@@ -1,0 +1,171 @@
+{
+  "nav": {
+    "home": "Home",
+    "tests": {
+      "label": "Tests",
+      "modals": "Modals",
+      "charts": "Charts",
+      "tables": "Tables",
+      "public": "Public"
+    },
+    "logout": "Logout"
+  },
+
+  "welcome": "Welcome to the ABET.",
+
+  "navbar": {
+    "user": {
+      "name": "Administrator",
+      "role": "Admi"
+    },
+    "openMenu": "Open menu",
+    "school": {
+      "label": "School",
+      "default": "QA"
+    },
+    "cycle": {
+      "label": "Cycle"
+    },
+    "program": {
+      "regular": "Regular",
+      "epe": "EPE"
+    }
+  },
+
+  "language": {
+    "es": "ES",
+    "en": "EN"
+  },
+
+  "sidebar": {
+    "open": "Open sidebar",
+    "close": "Close sidebar",
+    "logoAlt": "ABET Logo"
+  },
+
+  "dialog": {
+    "close": "Close",
+    "actions": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "title": {
+      "form": "New Registration",
+      "error": "Something went wrong",
+      "success": "Confirmation",
+      "info": "Information",
+      "warning": "Important notice",
+      "confirm": "Confirmation"
+    },
+    "message": {
+      "error": "There was an error processing the request.",
+      "success": "Operation completed successfully.",
+      "info": "New information is available.",
+      "warning": "Review the data before continuing.",
+      "confirm": "Confirm to continue."
+    }
+  },
+
+  "toast": {
+    "title": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Info"
+    },
+    "message": {
+      "success": "Operation completed successfully.",
+      "error": "There was an error processing the request.",
+      "warning": "Attention: review the data you entered.",
+      "info": "A new update is available in the system."
+    },
+    "close": "Close notification"
+  },
+
+  "tabs": {
+    "label": "Tabs"
+  },
+
+  "loading": {
+    "default": "Loading ..."
+  },
+
+  "login": {
+    "title": "Accreditation system",
+    "school": {
+      "placeholder": "Select school"
+    },
+    "user": {
+      "placeholder": "User"
+    },
+    "password": {
+      "placeholder": "Password"
+    },
+    "remember": "Remember me",
+    "submit": "Sign in",
+    "forgot": "Forgot your password?",
+    "loading": "Signing in...",
+    "error": {
+      "required": "All fields are required",
+      "generic": "Error during login"
+    }
+  },
+
+  "auth": {
+    "invalidCredentials": "Invalid credentials"
+  },
+
+  "table": {
+    "search": {
+      "placeholder": "Search..."
+    },
+    "empty": "No results found.",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
+    }
+  },
+
+  "select": {
+    "placeholder": {
+      "default": "Select an option"
+    },
+    "createLabel": "Create: \"{value}\""
+  },
+
+  "school": {
+    "eiscc": "SCHOOL OF SOFTWARE ENGINEERING AND COMPUTER SCIENCE",
+    "eiscb": "SCHOOL OF SYSTEMS ENGINEERING AND CYBER SECURITY",
+    "inggmi": "SCHOOL OF MINING MANAGEMENT ENGINEERING",
+    "inggem": "SCHOOL OF BUSINESS MANAGEMENT ENGINEERING",
+    "escel": "SCHOOL OF ELECTRONICS, MECHATRONICS AND NETWORKS ENGINEERING",
+    "ingamb": "SCHOOL OF ENVIRONMENTAL ENGINEERING",
+    "ingbio": "SCHOOL OF BIOMEDICAL ENGINEERING",
+    "ingciv": "SCHOOL OF CIVIL ENGINEERING",
+    "ingind": "SCHOOL OF INDUSTRIAL ENGINEERING"
+  },
+
+  "app": {
+    "name": "ABET Accreditation System",
+    "description": "ABET"
+  },
+
+  "page": {
+    "home": "Home",
+    "login": "Login",
+    "charts": "Charts",
+    "tables": "Tables",
+    "modals": "Modals",
+    "public": "Public"
+  },
+
+  "notFound": {
+    "title": "Page not found",
+    "message": "Sorry, we couldn’t find the page you’re looking for.",
+    "action": "Go home"
+  }
+}

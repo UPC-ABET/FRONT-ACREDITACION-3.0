@@ -1,0 +1,171 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "tests": {
+      "label": "Pruebas",
+      "modals": "Modales",
+      "charts": "Graficos",
+      "tables": "Tablas",
+      "public": "Publico"
+    },
+    "logout": "Cerrar sesion"
+  },
+
+  "welcome": "Bienvenido a ABET.",
+
+  "navbar": {
+    "user": {
+      "name": "Administrador",
+      "role": "Admi"
+    },
+    "openMenu": "Abrir menu",
+    "school": {
+      "label": "Escuela",
+      "default": "QA"
+    },
+    "cycle": {
+      "label": "Ciclo"
+    },
+    "program": {
+      "regular": "Regular",
+      "epe": "EPE"
+    }
+  },
+
+  "language": {
+    "es": "ES",
+    "en": "EN"
+  },
+
+  "sidebar": {
+    "open": "Abrir sidebar",
+    "close": "Cerrar sidebar",
+    "logoAlt": "Logo ABET"
+  },
+
+  "dialog": {
+    "close": "Cerrar",
+    "actions": {
+      "accept": "Aceptar",
+      "decline": "Rechazar",
+      "cancel": "Cancelar",
+      "save": "Guardar"
+    },
+    "title": {
+      "form": "Nuevo Registro",
+      "error": "Algo salio mal",
+      "success": "Confirmacion",
+      "info": "Informacion",
+      "warning": "Aviso importante",
+      "confirm": "Confirmacion"
+    },
+    "message": {
+      "error": "Ocurrio un error al procesar la solicitud.",
+      "success": "Operacion completada con exito.",
+      "info": "Nueva informacion disponible.",
+      "warning": "Revisa los datos antes de continuar.",
+      "confirm": "Confirma para continuar."
+    }
+  },
+
+  "toast": {
+    "title": {
+      "success": "Exito",
+      "error": "Error",
+      "warning": "Aviso",
+      "info": "Info"
+    },
+    "message": {
+      "success": "Operacion completada con exito.",
+      "error": "Hubo un error al procesar la solicitud.",
+      "warning": "Atencion: revisa los datos ingresados.",
+      "info": "Nueva actualizacion disponible en el sistema."
+    },
+    "close": "Cerrar notificacion"
+  },
+
+  "tabs": {
+    "label": "Pestañas"
+  },
+
+  "loading": {
+    "default": "Cargando ..."
+  },
+
+  "login": {
+    "title": "Sistema de  acreditación",
+    "school": {
+      "placeholder": "Selecciona escuela"
+    },
+    "user": {
+      "placeholder": "Usuario"
+    },
+    "password": {
+      "placeholder": "Contrasena"
+    },
+    "remember": "Recuerdame",
+    "submit": "Iniciar sesion",
+    "forgot": "¿Olvidaste la contrasena?",
+    "loading": "Iniciando sesion...",
+    "error": {
+      "required": "Todos los campos son obligatorios",
+      "generic": "Error durante el login"
+    }
+  },
+
+  "auth": {
+    "invalidCredentials": "Credenciales invalidas"
+  },
+
+  "table": {
+    "search": {
+      "placeholder": "Buscar..."
+    },
+    "empty": "No se encontraron resultados disponibles.",
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Pagina",
+      "of": "de"
+    }
+  },
+
+  "select": {
+    "placeholder": {
+      "default": "Seleccione una opcion"
+    },
+    "createLabel": "Crear: \"{value}\""
+  },
+
+  "school": {
+    "eiscc": "ESCUELA DE INGENIERIA DE SOFTWARE Y CIENCIAS DE LA COMPUTACION",
+    "eiscb": "ESCUELA DE INGENIERIA DE SISTEMAS Y CIBER SEGURIDAD",
+    "inggmi": "ESCUELA DE INGENIERIA DE GESTION MINERA",
+    "inggem": "ESCUELA DE INGENIERIA DE GESTION EMPRESARIAL",
+    "escel": "ESCUELA DE INGENIERIA ELECTRONICA, MECATRONICA Y REDES",
+    "ingamb": "ESCUELA DE INGENIERIA AMBIENTAL",
+    "ingbio": "ESCUELA DE INGENIERIA BIOMEDICA",
+    "ingciv": "ESCUELA DE INGENIERIA CIVIL",
+    "ingind": "ESCUELA DE INGENIERIA INDUSTRIAL"
+  },
+
+  "app": {
+    "name": "Sistema de Acreditación ABET",
+    "description": "ABET"
+  },
+
+  "page": {
+    "home": "Inicio",
+    "login": "Login",
+    "charts": "Graficos",
+    "tables": "Tablas",
+    "modals": "Modales",
+    "public": "Publico"
+  },
+
+  "notFound": {
+    "title": "Pagina no encontrada",
+    "message": "Lo sentimos, no pudimos encontrar la pagina que estas buscando.",
+    "action": "Ir al inicio"
+  }
+}
