@@ -14,7 +14,7 @@ type LayoutClientProps = {
 export default function LayoutClient({ children }: LayoutClientProps) {
     const pathname = usePathname()
     const isAuthRoute = pathname?.startsWith('/auth') ?? false
-    const isSurveyPublicRoute = pathname?.startsWith('/survey') ?? false
+    const isSurveyPublicRoute = pathname?.startsWith('/survey/') ?? false
     const router = useRouter()
     const [authRedirecting, setAuthRedirecting] = useState(false)
 
