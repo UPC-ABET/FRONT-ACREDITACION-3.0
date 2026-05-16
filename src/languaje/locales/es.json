@@ -1,6 +1,7 @@
 {
 	"nav": {
 		"home": "Inicio",
+		"rubrics": "Rúbricas",
 		"ifcs": "IFCs",
 		"tests": {
 			"label": "Pruebas",
