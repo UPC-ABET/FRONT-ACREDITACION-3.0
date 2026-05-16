@@ -2,10 +2,9 @@
 
 import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import { Input, Select, Button, LoadingDialog, ErrorDialog } from '@/shared/components'
 import { LoginPayload } from '@/shared/types'
-import { loginByCredentials } from '@/modules/auth/services'
+import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services'
 import { schoolOptions } from '@/modules/auth/constants'
 import { useI18n } from '@/providers'
 
@@ -56,8 +55,8 @@ export default function LoginForm() {
     }
   }
 
-  const handleMicrosoftLogin = async () => {
-    await signIn('azure-ad', { callbackUrl: '/' })
+  const handleMicrosoftLogin = () => {
+    window.location.assign(getMicrosoftLoginUrl())
   }
 
   return (
@@ -103,6 +102,25 @@ export default function LoginForm() {
 
       <div className="space-y-3">
         <Button type="submit" className="w-full">{t('login.submit')}</Button>
+        <Button
+          type="button"
+          className="w-full flex items-center justify-center gap-2"
+          onClick={handleMicrosoftLogin}
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <rect x="1" y="1" width="7" height="7" fill="#F25022" />
+            <rect x="10" y="1" width="7" height="7" fill="#7FBA00" />
+            <rect x="1" y="10" width="7" height="7" fill="#00A4EF" />
+            <rect x="10" y="10" width="7" height="7" fill="#FFB900" />
+          </svg>
+          {t('login.microsoft')}
+        </Button>
         <div className="text-center">
           <a href="#" className="text-sm text-red-600">{t('login.forgot')}</a>
         </div>

@@ -68,3 +68,11 @@ export const logoutUser = async (): Promise<void> => {
     },
   })
 }
+
+export const getMicrosoftLoginUrl = (): string => {
+  if (!BASE_URL) {
+    throw new Error('auth.missingApiUrl')
+  }
+
+  return `${BASE_URL}/auth/microsoft`
+}
