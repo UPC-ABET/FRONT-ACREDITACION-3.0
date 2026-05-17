@@ -1,15 +1,26 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Button, Card, Select } from '@/shared/components';
+import { Button, Card, ErrorDialog, Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { ORG_LABELS, TYPE_CODES } from '../constants';
-import { useIFCList, useOrgScope, useStatusTypes } from '../hooks';
+import {
+	useIFCList,
+	useOrgScope,
+	usePdfDownload,
+	useStatusReportDownload,
+	useStatusTypes,
+} from '../hooks';
 import { effectiveStatus, optionsForLevel } from '../services/scope';
 import type { IFCStatusFilter, ScopeTree, SelectionValue } from '../services/types';
 import { AcademicPeriodSelect } from './AcademicPeriodSelect';
 import { IFCTable } from './IFCTable';
 import { ScopeDropdowns } from './ScopeDropdowns';
+
+function tryTranslate(t: (k: string) => string, key: string) {
+	const translated = t(key);
+	return translated === key ? key : translated;
+}
 
 type StatusOptionItem = { value: IFCStatusFilter; label: string };
 
@@ -18,6 +29,8 @@ export function IFCDashboard() {
 	const [periodId, setPeriodId] = useState<number | null>(null);
 	const [selections, setSelections] = useState<Record<number, SelectionValue>>({});
 	const [statusFilter, setStatusFilter] = useState<IFCStatusFilter>('ALL');
+	const [lastSearchedChartIds, setLastSearchedChartIds] = useState<number[] | null>(null);
+	const [lastSearchedPeriodId, setLastSearchedPeriodId] = useState<number | null>(null);
 
 	const { scope, load: loadScope } = useOrgScope();
 	const { rows, load: loadList, setRows } = useIFCList();
@@ -51,6 +64,8 @@ export function IFCDashboard() {
 		setPeriodId(p);
 		setSelections({});
 		setRows([]);
+		setLastSearchedChartIds(null);
+		setLastSearchedPeriodId(null);
 		const tree = await loadScope(p);
 		if (tree && tree.levels.length > 0) {
 			const first = tree.levels[0].level_num;
@@ -78,6 +93,8 @@ export function IFCDashboard() {
 			lastSel === 'ALL'
 				? optionsForLevel(scope, lastLevel, selections).map((o) => o.id)
 				: [Number(lastSel)];
+		setLastSearchedChartIds(chartIds);
+		setLastSearchedPeriodId(periodId);
 		if (chartIds.length === 0) {
 			setRows([]);
 			return;
@@ -105,6 +122,33 @@ export function IFCDashboard() {
 		if (statusFilter === 'ALL') return rows;
 		return rows.filter((r) => effectiveStatus(r) === statusFilter);
 	}, [rows, statusFilter]);
+
+	const {
+		downloadMany,
+		downloadingAll,
+		error: pdfError,
+		clearError: clearPdfError,
+	} = usePdfDownload();
+
+	const {
+		download: downloadReport,
+		downloading: downloadingReport,
+		error: reportError,
+		clearError: clearReportError,
+	} = useStatusReportDownload();
+
+	const canDownloadReport =
+		lastSearchedChartIds !== null &&
+		lastSearchedChartIds.length > 0 &&
+		lastSearchedPeriodId !== null;
+
+	const approvedIds = useMemo<number[]>(
+		() =>
+			visibleRows
+				.filter((r) => r.ifc && r.ifc.status_code === TYPE_CODES.IFC_STATUS.APPROVED)
+				.map((r) => Number(r.ifc!.id)),
+		[visibleRows],
+	);
 
 	return (
 		<Card title={t('ifcs.page.title')}>
@@ -140,10 +184,51 @@ export function IFCDashboard() {
 							onClick={handleSearch}>
 							{t('ifcs.page.searchBtn')}
 						</Button>
+						<Button
+							variant="secondary"
+							size="md"
+							disabled={!canDownloadReport || downloadingReport}
+							title={
+								canDownloadReport ? undefined : t('ifcs.statusReport.tooltipNoScope')
+							}
+							onClick={() =>
+								downloadReport(lastSearchedChartIds!, lastSearchedPeriodId!)
+							}>
+							{downloadingReport
+								? t('loading.default')
+								: t('ifcs.statusReport.btn')}
+						</Button>
+						{approvedIds.length > 1 && (
+							<Button
+								variant="secondary"
+								size="md"
+								disabled={downloadingAll}
+								onClick={() => downloadMany(approvedIds)}>
+								{downloadingAll
+									? t('loading.default')
+									: `${t('ifcs.pdf.downloadAll')} (${approvedIds.length})`}
+							</Button>
+						)}
 					</div>
 				)}
 
 				{!chartIncomplete && <IFCTable rows={visibleRows} periodId={periodId} />}
+
+				{pdfError && (
+					<ErrorDialog
+						isOpen
+						onClose={clearPdfError}
+						message={tryTranslate(t, pdfError)}
+					/>
+				)}
+
+				{reportError && (
+					<ErrorDialog
+						isOpen
+						onClose={clearReportError}
+						message={tryTranslate(t, reportError)}
+					/>
+				)}
 			</div>
 		</Card>
 	);

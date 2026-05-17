@@ -46,8 +46,23 @@
 				"approved": "IFC approved",
 				"rejected": "IFC returned to the coordinator"
 			},
-			"rejectEmpty": "An observation is required to reject",
-			"exportTooltip": "PDF export — available in feature 07"
+			"rejectEmpty": "An observation is required to reject"
+		},
+		"pdf": {
+			"downloadPdf": "Download PDF",
+			"downloadAll": "Download All",
+			"exportNotApproved": "The IFC must be approved to export",
+			"error": {
+				"downloadFailed": "Could not download the PDF",
+				"bulkFailed": "Could not generate the PDF ZIP (at least one IFC is not approved)"
+			}
+		},
+		"statusReport": {
+			"btn": "Status Report",
+			"tooltipNoScope": "Run a search first",
+			"error": {
+				"downloadFailed": "Could not download the status report"
+			}
 		},
 		"form": {
 			"err": {

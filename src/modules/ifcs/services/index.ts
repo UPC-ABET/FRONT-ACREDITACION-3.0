@@ -12,3 +12,5 @@ export * from './ifcFindingsService';
 export * from './academicPeriodsService';
 export * from './parametersService';
 export * from './typesService';
+export * from './ifcsPdfService';
+export * from './ifcsStatusReportService';

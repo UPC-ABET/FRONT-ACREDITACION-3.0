@@ -6,10 +6,6 @@ export const VIEW_LABELS = {
 	rejection_reason: { en: 'Rejection reason', es: 'Motivo de rechazo' },
 	observation: { en: 'Observation', es: 'Observación' },
 	export: { en: 'Export', es: 'Exportar' },
-	export_tooltip: {
-		en: 'PDF export — available in feature 07',
-		es: 'Exportación PDF — disponible en la feature 07',
-	},
 	section_findings: { en: 'Findings', es: 'Hallazgos' },
 	section_actions: { en: 'Actions', es: 'Acciones' },
 	col_code: { en: 'Code', es: 'Código' },

@@ -2,12 +2,20 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
-import { DataTable } from '@/shared/components';
+import { DataTable, ErrorDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { TYPE_CODES } from '../constants';
+import { usePdfDownload } from '../hooks/usePdfDownload';
 import { effectiveStatus } from '../services/scope';
 import type { IFCRow } from '../services/types';
 import { StatusBadge } from './StatusBadge';
+
+function tryTranslate(t: (k: string) => string, key: string) {
+	const translated = t(key);
+	return translated === key ? key : translated;
+}
 
 type Props = { rows: IFCRow[]; periodId: number | null };
 
@@ -15,6 +23,7 @@ const UNREG_LABEL: Record<string, string> = { en: 'Unregistered', es: 'Sin Regis
 
 export function IFCTable({ rows, periodId }: Props) {
 	const { t, locale: lang } = useI18n();
+	const { downloadOne, downloadingId, error: pdfError, clearError } = usePdfDownload();
 
 	const columns = useMemo<ColumnDef<IFCRow>[]>(
 		() => [
@@ -50,19 +59,34 @@ export function IFCTable({ rows, periodId }: Props) {
 				id: 'actions',
 				header: t('ifcs.table.actions'),
 				cell: ({ row }) => {
-					if (row.original.ifc) {
+					const r = row.original;
+					if (r.ifc) {
+						const ifcId = Number(r.ifc.id);
+						const isApproved = r.ifc.status_code === TYPE_CODES.IFC_STATUS.APPROVED;
 						return (
-							<Link
-								href={`/ifcs/${row.original.ifc.id}`}
-								className="text-red-700 underline hover:text-red-500">
-								{t('ifcs.table.actionView')}
-							</Link>
+							<div className="flex items-center gap-2">
+								<Link
+									href={`/ifcs/${r.ifc.id}`}
+									className="text-red-700 underline hover:text-red-500">
+									{t('ifcs.table.actionView')}
+								</Link>
+								{isApproved && (
+									<button
+										type="button"
+										disabled={downloadingId === ifcId}
+										onClick={() => downloadOne(ifcId)}
+										title={t('ifcs.pdf.downloadPdf')}
+										className="text-red-700 hover:text-red-500 disabled:opacity-50">
+										<ArrowDownTrayIcon className="h-4 w-4" />
+									</button>
+								)}
+							</div>
 						);
 					}
 					if (periodId !== null) {
 						return (
 							<Link
-								href={`/ifcs/new?chart_id=${row.original.chart_id}&period_id=${periodId}`}
+								href={`/ifcs/new?chart_id=${r.chart_id}&period_id=${periodId}`}
 								className="text-red-700 underline hover:text-red-500">
 								{t('ifcs.table.actionRegister')}
 							</Link>
@@ -72,10 +96,20 @@ export function IFCTable({ rows, periodId }: Props) {
 				},
 			},
 		],
-		[t, lang, periodId],
+		[t, lang, periodId, downloadOne, downloadingId],
 	);
 
 	return (
-		<DataTable<IFCRow, unknown> columns={columns} data={rows} showSearch={false} showPagination />
+		<>
+			<DataTable<IFCRow, unknown>
+				columns={columns}
+				data={rows}
+				showSearch={false}
+				showPagination
+			/>
+			{pdfError && (
+				<ErrorDialog isOpen onClose={clearError} message={tryTranslate(t, pdfError)} />
+			)}
+		</>
 	);
 }

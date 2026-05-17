@@ -70,6 +70,8 @@ export interface IFCHeader {
 	academic_period_code: string;
 	area_label: I18nText;
 	subarea_label: I18nText;
+	program_label: I18nText;
+	course_code: string;
 	course_name: I18nText;
 	course_learning_outcome: I18nText;
 	coordinator: {
