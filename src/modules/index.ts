@@ -22,4 +22,5 @@
 
 export * from './auth';
 export * from './tests';
+export * from './ifcs';
 export * from '../shared/components/errors';

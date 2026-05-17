@@ -16,6 +16,7 @@ import {
 	HomeIcon,
 	FolderIcon,
 	Cog6ToothIcon,
+	DocumentChartBarIcon,
 	ArrowRightStartOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
@@ -61,6 +62,12 @@ export function AppSidebar() {
 
 	const navigation: NavItem[] = [
 		{ name: t('nav.home'), href: '/', icon: HomeIcon },
+
+		{
+			name: t('nav.ifc.label'),
+			icon: DocumentChartBarIcon,
+			children: [{ name: t('nav.ifc.dashboard'), href: '/ifcs' }],
+		},
 
 		{
 			name: t('nav.tests.label'),

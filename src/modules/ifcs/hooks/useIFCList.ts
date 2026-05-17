@@ -1,0 +1,34 @@
+'use client';
+
+import { useCallback, useState } from 'react';
+import { listIFCs } from '../services/ifcsService';
+import type { IFCRow } from '../services/types';
+
+export function useIFCList() {
+	const [rows, setRows] = useState<IFCRow[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const load = useCallback(async (chartIds: number[], periodId: number): Promise<IFCRow[]> => {
+		if (chartIds.length === 0) {
+			setRows([]);
+			return [];
+		}
+		setLoading(true);
+		setError(null);
+		try {
+			const data = await listIFCs(chartIds, periodId);
+			setRows(data);
+			return data;
+		} catch (e) {
+			const message = e instanceof Error ? e.message : 'ifcs.error.generic';
+			setError(message);
+			setRows([]);
+			return [];
+		} finally {
+			setLoading(false);
+		}
+	}, []);
+
+	return { rows, loading, error, load, setRows };
+}

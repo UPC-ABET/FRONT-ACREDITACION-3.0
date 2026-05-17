@@ -1,7 +1,10 @@
 {
 	"nav": {
 		"home": "Inicio",
-		"ifcs": "IFCs",
+		"ifc": {
+			"label": "IFC",
+			"dashboard": "Dashboard"
+		},
 		"tests": {
 			"label": "Pruebas",
 			"modals": "Modales",
@@ -11,11 +14,12 @@
 		},
 		"logout": "Cerrar sesion"
 	},
-
 	"ifcs": {
 		"page": {
 			"title": "Informe de Fin de Ciclo",
-			"period": "Período Académico"
+			"period": "Período Académico",
+			"searchBtn": "Buscar",
+			"searchDisabled": "Seleccione un período y un curso para buscar"
 		},
 		"table": {
 			"code": "Código",
@@ -24,13 +28,11 @@
 			"coordinator": "Docente",
 			"status": "Estado",
 			"actions": "Opciones",
-			"statusFilter": "Filtrar por estado",
+			"statusFilter": "Estado",
 			"empty": "Sin IFCs"
 		}
 	},
-
 	"welcome": "Bienvenido a ABET.",
-
 	"navbar": {
 		"user": {
 			"name": "Administrador",
@@ -49,18 +51,15 @@
 			"epe": "EPE"
 		}
 	},
-
 	"language": {
 		"es": "ES",
 		"en": "EN"
 	},
-
 	"sidebar": {
 		"open": "Abrir sidebar",
 		"close": "Cerrar sidebar",
 		"logoAlt": "Logo ABET"
 	},
-
 	"dialog": {
 		"close": "Cerrar",
 		"actions": {
@@ -85,7 +84,6 @@
 			"confirm": "Confirma para continuar."
 		}
 	},
-
 	"toast": {
 		"title": {
 			"success": "Exito",
@@ -101,15 +99,12 @@
 		},
 		"close": "Cerrar notificacion"
 	},
-
 	"tabs": {
 		"label": "Pestañas"
 	},
-
 	"loading": {
 		"default": "Cargando ..."
 	},
-
 	"login": {
 		"title": "Sistema de  acreditación",
 		"school": {
@@ -132,17 +127,14 @@
 			"schoolRequired": "Selecciona una escuela antes de continuar"
 		}
 	},
-
 	"auth": {
 		"invalidCredentials": "Credenciales invalidas"
 	},
-
 	"error": {
 		"school": {
 			"notFound": "La escuela seleccionada no existe"
 		}
 	},
-
 	"table": {
 		"search": {
 			"placeholder": "Buscar..."
@@ -155,14 +147,12 @@
 			"of": "de"
 		}
 	},
-
 	"select": {
 		"placeholder": {
 			"default": "Seleccione una opcion"
 		},
 		"createLabel": "Crear: \"{value}\""
 	},
-
 	"school": {
 		"eiscc": "ESCUELA DE INGENIERIA DE SOFTWARE Y CIENCIAS DE LA COMPUTACION",
 		"eiscb": "ESCUELA DE INGENIERIA DE SISTEMAS Y CIBER SEGURIDAD",
@@ -174,12 +164,10 @@
 		"ingciv": "ESCUELA DE INGENIERIA CIVIL",
 		"ingind": "ESCUELA DE INGENIERIA INDUSTRIAL"
 	},
-
 	"app": {
 		"name": "Sistema de Acreditación ABET",
 		"description": "ABET"
 	},
-
 	"page": {
 		"home": "Inicio",
 		"login": "Login",
@@ -188,7 +176,6 @@
 		"modals": "Modales",
 		"public": "Publico"
 	},
-
 	"notFound": {
 		"title": "Pagina no encontrada",
 		"message": "Lo sentimos, no pudimos encontrar la pagina que estas buscando.",
