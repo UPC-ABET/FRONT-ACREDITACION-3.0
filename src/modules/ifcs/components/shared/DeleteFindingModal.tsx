@@ -2,11 +2,10 @@
 
 import { ConfirmDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type { FindingRow } from '../../services/types';
-import { CONSULT_LABELS } from './consultLabels';
+import { CONSULT_LABELS } from '../consult/consultLabels';
 
 type Props = {
-	target: FindingRow | null;
+	target: { id: number } | null;
 	onConfirm: () => Promise<void> | void;
 	onClose: () => void;
 	submitting: boolean;

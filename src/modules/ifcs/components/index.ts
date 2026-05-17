@@ -20,3 +20,4 @@ export * from './shared';
 export * from './view';
 export * from './form';
 export * from './consult';
+export * from './finding-view';

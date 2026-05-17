@@ -96,9 +96,25 @@
 		"toast": {
 			"deleted": "Hallazgo eliminado"
 		},
+		"findingView": {
+			"col": {
+				"actionCode": "Código",
+				"actionDesc": "Descripción",
+				"actionStatus": "Estado"
+			},
+			"actionsEmpty": "No hay acciones asociadas",
+			"toast": {
+				"saved": "Hallazgo actualizado"
+			},
+			"err": {
+				"descriptionEmpty": "La descripción debe tener al menos un idioma completado"
+			}
+		},
 		"error": {
 			"listFailed": "No se pudo cargar la lista de hallazgos",
-			"deleteFailed": "No se pudo eliminar el hallazgo"
+			"deleteFailed": "No se pudo eliminar el hallazgo",
+			"viewFailed": "No se pudo cargar el hallazgo",
+			"patchFailed": "No se pudo guardar el hallazgo"
 		}
 	},
 	"welcome": "Bienvenido a ABET.",

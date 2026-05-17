@@ -13,5 +13,4 @@
 
 export * from './FindingsConsultPage';
 export * from './FindingsTable';
-export * from './DeleteFindingModal';
 export * from './consultLabels';

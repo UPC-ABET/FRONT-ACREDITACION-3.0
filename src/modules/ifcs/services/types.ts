@@ -227,3 +227,30 @@ export interface CreateIFCBody {
 }
 
 export type PatchIFCBody = Omit<CreateIFCBody, 'chart_id' | 'period_id'>;
+
+// ---- Finding detail view ---------------------------------------------------
+
+export interface FindingDetail {
+	id: number;
+	finding_code: string;
+	academic_period_code: string;
+	description: I18nText;
+	criticality: { code: string; name: I18nText };
+}
+
+export interface FindingActionRow {
+	id: number;
+	action_code: string;
+	description: I18nText;
+	completeness_code: string;
+	completeness_name: I18nText;
+}
+
+export interface FindingDetailPayload {
+	finding: FindingDetail;
+	actions: FindingActionRow[];
+}
+
+export interface PatchFindingBody {
+	description: I18nText;
+}
