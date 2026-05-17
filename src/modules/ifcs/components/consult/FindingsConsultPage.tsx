@@ -11,8 +11,8 @@ import { optionsForLevel } from '../../services/scope';
 import type { FindingRow, ScopeTree, SelectionValue } from '../../services/types';
 import { AcademicPeriodSelect } from '../AcademicPeriodSelect';
 import { ScopeDropdowns } from '../ScopeDropdowns';
+import { DeleteFindingModal } from '../shared/DeleteFindingModal';
 import { CONSULT_LABELS } from './consultLabels';
-import { DeleteFindingModal } from './DeleteFindingModal';
 import { FindingsTable } from './FindingsTable';
 
 export function FindingsConsultPage() {
