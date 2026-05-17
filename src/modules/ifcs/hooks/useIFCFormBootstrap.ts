@@ -5,12 +5,7 @@ import { PARAMETER_CODES, TYPE_GROUP_CODES } from '../constants';
 import { getIFCPrefill, getIFCView } from '../services/ifcsService';
 import { getParameterByCode } from '../services/parametersService';
 import { getTypesByGroupCode } from '../services/typesService';
-import type {
-	CriticalityOption,
-	IFCField,
-	IFCPrefill,
-	IFCViewPayload,
-} from '../services/types';
+import type { CriticalityOption, IFCField, IFCPrefill, IFCViewPayload } from '../services/types';
 
 export type IFCFormMode =
 	| { kind: 'create'; chartId: number; periodId: number }
@@ -39,16 +34,15 @@ export function useIFCFormBootstrap(mode: IFCFormMode) {
 
 		(async () => {
 			try {
-				const [languages, ifcFields, criticalities, existing, prefillCreate] =
-					await Promise.all([
-						getParameterByCode<string[]>(PARAMETER_CODES.LANGUAGES),
-						getParameterByCode<IFCField[]>(PARAMETER_CODES.IFC_FIELDS),
-						getTypesByGroupCode(TYPE_GROUP_CODES.CRITICALITY),
-						mode.kind === 'edit' ? getIFCView(mode.ifcId) : Promise.resolve(null),
-						mode.kind === 'create'
-							? getIFCPrefill(mode.chartId, mode.periodId)
-							: Promise.resolve(null),
-					]);
+				const [languages, ifcFields, criticalities, existing, prefillCreate] = await Promise.all([
+					getParameterByCode<string[]>(PARAMETER_CODES.LANGUAGES),
+					getParameterByCode<IFCField[]>(PARAMETER_CODES.IFC_FIELDS),
+					getTypesByGroupCode(TYPE_GROUP_CODES.CRITICALITY),
+					mode.kind === 'edit' ? getIFCView(mode.ifcId) : Promise.resolve(null),
+					mode.kind === 'create'
+						? getIFCPrefill(mode.chartId, mode.periodId)
+						: Promise.resolve(null),
+				]);
 
 				const prefill: IFCPrefill =
 					prefillCreate ??

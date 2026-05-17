@@ -66,7 +66,10 @@ export function AppSidebar() {
 		{
 			name: t('nav.ifc.label'),
 			icon: DocumentChartBarIcon,
-			children: [{ name: t('nav.ifc.dashboard'), href: '/ifcs' }],
+			children: [
+				{ name: t('nav.ifc.dashboard'), href: '/ifcs' },
+				{ name: t('nav.ifc.findings'), href: '/ifc-findings' },
+			],
 		},
 
 		{

@@ -19,3 +19,4 @@ export * from './StatusBadge';
 export * from './shared';
 export * from './view';
 export * from './form';
+export * from './consult';

@@ -28,8 +28,7 @@ export function IFCTable({ rows, periodId }: Props) {
 			{
 				accessorKey: 'course_name',
 				header: t('ifcs.table.course'),
-				cell: ({ row }) =>
-					row.original.course_name?.[lang] ?? row.original.course_name?.es ?? '',
+				cell: ({ row }) => row.original.course_name?.[lang] ?? row.original.course_name?.es ?? '',
 			},
 			{
 				accessorKey: 'coordinator_name',
@@ -77,11 +76,6 @@ export function IFCTable({ rows, periodId }: Props) {
 	);
 
 	return (
-		<DataTable<IFCRow, unknown>
-			columns={columns}
-			data={rows}
-			showSearch={false}
-			showPagination
-		/>
+		<DataTable<IFCRow, unknown> columns={columns} data={rows} showSearch={false} showPagination />
 	);
 }

@@ -19,6 +19,7 @@ type BaseDialogProps = {
 	onDecline?: () => void;
 	confirmLabel?: string;
 	declineLabel?: string;
+	isLoading?: boolean;
 };
 
 type FormDialogProps = {
@@ -38,6 +39,7 @@ function BaseFeedbackDialog({
 	onDecline,
 	confirmLabel,
 	declineLabel,
+	isLoading = false,
 	icon: Icon,
 	iconBg,
 	iconColor,
@@ -60,6 +62,7 @@ function BaseFeedbackDialog({
 			<Button
 				onClick={onDecline || onClose}
 				variant="secondary"
+				disabled={isLoading}
 				className="col-span-2 inline-flex w-full justify-center rounded-md bg-zinc-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-zinc-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500">
 				{declineLabelFinal}
 			</Button>
@@ -67,6 +70,7 @@ function BaseFeedbackDialog({
 			<Button
 				onClick={onConfirm || onClose}
 				variant="primary"
+				disabled={isLoading}
 				className="col-span-2 inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
 				{acceptLabel}
 			</Button>
@@ -76,6 +80,7 @@ function BaseFeedbackDialog({
 			<Button
 				onClick={onConfirm || onClose}
 				variant="primary"
+				disabled={isLoading}
 				className="col-span-2 inline-flex w-full justify-center rounded-md  bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
 				{acceptLabel}
 			</Button>
@@ -231,6 +236,7 @@ export function ConfirmDialog({
 	onDecline,
 	confirmLabel,
 	declineLabel,
+	isLoading,
 }: BaseDialogProps) {
 	const { t } = useI18n();
 
@@ -244,6 +250,7 @@ export function ConfirmDialog({
 			onDecline={onDecline}
 			confirmLabel={confirmLabel}
 			declineLabel={declineLabel}
+			isLoading={isLoading}
 			icon={CheckCircleIcon}
 			iconBg="bg-red-100"
 			iconColor="text-red-600"

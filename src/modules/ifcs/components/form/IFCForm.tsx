@@ -205,11 +205,7 @@ export function IFCForm(props: Props) {
 
 			{submitting && <LoadingDialog isOpen label={t('loading.default')} />}
 			{error && (
-				<ErrorDialog
-					isOpen
-					onClose={() => setError(null)}
-					message={tryTranslate(t, error)}
-				/>
+				<ErrorDialog isOpen onClose={() => setError(null)} message={tryTranslate(t, error)} />
 			)}
 		</div>
 	);

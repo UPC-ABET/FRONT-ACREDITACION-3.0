@@ -3,7 +3,8 @@
 		"home": "Home",
 		"ifc": {
 			"label": "IFC",
-			"dashboard": "Dashboard"
+			"dashboard": "Dashboard",
+			"findings": "Findings"
 		},
 		"tests": {
 			"label": "Tests",
@@ -74,6 +75,30 @@
 			"saveFailed": "Could not save the IFC",
 			"bootstrapFailed": "Could not load the form",
 			"generic": "Something went wrong"
+		}
+	},
+	"ifcFindings": {
+		"page": {
+			"title": "Findings"
+		},
+		"col": {
+			"criticality": "Criticality",
+			"code": "Code",
+			"period": "Academic Period",
+			"description": "Description",
+			"actions": "Options"
+		},
+		"action": {
+			"view": "View",
+			"delete": "Delete"
+		},
+		"empty": "No findings in scope",
+		"toast": {
+			"deleted": "Finding deleted"
+		},
+		"error": {
+			"listFailed": "Could not load findings",
+			"deleteFailed": "Could not delete the finding"
 		}
 	},
 	"welcome": "Welcome to the ABET.",
