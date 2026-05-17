@@ -1,13 +1,19 @@
 'use client';
 
 import { useI18n } from '@/providers';
-import { Card, Button } from '@/shared/components';
+import { Card, Button, ErrorDialog } from '@/shared/components';
 import { formatDateTime } from '@/shared/utils';
 import { IFCPageTitle } from '../shared/IFCPageTitle';
 import { StatusBadge } from '../StatusBadge';
 import { VIEW_LABELS } from './viewLabels';
 import { TYPE_CODES } from '../../constants';
+import { usePdfDownload } from '../../hooks/usePdfDownload';
 import type { IFCHeader } from '../../services/types';
+
+function tryTranslate(t: (k: string) => string, key: string) {
+	const translated = t(key);
+	return translated === key ? key : translated;
+}
 
 type Props = {
 	ifc: IFCHeader;
@@ -22,10 +28,13 @@ export function IFCHeaderCard({
 	observationText,
 	onObservationChange,
 }: Props) {
-	const { locale: lang } = useI18n();
+	const { t, locale: lang } = useI18n();
 	const statusCode = ifc.status?.code ?? TYPE_CODES.IFC_STATUS.UNREGISTERED;
 	const isObserved = statusCode === TYPE_CODES.IFC_STATUS.OBSERVED;
 	const statusLabel = ifc.status?.name?.[lang] ?? ifc.status?.name?.es ?? '';
+	const { downloadOne, downloadingId, error: pdfError, clearError } = usePdfDownload();
+	const canExport = statusCode === TYPE_CODES.IFC_STATUS.APPROVED;
+	const isDownloading = downloadingId === ifc.id;
 
 	return (
 		<Card>
@@ -80,11 +89,20 @@ export function IFCHeaderCard({
 				)}
 
 				<div className="flex justify-end">
-					<Button variant="secondary" size="md" disabled title={VIEW_LABELS.export_tooltip[lang]}>
-						{VIEW_LABELS.export[lang]}
+					<Button
+						variant="secondary"
+						size="md"
+						disabled={!canExport || isDownloading}
+						title={canExport ? undefined : t('ifcs.pdf.exportNotApproved')}
+						onClick={() => downloadOne(Number(ifc.id))}>
+						{isDownloading ? t('loading.default') : VIEW_LABELS.export[lang]}
 					</Button>
 				</div>
 			</div>
+
+			{pdfError && (
+				<ErrorDialog isOpen onClose={clearError} message={tryTranslate(t, pdfError)} />
+			)}
 		</Card>
 	);
 }

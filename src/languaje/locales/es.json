@@ -46,8 +46,23 @@
 				"approved": "IFC aprobado",
 				"rejected": "IFC devuelto al coordinador"
 			},
-			"rejectEmpty": "La observación es obligatoria para rechazar",
-			"exportTooltip": "Exportación PDF — disponible en la feature 07"
+			"rejectEmpty": "La observación es obligatoria para rechazar"
+		},
+		"pdf": {
+			"downloadPdf": "Descargar PDF",
+			"downloadAll": "Descargar Todos",
+			"exportNotApproved": "El IFC debe estar aprobado para exportarse",
+			"error": {
+				"downloadFailed": "No se pudo descargar el PDF",
+				"bulkFailed": "No se pudo generar el ZIP de PDFs (al menos un IFC no está aprobado)"
+			}
+		},
+		"statusReport": {
+			"btn": "Reporte de Estado",
+			"tooltipNoScope": "Realiza una búsqueda primero",
+			"error": {
+				"downloadFailed": "No se pudo descargar el reporte de estado"
+			}
 		},
 		"form": {
 			"err": {

@@ -12,3 +12,5 @@ export * from './useFindingDetail';
 export * from './useIFCFormBootstrap';
 export * from './useIFCFormState';
 export * from './useStatusTypes';
+export * from './usePdfDownload';
+export * from './useStatusReportDownload';
