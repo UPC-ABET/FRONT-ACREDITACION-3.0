@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Inicio",
+    "ifcs": "IFCs",
     "tests": {
       "label": "Pruebas",
       "modals": "Modales",
@@ -9,6 +10,23 @@
       "public": "Publico"
     },
     "logout": "Cerrar sesion"
+  },
+
+  "ifcs": {
+    "page": {
+      "title": "Informe de Fin de Ciclo",
+      "period": "Período Académico"
+    },
+    "table": {
+      "code": "Código",
+      "program": "Carrera",
+      "course": "Curso",
+      "coordinator": "Docente",
+      "status": "Estado",
+      "actions": "Opciones",
+      "statusFilter": "Filtrar por estado",
+      "empty": "Sin IFCs"
+    }
   },
 
   "welcome": "Bienvenido a ABET.",
@@ -110,12 +128,19 @@
     "loading": "Iniciando sesion...",
     "error": {
       "required": "Todos los campos son obligatorios",
-      "generic": "Error durante el login"
+      "generic": "Error durante el login",
+      "schoolRequired": "Selecciona una escuela antes de continuar"
     }
   },
 
   "auth": {
     "invalidCredentials": "Credenciales invalidas"
+  },
+
+  "error": {
+    "school": {
+      "notFound": "La escuela seleccionada no existe"
+    }
   },
 
   "table": {

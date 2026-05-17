@@ -3,8 +3,8 @@
  */
 
 export type LoginPayload = {
-  escuela: string
-  codigo: string
+  school_code: string
+  email: string
   password: string
 }
 

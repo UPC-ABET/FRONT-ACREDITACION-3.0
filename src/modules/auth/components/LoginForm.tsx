@@ -9,8 +9,8 @@ import { schoolOptions } from '@/modules/auth/constants'
 import { useI18n } from '@/providers'
 
 export default function LoginForm() {
-  const [escuela, setEscuela] = useState('')
-  const [codigo, setCodigo] = useState('')
+  const [schoolCode, setSchoolCode] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -29,20 +29,19 @@ export default function LoginForm() {
     setError(null)
     setDialogOpen(false)
 
-    if (!escuela || !codigo || !password) {
+    if (!schoolCode || !email || !password) {
       setError(t('login.error.required'))
       return
     }
 
-    const payload: LoginPayload = { escuela, codigo, password }
+    const payload: LoginPayload = { school_code: schoolCode, email, password }
     setLoading(true)
     try {
       const res = await loginByCredentials(payload)
       localStorage.setItem('bearerToken', JSON.stringify(res.accessToken))
       localStorage.setItem('token', JSON.stringify(res.user))
-      localStorage.setItem('escuela', JSON.stringify(escuela))
+      localStorage.setItem('escuela', JSON.stringify(schoolCode))
       router.replace('/')
-      // aquí podrías setear auth en contexto si existe
     } catch (err: any) {
       const rawMessage = typeof err?.message === 'string' ? err.message : ''
       const translated = rawMessage ? t(rawMessage) : ''
@@ -56,7 +55,11 @@ export default function LoginForm() {
   }
 
   const handleMicrosoftLogin = () => {
-    window.location.assign(getMicrosoftLoginUrl())
+    if (!schoolCode) {
+      setError(t('login.error.schoolRequired'))
+      return
+    }
+    window.location.assign(getMicrosoftLoginUrl(schoolCode))
   }
 
   return (
@@ -67,8 +70,8 @@ export default function LoginForm() {
         <div>
           <Select
             name="escuela"
-            value={escuela ? { label: escuela, value: escuela } : null}
-            onChange={(_, v) => setEscuela((v as any)?.value || '')}
+            value={schoolCode ? { label: schoolCode, value: schoolCode } : null}
+            onChange={(_, v) => setSchoolCode((v as any)?.value || '')}
             options={localizedSchools}
             placeholder={t('login.school.placeholder')}
           />
@@ -76,9 +79,9 @@ export default function LoginForm() {
 
         <div>
           <Input
-            id="codigo"
-            value={codigo}
-            onChange={(e: any) => setCodigo(e.target.value)}
+            id="email"
+            value={email}
+            onChange={(e: any) => setEmail(e.target.value)}
             placeholder={t('login.user.placeholder')}
           />
         </div>

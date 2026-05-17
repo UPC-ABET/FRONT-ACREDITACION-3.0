@@ -26,7 +26,8 @@ export const loginByCredentials = async (
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      email: payload.codigo,
+      school_code: payload.school_code,
+      email: payload.email,
       password: payload.password,
     }),
   })
@@ -69,10 +70,13 @@ export const logoutUser = async (): Promise<void> => {
   })
 }
 
-export const getMicrosoftLoginUrl = (): string => {
+export const getMicrosoftLoginUrl = (school_code: string): string => {
   if (!BASE_URL) {
     throw new Error('auth.missingApiUrl')
   }
+  if (!school_code) {
+    throw new Error('login.error.schoolRequired')
+  }
 
-  return `${BASE_URL}/auth/microsoft`
+  return `${BASE_URL}/auth/microsoft?school_code=${encodeURIComponent(school_code)}`
 }
