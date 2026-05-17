@@ -98,9 +98,7 @@ export function IFCActionsEditor({
 					size="md"
 					disabled={findings.length === 0}
 					onClick={onAdd}
-					title={
-						findings.length === 0 ? FORM_LABELS.btn_add_finding[lang] : undefined
-					}>
+					title={findings.length === 0 ? FORM_LABELS.btn_add_finding[lang] : undefined}>
 					{FORM_LABELS.btn_add_action[lang]}
 				</Button>
 			</div>

@@ -27,9 +27,7 @@ export async function getParameterByCode<T>(code: string): Promise<T> {
 		body: JSON.stringify({ code }),
 	});
 
-	const body = (await res.json().catch(() => null)) as Envelope<
-		Array<ParameterRow<T>>
-	> | null;
+	const body = (await res.json().catch(() => null)) as Envelope<Array<ParameterRow<T>>> | null;
 	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'parameters.error.notFound');
 
 	const row = body.data[0];

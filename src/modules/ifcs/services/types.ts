@@ -48,6 +48,18 @@ export type SelectionValue = number | 'ALL' | null;
 
 export type IFCStatusFilter = 'ALL' | string;
 
+export interface FindingRow {
+	id: number;
+	ifc_id: number;
+	course_id: number;
+	criticality_code: string;
+	criticality_name: I18nText;
+	criticality_order: number;
+	finding_code: string;
+	academic_period_code: string;
+	description: I18nText;
+}
+
 // ---- View payload --------------------------------------------------------
 
 export interface IFCHeader {

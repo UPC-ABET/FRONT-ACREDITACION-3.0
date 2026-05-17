@@ -93,9 +93,7 @@ export const applyFinding = {
 			findings: state.findings.filter((f) => f.tempId !== tempId),
 			actions: state.actions.filter((a) => a.finding_temp_id !== tempId),
 			deleted_finding_ids:
-				target.id !== null
-					? [...state.deleted_finding_ids, target.id]
-					: state.deleted_finding_ids,
+				target.id !== null ? [...state.deleted_finding_ids, target.id] : state.deleted_finding_ids,
 			deleted_action_ids: [...state.deleted_action_ids, ...droppedActionDbIds],
 		};
 	},

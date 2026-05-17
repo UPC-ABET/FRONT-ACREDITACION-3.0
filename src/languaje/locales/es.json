@@ -3,7 +3,8 @@
 		"home": "Inicio",
 		"ifc": {
 			"label": "IFC",
-			"dashboard": "Dashboard"
+			"dashboard": "Dashboard",
+			"findings": "Hallazgos"
 		},
 		"tests": {
 			"label": "Pruebas",
@@ -74,6 +75,30 @@
 			"saveFailed": "No se pudo guardar el IFC",
 			"bootstrapFailed": "No se pudo cargar el formulario",
 			"generic": "Ocurrió un error"
+		}
+	},
+	"ifcFindings": {
+		"page": {
+			"title": "Hallazgos"
+		},
+		"col": {
+			"criticality": "Criticidad",
+			"code": "Código",
+			"period": "Período Académico",
+			"description": "Descripción",
+			"actions": "Opciones"
+		},
+		"action": {
+			"view": "Ver",
+			"delete": "Eliminar"
+		},
+		"empty": "No hay hallazgos en este alcance",
+		"toast": {
+			"deleted": "Hallazgo eliminado"
+		},
+		"error": {
+			"listFailed": "No se pudo cargar la lista de hallazgos",
+			"deleteFailed": "No se pudo eliminar el hallazgo"
 		}
 	},
 	"welcome": "Bienvenido a ABET.",
