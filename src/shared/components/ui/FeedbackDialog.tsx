@@ -17,6 +17,8 @@ type BaseDialogProps = {
 	message?: string;
 	onConfirm?: () => void;
 	onDecline?: () => void;
+	confirmLabel?: string;
+	declineLabel?: string;
 };
 
 type FormDialogProps = {
@@ -34,6 +36,8 @@ function BaseFeedbackDialog({
 	message,
 	onConfirm,
 	onDecline,
+	confirmLabel,
+	declineLabel,
 	icon: Icon,
 	iconBg,
 	iconColor,
@@ -48,8 +52,8 @@ function BaseFeedbackDialog({
 
 	const resolvedTitle = title ?? '';
 	const resolvedMessage = message ?? '';
-	const declineLabel = t('dialog.actions.decline');
-	const acceptLabel = t('dialog.actions.accept');
+	const declineLabelFinal = declineLabel ?? t('dialog.actions.decline');
+	const acceptLabel = confirmLabel ?? t('dialog.actions.accept');
 
 	const actions: React.ReactNode = dualActions ? (
 		<div className="mt-5 sm:mt-6 grid grid-cols-5 gap-3">
@@ -57,7 +61,7 @@ function BaseFeedbackDialog({
 				onClick={onDecline || onClose}
 				variant="secondary"
 				className="col-span-2 inline-flex w-full justify-center rounded-md bg-zinc-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-zinc-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500">
-				{declineLabel}
+				{declineLabelFinal}
 			</Button>
 			<div className="col-span-1" />
 			<Button
@@ -225,6 +229,8 @@ export function ConfirmDialog({
 	message,
 	onConfirm,
 	onDecline,
+	confirmLabel,
+	declineLabel,
 }: BaseDialogProps) {
 	const { t } = useI18n();
 
@@ -236,6 +242,8 @@ export function ConfirmDialog({
 			message={message !== undefined ? message : t('dialog.message.confirm')}
 			onConfirm={onConfirm}
 			onDecline={onDecline}
+			confirmLabel={confirmLabel}
+			declineLabel={declineLabel}
 			icon={CheckCircleIcon}
 			iconBg="bg-red-100"
 			iconColor="text-red-600"

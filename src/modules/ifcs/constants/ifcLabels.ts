@@ -19,7 +19,27 @@ export const TYPE_CODES = {
 		PENDING: 'TG1003-T001',
 		IMPLEMENTED: 'TG1003-T002',
 	},
+	CRITICALITY: {
+		CRITICAL: 'TG801-T001',
+		WORRYING: 'TG801-T002',
+		NORMAL: 'TG801-T003',
+	},
 } as const;
+
+export const TYPE_GROUP_CODES = {
+	CRITICALITY: 'TG801',
+} as const;
+
+export const PARAMETER_CODES = {
+	LANGUAGES: 'PARAMETER_LANGUAGES',
+	IFC_FIELDS: 'PARAMETER_IFC_FIELDS',
+} as const;
+
+export const CRITICALITY_VARIANT: Record<string, 'default' | 'danger' | 'success' | 'outline'> = {
+	[TYPE_CODES.CRITICALITY.CRITICAL]: 'danger',
+	[TYPE_CODES.CRITICALITY.WORRYING]: 'default',
+	[TYPE_CODES.CRITICALITY.NORMAL]: 'outline',
+};
 
 export const COMPLETENESS_VARIANT: Record<string, 'default' | 'danger' | 'success' | 'outline'> = {
 	[TYPE_CODES.ACTION_COMPLETENESS.PENDING]: 'outline',
@@ -34,16 +54,6 @@ export const LEVEL_LABELS: Record<string, { en: string; es: string }> = {
 	[TYPE_CODES.CHART_LEVEL_TYPE.SUBAREA_COORDINATOR]: { en: 'Subarea', es: 'Subárea' },
 	[TYPE_CODES.CHART_LEVEL_TYPE.COURSE_COORDINATOR]: { en: 'Course', es: 'Curso' },
 };
-
-// Status filter options — value is the type code (or the 'ALL' sentinel).
-export const STATUS_OPTIONS = [
-	{ value: 'ALL', label: { en: 'All', es: 'Todos' } },
-	{ value: TYPE_CODES.IFC_STATUS.UNREGISTERED, label: { en: 'Unregistered', es: 'Sin Registro' } },
-	{ value: TYPE_CODES.IFC_STATUS.SAVED, label: { en: 'Saved', es: 'Guardado' } },
-	{ value: TYPE_CODES.IFC_STATUS.SUBMITTED, label: { en: 'Submitted', es: 'Enviado' } },
-	{ value: TYPE_CODES.IFC_STATUS.APPROVED, label: { en: 'Approved', es: 'Aprobado' } },
-	{ value: TYPE_CODES.IFC_STATUS.OBSERVED, label: { en: 'Observed', es: 'Observado' } },
-] as const;
 
 export const ORG_LABELS = {
 	chart_incomplete: {

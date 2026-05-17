@@ -30,7 +30,11 @@
 			"actions": "Options",
 			"statusFilter": "Status",
 			"empty": "No IFCs",
-			"actionView": "View"
+			"actionView": "View",
+			"actionRegister": "Register"
+		},
+		"status": {
+			"all": "All"
 		},
 		"view": {
 			"col": {
@@ -44,11 +48,31 @@
 			"rejectEmpty": "An observation is required to reject",
 			"exportTooltip": "PDF export — available in feature 07"
 		},
+		"form": {
+			"err": {
+				"requiredFields": "Required fields are missing or empty",
+				"findingIncomplete": "Every finding needs a description and a criticality",
+				"actionIncomplete": "Every action needs a description and a linked finding"
+			}
+		},
+		"submit": {
+			"modal": {
+				"title": "Submit IFC?",
+				"body": "Once submitted, no one can edit the IFC until a reviewer either approves or observes it.",
+				"confirm": "Submit",
+				"saveInstead": "Save instead"
+			}
+		},
 		"error": {
 			"viewFailed": "Could not load the IFC",
 			"submitFailed": "Could not submit the IFC",
 			"approveFailed": "Could not approve the IFC",
 			"rejectFailed": "Could not reject the IFC",
+			"prefillFailed": "Could not load the course information",
+			"createFailed": "Could not create the IFC",
+			"patchFailed": "Could not save the IFC",
+			"saveFailed": "Could not save the IFC",
+			"bootstrapFailed": "Could not load the form",
 			"generic": "Something went wrong"
 		}
 	},

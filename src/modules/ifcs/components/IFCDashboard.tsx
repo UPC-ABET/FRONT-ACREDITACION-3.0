@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 import { Button, Card, Select } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { ORG_LABELS, STATUS_OPTIONS, TYPE_CODES } from '../constants';
-import { useIFCList, useOrgScope } from '../hooks';
+import { ORG_LABELS, TYPE_CODES } from '../constants';
+import { useIFCList, useOrgScope, useStatusTypes } from '../hooks';
 import { effectiveStatus, optionsForLevel } from '../services/scope';
 import type { IFCStatusFilter, ScopeTree, SelectionValue } from '../services/types';
 import { AcademicPeriodSelect } from './AcademicPeriodSelect';
@@ -21,6 +21,7 @@ export function IFCDashboard() {
 
 	const { scope, load: loadScope } = useOrgScope();
 	const { rows, load: loadList, setRows } = useIFCList();
+	const { types: statusTypes } = useStatusTypes();
 
 	const chartIncomplete =
 		scope !== null &&
@@ -85,8 +86,14 @@ export function IFCDashboard() {
 	}
 
 	const statusOptions: StatusOptionItem[] = useMemo(
-		() => STATUS_OPTIONS.map((o) => ({ value: o.value, label: o.label[lang] })),
-		[lang],
+		() => [
+			{ value: 'ALL' as IFCStatusFilter, label: t('ifcs.status.all') },
+			...statusTypes.map((s) => ({
+				value: s.code as IFCStatusFilter,
+				label: s.name[lang] ?? s.name.es ?? s.code,
+			})),
+		],
+		[statusTypes, t, lang],
 	);
 
 	const selectedStatusOpt = useMemo(
@@ -136,7 +143,7 @@ export function IFCDashboard() {
 					</div>
 				)}
 
-				{!chartIncomplete && <IFCTable rows={visibleRows} />}
+				{!chartIncomplete && <IFCTable rows={visibleRows} periodId={periodId} />}
 			</div>
 		</Card>
 	);

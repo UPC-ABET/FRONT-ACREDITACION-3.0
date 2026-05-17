@@ -10,6 +10,7 @@ import { IFCHeaderCard } from './IFCHeaderCard';
 import { IFCInformationBlock } from './IFCInformationBlock';
 import { IFCResultadoLogros } from '../shared/IFCResultadoLogros';
 import { IFCResultadoAlcanzado } from '../shared/IFCResultadoAlcanzado';
+import { SubmitConfirmModal } from '../shared/SubmitConfirmModal';
 import { IFCFindingsTable } from './IFCFindingsTable';
 import { IFCActionsTable } from './IFCActionsTable';
 import { IFCActionButtons, computeActionFlags } from './IFCActionButtons';
@@ -30,6 +31,7 @@ export default function IFCViewPage() {
 	const [submitting, setSubmitting] = useState(false);
 	const [actionError, setActionError] = useState<string | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
+	const [submitModalOpen, setSubmitModalOpen] = useState(false);
 
 	const currentUserId = useMemo(() => {
 		if (typeof window === 'undefined') return null;
@@ -75,6 +77,11 @@ export default function IFCViewPage() {
 	}
 
 	function handleSubmit() {
+		setSubmitModalOpen(true);
+	}
+
+	function confirmSubmit() {
+		setSubmitModalOpen(false);
 		void runAction(() => submitIFC(id), 'ifcs.view.toast.submitted');
 	}
 
@@ -126,6 +133,12 @@ export default function IFCViewPage() {
 				onReject={handleReject}
 				onEdit={handleEdit}
 				onBack={handleBack}
+			/>
+
+			<SubmitConfirmModal
+				isOpen={submitModalOpen}
+				onClose={() => setSubmitModalOpen(false)}
+				onConfirm={confirmSubmit}
 			/>
 
 			{actionError && (
