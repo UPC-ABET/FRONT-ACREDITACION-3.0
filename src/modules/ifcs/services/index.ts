@@ -9,3 +9,5 @@ export * from './scope';
 export * from './orgScopeService';
 export * from './ifcsService';
 export * from './academicPeriodsService';
+export * from './parametersService';
+export * from './typesService';

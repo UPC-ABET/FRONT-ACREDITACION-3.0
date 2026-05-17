@@ -2,7 +2,7 @@
  * Shared API helpers.
  *
  * Centralised here once we needed the same bearer-token header in three
- * different module services (architecture §16.4).
+ * different module services.
  */
 
 export function authHeader(): Record<string, string> {

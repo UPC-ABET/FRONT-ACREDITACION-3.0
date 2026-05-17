@@ -1,5 +1,12 @@
 import { authHeader } from '@/shared/lib';
-import type { IFCRow, IFCViewPayload, RejectIFCBody } from './types';
+import type {
+	CreateIFCBody,
+	IFCPrefill,
+	IFCRow,
+	IFCViewPayload,
+	PatchIFCBody,
+	RejectIFCBody,
+} from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
@@ -69,6 +76,48 @@ export async function rejectIFC(id: number, comment: RejectIFCBody['comment']): 
 
 	const body = (await res.json().catch(() => null)) as Envelope<unknown> | null;
 	if (!res.ok) throw new Error(body?.message ?? 'ifcs.error.rejectFailed');
+}
+
+export async function getIFCPrefill(chartId: number, periodId: number): Promise<IFCPrefill> {
+	if (!BASE_URL) throw new Error('app.missingApiUrl');
+
+	const url = `${BASE_URL}/ifcs/prefill?chart_id=${chartId}&period_id=${periodId}`;
+	const res = await fetch(url, {
+		method: 'GET',
+		headers: { accept: '*/*', ...authHeader() },
+	});
+
+	const body = (await res.json().catch(() => null)) as Envelope<IFCPrefill> | null;
+	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.prefillFailed');
+	return body.data;
+}
+
+export async function createIFC(payload: CreateIFCBody): Promise<{ id: number }> {
+	if (!BASE_URL) throw new Error('app.missingApiUrl');
+
+	const res = await fetch(`${BASE_URL}/ifcs/create`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		body: JSON.stringify(payload),
+	});
+
+	const body = (await res.json().catch(() => null)) as Envelope<{ id: number }> | null;
+	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.createFailed');
+	return { id: Number(body.data.id) };
+}
+
+export async function patchIFC(id: number, payload: PatchIFCBody): Promise<{ id: number }> {
+	if (!BASE_URL) throw new Error('app.missingApiUrl');
+
+	const res = await fetch(`${BASE_URL}/ifcs/${id}`, {
+		method: 'PATCH',
+		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		body: JSON.stringify(payload),
+	});
+
+	const body = (await res.json().catch(() => null)) as Envelope<{ id: number }> | null;
+	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.patchFailed');
+	return { id: Number(body.data.id) };
 }
 
 async function postNoBody(url: string, fallbackErrorKey: string): Promise<void> {

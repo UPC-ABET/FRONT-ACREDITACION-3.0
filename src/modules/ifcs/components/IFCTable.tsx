@@ -9,30 +9,32 @@ import { effectiveStatus } from '../services/scope';
 import type { IFCRow } from '../services/types';
 import { StatusBadge } from './StatusBadge';
 
-type Props = { rows: IFCRow[] };
+type Props = { rows: IFCRow[]; periodId: number | null };
 
 const UNREG_LABEL: Record<string, string> = { en: 'Unregistered', es: 'Sin Registro' };
 
-export function IFCTable({ rows }: Props) {
+export function IFCTable({ rows, periodId }: Props) {
 	const { t, locale: lang } = useI18n();
 
 	const columns = useMemo<ColumnDef<IFCRow>[]>(
 		() => [
 			{ accessorKey: 'course_code', header: t('ifcs.table.code') },
 			{
-				id: 'program',
+				accessorKey: 'program_label',
 				header: t('ifcs.table.program'),
-				accessorFn: (row) => row.program_label[lang] ?? row.program_label.es ?? '',
+				cell: ({ row }) =>
+					row.original.program_label?.[lang] ?? row.original.program_label?.es ?? '',
 			},
 			{
-				id: 'course',
+				accessorKey: 'course_name',
 				header: t('ifcs.table.course'),
-				accessorFn: (row) => row.course_name[lang] ?? row.course_name.es ?? '',
+				cell: ({ row }) =>
+					row.original.course_name?.[lang] ?? row.original.course_name?.es ?? '',
 			},
 			{
-				id: 'coordinator',
+				accessorKey: 'coordinator_name',
 				header: t('ifcs.table.coordinator'),
-				accessorFn: (row) => row.coordinator_name ?? '—',
+				cell: ({ row }) => row.original.coordinator_name ?? '—',
 			},
 			{
 				id: 'status',
@@ -48,28 +50,38 @@ export function IFCTable({ rows }: Props) {
 			{
 				id: 'actions',
 				header: t('ifcs.table.actions'),
-				cell: ({ row }) =>
-					row.original.ifc ? (
-						<Link
-							href={`/ifcs/${row.original.ifc.id}`}
-							className="text-red-700 underline hover:text-red-500">
-							{t('ifcs.table.actionView')}
-						</Link>
-					) : (
-						<span className="text-zinc-400">—</span>
-					),
+				cell: ({ row }) => {
+					if (row.original.ifc) {
+						return (
+							<Link
+								href={`/ifcs/${row.original.ifc.id}`}
+								className="text-red-700 underline hover:text-red-500">
+								{t('ifcs.table.actionView')}
+							</Link>
+						);
+					}
+					if (periodId !== null) {
+						return (
+							<Link
+								href={`/ifcs/new?chart_id=${row.original.chart_id}&period_id=${periodId}`}
+								className="text-red-700 underline hover:text-red-500">
+								{t('ifcs.table.actionRegister')}
+							</Link>
+						);
+					}
+					return <span className="text-zinc-400">—</span>;
+				},
 			},
 		],
-		[t, lang],
+		[t, lang, periodId],
 	);
 
 	return (
 		<DataTable<IFCRow, unknown>
 			columns={columns}
 			data={rows}
-			showSearch
+			showSearch={false}
 			showPagination
-			searchPlaceholder={t('table.search.placeholder')}
 		/>
 	);
 }

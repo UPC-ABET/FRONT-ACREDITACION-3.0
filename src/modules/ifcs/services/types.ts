@@ -72,6 +72,7 @@ export interface IFCHeader {
 		comment: I18nText | null;
 		by: string | null;
 	} | null;
+	requester_in_chain: boolean;
 }
 
 export interface OutcomeItem {
@@ -131,3 +132,86 @@ export interface IFCInformationEntry {
 export interface RejectIFCBody {
 	comment: I18nText;
 }
+
+// ---- Form schema -----------------------------------------------------------
+
+export interface IFCField {
+	key: string;
+	label: I18nText;
+	required: boolean;
+	order: number;
+}
+
+export interface CriticalityOption {
+	id: number;
+	code: string;
+	name: I18nText;
+	description: I18nText;
+}
+
+// ---- Prefill ---------------------------------------------------------------
+
+export interface IFCPrefill {
+	course_name: I18nText;
+	course_learning_outcome: I18nText;
+	area_label: I18nText;
+	subarea_label: I18nText;
+	academic_period_code: string;
+	coordinator_code: string | null;
+	coordinator_name: string | null;
+	coordinator_user_id: number | null;
+	outcome_course_result: ProgramGroup[];
+}
+
+// ---- Form state ------------------------------------------------------------
+
+export interface FormFinding {
+	tempId: string;
+	id: number | null;
+	description: I18nText;
+	criticality_code: string;
+}
+
+export interface FormAction {
+	tempId: string;
+	id: number | null;
+	description: I18nText;
+	finding_temp_id: string;
+}
+
+export interface IFCFormState {
+	information: Record<string, I18nText>;
+	findings: FormFinding[];
+	actions: FormAction[];
+	deleted_finding_ids: number[];
+	deleted_action_ids: number[];
+}
+
+// ---- Outbound payloads -----------------------------------------------------
+
+export interface PayloadFinding {
+	tempId: string;
+	id: number | null;
+	description: I18nText;
+	criticality_code: string;
+}
+
+export interface PayloadAction {
+	tempId: string;
+	id: number | null;
+	description: I18nText;
+	finding_temp_id: string;
+}
+
+export interface CreateIFCBody {
+	chart_id: number;
+	period_id: number;
+	submit: boolean;
+	information?: Record<string, I18nText>;
+	findings: PayloadFinding[];
+	actions: PayloadAction[];
+	deleted_finding_ids?: number[];
+	deleted_action_ids?: number[];
+}
+
+export type PatchIFCBody = Omit<CreateIFCBody, 'chart_id' | 'period_id'>;

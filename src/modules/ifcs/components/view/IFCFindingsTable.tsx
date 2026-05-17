@@ -28,7 +28,8 @@ export function IFCFindingsTable({ findings }: Props) {
 			{
 				id: 'criticality',
 				header: VIEW_LABELS.col_criticality[lang],
-				accessorFn: (row) => row.criticality?.name?.[lang] ?? row.criticality?.name?.es ?? '',
+				cell: ({ row }) =>
+					row.original.criticality?.name?.[lang] ?? row.original.criticality?.name?.es ?? '',
 			},
 		],
 		[lang],

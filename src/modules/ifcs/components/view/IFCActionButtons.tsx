@@ -11,6 +11,7 @@ const S = TYPE_CODES.IFC_STATUS;
 export type ActionFlags = {
 	status: string;
 	isOwn: boolean;
+	inChain: boolean;
 	showSubmit: boolean;
 	showEdit: boolean;
 	showApprove: boolean;
@@ -25,12 +26,14 @@ export function computeActionFlags(ifc: IFCHeader, currentUserId: number | null)
 		currentUserId != null &&
 		ifc.coordinator.user_id != null &&
 		Number(ifc.coordinator.user_id) === Number(currentUserId);
+	const inChain = ifc.requester_in_chain;
 
 	return {
 		status,
 		isOwn,
-		showSubmit: (status === S.UNREGISTERED || status === S.SAVED) && isOwn,
-		showEdit: (status === S.SAVED || status === S.OBSERVED) && isOwn,
+		inChain,
+		showSubmit: (status === S.UNREGISTERED || status === S.SAVED) && inChain,
+		showEdit: (status === S.SAVED || status === S.OBSERVED) && inChain,
 		showApprove: status === S.SUBMITTED && !isOwn,
 		showReject: status === S.SUBMITTED && !isOwn,
 		showObservation: status === S.SUBMITTED && !isOwn,

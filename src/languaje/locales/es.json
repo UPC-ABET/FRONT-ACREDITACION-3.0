@@ -30,7 +30,11 @@
 			"actions": "Opciones",
 			"statusFilter": "Estado",
 			"empty": "Sin IFCs",
-			"actionView": "Ver"
+			"actionView": "Ver",
+			"actionRegister": "Registrar"
+		},
+		"status": {
+			"all": "Todos"
 		},
 		"view": {
 			"col": {
@@ -44,11 +48,31 @@
 			"rejectEmpty": "La observación es obligatoria para rechazar",
 			"exportTooltip": "Exportación PDF — disponible en la feature 07"
 		},
+		"form": {
+			"err": {
+				"requiredFields": "Hay campos obligatorios sin completar",
+				"findingIncomplete": "Cada hallazgo necesita descripción y criticidad",
+				"actionIncomplete": "Cada acción necesita descripción y un hallazgo enlazado"
+			}
+		},
+		"submit": {
+			"modal": {
+				"title": "¿Enviar IFC?",
+				"body": "Una vez enviado, nadie podrá editar el IFC hasta que un revisor lo apruebe u observe.",
+				"confirm": "Enviar",
+				"saveInstead": "Guardar en su lugar"
+			}
+		},
 		"error": {
 			"viewFailed": "No se pudo cargar el IFC",
 			"submitFailed": "No se pudo enviar el IFC",
 			"approveFailed": "No se pudo aprobar el IFC",
 			"rejectFailed": "No se pudo rechazar el IFC",
+			"prefillFailed": "No se pudo cargar la información del curso",
+			"createFailed": "No se pudo crear el IFC",
+			"patchFailed": "No se pudo guardar el IFC",
+			"saveFailed": "No se pudo guardar el IFC",
+			"bootstrapFailed": "No se pudo cargar el formulario",
 			"generic": "Ocurrió un error"
 		}
 	},
