@@ -24,6 +24,6 @@
 // export * from './logout-service'
 // export * from './register-service'
 
-export {}
-export * from './authService'
-export * from './backgroundService'
+export {};
+export * from './authService';
+export * from './backgroundService';

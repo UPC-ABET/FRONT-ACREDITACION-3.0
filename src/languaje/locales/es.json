@@ -1,197 +1,197 @@
 {
-  "nav": {
-    "home": "Inicio",
-    "ifcs": "IFCs",
-    "tests": {
-      "label": "Pruebas",
-      "modals": "Modales",
-      "charts": "Graficos",
-      "tables": "Tablas",
-      "public": "Publico"
-    },
-    "logout": "Cerrar sesion"
-  },
+	"nav": {
+		"home": "Inicio",
+		"ifcs": "IFCs",
+		"tests": {
+			"label": "Pruebas",
+			"modals": "Modales",
+			"charts": "Graficos",
+			"tables": "Tablas",
+			"public": "Publico"
+		},
+		"logout": "Cerrar sesion"
+	},
 
-  "ifcs": {
-    "page": {
-      "title": "Informe de Fin de Ciclo",
-      "period": "Período Académico"
-    },
-    "table": {
-      "code": "Código",
-      "program": "Carrera",
-      "course": "Curso",
-      "coordinator": "Docente",
-      "status": "Estado",
-      "actions": "Opciones",
-      "statusFilter": "Filtrar por estado",
-      "empty": "Sin IFCs"
-    }
-  },
+	"ifcs": {
+		"page": {
+			"title": "Informe de Fin de Ciclo",
+			"period": "Período Académico"
+		},
+		"table": {
+			"code": "Código",
+			"program": "Carrera",
+			"course": "Curso",
+			"coordinator": "Docente",
+			"status": "Estado",
+			"actions": "Opciones",
+			"statusFilter": "Filtrar por estado",
+			"empty": "Sin IFCs"
+		}
+	},
 
-  "welcome": "Bienvenido a ABET.",
+	"welcome": "Bienvenido a ABET.",
 
-  "navbar": {
-    "user": {
-      "name": "Administrador",
-      "role": "Admi"
-    },
-    "openMenu": "Abrir menu",
-    "school": {
-      "label": "Escuela",
-      "default": "QA"
-    },
-    "cycle": {
-      "label": "Ciclo"
-    },
-    "program": {
-      "regular": "Regular",
-      "epe": "EPE"
-    }
-  },
+	"navbar": {
+		"user": {
+			"name": "Administrador",
+			"role": "Admi"
+		},
+		"openMenu": "Abrir menu",
+		"school": {
+			"label": "Escuela",
+			"default": "QA"
+		},
+		"cycle": {
+			"label": "Ciclo"
+		},
+		"program": {
+			"regular": "Regular",
+			"epe": "EPE"
+		}
+	},
 
-  "language": {
-    "es": "ES",
-    "en": "EN"
-  },
+	"language": {
+		"es": "ES",
+		"en": "EN"
+	},
 
-  "sidebar": {
-    "open": "Abrir sidebar",
-    "close": "Cerrar sidebar",
-    "logoAlt": "Logo ABET"
-  },
+	"sidebar": {
+		"open": "Abrir sidebar",
+		"close": "Cerrar sidebar",
+		"logoAlt": "Logo ABET"
+	},
 
-  "dialog": {
-    "close": "Cerrar",
-    "actions": {
-      "accept": "Aceptar",
-      "decline": "Rechazar",
-      "cancel": "Cancelar",
-      "save": "Guardar"
-    },
-    "title": {
-      "form": "Nuevo Registro",
-      "error": "Algo salio mal",
-      "success": "Confirmacion",
-      "info": "Informacion",
-      "warning": "Aviso importante",
-      "confirm": "Confirmacion"
-    },
-    "message": {
-      "error": "Ocurrio un error al procesar la solicitud.",
-      "success": "Operacion completada con exito.",
-      "info": "Nueva informacion disponible.",
-      "warning": "Revisa los datos antes de continuar.",
-      "confirm": "Confirma para continuar."
-    }
-  },
+	"dialog": {
+		"close": "Cerrar",
+		"actions": {
+			"accept": "Aceptar",
+			"decline": "Rechazar",
+			"cancel": "Cancelar",
+			"save": "Guardar"
+		},
+		"title": {
+			"form": "Nuevo Registro",
+			"error": "Algo salio mal",
+			"success": "Confirmacion",
+			"info": "Informacion",
+			"warning": "Aviso importante",
+			"confirm": "Confirmacion"
+		},
+		"message": {
+			"error": "Ocurrio un error al procesar la solicitud.",
+			"success": "Operacion completada con exito.",
+			"info": "Nueva informacion disponible.",
+			"warning": "Revisa los datos antes de continuar.",
+			"confirm": "Confirma para continuar."
+		}
+	},
 
-  "toast": {
-    "title": {
-      "success": "Exito",
-      "error": "Error",
-      "warning": "Aviso",
-      "info": "Info"
-    },
-    "message": {
-      "success": "Operacion completada con exito.",
-      "error": "Hubo un error al procesar la solicitud.",
-      "warning": "Atencion: revisa los datos ingresados.",
-      "info": "Nueva actualizacion disponible en el sistema."
-    },
-    "close": "Cerrar notificacion"
-  },
+	"toast": {
+		"title": {
+			"success": "Exito",
+			"error": "Error",
+			"warning": "Aviso",
+			"info": "Info"
+		},
+		"message": {
+			"success": "Operacion completada con exito.",
+			"error": "Hubo un error al procesar la solicitud.",
+			"warning": "Atencion: revisa los datos ingresados.",
+			"info": "Nueva actualizacion disponible en el sistema."
+		},
+		"close": "Cerrar notificacion"
+	},
 
-  "tabs": {
-    "label": "Pestañas"
-  },
+	"tabs": {
+		"label": "Pestañas"
+	},
 
-  "loading": {
-    "default": "Cargando ..."
-  },
+	"loading": {
+		"default": "Cargando ..."
+	},
 
-  "login": {
-    "title": "Sistema de  acreditación",
-    "school": {
-      "placeholder": "Selecciona escuela"
-    },
-    "user": {
-      "placeholder": "Usuario"
-    },
-    "password": {
-      "placeholder": "Contrasena"
-    },
-    "remember": "Recuerdame",
-    "submit": "Iniciar sesion",
-    "microsoft": "Continuar con Microsoft",
-    "forgot": "¿Olvidaste la contrasena?",
-    "loading": "Iniciando sesion...",
-    "error": {
-      "required": "Todos los campos son obligatorios",
-      "generic": "Error durante el login",
-      "schoolRequired": "Selecciona una escuela antes de continuar"
-    }
-  },
+	"login": {
+		"title": "Sistema de  acreditación",
+		"school": {
+			"placeholder": "Selecciona escuela"
+		},
+		"user": {
+			"placeholder": "Usuario"
+		},
+		"password": {
+			"placeholder": "Contrasena"
+		},
+		"remember": "Recuerdame",
+		"submit": "Iniciar sesion",
+		"microsoft": "Continuar con Microsoft",
+		"forgot": "¿Olvidaste la contrasena?",
+		"loading": "Iniciando sesion...",
+		"error": {
+			"required": "Todos los campos son obligatorios",
+			"generic": "Error durante el login",
+			"schoolRequired": "Selecciona una escuela antes de continuar"
+		}
+	},
 
-  "auth": {
-    "invalidCredentials": "Credenciales invalidas"
-  },
+	"auth": {
+		"invalidCredentials": "Credenciales invalidas"
+	},
 
-  "error": {
-    "school": {
-      "notFound": "La escuela seleccionada no existe"
-    }
-  },
+	"error": {
+		"school": {
+			"notFound": "La escuela seleccionada no existe"
+		}
+	},
 
-  "table": {
-    "search": {
-      "placeholder": "Buscar..."
-    },
-    "empty": "No se encontraron resultados disponibles.",
-    "pagination": {
-      "previous": "Anterior",
-      "next": "Siguiente",
-      "page": "Pagina",
-      "of": "de"
-    }
-  },
+	"table": {
+		"search": {
+			"placeholder": "Buscar..."
+		},
+		"empty": "No se encontraron resultados disponibles.",
+		"pagination": {
+			"previous": "Anterior",
+			"next": "Siguiente",
+			"page": "Pagina",
+			"of": "de"
+		}
+	},
 
-  "select": {
-    "placeholder": {
-      "default": "Seleccione una opcion"
-    },
-    "createLabel": "Crear: \"{value}\""
-  },
+	"select": {
+		"placeholder": {
+			"default": "Seleccione una opcion"
+		},
+		"createLabel": "Crear: \"{value}\""
+	},
 
-  "school": {
-    "eiscc": "ESCUELA DE INGENIERIA DE SOFTWARE Y CIENCIAS DE LA COMPUTACION",
-    "eiscb": "ESCUELA DE INGENIERIA DE SISTEMAS Y CIBER SEGURIDAD",
-    "inggmi": "ESCUELA DE INGENIERIA DE GESTION MINERA",
-    "inggem": "ESCUELA DE INGENIERIA DE GESTION EMPRESARIAL",
-    "escel": "ESCUELA DE INGENIERIA ELECTRONICA, MECATRONICA Y REDES",
-    "ingamb": "ESCUELA DE INGENIERIA AMBIENTAL",
-    "ingbio": "ESCUELA DE INGENIERIA BIOMEDICA",
-    "ingciv": "ESCUELA DE INGENIERIA CIVIL",
-    "ingind": "ESCUELA DE INGENIERIA INDUSTRIAL"
-  },
+	"school": {
+		"eiscc": "ESCUELA DE INGENIERIA DE SOFTWARE Y CIENCIAS DE LA COMPUTACION",
+		"eiscb": "ESCUELA DE INGENIERIA DE SISTEMAS Y CIBER SEGURIDAD",
+		"inggmi": "ESCUELA DE INGENIERIA DE GESTION MINERA",
+		"inggem": "ESCUELA DE INGENIERIA DE GESTION EMPRESARIAL",
+		"escel": "ESCUELA DE INGENIERIA ELECTRONICA, MECATRONICA Y REDES",
+		"ingamb": "ESCUELA DE INGENIERIA AMBIENTAL",
+		"ingbio": "ESCUELA DE INGENIERIA BIOMEDICA",
+		"ingciv": "ESCUELA DE INGENIERIA CIVIL",
+		"ingind": "ESCUELA DE INGENIERIA INDUSTRIAL"
+	},
 
-  "app": {
-    "name": "Sistema de Acreditación ABET",
-    "description": "ABET"
-  },
+	"app": {
+		"name": "Sistema de Acreditación ABET",
+		"description": "ABET"
+	},
 
-  "page": {
-    "home": "Inicio",
-    "login": "Login",
-    "charts": "Graficos",
-    "tables": "Tablas",
-    "modals": "Modales",
-    "public": "Publico"
-  },
+	"page": {
+		"home": "Inicio",
+		"login": "Login",
+		"charts": "Graficos",
+		"tables": "Tablas",
+		"modals": "Modales",
+		"public": "Publico"
+	},
 
-  "notFound": {
-    "title": "Pagina no encontrada",
-    "message": "Lo sentimos, no pudimos encontrar la pagina que estas buscando.",
-    "action": "Ir al inicio"
-  }
+	"notFound": {
+		"title": "Pagina no encontrada",
+		"message": "Lo sentimos, no pudimos encontrar la pagina que estas buscando.",
+		"action": "Ir al inicio"
+	}
 }

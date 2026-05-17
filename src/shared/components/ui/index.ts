@@ -1,7 +1,7 @@
 export * from './Input';
 export * from './Dialog';
 export * from './Sidebar';
-export * from'./Table';
+export * from './Table';
 export * from './Card';
 export * from './Badge';
 export * from './Select';

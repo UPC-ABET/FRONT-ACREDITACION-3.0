@@ -13,4 +13,4 @@
  * - constantes específicas de auth o sales
  */
 
-export * from './app'
+export * from './app';

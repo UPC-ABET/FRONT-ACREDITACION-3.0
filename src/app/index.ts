@@ -20,4 +20,4 @@
  * app solo orquesta pantallas y conecta módulos.
  */
 
-export {}
+export {};

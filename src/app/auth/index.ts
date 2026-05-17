@@ -17,4 +17,4 @@
  * - app/auth/(protected)/...
  */
 
-export {}
+export {};

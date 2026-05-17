@@ -1,3 +1,3 @@
-import { SidebarProvider } from '@/shared/components/ui'
+import { SidebarProvider } from '@/shared/components/ui';
 
-export { SidebarProvider }
+export { SidebarProvider };

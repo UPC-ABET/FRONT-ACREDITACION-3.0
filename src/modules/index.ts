@@ -20,6 +20,6 @@
  * app solo orquesta pantallas y conecta módulos.
  */
 
-export * from './auth'
-export * from './tests'
-export * from '../shared/components/errors'
+export * from './auth';
+export * from './tests';
+export * from '../shared/components/errors';

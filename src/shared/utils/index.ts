@@ -18,6 +18,6 @@
  * si sirve en varios contextos, puede vivir aquí.
  */
 
-export * from './cn'
-export * from './debounce'
-export * from './format-date'
+export * from './cn';
+export * from './debounce';
+export * from './format-date';

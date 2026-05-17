@@ -21,4 +21,4 @@
 
 // export * from './auth'
 
-export {}
+export {};

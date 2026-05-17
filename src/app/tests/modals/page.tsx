@@ -1,5 +1,5 @@
-'use client'
+'use client';
 
-import { ModalsDemoPage } from '@/modules/tests'
+import { ModalsDemoPage } from '@/modules/tests';
 
-export default ModalsDemoPage
+export default ModalsDemoPage;

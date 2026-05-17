@@ -1,7 +1,7 @@
-import { ChartsPage } from '@/modules/tests'
+import { ChartsPage } from '@/modules/tests';
 
 export const metadata = {
-    title: 'Graficos',
-}
+	title: 'Graficos',
+};
 
-export default ChartsPage
+export default ChartsPage;

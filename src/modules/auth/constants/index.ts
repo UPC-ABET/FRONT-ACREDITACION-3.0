@@ -16,4 +16,4 @@
  * si solo auth la usa, déjala aquí.
  */
 
-export * from './schools'
+export * from './schools';

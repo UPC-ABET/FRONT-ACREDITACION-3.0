@@ -26,4 +26,4 @@
 // export * from './register-form'
 // export * from './forgot-password-form'
 
-export {}
+export {};

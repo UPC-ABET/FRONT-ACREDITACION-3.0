@@ -20,6 +20,6 @@
  * si el componente no tiene lenguaje de negocio, puede vivir aquí.
  */
 
-export * from './ui'
-export * from './LanguageSwitcher'
-export * from './errors'
+export * from './ui';
+export * from './LanguageSwitcher';
+export * from './errors';

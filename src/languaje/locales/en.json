@@ -1,197 +1,197 @@
 {
-  "nav": {
-    "home": "Home",
-    "ifcs": "IFCs",
-    "tests": {
-      "label": "Tests",
-      "modals": "Modals",
-      "charts": "Charts",
-      "tables": "Tables",
-      "public": "Public"
-    },
-    "logout": "Logout"
-  },
+	"nav": {
+		"home": "Home",
+		"ifcs": "IFCs",
+		"tests": {
+			"label": "Tests",
+			"modals": "Modals",
+			"charts": "Charts",
+			"tables": "Tables",
+			"public": "Public"
+		},
+		"logout": "Logout"
+	},
 
-  "ifcs": {
-    "page": {
-      "title": "End of Course Report",
-      "period": "Academic Period"
-    },
-    "table": {
-      "code": "Code",
-      "program": "Program",
-      "course": "Course",
-      "coordinator": "Professor",
-      "status": "Status",
-      "actions": "Options",
-      "statusFilter": "Filter by status",
-      "empty": "No IFCs"
-    }
-  },
+	"ifcs": {
+		"page": {
+			"title": "End of Course Report",
+			"period": "Academic Period"
+		},
+		"table": {
+			"code": "Code",
+			"program": "Program",
+			"course": "Course",
+			"coordinator": "Professor",
+			"status": "Status",
+			"actions": "Options",
+			"statusFilter": "Filter by status",
+			"empty": "No IFCs"
+		}
+	},
 
-  "welcome": "Welcome to the ABET.",
+	"welcome": "Welcome to the ABET.",
 
-  "navbar": {
-    "user": {
-      "name": "Administrator",
-      "role": "Admi"
-    },
-    "openMenu": "Open menu",
-    "school": {
-      "label": "School",
-      "default": "QA"
-    },
-    "cycle": {
-      "label": "Cycle"
-    },
-    "program": {
-      "regular": "Regular",
-      "epe": "EPE"
-    }
-  },
+	"navbar": {
+		"user": {
+			"name": "Administrator",
+			"role": "Admi"
+		},
+		"openMenu": "Open menu",
+		"school": {
+			"label": "School",
+			"default": "QA"
+		},
+		"cycle": {
+			"label": "Cycle"
+		},
+		"program": {
+			"regular": "Regular",
+			"epe": "EPE"
+		}
+	},
 
-  "language": {
-    "es": "ES",
-    "en": "EN"
-  },
+	"language": {
+		"es": "ES",
+		"en": "EN"
+	},
 
-  "sidebar": {
-    "open": "Open sidebar",
-    "close": "Close sidebar",
-    "logoAlt": "ABET Logo"
-  },
+	"sidebar": {
+		"open": "Open sidebar",
+		"close": "Close sidebar",
+		"logoAlt": "ABET Logo"
+	},
 
-  "dialog": {
-    "close": "Close",
-    "actions": {
-      "accept": "Accept",
-      "decline": "Decline",
-      "cancel": "Cancel",
-      "save": "Save"
-    },
-    "title": {
-      "form": "New Registration",
-      "error": "Something went wrong",
-      "success": "Confirmation",
-      "info": "Information",
-      "warning": "Important notice",
-      "confirm": "Confirmation"
-    },
-    "message": {
-      "error": "There was an error processing the request.",
-      "success": "Operation completed successfully.",
-      "info": "New information is available.",
-      "warning": "Review the data before continuing.",
-      "confirm": "Confirm to continue."
-    }
-  },
+	"dialog": {
+		"close": "Close",
+		"actions": {
+			"accept": "Accept",
+			"decline": "Decline",
+			"cancel": "Cancel",
+			"save": "Save"
+		},
+		"title": {
+			"form": "New Registration",
+			"error": "Something went wrong",
+			"success": "Confirmation",
+			"info": "Information",
+			"warning": "Important notice",
+			"confirm": "Confirmation"
+		},
+		"message": {
+			"error": "There was an error processing the request.",
+			"success": "Operation completed successfully.",
+			"info": "New information is available.",
+			"warning": "Review the data before continuing.",
+			"confirm": "Confirm to continue."
+		}
+	},
 
-  "toast": {
-    "title": {
-      "success": "Success",
-      "error": "Error",
-      "warning": "Warning",
-      "info": "Info"
-    },
-    "message": {
-      "success": "Operation completed successfully.",
-      "error": "There was an error processing the request.",
-      "warning": "Attention: review the data you entered.",
-      "info": "A new update is available in the system."
-    },
-    "close": "Close notification"
-  },
+	"toast": {
+		"title": {
+			"success": "Success",
+			"error": "Error",
+			"warning": "Warning",
+			"info": "Info"
+		},
+		"message": {
+			"success": "Operation completed successfully.",
+			"error": "There was an error processing the request.",
+			"warning": "Attention: review the data you entered.",
+			"info": "A new update is available in the system."
+		},
+		"close": "Close notification"
+	},
 
-  "tabs": {
-    "label": "Tabs"
-  },
+	"tabs": {
+		"label": "Tabs"
+	},
 
-  "loading": {
-    "default": "Loading ..."
-  },
+	"loading": {
+		"default": "Loading ..."
+	},
 
-  "login": {
-    "title": "Accreditation system",
-    "school": {
-      "placeholder": "Select school"
-    },
-    "user": {
-      "placeholder": "User"
-    },
-    "password": {
-      "placeholder": "Password"
-    },
-    "remember": "Remember me",
-    "submit": "Sign in",
-    "microsoft": "Continue with Microsoft",
-    "forgot": "Forgot your password?",
-    "loading": "Signing in...",
-    "error": {
-      "required": "All fields are required",
-      "generic": "Error during login",
-      "schoolRequired": "Select a school before continuing"
-    }
-  },
+	"login": {
+		"title": "Accreditation system",
+		"school": {
+			"placeholder": "Select school"
+		},
+		"user": {
+			"placeholder": "User"
+		},
+		"password": {
+			"placeholder": "Password"
+		},
+		"remember": "Remember me",
+		"submit": "Sign in",
+		"microsoft": "Continue with Microsoft",
+		"forgot": "Forgot your password?",
+		"loading": "Signing in...",
+		"error": {
+			"required": "All fields are required",
+			"generic": "Error during login",
+			"schoolRequired": "Select a school before continuing"
+		}
+	},
 
-  "auth": {
-    "invalidCredentials": "Invalid credentials"
-  },
+	"auth": {
+		"invalidCredentials": "Invalid credentials"
+	},
 
-  "error": {
-    "school": {
-      "notFound": "The selected school does not exist"
-    }
-  },
+	"error": {
+		"school": {
+			"notFound": "The selected school does not exist"
+		}
+	},
 
-  "table": {
-    "search": {
-      "placeholder": "Search..."
-    },
-    "empty": "No results found.",
-    "pagination": {
-      "previous": "Previous",
-      "next": "Next",
-      "page": "Page",
-      "of": "of"
-    }
-  },
+	"table": {
+		"search": {
+			"placeholder": "Search..."
+		},
+		"empty": "No results found.",
+		"pagination": {
+			"previous": "Previous",
+			"next": "Next",
+			"page": "Page",
+			"of": "of"
+		}
+	},
 
-  "select": {
-    "placeholder": {
-      "default": "Select an option"
-    },
-    "createLabel": "Create: \"{value}\""
-  },
+	"select": {
+		"placeholder": {
+			"default": "Select an option"
+		},
+		"createLabel": "Create: \"{value}\""
+	},
 
-  "school": {
-    "eiscc": "SCHOOL OF SOFTWARE ENGINEERING AND COMPUTER SCIENCE",
-    "eiscb": "SCHOOL OF SYSTEMS ENGINEERING AND CYBER SECURITY",
-    "inggmi": "SCHOOL OF MINING MANAGEMENT ENGINEERING",
-    "inggem": "SCHOOL OF BUSINESS MANAGEMENT ENGINEERING",
-    "escel": "SCHOOL OF ELECTRONICS, MECHATRONICS AND NETWORKS ENGINEERING",
-    "ingamb": "SCHOOL OF ENVIRONMENTAL ENGINEERING",
-    "ingbio": "SCHOOL OF BIOMEDICAL ENGINEERING",
-    "ingciv": "SCHOOL OF CIVIL ENGINEERING",
-    "ingind": "SCHOOL OF INDUSTRIAL ENGINEERING"
-  },
+	"school": {
+		"eiscc": "SCHOOL OF SOFTWARE ENGINEERING AND COMPUTER SCIENCE",
+		"eiscb": "SCHOOL OF SYSTEMS ENGINEERING AND CYBER SECURITY",
+		"inggmi": "SCHOOL OF MINING MANAGEMENT ENGINEERING",
+		"inggem": "SCHOOL OF BUSINESS MANAGEMENT ENGINEERING",
+		"escel": "SCHOOL OF ELECTRONICS, MECHATRONICS AND NETWORKS ENGINEERING",
+		"ingamb": "SCHOOL OF ENVIRONMENTAL ENGINEERING",
+		"ingbio": "SCHOOL OF BIOMEDICAL ENGINEERING",
+		"ingciv": "SCHOOL OF CIVIL ENGINEERING",
+		"ingind": "SCHOOL OF INDUSTRIAL ENGINEERING"
+	},
 
-  "app": {
-    "name": "ABET Accreditation System",
-    "description": "ABET"
-  },
+	"app": {
+		"name": "ABET Accreditation System",
+		"description": "ABET"
+	},
 
-  "page": {
-    "home": "Home",
-    "login": "Login",
-    "charts": "Charts",
-    "tables": "Tables",
-    "modals": "Modals",
-    "public": "Public"
-  },
+	"page": {
+		"home": "Home",
+		"login": "Login",
+		"charts": "Charts",
+		"tables": "Tables",
+		"modals": "Modals",
+		"public": "Public"
+	},
 
-  "notFound": {
-    "title": "Page not found",
-    "message": "Sorry, we couldn’t find the page you’re looking for.",
-    "action": "Go home"
-  }
+	"notFound": {
+		"title": "Page not found",
+		"message": "Sorry, we couldn’t find the page you’re looking for.",
+		"action": "Go home"
+	}
 }
