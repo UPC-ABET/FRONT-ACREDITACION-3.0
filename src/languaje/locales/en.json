@@ -1,7 +1,10 @@
 {
 	"nav": {
 		"home": "Home",
-		"ifcs": "IFCs",
+		"ifc": {
+			"label": "IFC",
+			"dashboard": "Dashboard"
+		},
 		"tests": {
 			"label": "Tests",
 			"modals": "Modals",
@@ -11,11 +14,12 @@
 		},
 		"logout": "Logout"
 	},
-
 	"ifcs": {
 		"page": {
 			"title": "End of Course Report",
-			"period": "Academic Period"
+			"period": "Academic Period",
+			"searchBtn": "Search",
+			"searchDisabled": "Pick a period and a course to search"
 		},
 		"table": {
 			"code": "Code",
@@ -24,13 +28,11 @@
 			"coordinator": "Professor",
 			"status": "Status",
 			"actions": "Options",
-			"statusFilter": "Filter by status",
+			"statusFilter": "Status",
 			"empty": "No IFCs"
 		}
 	},
-
 	"welcome": "Welcome to the ABET.",
-
 	"navbar": {
 		"user": {
 			"name": "Administrator",
@@ -49,18 +51,15 @@
 			"epe": "EPE"
 		}
 	},
-
 	"language": {
 		"es": "ES",
 		"en": "EN"
 	},
-
 	"sidebar": {
 		"open": "Open sidebar",
 		"close": "Close sidebar",
 		"logoAlt": "ABET Logo"
 	},
-
 	"dialog": {
 		"close": "Close",
 		"actions": {
@@ -85,7 +84,6 @@
 			"confirm": "Confirm to continue."
 		}
 	},
-
 	"toast": {
 		"title": {
 			"success": "Success",
@@ -101,11 +99,9 @@
 		},
 		"close": "Close notification"
 	},
-
 	"tabs": {
 		"label": "Tabs"
 	},
-
 	"loading": {
 		"default": "Loading ..."
 	},
@@ -114,7 +110,6 @@
 		"message": "Sign in again",
 		"action": "Sign out"
 	},
-
 	"login": {
 		"title": "Accreditation system",
 		"school": {
@@ -137,7 +132,6 @@
 			"schoolRequired": "Select a school before continuing"
 		}
 	},
-
 	"forgotPassword": {
 		"title": "Recover password",
 		"subtitle": "We will send a recovery link to your email.",
@@ -179,17 +173,14 @@
 			"goToLogin": "Go to sign in"
 		}
 	},
-
 	"auth": {
 		"invalidCredentials": "Invalid credentials"
 	},
-
 	"error": {
 		"school": {
 			"notFound": "The selected school does not exist"
 		}
 	},
-
 	"table": {
 		"search": {
 			"placeholder": "Search..."
@@ -202,14 +193,12 @@
 			"of": "of"
 		}
 	},
-
 	"select": {
 		"placeholder": {
 			"default": "Select an option"
 		},
 		"createLabel": "Create: \"{value}\""
 	},
-
 	"school": {
 		"sch_soft": "SCHOOL OF SOFTWARE ENGINEERING",
 		"sch_sist": "SCHOOL OF SYSTEMS ENGINEERING",
@@ -224,12 +213,10 @@
 		"ingciv": "CIVIL ENGINEERING",
 		"ingind": "INDUSTRIAL ENGINEERING"
 	},
-
 	"app": {
 		"name": "ABET Accreditation System",
 		"description": "ABET"
 	},
-
 	"page": {
 		"home": "Home",
 		"login": "Login",
@@ -238,7 +225,6 @@
 		"modals": "Modals",
 		"public": "Public"
 	},
-
 	"notFound": {
 		"title": "Page not found",
 		"message": "Sorry, we couldn’t find the page you’re looking for.",

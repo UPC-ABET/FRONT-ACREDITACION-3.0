@@ -3,9 +3,20 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarItem, SidebarNavGroup,
+import {
+	Sidebar,
+	SidebarHeader,
+	SidebarContent,
+	SidebarFooter,
+	SidebarGroup,
+	SidebarItem,
+	SidebarNavGroup,
 } from '@/shared/components';
-import {HomeIcon, Cog6ToothIcon, ArrowRightStartOnRectangleIcon,
+import {
+	HomeIcon,
+	Cog6ToothIcon,
+	DocumentChartBarIcon,
+	ArrowRightStartOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { clearClientSession, logoutUser } from '@/modules/auth/services';
@@ -48,6 +59,12 @@ export function AppSidebar() {
 
 	const navigation: NavItem[] = [
 		{ name: t('nav.home'), href: '/', icon: HomeIcon },
+
+		{
+			name: t('nav.ifc.label'),
+			icon: DocumentChartBarIcon,
+			children: [{ name: t('nav.ifc.dashboard'), href: '/ifcs' }],
+		},
 
 		{
 			name: t('nav.tests.label'),
