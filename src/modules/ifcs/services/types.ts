@@ -47,3 +47,87 @@ export interface AcademicPeriod {
 export type SelectionValue = number | 'ALL' | null;
 
 export type IFCStatusFilter = 'ALL' | string;
+
+// ---- View payload --------------------------------------------------------
+
+export interface IFCHeader {
+	id: number;
+	information: Record<string, unknown>;
+	extra: Record<string, unknown>;
+	created_at: string;
+	academic_period_code: string;
+	area_label: I18nText;
+	subarea_label: I18nText;
+	course_name: I18nText;
+	course_learning_outcome: I18nText;
+	coordinator: {
+		user_id: number | null;
+		code: string | null;
+		name: string | null;
+	};
+	status: {
+		code: string;
+		name: I18nText;
+		at: string;
+		comment: I18nText | null;
+		by: string | null;
+	} | null;
+}
+
+export interface OutcomeItem {
+	outcome_code: string;
+	outcome_name: I18nText;
+	outcome_description: I18nText;
+}
+
+export interface CommissionGroup {
+	commission_code: string;
+	commission_name: I18nText;
+	outcomes: OutcomeItem[];
+}
+
+export interface ProgramGroup {
+	program_code: string;
+	program_name: I18nText;
+	commissions: CommissionGroup[];
+}
+
+export interface FindingOutcome extends OutcomeItem {
+	commission: { code: string; name: I18nText };
+}
+
+export interface FindingAction {
+	id: number;
+	code: string;
+	description: I18nText;
+	correlative: number;
+	completeness_code: string;
+	completeness_name: I18nText;
+}
+
+export interface Finding {
+	id: number;
+	code: string;
+	description: I18nText;
+	correlative: number;
+	is_automatic: boolean;
+	criticality: { code: string; name: I18nText };
+	outcomes: FindingOutcome[];
+	actions: FindingAction[];
+}
+
+export interface IFCViewPayload {
+	ifc: IFCHeader;
+	outcome_course_result: ProgramGroup[];
+	findings: Finding[];
+}
+
+export interface IFCInformationEntry {
+	label: I18nText;
+	value: I18nText;
+	order: number;
+}
+
+export interface RejectIFCBody {
+	comment: I18nText;
+}

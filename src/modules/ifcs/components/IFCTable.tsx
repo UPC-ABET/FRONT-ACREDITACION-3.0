@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import Link from 'next/link';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
@@ -47,7 +48,16 @@ export function IFCTable({ rows }: Props) {
 			{
 				id: 'actions',
 				header: t('ifcs.table.actions'),
-				cell: () => <span className="text-zinc-400">—</span>,
+				cell: ({ row }) =>
+					row.original.ifc ? (
+						<Link
+							href={`/ifcs/${row.original.ifc.id}`}
+							className="text-red-700 underline hover:text-red-500">
+							{t('ifcs.table.actionView')}
+						</Link>
+					) : (
+						<span className="text-zinc-400">—</span>
+					),
 			},
 		],
 		[t, lang],
