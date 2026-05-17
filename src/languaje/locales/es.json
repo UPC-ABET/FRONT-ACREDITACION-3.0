@@ -119,7 +119,7 @@
 			"placeholder": "Usuario"
 		},
 		"password": {
-			"placeholder": "Contrasena"
+			"placeholder": "Contraseña"
 		},
 		"remember": "Recuerdame",
 		"submit": "Iniciar sesion",
@@ -164,15 +164,18 @@
 	},
 
 	"school": {
-		"eiscc": "ESCUELA DE INGENIERIA DE SOFTWARE Y CIENCIAS DE LA COMPUTACION",
-		"eiscb": "ESCUELA DE INGENIERIA DE SISTEMAS Y CIBER SEGURIDAD",
-		"inggmi": "ESCUELA DE INGENIERIA DE GESTION MINERA",
-		"inggem": "ESCUELA DE INGENIERIA DE GESTION EMPRESARIAL",
-		"escel": "ESCUELA DE INGENIERIA ELECTRONICA, MECATRONICA Y REDES",
-		"ingamb": "ESCUELA DE INGENIERIA AMBIENTAL",
-		"ingbio": "ESCUELA DE INGENIERIA BIOMEDICA",
-		"ingciv": "ESCUELA DE INGENIERIA CIVIL",
-		"ingind": "ESCUELA DE INGENIERIA INDUSTRIAL"
+		"sch_soft": "ESCUELA DE INGENIERIA DE SOFTWARE",
+		"sch_sist": "ESCUELA DE INGENIERIA DE SISTEMAS",
+		"sch_admin": "ESCUELA DE ADMINISTRACION",
+		"eiscb": "ESCUELA DE INGENIERIA DE SOFTWARE",
+		"eiscc": "ESCUELA DE INGENIERIA DE CIENCIAS DE LA COMPUTACION",
+		"inggmi": "INGENIERIA GMI",
+		"inggem": "INGENIERIA GEM",
+		"escel": "ESCUELA DE ELECTRONICA",
+		"ingamb": "INGENIERIA AMBIENTAL",
+		"ingbio": "INGENIERIA BIOMEDICA",
+		"ingciv": "INGENIERIA CIVIL",
+		"ingind": "INGENIERIA INDUSTRIAL"
 	},
 
 	"app": {

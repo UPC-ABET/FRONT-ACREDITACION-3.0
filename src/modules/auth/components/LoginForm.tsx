@@ -20,7 +20,11 @@ export default function LoginForm() {
 	const { t } = useI18n();
 
 	const localizedSchools = useMemo(
-		() => schoolOptions.map((option) => ({ id: option.id, label: t(option.labelKey) })),
+		() =>
+			schoolOptions.map((option) => ({
+				value: option.id,
+				label: t(option.labelKey),
+			})),
 		[t],
 	);
 
@@ -72,7 +76,7 @@ export default function LoginForm() {
 				<div>
 					<Select
 						name="escuela"
-						value={schoolCode ? { label: schoolCode, value: schoolCode } : null}
+						value={localizedSchools.find((s) => s.value === schoolCode) || null}
 						onChange={(_, v) => setSchoolCode((v as any)?.value || '')}
 						options={localizedSchools}
 						placeholder={t('login.school.placeholder')}
