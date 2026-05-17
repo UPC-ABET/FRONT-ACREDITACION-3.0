@@ -15,7 +15,16 @@ export const TYPE_CODES = {
 		OBSERVED: 'TG701-T004',
 		UNREGISTERED: 'TG701-T005',
 	},
+	ACTION_COMPLETENESS: {
+		PENDING: 'TG1003-T001',
+		IMPLEMENTED: 'TG1003-T002',
+	},
 } as const;
+
+export const COMPLETENESS_VARIANT: Record<string, 'default' | 'danger' | 'success' | 'outline'> = {
+	[TYPE_CODES.ACTION_COMPLETENESS.PENDING]: 'outline',
+	[TYPE_CODES.ACTION_COMPLETENESS.IMPLEMENTED]: 'success',
+};
 
 export const LEVEL_LABELS: Record<string, { en: string; es: string }> = {
 	[TYPE_CODES.CHART_LEVEL_TYPE.DEAN]: { en: "Dean's Office", es: 'Decanato' },

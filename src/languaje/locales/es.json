@@ -29,7 +29,27 @@
 			"status": "Estado",
 			"actions": "Opciones",
 			"statusFilter": "Estado",
-			"empty": "Sin IFCs"
+			"empty": "Sin IFCs",
+			"actionView": "Ver"
+		},
+		"view": {
+			"col": {
+				"completeness": "Completitud"
+			},
+			"toast": {
+				"submitted": "IFC enviado a revisión",
+				"approved": "IFC aprobado",
+				"rejected": "IFC devuelto al coordinador"
+			},
+			"rejectEmpty": "La observación es obligatoria para rechazar",
+			"exportTooltip": "Exportación PDF — disponible en la feature 07"
+		},
+		"error": {
+			"viewFailed": "No se pudo cargar el IFC",
+			"submitFailed": "No se pudo enviar el IFC",
+			"approveFailed": "No se pudo aprobar el IFC",
+			"rejectFailed": "No se pudo rechazar el IFC",
+			"generic": "Ocurrió un error"
 		}
 	},
 	"welcome": "Bienvenido a ABET.",

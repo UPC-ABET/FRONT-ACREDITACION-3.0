@@ -29,7 +29,27 @@
 			"status": "Status",
 			"actions": "Options",
 			"statusFilter": "Status",
-			"empty": "No IFCs"
+			"empty": "No IFCs",
+			"actionView": "View"
+		},
+		"view": {
+			"col": {
+				"completeness": "Completeness"
+			},
+			"toast": {
+				"submitted": "IFC submitted for review",
+				"approved": "IFC approved",
+				"rejected": "IFC returned to the coordinator"
+			},
+			"rejectEmpty": "An observation is required to reject",
+			"exportTooltip": "PDF export — available in feature 07"
+		},
+		"error": {
+			"viewFailed": "Could not load the IFC",
+			"submitFailed": "Could not submit the IFC",
+			"approveFailed": "Could not approve the IFC",
+			"rejectFailed": "Could not reject the IFC",
+			"generic": "Something went wrong"
 		}
 	},
 	"welcome": "Welcome to the ABET.",

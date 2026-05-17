@@ -6,3 +6,4 @@
 
 export * from './useOrgScope';
 export * from './useIFCList';
+export * from './useIFCView';
