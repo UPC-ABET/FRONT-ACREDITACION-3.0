@@ -259,53 +259,12 @@ export function MyPortfolioPage() {
   }, [])
 
   // ───────── Filtrado segun rutas permitidas ─────────
+  // TODO: restaurar filtrado por sesión cuando se resuelva el debug
   const getCarpetasFiltradas = useCallback(
     async (dir: string): Promise<PortfolioFileItem[]> => {
-      if (!accesoTotal && rutasPermitidas.length === 0) return []
-      if (rutasPermitidas.length === 0) return getFilesByDirectory(dir)
-
-      if (dir === '') {
-        const carpetas = await getFilesByDirectory(dir)
-        const modalidadesPermitidas = [
-          ...new Set(rutasPermitidas.map((ruta) => ruta.split('/')[0])),
-        ]
-        return carpetas.filter((c) => modalidadesPermitidas.includes(c.name))
-      }
-
-      const nivel = dir.split('/').filter(Boolean).length
-
-      if (nivel === 1) {
-        const carpetas = await getFilesByDirectory(dir)
-        const modalidad = dir.replace(/\/$/, '')
-        if (rutasPermitidas.includes(modalidad)) return carpetas
-        const carrerasPermitidas = rutasPermitidas
-          .filter((r) => r.startsWith(modalidad + '/'))
-          .map((r) => r.split('/')[1])
-          .filter(Boolean)
-        return carpetas.filter((c) => carrerasPermitidas.includes(c.name))
-      }
-
-      if (nivel === 2) {
-        const carpetas = await getFilesByDirectory(dir)
-        const [modalidad, carrera] = dir.replace(/\/$/, '').split('/')
-        const aniosPermitidos = rutasPermitidas
-          .filter((r) => {
-            const partes = r.split('/')
-            return partes[0] === modalidad && partes[1] === carrera && partes[2]
-          })
-          .map((r) => r.split('/')[2])
-        if (aniosPermitidos.length > 0)
-          return carpetas.filter((c) => aniosPermitidos.includes(c.name))
-        return carpetas
-      }
-
-      const puedeVer = rutasPermitidas.some(
-        (r) => dir.startsWith(r) || r.startsWith(dir)
-      )
-      if (!puedeVer) return []
       return getFilesByDirectory(dir)
     },
-    [accesoTotal, rutasPermitidas]
+    []
   )
 
   // ───────── Recarga de directorio ─────────

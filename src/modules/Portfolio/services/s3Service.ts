@@ -44,6 +44,9 @@ const SECRET_ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY ?? ''
 let _client: S3Client | null = null
 function getClient(): S3Client {
   if (_client) return _client
+  if (!BUCKET_REGION) throw new Error('NEXT_PUBLIC_AWS_BUCKET_REGION no está definida en .env.local')
+  if (!ACCESS_KEY_ID) throw new Error('NEXT_PUBLIC_AWS_ACCESS_KEY_ID no está definida en .env.local')
+  if (!SECRET_ACCESS_KEY) throw new Error('NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY no está definida en .env.local')
   _client = new S3Client({
     region: BUCKET_REGION,
     credentials: {

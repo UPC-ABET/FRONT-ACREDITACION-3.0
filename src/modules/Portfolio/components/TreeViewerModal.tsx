@@ -59,10 +59,12 @@ export function TreeViewerModal({ isOpen, onClose }: TreeViewerModalProps) {
   const [readyToOpen, setReadyToOpen] = useState(false)
   const [expandedKeys, setExpandedKeys] = useState<string[]>([])
   const [currentLevel, setCurrentLevel] = useState(0)
+  const [fetchError, setFetchError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true)
+      setFetchError(null)
       try {
         const keys = await listAllKeys()
         const tree = buildTreeFromPaths(keys)
@@ -70,6 +72,8 @@ export function TreeViewerModal({ isOpen, onClose }: TreeViewerModalProps) {
         setReadyToOpen(true)
       } catch (error) {
         console.error('Error TreeViewerModal:', error)
+        setFetchError(error instanceof Error ? error.message : String(error))
+        setReadyToOpen(true)
       } finally {
         setIsLoading(false)
       }
@@ -195,15 +199,23 @@ export function TreeViewerModal({ isOpen, onClose }: TreeViewerModalProps) {
         </div>
 
         <div id="printable-tree" className="max-h-[500px] overflow-y-auto">
-          {treeData.map((node, idx) => (
-            <TreeNode
-              key={idx}
-              node={node}
-              path=""
-              expandedKeys={expandedKeys}
-              setExpandedKeys={setExpandedKeys}
-            />
-          ))}
+          {fetchError ? (
+            <div className="text-red-600 text-sm p-3 bg-red-50 rounded border border-red-200">
+              <strong>Error al cargar S3:</strong> {fetchError}
+            </div>
+          ) : treeData.length === 0 ? (
+            <p className="text-gray-500 text-sm p-3">No se encontraron carpetas en el bucket.</p>
+          ) : (
+            treeData.map((node, idx) => (
+              <TreeNode
+                key={idx}
+                node={node}
+                path=""
+                expandedKeys={expandedKeys}
+                setExpandedKeys={setExpandedKeys}
+              />
+            ))
+          )}
         </div>
       </DialogContent>
     </Dialog>
