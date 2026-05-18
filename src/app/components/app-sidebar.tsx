@@ -10,6 +10,7 @@ import {
   Cog6ToothIcon,
   ArrowRightStartOnRectangleIcon,
   ClipboardDocumentListIcon,
+  FolderIcon,
 } from '@heroicons/react/24/outline'
 import { useI18n } from '@/providers'
 import { logoutUser } from '@/modules/auth/services'
@@ -78,6 +79,8 @@ export function AppSidebar() {
         { name: t('nav.tests.public'), href: '/tests/public' },
       ],
     },
+
+  { name: 'Portfolio', href: '/Portfolio', icon: FolderIcon },
 ]
 
   return (
