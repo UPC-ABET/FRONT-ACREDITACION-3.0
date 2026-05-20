@@ -13,6 +13,10 @@
 			"tables": "Tables",
 			"public": "Public"
 		},
+		"admin": {
+			"label": "Administration",
+			"notifications": "IFC Notifications"
+		},
 		"logout": "Logout"
 	},
 	"ifcs": {
@@ -77,6 +81,34 @@
 				"body": "Once submitted, no one can edit the IFC until a reviewer either approves or observes it.",
 				"confirm": "Submit",
 				"saveInstead": "Save instead"
+			},
+			"toast": {
+				"successWithNotify": "IFC submitted. Reviewers have been notified.",
+				"successNoConfig": "IFC submitted. No notification configuration for this stage.",
+				"successNoNotify": "IFC submitted. The notification could not be sent."
+			}
+		},
+		"notify": {
+			"btn": {
+				"tooltip": "Notify",
+				"notifyAll": "Notify All"
+			},
+			"toast": {
+				"success": "Notification sent",
+				"successAll": "{{count}} notification(s) sent",
+				"partial": "{{sent}} sent, {{skipped}} skipped (no configuration)",
+				"allSkipped": "All skipped — no notification configuration for this scenario",
+				"error": "{{count}} notification(s) failed to send"
+			},
+			"reason": {
+				"no_course_chart": "Course chart not found",
+				"no_config": "No notification configuration for this scenario",
+				"no_recipients": "No recipients configured",
+				"send_failed": "The email provider rejected the message",
+				"unknown": "Could not send the notification"
+			},
+			"error": {
+				"generic": "Could not send the notification"
 			}
 		},
 		"error": {
@@ -130,6 +162,42 @@
 			"deleteFailed": "Could not delete the finding",
 			"viewFailed": "Could not load the finding",
 			"patchFailed": "Could not save the finding"
+		}
+	},
+	"admin": {
+		"notify": {
+			"page": {
+				"title": "IFC Notification Configuration"
+			},
+			"field": {
+				"title": "Subject",
+				"body": "Body (HTML)",
+				"to": "Recipients (To)",
+				"cc": "Cc",
+				"isActive": "Active",
+				"noLevels": "No levels available"
+			},
+			"legend": {
+				"title": "Available variables",
+				"empty": "No variables available for this status"
+			},
+			"btn": {
+				"save": "Save",
+				"delete": "Delete",
+				"confirmDelete": "Confirm delete"
+			},
+			"confirm": {
+				"delete": "Delete this configuration?"
+			},
+			"toast": {
+				"saved": "Configuration saved",
+				"deleted": "Configuration deleted"
+			},
+			"error": {
+				"listFailed": "Could not load the configuration",
+				"saveFailed": "Could not save the configuration",
+				"deleteFailed": "Could not delete the configuration"
+			}
 		}
 	},
 	"welcome": "Welcome to the ABET.",

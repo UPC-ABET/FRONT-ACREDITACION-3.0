@@ -1,11 +1,12 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Button, Card, ErrorDialog, Select } from '@/shared/components';
+import { Button, Card, ErrorDialog, Select, SuccessDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { ORG_LABELS, TYPE_CODES } from '../constants';
 import {
 	useIFCList,
+	useIfcNotify,
 	useOrgScope,
 	usePdfDownload,
 	useStatusReportDownload,
@@ -22,6 +23,14 @@ function tryTranslate(t: (k: string) => string, key: string) {
 	return translated === key ? key : translated;
 }
 
+function formatTemplate(template: string, vars: Record<string, string | number>): string {
+	let out = template;
+	for (const [k, v] of Object.entries(vars)) {
+		out = out.replaceAll(`{{${k}}}`, String(v));
+	}
+	return out;
+}
+
 type StatusOptionItem = { value: IFCStatusFilter; label: string };
 
 export function IFCDashboard() {
@@ -31,10 +40,24 @@ export function IFCDashboard() {
 	const [statusFilter, setStatusFilter] = useState<IFCStatusFilter>('ALL');
 	const [lastSearchedChartIds, setLastSearchedChartIds] = useState<number[] | null>(null);
 	const [lastSearchedPeriodId, setLastSearchedPeriodId] = useState<number | null>(null);
+	const [notifyError, setNotifyError] = useState<string | null>(null);
+	const [notifySuccess, setNotifySuccess] = useState<string | null>(null);
 
 	const { scope, load: loadScope } = useOrgScope();
 	const { rows, load: loadList, setRows } = useIFCList();
 	const { types: statusTypes } = useStatusTypes();
+	const { notifyOne, notifyMany, notifyingChartId, notifyingAll } = useIfcNotify();
+
+	const currentUserId = useMemo<number | null>(() => {
+		if (typeof window === 'undefined') return null;
+		try {
+			const raw = localStorage.getItem('token');
+			const user = raw ? JSON.parse(raw) : null;
+			return user?.id != null ? Number(user.id) : null;
+		} catch {
+			return null;
+		}
+	}, []);
 
 	const chartIncomplete =
 		scope !== null &&
@@ -150,6 +173,67 @@ export function IFCDashboard() {
 		[visibleRows],
 	);
 
+	const notifiableChartIds = useMemo<number[]>(() => {
+		return visibleRows
+			.filter((r) => {
+				const status = effectiveStatus(r);
+				const coordinatorId = r.coordinator_user_id;
+				const isOwn =
+					currentUserId != null &&
+					coordinatorId != null &&
+					Number(coordinatorId) === Number(currentUserId);
+				return (
+					!isOwn &&
+					status !== TYPE_CODES.IFC_STATUS.APPROVED &&
+					status !== TYPE_CODES.IFC_STATUS.SUBMITTED
+				);
+			})
+			.map((r) => Number(r.chart_id));
+	}, [visibleRows, currentUserId]);
+
+	async function handleNotifyOne(chartId: number) {
+		if (periodId === null) return;
+		try {
+			const r = await notifyOne(chartId, periodId);
+			if (r.sent) {
+				setNotifySuccess(t('ifcs.notify.toast.success'));
+			} else {
+				setNotifyError(t(`ifcs.notify.reason.${r.reason ?? 'unknown'}`));
+			}
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : 'ifcs.notify.error.generic';
+			setNotifyError(msg);
+		}
+	}
+
+	async function handleNotifyAll() {
+		if (periodId === null || notifiableChartIds.length === 0) return;
+		try {
+			const result = await notifyMany(notifiableChartIds, periodId);
+			if (result.errors.length > 0) {
+				setNotifyError(
+					formatTemplate(t('ifcs.notify.toast.error'), { count: result.errors.length }),
+				);
+			} else if (result.skipped.length > 0 && result.sent.length === 0) {
+				setNotifyError(t('ifcs.notify.toast.allSkipped'));
+			} else if (result.skipped.length > 0) {
+				setNotifySuccess(
+					formatTemplate(t('ifcs.notify.toast.partial'), {
+						sent: result.sent.length,
+						skipped: result.skipped.length,
+					}),
+				);
+			} else {
+				setNotifySuccess(
+					formatTemplate(t('ifcs.notify.toast.successAll'), { count: result.sent.length }),
+				);
+			}
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : 'ifcs.notify.error.generic';
+			setNotifyError(msg);
+		}
+	}
+
 	return (
 		<Card title={t('ifcs.page.title')}>
 			<div className="space-y-6">
@@ -209,10 +293,29 @@ export function IFCDashboard() {
 									: `${t('ifcs.pdf.downloadAll')} (${approvedIds.length})`}
 							</Button>
 						)}
+						{notifiableChartIds.length > 0 && periodId !== null && (
+							<Button
+								variant="secondary"
+								size="md"
+								disabled={notifyingAll}
+								onClick={handleNotifyAll}>
+								{notifyingAll
+									? t('loading.default')
+									: `${t('ifcs.notify.btn.notifyAll')} (${notifiableChartIds.length})`}
+							</Button>
+						)}
 					</div>
 				)}
 
-				{!chartIncomplete && <IFCTable rows={visibleRows} periodId={periodId} />}
+				{!chartIncomplete && (
+					<IFCTable
+						rows={visibleRows}
+						periodId={periodId}
+						currentUserId={currentUserId}
+						notifyingChartId={notifyingChartId}
+						onNotify={handleNotifyOne}
+					/>
+				)}
 
 				{pdfError && (
 					<ErrorDialog
@@ -227,6 +330,22 @@ export function IFCDashboard() {
 						isOpen
 						onClose={clearReportError}
 						message={tryTranslate(t, reportError)}
+					/>
+				)}
+
+				{notifyError && (
+					<ErrorDialog
+						isOpen
+						onClose={() => setNotifyError(null)}
+						message={tryTranslate(t, notifyError)}
+					/>
+				)}
+
+				{notifySuccess && (
+					<SuccessDialog
+						isOpen
+						onClose={() => setNotifySuccess(null)}
+						message={notifySuccess}
 					/>
 				)}
 			</div>
