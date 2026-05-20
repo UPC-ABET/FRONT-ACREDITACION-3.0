@@ -133,6 +133,26 @@
 		}
 	},
 
+	"forgotPassword": {
+		"title": "Recuperar contraseña",
+		"subtitle": "Te enviaremos un enlace de recuperacion a tu correo.",
+		"loading": "Enviando solicitud...",
+		"form": {
+			"emailLabel": "Correo institucional",
+			"emailPlaceholder": "correo@upc.pe",
+			"submit": "Enviar enlace de recuperacion",
+			"backToLogin": "Volver al inicio de sesion"
+		},
+		"error": {
+			"emailRequired": "Ingresa tu correo institucional.",
+			"emailInvalid": "Ingresa un correo valido.",
+			"requestFailed": "No se pudo procesar la solicitud"
+		},
+		"success": {
+			"defaultMessage": "Si el correo existe, se enviara un enlace de recuperacion"
+		}
+	},
+
 	"auth": {
 		"invalidCredentials": "Credenciales invalidas"
 	},

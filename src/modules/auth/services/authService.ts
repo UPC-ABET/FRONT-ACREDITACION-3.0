@@ -1,41 +1,23 @@
 import type { LoginPayload } from '@/shared/types';
+import { requestJson, getApiBaseUrl } from '@/shared/lib';
+import type { LoginResponse, ForgotPasswordResponse } from '@/modules/auth/types';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
-const USERS_BASE_PATH = `${BASE_URL}/users`;
-
-type LoginResponse = {
-	code: number;
-	message: string;
-	data: {
-		user: any;
-		access_token: string;
-	};
-};
+const USERS_BASE_PATH = '/users';
 
 export const loginByCredentials = async (
 	payload: LoginPayload,
-): Promise<{ accessToken: string; user: any }> => {
-	if (!BASE_URL) {
-		throw new Error('auth.missingApiUrl');
-	}
-
-	const res = await fetch(`${USERS_BASE_PATH}/login-by-credentials`, {
+): Promise<{ accessToken: string; user: unknown }> => {
+	const { response, body } = await requestJson<LoginResponse>(`${USERS_BASE_PATH}/login-by-credentials`, {
 		method: 'POST',
-		headers: {
-			accept: '*/*',
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
+		body: {
 			school_code: payload.school_code,
 			email: payload.email,
 			password: payload.password,
-		}),
+		},
 	});
 
-	const body = (await res.json().catch(() => null)) as LoginResponse | null;
-
-	if (!res.ok || !body?.data?.access_token) {
-		throw new Error(body?.message || 'login.error.generic');
+	if (!response.ok || !body?.data?.access_token) {
+		throw new Error(body?.message);
 	}
 
 	return {
@@ -55,28 +37,31 @@ const getStoredToken = () => {
 };
 
 export const logoutUser = async (): Promise<void> => {
-	if (!BASE_URL) {
-		throw new Error('auth.missingApiUrl');
-	}
-
 	const token = getStoredToken();
 
-	await fetch(`${USERS_BASE_PATH}/logout`, {
+	await requestJson(`${USERS_BASE_PATH}/logout`, {
 		method: 'POST',
-		headers: {
-			accept: '*/*',
-			...(token ? { Authorization: `Bearer ${token}` } : {}),
-		},
+		token,
 	});
 };
 
 export const getMicrosoftLoginUrl = (school_code: string): string => {
-	if (!BASE_URL) {
-		throw new Error('auth.missingApiUrl');
-	}
 	if (!school_code) {
 		throw new Error('login.error.schoolRequired');
 	}
 
-	return `${BASE_URL}/auth/microsoft?school_code=${encodeURIComponent(school_code)}`;
+	return `${getApiBaseUrl()}/auth/microsoft?school_code=${encodeURIComponent(school_code)}`;
+};
+
+export const requestForgotPassword = async (email: string): Promise<string> => {
+	const { response, body } = await requestJson<ForgotPasswordResponse>('/auth/forgot-password', {
+		method: 'POST',
+		body: { email },
+	});
+
+	if (!response.ok) {
+		throw new Error(body?.message);
+	}
+
+	return body?.data?.message ?? body?.message ?? '';
 };

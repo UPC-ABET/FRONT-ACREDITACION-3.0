@@ -5,6 +5,12 @@ export type ApiResponse<T> = {
 	errors?: string[];
 };
 
+export type ApiEnvelope<T> = {
+	data?: T;
+	resource?: T;
+	message?: string;
+};
+
 export type ApiError = {
 	message: string;
 	code?: string;

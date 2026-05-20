@@ -126,9 +126,12 @@ export default function LoginForm() {
 					{t('login.microsoft')}
 				</Button>
 				<div className="text-center">
-					<a href="#" className="text-sm text-red-600">
+					<button
+						type="button"
+						onClick={() => router.push('/auth/forgot-password')}
+						className="text-sm text-red-600 hover:text-red-500 transition-colors">
 						{t('login.forgot')}
-					</a>
+					</button>
 				</div>
 			</div>
 

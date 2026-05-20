@@ -133,6 +133,26 @@
 		}
 	},
 
+	"forgotPassword": {
+		"title": "Recover password",
+		"subtitle": "We will send a recovery link to your email.",
+		"loading": "Sending request...",
+		"form": {
+			"emailLabel": "Institutional email",
+			"emailPlaceholder": "email@upc.pe",
+			"submit": "Send recovery link",
+			"backToLogin": "Back to sign in"
+		},
+		"error": {
+			"emailRequired": "Enter your institutional email.",
+			"emailInvalid": "Enter a valid email.",
+			"requestFailed": "Could not process the request"
+		},
+		"success": {
+			"defaultMessage": "If the email exists, a recovery link will be sent"
+		}
+	},
+
 	"auth": {
 		"invalidCredentials": "Invalid credentials"
 	},
