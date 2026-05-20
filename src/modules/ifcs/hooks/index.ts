@@ -14,3 +14,4 @@ export * from './useIFCFormState';
 export * from './useStatusTypes';
 export * from './usePdfDownload';
 export * from './useStatusReportDownload';
+export * from './useIfcNotify';

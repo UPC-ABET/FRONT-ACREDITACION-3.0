@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, BellAlertIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable, ErrorDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
@@ -17,11 +17,17 @@ function tryTranslate(t: (k: string) => string, key: string) {
 	return translated === key ? key : translated;
 }
 
-type Props = { rows: IFCRow[]; periodId: number | null };
+type Props = {
+	rows: IFCRow[];
+	periodId: number | null;
+	currentUserId: number | null;
+	notifyingChartId: number | null;
+	onNotify: (chartId: number) => void;
+};
 
 const UNREG_LABEL: Record<string, string> = { en: 'Unregistered', es: 'Sin Registro' };
 
-export function IFCTable({ rows, periodId }: Props) {
+export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNotify }: Props) {
 	const { t, locale: lang } = useI18n();
 	const { downloadOne, downloadingId, error: pdfError, clearError } = usePdfDownload();
 
@@ -60,6 +66,17 @@ export function IFCTable({ rows, periodId }: Props) {
 				header: t('ifcs.table.actions'),
 				cell: ({ row }) => {
 					const r = row.original;
+					const status = effectiveStatus(r);
+					const coordinatorId = r.coordinator_user_id;
+					const isOwn =
+						currentUserId != null &&
+						coordinatorId != null &&
+						Number(coordinatorId) === Number(currentUserId);
+					const canNotify =
+						!isOwn &&
+						status !== TYPE_CODES.IFC_STATUS.APPROVED &&
+						status !== TYPE_CODES.IFC_STATUS.SUBMITTED;
+
 					if (r.ifc) {
 						const ifcId = Number(r.ifc.id);
 						const isApproved = r.ifc.status_code === TYPE_CODES.IFC_STATUS.APPROVED;
@@ -80,23 +97,45 @@ export function IFCTable({ rows, periodId }: Props) {
 										<ArrowDownTrayIcon className="h-4 w-4" />
 									</button>
 								)}
+								{canNotify && periodId !== null && (
+									<button
+										type="button"
+										disabled={notifyingChartId === Number(r.chart_id)}
+										onClick={() => onNotify(Number(r.chart_id))}
+										title={t('ifcs.notify.btn.tooltip')}
+										className="text-red-700 hover:text-red-500 disabled:opacity-50">
+										<BellAlertIcon className="h-4 w-4" />
+									</button>
+								)}
 							</div>
 						);
 					}
 					if (periodId !== null) {
 						return (
-							<Link
-								href={`/ifcs/new?chart_id=${r.chart_id}&period_id=${periodId}`}
-								className="text-red-700 underline hover:text-red-500">
-								{t('ifcs.table.actionRegister')}
-							</Link>
+							<div className="flex items-center gap-2">
+								<Link
+									href={`/ifcs/new?chart_id=${r.chart_id}&period_id=${periodId}`}
+									className="text-red-700 underline hover:text-red-500">
+									{t('ifcs.table.actionRegister')}
+								</Link>
+								{canNotify && (
+									<button
+										type="button"
+										disabled={notifyingChartId === Number(r.chart_id)}
+										onClick={() => onNotify(Number(r.chart_id))}
+										title={t('ifcs.notify.btn.tooltip')}
+										className="text-red-700 hover:text-red-500 disabled:opacity-50">
+										<BellAlertIcon className="h-4 w-4" />
+									</button>
+								)}
+							</div>
 						);
 					}
 					return <span className="text-zinc-400">—</span>;
 				},
 			},
 		],
-		[t, lang, periodId, downloadOne, downloadingId],
+		[t, lang, periodId, downloadOne, downloadingId, currentUserId, notifyingChartId, onNotify],
 	);
 
 	return (

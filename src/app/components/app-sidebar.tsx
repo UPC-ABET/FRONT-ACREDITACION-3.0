@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -37,8 +37,21 @@ export function AppSidebar() {
 	const pathname = usePathname();
 	const { t } = useI18n();
 
-	const isActive = (href?: string) =>
-		href ? pathname === href || pathname.startsWith(`${href}/`) : false;
+	const [isAdmin, setIsAdmin] = useState(false);
+	useEffect(() => {
+		let admin = false;
+		try {
+			const raw = localStorage.getItem('token');
+			const user = raw ? JSON.parse(raw) : null;
+			admin = user?.is_admin === true;
+		} catch {
+			admin = false;
+		}
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: defer localStorage read past hydration
+		setIsAdmin(admin);
+	}, []);
+
+	const isActive = (href?: string) => (href ? pathname === href : false);
 
 	const handleLogout = async () => {
 		try {
@@ -79,6 +92,21 @@ export function AppSidebar() {
 				{ name: t('nav.tests.public'), href: '/tests/public' },
 			],
 		},
+
+		...(isAdmin
+			? [
+					{
+						name: t('nav.admin.label'),
+						icon: Cog6ToothIcon,
+						children: [
+							{
+								name: t('nav.admin.notifications'),
+								href: '/admin/ifc-notification-config',
+							},
+						],
+					} as NavItem,
+				]
+			: []),
 	];
 
 	return (

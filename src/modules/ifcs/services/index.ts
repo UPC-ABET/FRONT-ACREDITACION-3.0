@@ -14,3 +14,4 @@ export * from './parametersService';
 export * from './typesService';
 export * from './ifcsPdfService';
 export * from './ifcsStatusReportService';
+export * from './ifcsNotifyService';

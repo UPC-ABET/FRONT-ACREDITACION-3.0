@@ -80,9 +80,26 @@ export default function IFCViewPage() {
 		setSubmitModalOpen(true);
 	}
 
-	function confirmSubmit() {
+	async function confirmSubmit() {
 		setSubmitModalOpen(false);
-		void runAction(() => submitIFC(id), 'ifcs.view.toast.submitted');
+		setSubmitting(true);
+		setActionError(null);
+		try {
+			const res = await submitIFC(id);
+			if (res.notification.sent) {
+				setSuccessMsg(t('ifcs.submit.toast.successWithNotify'));
+			} else if (res.notification.reason === 'no_config') {
+				setSuccessMsg(t('ifcs.submit.toast.successNoConfig'));
+			} else {
+				setSuccessMsg(t('ifcs.submit.toast.successNoNotify'));
+			}
+			await refetch();
+		} catch (e) {
+			const message = e instanceof Error ? e.message : 'ifcs.error.generic';
+			setActionError(message);
+		} finally {
+			setSubmitting(false);
+		}
 	}
 
 	function handleApprove() {
@@ -138,7 +155,9 @@ export default function IFCViewPage() {
 			<SubmitConfirmModal
 				isOpen={submitModalOpen}
 				onClose={() => setSubmitModalOpen(false)}
-				onConfirm={confirmSubmit}
+				onConfirm={() => {
+					void confirmSubmit();
+				}}
 			/>
 
 			{actionError && (

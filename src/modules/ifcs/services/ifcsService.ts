@@ -6,6 +6,7 @@ import type {
 	IFCViewPayload,
 	PatchIFCBody,
 	RejectIFCBody,
+	SubmitResult,
 } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
@@ -57,8 +58,27 @@ export async function getIFCView(id: number): Promise<IFCViewPayload> {
 	return body.data;
 }
 
-export async function submitIFC(id: number): Promise<void> {
-	await postNoBody(`${BASE_URL}/ifcs/${id}/submit`, 'ifcs.error.submitFailed');
+export async function submitIFC(id: number): Promise<SubmitResult> {
+	if (!BASE_URL) throw new Error('app.missingApiUrl');
+
+	const res = await fetch(`${BASE_URL}/ifcs/${id}/submit`, {
+		method: 'POST',
+		headers: { accept: '*/*', ...authHeader() },
+	});
+
+	const body = (await res.json().catch(() => null)) as Envelope<SubmitResult> | null;
+	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.submitFailed');
+
+	const n = body.data.notification;
+	return {
+		id: Number(body.data.id),
+		notification: {
+			sent: Boolean(n?.sent),
+			recipients_count: Number(n?.recipients_count ?? 0),
+			cc_count: Number(n?.cc_count ?? 0),
+			reason: (n?.reason ?? null) as SubmitResult['notification']['reason'],
+		},
+	};
 }
 
 export async function approveIFC(id: number): Promise<void> {

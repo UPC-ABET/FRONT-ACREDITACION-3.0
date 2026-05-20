@@ -256,3 +256,29 @@ export interface FindingDetailPayload {
 export interface PatchFindingBody {
 	description: I18nText;
 }
+
+// ---- Notify ----------------------------------------------------------------
+
+export type NotifyReason =
+	| 'no_course_chart'
+	| 'no_config'
+	| 'no_recipients'
+	| 'send_failed';
+
+export interface NotifyResult {
+	sent: boolean;
+	recipients_count: number;
+	cc_count: number;
+	reason: NotifyReason | null;
+}
+
+export interface NotifyAllResult {
+	sent: number[];
+	skipped: number[];
+	errors: Array<{ chart_id: number; message: string }>;
+}
+
+export interface SubmitResult {
+	id: number;
+	notification: NotifyResult;
+}
