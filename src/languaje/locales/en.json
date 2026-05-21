@@ -152,6 +152,28 @@
 			"defaultMessage": "If the email exists, a recovery link will be sent"
 		}
 	},
+	"resetPassword": {
+		"title": "Reset password",
+		"subtitle": "Enter and confirm your new password.",
+		"loading": "Updating password...",
+		"form": {
+			"passwordPlaceholder": "New password",
+			"confirmPasswordPlaceholder": "Confirm new password",
+			"submit": "Change password"
+		},
+		"error": {
+			"required": "All fields are required",
+			"passwordMinLength": "Password must be at least 8 characters long",
+			"passwordMismatch": "Passwords do not match",
+			"invalidToken": "The recovery link is invalid or expired",
+			"requestFailed": "Could not process the request"
+		},
+		"success": {
+			"title": "Password updated",
+			"defaultMessage": "Your password was updated successfully",
+			"goToLogin": "Go to sign in"
+		}
+	},
 
 	"auth": {
 		"invalidCredentials": "Invalid credentials"

@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Card } from '@/shared/components/ui/Card';
+import { Card } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { getLoginBackgroundUrl } from '@/modules/auth';
-import ForgotPasswordForm from './components/ForgotPasswordForm';
+import ResetPasswordForm from './components/ResetPasswordForm';
 
-export default function ForgotPassword() {
+export default function ResetPassword() {
 	const { t } = useI18n();
 	const background = getLoginBackgroundUrl();
 
@@ -24,7 +24,7 @@ export default function ForgotPassword() {
 								alt={t('sidebar.logoAlt')}
 							/>
 						</div>
-						<ForgotPasswordForm />
+						<ResetPasswordForm />
 					</Card>
 				</div>
 			</div>

@@ -65,3 +65,24 @@ export const requestForgotPassword = async (email: string): Promise<string> => {
 
 	return body?.data?.message ?? body?.message ?? '';
 };
+
+export const requestResetPassword = async (
+	token: string,
+	password: string,
+	confirmPassword: string,
+): Promise<string> => {
+	// Temporal mock until backend endpoint is available.
+	await new Promise((resolve) => setTimeout(resolve, 500));
+
+	if (!token) {
+		throw new Error('resetPassword.error.invalidToken');
+	}
+	if (password.length < 8) {
+		throw new Error('resetPassword.error.passwordMinLength');
+	}
+	if (password !== confirmPassword) {
+		throw new Error('resetPassword.error.passwordMismatch');
+	}
+
+	return 'resetPassword.success.defaultMessage';
+};
