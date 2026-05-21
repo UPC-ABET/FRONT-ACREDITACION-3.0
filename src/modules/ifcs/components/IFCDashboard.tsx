@@ -276,7 +276,6 @@ export function IFCDashboard() {
 									variant="primary"
 									size="lg"
 									disabled={!canSearch}
-									title={canSearch ? undefined : t('ifcs.page.searchDisabled')}
 									onClick={handleSearch}>
 									<MagnifyingGlassIcon className="h-5 w-5" />
 									{t('ifcs.page.searchBtn')}
@@ -285,11 +284,6 @@ export function IFCDashboard() {
 									variant="secondary"
 									size="lg"
 									disabled={!canDownloadReport || downloadingReport}
-									title={
-										canDownloadReport
-											? undefined
-											: t('ifcs.statusReport.tooltipNoScope')
-									}
 									onClick={() =>
 										downloadReport(lastSearchedChartIds!, lastSearchedPeriodId!)
 									}>

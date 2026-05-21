@@ -15,7 +15,9 @@
 		},
 		"admin": {
 			"label": "Administration",
-			"notifications": "IFC Notifications"
+			"notifications": "IFC Notifications",
+			"ifcCodes": "IFC Codes",
+			"ifcFields": "IFC Form Fields"
 		},
 		"logout": "Logout"
 	},
@@ -23,8 +25,7 @@
 		"page": {
 			"title": "End of Course Report",
 			"period": "Academic Period",
-			"searchBtn": "Search",
-			"searchDisabled": "Pick a period and a course to search"
+			"searchBtn": "Search"
 		},
 		"table": {
 			"code": "Code",
@@ -167,7 +168,8 @@
 	"admin": {
 		"notify": {
 			"page": {
-				"title": "IFC Notification Configuration"
+				"title": "IFC Notification Configuration",
+				"selectPeriod": "Select a period to continue"
 			},
 			"field": {
 				"title": "Subject",
@@ -198,6 +200,75 @@
 				"saveFailed": "Could not save the configuration",
 				"deleteFailed": "Could not delete the configuration"
 			}
+		},
+		"params": {
+			"codes": {
+				"page": {
+					"title": "IFC Codes",
+					"subtitle": "Prefixes for generated codes",
+					"intro": "These prefixes are used to compose finding and action codes automatically (e.g. H-2026-001 or A-2026-001). Changing them does not affect existing codes; the new prefix is applied to records created after the change."
+				}
+			},
+			"fields": {
+				"page": {
+					"title": "IFC form fields",
+					"subtitle": "Information collected when creating or editing an IFC",
+					"intro": "Configure the information fields that appear on the IFC form. Each field needs a unique technical key, Spanish and English labels, and a display order. Changes apply to IFCs created from now on."
+				},
+				"row": {
+					"title": "Field"
+				},
+				"field": {
+					"key": "Technical key",
+					"keyPlaceholder": "e.g. context",
+					"keyHelp": "Internal identifier. No spaces; use letters, numbers, and underscores.",
+					"labelEs": "Label (ES)",
+					"labelEn": "Label (EN)",
+					"required": "Required",
+					"requiredHelp": "When on, the user must fill this field before submitting."
+				},
+				"btn": {
+					"add": "Add field",
+					"moveUp": "Move up",
+					"moveDown": "Move down",
+					"delete": "Delete field"
+				},
+				"empty": "No fields configured yet. Add the first one to make it appear on the IFC form.",
+				"unsaved": "You have unsaved changes.",
+				"allSaved": "Everything is in sync.",
+				"confirmDelete": {
+					"title": "Delete field",
+					"body": "This field will be removed from the form. Continue?",
+					"confirm": "Delete"
+				},
+				"err": {
+					"keyRequired": "Technical key is required",
+					"keyDuplicate": "Keys must be unique",
+					"labelRequired": "Label is required",
+					"fixBeforeSave": "Fix the errors before saving"
+				}
+			},
+			"field": {
+				"value": "Value",
+				"valuePlaceholder": "e.g. H",
+				"prefixHint": "Short text prepended to the generated code."
+			},
+			"btn": {
+				"save": "Save",
+				"discard": "Discard changes",
+				"reset": "Reset",
+				"retry": "Retry",
+				"saveDisabledNoChanges": "No changes to save",
+				"saveDisabledInvalid": "Fill the field before saving"
+			},
+			"toast": {
+				"saved": "Parameter saved"
+			},
+			"error": {
+				"loadFailed": "Could not load the parameter",
+				"saveFailed": "Could not save the parameter",
+				"notFound": "Parameter not found"
+			}
 		}
 	},
 	"welcome": "Welcome to the ABET.",
@@ -213,10 +284,6 @@
 		},
 		"cycle": {
 			"label": "Cycle"
-		},
-		"program": {
-			"regular": "Regular",
-			"epe": "EPE"
 		}
 	},
 	"language": {

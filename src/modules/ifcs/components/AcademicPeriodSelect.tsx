@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Select } from '@/shared/components';
-import { useI18n } from '@/providers';
-import { getAllAcademicPeriods } from '../services/academicPeriodsService';
+import { useABET, useI18n } from '@/providers';
+import { getAcademicPeriodsByFilters } from '../services/academicPeriodsService';
 import type { AcademicPeriod } from '../services/types';
 
 type Props = {
@@ -13,12 +13,19 @@ type Props = {
 
 export function AcademicPeriodSelect({ value, onChange }: Props) {
 	const { t } = useI18n();
+	const { modalityTypeId } = useABET();
 	const [periods, setPeriods] = useState<AcademicPeriod[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
+		if (modalityTypeId === null) {
+			setPeriods([]);
+			setLoading(true);
+			return;
+		}
 		let active = true;
-		getAllAcademicPeriods()
+		setLoading(true);
+		getAcademicPeriodsByFilters({ modality_type_id: modalityTypeId, is_active: true })
 			.then((rows) => {
 				if (active) setPeriods(rows);
 			})
@@ -31,7 +38,7 @@ export function AcademicPeriodSelect({ value, onChange }: Props) {
 		return () => {
 			active = false;
 		};
-	}, []);
+	}, [modalityTypeId]);
 
 	const options = useMemo(() => periods.map((p) => ({ value: p.id, label: p.code })), [periods]);
 

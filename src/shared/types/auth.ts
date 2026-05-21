@@ -9,7 +9,7 @@ export type LoginPayload = {
 };
 
 export type ABETContextType = {
-	/** Modalidad seleccionada (p. ej. presencial/virtual o un id) */
-	valueModality: string | number;
-	setValueModality?: (v: string | number) => void;
+	/** Modality type id (TG102 type) selected in the navbar pill switcher. */
+	modalityTypeId: number | null;
+	setModalityTypeId: (id: number | null) => void;
 };

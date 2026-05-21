@@ -1,15 +1,14 @@
 'use client';
 
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useABET, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
-import {
-	DEFAULT_PROGRAM_OPTIONS,
-	DEFAULT_PROGRAM_TYPE,
-	DEFAULT_USER_INITIALS,
-} from '@/shared/constants';
+import { DEFAULT_USER_INITIALS } from '@/shared/constants';
+import { TYPE_GROUP_CODES } from '@/modules/ifcs/constants';
+import { getTypesByGroupCode } from '@/modules/ifcs/services';
+import type { CriticalityOption } from '@/modules/ifcs/services';
 import type { NavbarProps, StoredUser } from '@/shared/types';
 
 function subscribeStoredUser(onStoreChange: () => void) {
@@ -145,18 +144,19 @@ function UserAvatar({
 
 function Navbar({
 	schoolName,
-	programType,
-	programOptions,
 	userName,
 	userRole,
 	userInitials,
 }: NavbarProps) {
 	const { toggle, isMobile: isSidebarMobile } = useSidebar();
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
+	const { modalityTypeId, setModalityTypeId } = useABET();
 
 	const storedUserRaw = useSyncExternalStore(subscribeStoredUser, readStoredUserRaw, () => '');
 	const storedSchoolCodeRaw = useSyncExternalStore(subscribeStoredUser, readStoredSchoolCodeRaw, () => '');
+
+	const [modalityOptions, setModalityOptions] = useState<CriticalityOption[]>([]);
 
 	const storedUser = useMemo<StoredUser | null>(() => {
 		if (!storedUserRaw) return null;
@@ -176,17 +176,41 @@ function Navbar({
 		}
 	}, [storedSchoolCodeRaw]);
 
-	const resolvedProgramType = programType ?? DEFAULT_PROGRAM_TYPE;
-	const resolvedProgramOptions = useMemo(() => {
-		const options = programOptions ?? DEFAULT_PROGRAM_OPTIONS;
-		return options.map((opt) => ({
-			value: opt.value,
-			label: opt.label ?? (opt.labelKey ? t(opt.labelKey) : opt.value),
-		}));
-	}, [programOptions, t]);
+	useEffect(() => {
+		let active = true;
+		getTypesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY)
+			.then((rows) => {
+				if (!active) return;
+				setModalityOptions(rows);
+				if (rows.length > 0 && modalityTypeId === null) {
+					setModalityTypeId(rows[0].id);
+				}
+			})
+			.catch(() => {
+				if (active) setModalityOptions([]);
+			});
+		return () => {
+			active = false;
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-	const resolvedSchoolName =
-		schoolName ?? storedSchoolCode;
+	const pillOptions = useMemo(
+		() =>
+			modalityOptions.map((opt) => ({
+				value: String(opt.id),
+				label: opt.name[locale] ?? opt.name.es ?? opt.code,
+			})),
+		[modalityOptions, locale],
+	);
+
+	const selectedProgramValue = modalityTypeId != null ? String(modalityTypeId) : '';
+
+	function handleSelectProgram(value: string) {
+		setModalityTypeId(Number(value));
+	}
+
+	const resolvedSchoolName = schoolName ?? storedSchoolCode;
 
 	const resolvedUserName =
 		userName ??
@@ -200,8 +224,6 @@ function Navbar({
 		userInitials ??
 		(`${storedUser?.first_name?.trim().charAt(0) ?? ''}${storedUser?.last_name?.trim().charAt(0) ?? ''}`.toUpperCase() ||
 			DEFAULT_USER_INITIALS);
-
-	const [selectedProgram, setSelectedProgram] = useState(resolvedProgramType);
 
 	const menuBtn = isSidebarMobile ? (
 		<Button
@@ -232,12 +254,14 @@ function Navbar({
 					<div className="ml-[12px]">
 						<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
 					</div>
-					<PillSwitcher
-						options={resolvedProgramOptions}
-						selectedProgram={selectedProgram}
-						onSelectProgram={setSelectedProgram}
-						loose
-					/>
+					{pillOptions.length > 0 && (
+						<PillSwitcher
+							options={pillOptions}
+							selectedProgram={selectedProgramValue}
+							onSelectProgram={handleSelectProgram}
+							loose
+						/>
+					)}
 				</div>
 			</nav>
 		);
@@ -249,11 +273,13 @@ function Navbar({
 				{menuBtn}
 				<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
 				<div className="flex-1" />
-				<PillSwitcher
-					options={resolvedProgramOptions}
-					selectedProgram={selectedProgram}
-					onSelectProgram={setSelectedProgram}
-				/>
+				{pillOptions.length > 0 && (
+					<PillSwitcher
+						options={pillOptions}
+						selectedProgram={selectedProgramValue}
+						onSelectProgram={handleSelectProgram}
+					/>
+				)}
 				<Sep />
 				<LanguageSwitcher />
 				<Sep />
@@ -267,11 +293,13 @@ function Navbar({
 			{menuBtn}
 			<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
 			<div className="flex-1" />
-			<PillSwitcher
-				options={resolvedProgramOptions}
-				selectedProgram={selectedProgram}
-				onSelectProgram={setSelectedProgram}
-			/>
+			{pillOptions.length > 0 && (
+				<PillSwitcher
+					options={pillOptions}
+					selectedProgram={selectedProgramValue}
+					onSelectProgram={handleSelectProgram}
+				/>
+			)}
 			<Sep />
 			<LanguageSwitcher />
 			<Sep />

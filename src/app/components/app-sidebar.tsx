@@ -103,6 +103,14 @@ export function AppSidebar() {
 								name: t('nav.admin.notifications'),
 								href: '/admin/ifc-notification-config',
 							},
+							{
+								name: t('nav.admin.ifcCodes'),
+								href: '/admin/ifc-codes',
+							},
+							{
+								name: t('nav.admin.ifcFields'),
+								href: '/admin/ifc-fields',
+							},
 						],
 					} as NavItem,
 				]

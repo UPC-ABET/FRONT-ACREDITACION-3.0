@@ -9,12 +9,20 @@ interface Envelope<T> {
 	data: T;
 }
 
-export async function getAllAcademicPeriods(): Promise<AcademicPeriod[]> {
+export interface AcademicPeriodFilters {
+	modality_type_id: number;
+	is_active?: boolean;
+}
+
+export async function getAcademicPeriodsByFilters(
+	filters: AcademicPeriodFilters,
+): Promise<AcademicPeriod[]> {
 	if (!BASE_URL) throw new Error('app.missingApiUrl');
 
-	const res = await fetch(`${BASE_URL}/academic-periods/get-all`, {
-		method: 'GET',
-		headers: { accept: '*/*', ...authHeader() },
+	const res = await fetch(`${BASE_URL}/academic-periods/get-by-filters`, {
+		method: 'POST',
+		headers: { accept: '*/*', 'Content-Type': 'application/json', ...authHeader() },
+		body: JSON.stringify(filters),
 	});
 
 	const body = (await res.json().catch(() => null)) as Envelope<AcademicPeriod[]> | null;

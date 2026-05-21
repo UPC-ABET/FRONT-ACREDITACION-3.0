@@ -132,7 +132,6 @@ export function FindingsConsultPage() {
 								variant="primary"
 								size="lg"
 								disabled={!canSearch}
-								title={canSearch ? undefined : t('ifcs.page.searchDisabled')}
 								onClick={handleSearch}>
 								<MagnifyingGlassIcon className="h-5 w-5" />
 								{t('ifcs.page.searchBtn')}

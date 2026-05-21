@@ -53,7 +53,6 @@ export function IFCHeaderCard({
 						variant="secondary"
 						size="lg"
 						disabled={!canExport || isDownloading}
-						title={canExport ? undefined : t('ifcs.pdf.exportNotApproved')}
 						onClick={() => downloadOne(Number(ifc.id))}>
 						<ArrowDownTrayIcon className="h-5 w-5" />
 						{isDownloading ? t('loading.default') : VIEW_LABELS.export[lang]}

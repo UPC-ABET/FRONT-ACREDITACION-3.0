@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
-import { Button, Card, ErrorDialog, LoadingDialog } from '@/shared/components';
+import { Button, Card, ErrorDialog, LoadingDialog, SuccessDialog } from '@/shared/components';
 import { useIFCFormState } from '../../hooks/useIFCFormState';
 import { createIFC, patchIFC } from '../../services/ifcsService';
 import type {
@@ -60,6 +60,8 @@ export function IFCForm(props: Props) {
 	const [submitting, setSubmitting] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [successMsg, setSuccessMsg] = useState<string | null>(null);
+	const [pendingNavId, setPendingNavId] = useState<number | null>(null);
 
 	function validate(): string | null {
 		const missingRequired = props.ifcFields
@@ -103,26 +105,37 @@ export function IFCForm(props: Props) {
 		}));
 
 		try {
-			if (props.mode === 'create') {
-				const { id } = await createIFC({
-					chart_id: props.chartId!,
-					period_id: props.periodId!,
-					submit,
-					information: state.information,
-					findings: findingsPayload,
-					actions: actionsPayload,
-				});
-				router.push(`/ifcs/${id}`);
+			const result =
+				props.mode === 'create'
+					? await createIFC({
+							chart_id: props.chartId!,
+							period_id: props.periodId!,
+							submit,
+							information: state.information,
+							findings: findingsPayload,
+							actions: actionsPayload,
+						})
+					: await patchIFC(props.existing!.ifc.id, {
+							submit,
+							information: state.information,
+							findings: findingsPayload,
+							actions: actionsPayload,
+							deleted_finding_ids: state.deleted_finding_ids,
+							deleted_action_ids: state.deleted_action_ids,
+						});
+
+			if (submit) {
+				const n = result.notification;
+				if (n.sent) {
+					setSuccessMsg(t('ifcs.submit.toast.successWithNotify'));
+				} else if (n.reason === 'no_config') {
+					setSuccessMsg(t('ifcs.submit.toast.successNoConfig'));
+				} else {
+					setSuccessMsg(t('ifcs.submit.toast.successNoNotify'));
+				}
+				setPendingNavId(result.id);
 			} else {
-				const { id } = await patchIFC(props.existing!.ifc.id, {
-					submit,
-					information: state.information,
-					findings: findingsPayload,
-					actions: actionsPayload,
-					deleted_finding_ids: state.deleted_finding_ids,
-					deleted_action_ids: state.deleted_action_ids,
-				});
-				router.push(`/ifcs/${id}`);
+				router.push(`/ifcs/${result.id}`);
 			}
 		} catch (e) {
 			const message = e instanceof Error ? e.message : 'ifcs.error.saveFailed';
@@ -218,6 +231,20 @@ export function IFCForm(props: Props) {
 			{submitting && <LoadingDialog isOpen label={t('loading.default')} />}
 			{error && (
 				<ErrorDialog isOpen onClose={() => setError(null)} message={tryTranslate(t, error)} />
+			)}
+			{successMsg && (
+				<SuccessDialog
+					isOpen
+					onClose={() => {
+						setSuccessMsg(null);
+						if (pendingNavId != null) {
+							const target = pendingNavId;
+							setPendingNavId(null);
+							router.push(`/ifcs/${target}`);
+						}
+					}}
+					message={successMsg}
+				/>
 			)}
 		</div>
 	);

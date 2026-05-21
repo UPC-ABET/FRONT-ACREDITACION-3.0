@@ -15,7 +15,9 @@
 		},
 		"admin": {
 			"label": "Administración",
-			"notifications": "Notificaciones IFC"
+			"notifications": "Notificaciones IFC",
+			"ifcCodes": "Códigos IFC",
+			"ifcFields": "Campos del formulario IFC"
 		},
 		"logout": "Cerrar sesión"
 	},
@@ -23,8 +25,7 @@
 		"page": {
 			"title": "Informe de Fin de Ciclo",
 			"period": "Período Académico",
-			"searchBtn": "Buscar",
-			"searchDisabled": "Seleccione un período y un curso para buscar"
+			"searchBtn": "Buscar"
 		},
 		"table": {
 			"code": "Código",
@@ -167,7 +168,8 @@
 	"admin": {
 		"notify": {
 			"page": {
-				"title": "Configuración de Notificaciones IFC"
+				"title": "Configuración de Notificaciones IFC",
+				"selectPeriod": "Seleccione un período para continuar"
 			},
 			"field": {
 				"title": "Asunto",
@@ -198,6 +200,75 @@
 				"saveFailed": "No se pudo guardar la configuración",
 				"deleteFailed": "No se pudo eliminar la configuración"
 			}
+		},
+		"params": {
+			"codes": {
+				"page": {
+					"title": "Códigos IFC",
+					"subtitle": "Prefijos para códigos generados",
+					"intro": "Estos prefijos se usan para componer automáticamente los códigos de hallazgos y acciones (por ejemplo, H-2026-001 o A-2026-001). Cambiarlos no afecta a los códigos ya existentes; solo aplica a los nuevos registros."
+				}
+			},
+			"fields": {
+				"page": {
+					"title": "Campos del formulario IFC",
+					"subtitle": "Información solicitada al crear o editar un IFC",
+					"intro": "Configura los campos de información que aparecen en el formulario del IFC. Cada campo necesita una llave técnica única, etiquetas en español e inglés, y un orden de aparición. Los cambios aplican a los próximos IFC que se creen."
+				},
+				"row": {
+					"title": "Campo"
+				},
+				"field": {
+					"key": "Llave técnica",
+					"keyPlaceholder": "ej. contexto",
+					"keyHelp": "Identificador interno. Sin espacios; usa letras, números y guiones bajos.",
+					"labelEs": "Etiqueta (ES)",
+					"labelEn": "Etiqueta (EN)",
+					"required": "Obligatorio",
+					"requiredHelp": "Si está activo, el usuario debe completar este campo antes de enviar."
+				},
+				"btn": {
+					"add": "Añadir campo",
+					"moveUp": "Mover arriba",
+					"moveDown": "Mover abajo",
+					"delete": "Eliminar campo"
+				},
+				"empty": "Aún no hay campos configurados. Añade el primero para que aparezca en el formulario de IFC.",
+				"unsaved": "Tienes cambios sin guardar.",
+				"allSaved": "Todo está sincronizado.",
+				"confirmDelete": {
+					"title": "Eliminar campo",
+					"body": "Se quitará este campo del formulario. ¿Deseas continuar?",
+					"confirm": "Eliminar"
+				},
+				"err": {
+					"keyRequired": "La llave técnica es obligatoria",
+					"keyDuplicate": "La llave debe ser única",
+					"labelRequired": "La etiqueta es obligatoria",
+					"fixBeforeSave": "Corrige los errores antes de guardar"
+				}
+			},
+			"field": {
+				"value": "Valor",
+				"valuePlaceholder": "ej. H",
+				"prefixHint": "Texto corto que precede al código generado."
+			},
+			"btn": {
+				"save": "Guardar",
+				"discard": "Descartar cambios",
+				"reset": "Restablecer",
+				"retry": "Reintentar",
+				"saveDisabledNoChanges": "No hay cambios para guardar",
+				"saveDisabledInvalid": "Completa el campo antes de guardar"
+			},
+			"toast": {
+				"saved": "Parámetro guardado"
+			},
+			"error": {
+				"loadFailed": "No se pudo cargar el parámetro",
+				"saveFailed": "No se pudo guardar el parámetro",
+				"notFound": "Parámetro no encontrado"
+			}
 		}
 	},
 	"welcome": "Bienvenido a ABET.",
@@ -213,10 +284,6 @@
 		},
 		"cycle": {
 			"label": "Ciclo"
-		},
-		"program": {
-			"regular": "Regular",
-			"epe": "EPE"
 		}
 	},
 	"language": {
