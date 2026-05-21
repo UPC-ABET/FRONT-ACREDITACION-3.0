@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Badge, Button, Card, TextArea } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { CRITICALITY_VARIANT } from '../../constants';
 import type { FindingDetail, I18nText } from '../../services/types';
 import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
 
@@ -61,33 +61,34 @@ export function FindingGeneralInfo({
 
 	return (
 		<Card title={L.section_general[lang]}>
-			<div className="space-y-4">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+			<div className="space-y-6">
+				<dl className="grid grid-cols-1 gap-5 rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:grid-cols-3">
 					<div>
-						<p className="text-xs font-semibold text-zinc-700 uppercase tracking-wide">
+						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
 							{L.col_code[lang]}
-						</p>
-						<p className="text-sm text-zinc-600">{finding.finding_code}</p>
+						</dt>
+						<dd className="mt-1.5 text-base text-zinc-900">{finding.finding_code}</dd>
 					</div>
 					<div>
-						<p className="text-xs font-semibold text-zinc-700 uppercase tracking-wide">
+						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
 							{L.col_period[lang]}
-						</p>
-						<p className="text-sm text-zinc-600">{finding.academic_period_code}</p>
+						</dt>
+						<dd className="mt-1.5 text-base text-zinc-900">
+							{finding.academic_period_code}
+						</dd>
 					</div>
-				</div>
+					<div>
+						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+							{L.col_criticality[lang]}
+						</dt>
+						<dd className="mt-1.5">
+							<Badge color={finding.criticality.color}>{criticalityLabel}</Badge>
+						</dd>
+					</div>
+				</dl>
 
 				<div>
-					<p className="text-xs font-semibold text-zinc-700 uppercase tracking-wide mb-1">
-						{L.col_criticality[lang]}
-					</p>
-					<Badge variant={CRITICALITY_VARIANT[finding.criticality.code] ?? 'default'}>
-						{criticalityLabel}
-					</Badge>
-				</div>
-
-				<div>
-					<p className="text-xs font-semibold text-zinc-700 uppercase tracking-wide mb-1">
+					<p className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">
 						{L.col_description[lang]}
 					</p>
 					{editing ? (
@@ -105,29 +106,33 @@ export function FindingGeneralInfo({
 							))}
 						</div>
 					) : (
-						<p className="text-sm text-zinc-600 whitespace-pre-line">{descriptionText}</p>
+						<p className="whitespace-pre-line text-base leading-relaxed text-zinc-800">
+							{descriptionText || '—'}
+						</p>
 					)}
 				</div>
 
-				<div className="flex justify-end gap-2 pt-2">
+				<div className="flex flex-wrap justify-end gap-3 border-t border-zinc-100 pt-5">
 					{!editing && (
 						<>
-							<Button variant="ghost" size="md" onClick={onDelete}>
+							<Button variant="ghost" size="lg" onClick={onDelete}>
+								<TrashIcon className="h-5 w-5" />
 								{L.btn_delete[lang]}
 							</Button>
-							<Button variant="secondary" size="md" onClick={startEdit}>
+							<Button variant="secondary" size="lg" onClick={startEdit}>
+								<PencilSquareIcon className="h-5 w-5" />
 								{L.btn_edit[lang]}
 							</Button>
 						</>
 					)}
 					{editing && (
 						<>
-							<Button variant="ghost" size="md" disabled={saving} onClick={cancelEdit}>
+							<Button variant="ghost" size="lg" disabled={saving} onClick={cancelEdit}>
 								{L.btn_cancel[lang]}
 							</Button>
 							<Button
 								variant="primary"
-								size="md"
+								size="lg"
 								disabled={saving}
 								onClick={handleSave}>
 								{L.btn_save[lang]}

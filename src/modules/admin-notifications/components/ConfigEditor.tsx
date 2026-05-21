@@ -1,6 +1,12 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import {
+	ExclamationTriangleIcon,
+	TrashIcon,
+	UserGroupIcon,
+	UsersIcon,
+} from '@heroicons/react/24/outline';
 import { Button, Input, TextArea, Toggle } from '@/shared/components';
 import { useI18n } from '@/providers';
 import type { I18nText } from '@/modules/ifcs/services/types';
@@ -41,6 +47,64 @@ function asI18n(text: I18nText | undefined | null): I18nText {
 	return { es: text?.es ?? '', en: text?.en ?? '' };
 }
 
+type RecipientOption = { id: number; label: string };
+
+function RecipientsField({
+	icon,
+	label,
+	options,
+	selected,
+	onToggle,
+	emptyLabel,
+}: {
+	icon: React.ReactNode;
+	label: string;
+	options: RecipientOption[];
+	selected: number[];
+	onToggle: (id: number) => void;
+	emptyLabel: string;
+}) {
+	return (
+		<div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+			<div className="flex items-center justify-between gap-2 border-b border-zinc-100 bg-zinc-50/60 px-5 py-3">
+				<div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-zinc-700">
+					{icon}
+					{label}
+				</div>
+				{selected.length > 0 && (
+					<span className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-red-100 px-2 text-xs font-bold text-red-700">
+						{selected.length}
+					</span>
+				)}
+			</div>
+			<div className="space-y-1 p-4">
+				{options.length === 0 ? (
+					<p className="px-1 py-2 text-sm italic text-zinc-500">{emptyLabel}</p>
+				) : (
+					options.map((opt) => {
+						const checked = selected.includes(opt.id);
+						return (
+							<label
+								key={opt.id}
+								className={`flex min-h-[44px] cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-base transition-colors ${
+									checked ? 'bg-red-50 text-red-900' : 'hover:bg-zinc-50'
+								}`}>
+								<input
+									type="checkbox"
+									className="h-5 w-5 cursor-pointer rounded border-zinc-300 accent-red-600"
+									checked={checked}
+									onChange={() => onToggle(opt.id)}
+								/>
+								<span>{opt.label}</span>
+							</label>
+						);
+					})
+				)}
+			</div>
+		</div>
+	);
+}
+
 export function ConfigEditor({
 	periodId,
 	triggerTypeId,
@@ -70,7 +134,7 @@ export function ConfigEditor({
 	const [saving, setSaving] = useState(false);
 	const [confirmDelete, setConfirmDelete] = useState(false);
 
-	const chartLevelOptions = useMemo(
+	const chartLevelOptions = useMemo<RecipientOption[]>(
 		() =>
 			chartLevels.map((c) => ({
 				id: Number(c.id),
@@ -124,118 +188,114 @@ export function ConfigEditor({
 	}
 
 	return (
-		<div className="space-y-5">
-			<div className="grid gap-4 md:grid-cols-2">
-				{LANGS.map((l) => (
-					<Input
-						key={`title-${l}`}
-						label={`${t('admin.notify.field.title')} (${l.toUpperCase()})`}
-						value={title[l] ?? ''}
-						onChange={(e) => setTitle({ ...title, [l]: e.target.value })}
-					/>
-				))}
-			</div>
+		<div className="space-y-8">
+			<section className="space-y-4">
+				<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
+					{t('admin.notify.field.title')}
+				</h3>
+				<div className="grid gap-4 md:grid-cols-2">
+					{LANGS.map((l) => (
+						<Input
+							key={`title-${l}`}
+							label={`${t('admin.notify.field.title')} (${l.toUpperCase()})`}
+							value={title[l] ?? ''}
+							onChange={(e) => setTitle({ ...title, [l]: e.target.value })}
+						/>
+					))}
+				</div>
+			</section>
 
-			<VariableLegend notifyVars={notifyVars} currentStatusCode={statusCode} />
-
-			<div className="grid gap-4 md:grid-cols-2">
-				{LANGS.map((l) => (
-					<TextArea
-						key={`body-${l}`}
-						label={`${t('admin.notify.field.body')} (${l.toUpperCase()})`}
-						rows={8}
-						value={body[l] ?? ''}
-						onChange={(e) => setBody({ ...body, [l]: e.target.value })}
-					/>
-				))}
-			</div>
-
-			<div className="grid gap-4 md:grid-cols-2">
-				<fieldset className="rounded border border-zinc-200 p-3">
-					<legend className="px-1 text-xs font-medium text-zinc-700">
-						{t('admin.notify.field.to')}
-					</legend>
-					<div className="space-y-2">
-						{chartLevelOptions.map((opt) => (
-							<label key={`to-${opt.id}`} className="flex items-center gap-2 text-sm">
-								<input
-									type="checkbox"
-									className="accent-red-600"
-									checked={toIds.includes(opt.id)}
-									onChange={() => setToIds((prev) => toggleIdInList(prev, opt.id))}
-								/>
-								<span>{opt.label}</span>
-							</label>
+			<section className="space-y-4">
+				<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
+					{t('admin.notify.field.body')}
+				</h3>
+				<div className="grid gap-5 lg:grid-cols-[1fr_320px]">
+					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+						{LANGS.map((l) => (
+							<TextArea
+								key={`body-${l}`}
+								label={`${t('admin.notify.field.body')} (${l.toUpperCase()})`}
+								rows={10}
+								value={body[l] ?? ''}
+								onChange={(e) => setBody({ ...body, [l]: e.target.value })}
+							/>
 						))}
-						{chartLevelOptions.length === 0 && (
-							<p className="text-xs text-zinc-500">{t('admin.notify.field.noLevels')}</p>
-						)}
 					</div>
-				</fieldset>
+					<VariableLegend notifyVars={notifyVars} currentStatusCode={statusCode} />
+				</div>
+			</section>
 
-				<fieldset className="rounded border border-zinc-200 p-3">
-					<legend className="px-1 text-xs font-medium text-zinc-700">
-						{t('admin.notify.field.cc')}
-					</legend>
-					<div className="space-y-2">
-						{chartLevelOptions.map((opt) => (
-							<label key={`cc-${opt.id}`} className="flex items-center gap-2 text-sm">
-								<input
-									type="checkbox"
-									className="accent-red-600"
-									checked={ccIds.includes(opt.id)}
-									onChange={() => setCcIds((prev) => toggleIdInList(prev, opt.id))}
-								/>
-								<span>{opt.label}</span>
-							</label>
-						))}
-						{chartLevelOptions.length === 0 && (
-							<p className="text-xs text-zinc-500">{t('admin.notify.field.noLevels')}</p>
-						)}
-					</div>
-				</fieldset>
-			</div>
+			<section className="space-y-4">
+				<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
+					{t('admin.notify.field.to')} / {t('admin.notify.field.cc')}
+				</h3>
+				<div className="grid gap-5 md:grid-cols-2">
+					<RecipientsField
+						icon={<UsersIcon className="h-5 w-5 text-red-700" />}
+						label={t('admin.notify.field.to')}
+						options={chartLevelOptions}
+						selected={toIds}
+						onToggle={(id) => setToIds((prev) => toggleIdInList(prev, id))}
+						emptyLabel={t('admin.notify.field.noLevels')}
+					/>
+					<RecipientsField
+						icon={<UserGroupIcon className="h-5 w-5 text-red-700" />}
+						label={t('admin.notify.field.cc')}
+						options={chartLevelOptions}
+						selected={ccIds}
+						onToggle={(id) => setCcIds((prev) => toggleIdInList(prev, id))}
+						emptyLabel={t('admin.notify.field.noLevels')}
+					/>
+				</div>
+			</section>
 
-			<div className="flex items-center gap-3">
-				<Toggle checked={isActive} onChange={setIsActive} />
-				<span className="text-sm text-zinc-700">{t('admin.notify.field.isActive')}</span>
-			</div>
+			<section className="flex flex-col gap-4 rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex items-center gap-3">
+					<Toggle checked={isActive} onChange={setIsActive} />
+					<span className="text-base font-medium text-zinc-900">
+						{t('admin.notify.field.isActive')}
+					</span>
+				</div>
 
-			<div className="flex flex-wrap items-center gap-3">
-				<Button variant="primary" size="md" disabled={saving} onClick={handleSave}>
-					{saving ? t('loading.default') : t('admin.notify.btn.save')}
-				</Button>
-				{existingConfig && !confirmDelete && (
-					<Button
-						variant="secondary"
-						size="md"
-						disabled={saving}
-						onClick={() => setConfirmDelete(true)}>
-						{t('admin.notify.btn.delete')}
-					</Button>
-				)}
-				{existingConfig && confirmDelete && (
-					<>
-						<span className="text-sm text-red-700">
-							{t('admin.notify.confirm.delete')}
-						</span>
-						<Button
-							variant="primary"
-							size="sm"
-							disabled={saving}
-							onClick={handleDelete}>
-							{t('admin.notify.btn.confirmDelete')}
-						</Button>
+				<div className="flex flex-wrap items-center gap-3">
+					{existingConfig && !confirmDelete && (
 						<Button
 							variant="ghost"
-							size="sm"
+							size="lg"
 							disabled={saving}
-							onClick={() => setConfirmDelete(false)}>
-							{t('dialog.actions.cancel')}
+							onClick={() => setConfirmDelete(true)}
+							className="text-red-700 hover:bg-red-50">
+							<TrashIcon className="h-5 w-5" />
+							{t('admin.notify.btn.delete')}
 						</Button>
-					</>
-				)}
-			</div>
+					)}
+					{existingConfig && confirmDelete && (
+						<div className="flex flex-wrap items-center gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-3">
+							<ExclamationTriangleIcon className="h-5 w-5 text-red-700" />
+							<span className="text-sm font-medium text-red-800">
+								{t('admin.notify.confirm.delete')}
+							</span>
+							<Button
+								variant="ghost"
+								size="md"
+								disabled={saving}
+								onClick={() => setConfirmDelete(false)}>
+								{t('dialog.actions.cancel')}
+							</Button>
+							<Button
+								variant="primary"
+								size="md"
+								disabled={saving}
+								onClick={handleDelete}>
+								{t('admin.notify.btn.confirmDelete')}
+							</Button>
+						</div>
+					)}
+					<Button variant="primary" size="lg" disabled={saving} onClick={handleSave}>
+						{saving ? t('loading.default') : t('admin.notify.btn.save')}
+					</Button>
+				</div>
+			</section>
 		</div>
 	);
 }

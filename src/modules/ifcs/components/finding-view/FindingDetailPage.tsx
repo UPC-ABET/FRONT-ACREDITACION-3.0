@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { Button, Card, ErrorDialog, LoadingDialog, SuccessDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useFindingDetail } from '../../hooks/useFindingDetail';
@@ -92,13 +93,21 @@ export default function FindingDetailPage() {
 	}
 
 	return (
-		<div className="space-y-8">
-			<div className="flex items-center justify-between">
-				<h1 className="text-xl font-semibold text-zinc-800">{L.page_title[lang]}</h1>
+		<div className="w-full space-y-8">
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<div className="space-y-1.5">
+					<p className="text-sm font-semibold uppercase tracking-wider text-red-700">
+						{L.page_title[lang]}
+					</p>
+					<h1 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
+						{data.finding.finding_code}
+					</h1>
+				</div>
 				<Button
 					variant="ghost"
-					size="md"
+					size="lg"
 					onClick={() => router.push('/ifc-findings')}>
+					<ArrowLeftIcon className="h-5 w-5" />
 					{L.btn_back[lang]}
 				</Button>
 			</div>

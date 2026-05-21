@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowDownTrayIcon, BellAlertIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, BellAlertIcon, EyeIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable, ErrorDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
@@ -26,6 +26,9 @@ type Props = {
 };
 
 const UNREG_LABEL: Record<string, string> = { en: 'Unregistered', es: 'Sin Registro' };
+
+const ICON_BTN =
+	'inline-flex h-10 w-10 items-center justify-center rounded-md text-red-700 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50';
 
 export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNotify }: Props) {
 	const { t, locale: lang } = useI18n();
@@ -58,7 +61,13 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 					const label = row.original.ifc
 						? (row.original.ifc.status_label[lang] ?? row.original.ifc.status_label.es ?? code)
 						: (UNREG_LABEL[lang] ?? UNREG_LABEL.es);
-					return <StatusBadge status={code} label={label} />;
+					return (
+						<StatusBadge
+							status={code}
+							label={label}
+							color={row.original.ifc?.status_color}
+						/>
+					);
 				},
 			},
 			{
@@ -81,20 +90,23 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 						const ifcId = Number(r.ifc.id);
 						const isApproved = r.ifc.status_code === TYPE_CODES.IFC_STATUS.APPROVED;
 						return (
-							<div className="flex items-center gap-2">
+							<div className="flex items-center gap-1">
 								<Link
 									href={`/ifcs/${r.ifc.id}`}
-									className="text-red-700 underline hover:text-red-500">
-									{t('ifcs.table.actionView')}
+									className={ICON_BTN}
+									aria-label={t('ifcs.table.actionView')}
+									title={t('ifcs.table.actionView')}>
+									<EyeIcon className="h-5 w-5" />
 								</Link>
 								{isApproved && (
 									<button
 										type="button"
 										disabled={downloadingId === ifcId}
 										onClick={() => downloadOne(ifcId)}
+										aria-label={t('ifcs.pdf.downloadPdf')}
 										title={t('ifcs.pdf.downloadPdf')}
-										className="text-red-700 hover:text-red-500 disabled:opacity-50">
-										<ArrowDownTrayIcon className="h-4 w-4" />
+										className={ICON_BTN}>
+										<ArrowDownTrayIcon className="h-5 w-5" />
 									</button>
 								)}
 								{canNotify && periodId !== null && (
@@ -102,9 +114,10 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 										type="button"
 										disabled={notifyingChartId === Number(r.chart_id)}
 										onClick={() => onNotify(Number(r.chart_id))}
+										aria-label={t('ifcs.notify.btn.tooltip')}
 										title={t('ifcs.notify.btn.tooltip')}
-										className="text-red-700 hover:text-red-500 disabled:opacity-50">
-										<BellAlertIcon className="h-4 w-4" />
+										className={ICON_BTN}>
+										<BellAlertIcon className="h-5 w-5" />
 									</button>
 								)}
 							</div>
@@ -112,20 +125,23 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 					}
 					if (periodId !== null) {
 						return (
-							<div className="flex items-center gap-2">
+							<div className="flex items-center gap-1">
 								<Link
 									href={`/ifcs/new?chart_id=${r.chart_id}&period_id=${periodId}`}
-									className="text-red-700 underline hover:text-red-500">
-									{t('ifcs.table.actionRegister')}
+									className={ICON_BTN}
+									aria-label={t('ifcs.table.actionRegister')}
+									title={t('ifcs.table.actionRegister')}>
+									<PencilSquareIcon className="h-5 w-5" />
 								</Link>
 								{canNotify && (
 									<button
 										type="button"
 										disabled={notifyingChartId === Number(r.chart_id)}
 										onClick={() => onNotify(Number(r.chart_id))}
+										aria-label={t('ifcs.notify.btn.tooltip')}
 										title={t('ifcs.notify.btn.tooltip')}
-										className="text-red-700 hover:text-red-500 disabled:opacity-50">
-										<BellAlertIcon className="h-4 w-4" />
+										className={ICON_BTN}>
+										<BellAlertIcon className="h-5 w-5" />
 									</button>
 								)}
 							</div>

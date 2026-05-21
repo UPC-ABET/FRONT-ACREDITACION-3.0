@@ -126,7 +126,7 @@ export default function IFCViewPage() {
 	}
 
 	return (
-		<div className="space-y-8">
+		<div className="w-full space-y-8">
 			<IFCHeaderCard
 				ifc={ifc}
 				showObservation={flags.showObservation}
@@ -134,23 +134,27 @@ export default function IFCViewPage() {
 				onObservationChange={setObservationText}
 			/>
 
-			<IFCResultadoLogros outcomeResult={data.outcome_course_result} />
-			<IFCResultadoAlcanzado learningOutcome={ifc.course_learning_outcome} />
+			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+				<IFCResultadoLogros outcomeResult={data.outcome_course_result} />
+				<IFCResultadoAlcanzado learningOutcome={ifc.course_learning_outcome} />
+			</div>
 
 			<IFCInformationBlock information={ifc.information} />
 
 			<IFCFindingsTable findings={data.findings} />
 			<IFCActionsTable findings={data.findings} />
 
-			<IFCActionButtons
-				flags={flags}
-				disabled={submitting}
-				onSubmit={handleSubmit}
-				onApprove={handleApprove}
-				onReject={handleReject}
-				onEdit={handleEdit}
-				onBack={handleBack}
-			/>
+			<div className="sticky bottom-0 z-10 -mx-4 border-t border-zinc-200 bg-white/95 px-4 py-4 backdrop-blur sm:relative sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+				<IFCActionButtons
+					flags={flags}
+					disabled={submitting}
+					onSubmit={handleSubmit}
+					onApprove={handleApprove}
+					onReject={handleReject}
+					onEdit={handleEdit}
+					onBack={handleBack}
+				/>
+			</div>
 
 			<SubmitConfirmModal
 				isOpen={submitModalOpen}

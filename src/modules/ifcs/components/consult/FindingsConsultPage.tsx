@@ -2,6 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {
+	ExclamationTriangleIcon,
+	InboxIcon,
+	MagnifyingGlassIcon,
+} from '@heroicons/react/24/outline';
 import { Button, Card, ErrorDialog, LoadingDialog, SuccessDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { TYPE_CODES } from '../../constants';
@@ -109,41 +114,55 @@ export function FindingsConsultPage() {
 	return (
 		<Card title={t('ifcFindings.page.title')}>
 			<div className="space-y-6">
-				<AcademicPeriodSelect value={periodId} onChange={handlePeriod} />
+				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6">
+					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						<AcademicPeriodSelect value={periodId} onChange={handlePeriod} />
+						{!chartIncomplete && scope && scope.levels.length > 0 && (
+							<ScopeDropdowns
+								scope={scope}
+								selections={selections}
+								onSelect={handleSelect}
+							/>
+						)}
+					</div>
+
+					{!chartIncomplete && (
+						<div className="mt-6 flex justify-end border-t border-zinc-200 pt-5">
+							<Button
+								variant="primary"
+								size="lg"
+								disabled={!canSearch}
+								title={canSearch ? undefined : t('ifcs.page.searchDisabled')}
+								onClick={handleSearch}>
+								<MagnifyingGlassIcon className="h-5 w-5" />
+								{t('ifcs.page.searchBtn')}
+							</Button>
+						</div>
+					)}
+				</div>
 
 				{chartIncomplete && (
-					<p className="text-sm text-red-600">{CONSULT_LABELS.chart_incomplete[lang]}</p>
-				)}
-
-				{!chartIncomplete && scope && scope.levels.length > 0 && (
-					<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
-				)}
-
-				{!chartIncomplete && (
-					<div className="flex justify-end">
-						<Button
-							variant="primary"
-							size="md"
-							disabled={!canSearch}
-							title={canSearch ? undefined : t('ifcs.page.searchDisabled')}
-							onClick={handleSearch}>
-							{t('ifcs.page.searchBtn')}
-						</Button>
+					<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
+						<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
+						<p>{CONSULT_LABELS.chart_incomplete[lang]}</p>
 					</div>
 				)}
 
 				{!chartIncomplete && hasSearched && rows.length === 0 && !submitting && (
-					<p className="text-sm text-zinc-500 italic text-center py-6">
-						{CONSULT_LABELS.empty[lang]}
-					</p>
+					<div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-white py-14 text-zinc-500">
+						<InboxIcon className="h-10 w-10 text-zinc-400" />
+						<p className="text-base italic">{CONSULT_LABELS.empty[lang]}</p>
+					</div>
 				)}
 
 				{!chartIncomplete && rows.length > 0 && (
-					<FindingsTable
-						rows={rows}
-						onView={(findingId) => router.push(`/ifc-findings/${findingId}`)}
-						onDelete={(row) => setDeleteTarget(row)}
-					/>
+					<div className="overflow-x-auto">
+						<FindingsTable
+							rows={rows}
+							onView={(findingId) => router.push(`/ifc-findings/${findingId}`)}
+							onDelete={(row) => setDeleteTarget(row)}
+						/>
+					</div>
 				)}
 			</div>
 

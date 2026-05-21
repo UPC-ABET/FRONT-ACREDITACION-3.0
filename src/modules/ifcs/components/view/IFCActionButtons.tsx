@@ -63,29 +63,29 @@ export function IFCActionButtons({
 	const { locale: lang } = useI18n();
 
 	return (
-		<div className="flex flex-wrap items-center justify-end gap-2 pt-2">
+		<div className="flex flex-wrap items-center justify-end gap-3 pt-2">
 			{flags.showBack && (
-				<Button variant="secondary" size="md" onClick={onBack} disabled={disabled}>
+				<Button variant="secondary" size="lg" onClick={onBack} disabled={disabled}>
 					{VIEW_LABELS.btn_back[lang]}
 				</Button>
 			)}
 			{flags.showEdit && (
-				<Button variant="surface" size="md" onClick={onEdit} disabled={disabled}>
+				<Button variant="surface" size="lg" onClick={onEdit} disabled={disabled}>
 					{VIEW_LABELS.btn_edit[lang]}
 				</Button>
 			)}
 			{flags.showReject && (
-				<Button variant="warning" size="md" onClick={onReject} disabled={disabled}>
+				<Button variant="warning" size="lg" onClick={onReject} disabled={disabled}>
 					{VIEW_LABELS.btn_reject[lang]}
 				</Button>
 			)}
 			{flags.showApprove && (
-				<Button variant="primary" size="md" onClick={onApprove} disabled={disabled}>
+				<Button variant="primary" size="lg" onClick={onApprove} disabled={disabled}>
 					{VIEW_LABELS.btn_approve[lang]}
 				</Button>
 			)}
 			{flags.showSubmit && (
-				<Button variant="primary" size="md" onClick={onSubmit} disabled={disabled}>
+				<Button variant="primary" size="lg" onClick={onSubmit} disabled={disabled}>
 					{VIEW_LABELS.btn_submit[lang]}
 				</Button>
 			)}

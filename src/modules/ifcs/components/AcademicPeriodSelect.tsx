@@ -38,18 +38,16 @@ export function AcademicPeriodSelect({ value, onChange }: Props) {
 	const selected = useMemo(() => options.find((o) => o.value === value) ?? null, [options, value]);
 
 	return (
-		<div className="max-w-xs">
-			<Select
-				label={t('ifcs.page.period')}
-				isDisabled={loading}
-				placeholder={loading ? t('loading.default') : undefined}
-				value={selected}
-				onChange={(_, opt) => {
-					const next = (opt as { value?: number | string } | null)?.value;
-					if (next != null) onChange(Number(next));
-				}}
-				options={options}
-			/>
-		</div>
+		<Select
+			label={t('ifcs.page.period')}
+			isDisabled={loading}
+			placeholder={loading ? t('loading.default') : undefined}
+			value={selected}
+			onChange={(_, opt) => {
+				const next = (opt as { value?: number | string } | null)?.value;
+				if (next != null) onChange(Number(next));
+			}}
+			options={options}
+		/>
 	);
 }

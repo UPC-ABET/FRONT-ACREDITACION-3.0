@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { LEVEL_LABELS } from '../constants';
@@ -50,11 +50,11 @@ export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 	}, [scope, selections, firstLevelNum, lang, allLabel]);
 
 	return (
-		<div className="flex flex-wrap gap-3">
+		<>
 			{renderedLevels.map(({ level, dropdownOptions, selectedOpt, disabled, empty }) => {
 				if (empty) return null;
 				return (
-					<div key={level.level_num} className="min-w-[200px]">
+					<Fragment key={level.level_num}>
 						<Select
 							label={LEVEL_LABELS[level.type_code]?.[lang] ?? level.type_code}
 							isDisabled={disabled}
@@ -65,9 +65,9 @@ export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 							}}
 							options={dropdownOptions}
 						/>
-					</div>
+					</Fragment>
 				);
 			})}
-		</div>
+		</>
 	);
 }
