@@ -9,11 +9,16 @@ import { verificationOutcomes } from '../../utils/capstone-utils'
 
 function commissionTabStatus(commission: CommissionTab, locale: 'en' | 'es'): 'complete' | 'partial' | 'empty' {
   const outcomes = verificationOutcomes(commission)
-  const questionFilled = (q: CommissionTab['outcomes'][number]['questions'][number]) =>
-    q.questionText[locale].trim().length > 0
-  const outcomeComplete = (o: CommissionTab['outcomes'][number]) =>
-    o.questions.length > 0 && o.questions.every(questionFilled)
-  const hasAny = outcomes.some((o) => o.questions.some(questionFilled))
+  const criteriaFilled = (c: CommissionTab['outcomes'][number]['questions'][number]['criteria'][number]) =>
+    c.description[locale].trim().length > 0
+  const outcomeComplete = (o: CommissionTab['outcomes'][number]) => {
+    const q = o.questions[0]
+    return q !== undefined && q.criteria.length > 0 && q.criteria.every(criteriaFilled)
+  }
+  const hasAny = outcomes.some((o) => {
+    const q = o.questions[0]
+    return q !== undefined && q.criteria.some(criteriaFilled)
+  })
   const allComplete = outcomes.length > 0 && outcomes.every(outcomeComplete)
   if (allComplete) return 'complete'
   if (hasAny) return 'partial'

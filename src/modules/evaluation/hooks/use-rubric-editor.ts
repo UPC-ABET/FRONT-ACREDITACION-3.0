@@ -94,32 +94,35 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
           const outcome = outcomesById.get(outcomeId)
           if (!outcome) return null
 
-          const questions = allApiQuestions
-            .filter((q: any) => {
-              const qOutcomeId = q.outcomeId ?? q.outcome_id
-              return Number(qOutcomeId) === Number(outcomeId)
-            })
-            .map((q: any) => {
-              const qText = typeof q.text === 'string' ? { en: q.text, es: q.text } : (q.text ?? { en: '', es: '' })
-              return {
-                id: String(q.id),
-                questionText: qText,
-                criteria: (q.criterias ?? []).map((c: any) => {
-                  const cText = typeof c.text === 'string' ? { en: c.text, es: c.text } : (c.text ?? { en: '', es: '' })
-                  return {
-                    id: String(c.id),
-                    description: cText,
-                    minValue: Number(c.min_value),
-                    maxValue: Number(c.max_value),
-                  }
-                }),
-              }
-            })
-
+          // Outcome description — always used as the question text
           const descRaw = outcome.description
           const outcomeDescription = typeof descRaw === 'string'
             ? { en: descRaw, es: descRaw }
             : (descRaw ?? { en: '', es: '' })
+
+          // Each outcome maps to exactly ONE question whose text = outcome description.
+          // The user-managed items are the criterias of that question.
+          const outcomeApiQuestions = allApiQuestions.filter((q: any) => {
+            const qOutcomeId = q.outcomeId ?? q.outcome_id
+            return Number(qOutcomeId) === Number(outcomeId)
+          })
+          const firstApiQuestion = outcomeApiQuestions[0]
+
+          const criteria = (firstApiQuestion?.criterias ?? []).map((c: any) => {
+            const cText = typeof c.text === 'string' ? { en: c.text, es: c.text } : (c.text ?? { en: '', es: '' })
+            return {
+              id: String(c.id),
+              description: cText,
+              minValue: 0,
+              maxValue: 0,
+            }
+          })
+
+          const questions = [{
+            id: firstApiQuestion ? String(firstApiQuestion.id) : `temp-${outcomeId}`,
+            questionText: outcomeDescription,   // always mirrors outcome description
+            criteria,
+          }]
 
           return {
             id: String(outcome.id),
@@ -143,7 +146,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
           accreditorCode: '',
           isComplete:
             verification.length > 0 &&
-            verification.every((o: any) => o.questions.length > 0),
+            verification.every((o: any) => (o.questions[0]?.criteria?.length ?? 0) > 0),
           outcomes,
         }
       })

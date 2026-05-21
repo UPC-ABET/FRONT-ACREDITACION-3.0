@@ -6,18 +6,18 @@ import { Button } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
 import { CommissionTabs } from './CommissionTabs'
 import { CommissionValidator } from './CommissionValidator'
+import { CriteriaInlineRow } from './CriteriaInlineRow'
 import { OutcomeCard } from './OutcomeCard'
-import { QuestionInlineRow } from './QuestionInlineRow'
 import { verificationOutcomes } from '../../utils/capstone-utils'
 import { PerformanceLevelsSummary } from './PerformanceLevelsSummary'
 import { rubricsService } from '../../services'
-import { OutcomeQuestion, RubricDetail } from '../../types'
+import { CriteriaItem, RubricDetail } from '../../types'
 
-function updateOutcomeQuestions(
+function updateOutcomeCriteria(
   rubric: RubricDetail,
   commissionId: string,
   outcomeId: string,
-  updater: (questions: OutcomeQuestion[]) => OutcomeQuestion[]
+  updater: (criteria: CriteriaItem[]) => CriteriaItem[]
 ): RubricDetail {
   return {
     ...rubric,
@@ -25,12 +25,14 @@ function updateOutcomeQuestions(
       if (commission.id !== commissionId) return commission
       const outcomes = commission.outcomes.map((outcome) => {
         if (outcome.id !== outcomeId) return outcome
-        return { ...outcome, questions: updater(outcome.questions) }
+        const q = outcome.questions[0]
+        if (!q) return outcome
+        return { ...outcome, questions: [{ ...q, criteria: updater(q.criteria) }] }
       })
       const verification = outcomes.filter((o) => o.outcomeType === 'verificacion')
       const isComplete =
         verification.length > 0 &&
-        verification.every((o) => o.questions.length > 0)
+        verification.every((o) => (o.questions[0]?.criteria.length ?? 0) > 0)
       return { ...commission, outcomes, isComplete }
     }),
   }
@@ -63,23 +65,27 @@ export function RubricEditorCapstone({ rubric, rubricId, canEdit, queryKey, onNo
   /**
    * Locale-aware save validation.
    * A commission is "complete" when every verification outcome has at least
-   * one question whose text in the CURRENT locale is non-empty.
-   * A commission is "partial" when it has some questions filled but not all outcomes.
+   * one criteria whose text in the CURRENT locale is non-empty.
    * Save is allowed when at least one commission is complete and none are partial.
    */
   const saveAllowed = useMemo(() => {
-    const questionFilled = (q: OutcomeQuestion) => q.questionText[locale].trim().length > 0
+    const criteriaFilled = (c: CriteriaItem) => c.description[locale].trim().length > 0
+
+    const outcomeComplete = (outcome: (typeof draftRubric.commissions)[number]['outcomes'][number]) => {
+      const q = outcome.questions[0]
+      return q !== undefined && q.criteria.length > 0 && q.criteria.every(criteriaFilled)
+    }
 
     const isComplete = (commission: (typeof draftRubric.commissions)[number]) => {
       const outcomes = verificationOutcomes(commission)
-      return (
-        outcomes.length > 0 &&
-        outcomes.every((o) => o.questions.length > 0 && o.questions.every(questionFilled))
-      )
+      return outcomes.length > 0 && outcomes.every(outcomeComplete)
     }
 
     const hasAnyFilled = (commission: (typeof draftRubric.commissions)[number]) =>
-      verificationOutcomes(commission).some((o) => o.questions.some(questionFilled))
+      verificationOutcomes(commission).some((o) => {
+        const q = o.questions[0]
+        return q !== undefined && q.criteria.some(criteriaFilled)
+      })
 
     const isPartial = (commission: (typeof draftRubric.commissions)[number]) =>
       hasAnyFilled(commission) && !isComplete(commission)
@@ -101,52 +107,59 @@ export function RubricEditorCapstone({ rubric, rubricId, canEdit, queryKey, onNo
     setIsSaving(true)
     try {
       const questions = draftRubric.commissions.flatMap((commission) =>
-        verificationOutcomes(commission).flatMap((outcome) =>
-          outcome.questions.map((q) => {
-            const qId = q.id && !q.id.startsWith('temp-') ? Number(q.id) : undefined
-            return {
-              ...(qId !== undefined && { id: qId }),
-              outcome_id: Number(outcome.id),
-              question: { es: q.questionText.es, en: q.questionText.en },
-              criterias: [],
-            }
-          })
-        )
+        verificationOutcomes(commission).map((outcome) => {
+          const q = outcome.questions[0]
+          const qId = q && !q.id.startsWith('temp-') ? Number(q.id) : undefined
+          return {
+            ...(qId !== undefined && { id: qId }),
+            outcome_id: Number(outcome.id),
+            question: { es: outcome.outcomeDescription.es, en: outcome.outcomeDescription.en },
+            criterias: (q?.criteria ?? []).map((c) => {
+              const cId = !c.id.startsWith('temp-') ? Number(c.id) : undefined
+              return {
+                ...(cId !== undefined && { id: cId }),
+                criteria: { es: c.description.es, en: c.description.en },
+                min_value: 0,
+                max_value: 0,
+              }
+            }),
+          }
+        })
       )
       await rubricsService.update(rubricId, { questions })
       onNotify('success', messages.saveSuccess)
     } catch {
-      onNotify('error', t('rubrics.editor.error.saveError'))
+      onNotify('error', t('rubrics.editor.capstone.saveError'))
     } finally {
       setIsSaving(false)
     }
   }, [canEdit, saveAllowed, draftRubric.commissions, rubricId, onNotify, messages.saveSuccess, t])
 
-  // ── handlers ────────────────────────────────────────────────────────────────
+  // ── criteria handlers ────────────────────────────────────────────────────────
 
-  const handleAddQuestion = (commissionId: string, outcomeId: string) => {
+  const handleAddCriteria = (commissionId: string, outcomeId: string) => {
     mergeRubric((prev) =>
-      updateOutcomeQuestions(prev, commissionId, outcomeId, (questions) => [
-        ...questions,
-        { id: `temp-${Date.now()}`, questionText: { en: '', es: '' }, criteria: [] },
+      updateOutcomeCriteria(prev, commissionId, outcomeId, (criteria) => [
+        ...criteria,
+        { id: `temp-${Date.now()}`, description: { en: '', es: '' }, minValue: 0, maxValue: 0 },
       ])
     )
   }
 
-  const handlePatchQuestion = async (
+  const handlePatchCriteria = async (
     commissionId: string,
     outcomeId: string,
-    questionId: string,
-    newText: string
+    criteriaId: string,
+    text: string
   ) => {
-    setSavingKey(questionId)
+    setSavingKey(criteriaId)
     try {
       mergeRubric((prev) =>
-        updateOutcomeQuestions(prev, commissionId, outcomeId, (questions) =>
-          questions.map((q) =>
-            q.id === questionId
-              ? { ...q, questionText: { ...q.questionText, [locale]: newText } }
-              : q
+        updateOutcomeCriteria(prev, commissionId, outcomeId, (criteria) =>
+          criteria.map((c) =>
+            c.id === criteriaId
+              ? { ...c, description: { ...c.description, [locale]: text } }
+              : c
           )
         )
       )
@@ -155,23 +168,24 @@ export function RubricEditorCapstone({ rubric, rubricId, canEdit, queryKey, onNo
     }
   }
 
-  const handleCreateQuestion = async (
+  const handleCreateCriteria = async (
     commissionId: string,
     outcomeId: string,
-    newText: string
+    text: string
   ) => {
     setSavingKey(`${outcomeId}__create`)
     try {
       mergeRubric((prev) =>
-        updateOutcomeQuestions(prev, commissionId, outcomeId, (questions) => {
-          const tempIndex = questions.findIndex((q) => q.id.startsWith('temp-'))
-          const next: OutcomeQuestion = {
+        updateOutcomeCriteria(prev, commissionId, outcomeId, (criteria) => {
+          const tempIndex = criteria.findIndex((c) => c.id.startsWith('temp-'))
+          const next: CriteriaItem = {
             id: `temp-${Date.now()}`,
-            questionText: { en: newText, es: newText },
-            criteria: [],
+            description: { en: text, es: text },
+            minValue: 0,
+            maxValue: 0,
           }
-          if (tempIndex === -1) return [...questions, next]
-          const arr = [...questions]
+          if (tempIndex === -1) return [...criteria, next]
+          const arr = [...criteria]
           arr[tempIndex] = next
           return arr
         })
@@ -181,16 +195,16 @@ export function RubricEditorCapstone({ rubric, rubricId, canEdit, queryKey, onNo
     }
   }
 
-  const handleDeleteQuestion = async (
+  const handleDeleteCriteria = async (
     commissionId: string,
     outcomeId: string,
-    questionId: string
+    criteriaId: string
   ) => {
-    setSavingKey(questionId)
+    setSavingKey(criteriaId)
     try {
       mergeRubric((prev) =>
-        updateOutcomeQuestions(prev, commissionId, outcomeId, (questions) =>
-          questions.filter((q) => q.id !== questionId)
+        updateOutcomeCriteria(prev, commissionId, outcomeId, (criteria) =>
+          criteria.filter((c) => c.id !== criteriaId)
         )
       )
     } finally {
@@ -198,14 +212,14 @@ export function RubricEditorCapstone({ rubric, rubricId, canEdit, queryKey, onNo
     }
   }
 
-  const handleDeleteQuestionLocal = (
+  const handleDeleteCriteriaLocal = (
     commissionId: string,
     outcomeId: string,
-    questionId: string
+    criteriaId: string
   ) => {
     mergeRubric((prev) =>
-      updateOutcomeQuestions(prev, commissionId, outcomeId, (questions) =>
-        questions.filter((q) => q.id !== questionId)
+      updateOutcomeCriteria(prev, commissionId, outcomeId, (criteria) =>
+        criteria.filter((c) => c.id !== criteriaId)
       )
     )
   }
@@ -240,45 +254,46 @@ export function RubricEditorCapstone({ rubric, rubricId, canEdit, queryKey, onNo
               canEdit={canEdit}
               emptyMessage={t('rubrics.editor.capstone.validation.emptyOutcomeReadonly')}
               emptyMessageWithHint={t('rubrics.editor.capstone.validation.emptyOutcome')}
-              onAdd={canEdit ? () => handleAddQuestion(activeCommission.id, outcome.id) : undefined}
+              onAdd={canEdit ? () => handleAddCriteria(activeCommission.id, outcome.id) : undefined}
             >
-              {outcome.questions.map((question, index) => (
-                <QuestionInlineRow
-                  key={question.id}
-                  question={question}
+              {(outcome.questions[0]?.criteria ?? []).map((criterion, index) => (
+                <CriteriaInlineRow
+                  key={criterion.id}
+                  criterion={criterion}
                   index={index}
                   canEdit={canEdit}
                   isSaving={
-                    savingKey === question.id ||
-                    (question.id.startsWith('temp-') && savingKey === `${outcome.id}__create`)
+                    savingKey === criterion.id ||
+                    (criterion.id.startsWith('temp-') && savingKey === `${outcome.id}__create`)
                   }
                   savingLabel={t('rubrics.editor.criteria.saving')}
                   placeholder={t('rubrics.editor.capstone.criteria.criteriaPlaceholder')}
-                  labelPrefix={t('rubrics.editor.capstone.criteria.criteriaLabel')}
-                  onTextChange={(questionId, text) =>
+                  criteriaLabelPrefix={t('rubrics.editor.capstone.criteria.criteriaLabel')}
+                  onTextChange={(criteriaId, text) =>
                     mergeRubric((prev) =>
-                      updateOutcomeQuestions(prev, activeCommission.id, outcome.id, (questions) =>
-                        questions.map((q) =>
-                          q.id === questionId
-                            ? { ...q, questionText: { ...q.questionText, [locale]: text } }
-                            : q
+                      updateOutcomeCriteria(prev, activeCommission.id, outcome.id, (criteria) =>
+                        criteria.map((c) =>
+                          c.id === criteriaId
+                            ? { ...c, description: { ...c.description, [locale]: text } }
+                            : c
                         )
                       )
                     )
                   }
-                  onPatch={(questionId, text) =>
-                    handlePatchQuestion(activeCommission.id, outcome.id, questionId, text)
+                  onPatch={(criteriaId, text) =>
+                    handlePatchCriteria(activeCommission.id, outcome.id, criteriaId, text)
                   }
                   onCreate={(text) =>
-                    handleCreateQuestion(activeCommission.id, outcome.id, text)
+                    handleCreateCriteria(activeCommission.id, outcome.id, text)
                   }
-                  onDeletePersisted={(questionId) =>
-                    handleDeleteQuestion(activeCommission.id, outcome.id, questionId)
+                  onDeletePersisted={(criteriaId) =>
+                    handleDeleteCriteria(activeCommission.id, outcome.id, criteriaId)
                   }
-                  onDeleteLocal={(questionId) =>
-                    handleDeleteQuestionLocal(activeCommission.id, outcome.id, questionId)
+                  onDeleteLocal={(criteriaId) =>
+                    handleDeleteCriteriaLocal(activeCommission.id, outcome.id, criteriaId)
                   }
                   onNotifyRetry={() => onNotify('warning', messages.autosaveRetry)}
+                  onConfirmDelete={() => window.confirm(t('rubrics.editor.capstone.criteria.confirmDelete'))}
                 />
               ))}
             </OutcomeCard>

@@ -22,6 +22,7 @@ export interface CriteriaInlineRowProps {
   savingLabel: string
   placeholder: string
   criteriaLabelPrefix: string
+  onTextChange?: (criteriaId: string, text: string) => void
   onPatch: (criteriaId: string, description: string) => Promise<void>
   onCreate: (description: string) => Promise<void>
   onDeletePersisted: (criteriaId: string) => Promise<void>
@@ -47,6 +48,7 @@ export function CriteriaInlineRow({
   savingLabel,
   placeholder,
   criteriaLabelPrefix,
+  onTextChange,
   onPatch,
   onCreate,
   onDeletePersisted,
@@ -122,7 +124,10 @@ export function CriteriaInlineRow({
           value={text}
           disabled={!canEdit}
           placeholder={placeholder}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) => {
+              setText(e.target.value)
+              onTextChange?.(criterion.id, e.target.value)
+            }}
           onFocus={() => {
             focusedRef.current = true
           }}

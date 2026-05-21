@@ -2,7 +2,7 @@
 
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { verificationOutcomes } from '../../utils/capstone-utils'
-import { CommissionTab, OutcomeQuestion } from '../../types'
+import { CommissionTab, CriteriaItem } from '../../types'
 
 interface CommissionValidatorProps {
   commissions: CommissionTab[]
@@ -11,12 +11,14 @@ interface CommissionValidatorProps {
   labelIncomplete: string
 }
 
-function questionFilled(q: OutcomeQuestion, locale: 'en' | 'es'): boolean {
-  return q.questionText[locale].trim().length > 0
+function criteriaFilled(c: CriteriaItem, locale: 'en' | 'es'): boolean {
+  return c.description[locale].trim().length > 0
 }
 
 function outcomeComplete(outcome: CommissionTab['outcomes'][number], locale: 'en' | 'es'): boolean {
-  return outcome.questions.length > 0 && outcome.questions.every((q) => questionFilled(q, locale))
+  const q = outcome.questions[0]
+  if (!q || q.criteria.length === 0) return false
+  return q.criteria.every((c) => criteriaFilled(c, locale))
 }
 
 function commissionStats(commission: CommissionTab, locale: 'en' | 'es') {
@@ -24,7 +26,10 @@ function commissionStats(commission: CommissionTab, locale: 'en' | 'es') {
   const done = outcomes.filter((o) => outcomeComplete(o, locale)).length
   const total = outcomes.length
   const full = total > 0 && done === total
-  const partial = !full && outcomes.some((o) => o.questions.some((q) => questionFilled(q, locale)))
+  const partial = !full && outcomes.some((o) => {
+    const q = o.questions[0]
+    return q !== undefined && q.criteria.some((c) => criteriaFilled(c, locale))
+  })
   return { done, total, full, partial }
 }
 

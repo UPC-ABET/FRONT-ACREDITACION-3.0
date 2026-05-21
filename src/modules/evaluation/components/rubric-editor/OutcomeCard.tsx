@@ -20,7 +20,7 @@ export function OutcomeCard({ outcome, canEdit, emptyMessage, emptyMessageWithHi
   const { locale } = useI18n()
   const description = outcome.outcomeDescription[locale]
   const short = description.length > TRUNC ? `${description.slice(0, TRUNC)}…` : description
-  const hasContent = outcome.questions.length > 0
+  const hasContent = (outcome.questions[0]?.criteria.length ?? 0) > 0
 
   return (
     <section className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
