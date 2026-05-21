@@ -23,7 +23,7 @@ export function IFCInformationFields({ fields, languages, values, onChange }: Pr
 				const current = values[f.key] ?? {};
 				return (
 					<div key={f.key} className="space-y-2">
-						<label className="block text-sm font-semibold text-zinc-800">
+						<label className="block text-base font-semibold text-zinc-900">
 							{f.label[lang] ?? f.label.es ?? f.key}
 							{f.required && <span className="ml-1 text-red-600">*</span>}
 						</label>

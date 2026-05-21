@@ -25,6 +25,7 @@ export interface IFCRecord {
 	updated_at: string;
 	status_code: string;
 	status_label: I18nText;
+	status_color?: string;
 }
 
 export interface IFCRow {
@@ -54,6 +55,7 @@ export interface FindingRow {
 	course_id: number;
 	criticality_code: string;
 	criticality_name: I18nText;
+	criticality_color?: string;
 	criticality_order: number;
 	finding_code: string;
 	academic_period_code: string;
@@ -82,6 +84,7 @@ export interface IFCHeader {
 	status: {
 		code: string;
 		name: I18nText;
+		color?: string;
 		at: string;
 		comment: I18nText | null;
 		by: string | null;
@@ -126,7 +129,7 @@ export interface Finding {
 	description: I18nText;
 	correlative: number;
 	is_automatic: boolean;
-	criticality: { code: string; name: I18nText };
+	criticality: { code: string; name: I18nText; color?: string };
 	outcomes: FindingOutcome[];
 	actions: FindingAction[];
 }
@@ -237,7 +240,7 @@ export interface FindingDetail {
 	finding_code: string;
 	academic_period_code: string;
 	description: I18nText;
-	criticality: { code: string; name: I18nText };
+	criticality: { code: string; name: I18nText; color?: string };
 }
 
 export interface FindingActionRow {

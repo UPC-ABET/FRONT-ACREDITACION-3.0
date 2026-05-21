@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge, DataTable } from '@/shared/components';
+import { Badge, Card, DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { VIEW_LABELS } from './viewLabels';
 import { COMPLETENESS_VARIANT } from '../../constants';
@@ -28,7 +28,7 @@ export function IFCActionsTable({ findings }: Props) {
 				header: VIEW_LABELS.col_description[lang],
 				accessorFn: (row) => row.description?.[lang] ?? row.description?.es ?? '',
 				cell: ({ row }) => (
-					<span className="whitespace-pre-line">
+					<span className="whitespace-pre-line text-base leading-relaxed">
 						{row.original.description?.[lang] ?? row.original.description?.es ?? ''}
 					</span>
 				),
@@ -51,16 +51,15 @@ export function IFCActionsTable({ findings }: Props) {
 	);
 
 	return (
-		<section className="space-y-3">
-			<h2 className="text-base font-bold uppercase tracking-wide text-zinc-700">
-				{VIEW_LABELS.section_actions[lang]}
-			</h2>
-			<DataTable<ActionRow, unknown>
-				columns={columns}
-				data={data}
-				showSearch={false}
-				showPagination={false}
-			/>
-		</section>
+		<Card title={VIEW_LABELS.section_actions[lang]}>
+			<div className="overflow-x-auto">
+				<DataTable<ActionRow, unknown>
+					columns={columns}
+					data={data}
+					showSearch={false}
+					showPagination={false}
+				/>
+			</div>
+		</Card>
 	);
 }

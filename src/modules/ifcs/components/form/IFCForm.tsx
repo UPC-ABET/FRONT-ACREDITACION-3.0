@@ -133,32 +133,44 @@ export function IFCForm(props: Props) {
 	}
 
 	return (
-		<div className="space-y-8">
+		<div className="w-full space-y-8">
 			<Card>
-				<div className="space-y-2">
+				<div className="space-y-4">
 					<IFCPageTitle
 						area={props.prefill.area_label}
 						subarea={props.prefill.subarea_label}
 						course={props.prefill.course_name}
 						period={props.prefill.academic_period_code}
 					/>
-					<p className="text-sm text-zinc-700">
-						<strong>{FORM_LABELS.coordinator[lang]}:</strong>{' '}
-						{props.prefill.coordinator_name ?? '—'}
-						{props.prefill.coordinator_code && <> ({props.prefill.coordinator_code})</>}
-					</p>
+					<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-4">
+						<p className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+							{FORM_LABELS.coordinator[lang]}
+						</p>
+						<p className="mt-1.5 text-base text-zinc-900">
+							{props.prefill.coordinator_name ?? '—'}
+							{props.prefill.coordinator_code && (
+								<> ({props.prefill.coordinator_code})</>
+							)}
+						</p>
+					</div>
 				</div>
 			</Card>
 
-			<IFCResultadoLogros outcomeResult={props.prefill.outcome_course_result} />
-			<IFCResultadoAlcanzado learningOutcome={props.prefill.course_learning_outcome} />
+			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+				<IFCResultadoLogros outcomeResult={props.prefill.outcome_course_result} />
+				<IFCResultadoAlcanzado learningOutcome={props.prefill.course_learning_outcome} />
+			</div>
 
-			<IFCInformationFields
-				fields={props.ifcFields}
-				languages={props.languages}
-				values={state.information}
-				onChange={setInformation}
-			/>
+			{props.ifcFields.length > 0 && (
+				<Card>
+					<IFCInformationFields
+						fields={props.ifcFields}
+						languages={props.languages}
+						values={state.information}
+						onChange={setInformation}
+					/>
+				</Card>
+			)}
 
 			<IFCFindingsEditor
 				findings={state.findings}
@@ -178,14 +190,14 @@ export function IFCForm(props: Props) {
 				onDelete={deleteAction}
 			/>
 
-			<div className="flex flex-wrap justify-end gap-2">
-				<Button variant="ghost" size="md" onClick={() => router.back()}>
+			<div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap justify-end gap-3 border-t border-zinc-200 bg-white/95 px-4 py-4 backdrop-blur sm:relative sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+				<Button variant="ghost" size="lg" onClick={() => router.back()}>
 					{FORM_LABELS.btn_cancel[lang]}
 				</Button>
-				<Button variant="secondary" size="md" onClick={() => void onSave(false)}>
+				<Button variant="secondary" size="lg" onClick={() => void onSave(false)}>
 					{FORM_LABELS.btn_save[lang]}
 				</Button>
-				<Button variant="primary" size="md" onClick={() => setModalOpen(true)}>
+				<Button variant="primary" size="lg" onClick={() => setModalOpen(true)}>
 					{FORM_LABELS.btn_submit[lang]}
 				</Button>
 			</div>

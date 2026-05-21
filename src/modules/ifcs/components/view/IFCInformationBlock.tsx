@@ -19,18 +19,20 @@ export function IFCInformationBlock({ information }: Props) {
 
 	return (
 		<Card>
-			<section className="space-y-4">
-				{entries.map((e) => (
-					<div key={e.key}>
-						<h3 className="text-sm font-semibold text-zinc-800">
+			<dl className="space-y-6">
+				{entries.map((e, idx) => (
+					<div
+						key={e.key}
+						className={idx > 0 ? 'border-t border-zinc-100 pt-6' : undefined}>
+						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
 							{e.label?.[lang] ?? e.label?.es ?? e.key}
-						</h3>
-						<p className="text-sm text-zinc-600 whitespace-pre-line">
+						</dt>
+						<dd className="mt-2 whitespace-pre-line text-base leading-relaxed text-zinc-800">
 							{e.value?.[lang] ?? e.value?.es ?? ''}
-						</p>
+						</dd>
 					</div>
 				))}
-			</section>
+			</dl>
 		</Card>
 	);
 }

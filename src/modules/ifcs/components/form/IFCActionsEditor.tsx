@@ -1,8 +1,8 @@
 'use client';
 
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { Button, Card, Select, TextArea } from '@/shared/components';
+import { Button, Select, TextArea } from '@/shared/components';
 import type { FormAction, FormFinding } from '../../services/types';
 import { FORM_LABELS } from './formLabels';
 
@@ -33,74 +33,95 @@ export function IFCActionsEditor({
 			`${FORM_LABELS.finding_placeholder[lang]} ${idx + 1}`,
 	}));
 
-	return (
-		<section className="space-y-4">
-			<h2 className="text-base font-bold uppercase tracking-wide text-zinc-700">
-				{FORM_LABELS.section_actions[lang]}
-			</h2>
+	const noFindings = findings.length === 0;
 
-			{actions.map((a, idx) => {
-				const selectedFinding = findingOptions.find((o) => o.value === a.finding_temp_id);
-				return (
-					<Card key={a.tempId}>
-						<div className="space-y-4">
-							<div className="flex items-center justify-between">
-								<span className="text-xs font-semibold uppercase text-zinc-500">
-									{FORM_LABELS.action_placeholder[lang]} {idx + 1}
+	return (
+		<section className="space-y-5">
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<h2 className="text-lg font-bold uppercase tracking-wide text-zinc-900">
+					{FORM_LABELS.section_actions[lang]}
+				</h2>
+				<Button
+					variant="secondary"
+					size="lg"
+					disabled={noFindings}
+					onClick={onAdd}
+					title={noFindings ? FORM_LABELS.btn_add_finding[lang] : undefined}>
+					<PlusIcon className="h-5 w-5" />
+					{FORM_LABELS.btn_add_action[lang]}
+				</Button>
+			</div>
+
+			{actions.length === 0 && (
+				<div className="rounded-lg border border-dashed border-zinc-200 bg-white py-10 text-center text-base italic text-zinc-500">
+					{FORM_LABELS.section_actions[lang]} —{' '}
+					{FORM_LABELS.btn_add_action[lang].toLowerCase()}
+				</div>
+			)}
+
+			<div className="space-y-4">
+				{actions.map((a, idx) => {
+					const selectedFinding = findingOptions.find((o) => o.value === a.finding_temp_id);
+					return (
+						<div
+							key={a.tempId}
+							className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
+							<div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/60 px-5 py-3">
+								<span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-zinc-700">
+									<span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700">
+										{idx + 1}
+									</span>
+									{FORM_LABELS.action_placeholder[lang]}
 								</span>
 								<Button
 									variant="ghost"
-									size="sm"
+									size="md"
 									onClick={() => onDelete(a.tempId)}
-									aria-label={FORM_LABELS.btn_delete[lang]}>
-									<TrashIcon className="h-4 w-4" />
+									aria-label={FORM_LABELS.btn_delete[lang]}
+									title={FORM_LABELS.btn_delete[lang]}
+									className="text-zinc-500 hover:text-red-600">
+									<TrashIcon className="h-5 w-5" />
 								</Button>
 							</div>
 
-							<Select
-								label={FORM_LABELS.col_finding[lang]}
-								value={selectedFinding ?? null}
-								options={findingOptions}
-								onChange={(_, opt) => {
-									const v = (opt as { value?: string } | null)?.value ?? '';
-									onUpdate(a.tempId, { finding_temp_id: v });
-								}}
-							/>
+							<div className="space-y-5 p-5">
+								<Select
+									label={FORM_LABELS.col_finding[lang]}
+									value={selectedFinding ?? null}
+									options={findingOptions}
+									onChange={(_, opt) => {
+										const v = (opt as { value?: string } | null)?.value ?? '';
+										onUpdate(a.tempId, { finding_temp_id: v });
+									}}
+								/>
 
-							<div className="space-y-2">
-								<label className="block text-sm font-semibold text-zinc-800">
-									{FORM_LABELS.col_description[lang]}
-									<span className="ml-1 text-red-600">*</span>
-								</label>
-								<div className="space-y-3">
-									{languages.map((l) => (
-										<TextArea
-											key={l}
-											label={l.toUpperCase()}
-											value={a.description[l] ?? ''}
-											onChange={(e) =>
-												onUpdate(a.tempId, {
-													description: { ...a.description, [l]: e.target.value },
-												})
-											}
-										/>
-									))}
+								<div className="space-y-2">
+									<label className="block text-base font-semibold text-zinc-900">
+										{FORM_LABELS.col_description[lang]}
+										<span className="ml-1 text-red-600">*</span>
+									</label>
+									<div className="space-y-3">
+										{languages.map((l) => (
+											<TextArea
+												key={l}
+												label={l.toUpperCase()}
+												value={a.description[l] ?? ''}
+												onChange={(e) =>
+													onUpdate(a.tempId, {
+														description: {
+															...a.description,
+															[l]: e.target.value,
+														},
+													})
+												}
+											/>
+										))}
+									</div>
 								</div>
 							</div>
 						</div>
-					</Card>
-				);
-			})}
-
-			<div>
-				<Button
-					variant="secondary"
-					size="md"
-					disabled={findings.length === 0}
-					onClick={onAdd}
-					title={findings.length === 0 ? FORM_LABELS.btn_add_finding[lang] : undefined}>
-					{FORM_LABELS.btn_add_action[lang]}
-				</Button>
+					);
+				})}
 			</div>
 		</section>
 	);

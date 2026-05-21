@@ -1,10 +1,10 @@
 'use client';
 
 import { useMemo } from 'react';
+import { EyeIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge, Button, DataTable } from '@/shared/components';
+import { Badge, DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { CRITICALITY_VARIANT } from '../../constants';
 import type { FindingRow } from '../../services/types';
 
 type Props = {
@@ -12,6 +12,9 @@ type Props = {
 	onView: (findingId: number) => void;
 	onDelete: (row: FindingRow) => void;
 };
+
+const ICON_BTN =
+	'inline-flex h-10 w-10 items-center justify-center rounded-md text-red-700 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50';
 
 export function FindingsTable({ rows, onView, onDelete }: Props) {
 	const { t, locale: lang } = useI18n();
@@ -25,7 +28,7 @@ export function FindingsTable({ rows, onView, onDelete }: Props) {
 					const code = row.original.criticality_code;
 					const label =
 						row.original.criticality_name?.[lang] ?? row.original.criticality_name?.es ?? code;
-					return <Badge variant={CRITICALITY_VARIANT[code] ?? 'default'}>{label}</Badge>;
+					return <Badge color={row.original.criticality_color}>{label}</Badge>;
 				},
 			},
 			{
@@ -39,27 +42,33 @@ export function FindingsTable({ rows, onView, onDelete }: Props) {
 			{
 				accessorKey: 'description',
 				header: t('ifcFindings.col.description'),
-				cell: ({ row }) => row.original.description?.[lang] ?? row.original.description?.es ?? '',
+				cell: ({ row }) => (
+					<span className="whitespace-pre-line text-base leading-relaxed">
+						{row.original.description?.[lang] ?? row.original.description?.es ?? ''}
+					</span>
+				),
 			},
 			{
 				id: 'actions',
 				header: t('ifcFindings.col.actions'),
 				cell: ({ row }) => (
-					<div className="flex gap-2">
-						<Button
-							size="sm"
-							variant="ghost"
+					<div className="flex items-center gap-1">
+						<button
+							type="button"
 							onClick={() => onView(row.original.id)}
-							className="text-red-700 hover:text-red-500">
-							{t('ifcFindings.action.view')}
-						</Button>
-						<Button
-							size="sm"
-							variant="ghost"
+							aria-label={t('ifcFindings.action.view')}
+							title={t('ifcFindings.action.view')}
+							className={ICON_BTN}>
+							<EyeIcon className="h-5 w-5" />
+						</button>
+						<button
+							type="button"
 							onClick={() => onDelete(row.original)}
-							className="text-red-700 hover:text-red-500">
-							{t('ifcFindings.action.delete')}
-						</Button>
+							aria-label={t('ifcFindings.action.delete')}
+							title={t('ifcFindings.action.delete')}
+							className={ICON_BTN}>
+							<TrashIcon className="h-5 w-5" />
+						</button>
 					</div>
 				),
 			},

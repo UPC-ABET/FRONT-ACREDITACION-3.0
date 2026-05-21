@@ -1,6 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import {
+	ArrowDownTrayIcon,
+	BellAlertIcon,
+	DocumentChartBarIcon,
+	ExclamationTriangleIcon,
+	MagnifyingGlassIcon,
+} from '@heroicons/react/24/outline';
 import { Button, Card, ErrorDialog, Select, SuccessDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { ORG_LABELS, TYPE_CODES } from '../constants';
@@ -103,7 +110,6 @@ export function IFCDashboard() {
 			if (l.level_num > level_num) next[l.level_num] = null;
 		});
 		setSelections(runAutoSelect(scope, next, level_num + 1));
-		// No /list fetch here — Search button is the single trigger.
 	}
 
 	const lastLevel = scope?.levels.at(-1)?.level_num ?? null;
@@ -234,87 +240,115 @@ export function IFCDashboard() {
 		}
 	}
 
+	const hasResults = visibleRows.length > 0;
+	const hasSearched = lastSearchedChartIds !== null;
+
 	return (
 		<Card title={t('ifcs.page.title')}>
 			<div className="space-y-6">
-				<AcademicPeriodSelect value={periodId} onChange={handlePeriod} />
+				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6">
+					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						<AcademicPeriodSelect value={periodId} onChange={handlePeriod} />
+						{!chartIncomplete && scope && scope.levels.length > 0 && (
+							<ScopeDropdowns
+								scope={scope}
+								selections={selections}
+								onSelect={handleSelect}
+							/>
+						)}
+					</div>
+
+					{!chartIncomplete && (
+						<div className="mt-6 flex flex-col gap-4 border-t border-zinc-200 pt-5 lg:flex-row lg:items-end lg:justify-between">
+							<div className="w-full lg:w-72">
+								<Select
+									label={t('ifcs.table.statusFilter')}
+									value={selectedStatusOpt}
+									onChange={(_, opt) => {
+										const next = (opt as { value?: IFCStatusFilter } | null)?.value;
+										setStatusFilter((next ?? 'ALL') as IFCStatusFilter);
+									}}
+									options={statusOptions}
+								/>
+							</div>
+							<div className="flex flex-wrap items-center gap-2 lg:justify-end">
+								<Button
+									variant="primary"
+									size="lg"
+									disabled={!canSearch}
+									title={canSearch ? undefined : t('ifcs.page.searchDisabled')}
+									onClick={handleSearch}>
+									<MagnifyingGlassIcon className="h-5 w-5" />
+									{t('ifcs.page.searchBtn')}
+								</Button>
+								<Button
+									variant="secondary"
+									size="lg"
+									disabled={!canDownloadReport || downloadingReport}
+									title={
+										canDownloadReport
+											? undefined
+											: t('ifcs.statusReport.tooltipNoScope')
+									}
+									onClick={() =>
+										downloadReport(lastSearchedChartIds!, lastSearchedPeriodId!)
+									}>
+									<DocumentChartBarIcon className="h-5 w-5" />
+									{downloadingReport
+										? t('loading.default')
+										: t('ifcs.statusReport.btn')}
+								</Button>
+								{approvedIds.length > 1 && (
+									<Button
+										variant="secondary"
+										size="lg"
+										disabled={downloadingAll}
+										onClick={() => downloadMany(approvedIds)}>
+										<ArrowDownTrayIcon className="h-5 w-5" />
+										{downloadingAll
+											? t('loading.default')
+											: `${t('ifcs.pdf.downloadAll')} (${approvedIds.length})`}
+									</Button>
+								)}
+								{notifiableChartIds.length > 0 && periodId !== null && (
+									<Button
+										variant="secondary"
+										size="lg"
+										disabled={notifyingAll}
+										onClick={handleNotifyAll}>
+										<BellAlertIcon className="h-5 w-5" />
+										{notifyingAll
+											? t('loading.default')
+											: `${t('ifcs.notify.btn.notifyAll')} (${notifiableChartIds.length})`}
+									</Button>
+								)}
+							</div>
+						</div>
+					)}
+				</div>
 
 				{chartIncomplete && (
-					<p className="text-sm text-red-600">{ORG_LABELS.chart_incomplete[lang]}</p>
-				)}
-
-				{!chartIncomplete && scope && scope.levels.length > 0 && (
-					<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
-				)}
-
-				{!chartIncomplete && (
-					<div className="flex flex-wrap items-end gap-3">
-						<div className="min-w-[220px]">
-							<Select
-								label={t('ifcs.table.statusFilter')}
-								value={selectedStatusOpt}
-								onChange={(_, opt) => {
-									const next = (opt as { value?: IFCStatusFilter } | null)?.value;
-									setStatusFilter((next ?? 'ALL') as IFCStatusFilter);
-								}}
-								options={statusOptions}
-							/>
-						</div>
-						<Button
-							variant="primary"
-							size="md"
-							disabled={!canSearch}
-							title={canSearch ? undefined : t('ifcs.page.searchDisabled')}
-							onClick={handleSearch}>
-							{t('ifcs.page.searchBtn')}
-						</Button>
-						<Button
-							variant="secondary"
-							size="md"
-							disabled={!canDownloadReport || downloadingReport}
-							title={
-								canDownloadReport ? undefined : t('ifcs.statusReport.tooltipNoScope')
-							}
-							onClick={() =>
-								downloadReport(lastSearchedChartIds!, lastSearchedPeriodId!)
-							}>
-							{downloadingReport
-								? t('loading.default')
-								: t('ifcs.statusReport.btn')}
-						</Button>
-						{approvedIds.length > 1 && (
-							<Button
-								variant="secondary"
-								size="md"
-								disabled={downloadingAll}
-								onClick={() => downloadMany(approvedIds)}>
-								{downloadingAll
-									? t('loading.default')
-									: `${t('ifcs.pdf.downloadAll')} (${approvedIds.length})`}
-							</Button>
-						)}
-						{notifiableChartIds.length > 0 && periodId !== null && (
-							<Button
-								variant="secondary"
-								size="md"
-								disabled={notifyingAll}
-								onClick={handleNotifyAll}>
-								{notifyingAll
-									? t('loading.default')
-									: `${t('ifcs.notify.btn.notifyAll')} (${notifiableChartIds.length})`}
-							</Button>
-						)}
+					<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
+						<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
+						<p>{ORG_LABELS.chart_incomplete[lang]}</p>
 					</div>
 				)}
 
 				{!chartIncomplete && (
-					<IFCTable
-						rows={visibleRows}
-						periodId={periodId}
-						currentUserId={currentUserId}
-						notifyingChartId={notifyingChartId}
-						onNotify={handleNotifyOne}
-					/>
+					<div className="overflow-x-auto">
+						<IFCTable
+							rows={visibleRows}
+							periodId={periodId}
+							currentUserId={currentUserId}
+							notifyingChartId={notifyingChartId}
+							onNotify={handleNotifyOne}
+						/>
+						{hasSearched && !hasResults && (
+							<p className="py-8 text-center text-base italic text-zinc-500">
+								{t('ifcs.table.empty')}
+							</p>
+						)}
+					</div>
 				)}
 
 				{pdfError && (
