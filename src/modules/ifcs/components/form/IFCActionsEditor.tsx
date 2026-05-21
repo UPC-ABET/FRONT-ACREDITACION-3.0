@@ -45,8 +45,7 @@ export function IFCActionsEditor({
 					variant="secondary"
 					size="lg"
 					disabled={noFindings}
-					onClick={onAdd}
-					title={noFindings ? FORM_LABELS.btn_add_finding[lang] : undefined}>
+					onClick={onAdd}>
 					<PlusIcon className="h-5 w-5" />
 					{FORM_LABELS.btn_add_action[lang]}
 				</Button>

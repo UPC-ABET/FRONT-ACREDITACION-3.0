@@ -58,20 +58,19 @@ function BaseFeedbackDialog({
 	const acceptLabel = confirmLabel ?? t('dialog.actions.accept');
 
 	const actions: React.ReactNode = dualActions ? (
-		<div className="mt-5 sm:mt-6 grid grid-cols-5 gap-3">
+		<div className="mt-5 sm:mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:gap-3">
 			<Button
 				onClick={onDecline || onClose}
 				variant="secondary"
 				disabled={isLoading}
-				className="col-span-2 inline-flex w-full justify-center rounded-md bg-zinc-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-zinc-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500">
+				className="inline-flex w-full flex-1 justify-center whitespace-normal rounded-md bg-zinc-500 px-3 py-2 text-center text-sm font-semibold leading-tight text-white shadow-sm hover:bg-zinc-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500">
 				{declineLabelFinal}
 			</Button>
-			<div className="col-span-1" />
 			<Button
 				onClick={onConfirm || onClose}
 				variant="primary"
 				disabled={isLoading}
-				className="col-span-2 inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+				className="inline-flex w-full flex-1 justify-center whitespace-normal rounded-md bg-red-600 px-3 py-2 text-center text-sm font-semibold leading-tight text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
 				{acceptLabel}
 			</Button>
 		</div>
@@ -93,7 +92,9 @@ function BaseFeedbackDialog({
 			onOpenChange={(open) => {
 				if (!open) onClose();
 			}}>
-			<DialogContent showCloseButton={false} className="max-w-sm">
+			<DialogContent
+				showCloseButton={false}
+				className={dualActions ? 'max-w-md' : 'max-w-sm'}>
 				<div>
 					<div className="flex items-center justify-center space-x-5">
 						<div className={`flex h-12 w-12 items-center justify-center rounded-full ${iconBg}`}>

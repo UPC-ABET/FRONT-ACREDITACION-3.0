@@ -112,7 +112,20 @@ export async function getIFCPrefill(chartId: number, periodId: number): Promise<
 	return body.data;
 }
 
-export async function createIFC(payload: CreateIFCBody): Promise<{ id: number }> {
+function parseSaveResult(data: { id: number; notification?: SubmitResult['notification'] }): SubmitResult {
+	const n = data.notification;
+	return {
+		id: Number(data.id),
+		notification: {
+			sent: Boolean(n?.sent),
+			recipients_count: Number(n?.recipients_count ?? 0),
+			cc_count: Number(n?.cc_count ?? 0),
+			reason: (n?.reason ?? null) as SubmitResult['notification']['reason'],
+		},
+	};
+}
+
+export async function createIFC(payload: CreateIFCBody): Promise<SubmitResult> {
 	if (!BASE_URL) throw new Error('app.missingApiUrl');
 
 	const res = await fetch(`${BASE_URL}/ifcs/create`, {
@@ -121,12 +134,15 @@ export async function createIFC(payload: CreateIFCBody): Promise<{ id: number }>
 		body: JSON.stringify(payload),
 	});
 
-	const body = (await res.json().catch(() => null)) as Envelope<{ id: number }> | null;
+	const body = (await res.json().catch(() => null)) as Envelope<{
+		id: number;
+		notification?: SubmitResult['notification'];
+	}> | null;
 	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.createFailed');
-	return { id: Number(body.data.id) };
+	return parseSaveResult(body.data);
 }
 
-export async function patchIFC(id: number, payload: PatchIFCBody): Promise<{ id: number }> {
+export async function patchIFC(id: number, payload: PatchIFCBody): Promise<SubmitResult> {
 	if (!BASE_URL) throw new Error('app.missingApiUrl');
 
 	const res = await fetch(`${BASE_URL}/ifcs/${id}`, {
@@ -135,9 +151,12 @@ export async function patchIFC(id: number, payload: PatchIFCBody): Promise<{ id:
 		body: JSON.stringify(payload),
 	});
 
-	const body = (await res.json().catch(() => null)) as Envelope<{ id: number }> | null;
+	const body = (await res.json().catch(() => null)) as Envelope<{
+		id: number;
+		notification?: SubmitResult['notification'];
+	}> | null;
 	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.patchFailed');
-	return { id: Number(body.data.id) };
+	return parseSaveResult(body.data);
 }
 
 async function postNoBody(url: string, fallbackErrorKey: string): Promise<void> {

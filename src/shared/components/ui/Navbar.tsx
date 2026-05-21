@@ -1,27 +1,17 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bars3BottomLeftIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useABET, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
-import {
-	DEFAULT_CYCLE_LABEL,
-	DEFAULT_PROGRAM_OPTIONS,
-	DEFAULT_PROGRAM_TYPE,
-	DEFAULT_USER_INITIALS,
-} from '@/shared/constants';
-
-type ProgramOption = {
-	value: string;
-	label?: string;
-	labelKey?: string;
-};
+import { DEFAULT_CYCLE_LABEL, DEFAULT_USER_INITIALS } from '@/shared/constants';
+import { TYPE_GROUP_CODES } from '@/modules/ifcs/constants';
+import { getTypesByGroupCode } from '@/modules/ifcs/services';
+import type { CriticalityOption } from '@/modules/ifcs/services';
 
 type NavbarProps = {
 	cycleLabel?: string;
 	schoolName?: string;
-	programType?: string;
-	programOptions?: ProgramOption[];
 	userName?: string;
 	userRole?: string;
 	userInitials?: string;
@@ -36,17 +26,18 @@ type StoredUser = {
 function Navbar({
 	cycleLabel,
 	schoolName,
-	programType,
-	programOptions,
 	userName,
 	userRole,
 	userInitials,
 }: NavbarProps) {
 	const { toggle, isMobile: isSidebarMobile } = useSidebar();
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
+	const { modalityTypeId, setModalityTypeId } = useABET();
 
 	const [storedUser, setStoredUser] = useState<StoredUser | null>(null);
+	const [modalityOptions, setModalityOptions] = useState<CriticalityOption[]>([]);
+	const [loadingModalities, setLoadingModalities] = useState(true);
 
 	useEffect(() => {
 		const raw = localStorage.getItem('token');
@@ -59,14 +50,27 @@ function Navbar({
 		}
 	}, []);
 
-	const resolvedProgramType = programType ?? DEFAULT_PROGRAM_TYPE;
-	const resolvedProgramOptions = useMemo(() => {
-		const options = programOptions ?? DEFAULT_PROGRAM_OPTIONS;
-		return options.map((opt) => ({
-			value: opt.value,
-			label: opt.label ?? (opt.labelKey ? t(opt.labelKey) : opt.value),
-		}));
-	}, [programOptions, t]);
+	useEffect(() => {
+		let active = true;
+		getTypesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY)
+			.then((rows) => {
+				if (!active) return;
+				setModalityOptions(rows);
+				if (rows.length > 0 && modalityTypeId === null) {
+					setModalityTypeId(rows[0].id);
+				}
+			})
+			.catch(() => {
+				if (active) setModalityOptions([]);
+			})
+			.finally(() => {
+				if (active) setLoadingModalities(false);
+			});
+		return () => {
+			active = false;
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const resolvedCycleLabel = cycleLabel ?? DEFAULT_CYCLE_LABEL;
 	const resolvedSchoolName = schoolName ?? t('navbar.school.default');
@@ -90,8 +94,6 @@ function Navbar({
 			? buildInitials(storedUser.first_name, storedUser.last_name)
 			: DEFAULT_USER_INITIALS);
 
-	const [selectedProgram, setSelectedProgram] = useState(resolvedProgramType);
-
 	const navStyle: React.CSSProperties = {
 		background: '#f8f8f9',
 		borderBottom: '1.5px solid #e5e5e8',
@@ -110,30 +112,51 @@ function Navbar({
 		</Button>
 	) : null;
 
-	const PillSwitcher = () => (
-		<div
-			className="flex items-center gap-[3px] p-[3px] rounded-lg"
-			style={{ background: '#ececee', border: '1.5px solid #e0e0e3' }}>
-			{resolvedProgramOptions.map((opt) => (
-				<button
-					key={opt.value}
-					onClick={() => setSelectedProgram(opt.value)}
-					className="px-4 py-[6px] rounded-md text-[11.5px] font-bold transition-all duration-200 cursor-pointer border-none tracking-wide"
-					style={
-						selectedProgram === opt.value
-							? {
-									background: '#fff',
-									color: '#C8102E',
-									boxShadow: '0 1px 4px rgba(0,0,0,0.10)',
-									border: '1px solid rgba(200,16,46,0.15)',
-								}
-							: { background: 'transparent', color: '#a1a1aa', border: '1px solid transparent' }
-					}>
-					{opt.label}
-				</button>
-			))}
-		</div>
-	);
+	const PillSwitcher = () => {
+		if (loadingModalities || modalityOptions.length === 0) {
+			return (
+				<div
+					className="flex items-center gap-[3px] p-[3px] rounded-lg"
+					style={{ background: '#ececee', border: '1.5px solid #e0e0e3' }}>
+					<span className="px-4 py-[6px] text-[11.5px] font-bold text-zinc-400 tracking-wide">
+						{loadingModalities ? t('loading.default') : '—'}
+					</span>
+				</div>
+			);
+		}
+		return (
+			<div
+				className="flex items-center gap-[3px] p-[3px] rounded-lg"
+				style={{ background: '#ececee', border: '1.5px solid #e0e0e3' }}>
+				{modalityOptions.map((opt) => {
+					const label = opt.name[locale] ?? opt.name.es ?? opt.code;
+					const isActive = modalityTypeId === opt.id;
+					return (
+						<button
+							key={opt.id}
+							onClick={() => setModalityTypeId(opt.id)}
+							className="px-4 py-[6px] rounded-md text-[11.5px] font-bold transition-all duration-200 cursor-pointer border-none tracking-wide"
+							style={
+								isActive
+									? {
+											background: '#fff',
+											color: '#C8102E',
+											boxShadow: '0 1px 4px rgba(0,0,0,0.10)',
+											border: '1px solid rgba(200,16,46,0.15)',
+										}
+									: {
+											background: 'transparent',
+											color: '#a1a1aa',
+											border: '1px solid transparent',
+										}
+							}>
+							{label}
+						</button>
+					);
+				})}
+			</div>
+		);
+	};
 
 	const SchoolBlock = ({ vertical = false }: { vertical?: boolean }) => (
 		<div
@@ -205,7 +228,7 @@ function Navbar({
 					</div>
 				</div>
 				<div className="flex items-center gap-3">
-					<SchoolBlock vertical /> {/* 👈 */}
+					<SchoolBlock vertical />
 					<div className="w-px h-7 bg-zinc-200 flex-shrink-0" />
 					<CycleBlock />
 					<div className="w-px h-7 bg-zinc-200 flex-shrink-0" />

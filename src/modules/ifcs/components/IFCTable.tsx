@@ -2,7 +2,12 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowDownTrayIcon, BellAlertIcon, EyeIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import {
+	ArrowDownTrayIcon,
+	BellAlertIcon,
+	EyeIcon,
+	PencilSquareIcon,
+} from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable, ErrorDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
@@ -61,13 +66,7 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 					const label = row.original.ifc
 						? (row.original.ifc.status_label[lang] ?? row.original.ifc.status_label.es ?? code)
 						: (UNREG_LABEL[lang] ?? UNREG_LABEL.es);
-					return (
-						<StatusBadge
-							status={code}
-							label={label}
-							color={row.original.ifc?.status_color}
-						/>
-					);
+					return <StatusBadge status={code} label={label} color={row.original.ifc?.status_color} />;
 				},
 			},
 			{
@@ -156,15 +155,8 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 
 	return (
 		<>
-			<DataTable<IFCRow, unknown>
-				columns={columns}
-				data={rows}
-				showSearch={false}
-				showPagination
-			/>
-			{pdfError && (
-				<ErrorDialog isOpen onClose={clearError} message={tryTranslate(t, pdfError)} />
-			)}
+			<DataTable<IFCRow, unknown> columns={columns} data={rows} showSearch={false} showPagination />
+			{pdfError && <ErrorDialog isOpen onClose={clearError} message={tryTranslate(t, pdfError)} />}
 		</>
 	);
 }
