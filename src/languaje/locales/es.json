@@ -217,5 +217,94 @@
 		"title": "Pagina no encontrada",
 		"message": "Lo sentimos, no pudimos encontrar la pagina que estas buscando.",
 		"action": "Ir al inicio"
+	},
+
+	"rubrics": {
+		"list": {
+			"title": "Rúbricas",
+			"description": "Listado de rúbricas.",
+			"createButton": "Crear rúbrica",
+			"loading": "Cargando rúbricas...",
+			"error": "No fue posible cargar las rúbricas.",
+			"empty": "No hay rúbricas registradas."
+		},
+		"editor": {
+			"error": {
+				"saveError": "Error al guardar la rúbrica.",
+				"notFound": "Rúbrica no encontrada.",
+				"load": "Error al cargar la rúbrica."
+			},
+			"save": {
+				"autosaveRetry": "Reintentar guardado.",
+				"saveRubricSuccess": "Rúbrica guardada exitosamente."
+			},
+			"capstone": {
+				"saveRubric": "Guardar rúbrica",
+				"saving": "Guardando rúbrica...",
+				"noCommissions" : "No se encontraron comisiones.",
+				"tooltips": {
+					"commissionCheckboxIncomplete": "Criterios incompletos para los outcomes.",
+					"saveDisabled": "Rúbrica no válida. Guardado deshabilitado."
+				},
+				"validation": {
+					"emptyOutcome": "No se han agregado criterios a este outcome. Agrega al menos un criterio para validar la rúbrica.",
+					"emptyOutcomeReadonly": "No se han agregado criterios a este outcome.",
+					"validationIncomplete": "Por favor, agrega al menos un criterio por cada outcome",
+					"validationComplete": "Rúbrica validada correctamente. Puede guardar los cambios."
+				},
+				"criteria": {
+					"saving": "Guardando criterio...",
+					"confirmDelete": "¿Estás seguro de que deseas eliminar este criterio? Esta acción no se puede deshacer.",
+					"criteriaLabel": "Criterio",
+					"criteriaPlaceholder": "Ingrese la descripción del criterio"
+				}
+			},
+			"nonCapstone": {
+				"totalScore": "Puntaje total",
+				"points": "puntos",
+				"saveRubric": "Guardar rúbrica",
+				"saving": "Guardando rúbrica...",
+				"tooltips": {
+					"saveDisabled": "Rúbrica no válida. Guardado deshabilitado.",
+					"maxCols": "Has alcanzado el número máximo de criterios."
+				},
+				"validation": {
+					"validationComplete": "Rúbrica validada correctamente. Puede guardar los cambios.",
+					"allFieldsRequired": "Todos los campos son obligatorios.",
+					"totalMustBe20": "La suma total de puntos debe ser 20.",
+					"minMustBeLessThanMax": "El puntaje mínimo debe ser menor que el máximo para cada criterio.",
+					"continuityRequired": "Los rangos de puntaje deben ser continuos entre criterios."
+				},	
+				"question": {
+					"column": "Pregunta",
+					"label": "Pregunta",
+					"placeholder": "Ingrese la pregunta",
+					"addQuestion": "Agregar pregunta"
+				},
+				"criteria": {
+					"label": "Criterio",
+					"addCriteria": "Agregar criterio",
+					"placeholder": "Ingrese la descripción del criterio"
+				},
+				"score": {
+					"minScoreLabel": "Mín.",
+					"maxScoreLabel": "Máx."
+				}
+			},
+			"header": {
+				"academicPeriod": "Período académico",
+				"maxScore": "Puntaje máximo",
+				"units": {
+					"points": "puntos"
+				},
+				"editable": "Editable",
+				"readonly": "Solo lectura"
+			},
+			"performanceLevels": {
+				"title": "Niveles de aceptación",
+				"helper": "Los niveles de aceptación son aplicables a todos los criterios.",
+				"empty": "No se han definido niveles de aceptación para esta rúbrica."
+			}
+		}
 	}
 }

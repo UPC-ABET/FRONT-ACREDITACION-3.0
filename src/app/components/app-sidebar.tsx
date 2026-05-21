@@ -54,7 +54,7 @@ export function AppSidebar() {
 
 	const navigation: NavItem[] = [
 		{ name: t('nav.home'), href: '/', icon: HomeIcon },
-
+    { name: t('nav.rubrics'), href: '/rubrics', icon: DocumentCheckIcon },
 		{
 			name: t('nav.tests.label'),
 			icon: Cog6ToothIcon,

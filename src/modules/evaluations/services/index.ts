@@ -1,1 +1,0 @@
-export { evaluationsService } from './evaluationsService'

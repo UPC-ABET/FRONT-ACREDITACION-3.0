@@ -1,3 +1,5 @@
+import { RubricsListPage } from '@/modules/evaluation/pages'
+
 export default function Page() {
-  return <div>Bienvenido a Rubricas</div>;
+  return <RubricsListPage />
 }
