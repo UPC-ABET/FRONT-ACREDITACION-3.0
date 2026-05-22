@@ -7,7 +7,7 @@ import {
 	UserGroupIcon,
 	UsersIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Input, TextArea, Toggle } from '@/shared/components';
+import { Button, I18nTextField, Toggle } from '@/shared/components';
 import { useI18n } from '@/providers';
 import type { I18nText } from '@/modules/ifcs/services/types';
 import {
@@ -29,10 +29,6 @@ type Props = {
 	onError: (msg: string) => void;
 	onSuccess: (msg: string) => void;
 };
-
-type Lang = 'es' | 'en';
-
-const LANGS: Lang[] = ['es', 'en'];
 
 function emptyI18n(): I18nText {
 	return { es: '', en: '' };
@@ -184,16 +180,7 @@ export function ConfigEditor({
 				<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
 					{t('admin.notify.field.title')}
 				</h3>
-				<div className="grid gap-4 md:grid-cols-2">
-					{LANGS.map((l) => (
-						<Input
-							key={`title-${l}`}
-							label={`${t('admin.notify.field.title')} (${l.toUpperCase()})`}
-							value={title[l] ?? ''}
-							onChange={(e) => setTitle({ ...title, [l]: e.target.value })}
-						/>
-					))}
-				</div>
+				<I18nTextField as="input" layout="row" value={title} onChange={setTitle} />
 			</section>
 
 			<section className="space-y-4">
@@ -201,17 +188,7 @@ export function ConfigEditor({
 					{t('admin.notify.field.body')}
 				</h3>
 				<div className="grid gap-5 lg:grid-cols-[1fr_320px]">
-					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-						{LANGS.map((l) => (
-							<TextArea
-								key={`body-${l}`}
-								label={`${t('admin.notify.field.body')} (${l.toUpperCase()})`}
-								rows={10}
-								value={body[l] ?? ''}
-								onChange={(e) => setBody({ ...body, [l]: e.target.value })}
-							/>
-						))}
-					</div>
+					<I18nTextField layout="row" rows={10} value={body} onChange={setBody} />
 					<VariableLegend notifyVars={notifyVars} currentStatusCode={statusCode} />
 				</div>
 			</section>

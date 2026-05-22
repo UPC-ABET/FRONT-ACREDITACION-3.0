@@ -6,6 +6,7 @@ import { ErrorDialog, LoadingDialog, SuccessDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useIFCView } from '../../hooks/useIFCView';
 import { approveIFC, rejectIFC, submitIFC } from '../../services/ifcsService';
+import type { I18nText } from '../../services/types';
 import { IFCHeaderCard } from './IFCHeaderCard';
 import { IFCInformationBlock } from './IFCInformationBlock';
 import { IFCResultadoLogros } from '../shared/IFCResultadoLogros';
@@ -22,13 +23,13 @@ function tryTranslate(t: (k: string) => string, key: string) {
 }
 
 export default function IFCViewPage() {
-	const { t, locale: lang } = useI18n();
+	const { t } = useI18n();
 	const router = useRouter();
 	const params = useParams<{ id: string }>();
 	const id = Number(params?.id);
 
 	const { data, loading, error, refetch } = useIFCView(id);
-	const [observationText, setObservationText] = useState('');
+	const [observationText, setObservationText] = useState<I18nText>({});
 	const [submitting, setSubmitting] = useState(false);
 	const [actionError, setActionError] = useState<string | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -108,14 +109,16 @@ export default function IFCViewPage() {
 	}
 
 	function handleReject() {
-		if (observationText.trim() === '') {
+		const trimmed: I18nText = Object.fromEntries(
+			Object.entries(observationText)
+				.map(([k, v]) => [k, v.trim()])
+				.filter(([, v]) => v !== ''),
+		);
+		if (Object.keys(trimmed).length === 0) {
 			setActionError('ifcs.view.rejectEmpty');
 			return;
 		}
-		void runAction(
-			() => rejectIFC(id, { [lang]: observationText.trim() }),
-			'ifcs.view.toast.rejected',
-		);
+		void runAction(() => rejectIFC(id, trimmed), 'ifcs.view.toast.rejected');
 	}
 
 	function handleEdit() {

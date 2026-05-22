@@ -70,6 +70,8 @@ export function IFCForm(props: Props) {
 			.some((f) => !hasAnyLang(state.information[f.key], props.languages));
 		if (missingRequired) return 'ifcs.form.err.requiredFields';
 
+		if (state.findings.length === 0) return 'error.ifc.findingsRequired';
+
 		const findingInvalid = state.findings.some(
 			(f) => !hasAnyLang(f.description, props.languages) || !f.criticality_code,
 		);
@@ -79,6 +81,11 @@ export function IFCForm(props: Props) {
 			(a) => !hasAnyLang(a.description, props.languages) || !a.finding_temp_id,
 		);
 		if (actionInvalid) return 'ifcs.form.err.actionIncomplete';
+
+		const findingWithoutActions = state.findings.some(
+			(f) => !state.actions.some((a) => a.finding_temp_id === f.tempId),
+		);
+		if (findingWithoutActions) return 'error.ifc.actionsRequiredPerFinding';
 
 		return null;
 	}
@@ -177,7 +184,6 @@ export function IFCForm(props: Props) {
 				<Card>
 					<IFCInformationFields
 						fields={props.ifcFields}
-						languages={props.languages}
 						values={state.information}
 						onChange={setInformation}
 					/>
@@ -188,7 +194,6 @@ export function IFCForm(props: Props) {
 
 			<IFCFindingsEditor
 				findings={state.findings}
-				languages={props.languages}
 				criticalities={props.criticalities}
 				onAdd={addFinding}
 				onUpdate={updateFinding}
@@ -198,7 +203,6 @@ export function IFCForm(props: Props) {
 			<IFCActionsEditor
 				actions={state.actions}
 				findings={state.findings}
-				languages={props.languages}
 				onAdd={addAction}
 				onUpdate={updateAction}
 				onDelete={deleteAction}

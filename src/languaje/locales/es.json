@@ -288,7 +288,11 @@
 	},
 	"language": {
 		"es": "ES",
-		"en": "EN"
+		"en": "EN",
+		"name": {
+			"es": "Español",
+			"en": "Inglés"
+		}
 	},
 	"sidebar": {
 		"open": "Abrir sidebar",
@@ -414,6 +418,10 @@
 	"error": {
 		"school": {
 			"notFound": "La escuela seleccionada no existe"
+		},
+		"ifc": {
+			"findingsRequired": "Se requiere al menos un hallazgo",
+			"actionsRequiredPerFinding": "Cada hallazgo necesita al menos una acción"
 		}
 	},
 	"table": {

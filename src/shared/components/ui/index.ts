@@ -10,6 +10,7 @@ export * from './Chart';
 export * from './FeedbackDialog';
 export * from './Toggle';
 export * from './TextArea';
+export * from './I18nTextField';
 export * from './Tabs';
 export * from './Toast';
 export * from './Skeleton';

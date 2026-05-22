@@ -2,14 +2,14 @@
 
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { Button, Card, ErrorDialog } from '@/shared/components';
+import { Button, Card, ErrorDialog, I18nTextField } from '@/shared/components';
 import { formatDateTime } from '@/shared/utils';
 import { IFCPageTitle } from '../shared/IFCPageTitle';
 import { StatusBadge } from '../StatusBadge';
 import { VIEW_LABELS } from './viewLabels';
 import { TYPE_CODES } from '../../constants';
 import { usePdfDownload } from '../../hooks/usePdfDownload';
-import type { IFCHeader } from '../../services/types';
+import type { I18nText, IFCHeader } from '../../services/types';
 
 function tryTranslate(t: (k: string) => string, key: string) {
 	const translated = t(key);
@@ -19,8 +19,8 @@ function tryTranslate(t: (k: string) => string, key: string) {
 type Props = {
 	ifc: IFCHeader;
 	showObservation: boolean;
-	observationText: string;
-	onObservationChange: (s: string) => void;
+	observationText: I18nText;
+	onObservationChange: (next: I18nText) => void;
 };
 
 export function IFCHeaderCard({
@@ -99,17 +99,12 @@ export function IFCHeaderCard({
 				)}
 
 				{showObservation && (
-					<div>
-						<label className="mb-2 block text-base font-semibold text-zinc-800">
-							{VIEW_LABELS.observation[lang]} <span className="text-red-600">*</span>
-						</label>
-						<textarea
-							className="w-full rounded-md border border-zinc-300 p-3 text-base leading-relaxed transition-colors focus:border-red-700 focus:outline-none focus:ring-2 focus:ring-red-500/20"
-							rows={4}
-							value={observationText}
-							onChange={(e) => onObservationChange(e.target.value)}
-						/>
-					</div>
+					<I18nTextField
+						label={VIEW_LABELS.observation[lang]}
+						required
+						value={observationText}
+						onChange={onObservationChange}
+					/>
 				)}
 			</div>
 

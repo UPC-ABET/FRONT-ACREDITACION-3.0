@@ -12,8 +12,11 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 		return (
 			<div className="flex flex-col w-full">
 				{label && (
-					<label htmlFor={id} className="font-medium text-xs mb-2 text-zinc-700">
+					<label
+						htmlFor={id}
+						className="block text-base font-semibold text-zinc-900 mb-2 select-none">
 						{label}
+						{props.required && <span className="ml-1 text-red-600">*</span>}
 					</label>
 				)}
 				<textarea
