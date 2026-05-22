@@ -6,5 +6,5 @@ export type FilterProgramRequest = Partial<{
   name: { es?: string; en?: string }
   degree: { es?: string; en?: string }
   academic_period_id: number
-  school_code: string
+  school_id: number
 }>

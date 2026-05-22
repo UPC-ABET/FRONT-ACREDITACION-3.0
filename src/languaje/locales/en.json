@@ -3,6 +3,8 @@
 		"home": "Home",
 		"ifcs": "IFCs",
 		"rubrics": "Rubrics",
+		"rubricsList": "Rubrics",
+		"projects": "Academic Projects",
 		"tests": {
 			"label": "Tests",
 			"modals": "Modals",
@@ -304,6 +306,33 @@
 				"title": "Acceptance levels",
 				"helper": "Acceptance levels apply to all criteria.",
 				"empty": "No acceptance levels have been defined for this rubric."
+			}
+		}
+	},
+
+	"projects": {
+		"list": {
+			"title": "Academic Projects",
+			"description": "List of academic projects.",
+			"addButton": "Add Project",
+			"clearFilters": "Clear Filters",
+			"loading": "Loading projects...",
+			"error": "Could not load projects.",
+			"empty": "No projects registered.",
+			"selectPeriod": "Select an academic period to get started.",
+			"filters": {
+				"academicPeriod": "Academic Period",
+				"program": "Program",
+				"course": "Course"
+			},
+			"table": {
+				"code": "Code",
+				"name": "Name",
+				"evaluators": "Evaluators",
+				"students": "Students",
+				"actions": "Actions",
+				"view": "View",
+				"edit": "Edit"
 			}
 		}
 	}

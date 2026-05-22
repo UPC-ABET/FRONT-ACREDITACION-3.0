@@ -7,5 +7,5 @@ export type FilterCourseRequest = Partial<{
   learning_outcome: { es?: string; en?: string }
   academic_period_id: number
   program_id: number
-  school_code: string
+  school_id: number
 }>

@@ -54,7 +54,14 @@ export function AppSidebar() {
 
 	const navigation: NavItem[] = [
 		{ name: t('nav.home'), href: '/', icon: HomeIcon },
-    { name: t('nav.rubrics'), href: '/rubrics', icon: DocumentCheckIcon },
+		{
+			name: t('nav.rubrics'),
+			icon: DocumentCheckIcon,
+			children: [
+				{ name: t('nav.rubricsList'), href: '/rubrics' },
+				{ name: t('nav.projects'), href: '/projects' },
+			],
+		},
 		{
 			name: t('nav.tests.label'),
 			icon: Cog6ToothIcon,
@@ -91,7 +98,7 @@ export function AppSidebar() {
                     label={item.name}
                     icon={<item.icon className="h-5 w-5" />}
                     active={childActive}
-                    defaultOpen={false}
+                    defaultOpen={childActive}
                   >
                     {item.children.map((child) => (
                       <Link key={child.name} href={child.href}>

@@ -2,6 +2,8 @@
 	"nav": {
 		"home": "Inicio",
 		"rubrics": "Rúbricas",
+		"rubricsList": "Rúbricas",
+		"projects": "Proyectos Académicos",
 		"ifcs": "IFCs",
 		"tests": {
 			"label": "Pruebas",
@@ -179,7 +181,7 @@
 
 	"select": {
 		"placeholder": {
-			"default": "Seleccione una opcion"
+			"default": "Seleccione una opción"
 		},
 		"createLabel": "Crear: \"{value}\""
 	},
@@ -304,6 +306,33 @@
 				"title": "Niveles de aceptación",
 				"helper": "Los niveles de aceptación son aplicables a todos los criterios.",
 				"empty": "No se han definido niveles de aceptación para esta rúbrica."
+			}
+		}
+	},
+
+	"projects": {
+		"list": {
+			"title": "Proyectos Académicos",
+			"description": "Listado de proyectos académicos.",
+			"addButton": "Agregar proyecto",
+			"clearFilters": "Limpiar filtros",
+			"loading": "Cargando proyectos...",
+			"error": "No fue posible cargar los proyectos.",
+			"empty": "No hay proyectos registrados.",
+			"selectPeriod": "Selecciona un período académico para comenzar.",
+			"filters": {
+				"academicPeriod": "Período Académico",
+				"program": "Programa",
+				"course": "Curso"
+			},
+			"table": {
+				"code": "Código",
+				"name": "Nombre",
+				"evaluators": "Evaluadores",
+				"students": "Estudiantes",
+				"actions": "Acciones",
+				"view": "Ver",
+				"edit": "Editar"
 			}
 		}
 	}
