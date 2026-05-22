@@ -1,15 +1,14 @@
 'use client';
 
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useABET, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
-import {
-	DEFAULT_PROGRAM_OPTIONS,
-	DEFAULT_PROGRAM_TYPE,
-	DEFAULT_USER_INITIALS,
-} from '@/shared/constants';
+import { DEFAULT_USER_INITIALS } from '@/shared/constants';
+import { TYPE_GROUP_CODES } from '@/modules/ifcs/constants';
+import { getTypesByGroupCode } from '@/modules/ifcs/services';
+import type { CriticalityOption } from '@/modules/ifcs/services';
 import type { NavbarProps, StoredUser } from '@/shared/types';
 
 function subscribeStoredUser(onStoreChange: () => void) {
@@ -30,76 +29,18 @@ function readStoredSchoolCodeRaw() {
 
 const Sep = () => <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />;
 
-function PillSwitcher({
-	options,
-	selectedProgram,
-	onSelectProgram,
-	loose = false,
-}: {
-	options: Array<{ value: string; label: string }>;
-	selectedProgram: string;
-	onSelectProgram: (value: string) => void;
-	loose?: boolean;
-}) {
-	if (loose) {
-		return (
-			<div className="flex items-center gap-1 flex-shrink-0">
-				{options.map((opt) => {
-					const active = selectedProgram === opt.value;
-					return (
-						<button
-							key={opt.value}
-							onClick={() => onSelectProgram(opt.value)}
-							className="px-5 py-2 rounded-xl text-[14px] font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap"
-							style={{
-								background: active ? '#fff' : 'transparent',
-								color: active ? '#C8102E' : '#a1a1aa',
-								border: active ? '1.5px solid #e2e2e6' : '1.5px solid transparent',
-								boxShadow: active ? '0 1px 5px rgba(0,0,0,0.08)' : 'none',
-							}}>
-							{opt.label}
-						</button>
-					);
-				})}
-			</div>
-		);
-	}
-
-	return (
-		<div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-zinc-200/80 border border-zinc-300/60 flex-shrink-0">
-			{options.map((opt) => {
-				const active = selectedProgram === opt.value;
-				return (
-					<button
-						key={opt.value}
-						onClick={() => onSelectProgram(opt.value)}
-						className="px-3.5 py-1.5 rounded-md text-[11px] font-bold tracking-wide transition-all duration-150 cursor-pointer border"
-						style={{
-							background: active ? '#fff' : 'transparent',
-							color: active ? '#C8102E' : '#a1a1aa',
-							borderColor: active ? 'rgba(200,16,46,0.15)' : 'transparent',
-							boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-						}}>
-						{opt.label}
-					</button>
-				);
-			})}
-		</div>
-	);
-}
-
 function SchoolName({ short = false, label, name }: { short?: boolean; label: string; name: string }) {
 	return (
 		<div className="flex items-center min-w-0 text-zinc-800 leading-none">
-          <span
-			  className={`font-semibold ${short ? 'text-[14px]' : 'text-[18px]'} flex-shrink-0`}
-	          style={{ color: '#C8102E' }}>
-             {label}:&nbsp;
-          </span>
+			<span
+				className={`font-semibold ${short ? 'text-[14px]' : 'text-[18px]'} flex-shrink-0`}
+				style={{ color: '#C8102E' }}>
+				{label}:&nbsp;
+			</span>
 			<span
 				className={`font-semibold ${short ? 'text-[12px] max-w-[150px]' : 'text-[14px] max-w-[220px]'}`}>
-             &quot;{name}&quot;
-          </span>
+				&quot;{name}&quot;
+			</span>
 		</div>
 	);
 }
@@ -126,6 +67,7 @@ function UserAvatar({
 				style={{ background: '#C8102E' }}>
 				{initials}
 			</div>
+
 			{withName && (
 				<div className="flex flex-col leading-none gap-0.5 min-w-0">
 					<span className="text-[12px] font-semibold text-zinc-800 truncate max-w-[140px]">
@@ -138,25 +80,23 @@ function UserAvatar({
 					)}
 				</div>
 			)}
+
 			{withChevron && <ChevronDownIcon className="h-4 w-4 text-zinc-400 flex-shrink-0" />}
 		</div>
 	);
 }
 
-function Navbar({
-	schoolName,
-	programType,
-	programOptions,
-	userName,
-	userRole,
-	userInitials,
-}: NavbarProps) {
+function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 	const { toggle, isMobile: isSidebarMobile } = useSidebar();
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
+	const { modalityTypeId, setModalityTypeId } = useABET();
 
 	const storedUserRaw = useSyncExternalStore(subscribeStoredUser, readStoredUserRaw, () => '');
 	const storedSchoolCodeRaw = useSyncExternalStore(subscribeStoredUser, readStoredSchoolCodeRaw, () => '');
+
+	const [modalityOptions, setModalityOptions] = useState<CriticalityOption[]>([]);
+	const [loadingModalities, setLoadingModalities] = useState(true);
 
 	const storedUser = useMemo<StoredUser | null>(() => {
 		if (!storedUserRaw) return null;
@@ -176,32 +116,51 @@ function Navbar({
 		}
 	}, [storedSchoolCodeRaw]);
 
-	const resolvedProgramType = programType ?? DEFAULT_PROGRAM_TYPE;
-	const resolvedProgramOptions = useMemo(() => {
-		const options = programOptions ?? DEFAULT_PROGRAM_OPTIONS;
-		return options.map((opt) => ({
-			value: opt.value,
-			label: opt.label ?? (opt.labelKey ? t(opt.labelKey) : opt.value),
-		}));
-	}, [programOptions, t]);
+	useEffect(() => {
+		let active = true;
 
-	const resolvedSchoolName =
-		schoolName ?? storedSchoolCode;
+		getTypesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY)
+			.then((rows) => {
+				if (!active) return;
+
+				setModalityOptions(rows);
+
+				if (rows.length > 0 && modalityTypeId === null) {
+					setModalityTypeId(rows[0].id);
+				}
+			})
+			.catch(() => {
+				if (active) setModalityOptions([]);
+			})
+			.finally(() => {
+				if (active) setLoadingModalities(false);
+			});
+
+		return () => {
+			active = false;
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const resolvedSchoolName = schoolName ?? storedSchoolCode;
 
 	const resolvedUserName =
 		userName ??
-		((storedUser ? `${storedUser.first_name ?? ''} ${storedUser.last_name ?? ''}`.trim() : '') || t('navbar.user.name'));
+		((storedUser ? `${storedUser.first_name ?? ''} ${storedUser.last_name ?? ''}`.trim() : '') ||
+			t('navbar.user.name'));
 
 	const resolvedUserRole =
 		userRole ??
-		((storedUser ? (storedUser.is_admin ? t('navbar.user.role') : '') : '') || t('navbar.user.role'));
+		((storedUser ? (storedUser.is_admin ? t('navbar.user.role') : '') : '') ||
+			t('navbar.user.role'));
 
 	const resolvedUserInitials =
 		userInitials ??
 		(`${storedUser?.first_name?.trim().charAt(0) ?? ''}${storedUser?.last_name?.trim().charAt(0) ?? ''}`.toUpperCase() ||
 			DEFAULT_USER_INITIALS);
 
-	const [selectedProgram, setSelectedProgram] = useState(resolvedProgramType);
+	const navClass = 'w-full sticky top-0 z-30 bg-[#f8f8f9] border-b border-zinc-200';
+	const schoolLabelText = t('navbar.school.label');
 
 	const menuBtn = isSidebarMobile ? (
 		<Button
@@ -215,8 +174,50 @@ function Navbar({
 		</Button>
 	) : null;
 
-	const navClass = 'w-full sticky top-0 z-30 bg-[#f8f8f9] border-b border-zinc-200';
-	const schoolLabelText = t('navbar.school.label');
+	const ProgramSwitcher = ({ loose = false }: { loose?: boolean }) => {
+		if (loadingModalities || modalityOptions.length === 0) {
+			return (
+				<div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-zinc-200/80 border border-zinc-300/60 flex-shrink-0">
+					<span className="px-4 py-1.5 text-[11px] font-bold text-zinc-400">
+						{loadingModalities ? t('loading.default') : '—'}
+					</span>
+				</div>
+			);
+		}
+
+		return (
+			<div
+				className={
+					loose
+						? 'flex items-center gap-1 flex-shrink-0'
+						: 'flex items-center gap-0.5 p-0.5 rounded-lg bg-zinc-200/80 border border-zinc-300/60 flex-shrink-0'
+				}>
+				{modalityOptions.map((opt) => {
+					const label = opt.name[locale] ?? opt.name.es ?? opt.code;
+					const active = modalityTypeId === opt.id;
+
+					return (
+						<button
+							key={opt.id}
+							onClick={() => setModalityTypeId(opt.id)}
+							className={
+								loose
+									? 'px-5 py-2 rounded-xl text-[14px] font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap'
+									: 'px-3.5 py-1.5 rounded-md text-[11px] font-bold tracking-wide transition-all duration-150 cursor-pointer border'
+							}
+							style={{
+								background: active ? '#fff' : 'transparent',
+								color: active ? '#C8102E' : '#a1a1aa',
+								border: active ? '1.5px solid #e2e2e6' : '1.5px solid transparent',
+								boxShadow: active ? '0 1px 5px rgba(0,0,0,0.08)' : 'none',
+							}}>
+							{label}
+						</button>
+					);
+				})}
+			</div>
+		);
+	};
 
 	if (isMobile) {
 		return (
@@ -228,16 +229,12 @@ function Navbar({
 					</div>
 					<UserAvatar initials={resolvedUserInitials} name={resolvedUserName} role={resolvedUserRole} />
 				</div>
+
 				<div className="flex items-center justify-between px-4 h-14 gap-4">
 					<div className="ml-[12px]">
 						<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
 					</div>
-					<PillSwitcher
-						options={resolvedProgramOptions}
-						selectedProgram={selectedProgram}
-						onSelectProgram={setSelectedProgram}
-						loose
-					/>
+					<ProgramSwitcher loose />
 				</div>
 			</nav>
 		);
@@ -249,11 +246,7 @@ function Navbar({
 				{menuBtn}
 				<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
 				<div className="flex-1" />
-				<PillSwitcher
-					options={resolvedProgramOptions}
-					selectedProgram={selectedProgram}
-					onSelectProgram={setSelectedProgram}
-				/>
+				<ProgramSwitcher />
 				<Sep />
 				<LanguageSwitcher />
 				<Sep />
@@ -267,11 +260,7 @@ function Navbar({
 			{menuBtn}
 			<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
 			<div className="flex-1" />
-			<PillSwitcher
-				options={resolvedProgramOptions}
-				selectedProgram={selectedProgram}
-				onSelectProgram={setSelectedProgram}
-			/>
+			<ProgramSwitcher />
 			<Sep />
 			<LanguageSwitcher />
 			<Sep />

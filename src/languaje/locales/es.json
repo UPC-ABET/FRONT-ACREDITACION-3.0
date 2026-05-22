@@ -1,7 +1,11 @@
 {
 	"nav": {
 		"home": "Inicio",
-		"ifcs": "IFCs",
+		"ifc": {
+			"label": "IFC",
+			"dashboard": "Dashboard",
+			"findings": "Hallazgos"
+		},
 		"tests": {
 			"label": "Pruebas",
 			"modals": "Modales",
@@ -9,13 +13,23 @@
 			"tables": "Tablas",
 			"public": "Publico"
 		},
-		"logout": "Cerrar sesión"
-	},
 
+		"admin": {
+			"label": "Administración",
+			"notifications": "Notificaciones IFC",
+			"ifcCodes": "Códigos IFC",
+			"ifcFields": "Campos del formulario IFC"
+		},
+		"logout": "Cerrar sesion"
+
+		"logout": "Cerrar sesión"
+
+	},
 	"ifcs": {
 		"page": {
 			"title": "Informe de Fin de Ciclo",
-			"period": "Período Académico"
+			"period": "Período Académico",
+			"searchBtn": "Buscar"
 		},
 		"table": {
 			"code": "Código",
@@ -24,13 +38,244 @@
 			"coordinator": "Docente",
 			"status": "Estado",
 			"actions": "Opciones",
-			"statusFilter": "Filtrar por estado",
-			"empty": "Sin IFCs"
+			"statusFilter": "Estado",
+			"empty": "Sin IFCs",
+			"actionView": "Ver",
+			"actionRegister": "Registrar"
+		},
+		"status": {
+			"all": "Todos"
+		},
+		"view": {
+			"col": {
+				"completeness": "Completitud"
+			},
+			"toast": {
+				"submitted": "IFC enviado a revisión",
+				"approved": "IFC aprobado",
+				"rejected": "IFC devuelto al coordinador"
+			},
+			"rejectEmpty": "La observación es obligatoria para rechazar"
+		},
+		"pdf": {
+			"downloadPdf": "Descargar PDF",
+			"downloadAll": "Descargar Todos",
+			"exportNotApproved": "El IFC debe estar aprobado para exportarse",
+			"error": {
+				"downloadFailed": "No se pudo descargar el PDF",
+				"bulkFailed": "No se pudo generar el ZIP de PDFs (al menos un IFC no está aprobado)"
+			}
+		},
+		"statusReport": {
+			"btn": "Reporte de Estado",
+			"tooltipNoScope": "Realiza una búsqueda primero",
+			"error": {
+				"downloadFailed": "No se pudo descargar el reporte de estado"
+			}
+		},
+		"form": {
+			"err": {
+				"requiredFields": "Hay campos obligatorios sin completar",
+				"findingIncomplete": "Cada hallazgo necesita descripción y criticidad",
+				"actionIncomplete": "Cada acción necesita descripción y un hallazgo enlazado"
+			}
+		},
+		"submit": {
+			"modal": {
+				"title": "¿Enviar IFC?",
+				"body": "Una vez enviado, nadie podrá editar el IFC hasta que un revisor lo apruebe u observe.",
+				"confirm": "Enviar",
+				"saveInstead": "Guardar en su lugar"
+			},
+			"toast": {
+				"successWithNotify": "IFC enviado. Se notificó a los revisores.",
+				"successNoConfig": "IFC enviado. No hay configuración de notificación para esta etapa.",
+				"successNoNotify": "IFC enviado. La notificación no pudo enviarse."
+			}
+		},
+		"notify": {
+			"btn": {
+				"tooltip": "Notificar",
+				"notifyAll": "Notificar a todos"
+			},
+			"toast": {
+				"success": "Notificación enviada",
+				"successAll": "{{count}} notificación(es) enviada(s)",
+				"partial": "{{sent}} enviada(s), {{skipped}} omitida(s) (sin configuración)",
+				"allSkipped": "Todas omitidas — no hay configuración de notificación para este escenario",
+				"error": "Falló el envío de {{count}} notificación(es)"
+			},
+			"reason": {
+				"no_course_chart": "No se encontró el organigrama del curso",
+				"no_config": "No hay configuración de notificación para este escenario",
+				"no_recipients": "No hay destinatarios configurados",
+				"send_failed": "El proveedor de correo rechazó el envío",
+				"unknown": "No se pudo enviar la notificación"
+			},
+			"error": {
+				"generic": "No se pudo enviar la notificación"
+			}
+		},
+		"error": {
+			"viewFailed": "No se pudo cargar el IFC",
+			"submitFailed": "No se pudo enviar el IFC",
+			"approveFailed": "No se pudo aprobar el IFC",
+			"rejectFailed": "No se pudo rechazar el IFC",
+			"prefillFailed": "No se pudo cargar la información del curso",
+			"createFailed": "No se pudo crear el IFC",
+			"patchFailed": "No se pudo guardar el IFC",
+			"saveFailed": "No se pudo guardar el IFC",
+			"bootstrapFailed": "No se pudo cargar el formulario",
+			"generic": "Ocurrió un error"
 		}
 	},
-
+	"ifcFindings": {
+		"page": {
+			"title": "Hallazgos"
+		},
+		"col": {
+			"criticality": "Criticidad",
+			"code": "Código",
+			"period": "Período Académico",
+			"description": "Descripción",
+			"actions": "Opciones"
+		},
+		"action": {
+			"view": "Ver",
+			"delete": "Eliminar"
+		},
+		"empty": "No hay hallazgos en este alcance",
+		"toast": {
+			"deleted": "Hallazgo eliminado"
+		},
+		"findingView": {
+			"col": {
+				"actionCode": "Código",
+				"actionDesc": "Descripción",
+				"actionStatus": "Estado"
+			},
+			"actionsEmpty": "No hay acciones asociadas",
+			"toast": {
+				"saved": "Hallazgo actualizado"
+			},
+			"err": {
+				"descriptionEmpty": "La descripción debe tener al menos un idioma completado"
+			}
+		},
+		"error": {
+			"listFailed": "No se pudo cargar la lista de hallazgos",
+			"deleteFailed": "No se pudo eliminar el hallazgo",
+			"viewFailed": "No se pudo cargar el hallazgo",
+			"patchFailed": "No se pudo guardar el hallazgo"
+		}
+	},
+	"admin": {
+		"notify": {
+			"page": {
+				"title": "Configuración de Notificaciones IFC",
+				"selectPeriod": "Seleccione un período para continuar"
+			},
+			"field": {
+				"title": "Asunto",
+				"body": "Cuerpo (HTML)",
+				"to": "Destinatarios (Para)",
+				"cc": "En copia (CC)",
+				"isActive": "Activo",
+				"noLevels": "No hay niveles disponibles"
+			},
+			"legend": {
+				"title": "Variables disponibles",
+				"empty": "No hay variables disponibles para este estado"
+			},
+			"btn": {
+				"save": "Guardar",
+				"delete": "Eliminar",
+				"confirmDelete": "Confirmar eliminación"
+			},
+			"confirm": {
+				"delete": "¿Eliminar esta configuración?"
+			},
+			"toast": {
+				"saved": "Configuración guardada",
+				"deleted": "Configuración eliminada"
+			},
+			"error": {
+				"listFailed": "No se pudo cargar la configuración",
+				"saveFailed": "No se pudo guardar la configuración",
+				"deleteFailed": "No se pudo eliminar la configuración"
+			}
+		},
+		"params": {
+			"codes": {
+				"page": {
+					"title": "Códigos IFC",
+					"subtitle": "Prefijos para códigos generados",
+					"intro": "Estos prefijos se usan para componer automáticamente los códigos de hallazgos y acciones (por ejemplo, H-2026-001 o A-2026-001). Cambiarlos no afecta a los códigos ya existentes; solo aplica a los nuevos registros."
+				}
+			},
+			"fields": {
+				"page": {
+					"title": "Campos del formulario IFC",
+					"subtitle": "Información solicitada al crear o editar un IFC",
+					"intro": "Configura los campos de información que aparecen en el formulario del IFC. Cada campo necesita una llave técnica única, etiquetas en español e inglés, y un orden de aparición. Los cambios aplican a los próximos IFC que se creen."
+				},
+				"row": {
+					"title": "Campo"
+				},
+				"field": {
+					"key": "Llave técnica",
+					"keyPlaceholder": "ej. contexto",
+					"keyHelp": "Identificador interno. Sin espacios; usa letras, números y guiones bajos.",
+					"labelEs": "Etiqueta (ES)",
+					"labelEn": "Etiqueta (EN)",
+					"required": "Obligatorio",
+					"requiredHelp": "Si está activo, el usuario debe completar este campo antes de enviar."
+				},
+				"btn": {
+					"add": "Añadir campo",
+					"moveUp": "Mover arriba",
+					"moveDown": "Mover abajo",
+					"delete": "Eliminar campo"
+				},
+				"empty": "Aún no hay campos configurados. Añade el primero para que aparezca en el formulario de IFC.",
+				"unsaved": "Tienes cambios sin guardar.",
+				"allSaved": "Todo está sincronizado.",
+				"confirmDelete": {
+					"title": "Eliminar campo",
+					"body": "Se quitará este campo del formulario. ¿Deseas continuar?",
+					"confirm": "Eliminar"
+				},
+				"err": {
+					"keyRequired": "La llave técnica es obligatoria",
+					"keyDuplicate": "La llave debe ser única",
+					"labelRequired": "La etiqueta es obligatoria",
+					"fixBeforeSave": "Corrige los errores antes de guardar"
+				}
+			},
+			"field": {
+				"value": "Valor",
+				"valuePlaceholder": "ej. H",
+				"prefixHint": "Texto corto que precede al código generado."
+			},
+			"btn": {
+				"save": "Guardar",
+				"discard": "Descartar cambios",
+				"reset": "Restablecer",
+				"retry": "Reintentar",
+				"saveDisabledNoChanges": "No hay cambios para guardar",
+				"saveDisabledInvalid": "Completa el campo antes de guardar"
+			},
+			"toast": {
+				"saved": "Parámetro guardado"
+			},
+			"error": {
+				"loadFailed": "No se pudo cargar el parámetro",
+				"saveFailed": "No se pudo guardar el parámetro",
+				"notFound": "Parámetro no encontrado"
+			}
+		}
+	},
 	"welcome": "Bienvenido a ABET.",
-
 	"navbar": {
 		"user": {
 			"name": "Administrador",
@@ -43,24 +288,17 @@
 		},
 		"cycle": {
 			"label": "Ciclo"
-		},
-		"program": {
-			"regular": "Regular",
-			"epe": "EPE"
 		}
 	},
-
 	"language": {
 		"es": "ES",
 		"en": "EN"
 	},
-
 	"sidebar": {
 		"open": "Abrir sidebar",
 		"close": "Cerrar sidebar",
 		"logoAlt": "Logo ABET"
 	},
-
 	"dialog": {
 		"close": "Cerrar",
 		"actions": {
@@ -85,7 +323,6 @@
 			"confirm": "Confirma para continuar."
 		}
 	},
-
 	"toast": {
 		"title": {
 			"success": "Exito",
@@ -101,19 +338,19 @@
 		},
 		"close": "Cerrar notificacion"
 	},
-
 	"tabs": {
 		"label": "Pestañas"
 	},
-
 	"loading": {
 		"default": "Cargando ..."
 	},
+
 	"sessionExpired": {
 		"title": "Sesion expirada",
 		"message": "Vuelve a iniciar sesion",
 		"action": "Cerrar sesion"
 	},
+
 
 	"login": {
 		"title": "Sistema de  acreditación",
@@ -137,6 +374,7 @@
 			"schoolRequired": "Selecciona una escuela antes de continuar"
 		}
 	},
+
 
 	"forgotPassword": {
 		"title": "Recuperar contraseña",
@@ -183,13 +421,11 @@
 	"auth": {
 		"invalidCredentials": "Credenciales invalidas"
 	},
-
 	"error": {
 		"school": {
 			"notFound": "La escuela seleccionada no existe"
 		}
 	},
-
 	"table": {
 		"search": {
 			"placeholder": "Buscar..."
@@ -202,14 +438,12 @@
 			"of": "de"
 		}
 	},
-
 	"select": {
 		"placeholder": {
 			"default": "Seleccione una opcion"
 		},
 		"createLabel": "Crear: \"{value}\""
 	},
-
 	"school": {
 		"sch_soft": "ESCUELA DE INGENIERIA DE SOFTWARE",
 		"sch_sist": "ESCUELA DE INGENIERIA DE SISTEMAS",
@@ -224,12 +458,10 @@
 		"ingciv": "INGENIERIA CIVIL",
 		"ingind": "INGENIERIA INDUSTRIAL"
 	},
-
 	"app": {
 		"name": "Sistema de Acreditación ABET",
 		"description": "ABET"
 	},
-
 	"page": {
 		"home": "Inicio",
 		"login": "Login",
@@ -238,7 +470,6 @@
 		"modals": "Modales",
 		"public": "Publico"
 	},
-
 	"notFound": {
 		"title": "Pagina no encontrada",
 		"message": "Lo sentimos, no pudimos encontrar la pagina que estas buscando.",

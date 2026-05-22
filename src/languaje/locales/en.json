@@ -1,7 +1,11 @@
 {
 	"nav": {
 		"home": "Home",
-		"ifcs": "IFCs",
+		"ifc": {
+			"label": "IFC",
+			"dashboard": "Dashboard",
+			"findings": "Findings"
+		},
 		"tests": {
 			"label": "Tests",
 			"modals": "Modals",
@@ -9,13 +13,19 @@
 			"tables": "Tables",
 			"public": "Public"
 		},
+		"admin": {
+			"label": "Administration",
+			"notifications": "IFC Notifications",
+			"ifcCodes": "IFC Codes",
+			"ifcFields": "IFC Form Fields"
+		},
 		"logout": "Logout"
 	},
-
 	"ifcs": {
 		"page": {
 			"title": "End of Course Report",
-			"period": "Academic Period"
+			"period": "Academic Period",
+			"searchBtn": "Search"
 		},
 		"table": {
 			"code": "Code",
@@ -24,13 +34,244 @@
 			"coordinator": "Professor",
 			"status": "Status",
 			"actions": "Options",
-			"statusFilter": "Filter by status",
-			"empty": "No IFCs"
+			"statusFilter": "Status",
+			"empty": "No IFCs",
+			"actionView": "View",
+			"actionRegister": "Register"
+		},
+		"status": {
+			"all": "All"
+		},
+		"view": {
+			"col": {
+				"completeness": "Completeness"
+			},
+			"toast": {
+				"submitted": "IFC submitted for review",
+				"approved": "IFC approved",
+				"rejected": "IFC returned to the coordinator"
+			},
+			"rejectEmpty": "An observation is required to reject"
+		},
+		"pdf": {
+			"downloadPdf": "Download PDF",
+			"downloadAll": "Download All",
+			"exportNotApproved": "The IFC must be approved to export",
+			"error": {
+				"downloadFailed": "Could not download the PDF",
+				"bulkFailed": "Could not generate the PDF ZIP (at least one IFC is not approved)"
+			}
+		},
+		"statusReport": {
+			"btn": "Status Report",
+			"tooltipNoScope": "Run a search first",
+			"error": {
+				"downloadFailed": "Could not download the status report"
+			}
+		},
+		"form": {
+			"err": {
+				"requiredFields": "Required fields are missing or empty",
+				"findingIncomplete": "Every finding needs a description and a criticality",
+				"actionIncomplete": "Every action needs a description and a linked finding"
+			}
+		},
+		"submit": {
+			"modal": {
+				"title": "Submit IFC?",
+				"body": "Once submitted, no one can edit the IFC until a reviewer either approves or observes it.",
+				"confirm": "Submit",
+				"saveInstead": "Save instead"
+			},
+			"toast": {
+				"successWithNotify": "IFC submitted. Reviewers have been notified.",
+				"successNoConfig": "IFC submitted. No notification configuration for this stage.",
+				"successNoNotify": "IFC submitted. The notification could not be sent."
+			}
+		},
+		"notify": {
+			"btn": {
+				"tooltip": "Notify",
+				"notifyAll": "Notify All"
+			},
+			"toast": {
+				"success": "Notification sent",
+				"successAll": "{{count}} notification(s) sent",
+				"partial": "{{sent}} sent, {{skipped}} skipped (no configuration)",
+				"allSkipped": "All skipped — no notification configuration for this scenario",
+				"error": "{{count}} notification(s) failed to send"
+			},
+			"reason": {
+				"no_course_chart": "Course chart not found",
+				"no_config": "No notification configuration for this scenario",
+				"no_recipients": "No recipients configured",
+				"send_failed": "The email provider rejected the message",
+				"unknown": "Could not send the notification"
+			},
+			"error": {
+				"generic": "Could not send the notification"
+			}
+		},
+		"error": {
+			"viewFailed": "Could not load the IFC",
+			"submitFailed": "Could not submit the IFC",
+			"approveFailed": "Could not approve the IFC",
+			"rejectFailed": "Could not reject the IFC",
+			"prefillFailed": "Could not load the course information",
+			"createFailed": "Could not create the IFC",
+			"patchFailed": "Could not save the IFC",
+			"saveFailed": "Could not save the IFC",
+			"bootstrapFailed": "Could not load the form",
+			"generic": "Something went wrong"
 		}
 	},
-
+	"ifcFindings": {
+		"page": {
+			"title": "Findings"
+		},
+		"col": {
+			"criticality": "Criticality",
+			"code": "Code",
+			"period": "Academic Period",
+			"description": "Description",
+			"actions": "Options"
+		},
+		"action": {
+			"view": "View",
+			"delete": "Delete"
+		},
+		"empty": "No findings in scope",
+		"toast": {
+			"deleted": "Finding deleted"
+		},
+		"findingView": {
+			"col": {
+				"actionCode": "Code",
+				"actionDesc": "Description",
+				"actionStatus": "Status"
+			},
+			"actionsEmpty": "No actions associated",
+			"toast": {
+				"saved": "Finding updated"
+			},
+			"err": {
+				"descriptionEmpty": "Description must have at least one language filled"
+			}
+		},
+		"error": {
+			"listFailed": "Could not load findings",
+			"deleteFailed": "Could not delete the finding",
+			"viewFailed": "Could not load the finding",
+			"patchFailed": "Could not save the finding"
+		}
+	},
+	"admin": {
+		"notify": {
+			"page": {
+				"title": "IFC Notification Configuration",
+				"selectPeriod": "Select a period to continue"
+			},
+			"field": {
+				"title": "Subject",
+				"body": "Body (HTML)",
+				"to": "Recipients (To)",
+				"cc": "Cc",
+				"isActive": "Active",
+				"noLevels": "No levels available"
+			},
+			"legend": {
+				"title": "Available variables",
+				"empty": "No variables available for this status"
+			},
+			"btn": {
+				"save": "Save",
+				"delete": "Delete",
+				"confirmDelete": "Confirm delete"
+			},
+			"confirm": {
+				"delete": "Delete this configuration?"
+			},
+			"toast": {
+				"saved": "Configuration saved",
+				"deleted": "Configuration deleted"
+			},
+			"error": {
+				"listFailed": "Could not load the configuration",
+				"saveFailed": "Could not save the configuration",
+				"deleteFailed": "Could not delete the configuration"
+			}
+		},
+		"params": {
+			"codes": {
+				"page": {
+					"title": "IFC Codes",
+					"subtitle": "Prefixes for generated codes",
+					"intro": "These prefixes are used to compose finding and action codes automatically (e.g. H-2026-001 or A-2026-001). Changing them does not affect existing codes; the new prefix is applied to records created after the change."
+				}
+			},
+			"fields": {
+				"page": {
+					"title": "IFC form fields",
+					"subtitle": "Information collected when creating or editing an IFC",
+					"intro": "Configure the information fields that appear on the IFC form. Each field needs a unique technical key, Spanish and English labels, and a display order. Changes apply to IFCs created from now on."
+				},
+				"row": {
+					"title": "Field"
+				},
+				"field": {
+					"key": "Technical key",
+					"keyPlaceholder": "e.g. context",
+					"keyHelp": "Internal identifier. No spaces; use letters, numbers, and underscores.",
+					"labelEs": "Label (ES)",
+					"labelEn": "Label (EN)",
+					"required": "Required",
+					"requiredHelp": "When on, the user must fill this field before submitting."
+				},
+				"btn": {
+					"add": "Add field",
+					"moveUp": "Move up",
+					"moveDown": "Move down",
+					"delete": "Delete field"
+				},
+				"empty": "No fields configured yet. Add the first one to make it appear on the IFC form.",
+				"unsaved": "You have unsaved changes.",
+				"allSaved": "Everything is in sync.",
+				"confirmDelete": {
+					"title": "Delete field",
+					"body": "This field will be removed from the form. Continue?",
+					"confirm": "Delete"
+				},
+				"err": {
+					"keyRequired": "Technical key is required",
+					"keyDuplicate": "Keys must be unique",
+					"labelRequired": "Label is required",
+					"fixBeforeSave": "Fix the errors before saving"
+				}
+			},
+			"field": {
+				"value": "Value",
+				"valuePlaceholder": "e.g. H",
+				"prefixHint": "Short text prepended to the generated code."
+			},
+			"btn": {
+				"save": "Save",
+				"discard": "Discard changes",
+				"reset": "Reset",
+				"retry": "Retry",
+				"saveDisabledNoChanges": "No changes to save",
+				"saveDisabledInvalid": "Fill the field before saving"
+			},
+			"toast": {
+				"saved": "Parameter saved"
+			},
+			"error": {
+				"loadFailed": "Could not load the parameter",
+				"saveFailed": "Could not save the parameter",
+				"notFound": "Parameter not found"
+			}
+		}
+	},
 	"welcome": "Welcome to the ABET.",
-
 	"navbar": {
 		"user": {
 			"name": "Administrator",
@@ -43,24 +284,17 @@
 		},
 		"cycle": {
 			"label": "Cycle"
-		},
-		"program": {
-			"regular": "Regular",
-			"epe": "EPE"
 		}
 	},
-
 	"language": {
 		"es": "ES",
 		"en": "EN"
 	},
-
 	"sidebar": {
 		"open": "Open sidebar",
 		"close": "Close sidebar",
 		"logoAlt": "ABET Logo"
 	},
-
 	"dialog": {
 		"close": "Close",
 		"actions": {
@@ -85,7 +319,6 @@
 			"confirm": "Confirm to continue."
 		}
 	},
-
 	"toast": {
 		"title": {
 			"success": "Success",
@@ -101,14 +334,13 @@
 		},
 		"close": "Close notification"
 	},
-
 	"tabs": {
 		"label": "Tabs"
 	},
-
 	"loading": {
 		"default": "Loading ..."
 	},
+
 	"sessionExpired": {
 		"title": "Session expired",
 		"message": "Sign in again",
@@ -137,6 +369,7 @@
 			"schoolRequired": "Select a school before continuing"
 		}
 	},
+
 
 	"forgotPassword": {
 		"title": "Recover password",
@@ -183,13 +416,11 @@
 	"auth": {
 		"invalidCredentials": "Invalid credentials"
 	},
-
 	"error": {
 		"school": {
 			"notFound": "The selected school does not exist"
 		}
 	},
-
 	"table": {
 		"search": {
 			"placeholder": "Search..."
@@ -202,14 +433,12 @@
 			"of": "of"
 		}
 	},
-
 	"select": {
 		"placeholder": {
 			"default": "Select an option"
 		},
 		"createLabel": "Create: \"{value}\""
 	},
-
 	"school": {
 		"sch_soft": "SCHOOL OF SOFTWARE ENGINEERING",
 		"sch_sist": "SCHOOL OF SYSTEMS ENGINEERING",
@@ -224,12 +453,10 @@
 		"ingciv": "CIVIL ENGINEERING",
 		"ingind": "INDUSTRIAL ENGINEERING"
 	},
-
 	"app": {
 		"name": "ABET Accreditation System",
 		"description": "ABET"
 	},
-
 	"page": {
 		"home": "Home",
 		"login": "Login",
@@ -238,7 +465,6 @@
 		"modals": "Modals",
 		"public": "Public"
 	},
-
 	"notFound": {
 		"title": "Page not found",
 		"message": "Sorry, we couldn’t find the page you’re looking for.",

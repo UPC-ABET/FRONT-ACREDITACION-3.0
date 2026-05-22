@@ -1,11 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarItem, SidebarNavGroup,
 } from '@/shared/components';
-import {HomeIcon, Cog6ToothIcon, ArrowRightStartOnRectangleIcon,
+import {
+	HomeIcon,
+	FolderIcon,
+	Cog6ToothIcon,
+	DocumentChartBarIcon,
+	ArrowRightStartOnRectangleIcon,
+=======
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { clearClientSession, logoutUser } from '@/modules/auth/services';
@@ -26,8 +32,25 @@ export function AppSidebar() {
 	const pathname = usePathname();
 	const { t } = useI18n();
 
+
+	const [isAdmin, setIsAdmin] = useState(false);
+	useEffect(() => {
+		let admin = false;
+		try {
+			const raw = localStorage.getItem('token');
+			const user = raw ? JSON.parse(raw) : null;
+			admin = user?.is_admin === true;
+		} catch {
+			admin = false;
+		}
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: defer localStorage read past hydration
+		setIsAdmin(admin);
+	}, []);
+
+
 	const isActive = (href?: string) =>
 		href ? pathname === href || pathname.startsWith(`${href}/`) : false;
+
 
 	const handleLogout = async () => {
 		try {
@@ -50,6 +73,15 @@ export function AppSidebar() {
 		{ name: t('nav.home'), href: '/', icon: HomeIcon },
 
 		{
+			name: t('nav.ifc.label'),
+			icon: DocumentChartBarIcon,
+			children: [
+				{ name: t('nav.ifc.dashboard'), href: '/ifcs' },
+				{ name: t('nav.ifc.findings'), href: '/ifc-findings' },
+			],
+		},
+
+		{
 			name: t('nav.tests.label'),
 			icon: Cog6ToothIcon,
 			children: [
@@ -59,6 +91,29 @@ export function AppSidebar() {
 				{ name: t('nav.tests.public'), href: '/tests/public' },
 			],
 		},
+
+		...(isAdmin
+			? [
+					{
+						name: t('nav.admin.label'),
+						icon: Cog6ToothIcon,
+						children: [
+							{
+								name: t('nav.admin.notifications'),
+								href: '/admin/ifc-notification-config',
+							},
+							{
+								name: t('nav.admin.ifcCodes'),
+								href: '/admin/ifc-codes',
+							},
+							{
+								name: t('nav.admin.ifcFields'),
+								href: '/admin/ifc-fields',
+							},
+						],
+					} as NavItem,
+				]
+			: []),
 	];
 
 	return (
