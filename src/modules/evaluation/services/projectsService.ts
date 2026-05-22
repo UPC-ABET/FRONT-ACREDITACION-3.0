@@ -1,5 +1,7 @@
 import { ApiResponse } from "@/shared";
 import { buildJsonHeaders } from '@/shared/lib'
+import { FilterProjectDto } from '../api/dtos/request'
+import { ProjectResponse } from '../api/dtos/response'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
@@ -50,7 +52,7 @@ export const projectsService = {
     return request(`${BASE_URL}/projects/get-all`)
   },
 
-  getByFilters(filters: Record<string, unknown>): Promise<ApiResponse<any[]>> {
+  getByFilters(filters: FilterProjectDto = {}): Promise<ApiResponse<ProjectResponse[]>> {
     return request(`${BASE_URL}/projects/get-by-filters`, {
       method: 'POST',
       body: JSON.stringify(filters),

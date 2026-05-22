@@ -4,7 +4,8 @@ export type CourseResponse = {
   is_active: boolean
   created_at: string
   updated_at: string | null
+  code: string
   name: { en: string; es: string }
   description: { en: string; es: string }
-  learning_outcome: string
+  learning_outcome: { en: string; es: string }
 }

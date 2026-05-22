@@ -1,15 +1,11 @@
-export type FilterProjectDto = Partial<{
-  code: string
+export type FilterCourseRequest = Partial<{
+  extra: Record<string, unknown>
   is_active: boolean
+  code: string
   name: { es?: string; en?: string }
   description: { es?: string; en?: string }
-  extra: Record<string, unknown>
+  learning_outcome: { es?: string; en?: string }
   academic_period_id: number
   program_id: number
   school_code: string
-  course_id: number
-  student_id: number
-  professor_id: number
 }>
-
-export {}
