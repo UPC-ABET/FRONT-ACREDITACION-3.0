@@ -3,11 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type {
-	CoreType,
-	NotificationConfig,
-	NotifyVar,
-} from '../services/types';
+import type { CoreType, NotificationConfig, NotifyVar } from '../services/types';
 import { TRIGGER_FALLBACK_LABEL } from './adminLabels';
 import { ConfigEditor } from './ConfigEditor';
 
@@ -71,9 +67,7 @@ export function ConfigTabs({
 
 	const existing =
 		configs.find(
-			(c) =>
-				Number(c.trigger_type_id) === triggerId &&
-				Number(c.ifc_status_type_id) === statusId,
+			(c) => Number(c.trigger_type_id) === triggerId && Number(c.ifc_status_type_id) === statusId,
 		) ?? null;
 
 	return (
@@ -97,9 +91,7 @@ export function ConfigTabs({
 								aria-selected={active}
 								onClick={() => setActiveStatus(s.id)}
 								className={`min-h-[40px] whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold uppercase tracking-wider transition-colors ${
-									active
-										? 'bg-white text-red-700 shadow-sm'
-										: 'text-zinc-600 hover:text-zinc-900'
+									active ? 'bg-white text-red-700 shadow-sm' : 'text-zinc-600 hover:text-zinc-900'
 								}`}>
 								{s.label}
 							</button>

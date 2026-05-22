@@ -30,7 +30,11 @@ function getJwtExpirationMs(token: string): number | null {
 	}
 }
 
-export function useSessionExpiry({ enabled, onExpire, idleMs = DEFAULT_IDLE_MS }: UseSessionExpiryParams) {
+export function useSessionExpiry({
+	enabled,
+	onExpire,
+	idleMs = DEFAULT_IDLE_MS,
+}: UseSessionExpiryParams) {
 	const expiredRef = useRef(false);
 
 	useEffect(() => {
@@ -60,7 +64,9 @@ export function useSessionExpiry({ enabled, onExpire, idleMs = DEFAULT_IDLE_MS }
 			'scroll',
 			'touchstart',
 		];
-		events.forEach((eventName) => window.addEventListener(eventName, resetInactivityTimer, { passive: true }));
+		events.forEach((eventName) =>
+			window.addEventListener(eventName, resetInactivityTimer, { passive: true }),
+		);
 		resetInactivityTimer();
 
 		const expAt = getJwtExpirationMs(token);

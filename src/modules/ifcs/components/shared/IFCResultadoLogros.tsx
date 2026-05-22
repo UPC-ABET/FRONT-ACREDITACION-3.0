@@ -27,9 +27,7 @@ export function IFCResultadoLogros({ outcomeResult }: Props) {
 									className="space-y-3">
 									{commission.outcomes.map((outcome) => {
 										const ref = [
-											commission.commission_name?.[lang] ??
-												commission.commission_name?.es ??
-												'',
+											commission.commission_name?.[lang] ?? commission.commission_name?.es ?? '',
 											outcome.outcome_code,
 										]
 											.filter(Boolean)

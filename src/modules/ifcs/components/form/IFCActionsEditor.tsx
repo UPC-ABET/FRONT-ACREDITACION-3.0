@@ -41,11 +41,7 @@ export function IFCActionsEditor({
 				<h2 className="text-lg font-bold uppercase tracking-wide text-zinc-900">
 					{FORM_LABELS.section_actions[lang]}
 				</h2>
-				<Button
-					variant="secondary"
-					size="lg"
-					disabled={noFindings}
-					onClick={onAdd}>
+				<Button variant="secondary" size="lg" disabled={noFindings} onClick={onAdd}>
 					<PlusIcon className="h-5 w-5" />
 					{FORM_LABELS.btn_add_action[lang]}
 				</Button>
@@ -53,8 +49,7 @@ export function IFCActionsEditor({
 
 			{actions.length === 0 && (
 				<div className="rounded-lg border border-dashed border-zinc-200 bg-white py-10 text-center text-base italic text-zinc-500">
-					{FORM_LABELS.section_actions[lang]} —{' '}
-					{FORM_LABELS.btn_add_action[lang].toLowerCase()}
+					{FORM_LABELS.section_actions[lang]} — {FORM_LABELS.btn_add_action[lang].toLowerCase()}
 				</div>
 			)}
 

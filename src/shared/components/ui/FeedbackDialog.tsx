@@ -92,9 +92,7 @@ function BaseFeedbackDialog({
 			onOpenChange={(open) => {
 				if (!open) onClose();
 			}}>
-			<DialogContent
-				showCloseButton={false}
-				className={dualActions ? 'max-w-md' : 'max-w-sm'}>
+			<DialogContent showCloseButton={false} className={dualActions ? 'max-w-md' : 'max-w-sm'}>
 				<div>
 					<div className="flex items-center justify-center space-x-5">
 						<div className={`flex h-12 w-12 items-center justify-center rounded-full ${iconBg}`}>

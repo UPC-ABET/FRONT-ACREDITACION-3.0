@@ -53,9 +53,7 @@ export function FindingGeneralInfo({
 	}
 
 	const criticalityLabel =
-		finding.criticality.name?.[lang] ??
-		finding.criticality.name?.es ??
-		finding.criticality.code;
+		finding.criticality.name?.[lang] ?? finding.criticality.name?.es ?? finding.criticality.code;
 
 	const descriptionText = finding.description?.[lang] ?? finding.description?.es ?? '';
 
@@ -73,9 +71,7 @@ export function FindingGeneralInfo({
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
 							{L.col_period[lang]}
 						</dt>
-						<dd className="mt-1.5 text-base text-zinc-900">
-							{finding.academic_period_code}
-						</dd>
+						<dd className="mt-1.5 text-base text-zinc-900">{finding.academic_period_code}</dd>
 					</div>
 					<div>
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
@@ -98,9 +94,7 @@ export function FindingGeneralInfo({
 									key={l}
 									label={l.toUpperCase()}
 									value={draft[l] ?? ''}
-									onChange={(e) =>
-										setDraft((p) => ({ ...p, [l]: e.target.value }))
-									}
+									onChange={(e) => setDraft((p) => ({ ...p, [l]: e.target.value }))}
 									disabled={saving}
 								/>
 							))}
@@ -130,11 +124,7 @@ export function FindingGeneralInfo({
 							<Button variant="ghost" size="lg" disabled={saving} onClick={cancelEdit}>
 								{L.btn_cancel[lang]}
 							</Button>
-							<Button
-								variant="primary"
-								size="lg"
-								disabled={saving}
-								onClick={handleSave}>
+							<Button variant="primary" size="lg" disabled={saving} onClick={handleSave}>
 								{L.btn_save[lang]}
 							</Button>
 						</>

@@ -22,8 +22,8 @@
  * esta carpeta solo resuelve UI del contexto auth.
  */
 
-export * from './LoginForm'
-export * from './ForgotPasswordForm'
-export * from './ResetPasswordForm'
+export * from './LoginForm';
+export * from './ForgotPasswordForm';
+export * from './ResetPasswordForm';
 
 export {};

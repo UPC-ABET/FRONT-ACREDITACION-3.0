@@ -340,13 +340,11 @@
 	"loading": {
 		"default": "Loading ..."
 	},
-
 	"sessionExpired": {
 		"title": "Session expired",
 		"message": "Sign in again",
 		"action": "Sign out"
 	},
-
 	"login": {
 		"title": "Accreditation system",
 		"school": {
@@ -369,8 +367,6 @@
 			"schoolRequired": "Select a school before continuing"
 		}
 	},
-
-
 	"forgotPassword": {
 		"title": "Recover password",
 		"subtitle": "We will send a recovery link to your email.",
@@ -412,7 +408,6 @@
 			"goToLogin": "Go to sign in"
 		}
 	},
-
 	"auth": {
 		"invalidCredentials": "Invalid credentials"
 	},

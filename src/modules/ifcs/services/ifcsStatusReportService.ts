@@ -31,7 +31,8 @@ export async function downloadStatusReport(
 			lang,
 		}),
 	});
-	if (!res.ok) throw new Error(await readErrorMessage(res, 'ifcs.statusReport.error.downloadFailed'));
+	if (!res.ok)
+		throw new Error(await readErrorMessage(res, 'ifcs.statusReport.error.downloadFailed'));
 	const blob = await res.blob();
 	const filename = parseFilename(
 		res.headers.get('Content-Disposition'),

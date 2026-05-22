@@ -250,11 +250,7 @@ export function IFCDashboard() {
 					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 						<AcademicPeriodSelect value={periodId} onChange={handlePeriod} />
 						{!chartIncomplete && scope && scope.levels.length > 0 && (
-							<ScopeDropdowns
-								scope={scope}
-								selections={selections}
-								onSelect={handleSelect}
-							/>
+							<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
 						)}
 					</div>
 
@@ -272,11 +268,7 @@ export function IFCDashboard() {
 								/>
 							</div>
 							<div className="flex flex-wrap items-center gap-2 lg:justify-end">
-								<Button
-									variant="primary"
-									size="lg"
-									disabled={!canSearch}
-									onClick={handleSearch}>
+								<Button variant="primary" size="lg" disabled={!canSearch} onClick={handleSearch}>
 									<MagnifyingGlassIcon className="h-5 w-5" />
 									{t('ifcs.page.searchBtn')}
 								</Button>
@@ -284,13 +276,9 @@ export function IFCDashboard() {
 									variant="secondary"
 									size="lg"
 									disabled={!canDownloadReport || downloadingReport}
-									onClick={() =>
-										downloadReport(lastSearchedChartIds!, lastSearchedPeriodId!)
-									}>
+									onClick={() => downloadReport(lastSearchedChartIds!, lastSearchedPeriodId!)}>
 									<DocumentChartBarIcon className="h-5 w-5" />
-									{downloadingReport
-										? t('loading.default')
-										: t('ifcs.statusReport.btn')}
+									{downloadingReport ? t('loading.default') : t('ifcs.statusReport.btn')}
 								</Button>
 								{approvedIds.length > 1 && (
 									<Button
@@ -346,19 +334,11 @@ export function IFCDashboard() {
 				)}
 
 				{pdfError && (
-					<ErrorDialog
-						isOpen
-						onClose={clearPdfError}
-						message={tryTranslate(t, pdfError)}
-					/>
+					<ErrorDialog isOpen onClose={clearPdfError} message={tryTranslate(t, pdfError)} />
 				)}
 
 				{reportError && (
-					<ErrorDialog
-						isOpen
-						onClose={clearReportError}
-						message={tryTranslate(t, reportError)}
-					/>
+					<ErrorDialog isOpen onClose={clearReportError} message={tryTranslate(t, reportError)} />
 				)}
 
 				{notifyError && (
@@ -370,11 +350,7 @@ export function IFCDashboard() {
 				)}
 
 				{notifySuccess && (
-					<SuccessDialog
-						isOpen
-						onClose={() => setNotifySuccess(null)}
-						message={notifySuccess}
-					/>
+					<SuccessDialog isOpen onClose={() => setNotifySuccess(null)} message={notifySuccess} />
 				)}
 			</div>
 		</Card>

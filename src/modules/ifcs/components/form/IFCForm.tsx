@@ -162,9 +162,7 @@ export function IFCForm(props: Props) {
 						</p>
 						<p className="mt-1.5 text-base text-zinc-900">
 							{props.prefill.coordinator_name ?? '—'}
-							{props.prefill.coordinator_code && (
-								<> ({props.prefill.coordinator_code})</>
-							)}
+							{props.prefill.coordinator_code && <> ({props.prefill.coordinator_code})</>}
 						</p>
 					</div>
 				</div>

@@ -104,10 +104,7 @@ export default function ResetPasswordForm() {
 							<DialogTitle>{t('resetPassword.success.title')}</DialogTitle>
 						</DialogHeader>
 						<p className="text-center text-sm text-zinc-600">{successMessage}</p>
-						<Button
-							type="button"
-							className="w-full"
-							onClick={() => router.push('/auth/login')}>
+						<Button type="button" className="w-full" onClick={() => router.push('/auth/login')}>
 							{t('resetPassword.success.goToLogin')}
 						</Button>
 					</div>

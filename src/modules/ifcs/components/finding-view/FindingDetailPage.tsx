@@ -103,10 +103,7 @@ export default function FindingDetailPage() {
 						{data.finding.finding_code}
 					</h1>
 				</div>
-				<Button
-					variant="ghost"
-					size="lg"
-					onClick={() => router.push('/ifc-findings')}>
+				<Button variant="ghost" size="lg" onClick={() => router.push('/ifc-findings')}>
 					<ArrowLeftIcon className="h-5 w-5" />
 					{L.btn_back[lang]}
 				</Button>

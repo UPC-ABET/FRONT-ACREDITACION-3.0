@@ -23,10 +23,7 @@ export async function notifyIfc(chartId: number, periodId: number): Promise<Noti
 	return body.data;
 }
 
-export async function notifyIfcAll(
-	chartIds: number[],
-	periodId: number,
-): Promise<NotifyAllResult> {
+export async function notifyIfcAll(chartIds: number[], periodId: number): Promise<NotifyAllResult> {
 	if (!BASE_URL) throw new Error('app.missingApiUrl');
 
 	const res = await fetch(`${BASE_URL}/ifcs/notify-all`, {

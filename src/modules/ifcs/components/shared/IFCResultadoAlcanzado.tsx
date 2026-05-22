@@ -13,9 +13,7 @@ export function IFCResultadoAlcanzado({ learningOutcome }: Props) {
 
 	return (
 		<Card title={IFC_SHARED_LABELS.resultado_alcanzado[lang]} className="h-full">
-			<p className="whitespace-pre-line text-base leading-relaxed text-zinc-800">
-				{text || '—'}
-			</p>
+			<p className="whitespace-pre-line text-base leading-relaxed text-zinc-800">{text || '—'}</p>
 		</Card>
 	);
 }

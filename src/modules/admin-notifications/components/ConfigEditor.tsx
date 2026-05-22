@@ -14,12 +14,7 @@ import {
 	deleteNotificationConfig,
 	upsertNotificationConfig,
 } from '../services/notificationConfigsService';
-import type {
-	CoreType,
-	NotificationConfig,
-	NotifyVar,
-	UpsertConfigBody,
-} from '../services/types';
+import type { CoreType, NotificationConfig, NotifyVar, UpsertConfigBody } from '../services/types';
 import { VariableLegend } from './VariableLegend';
 
 type Props = {
@@ -124,12 +119,8 @@ export function ConfigEditor({
 	const [body, setBody] = useState<I18nText>(() =>
 		existingConfig ? asI18n(existingConfig.body) : emptyI18n(),
 	);
-	const [toIds, setToIds] = useState<number[]>(
-		() => existingConfig?.to_chart_level_type_ids ?? [],
-	);
-	const [ccIds, setCcIds] = useState<number[]>(
-		() => existingConfig?.cc_chart_level_type_ids ?? [],
-	);
+	const [toIds, setToIds] = useState<number[]>(() => existingConfig?.to_chart_level_type_ids ?? []);
+	const [ccIds, setCcIds] = useState<number[]>(() => existingConfig?.cc_chart_level_type_ids ?? []);
 	const [isActive, setIsActive] = useState<boolean>(() => existingConfig?.is_active ?? true);
 	const [saving, setSaving] = useState(false);
 	const [confirmDelete, setConfirmDelete] = useState(false);
@@ -282,11 +273,7 @@ export function ConfigEditor({
 								onClick={() => setConfirmDelete(false)}>
 								{t('dialog.actions.cancel')}
 							</Button>
-							<Button
-								variant="primary"
-								size="md"
-								disabled={saving}
-								onClick={handleDelete}>
+							<Button variant="primary" size="md" disabled={saving} onClick={handleDelete}>
 								{t('admin.notify.btn.confirmDelete')}
 							</Button>
 						</div>

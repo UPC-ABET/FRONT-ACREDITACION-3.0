@@ -118,21 +118,13 @@ export function FindingsConsultPage() {
 					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 						<AcademicPeriodSelect value={periodId} onChange={handlePeriod} />
 						{!chartIncomplete && scope && scope.levels.length > 0 && (
-							<ScopeDropdowns
-								scope={scope}
-								selections={selections}
-								onSelect={handleSelect}
-							/>
+							<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
 						)}
 					</div>
 
 					{!chartIncomplete && (
 						<div className="mt-6 flex justify-end border-t border-zinc-200 pt-5">
-							<Button
-								variant="primary"
-								size="lg"
-								disabled={!canSearch}
-								onClick={handleSearch}>
+							<Button variant="primary" size="lg" disabled={!canSearch} onClick={handleSearch}>
 								<MagnifyingGlassIcon className="h-5 w-5" />
 								{t('ifcs.page.searchBtn')}
 							</Button>
