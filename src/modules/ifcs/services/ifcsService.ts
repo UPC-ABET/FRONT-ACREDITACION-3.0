@@ -55,6 +55,13 @@ export async function getIFCView(id: number): Promise<IFCViewPayload> {
 			a.id = Number(a.id);
 		});
 	});
+	body.data.previous_actions = (body.data.previous_actions ?? []).map((p) => ({
+		...p,
+		id: Number(p.id),
+		finding_action_id: Number(p.finding_action_id),
+		finding_id: Number(p.finding_id),
+		academic_period_id: Number(p.academic_period_id),
+	}));
 	return body.data;
 }
 
@@ -109,6 +116,13 @@ export async function getIFCPrefill(chartId: number, periodId: number): Promise<
 
 	const body = (await res.json().catch(() => null)) as Envelope<IFCPrefill> | null;
 	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.prefillFailed');
+	body.data.previous_actions = (body.data.previous_actions ?? []).map((p) => ({
+		...p,
+		id: Number(p.id),
+		finding_action_id: Number(p.finding_action_id),
+		finding_id: Number(p.finding_id),
+		academic_period_id: Number(p.academic_period_id),
+	}));
 	return body.data;
 }
 

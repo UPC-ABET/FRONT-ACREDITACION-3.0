@@ -16,6 +16,7 @@ import type {
 import { IFCPageTitle } from '../shared/IFCPageTitle';
 import { IFCResultadoAlcanzado } from '../shared/IFCResultadoAlcanzado';
 import { IFCResultadoLogros } from '../shared/IFCResultadoLogros';
+import { PreviousActionsTable } from '../shared/PreviousActionsTable';
 import { SubmitConfirmModal } from '../shared/SubmitConfirmModal';
 import { FORM_LABELS } from './formLabels';
 import { IFCActionsEditor } from './IFCActionsEditor';
@@ -184,6 +185,8 @@ export function IFCForm(props: Props) {
 					/>
 				</Card>
 			)}
+
+			<PreviousActionsTable previousActions={props.prefill.previous_actions} />
 
 			<IFCFindingsEditor
 				findings={state.findings}
