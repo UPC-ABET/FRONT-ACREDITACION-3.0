@@ -20,7 +20,11 @@ export default function LoginForm() {
 	const { t } = useI18n();
 
 	const localizedSchools = useMemo(
-		() => schoolOptions.map((option) => ({ id: option.id, label: t(option.labelKey) })),
+		() =>
+			schoolOptions.map((option) => ({
+				value: option.id,
+				label: t(option.labelKey),
+			})),
 		[t],
 	);
 
@@ -41,7 +45,7 @@ export default function LoginForm() {
 			localStorage.setItem('bearerToken', JSON.stringify(res.accessToken));
 			localStorage.setItem('token', JSON.stringify(res.user));
 			localStorage.setItem('escuela', JSON.stringify(schoolCode));
-			router.replace('/');
+			window.location.replace('/');
 		} catch (err: any) {
 			const rawMessage = typeof err?.message === 'string' ? err.message : '';
 			const translated = rawMessage ? t(rawMessage) : '';
@@ -72,7 +76,7 @@ export default function LoginForm() {
 				<div>
 					<Select
 						name="escuela"
-						value={schoolCode ? { label: schoolCode, value: schoolCode } : null}
+						value={localizedSchools.find((s) => s.value === schoolCode) || null}
 						onChange={(_, v) => setSchoolCode((v as any)?.value || '')}
 						options={localizedSchools}
 						placeholder={t('login.school.placeholder')}
@@ -122,9 +126,12 @@ export default function LoginForm() {
 					{t('login.microsoft')}
 				</Button>
 				<div className="text-center">
-					<a href="#" className="text-sm text-red-600">
+					<button
+						type="button"
+						onClick={() => router.push('/auth/forgot-password')}
+						className="text-sm text-red-600 hover:text-red-500 transition-colors">
 						{t('login.forgot')}
-					</a>
+					</button>
 				</div>
 			</div>
 

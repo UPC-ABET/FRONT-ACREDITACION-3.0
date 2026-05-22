@@ -20,3 +20,4 @@ export * from './checkbox';
 export * from './hover-card';
 export * from './label';
 export * from './separator';
+export * from './alert';

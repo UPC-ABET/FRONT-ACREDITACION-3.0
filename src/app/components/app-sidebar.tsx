@@ -2,15 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import {
-	Sidebar,
-	SidebarHeader,
-	SidebarContent,
-	SidebarFooter,
-	SidebarGroup,
-	SidebarItem,
-	SidebarNavGroup,
+import { usePathname } from 'next/navigation';
+import {Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarItem, SidebarNavGroup,
 } from '@/shared/components';
 import {
 	HomeIcon,
@@ -18,9 +11,10 @@ import {
 	Cog6ToothIcon,
 	DocumentChartBarIcon,
 	ArrowRightStartOnRectangleIcon,
+=======
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { logoutUser } from '@/modules/auth/services';
+import { clearClientSession, logoutUser } from '@/modules/auth/services';
 
 type NavChild = {
 	name: string;
@@ -36,8 +30,8 @@ type NavItem = {
 
 export function AppSidebar() {
 	const pathname = usePathname();
-	const router = useRouter();
 	const { t } = useI18n();
+
 
 	const [isAdmin, setIsAdmin] = useState(false);
 	useEffect(() => {
@@ -53,7 +47,10 @@ export function AppSidebar() {
 		setIsAdmin(admin);
 	}, []);
 
-	const isActive = (href?: string) => (href ? pathname === href : false);
+
+	const isActive = (href?: string) =>
+		href ? pathname === href || pathname.startsWith(`${href}/`) : false;
+
 
 	const handleLogout = async () => {
 		try {
@@ -61,16 +58,14 @@ export function AppSidebar() {
 		} catch {
 			// Silencia errores de logout para no bloquear el cierre de sesión local.
 		} finally {
-			localStorage.removeItem('bearerToken');
-			localStorage.removeItem('token');
-			localStorage.removeItem('escuela');
+			clearClientSession();
 			sessionStorage.clear();
 			document.cookie.split(';').forEach((c) => {
 				document.cookie = c
 					.replace(/^ +/, '')
 					.replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
 			});
-			router.replace('/auth/login');
+			window.location.replace('/auth/login');
 		}
 	};
 

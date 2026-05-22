@@ -13,6 +13,7 @@
 			"tables": "Tablas",
 			"public": "Publico"
 		},
+
 		"admin": {
 			"label": "Administración",
 			"notifications": "Notificaciones IFC",
@@ -20,6 +21,9 @@
 			"ifcFields": "Campos del formulario IFC"
 		},
 		"logout": "Cerrar sesion"
+
+		"logout": "Cerrar sesión"
+
 	},
 	"ifcs": {
 		"page": {
@@ -314,7 +318,7 @@
 		"message": {
 			"error": "Ocurrio un error al procesar la solicitud.",
 			"success": "Operacion completada con exito.",
-			"info": "Nueva informacion disponible.",
+			"info": "Nueva información disponible.",
 			"warning": "Revisa los datos antes de continuar.",
 			"confirm": "Confirma para continuar."
 		}
@@ -340,6 +344,14 @@
 	"loading": {
 		"default": "Cargando ..."
 	},
+
+	"sessionExpired": {
+		"title": "Sesion expirada",
+		"message": "Vuelve a iniciar sesion",
+		"action": "Cerrar sesion"
+	},
+
+
 	"login": {
 		"title": "Sistema de  acreditación",
 		"school": {
@@ -349,19 +361,63 @@
 			"placeholder": "Usuario"
 		},
 		"password": {
-			"placeholder": "Contrasena"
+			"placeholder": "Contraseña"
 		},
 		"remember": "Recuerdame",
-		"submit": "Iniciar sesion",
+		"submit": "Iniciar sesión",
 		"microsoft": "Continuar con Microsoft",
 		"forgot": "¿Olvidaste la contrasena?",
-		"loading": "Iniciando sesion...",
+		"loading": "Iniciando sesión...",
 		"error": {
 			"required": "Todos los campos son obligatorios",
 			"generic": "Error durante el login",
 			"schoolRequired": "Selecciona una escuela antes de continuar"
 		}
 	},
+
+
+	"forgotPassword": {
+		"title": "Recuperar contraseña",
+		"subtitle": "Te enviaremos un enlace de recuperacion a tu correo.",
+		"loading": "Enviando solicitud...",
+		"form": {
+			"emailLabel": "Correo institucional",
+			"emailPlaceholder": "correo@upc.pe",
+			"submit": "Enviar enlace de recuperación",
+			"backToLogin": "Volver al inicio de sesión"
+		},
+		"error": {
+			"emailRequired": "Ingresa tu correo institucional.",
+			"emailInvalid": "Ingresa un correo valido.",
+			"requestFailed": "No se pudo procesar la solicitud"
+		},
+		"success": {
+			"defaultMessage": "Si el correo existe, se enviara un enlace de recuperación"
+		}
+	},
+	"resetPassword": {
+		"title": "Restablecer contraseña",
+		"subtitle": "Ingresa y confirma tu nueva contrasena.",
+		"loading": "Actualizando contrasena...",
+		"form": {
+			"passwordPlaceholder": "Nueva contraseña",
+			"confirmPasswordPlaceholder": "Confirmar nueva contraseña",
+			"submit": "Cambiar contraseña"
+		},
+		"error": {
+			"required": "Todos los campos son obligatorios",
+			"passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+			"passwordMismatch": "Las contraseñas no coinciden",
+			"invalidToken": "El enlace de recuperacion no es valido o expiro",
+			"requestFailed": "No se pudo procesar la solicitud"
+		},
+		"success": {
+			"title": "Contrasena actualizada",
+			"defaultMessage": "Tu contraseña fue actualizada correctamente",
+			"goToLogin": "Ir a iniciar sesión"
+		}
+	},
+
 	"auth": {
 		"invalidCredentials": "Credenciales invalidas"
 	},
@@ -389,15 +445,18 @@
 		"createLabel": "Crear: \"{value}\""
 	},
 	"school": {
-		"eiscc": "ESCUELA DE INGENIERIA DE SOFTWARE Y CIENCIAS DE LA COMPUTACION",
-		"eiscb": "ESCUELA DE INGENIERIA DE SISTEMAS Y CIBER SEGURIDAD",
-		"inggmi": "ESCUELA DE INGENIERIA DE GESTION MINERA",
-		"inggem": "ESCUELA DE INGENIERIA DE GESTION EMPRESARIAL",
-		"escel": "ESCUELA DE INGENIERIA ELECTRONICA, MECATRONICA Y REDES",
-		"ingamb": "ESCUELA DE INGENIERIA AMBIENTAL",
-		"ingbio": "ESCUELA DE INGENIERIA BIOMEDICA",
-		"ingciv": "ESCUELA DE INGENIERIA CIVIL",
-		"ingind": "ESCUELA DE INGENIERIA INDUSTRIAL"
+		"sch_soft": "ESCUELA DE INGENIERIA DE SOFTWARE",
+		"sch_sist": "ESCUELA DE INGENIERIA DE SISTEMAS",
+		"sch_admin": "ESCUELA DE ADMINISTRACION",
+		"eiscb": "ESCUELA DE INGENIERIA DE SOFTWARE",
+		"eiscc": "ESCUELA DE INGENIERIA DE CIENCIAS DE LA COMPUTACION",
+		"inggmi": "INGENIERIA GMI",
+		"inggem": "INGENIERIA GEM",
+		"escel": "ESCUELA DE ELECTRONICA",
+		"ingamb": "INGENIERIA AMBIENTAL",
+		"ingbio": "INGENIERIA BIOMEDICA",
+		"ingciv": "INGENIERIA CIVIL",
+		"ingind": "INGENIERIA INDUSTRIAL"
 	},
 	"app": {
 		"name": "Sistema de Acreditación ABET",

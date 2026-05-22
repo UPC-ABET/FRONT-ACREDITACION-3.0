@@ -340,6 +340,13 @@
 	"loading": {
 		"default": "Loading ..."
 	},
+
+	"sessionExpired": {
+		"title": "Session expired",
+		"message": "Sign in again",
+		"action": "Sign out"
+	},
+
 	"login": {
 		"title": "Accreditation system",
 		"school": {
@@ -362,6 +369,50 @@
 			"schoolRequired": "Select a school before continuing"
 		}
 	},
+
+
+	"forgotPassword": {
+		"title": "Recover password",
+		"subtitle": "We will send a recovery link to your email.",
+		"loading": "Sending request...",
+		"form": {
+			"emailLabel": "Institutional email",
+			"emailPlaceholder": "email@upc.pe",
+			"submit": "Send recovery link",
+			"backToLogin": "Back to sign in"
+		},
+		"error": {
+			"emailRequired": "Enter your institutional email.",
+			"emailInvalid": "Enter a valid email.",
+			"requestFailed": "Could not process the request"
+		},
+		"success": {
+			"defaultMessage": "If the email exists, a recovery link will be sent"
+		}
+	},
+	"resetPassword": {
+		"title": "Reset password",
+		"subtitle": "Enter and confirm your new password.",
+		"loading": "Updating password...",
+		"form": {
+			"passwordPlaceholder": "New password",
+			"confirmPasswordPlaceholder": "Confirm new password",
+			"submit": "Change password"
+		},
+		"error": {
+			"required": "All fields are required",
+			"passwordMinLength": "Password must be at least 8 characters long",
+			"passwordMismatch": "Passwords do not match",
+			"invalidToken": "The recovery link is invalid or expired",
+			"requestFailed": "Could not process the request"
+		},
+		"success": {
+			"title": "Password updated",
+			"defaultMessage": "Your password was updated successfully",
+			"goToLogin": "Go to sign in"
+		}
+	},
+
 	"auth": {
 		"invalidCredentials": "Invalid credentials"
 	},
@@ -389,15 +440,18 @@
 		"createLabel": "Create: \"{value}\""
 	},
 	"school": {
-		"eiscc": "SCHOOL OF SOFTWARE ENGINEERING AND COMPUTER SCIENCE",
-		"eiscb": "SCHOOL OF SYSTEMS ENGINEERING AND CYBER SECURITY",
-		"inggmi": "SCHOOL OF MINING MANAGEMENT ENGINEERING",
-		"inggem": "SCHOOL OF BUSINESS MANAGEMENT ENGINEERING",
-		"escel": "SCHOOL OF ELECTRONICS, MECHATRONICS AND NETWORKS ENGINEERING",
-		"ingamb": "SCHOOL OF ENVIRONMENTAL ENGINEERING",
-		"ingbio": "SCHOOL OF BIOMEDICAL ENGINEERING",
-		"ingciv": "SCHOOL OF CIVIL ENGINEERING",
-		"ingind": "SCHOOL OF INDUSTRIAL ENGINEERING"
+		"sch_soft": "SCHOOL OF SOFTWARE ENGINEERING",
+		"sch_sist": "SCHOOL OF SYSTEMS ENGINEERING",
+		"sch_admin": "SCHOOL OF BUSINESS ADMINISTRATION",
+		"eiscb": "SCHOOL OF SOFTWARE ENGINEERING",
+		"eiscc": "SCHOOL OF COMPUTER SCIENCE ENGINEERING",
+		"inggmi": "GMI ENGINEERING",
+		"inggem": "GEM ENGINEERING",
+		"escel": "SCHOOL OF ELECTRONICS",
+		"ingamb": "ENVIRONMENTAL ENGINEERING",
+		"ingbio": "BIOMEDICAL ENGINEERING",
+		"ingciv": "CIVIL ENGINEERING",
+		"ingind": "INDUSTRIAL ENGINEERING"
 	},
 	"app": {
 		"name": "ABET Accreditation System",

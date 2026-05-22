@@ -1,61 +1,130 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { Bars3BottomLeftIcon } from '@heroicons/react/24/outline';
+
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
-import { DEFAULT_CYCLE_LABEL, DEFAULT_USER_INITIALS } from '@/shared/constants';
+import { DEFAULT_USER_INITIALS } from '@/shared/constants';
 import { TYPE_GROUP_CODES } from '@/modules/ifcs/constants';
 import { getTypesByGroupCode } from '@/modules/ifcs/services';
 import type { CriticalityOption } from '@/modules/ifcs/services';
+import type { NavbarProps, StoredUser } from '@/shared/types';
 
-type NavbarProps = {
-	cycleLabel?: string;
-	schoolName?: string;
-	userName?: string;
-	userRole?: string;
-	userInitials?: string;
-};
+function subscribeStoredUser(onStoreChange: () => void) {
+	if (typeof window === 'undefined') return () => {};
+	window.addEventListener('storage', onStoreChange);
+	return () => window.removeEventListener('storage', onStoreChange);
+}
 
-type StoredUser = {
-	first_name?: string;
-	last_name?: string;
-	is_admin?: boolean;
-};
+function readStoredUserRaw() {
+	if (typeof window === 'undefined') return '';
+	return localStorage.getItem('token') ?? '';
+}
 
-function Navbar({
-	cycleLabel,
-	schoolName,
-	userName,
-	userRole,
-	userInitials,
-}: NavbarProps) {
+function readStoredSchoolCodeRaw() {
+	if (typeof window === 'undefined') return '';
+	return localStorage.getItem('escuela') ?? '';
+}
+
+const Sep = () => <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />;
+
+function SchoolName({ short = false, label, name }: { short?: boolean; label: string; name: string }) {
+	return (
+		<div className="flex items-center min-w-0 text-zinc-800 leading-none">
+			<span
+				className={`font-semibold ${short ? 'text-[14px]' : 'text-[18px]'} flex-shrink-0`}
+				style={{ color: '#C8102E' }}>
+				{label}:&nbsp;
+			</span>
+			<span
+				className={`font-semibold ${short ? 'text-[12px] max-w-[150px]' : 'text-[14px] max-w-[220px]'}`}>
+				&quot;{name}&quot;
+			</span>
+		</div>
+	);
+}
+
+function UserAvatar({
+	withName = false,
+	withChevron = false,
+	initials,
+	name,
+	role,
+}: {
+	withName?: boolean;
+	withChevron?: boolean;
+	initials: string;
+	name: string;
+	role: string;
+}) {
+	return (
+		<div
+			className="flex items-center gap-2 rounded-xl cursor-pointer hover:bg-zinc-100 transition-colors flex-shrink-0"
+			style={{ padding: withName ? '4px 8px 4px 4px' : '4px 6px 4px 4px' }}>
+			<div
+				className="w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-extrabold text-white flex-shrink-0"
+				style={{ background: '#C8102E' }}>
+				{initials}
+			</div>
+
+			{withName && (
+				<div className="flex flex-col leading-none gap-0.5 min-w-0">
+					<span className="text-[12px] font-semibold text-zinc-800 truncate max-w-[140px]">
+						{name}
+					</span>
+					{role && (
+						<span className="text-[10px] text-zinc-400 truncate max-w-[140px]">
+							{role}
+						</span>
+					)}
+				</div>
+			)}
+
+			{withChevron && <ChevronDownIcon className="h-4 w-4 text-zinc-400 flex-shrink-0" />}
+		</div>
+	);
+}
+
+function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 	const { toggle, isMobile: isSidebarMobile } = useSidebar();
 	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
 	const { modalityTypeId, setModalityTypeId } = useABET();
 
-	const [storedUser, setStoredUser] = useState<StoredUser | null>(null);
+	const storedUserRaw = useSyncExternalStore(subscribeStoredUser, readStoredUserRaw, () => '');
+	const storedSchoolCodeRaw = useSyncExternalStore(subscribeStoredUser, readStoredSchoolCodeRaw, () => '');
+
 	const [modalityOptions, setModalityOptions] = useState<CriticalityOption[]>([]);
 	const [loadingModalities, setLoadingModalities] = useState(true);
 
-	useEffect(() => {
-		const raw = localStorage.getItem('token');
-		if (!raw) return;
+	const storedUser = useMemo<StoredUser | null>(() => {
+		if (!storedUserRaw) return null;
 		try {
-			const parsed = JSON.parse(raw) as StoredUser;
-			setStoredUser(parsed);
+			return JSON.parse(storedUserRaw) as StoredUser;
 		} catch {
-			setStoredUser(null);
+			return null;
 		}
-	}, []);
+	}, [storedUserRaw]);
+
+	const storedSchoolCode = useMemo(() => {
+		if (!storedSchoolCodeRaw) return '';
+		try {
+			return JSON.parse(storedSchoolCodeRaw) as string;
+		} catch {
+			return storedSchoolCodeRaw;
+		}
+	}, [storedSchoolCodeRaw]);
 
 	useEffect(() => {
 		let active = true;
+
 		getTypesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY)
 			.then((rows) => {
 				if (!active) return;
+
 				setModalityOptions(rows);
+
 				if (rows.length > 0 && modalityTypeId === null) {
 					setModalityTypeId(rows[0].id);
 				}
@@ -66,19 +135,14 @@ function Navbar({
 			.finally(() => {
 				if (active) setLoadingModalities(false);
 			});
+
 		return () => {
 			active = false;
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const resolvedCycleLabel = cycleLabel ?? DEFAULT_CYCLE_LABEL;
-	const resolvedSchoolName = schoolName ?? t('navbar.school.default');
-	const buildInitials = (firstName?: string, lastName?: string) => {
-		const first = firstName?.trim().charAt(0) ?? '';
-		const last = lastName?.trim().charAt(0) ?? '';
-		return `${first}${last}`.toUpperCase() || DEFAULT_USER_INITIALS;
-	};
+	const resolvedSchoolName = schoolName ?? storedSchoolCode;
 
 	const resolvedUserName =
 		userName ??
@@ -86,70 +150,67 @@ function Navbar({
 			t('navbar.user.name'));
 
 	const resolvedUserRole =
-		userRole ?? ((storedUser ? (storedUser.is_admin ? 'admi' : '') : '') || t('navbar.user.role'));
+		userRole ??
+		((storedUser ? (storedUser.is_admin ? t('navbar.user.role') : '') : '') ||
+			t('navbar.user.role'));
 
 	const resolvedUserInitials =
 		userInitials ??
-		(storedUser
-			? buildInitials(storedUser.first_name, storedUser.last_name)
-			: DEFAULT_USER_INITIALS);
+		(`${storedUser?.first_name?.trim().charAt(0) ?? ''}${storedUser?.last_name?.trim().charAt(0) ?? ''}`.toUpperCase() ||
+			DEFAULT_USER_INITIALS);
 
-	const navStyle: React.CSSProperties = {
-		background: '#f8f8f9',
-		borderBottom: '1.5px solid #e5e5e8',
-		position: 'relative',
-	};
+	const navClass = 'w-full sticky top-0 z-30 bg-[#f8f8f9] border-b border-zinc-200';
+	const schoolLabelText = t('navbar.school.label');
 
-	const toggleButton = isSidebarMobile ? (
+	const menuBtn = isSidebarMobile ? (
 		<Button
 			type="button"
 			onClick={toggle}
 			aria-label={t('navbar.openMenu')}
 			variant="ghost"
 			size="sm"
-			className="h-8 w-8 p-0 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-200/60 transition-colors">
-			<Bars3BottomLeftIcon className="h-5 w-5" />
+			className="h-9 w-9 p-0 rounded-lg text-zinc-500 hover:text-zinc-700 hover:bg-zinc-200/70 transition-colors flex-shrink-0">
+			<Bars3BottomLeftIcon className="h-6 w-6" />
 		</Button>
 	) : null;
 
-	const PillSwitcher = () => {
+	const ProgramSwitcher = ({ loose = false }: { loose?: boolean }) => {
 		if (loadingModalities || modalityOptions.length === 0) {
 			return (
-				<div
-					className="flex items-center gap-[3px] p-[3px] rounded-lg"
-					style={{ background: '#ececee', border: '1.5px solid #e0e0e3' }}>
-					<span className="px-4 py-[6px] text-[11.5px] font-bold text-zinc-400 tracking-wide">
+				<div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-zinc-200/80 border border-zinc-300/60 flex-shrink-0">
+					<span className="px-4 py-1.5 text-[11px] font-bold text-zinc-400">
 						{loadingModalities ? t('loading.default') : '—'}
 					</span>
 				</div>
 			);
 		}
+
 		return (
 			<div
-				className="flex items-center gap-[3px] p-[3px] rounded-lg"
-				style={{ background: '#ececee', border: '1.5px solid #e0e0e3' }}>
+				className={
+					loose
+						? 'flex items-center gap-1 flex-shrink-0'
+						: 'flex items-center gap-0.5 p-0.5 rounded-lg bg-zinc-200/80 border border-zinc-300/60 flex-shrink-0'
+				}>
 				{modalityOptions.map((opt) => {
 					const label = opt.name[locale] ?? opt.name.es ?? opt.code;
-					const isActive = modalityTypeId === opt.id;
+					const active = modalityTypeId === opt.id;
+
 					return (
 						<button
 							key={opt.id}
 							onClick={() => setModalityTypeId(opt.id)}
-							className="px-4 py-[6px] rounded-md text-[11.5px] font-bold transition-all duration-200 cursor-pointer border-none tracking-wide"
-							style={
-								isActive
-									? {
-											background: '#fff',
-											color: '#C8102E',
-											boxShadow: '0 1px 4px rgba(0,0,0,0.10)',
-											border: '1px solid rgba(200,16,46,0.15)',
-										}
-									: {
-											background: 'transparent',
-											color: '#a1a1aa',
-											border: '1px solid transparent',
-										}
-							}>
+							className={
+								loose
+									? 'px-5 py-2 rounded-xl text-[14px] font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap'
+									: 'px-3.5 py-1.5 rounded-md text-[11px] font-bold tracking-wide transition-all duration-150 cursor-pointer border'
+							}
+							style={{
+								background: active ? '#fff' : 'transparent',
+								color: active ? '#C8102E' : '#a1a1aa',
+								border: active ? '1.5px solid #e2e2e6' : '1.5px solid transparent',
+								boxShadow: active ? '0 1px 5px rgba(0,0,0,0.08)' : 'none',
+							}}>
 							{label}
 						</button>
 					);
@@ -158,127 +219,52 @@ function Navbar({
 		);
 	};
 
-	const SchoolBlock = ({ vertical = false }: { vertical?: boolean }) => (
-		<div
-			className={`flex gap-[3px] ${vertical ? 'flex-col items-start' : 'flex-row items-baseline'}`}>
-			<span
-				className="text-[13px] font-black uppercase leading-none"
-				style={{ color: '#C8102E', letterSpacing: '0.08em' }}>
-				{t('navbar.school.label')}:
-			</span>
-			<span
-				className={`font-bold text-zinc-800 leading-none ${vertical ? 'text-[15px]' : 'text-[17px]'}`}
-				style={{ letterSpacing: '-0.01em' }}>
-				{resolvedSchoolName}
-			</span>
-		</div>
-	);
-
-	const CycleBlock = () => (
-		<div
-			className="flex flex-col gap-[2px] px-3 py-2 rounded-lg"
-			style={{ background: '#fff', border: '1.5px solid #e2e2e6' }}>
-			<span
-				className="text-[9px] font-bold uppercase leading-none text-zinc-400"
-				style={{ letterSpacing: '0.12em' }}>
-				{t('navbar.cycle.label')}
-			</span>
-			<span className="text-[13px] font-bold text-zinc-600 leading-none tabular-nums">
-				{resolvedCycleLabel}
-			</span>
-		</div>
-	);
-
-	const UserBlock = ({ compact = false }: { compact?: boolean }) => (
-		<div
-			className="flex items-center gap-2.5 cursor-pointer rounded-xl transition-colors hover:bg-zinc-100"
-			style={{ padding: '5px 10px 5px 5px' }}>
-			<div
-				className="w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-extrabold text-white flex-shrink-0"
-				style={{ background: '#C8102E' }}>
-				{resolvedUserInitials}
-			</div>
-			{!compact && (
-				<div className="flex flex-col leading-none gap-[3px]">
-					<span className="text-[12.5px] font-bold text-zinc-800 truncate max-w-[160px]">
-						{resolvedUserName}
-					</span>
-					{resolvedUserRole ? (
-						<span className="text-[10px] text-zinc-400 truncate max-w-[160px]">
-							{resolvedUserRole}
-						</span>
-					) : null}
-				</div>
-			)}
-		</div>
-	);
-
-	const Sep = () => <div className="w-px h-7 bg-zinc-200 flex-shrink-0" />;
-
-	/* ─── Mobile ─── */
 	if (isMobile) {
 		return (
-			<nav className="w-full sticky top-0 z-30 flex flex-col gap-2.5 px-4 py-3" style={navStyle}>
-				<div className="flex items-center justify-between">
-					<div>{toggleButton}</div>
+			<nav className={`${navClass} flex flex-col`}>
+				<div className="flex items-center justify-between px-4 h-[68px] border-b border-zinc-200">
 					<div className="flex items-center gap-3">
+						{menuBtn}
 						<LanguageSwitcher />
-						<div className="w-px h-6 bg-zinc-200" />
-						<UserBlock />
 					</div>
+					<UserAvatar initials={resolvedUserInitials} name={resolvedUserName} role={resolvedUserRole} />
 				</div>
-				<div className="flex items-center gap-3">
-					<SchoolBlock vertical />
-					<div className="w-px h-7 bg-zinc-200 flex-shrink-0" />
-					<CycleBlock />
-					<div className="w-px h-7 bg-zinc-200 flex-shrink-0" />
-					<PillSwitcher />
+
+				<div className="flex items-center justify-between px-4 h-14 gap-4">
+					<div className="ml-[12px]">
+						<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
+					</div>
+					<ProgramSwitcher loose />
 				</div>
 			</nav>
 		);
 	}
 
-	/* ─── Tablet ─── */
 	if (isTablet) {
 		return (
-			<nav
-				className="w-full h-[72px] flex items-center justify-between px-5 sticky top-0 z-30"
-				style={navStyle}>
-				<div className="flex items-center gap-4">
-					{toggleButton}
-					<SchoolBlock />
-				</div>
-				<div className="flex items-center gap-4 ml-auto">
-					<CycleBlock />
-					<Sep />
-					<PillSwitcher />
-					<Sep />
-					<LanguageSwitcher />
-					<Sep />
-					<UserBlock compact />
-				</div>
-			</nav>
-		);
-	}
-
-	/* ─── Desktop ─── */
-	return (
-		<nav
-			className="w-full h-[72px] flex items-center justify-between px-6 sticky top-0 z-30"
-			style={navStyle}>
-			<div className="flex items-center gap-4">
-				{toggleButton}
-				<SchoolBlock />
-			</div>
-			<div className="flex items-center gap-5 ml-auto">
-				<CycleBlock />
-				<Sep />
-				<PillSwitcher />
+			<nav className={`${navClass} h-[90px] flex items-center gap-3 px-4`}>
+				{menuBtn}
+				<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
+				<div className="flex-1" />
+				<ProgramSwitcher />
 				<Sep />
 				<LanguageSwitcher />
 				<Sep />
-				<UserBlock />
-			</div>
+				<UserAvatar initials={resolvedUserInitials} name={resolvedUserName} role={resolvedUserRole} />
+			</nav>
+		);
+	}
+
+	return (
+		<nav className={`${navClass} h-[80px] flex items-center gap-4 px-6`}>
+			{menuBtn}
+			<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
+			<div className="flex-1" />
+			<ProgramSwitcher />
+			<Sep />
+			<LanguageSwitcher />
+			<Sep />
+			<UserAvatar withName initials={resolvedUserInitials} name={resolvedUserName} role={resolvedUserRole} />
 		</nav>
 	);
 }
