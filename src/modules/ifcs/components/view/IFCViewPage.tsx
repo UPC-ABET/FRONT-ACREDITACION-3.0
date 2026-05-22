@@ -10,6 +10,7 @@ import { IFCHeaderCard } from './IFCHeaderCard';
 import { IFCInformationBlock } from './IFCInformationBlock';
 import { IFCResultadoLogros } from '../shared/IFCResultadoLogros';
 import { IFCResultadoAlcanzado } from '../shared/IFCResultadoAlcanzado';
+import { PreviousActionsTable } from '../shared/PreviousActionsTable';
 import { SubmitConfirmModal } from '../shared/SubmitConfirmModal';
 import { IFCFindingsTable } from './IFCFindingsTable';
 import { IFCActionsTable } from './IFCActionsTable';
@@ -140,6 +141,8 @@ export default function IFCViewPage() {
 			</div>
 
 			<IFCInformationBlock information={ifc.information} />
+
+			<PreviousActionsTable previousActions={data.previous_actions} />
 
 			<IFCFindingsTable findings={data.findings} />
 			<IFCActionsTable findings={data.findings} />

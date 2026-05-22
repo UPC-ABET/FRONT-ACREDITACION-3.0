@@ -134,10 +134,26 @@ export interface Finding {
 	actions: FindingAction[];
 }
 
+export interface PreviousAction {
+	id: number;
+	finding_action_id: number;
+	finding_id: number;
+	code: string;
+	correlative: number;
+	description: I18nText;
+	evidences: I18nText | null;
+	completeness_code: string;
+	completeness_name: I18nText;
+	academic_period_id: number;
+	academic_period_code: string;
+	source: 'direct' | 'both' | string;
+}
+
 export interface IFCViewPayload {
 	ifc: IFCHeader;
 	outcome_course_result: ProgramGroup[];
 	findings: Finding[];
+	previous_actions: PreviousAction[];
 }
 
 export interface IFCInformationEntry {
@@ -178,6 +194,7 @@ export interface IFCPrefill {
 	coordinator_name: string | null;
 	coordinator_user_id: number | null;
 	outcome_course_result: ProgramGroup[];
+	previous_actions: PreviousAction[];
 }
 
 // ---- Form state ------------------------------------------------------------

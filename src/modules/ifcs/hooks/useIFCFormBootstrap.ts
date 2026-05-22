@@ -56,6 +56,7 @@ export function useIFCFormBootstrap(mode: IFCFormMode) {
 						coordinator_name: existing!.ifc.coordinator.name,
 						coordinator_user_id: existing!.ifc.coordinator.user_id,
 						outcome_course_result: existing!.outcome_course_result,
+						previous_actions: existing!.previous_actions ?? [],
 					} as IFCPrefill);
 
 				if (alive) {

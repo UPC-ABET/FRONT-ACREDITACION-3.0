@@ -9,4 +9,5 @@ export * from './IFCResultadoLogros';
 export * from './IFCResultadoAlcanzado';
 export * from './SubmitConfirmModal';
 export * from './DeleteFindingModal';
+export * from './PreviousActionsTable';
 export * from './ifc.labels';
