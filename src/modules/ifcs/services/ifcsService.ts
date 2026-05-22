@@ -126,7 +126,10 @@ export async function getIFCPrefill(chartId: number, periodId: number): Promise<
 	return body.data;
 }
 
-function parseSaveResult(data: { id: number; notification?: SubmitResult['notification'] }): SubmitResult {
+function parseSaveResult(data: {
+	id: number;
+	notification?: SubmitResult['notification'];
+}): SubmitResult {
 	const n = data.notification;
 	return {
 		id: Number(data.id),

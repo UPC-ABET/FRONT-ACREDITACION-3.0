@@ -13,17 +13,13 @@
 			"tables": "Tablas",
 			"public": "Publico"
 		},
-
 		"admin": {
 			"label": "Administración",
 			"notifications": "Notificaciones IFC",
 			"ifcCodes": "Códigos IFC",
 			"ifcFields": "Campos del formulario IFC"
 		},
-		"logout": "Cerrar sesion"
-
 		"logout": "Cerrar sesión"
-
 	},
 	"ifcs": {
 		"page": {
@@ -344,14 +340,11 @@
 	"loading": {
 		"default": "Cargando ..."
 	},
-
 	"sessionExpired": {
 		"title": "Sesion expirada",
 		"message": "Vuelve a iniciar sesion",
 		"action": "Cerrar sesion"
 	},
-
-
 	"login": {
 		"title": "Sistema de  acreditación",
 		"school": {
@@ -374,8 +367,6 @@
 			"schoolRequired": "Selecciona una escuela antes de continuar"
 		}
 	},
-
-
 	"forgotPassword": {
 		"title": "Recuperar contraseña",
 		"subtitle": "Te enviaremos un enlace de recuperacion a tu correo.",
@@ -417,7 +408,6 @@
 			"goToLogin": "Ir a iniciar sesión"
 		}
 	},
-
 	"auth": {
 		"invalidCredentials": "Credenciales invalidas"
 	},

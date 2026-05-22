@@ -18,9 +18,7 @@ export async function getParameterByFilters<T>(code: string): Promise<ParameterR
 		body: JSON.stringify({ code }),
 	});
 
-	const body = (await res.json().catch(() => null)) as Envelope<
-		Array<ParameterRow<T>>
-	> | null;
+	const body = (await res.json().catch(() => null)) as Envelope<Array<ParameterRow<T>>> | null;
 	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'admin.params.error.loadFailed');
 
 	const row = body.data[0];

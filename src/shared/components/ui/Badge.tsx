@@ -41,9 +41,7 @@ function Badge({ children, variant = 'default', color, className }: BadgeProps) 
 		outline: 'border-zinc-200 text-zinc-600 bg-transparent',
 	};
 
-	return (
-		<span className={`${baseClass} ${variants[variant]} ${className ?? ''}`}>{children}</span>
-	);
+	return <span className={`${baseClass} ${variants[variant]} ${className ?? ''}`}>{children}</span>;
 }
 
 export { Badge };

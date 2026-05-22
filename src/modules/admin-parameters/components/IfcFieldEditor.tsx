@@ -1,10 +1,6 @@
 'use client';
 
-import {
-	ArrowDownIcon,
-	ArrowUpIcon,
-	TrashIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowDownIcon, ArrowUpIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Button, Input, Toggle } from '@/shared/components';
 import { useI18n } from '@/providers';
 import type { IFCFieldDescriptor } from '../services/types';
@@ -87,9 +83,7 @@ export function IfcFieldEditor({
 					<Input
 						label={t('admin.params.fields.field.key')}
 						value={field.key}
-						onChange={(e) =>
-							onChange({ ...field, key: e.target.value.replace(/\s+/g, '_') })
-						}
+						onChange={(e) => onChange({ ...field, key: e.target.value.replace(/\s+/g, '_') })}
 						placeholder={t('admin.params.fields.field.keyPlaceholder')}
 						error={
 							keyError
@@ -99,9 +93,7 @@ export function IfcFieldEditor({
 									: undefined
 						}
 						helperText={
-							!keyError && !keyDuplicate
-								? t('admin.params.fields.field.keyHelp')
-								: undefined
+							!keyError && !keyDuplicate ? t('admin.params.fields.field.keyHelp') : undefined
 						}
 						required
 					/>

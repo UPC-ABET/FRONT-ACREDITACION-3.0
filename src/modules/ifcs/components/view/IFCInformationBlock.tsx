@@ -21,9 +21,7 @@ export function IFCInformationBlock({ information }: Props) {
 		<Card>
 			<dl className="space-y-6">
 				{entries.map((e, idx) => (
-					<div
-						key={e.key}
-						className={idx > 0 ? 'border-t border-zinc-100 pt-6' : undefined}>
+					<div key={e.key} className={idx > 0 ? 'border-t border-zinc-100 pt-6' : undefined}>
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
 							{e.label?.[lang] ?? e.label?.es ?? e.key}
 						</dt>

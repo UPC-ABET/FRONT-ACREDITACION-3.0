@@ -30,11 +30,8 @@ export function FindingActionsTable({ actions }: Props) {
 				accessorKey: 'completeness_code',
 				header: L.col_action_status[lang],
 				cell: ({ row }) => (
-					<Badge
-						variant={COMPLETENESS_VARIANT[row.original.completeness_code] ?? 'default'}>
-						{row.original.completeness_name?.[lang] ??
-							row.original.completeness_name?.es ??
-							''}
+					<Badge variant={COMPLETENESS_VARIANT[row.original.completeness_code] ?? 'default'}>
+						{row.original.completeness_name?.[lang] ?? row.original.completeness_name?.es ?? ''}
 					</Badge>
 				),
 			},
@@ -43,11 +40,7 @@ export function FindingActionsTable({ actions }: Props) {
 	);
 
 	if (actions.length === 0) {
-		return (
-			<p className="text-sm text-zinc-500 italic text-center py-6">
-				{L.actions_empty[lang]}
-			</p>
-		);
+		return <p className="text-sm text-zinc-500 italic text-center py-6">{L.actions_empty[lang]}</p>;
 	}
 
 	return (

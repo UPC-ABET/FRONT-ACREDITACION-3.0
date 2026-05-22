@@ -253,17 +253,11 @@ export function IfcFieldsPage() {
 
 						<div className="sticky bottom-0 z-10 -mx-4 flex flex-col-reverse items-stretch gap-3 border-t border-zinc-200 bg-white/95 px-4 py-4 backdrop-blur sm:relative sm:mx-0 sm:flex-row sm:items-center sm:justify-between sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
 							<p className="text-xs text-zinc-500">
-								{dirty
-									? t('admin.params.fields.unsaved')
-									: t('admin.params.fields.allSaved')}
+								{dirty ? t('admin.params.fields.unsaved') : t('admin.params.fields.allSaved')}
 							</p>
 							<div className="flex flex-wrap items-center gap-2 sm:justify-end">
 								{dirty && (
-									<Button
-										variant="ghost"
-										size="lg"
-										disabled={saving}
-										onClick={discardChanges}>
+									<Button variant="ghost" size="lg" disabled={saving} onClick={discardChanges}>
 										<ArrowUturnLeftIcon className="h-5 w-5" />
 										{t('admin.params.btn.discard')}
 									</Button>

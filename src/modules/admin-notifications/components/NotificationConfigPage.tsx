@@ -33,9 +33,7 @@ export function NotificationConfigPage() {
 				{periodId === null && (
 					<div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-white py-14 text-zinc-500">
 						<CalendarDaysIcon className="h-10 w-10 text-zinc-400" />
-						<p className="text-base italic">
-							{t('admin.notify.page.selectPeriod')}
-						</p>
+						<p className="text-base italic">{t('admin.notify.page.selectPeriod')}</p>
 					</div>
 				)}
 
@@ -66,11 +64,7 @@ export function NotificationConfigPage() {
 				)}
 
 				{successMsg && (
-					<SuccessDialog
-						isOpen
-						onClose={() => setSuccessMsg(null)}
-						message={successMsg}
-					/>
+					<SuccessDialog isOpen onClose={() => setSuccessMsg(null)} message={successMsg} />
 				)}
 			</div>
 		</Card>

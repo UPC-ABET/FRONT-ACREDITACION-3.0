@@ -279,11 +279,7 @@ export interface PatchFindingBody {
 
 // ---- Notify ----------------------------------------------------------------
 
-export type NotifyReason =
-	| 'no_course_chart'
-	| 'no_config'
-	| 'no_recipients'
-	| 'send_failed';
+export type NotifyReason = 'no_course_chart' | 'no_config' | 'no_recipients' | 'send_failed';
 
 export interface NotifyResult {
 	sent: boolean;

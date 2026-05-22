@@ -51,10 +51,7 @@ export async function getFindingDetail(id: number): Promise<FindingDetailPayload
 	return data;
 }
 
-export async function patchFinding(
-	id: number,
-	payload: PatchFindingBody,
-): Promise<{ id: number }> {
+export async function patchFinding(id: number, payload: PatchFindingBody): Promise<{ id: number }> {
 	if (!BASE_URL) throw new Error('app.missingApiUrl');
 
 	const res = await fetch(`${BASE_URL}/ifc-findings/${id}`, {

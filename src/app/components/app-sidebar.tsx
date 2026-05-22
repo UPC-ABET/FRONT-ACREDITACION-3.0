@@ -3,15 +3,20 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarItem, SidebarNavGroup,
+import {
+	Sidebar,
+	SidebarHeader,
+	SidebarContent,
+	SidebarFooter,
+	SidebarGroup,
+	SidebarItem,
+	SidebarNavGroup,
 } from '@/shared/components';
 import {
 	HomeIcon,
-	FolderIcon,
 	Cog6ToothIcon,
 	DocumentChartBarIcon,
 	ArrowRightStartOnRectangleIcon,
-=======
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { clearClientSession, logoutUser } from '@/modules/auth/services';
@@ -32,7 +37,6 @@ export function AppSidebar() {
 	const pathname = usePathname();
 	const { t } = useI18n();
 
-
 	const [isAdmin, setIsAdmin] = useState(false);
 	useEffect(() => {
 		let admin = false;
@@ -47,10 +51,7 @@ export function AppSidebar() {
 		setIsAdmin(admin);
 	}, []);
 
-
-	const isActive = (href?: string) =>
-		href ? pathname === href || pathname.startsWith(`${href}/`) : false;
-
+	const isActive = (href?: string) => (href ? pathname === href : false);
 
 	const handleLogout = async () => {
 		try {

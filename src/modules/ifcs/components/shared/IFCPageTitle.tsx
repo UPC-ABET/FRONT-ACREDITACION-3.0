@@ -21,9 +21,7 @@ export function IFCPageTitle({ area, subarea, course, period }: Props) {
 			<h1 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
 				{courseName || '—'}
 			</h1>
-			{crumbs.length > 0 && (
-				<p className="text-base text-zinc-600">{crumbs.join(' · ')}</p>
-			)}
+			{crumbs.length > 0 && <p className="text-base text-zinc-600">{crumbs.join(' · ')}</p>}
 		</div>
 	);
 }

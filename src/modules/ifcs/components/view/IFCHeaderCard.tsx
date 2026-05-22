@@ -77,15 +77,10 @@ export function IFCHeaderCard({
 							{VIEW_LABELS.status[lang]}
 						</dt>
 						<dd className="mt-1.5 flex flex-wrap items-center gap-2 text-base text-zinc-900">
-							<StatusBadge
-								status={statusCode}
-								label={statusLabel}
-								color={ifc.status?.color}
-							/>
+							<StatusBadge status={statusCode} label={statusLabel} color={ifc.status?.color} />
 							{ifc.status && (
 								<span className="text-sm text-zinc-600">
-									{VIEW_LABELS.by[lang]} {ifc.status.by ?? '—'} ·{' '}
-									{formatDateTime(ifc.status.at)}
+									{VIEW_LABELS.by[lang]} {ifc.status.by ?? '—'} · {formatDateTime(ifc.status.at)}
 								</span>
 							)}
 						</dd>
@@ -118,9 +113,7 @@ export function IFCHeaderCard({
 				)}
 			</div>
 
-			{pdfError && (
-				<ErrorDialog isOpen onClose={clearError} message={tryTranslate(t, pdfError)} />
-			)}
+			{pdfError && <ErrorDialog isOpen onClose={clearError} message={tryTranslate(t, pdfError)} />}
 		</Card>
 	);
 }

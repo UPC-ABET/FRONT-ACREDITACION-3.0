@@ -7,14 +7,17 @@ const USERS_BASE_PATH = '/users';
 export const loginByCredentials = async (
 	payload: LoginPayload,
 ): Promise<{ accessToken: string; user: unknown }> => {
-	const { response, body } = await requestJson<LoginResponse>(`${USERS_BASE_PATH}/login-by-credentials`, {
-		method: 'POST',
-		body: {
-			school_code: payload.school_code,
-			email: payload.email,
-			password: payload.password,
+	const { response, body } = await requestJson<LoginResponse>(
+		`${USERS_BASE_PATH}/login-by-credentials`,
+		{
+			method: 'POST',
+			body: {
+				school_code: payload.school_code,
+				email: payload.email,
+				password: payload.password,
+			},
 		},
-	});
+	);
 
 	if (!response.ok || !body?.data?.access_token) {
 		throw new Error(body?.message);

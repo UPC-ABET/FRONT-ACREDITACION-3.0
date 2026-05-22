@@ -39,8 +39,7 @@ export function IFCFindingsEditor({
 
 			{findings.length === 0 && (
 				<div className="rounded-lg border border-dashed border-zinc-200 bg-white py-10 text-center text-base italic text-zinc-500">
-					{FORM_LABELS.section_findings[lang]} —{' '}
-					{FORM_LABELS.btn_add_finding[lang].toLowerCase()}
+					{FORM_LABELS.section_findings[lang]} — {FORM_LABELS.btn_add_finding[lang].toLowerCase()}
 				</div>
 			)}
 
