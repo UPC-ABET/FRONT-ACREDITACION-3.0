@@ -109,6 +109,11 @@
 	"loading": {
 		"default": "Cargando ..."
 	},
+	"sessionExpired": {
+		"title": "Sesion expirada",
+		"message": "Vuelve a iniciar sesion",
+		"action": "Cerrar sesion"
+	},
 
 	"login": {
 		"title": "Sistema de  acreditación",

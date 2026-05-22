@@ -36,6 +36,13 @@ const getStoredToken = () => {
 	}
 };
 
+export const clearClientSession = () => {
+	if (typeof window === 'undefined') return;
+	window.localStorage.removeItem('bearerToken');
+	window.localStorage.removeItem('token');
+	window.localStorage.removeItem('escuela');
+};
+
 export const logoutUser = async (): Promise<void> => {
 	const token = getStoredToken();
 

@@ -109,6 +109,11 @@
 	"loading": {
 		"default": "Loading ..."
 	},
+	"sessionExpired": {
+		"title": "Session expired",
+		"message": "Sign in again",
+		"action": "Sign out"
+	},
 
 	"login": {
 		"title": "Accreditation system",
