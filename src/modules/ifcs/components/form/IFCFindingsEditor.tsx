@@ -2,13 +2,12 @@
 
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { Button, Select, TextArea } from '@/shared/components';
+import { Button, I18nTextField, Select } from '@/shared/components';
 import type { CriticalityOption, FormFinding } from '../../services/types';
 import { FORM_LABELS } from './formLabels';
 
 type Props = {
 	findings: FormFinding[];
-	languages: string[];
 	criticalities: CriticalityOption[];
 	onAdd: () => void;
 	onUpdate: (tempId: string, patch: Partial<FormFinding>) => void;
@@ -17,7 +16,6 @@ type Props = {
 
 export function IFCFindingsEditor({
 	findings,
-	languages,
 	criticalities,
 	onAdd,
 	onUpdate,
@@ -75,29 +73,12 @@ export function IFCFindingsEditor({
 							</div>
 
 							<div className="space-y-5 p-5">
-								<div className="space-y-2">
-									<label className="block text-base font-semibold text-zinc-900">
-										{FORM_LABELS.col_description[lang]}
-										<span className="ml-1 text-red-600">*</span>
-									</label>
-									<div className="space-y-3">
-										{languages.map((l) => (
-											<TextArea
-												key={l}
-												label={l.toUpperCase()}
-												value={f.description[l] ?? ''}
-												onChange={(e) =>
-													onUpdate(f.tempId, {
-														description: {
-															...f.description,
-															[l]: e.target.value,
-														},
-													})
-												}
-											/>
-										))}
-									</div>
-								</div>
+								<I18nTextField
+									label={FORM_LABELS.col_description[lang]}
+									required
+									value={f.description}
+									onChange={(next) => onUpdate(f.tempId, { description: next })}
+								/>
 
 								<Select
 									label={FORM_LABELS.col_criticality[lang]}

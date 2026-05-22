@@ -178,7 +178,11 @@ function Select({
 	return (
 		<div className="flex flex-col w-full">
 			{label && (
-				<label className="font-medium text-xs mb-2 text-zinc-700 select-none">{label}</label>
+				<label
+					htmlFor={selectId}
+					className="block text-base font-semibold text-zinc-900 mb-2 select-none">
+					{label}
+				</label>
 			)}
 
 			{isCreatable ? (

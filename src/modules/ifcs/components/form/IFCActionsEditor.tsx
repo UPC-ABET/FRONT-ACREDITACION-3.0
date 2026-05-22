@@ -2,27 +2,19 @@
 
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { Button, Select, TextArea } from '@/shared/components';
+import { Button, I18nTextField, Select } from '@/shared/components';
 import type { FormAction, FormFinding } from '../../services/types';
 import { FORM_LABELS } from './formLabels';
 
 type Props = {
 	actions: FormAction[];
 	findings: FormFinding[];
-	languages: string[];
 	onAdd: () => void;
 	onUpdate: (tempId: string, patch: Partial<FormAction>) => void;
 	onDelete: (tempId: string) => void;
 };
 
-export function IFCActionsEditor({
-	actions,
-	findings,
-	languages,
-	onAdd,
-	onUpdate,
-	onDelete,
-}: Props) {
+export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete }: Props) {
 	const { locale: lang } = useI18n();
 
 	const findingOptions = findings.map((f, idx) => ({
@@ -89,29 +81,12 @@ export function IFCActionsEditor({
 									}}
 								/>
 
-								<div className="space-y-2">
-									<label className="block text-base font-semibold text-zinc-900">
-										{FORM_LABELS.col_description[lang]}
-										<span className="ml-1 text-red-600">*</span>
-									</label>
-									<div className="space-y-3">
-										{languages.map((l) => (
-											<TextArea
-												key={l}
-												label={l.toUpperCase()}
-												value={a.description[l] ?? ''}
-												onChange={(e) =>
-													onUpdate(a.tempId, {
-														description: {
-															...a.description,
-															[l]: e.target.value,
-														},
-													})
-												}
-											/>
-										))}
-									</div>
-								</div>
+								<I18nTextField
+									label={FORM_LABELS.col_description[lang]}
+									required
+									value={a.description}
+									onChange={(next) => onUpdate(a.tempId, { description: next })}
+								/>
 							</div>
 						</div>
 					);

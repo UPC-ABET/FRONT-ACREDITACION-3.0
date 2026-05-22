@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Badge, Button, Card, TextArea } from '@/shared/components';
+import { Badge, Button, Card, I18nTextField } from '@/shared/components';
 import { useI18n } from '@/providers';
 import type { FindingDetail, I18nText } from '../../services/types';
 import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
@@ -88,17 +88,7 @@ export function FindingGeneralInfo({
 						{L.col_description[lang]}
 					</p>
 					{editing ? (
-						<div className="space-y-3">
-							{languages.map((l) => (
-								<TextArea
-									key={l}
-									label={l.toUpperCase()}
-									value={draft[l] ?? ''}
-									onChange={(e) => setDraft((p) => ({ ...p, [l]: e.target.value }))}
-									disabled={saving}
-								/>
-							))}
-						</div>
+						<I18nTextField value={draft} onChange={setDraft} disabled={saving} />
 					) : (
 						<p className="whitespace-pre-line text-base leading-relaxed text-zinc-800">
 							{descriptionText || '—'}
