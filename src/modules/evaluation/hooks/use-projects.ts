@@ -6,6 +6,7 @@ export const projectsQueryKeys = {
   all: ['projects'] as const,
   filtered: (filters: FilterProjectDto) => ['projects', 'filtered', filters] as const,
   byProfessor: (professorId: string | number) => ['projects', 'by-professor', professorId] as const,
+  details: (projectId: string | number) => ['projects', 'details', projectId] as const,
 }
 
 export function useProjects(filters: FilterProjectDto = {}) {
@@ -20,5 +21,13 @@ export function useProjectsByProfessor(professorId: string | number | undefined)
     queryKey: projectsQueryKeys.byProfessor(professorId!),
     queryFn: () => projectsService.getByProfessor(professorId!).then((r) => r.data),
     enabled: professorId != null,
+  })
+}
+
+export function useProjectDetails(projectId: string | number | undefined) {
+  return useQuery({
+    queryKey: projectsQueryKeys.details(projectId!),
+    queryFn: () => projectsService.getDetails(projectId!).then((r) => r.data),
+    enabled: projectId != null,
   })
 }

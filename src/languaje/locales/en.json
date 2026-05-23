@@ -15,7 +15,6 @@
 		},
 		"logout": "Logout"
 	},
-
 	"ifcs": {
 		"page": {
 			"title": "End of Course Report",
@@ -32,9 +31,7 @@
 			"empty": "No IFCs"
 		}
 	},
-
 	"welcome": "Welcome to the ABET.",
-
 	"navbar": {
 		"user": {
 			"name": "Administrator",
@@ -53,18 +50,15 @@
 			"epe": "EPE"
 		}
 	},
-
 	"language": {
 		"es": "ES",
 		"en": "EN"
 	},
-
 	"sidebar": {
 		"open": "Open sidebar",
 		"close": "Close sidebar",
 		"logoAlt": "ABET Logo"
 	},
-
 	"dialog": {
 		"close": "Close",
 		"actions": {
@@ -89,7 +83,6 @@
 			"confirm": "Confirm to continue."
 		}
 	},
-
 	"toast": {
 		"title": {
 			"success": "Success",
@@ -105,15 +98,12 @@
 		},
 		"close": "Close notification"
 	},
-
 	"tabs": {
 		"label": "Tabs"
 	},
-
 	"loading": {
 		"default": "Loading ..."
 	},
-
 	"login": {
 		"title": "Accreditation system",
 		"school": {
@@ -136,7 +126,6 @@
 			"schoolRequired": "Select a school before continuing"
 		}
 	},
-
 	"forgotPassword": {
 		"title": "Recover password",
 		"subtitle": "We will send a recovery link to your email.",
@@ -156,17 +145,14 @@
 			"defaultMessage": "If the email exists, a recovery link will be sent"
 		}
 	},
-
 	"auth": {
 		"invalidCredentials": "Invalid credentials"
 	},
-
 	"error": {
 		"school": {
 			"notFound": "The selected school does not exist"
 		}
 	},
-
 	"table": {
 		"search": {
 			"placeholder": "Search..."
@@ -179,14 +165,12 @@
 			"of": "of"
 		}
 	},
-
 	"select": {
 		"placeholder": {
 			"default": "Select an option"
 		},
 		"createLabel": "Create: \"{value}\""
 	},
-
 	"school": {
 		"sch_soft": "SCHOOL OF SOFTWARE ENGINEERING",
 		"sch_sist": "SCHOOL OF SYSTEMS ENGINEERING",
@@ -201,12 +185,10 @@
 		"ingciv": "CIVIL ENGINEERING",
 		"ingind": "INDUSTRIAL ENGINEERING"
 	},
-
 	"app": {
 		"name": "ABET Accreditation System",
 		"description": "ABET"
 	},
-
 	"page": {
 		"home": "Home",
 		"login": "Login",
@@ -215,13 +197,11 @@
 		"modals": "Modals",
 		"public": "Public"
 	},
-
 	"notFound": {
 		"title": "Page not found",
 		"message": "Sorry, we couldn’t find the page you’re looking for.",
 		"action": "Go home"
 	},
-
 	"rubrics": {
 		"list": {
 			"title": "Rubrics",
@@ -310,7 +290,6 @@
 			}
 		}
 	},
-
 	"projects": {
 		"list": {
 			"title": "Academic Projects",
@@ -353,6 +332,23 @@
 				"evaluationDate": "Evaluation Date",
 				"actions": "Actions",
 				"grade": "Evaluate"
+			}
+		},
+		"evaluate": {
+			"loading": "Loading project...",
+			"error": "Could not load the project.",
+			"notFound": "Project not found.",
+			"backButton": "Back",
+			"header": {
+				"course": "Course",
+				"rubric": "Rubric",
+				"gradeType": "Grade type"
+			},
+			"students": {
+				"title": "Students",
+				"grade": "Grade",
+				"noGrade": "No grade",
+				"empty": "No students in this project."
 			}
 		}
 	}

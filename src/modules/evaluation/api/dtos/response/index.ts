@@ -1,4 +1,5 @@
 export * from './evaluation.response'
+export * from './project-details.response'
 export * from './project-by-professor.response'
 export * from './project-evaluator.response'
 export * from './project-student.response'

@@ -15,7 +15,6 @@
 		},
 		"logout": "Cerrar sesion"
 	},
-
 	"ifcs": {
 		"page": {
 			"title": "Informe de Fin de Ciclo",
@@ -32,9 +31,7 @@
 			"empty": "Sin IFCs"
 		}
 	},
-
 	"welcome": "Bienvenido a ABET.",
-
 	"navbar": {
 		"user": {
 			"name": "Administrador",
@@ -53,18 +50,15 @@
 			"epe": "EPE"
 		}
 	},
-
 	"language": {
 		"es": "ES",
 		"en": "EN"
 	},
-
 	"sidebar": {
 		"open": "Abrir sidebar",
 		"close": "Cerrar sidebar",
 		"logoAlt": "Logo ABET"
 	},
-
 	"dialog": {
 		"close": "Cerrar",
 		"actions": {
@@ -89,7 +83,6 @@
 			"confirm": "Confirma para continuar."
 		}
 	},
-
 	"toast": {
 		"title": {
 			"success": "Exito",
@@ -105,15 +98,12 @@
 		},
 		"close": "Cerrar notificacion"
 	},
-
 	"tabs": {
 		"label": "Pestañas"
 	},
-
 	"loading": {
 		"default": "Cargando ..."
 	},
-
 	"login": {
 		"title": "Sistema de  acreditación",
 		"school": {
@@ -136,7 +126,6 @@
 			"schoolRequired": "Selecciona una escuela antes de continuar"
 		}
 	},
-
 	"forgotPassword": {
 		"title": "Recuperar contraseña",
 		"subtitle": "Te enviaremos un enlace de recuperacion a tu correo.",
@@ -156,17 +145,14 @@
 			"defaultMessage": "Si el correo existe, se enviara un enlace de recuperacion"
 		}
 	},
-
 	"auth": {
 		"invalidCredentials": "Credenciales invalidas"
 	},
-
 	"error": {
 		"school": {
 			"notFound": "La escuela seleccionada no existe"
 		}
 	},
-
 	"table": {
 		"search": {
 			"placeholder": "Buscar..."
@@ -179,14 +165,12 @@
 			"of": "de"
 		}
 	},
-
 	"select": {
 		"placeholder": {
 			"default": "Seleccione una opción"
 		},
 		"createLabel": "Crear: \"{value}\""
 	},
-
 	"school": {
 		"sch_soft": "ESCUELA DE INGENIERIA DE SOFTWARE",
 		"sch_sist": "ESCUELA DE INGENIERIA DE SISTEMAS",
@@ -201,12 +185,10 @@
 		"ingciv": "INGENIERIA CIVIL",
 		"ingind": "INGENIERIA INDUSTRIAL"
 	},
-
 	"app": {
 		"name": "Sistema de Acreditación ABET",
 		"description": "ABET"
 	},
-
 	"page": {
 		"home": "Inicio",
 		"login": "Login",
@@ -215,13 +197,11 @@
 		"modals": "Modales",
 		"public": "Publico"
 	},
-
 	"notFound": {
 		"title": "Pagina no encontrada",
 		"message": "Lo sentimos, no pudimos encontrar la pagina que estas buscando.",
 		"action": "Ir al inicio"
 	},
-
 	"rubrics": {
 		"list": {
 			"title": "Rúbricas",
@@ -244,7 +224,7 @@
 			"capstone": {
 				"saveRubric": "Guardar rúbrica",
 				"saving": "Guardando rúbrica...",
-				"noCommissions" : "No se encontraron comisiones.",
+				"noCommissions": "No se encontraron comisiones.",
 				"tooltips": {
 					"commissionCheckboxIncomplete": "Criterios incompletos para los outcomes.",
 					"saveDisabled": "Rúbrica no válida. Guardado deshabilitado."
@@ -277,7 +257,7 @@
 					"totalMustBe20": "La suma total de puntos debe ser 20.",
 					"minMustBeLessThanMax": "El puntaje mínimo debe ser menor que el máximo para cada criterio.",
 					"continuityRequired": "Los rangos de puntaje deben ser continuos entre criterios."
-				},	
+				},
 				"question": {
 					"column": "Pregunta",
 					"label": "Pregunta",
@@ -310,7 +290,6 @@
 			}
 		}
 	},
-
 	"projects": {
 		"list": {
 			"title": "Proyectos Académicos",
@@ -353,6 +332,23 @@
 				"evaluationDate": "Fecha de Evaluación",
 				"actions": "Acciones",
 				"grade": "Evaluar"
+			}
+		},
+		"evaluate": {
+			"loading": "Cargando proyecto...",
+			"error": "No fue posible cargar el proyecto.",
+			"notFound": "Proyecto no encontrado.",
+			"backButton": "Volver",
+			"header": {
+				"course": "Curso",
+				"rubric": "Rúbrica",
+				"gradeType": "Tipo de nota"
+			},
+			"students": {
+				"title": "Estudiantes",
+				"grade": "Nota",
+				"noGrade": "Sin nota",
+				"empty": "No hay estudiantes en este proyecto."
 			}
 		}
 	}

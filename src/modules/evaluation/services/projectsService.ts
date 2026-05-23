@@ -1,7 +1,7 @@
 import { ApiResponse } from "@/shared";
 import { buildJsonHeaders } from '@/shared/lib'
 import { FilterProjectDto } from '../api/dtos/request'
-import { ProjectByProfessorResponse, ProjectResponse } from '../api/dtos/response'
+import { ProjectByProfessorResponse, ProjectDetailsResponse, ProjectResponse } from '../api/dtos/response'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
@@ -39,6 +39,10 @@ export const projectsService = {
 
   getById(projectId: string | number): Promise<ApiResponse<any>> {
     return request(`${BASE_URL}/projects/project/${projectId}`)
+  },
+
+  getDetails(projectId: string | number): Promise<ApiResponse<ProjectDetailsResponse>> {
+    return request(`${BASE_URL}/projects/project/${projectId}?is_evaluation_mode=true`)
   },
 
   update(id: string | number, body: Record<string, unknown>): Promise<ApiResponse<any>> {
