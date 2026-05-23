@@ -1,9 +1,11 @@
 'use client'
 
+import { useMemo } from 'react'
 import Link from 'next/link'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { Skeleton } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
+import { getUserIdFromToken } from '@/shared/lib/jwt'
 import { useProjectDetails } from '../hooks'
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable'
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable'
@@ -19,6 +21,15 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
   const { t, locale } = useI18n()
 
   const { data, isLoading, isError, error } = useProjectDetails(projectId, { gradeTypeId, isEvaluationMode: true })
+
+  // Resolve the current professor's project_evaluator_id from the evaluators list.
+  // getUserIdFromToken() returns the professor_id stored in the JWT.
+  const evaluatorId = useMemo(() => {
+    if (!data?.evaluators?.length) return 0
+    const myProfessorId = Number(getUserIdFromToken())
+    const match = data.evaluators.find((e) => e.professor_id === myProfessorId)
+    return match?.id ?? data.evaluators[0]?.id ?? 0
+  }, [data?.evaluators])
 
   if (isLoading) {
     return (
@@ -49,7 +60,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
     )
   }
 
-   const { project, students, rubric, evaluators } = data
+  const { project, students, rubric } = data
 
   const projectName = project.name[locale as 'es' | 'en'] ?? project.name.es
   const courseName = rubric.course.name[locale as 'es' | 'en'] ?? rubric.course.name.es
@@ -168,14 +179,14 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
             questions={rubric.questions}
             students={students}
             academicPeriodId={data.academic_period?.id ?? null}
-            evaluatorId={evaluators?.[0]?.id ?? 0}
+            evaluatorId={evaluatorId}
           />
         ) : (
           rubric.questions.length > 0 && (
             <ProjectRubricNonCapstoneTable
               questions={rubric.questions}
               students={students}
-              evaluatorId={evaluators?.[0]?.id ?? 0}
+              evaluatorId={evaluatorId}
             />
           )
         )}

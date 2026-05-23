@@ -1,6 +1,6 @@
 export type ProjectDetailsStudentResponse = {
-  id: number          // project_student_id
-  student_id: number  // Student entity ID
+  id: number
+  student_id: number
   first_name: string
   last_name: string
   email: string

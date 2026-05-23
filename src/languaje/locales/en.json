@@ -367,7 +367,8 @@
         "errorNaN": "Enter a valid number.",
         "errorRange": "One or more scores are outside the allowed range for their question.",
         "fillAll": "Fill in all scores to save.",
-        "saveButton": "Save grades"
+        "saveButton": "Save grades",
+        "saving": "Saving..."
       },
       "capstone": {
         "outcome": "Outcome",

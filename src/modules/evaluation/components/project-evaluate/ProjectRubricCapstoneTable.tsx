@@ -105,7 +105,7 @@ export function ProjectRubricCapstoneTable({
       for (const c of q?.criterias ?? []) {
         result[c.id] = {}
         for (const st of students) {
-          const entry = c.scores.find((s) => s.student_id === st.id)
+          const entry = c.scores.find((s) => s.student_id === st.student_id)
           result[c.id][st.id] = entry ? entry.score : null
         }
       }
@@ -139,12 +139,12 @@ export function ProjectRubricCapstoneTable({
 
    // ── Handlers ──────────────────────────────────────────────────────────────
 
-   const handleSelect = (criteriaId: number, studentId: number, value: number) =>
+   const handleSelect = (criteriaId: number, projectStudentId: number, value: number) =>
      setSelections((prev) => ({
        ...prev,
        [criteriaId]: {
          ...prev[criteriaId],
-         [studentId]: prev[criteriaId]?.[studentId] === value ? null : value,
+         [projectStudentId]: prev[criteriaId]?.[projectStudentId] === value ? null : value,
        },
      }))
 
@@ -155,43 +155,39 @@ export function ProjectRubricCapstoneTable({
      }))
 
     const handleSave = () => {
-      // Build a map: studentId → scores[]
-      const studentScores = new Map<number, { rubric_question_criteria_id: number; score: number; commentaries: Record<string, string> }[]>();
+      // Build a map: project_student_id → scores[]
+      const studentScores = new Map<number, { rubric_question_criteria_id: number; score: number; commentaries: Record<string, string> }[]>()
 
       for (const outcome of outcomes) {
-        const q = questionByOutcome.get(outcome.id);
+        const q = questionByOutcome.get(outcome.id)
         for (const c of q?.criterias ?? []) {
-          const selectedValue = duplicateMode ? dupSelections[c.id] : null;
-          if (selectedValue === null && !duplicateMode) {
-            // Individual mode: score may differ per student
+          if (duplicateMode) {
+            const selectedValue = dupSelections[c.id]
+            if (selectedValue == null) continue
             for (const st of students) {
-              const val = selections[c.id]?.[st.id];
-              if (val != null) {
-                const existing = studentScores.get(st.id) ?? [];
-                existing.push({ rubric_question_criteria_id: c.id, score: val, commentaries: {} });
-                studentScores.set(st.id, existing);
-              }
+              const existing = studentScores.get(st.id) ?? []
+              existing.push({ rubric_question_criteria_id: c.id, score: selectedValue, commentaries: {} })
+              studentScores.set(st.id, existing)
             }
-          } else if (selectedValue !== null) {
-            // Duplicate mode: same score for all students
+          } else {
             for (const st of students) {
-              const existing = studentScores.get(st.id) ?? [];
-              existing.push({ rubric_question_criteria_id: c.id, score: selectedValue, commentaries: {} });
-              studentScores.set(st.id, existing);
+              const val = selections[c.id]?.[st.id]
+              if (val == null) continue
+              const existing = studentScores.get(st.id) ?? []
+              existing.push({ rubric_question_criteria_id: c.id, score: val, commentaries: {} })
+              studentScores.set(st.id, existing)
             }
           }
         }
       }
 
-      // Submit one request per student with all their scores
-      const entries = studentScores.entries();
-      for (const [studentId, scores] of entries) {
+      for (const [projectStudentId, scores] of studentScores.entries()) {
         submitEvaluation({
-          project_student_id: studentId,
+          project_student_id: projectStudentId,
           project_evaluator_id: evaluatorId,
-          observation: { es: "", en: "" },
+          observation: { es: '', en: '' },
           scores,
-        });
+        } as any)
       }
     }
 

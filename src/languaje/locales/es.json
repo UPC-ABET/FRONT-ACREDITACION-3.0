@@ -367,7 +367,8 @@
         "errorNaN": "Ingresa un número válido.",
         "errorRange": "Uno o más puntajes están fuera del rango permitido para su pregunta.",
         "fillAll": "Completa todos los puntajes para guardar.",
-        "saveButton": "Guardar calificaciones"
+        "saveButton": "Guardar calificaciones",
+        "saving": "Guardando..."
       },
       "capstone": {
         "outcome": "Outcome",
