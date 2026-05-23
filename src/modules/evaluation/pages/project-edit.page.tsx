@@ -218,43 +218,33 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
               {t('projects.edit.evaluators.empty')}
             </p>
           ) : (
-            evaluators.map((evaluator) => {
-              const typeName =
-                evaluator.evaluator_type_name?.[locale as 'es' | 'en'] ??
-                evaluator.evaluator_type_name?.es
-
-              return (
-                <div
-                  key={evaluator.id}
-                  className="flex items-center justify-between gap-4 px-6 py-4"
-                >
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-medium text-zinc-900">
-                      {evaluator.first_name} {evaluator.last_name}
-                    </span>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-zinc-500">
-                      <span className="font-mono">ID {evaluator.professor_id}</span>
-                      {typeName && (
-                        <>
-                          <span className="text-zinc-300">·</span>
-                          <span>{typeName}</span>
-                        </>
-                      )}
-                    </div>
+            evaluators.map((evaluator) => (
+              <div
+                key={evaluator.id}
+                className="flex items-center justify-between gap-4 px-6 py-4"
+              >
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-medium text-zinc-900">
+                    {evaluator.professor_first_name} {evaluator.professor_last_name}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-zinc-500">
+                    <span>{evaluator.professor_email}</span>
+                    <span className="text-zinc-300">·</span>
+                    <span>{evaluator.evaluator_type_name[locale as 'es' | 'en'] ?? evaluator.evaluator_type_name.es}</span>
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() => removeEvaluatorMutation.mutate(evaluator.id)}
-                    disabled={removeEvaluatorMutation.isPending}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                    title="Eliminar"
-                  >
-                    <XMarkIcon className="h-4 w-4" />
-                  </button>
                 </div>
-              )
-            })
+
+                <button
+                  type="button"
+                  onClick={() => removeEvaluatorMutation.mutate(evaluator.id)}
+                  disabled={removeEvaluatorMutation.isPending}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  title="Eliminar"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </button>
+              </div>
+            ))
           )}
         </div>
 

@@ -11,9 +11,11 @@ export type ProjectDetailsStudentResponse = {
 export type ProjectDetailsEvaluatorResponse = {
   id: number
   professor_id: number
-  first_name: string
-  last_name: string
-  evaluator_type_name?: { en: string; es: string }
+  professor_first_name: string
+  professor_last_name: string
+  professor_email: string
+  evaluator_type_id: number
+  evaluator_type_name: { en: string; es: string }
 }
 
 export type CriteriaScoreResponse = {
