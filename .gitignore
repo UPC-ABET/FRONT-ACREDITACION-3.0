@@ -32,6 +32,8 @@
 *.launch
 .settings/
 *.sublime-workspace
+.idea/
+.vscode/
 
 # debug
 npm-debug.log*
