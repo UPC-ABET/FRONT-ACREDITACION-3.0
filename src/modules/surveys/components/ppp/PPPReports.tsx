@@ -60,15 +60,15 @@ export function PPPReports() {
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
               <span className="text-xs text-zinc-500 block">Total encuestas</span>
-              <span className="font-semibold">{reportData.summary.total_surveys}</span>
+              <span className="font-semibold">{reportData.summary?.total_surveys ?? '—'}</span>
             </div>
-            {reportData.summary.completion_rate_pct !== undefined && (
+            {reportData.summary?.completion_rate_pct !== undefined && (
               <div>
                 <span className="text-xs text-zinc-500 block">Tasa de completitud</span>
                 <span className="font-semibold">{reportData.summary.completion_rate_pct}%</span>
               </div>
             )}
-            {reportData.summary.verde !== undefined && (
+            {reportData.summary?.verde !== undefined && (
               <div>
                 <span className="text-xs text-zinc-500 block">Verde / Amarillo / Rojo</span>
                 <span className="font-semibold">

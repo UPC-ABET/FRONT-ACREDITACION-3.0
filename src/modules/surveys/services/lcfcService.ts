@@ -1,22 +1,11 @@
-import {
-  apiPost,
-  apiGet,
-  apiPostBlob,
-  triggerFileDownload,
-  triggerBlobDownload,
-  fileToBase64,
-} from './apiClient'
+import { apiPost, apiGet } from './apiClient'
 import type {
   LCFCCourse,
   LCFCNotificationSendRequest,
   DashboardResponse,
-  FileResource,
   SurveyApiResponse,
   PageInfo,
 } from '../types'
-
-const SCHOOL = '1'
-const LANG = 'es-PE'
 
 // ─── Internal backend shapes ───────────────────────────────────────────────
 
@@ -82,9 +71,8 @@ export async function generateLCFCConfiguration(
   })
 }
 
-export async function cloneLCFCConfiguration(idPeriodoOrigen: number, idPeriodoDestino: number) {
-  // Not in new backend — kept calling old endpoint as fallback
-  return apiPost('lcfc/configuracion/clonar', { idPeriodoOrigen, idPeriodoDestino })
+export async function cloneLCFCConfiguration(_idPeriodoOrigen: number, _idPeriodoDestino: number): Promise<void> {
+  throw new Error('La clonación de configuración LCFC no está disponible en esta versión del backend.')
 }
 
 export async function changeLCFCConfigStatus(
@@ -115,36 +103,18 @@ export async function sendLCFCEmail(request: {
 
 // ─── Email params (legacy) ─────────────────────────────────────────────────
 
-export async function getLCFCEmailParams() {
-  const res = await apiGet<{ success: boolean; parametros?: Array<{ nombre: string; description: string }> }>(
-    'lcfc/notificacion/parametros'
-  )
-  return res.parametros ?? []
+export async function getLCFCEmailParams(): Promise<Array<{ nombre: string; description: string }>> {
+  return []
 }
 
 // ─── Excel template & upload ───────────────────────────────────────────────
 
-export async function downloadLCFCTemplate(idPeriodoAcademico: number): Promise<void> {
-  const res = await apiPost<{ success: boolean; data?: { resource?: FileResource } }>(
-    'excel/template-LCFC',
-    { body: { escuela: SCHOOL, idioma: LANG, idPeriodoAcademico }, page: { pageNumber: 0, pageSize: -1 } }
-  )
-  const resource = res.data?.resource
-  if (!resource) throw new Error('No se pudo obtener la plantilla')
-  triggerFileDownload(resource.fileContents, resource.contentType, resource.fileDownloadName)
+export async function downloadLCFCTemplate(_idPeriodoAcademico: number): Promise<void> {
+  throw new Error('La descarga de plantilla LCFC no está disponible en esta versión del backend.')
 }
 
-export async function uploadLCFCMassive(file: File, escuelaActual?: unknown): Promise<void> {
-  const archivoBase64 = await fileToBase64(file)
-  const blob = await apiPostBlob('excel/uploadNotificationEncuesta-LCFC', {
-    idCarrera: 0,
-    validarCarrera: false,
-    escuelaId: SCHOOL,
-    escuelaActual: escuelaActual ?? { id: 1, nombre: 'Escuela', cod: 'E' },
-    archivoBase64,
-    nombreArchivo: file.name,
-  })
-  triggerBlobDownload(blob, `Reporte_Carga_LCFC_${Date.now()}.xlsx`)
+export async function uploadLCFCMassive(_file: File, _escuelaActual?: unknown): Promise<void> {
+  throw new Error('La carga masiva LCFC no está disponible en esta versión del backend.')
 }
 
 // ─── Dashboard ─────────────────────────────────────────────────────────────

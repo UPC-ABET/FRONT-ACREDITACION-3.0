@@ -1,14 +1,13 @@
-import { apiPost, apiGet, apiDelete, apiPostBlob, triggerFileDownload, triggerBlobDownload, fileToBase64 } from './apiClient'
+import { apiPost, apiGet, apiDelete, apiPostBlob, triggerBlobDownload, fileToBase64 } from './apiClient'
+import { getSurveyTypeId } from './academicService'
 import type {
   CompetenceConfig,
   CompetenceFormData,
   AcceptanceLevel,
-  FileResource,
   DashboardResponse,
 } from '../types'
 
 const SCHOOL = '1'
-const LANG = 'es-PE'
 
 // ─── Internal backend shapes ───────────────────────────────────────────────
 
@@ -151,9 +150,10 @@ export async function clonePPPConfiguration(params: {
 // ─── Acceptance levels ─────────────────────────────────────────────────────
 
 export async function listAcceptanceLevels(academic_period_id: number): Promise<AcceptanceLevel[]> {
+  const survey_type_id = await getSurveyTypeId('PPP')
   const res = await apiPost<BackendAcceptanceLevel[] | { data?: BackendAcceptanceLevel[] }>(
     'acceptance-levels/list',
-    { survey_type_code: 'PPP', academic_period_id }
+    { survey_type_id, academic_period_id }
   )
   const obj = res as { data?: BackendAcceptanceLevel[] }
   const list = Array.isArray(res) ? res : (obj.data ?? [])
@@ -171,14 +171,8 @@ export async function updateAcceptanceLevels(
 
 // ─── Excel template & upload ───────────────────────────────────────────────
 
-export async function downloadPPPTemplate(idPeriodoAcademico: number): Promise<void> {
-  const res = await apiPost<{ success: boolean; data?: { resource?: FileResource } }>(
-    'excel/template-PPP',
-    { body: { escuela: SCHOOL, idioma: LANG, idPeriodoAcademico }, page: { pageNumber: 0, pageSize: -1 } }
-  )
-  const resource = res.data?.resource
-  if (!resource) throw new Error('No se pudo obtener la plantilla')
-  triggerFileDownload(resource.fileContents, resource.contentType, resource.fileDownloadName)
+export async function downloadPPPTemplate(_idPeriodoAcademico: number): Promise<void> {
+  throw new Error('La descarga de plantilla PPP no está disponible en esta versión del backend.')
 }
 
 export async function uploadPPPMassive(

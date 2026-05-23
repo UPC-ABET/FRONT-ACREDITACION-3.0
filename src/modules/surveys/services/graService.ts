@@ -3,10 +3,10 @@ import {
   apiGet,
   apiDelete,
   apiPostBlob,
-  triggerFileDownload,
   triggerBlobDownload,
   fileToBase64,
 } from './apiClient'
+import { getSurveyTypeId } from './academicService'
 import type {
   CompetenceConfig,
   CompetenceFormData,
@@ -15,13 +15,10 @@ import type {
   GRAEmailSendRequest,
   SendEmailResponse,
   SurveyApiResponse,
-  FileResource,
   DashboardResponse,
   AcceptanceLevel,
 } from '../types'
 
-const SCHOOL = '1'
-const LANG = 'es-PE'
 
 // ─── Internal backend shapes ───────────────────────────────────────────────
 
@@ -160,9 +157,10 @@ export async function listGRAOutcomes(params: {
 // ─── Acceptance levels (shared with PPP) ──────────────────────────────────
 
 export async function listGRAAcceptanceLevels(academic_period_id: number): Promise<AcceptanceLevel[]> {
+  const survey_type_id = await getSurveyTypeId('GRA')
   const res = await apiPost<Array<{ id: number; min_score: number; max_score: number; name: { es?: string }; color?: string; order?: number }>>(
     'acceptance-levels/list',
-    { survey_type_code: 'GRA', academic_period_id }
+    { survey_type_id, academic_period_id }
   )
   const list = Array.isArray(res) ? res : []
   return list.map((l, i) => ({
@@ -256,23 +254,13 @@ export async function saveGRAEmailTemplate(template: {
 
 // ─── Excel template & upload ───────────────────────────────────────────────
 
-export async function downloadGRATemplate(idPeriodoAcademico: number): Promise<void> {
-  const res = await apiPost<{ success: boolean; data?: { resource?: FileResource } }>(
-    'excel/template-GRA',
-    { body: { escuela: SCHOOL, idioma: LANG, idPeriodoAcademico }, page: { pageNumber: 0, pageSize: -1 } }
-  )
-  const resource = res.data?.resource
-  if (!resource) throw new Error('No se pudo obtener la plantilla')
-  triggerFileDownload(resource.fileContents, resource.contentType, resource.fileDownloadName)
+export async function downloadGRATemplate(_idPeriodoAcademico: number): Promise<void> {
+  throw new Error('La descarga de plantilla GRA no está disponible en esta versión del backend.')
 }
 
-export async function uploadGRAMassive(file: File, escuelaActual?: unknown): Promise<void> {
+export async function uploadGRAMassive(file: File, _escuelaActual?: unknown): Promise<void> {
   const archivoBase64 = await fileToBase64(file)
   const blob = await apiPostBlob('excel/uploadNotificationEncuesta-GRA', {
-    idCarrera: 0,
-    validarCarrera: false,
-    escuelaId: SCHOOL,
-    escuelaActual: escuelaActual ?? { id: 1, nombre: 'Escuela', cod: 'E' },
     archivoBase64,
     nombreArchivo: file.name,
   })
