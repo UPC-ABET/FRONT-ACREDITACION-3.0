@@ -4,7 +4,7 @@ import React from 'react';
 import { Card } from '@/shared/components/ui/Card';
 import { useI18n } from '@/providers';
 import { getLoginBackgroundUrl } from '@/modules/auth';
-import ForgotPasswordForm from '@/modules/auth/components/ForgotPasswordForm';
+import ForgotPasswordForm from './components/ForgotPasswordForm';
 
 export default function ForgotPassword() {
 	const { t } = useI18n();

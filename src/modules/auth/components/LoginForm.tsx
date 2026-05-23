@@ -45,7 +45,7 @@ export default function LoginForm() {
 			localStorage.setItem('bearerToken', JSON.stringify(res.accessToken));
 			localStorage.setItem('token', JSON.stringify(res.user));
 			localStorage.setItem('escuela', JSON.stringify(schoolCode));
-			router.replace('/');
+			window.location.replace('/');
 		} catch (err: any) {
 			const rawMessage = typeof err?.message === 'string' ? err.message : '';
 			const translated = rawMessage ? t(rawMessage) : '';

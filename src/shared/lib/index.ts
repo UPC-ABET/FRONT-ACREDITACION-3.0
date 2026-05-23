@@ -14,7 +14,6 @@
  * aquí vive la base técnica reutilizable.
  */
 
-// export * from './api-client'
 // export * from './env'
 
 export {};

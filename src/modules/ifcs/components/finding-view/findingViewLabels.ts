@@ -1,0 +1,25 @@
+export const FINDING_VIEW_LABELS = {
+	page_title: { en: 'Finding', es: 'Hallazgo' },
+	section_general: { en: 'General Information', es: 'Información General' },
+	col_code: { en: 'Code', es: 'Código' },
+	col_period: { en: 'Academic Period', es: 'Período Académico' },
+	col_description: { en: 'Description', es: 'Descripción' },
+	col_criticality: { en: 'Criticality', es: 'Criticidad' },
+	section_actions: {
+		en: 'Associated Improvement Actions',
+		es: 'Acciones de Mejora Asociadas',
+	},
+	col_action_code: { en: 'Code', es: 'Código' },
+	col_action_desc: { en: 'Description', es: 'Descripción' },
+	col_action_status: { en: 'Status', es: 'Estado' },
+	btn_edit: { en: 'Edit', es: 'Editar' },
+	btn_delete: { en: 'Delete', es: 'Eliminar' },
+	btn_save: { en: 'Save', es: 'Guardar' },
+	btn_cancel: { en: 'Cancel', es: 'Cancelar' },
+	btn_back: { en: 'Back to list', es: 'Volver al listado' },
+	err_description_empty: {
+		en: 'Description must have at least one language filled',
+		es: 'La descripción debe tener al menos un idioma completado',
+	},
+	actions_empty: { en: 'No actions associated', es: 'No hay acciones asociadas' },
+} as const;
