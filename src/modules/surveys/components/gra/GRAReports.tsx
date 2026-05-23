@@ -2,13 +2,11 @@
 
 import React, { useEffect, useState } from 'react'
 import { Select, Button, Toast } from '@/shared/components'
-import { DocumentArrowDownIcon } from '@heroicons/react/24/outline'
 import { useGRAReports, useGRACycles } from '../../hooks'
 import { useABET } from '@/providers'
-import { triggerFileDownload } from '../../services'
 
 export function GRAReports() {
-  const { valueModality } = useABET()
+  const { modalityTypeId } = useABET()
   const { cycles, load: loadCycles } = useGRACycles()
   const { loading, error, reportData, generate } = useGRAReports()
 
@@ -17,7 +15,7 @@ export function GRAReports() {
     open: false, type: 'success', msg: '',
   })
 
-  useEffect(() => { loadCycles(valueModality) }, [valueModality, loadCycles])
+  useEffect(() => { loadCycles(modalityTypeId) }, [modalityTypeId, loadCycles])
   useEffect(() => {
     if (error) setToast({ open: true, type: 'error', msg: error })
   }, [error])
@@ -35,9 +33,9 @@ export function GRAReports() {
   return (
     <div className="max-w-lg space-y-6">
       <div>
-        <h3 className="text-base font-bold text-zinc-800">Reporte de Percepción — Graduandos</h3>
+        <h3 className="text-base font-bold text-zinc-800">Dashboard — Graduandos</h3>
         <p className="text-sm text-zinc-500 mt-1">
-          Genera el reporte de percepción por ciclo académico para encuestas de graduandos.
+          Resumen de percepción por ciclo académico para encuestas de graduandos.
         </p>
       </div>
 
@@ -51,39 +49,44 @@ export function GRAReports() {
       />
 
       <Button onClick={handleGenerate} disabled={loading || !cycle}>
-        {loading ? 'Generando...' : 'Generar Reporte'}
+        {loading ? 'Generando...' : 'Generar Dashboard'}
       </Button>
 
       {reportData && (
         <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-200 space-y-3">
-          <p className="text-sm font-bold text-zinc-700">
-            Reporte generado ({reportData.pdfFiles?.length ?? 0} archivo(s))
-          </p>
-          {reportData.pdfFiles?.map((f) => (
-            <button
-              key={f.fileName}
-              className="flex items-center gap-2 text-sm text-red-600 hover:underline"
-              onClick={() => triggerFileDownload(f.base64Content, 'application/pdf', f.fileName)}
-            >
-              <DocumentArrowDownIcon className="h-4 w-4" />
-              {f.fileName}
-            </button>
-          ))}
-          {reportData.zipFile && (
-            <Button
-              variant="surface"
-              size="sm"
-              onClick={() =>
-                reportData.zipFile &&
-                triggerFileDownload(
-                  reportData.zipFile.base64Content,
-                  'application/zip',
-                  reportData.zipFile.fileName
-                )
-              }
-            >
-              Descargar ZIP completo
-            </Button>
+          <p className="text-sm font-bold text-zinc-700">Resumen</p>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <span className="text-xs text-zinc-500 block">Total encuestas</span>
+              <span className="font-semibold">{reportData.summary.total_surveys}</span>
+            </div>
+            {reportData.summary.completion_rate_pct !== undefined && (
+              <div>
+                <span className="text-xs text-zinc-500 block">Tasa de completitud</span>
+                <span className="font-semibold">{reportData.summary.completion_rate_pct}%</span>
+              </div>
+            )}
+            {reportData.summary.verde !== undefined && (
+              <div>
+                <span className="text-xs text-zinc-500 block">Verde / Amarillo / Rojo</span>
+                <span className="font-semibold">
+                  {reportData.summary.verde} / {reportData.summary.amarillo} / {reportData.summary.rojo}
+                </span>
+              </div>
+            )}
+          </div>
+          {reportData.outcomes && reportData.outcomes.length > 0 && (
+            <div className="mt-3">
+              <p className="text-xs font-bold text-zinc-600 mb-2">Outcomes</p>
+              <ul className="space-y-1">
+                {reportData.outcomes.map((o) => (
+                  <li key={o.outcome_id} className="flex items-center justify-between text-xs">
+                    <span className="text-zinc-700 truncate max-w-xs">{o.outcome_name}</span>
+                    <span className="font-semibold ml-2">{o.average_score.toFixed(2)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       )}

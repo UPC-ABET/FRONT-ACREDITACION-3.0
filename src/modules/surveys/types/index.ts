@@ -14,50 +14,36 @@ export interface PageInfo {
   totalPages: number
 }
 
-// ─── Common API request wrapper ────────────────────────────────────────────
-export interface SurveyBodyRequest<T = Record<string, unknown>> {
-  body: T & {
-    escuela?: string
-    idioma?: string
-  }
-  page?: PageRequest
-}
-
-// ─── Cycle / Academic Period ───────────────────────────────────────────────
-export interface AcademicCycle {
+// ─── Academic entities (from academic module) ──────────────────────────────
+export interface AcademicPeriod {
   id: number
   nombre: string
   codigo?: string
 }
 
-export interface Career {
+export interface Program {
   id: number
   nombre: string
   codigo?: string
-}
-
-export interface Commission {
-  id: number
-  nombre: string
-  idCarrera?: number
 }
 
 // ─── Competences (PPP / GRA) ───────────────────────────────────────────────
 export interface CompetenceConfig {
   id: number
-  competenciaGeneral: string
-  competenciaEspecifica: string
-  descripcion: string
-  nivelAceptacion: number
+  outcomeId?: number
+  competenciaGeneral: string   // maps to extra.name_es
+  competenciaEspecifica: string // maps to extra.name_en
+  descripcion: string          // maps to extra.description_es
+  nivelAceptacion: number      // maps to extra.order
   estado?: string
+  isActive?: boolean
   idCarrera?: number
   idPeriodo?: number
-  fechaCreacion?: string
-  ultimaActualizacion?: string
 }
 
 export interface CompetenceFormData {
   id: number
+  outcome_id?: number         // required by new backend on create
   competenciaGeneral: string
   competenciaEspecifica: string
   descripcion: string
@@ -67,11 +53,15 @@ export interface CompetenceFormData {
   escuela: string
 }
 
+// ─── Acceptance levels ─────────────────────────────────────────────────────
 export interface AcceptanceLevel {
   id?: number
-  nivel: number
-  descripcion: string
-  rango: string
+  nivel: number       // maps to backend "order"
+  descripcion: string // maps to backend "name.es"
+  rango: string       // derived from min_score – max_score
+  minScore?: number
+  maxScore?: number
+  color?: string
 }
 
 // ─── File download response ────────────────────────────────────────────────
@@ -82,18 +72,10 @@ export interface FileResource {
 }
 
 // ─── PPP ───────────────────────────────────────────────────────────────────
-export interface PPPListResponse {
-  success: boolean
-  lstConfig: CompetenceConfig[]
-  message?: string
-}
-
 export interface PPPCloneRequest {
-  escuela: string
-  idCarreraOrigen: number
-  idPeriodoOrigen: number
-  idCarreraDestino: number
-  idPeriodoDestino: number
+  source_academic_period_id: number
+  target_academic_period_id: number
+  program_id: number
 }
 
 // ─── GRA Student Notification ─────────────────────────────────────────────
@@ -144,11 +126,19 @@ export interface SendEmailResponse {
   message?: string
 }
 
+// ─── GRA Email Send (new backend) ─────────────────────────────────────────
+export interface GRAEmailSendRequest {
+  academic_period_id: number
+  program_id: number
+  survey_base_url: string
+}
+
 // ─── LCFC ──────────────────────────────────────────────────────────────────
 export interface LCFCCourse {
   idCurso: number
   nombreCurso: string
   codigo: string
+  isActive?: boolean
   comisiones: Array<{
     idComision: number
     nombreComision: string
@@ -165,18 +155,12 @@ export interface LCFCStudent {
   encuestaCompletada: boolean
 }
 
-export interface LCFCNotificationRequest {
-  idCiclo: number
-  idPeriodo: number
-  pageNumber?: number
-  pageSize?: number
-}
-
 export interface LCFCEmailParam {
   nombre: string
   description: string
 }
 
+// Legacy LCFC send request (kept for backward compat)
 export interface LCFCSendRequest {
   idCiclo: number
   idPeriodo: number
@@ -184,6 +168,16 @@ export interface LCFCSendRequest {
   selectedStudents?: number[]
   asunto: string
   cuerpo: string
+}
+
+// New backend LCFC notification send request
+export interface LCFCNotificationSendRequest {
+  academic_period_id: number
+  program_id: number
+  campus_id?: number
+  course_section_id?: number
+  max_register_date: string
+  survey_base_url: string
 }
 
 export interface LCFCConfigItem {
@@ -213,6 +207,7 @@ export interface SurveyCommissionGroup {
 }
 
 export interface SurveyTokenVerification {
+  token?: string
   escuela: string
   escuelaId?: number
   nombreEscuela?: string
@@ -223,11 +218,12 @@ export interface SurveyTokenVerification {
   nombreEstudiante?: string
   nombreCurso?: string
   cursoCodigo?: string
-  estado: boolean
+  estado: boolean        // false = not answered yet, true = already answered
   alumnoId: number
   encuestaId: number
   tokenValido?: boolean
   diasRestantes?: number
+  surveyId?: number
 }
 
 export interface SurveyOutcomesResponse {
@@ -249,6 +245,7 @@ export interface SurveySubmitItem {
 }
 
 export interface SurveySubmitRequest {
+  token?: string          // new backend uses token
   comentario: string
   encuestaId: number
   escuela: string
@@ -264,7 +261,7 @@ export interface SurveySubmitResponse {
   }
 }
 
-// ─── Reports ───────────────────────────────────────────────────────────────
+// ─── Reports / Dashboard ───────────────────────────────────────────────────
 export interface ReportFilter {
   idPeriodoAcademico?: number
   idCarrera?: number
@@ -273,21 +270,36 @@ export interface ReportFilter {
   idioma?: string
 }
 
+export interface DashboardOutcome {
+  outcome_id: number
+  outcome_code?: string
+  outcome_name: string
+  average_score: number
+  color: 'ROJO' | 'AMARILLO' | 'VERDE'
+  total_responses: number
+}
+
+export interface DashboardSummary {
+  total_surveys: number
+  rojo?: number
+  amarillo?: number
+  verde?: number
+  completed?: number
+  pending?: number
+  completion_rate_pct?: number
+}
+
+export interface DashboardResponse {
+  summary: DashboardSummary
+  outcomes?: DashboardOutcome[]
+  by_program?: unknown[]
+  by_course?: unknown[]
+  filters?: unknown
+}
+
 export interface ReportPDFFile {
   fileName: string
   base64Content: string
-}
-
-export interface ReportResponse {
-  success: boolean
-  data?: {
-    pdfFiles?: ReportPDFFile[]
-    zipFile?: {
-      base64Content: string
-      fileName: string
-    }
-  }
-  message?: string
 }
 
 // ─── Generic API response ──────────────────────────────────────────────────

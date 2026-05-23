@@ -7,7 +7,7 @@ import { usePPPDownload, usePPPCycles } from '../../hooks'
 import { useABET } from '@/providers'
 
 export function PPPDownloadTemplate() {
-  const { valueModality } = useABET()
+  const { modalityTypeId } = useABET()
   const { cycles, load: loadCycles } = usePPPCycles()
   const { loading, error, download } = usePPPDownload()
 
@@ -16,7 +16,7 @@ export function PPPDownloadTemplate() {
     open: false, type: 'success', msg: '',
   })
 
-  useEffect(() => { loadCycles(valueModality) }, [valueModality, loadCycles])
+  useEffect(() => { loadCycles(modalityTypeId) }, [modalityTypeId, loadCycles])
 
   useEffect(() => {
     if (error) setToast({ open: true, type: 'error', msg: error })

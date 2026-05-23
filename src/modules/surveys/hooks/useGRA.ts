@@ -2,14 +2,17 @@
 
 import { useState, useCallback } from 'react'
 import type {
+  AcademicPeriod,
   CompetenceConfig,
   CompetenceFormData,
+  DashboardResponse,
   GRAStudent,
   StudentSearchResult,
   EmailTemplate,
-  SendEmailRequest,
+  GRAEmailSendRequest,
 } from '../types'
 import {
+  getAcademicPeriods,
   listGRACompetences,
   saveGRACompetence,
   deleteGRACompetence,
@@ -24,19 +27,24 @@ import {
   downloadGRATemplate,
   uploadGRAMassive,
   generateGRAPerceptionReport,
-  getCycleList,
 } from '../services'
 
 export function useGRACycles() {
-  const [cycles, setCycles] = useState<Array<{ id: number; nombre: string }>>([])
+  const { periods, loading, error, load: _load } = useGRAPeriods()
+  const load = useCallback((_modalityId?: unknown) => { _load() }, [_load])
+  return { cycles: periods, loading, error, load }
+}
+
+export function useGRAPeriods() {
+  const [periods, setPeriods] = useState<AcademicPeriod[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const load = useCallback(async (modalityId?: string | number) => {
+  const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      setCycles(await getCycleList(modalityId))
+      setPeriods(await getAcademicPeriods())
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -44,7 +52,7 @@ export function useGRACycles() {
     }
   }, [])
 
-  return { cycles, loading, error, load }
+  return { periods, loading, error, load }
 }
 
 export function useGRACompetences() {
@@ -105,35 +113,40 @@ export function useGRACompetences() {
   return { competences, loading, error, load, save, remove, clone, setError }
 }
 
-export function useGRAStudents(idEncuesta: number) {
+export function useGRAStudents() {
   const [students, setStudents] = useState<GRAStudent[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const { students: data } = await listGRAStudents(idEncuesta)
-      setStudents(data)
-    } catch (e) {
-      setError((e as Error).message)
-    } finally {
-      setLoading(false)
-    }
-  }, [idEncuesta])
-
-  const remove = useCallback(
-    async (idNotificacion: number, onSuccess?: () => void) => {
+  const load = useCallback(
+    async (params: {
+      program_id?: number
+      academic_period_id?: number
+      campus_id?: number
+      student_code?: string
+    }) => {
+      setLoading(true)
+      setError(null)
       try {
-        await deleteStudentNotification(idNotificacion)
-        onSuccess?.()
+        const { students: data } = await listGRAStudents(params)
+        setStudents(data)
       } catch (e) {
         setError((e as Error).message)
+      } finally {
+        setLoading(false)
       }
     },
     []
   )
+
+  const remove = useCallback(async (idNotificacion: number, onSuccess?: () => void) => {
+    try {
+      await deleteStudentNotification(idNotificacion)
+      onSuccess?.()
+    } catch (e) {
+      setError((e as Error).message)
+    }
+  }, [])
 
   return { students, loading, error, load, remove }
 }
@@ -148,8 +161,7 @@ export function useGRAStudentSearch() {
     setError(null)
     setResult(null)
     try {
-      const student = await searchStudentByCode(codigo, idCarrera)
-      setResult(student)
+      setResult(await searchStudentByCode(codigo, idCarrera))
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -160,10 +172,11 @@ export function useGRAStudentSearch() {
   const add = useCallback(
     async (
       params: {
-        idEstudiante: number
-        idEncuesta: number
-        emailEstudiante: string
-        nombreEstudiante: string
+        student_id: number
+        program_id: number
+        academic_period_id: number
+        campus_id?: number
+        max_register_date?: string
       },
       onSuccess?: () => void
     ) => {
@@ -192,8 +205,7 @@ export function useGRAEmail(idEncuesta: number) {
     setLoading(true)
     setError(null)
     try {
-      const t = await getGRAEmailTemplate(idEncuesta)
-      setTemplate(t)
+      setTemplate(await getGRAEmailTemplate(idEncuesta))
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -217,7 +229,7 @@ export function useGRAEmail(idEncuesta: number) {
   )
 
   const send = useCallback(
-    async (req: SendEmailRequest, onSuccess?: () => void) => {
+    async (req: GRAEmailSendRequest, onSuccess?: () => void) => {
       setSending(true)
       try {
         await sendGRAEmail(req)
@@ -254,9 +266,9 @@ export function useGRAUpload() {
     setSuccess(false)
     try {
       const escuelaActual =
-        typeof localStorage !== 'undefined'
-          ? JSON.parse(localStorage.getItem('escuela') ?? 'null')
-          : null
+        typeof localStorage === 'undefined'
+          ? null
+          : JSON.parse(localStorage.getItem('escuela') ?? 'null')
       await uploadGRAMassive(file, escuelaActual ?? undefined)
       setSuccess(true)
     } catch (e) {
@@ -272,18 +284,14 @@ export function useGRAUpload() {
 export function useGRAReports() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [reportData, setReportData] = useState<{
-    pdfFiles?: Array<{ fileName: string; base64Content: string }>
-    zipFile?: { base64Content: string; fileName: string }
-  } | null>(null)
+  const [reportData, setReportData] = useState<DashboardResponse | null>(null)
 
   const generate = useCallback(
     async (params: { idPeriodoAcademico?: number; idCarrera?: number; idComision?: number }) => {
       setLoading(true)
       setError(null)
       try {
-        const res = await generateGRAPerceptionReport(params)
-        setReportData(res.data ?? null)
+        setReportData(await generateGRAPerceptionReport(params))
       } catch (e) {
         setError((e as Error).message)
       } finally {

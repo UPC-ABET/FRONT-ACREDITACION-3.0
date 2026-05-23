@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import type { CompetenceConfig, AcceptanceLevel, CompetenceFormData } from '../types'
+import type { AcademicPeriod, CompetenceConfig, AcceptanceLevel, CompetenceFormData, DashboardResponse } from '../types'
 import {
+  getAcademicPeriods,
   listPPPCompetences,
   savePPPCompetence,
   deletePPPCompetence,
@@ -12,20 +13,26 @@ import {
   downloadPPPTemplate,
   uploadPPPMassive,
   generatePPPPerceptionReport,
-  getCycleList,
 } from '../services'
 
+// Backward-compat alias: components that import usePPPCycles still work.
+// load() ignores the optional modalityId arg; periods come from getAcademicPeriods().
 export function usePPPCycles() {
-  const [cycles, setCycles] = useState<Array<{ id: number; nombre: string }>>([])
+  const { periods, loading, error, load: _load } = usePPPPeriods()
+  const load = useCallback((_modalityId?: unknown) => { _load() }, [_load])
+  return { cycles: periods, loading, error, load }
+}
+
+export function usePPPPeriods() {
+  const [periods, setPeriods] = useState<AcademicPeriod[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const load = useCallback(async (modalityId?: string | number) => {
+  const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await getCycleList(modalityId)
-      setCycles(data)
+      setPeriods(await getAcademicPeriods())
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -33,7 +40,7 @@ export function usePPPCycles() {
     }
   }, [])
 
-  return { cycles, loading, error, load }
+  return { periods, loading, error, load }
 }
 
 export function usePPPCompetences() {
@@ -45,8 +52,7 @@ export function usePPPCompetences() {
     setLoading(true)
     setError(null)
     try {
-      const data = await listPPPCompetences(idPeriodo, idCarrera)
-      setCompetences(data)
+      setCompetences(await listPPPCompetences(idPeriodo, idCarrera))
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -54,17 +60,14 @@ export function usePPPCompetences() {
     }
   }, [])
 
-  const save = useCallback(
-    async (data: CompetenceFormData, onSuccess?: () => void) => {
-      try {
-        await savePPPCompetence(data)
-        onSuccess?.()
-      } catch (e) {
-        setError((e as Error).message)
-      }
-    },
-    []
-  )
+  const save = useCallback(async (data: CompetenceFormData, onSuccess?: () => void) => {
+    try {
+      await savePPPCompetence(data)
+      onSuccess?.()
+    } catch (e) {
+      setError((e as Error).message)
+    }
+  }, [])
 
   const remove = useCallback(async (id: number, onSuccess?: () => void) => {
     try {
@@ -107,8 +110,7 @@ export function usePPPAcceptanceLevels() {
     setLoading(true)
     setError(null)
     try {
-      const data = await listAcceptanceLevels(idPeriodo)
-      setLevels(data)
+      setLevels(await listAcceptanceLevels(idPeriodo))
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -155,23 +157,27 @@ export function usePPPUpload() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
-  const upload = useCallback(async (file: File) => {
-    setLoading(true)
-    setError(null)
-    setSuccess(false)
-    try {
-      const escuelaActual =
-        typeof localStorage !== 'undefined'
-          ? JSON.parse(localStorage.getItem('escuela') ?? 'null')
-          : null
-      await uploadPPPMassive(file, escuelaActual ?? undefined)
-      setSuccess(true)
-    } catch (e) {
-      setError((e as Error).message)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const upload = useCallback(
+    async (
+      file: File,
+      academic_period_id: number,
+      program_id = 0,
+      campus_id = 0
+    ) => {
+      setLoading(true)
+      setError(null)
+      setSuccess(false)
+      try {
+        await uploadPPPMassive(file, academic_period_id, program_id, campus_id)
+        setSuccess(true)
+      } catch (e) {
+        setError((e as Error).message)
+      } finally {
+        setLoading(false)
+      }
+    },
+    []
+  )
 
   return { loading, error, success, upload, reset: () => setSuccess(false) }
 }
@@ -179,10 +185,7 @@ export function usePPPUpload() {
 export function usePPPReports() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [reportData, setReportData] = useState<{
-    pdfFiles?: Array<{ fileName: string; base64Content: string }>
-    zipFile?: { base64Content: string; fileName: string }
-  } | null>(null)
+  const [reportData, setReportData] = useState<DashboardResponse | null>(null)
 
   const generate = useCallback(
     async (params: {
@@ -193,8 +196,7 @@ export function usePPPReports() {
       setLoading(true)
       setError(null)
       try {
-        const res = await generatePPPPerceptionReport(params)
-        setReportData(res.data ?? null)
+        setReportData(await generatePPPPerceptionReport(params))
       } catch (e) {
         setError((e as Error).message)
       } finally {

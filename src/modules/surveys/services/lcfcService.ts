@@ -1,109 +1,133 @@
 import {
   apiPost,
   apiGet,
-  triggerFileDownload,
-  fileToBase64,
   apiPostBlob,
+  triggerFileDownload,
   triggerBlobDownload,
+  fileToBase64,
 } from './apiClient'
 import type {
   LCFCCourse,
-  LCFCStudent,
-  LCFCEmailParam,
-  LCFCSendRequest,
-  LCFCConfigItem,
-  SurveyApiResponse,
+  LCFCNotificationSendRequest,
+  DashboardResponse,
   FileResource,
+  SurveyApiResponse,
   PageInfo,
 } from '../types'
 
 const SCHOOL = '1'
 const LANG = 'es-PE'
 
-// ─── Configuration ─────────────────────────────────────────────────────────
-export async function listLCFCCourses(
-  idEscuela: string,
-  idPeriodo: number,
-  page = 0,
-  pageSize = -1
-): Promise<{ cursos: LCFCCourse[]; pageInfo?: PageInfo }> {
-  const res = await apiPost<SurveyApiResponse<{ cursos: LCFCCourse[] }>>(
-    'lcfc/configuracion/pageable',
-    { idEscuela, idPeriodo, pageNumber: page, pageSize }
-  )
-  const data = res.data?.resource as { cursos?: LCFCCourse[] } | undefined
-  return { cursos: data?.cursos ?? [], pageInfo: res.data?.pageInfo }
+// ─── Internal backend shapes ───────────────────────────────────────────────
+
+interface BackendLcfcConfig {
+  id: number
+  is_active: boolean
+  extra?: {
+    course_section_id?: number
+    program_id?: number
+    academic_period_id?: number
+  }
+  course_name?: string
+  course_code?: string
+  course_section_id?: number
 }
 
-export async function generateLCFCConfiguration(
-  escuela: string,
-  periodo: number
-): Promise<SurveyApiResponse> {
-  return apiPost<SurveyApiResponse>(
-    `lcfc/configuracion/generar/escuela/${escuela}/periodo/${periodo}`,
-    {}
-  )
-}
+// ─── Adapter ───────────────────────────────────────────────────────────────
 
-export async function cloneLCFCConfiguration(idPeriodoOrigen: number, idPeriodoDestino: number) {
-  return apiPost<SurveyApiResponse>('lcfc/configuracion/clonar', {
-    idPeriodoOrigen,
-    idPeriodoDestino,
-  })
-}
-
-export async function changeLCFCConfigStatus(
-  idConfiguracion: number,
-  nuevoEstado: 'ACTIVO' | 'INACTIVO'
-) {
-  return apiPost<SurveyApiResponse>('lcfc/configuracion/cambio', {
-    idConfiguracion,
-    nuevoEstado,
-  })
-}
-
-// ─── Students / notifications ──────────────────────────────────────────────
-export async function listLCFCStudents(
-  idCiclo: number,
-  idPeriodo: number,
-  page = 0,
-  pageSize = 20
-): Promise<{ estudiantes: LCFCStudent[]; totalRegistros: number }> {
-  const res = await apiPost<{
-    success: boolean
-    data?: {
-      estudiantes?: LCFCStudent[]
-      totalRegistros?: number
-    }
-  }>('lcfc/notificacion/paginado', { idCiclo, idPeriodo, pageNumber: page, pageSize })
+function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
   return {
-    estudiantes: res.data?.estudiantes ?? [],
-    totalRegistros: res.data?.totalRegistros ?? 0,
+    idCurso: raw.course_section_id ?? raw.extra?.course_section_id ?? raw.id,
+    nombreCurso: raw.course_name ?? `Curso ${raw.id}`,
+    codigo: raw.course_code ?? '',
+    isActive: raw.is_active,
+    comisiones: [],
   }
 }
 
-export async function getLCFCEmailParams(): Promise<LCFCEmailParam[]> {
-  const res = await apiGet<{ success: boolean; parametros?: LCFCEmailParam[] }>(
+// ─── Configuration ─────────────────────────────────────────────────────────
+
+export async function listLCFCCourses(
+  _idEscuela: string,
+  academic_period_id: number,
+  program_id?: number,
+  page = 0,
+  pageSize = -1
+): Promise<{ cursos: LCFCCourse[]; pageInfo?: PageInfo }> {
+  const res = await apiPost<BackendLcfcConfig[] | SurveyApiResponse<BackendLcfcConfig[]>>(
+    'lcfc/config/get-by-filters',
+    { academic_period_id, program_id: program_id || undefined, is_active: undefined, pageNumber: page, pageSize }
+  )
+
+  if (Array.isArray(res)) {
+    return { cursos: res.map((c) => adaptLcfcConfig(c)) }
+  }
+  const list = res.data?.resource ?? []
+  return {
+    cursos: list.map((c) => adaptLcfcConfig(c)),
+    pageInfo: res.data?.pageInfo,
+  }
+}
+
+export async function generateLCFCConfiguration(
+  _escuela: string,
+  academic_period_id: number,
+  program_id?: number,
+  campus_id?: number
+) {
+  return apiPost('lcfc/config/generate', {
+    academic_period_id,
+    program_id: program_id ?? 0,
+    campus_id: campus_id ?? 0,
+  })
+}
+
+export async function cloneLCFCConfiguration(idPeriodoOrigen: number, idPeriodoDestino: number) {
+  // Not in new backend — kept calling old endpoint as fallback
+  return apiPost('lcfc/configuracion/clonar', { idPeriodoOrigen, idPeriodoDestino })
+}
+
+export async function changeLCFCConfigStatus(
+  config_id: number,
+  nuevoEstado: 'ACTIVO' | 'INACTIVO'
+) {
+  return apiPost('lcfc/config/update-status', {
+    updates: [{ config_id, is_active: nuevoEstado === 'ACTIVO' }],
+  })
+}
+
+// ─── Notifications (new backend: single send-all operation) ────────────────
+
+export async function sendLCFCNotification(request: LCFCNotificationSendRequest) {
+  return apiPost('lcfc/notification/send', request)
+}
+
+// Legacy send used by older hook — kept for compatibility
+export async function sendLCFCEmail(request: {
+  idCiclo: number
+  idPeriodo: number
+  destinatarios: string
+  asunto: string
+  cuerpo: string
+}) {
+  return apiPost('lcfc/notificacion/envio', request)
+}
+
+// ─── Email params (legacy) ─────────────────────────────────────────────────
+
+export async function getLCFCEmailParams() {
+  const res = await apiGet<{ success: boolean; parametros?: Array<{ nombre: string; description: string }> }>(
     'lcfc/notificacion/parametros'
   )
   return res.parametros ?? []
 }
 
-export async function sendLCFCEmail(request: LCFCSendRequest) {
-  return apiPost<{ success: boolean; enviados?: number; fallidos?: number }>(
-    'lcfc/notificacion/envio',
-    request
-  )
-}
+// ─── Excel template & upload ───────────────────────────────────────────────
 
-// ─── Template ──────────────────────────────────────────────────────────────
 export async function downloadLCFCTemplate(idPeriodoAcademico: number): Promise<void> {
   const res = await apiPost<{ success: boolean; data?: { resource?: FileResource } }>(
     'excel/template-LCFC',
-    {
-      body: { escuela: SCHOOL, idioma: LANG, idPeriodoAcademico },
-      page: { pageNumber: 0, pageSize: -1 },
-    }
+    { body: { escuela: SCHOOL, idioma: LANG, idPeriodoAcademico }, page: { pageNumber: 0, pageSize: -1 } }
   )
   const resource = res.data?.resource
   if (!resource) throw new Error('No se pudo obtener la plantilla')
@@ -123,18 +147,30 @@ export async function uploadLCFCMassive(file: File, escuelaActual?: unknown): Pr
   triggerBlobDownload(blob, `Reporte_Carga_LCFC_${Date.now()}.xlsx`)
 }
 
-// ─── Reports ───────────────────────────────────────────────────────────────
+// ─── Dashboard ─────────────────────────────────────────────────────────────
+
+export async function generateLCFCDashboard(params: {
+  academic_period_id?: number
+  program_id?: number
+  campus_id?: number
+}): Promise<DashboardResponse> {
+  return apiPost<DashboardResponse>('lcfc/dashboard', params)
+}
+
 export async function generateLCFCPerceptionReport(params: {
   idPeriodoAcademico?: number
   idEscuela?: string
   idPeriodo?: number
   idCarrera?: number
 }) {
-  return apiPost<{
-    success: boolean
-    data?: { pdfFiles?: Array<{ fileName: string; base64Content: string }> }
-  }>('lcfc/reporte/percepcion', {
-    body: { escuela: SCHOOL, idioma: LANG, ...params },
-    page: { pageNumber: 0, pageSize: -1 },
+  return generateLCFCDashboard({
+    academic_period_id: params.idPeriodoAcademico ?? params.idPeriodo,
+    program_id: params.idCarrera,
   })
+}
+
+// ─── Token & survey (student-facing admin read) ────────────────────────────
+
+export async function validateLCFCToken(token: string) {
+  return apiGet(`lcfc/token/validate/${encodeURIComponent(token)}`)
 }

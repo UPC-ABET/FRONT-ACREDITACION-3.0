@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
     const data = await s3ListDirectory(dir)
     return NextResponse.json(data)
   } catch (error) {
+    console.error('[s3/list] Error:', error)
     return NextResponse.json({ error: String(error) }, { status: 500 })
   }
 }

@@ -20,7 +20,7 @@ import { useABET } from '@/providers'
 import type { LCFCCourse } from '../../../types'
 
 export function LCFCConfiguration() {
-  const { valueModality } = useABET()
+  const { modalityTypeId } = useABET()
   const { cycles, load: loadCycles } = useLCFCCycles()
   const {
     courses,
@@ -39,7 +39,7 @@ export function LCFCConfiguration() {
     open: false, type: 'success', msg: '',
   })
 
-  useEffect(() => { loadCycles(valueModality) }, [valueModality, loadCycles])
+  useEffect(() => { loadCycles(modalityTypeId) }, [modalityTypeId, loadCycles])
 
   useEffect(() => {
     if (selectedCycle) loadConfig('1', selectedCycle.value)
@@ -51,7 +51,7 @@ export function LCFCConfiguration() {
 
   function handleGenerate() {
     if (!selectedCycle) return
-    generate('1', selectedCycle.value, () => {
+    generate('1', selectedCycle.value, undefined, undefined, () => {
       setToast({ open: true, type: 'success', msg: 'Configuración generada exitosamente.' })
       loadConfig('1', selectedCycle.value)
     })

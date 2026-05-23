@@ -13,7 +13,7 @@ const TABS = [
 ]
 
 export function PPPConfiguration() {
-  const { valueModality } = useABET()
+  const { modalityTypeId } = useABET()
   const { cycles, load: loadCycles } = usePPPCycles()
   const {
     competences,
@@ -33,7 +33,7 @@ export function PPPConfiguration() {
     open: false, type: 'success', msg: '',
   })
 
-  useEffect(() => { loadCycles(valueModality) }, [valueModality, loadCycles])
+  useEffect(() => { loadCycles(modalityTypeId) }, [modalityTypeId, loadCycles])
 
   useEffect(() => {
     if (!selectedCycle) return

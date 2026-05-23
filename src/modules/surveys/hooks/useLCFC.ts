@@ -1,31 +1,42 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import type { LCFCCourse, LCFCStudent, LCFCEmailParam, LCFCSendRequest } from '../types'
+import type {
+  AcademicPeriod,
+  DashboardResponse,
+  LCFCCourse,
+  LCFCEmailParam,
+  LCFCNotificationSendRequest,
+} from '../types'
 import {
+  getAcademicPeriods,
   listLCFCCourses,
   generateLCFCConfiguration,
   cloneLCFCConfiguration,
   changeLCFCConfigStatus,
-  listLCFCStudents,
   getLCFCEmailParams,
-  sendLCFCEmail,
+  sendLCFCNotification,
   downloadLCFCTemplate,
   uploadLCFCMassive,
   generateLCFCPerceptionReport,
-  getCycleList,
 } from '../services'
 
 export function useLCFCCycles() {
-  const [cycles, setCycles] = useState<Array<{ id: number; nombre: string }>>([])
+  const { periods, loading, error, load: _load } = useLCFCPeriods()
+  const load = useCallback((_modalityId?: unknown) => { _load() }, [_load])
+  return { cycles: periods, loading, error, load }
+}
+
+export function useLCFCPeriods() {
+  const [periods, setPeriods] = useState<AcademicPeriod[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const load = useCallback(async (modalityId?: string | number) => {
+  const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      setCycles(await getCycleList(modalityId))
+      setPeriods(await getAcademicPeriods())
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -33,7 +44,7 @@ export function useLCFCCycles() {
     }
   }, [])
 
-  return { cycles, loading, error, load }
+  return { periods, loading, error, load }
 }
 
 export function useLCFCConfiguration() {
@@ -41,23 +52,32 @@ export function useLCFCConfiguration() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const load = useCallback(async (idEscuela: string, idPeriodo: number) => {
-    setLoading(true)
-    setError(null)
-    try {
-      const { cursos } = await listLCFCCourses(idEscuela, idPeriodo)
-      setCourses(cursos)
-    } catch (e) {
-      setError((e as Error).message)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const load = useCallback(
+    async (idEscuela: string, idPeriodo: number, idCarrera?: number) => {
+      setLoading(true)
+      setError(null)
+      try {
+        const { cursos } = await listLCFCCourses(idEscuela, idPeriodo, idCarrera)
+        setCourses(cursos)
+      } catch (e) {
+        setError((e as Error).message)
+      } finally {
+        setLoading(false)
+      }
+    },
+    []
+  )
 
   const generate = useCallback(
-    async (escuela: string, periodo: number, onSuccess?: () => void) => {
+    async (
+      escuela: string,
+      academic_period_id: number,
+      program_id?: number,
+      campus_id?: number,
+      onSuccess?: () => void
+    ) => {
       try {
-        await generateLCFCConfiguration(escuela, periodo)
+        await generateLCFCConfiguration(escuela, academic_period_id, program_id, campus_id)
         onSuccess?.()
       } catch (e) {
         setError((e as Error).message)
@@ -97,30 +117,7 @@ export function useLCFCConfiguration() {
   return { courses, loading, error, load, generate, clone, changeStatus }
 }
 
-export function useLCFCStudents() {
-  const [students, setStudents] = useState<LCFCStudent[]>([])
-  const [total, setTotal] = useState(0)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const load = useCallback(async (idCiclo: number, idPeriodo: number, page = 0) => {
-    setLoading(true)
-    setError(null)
-    try {
-      const { estudiantes, totalRegistros } = await listLCFCStudents(idCiclo, idPeriodo, page)
-      setStudents(estudiantes)
-      setTotal(totalRegistros)
-    } catch (e) {
-      setError((e as Error).message)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  return { students, total, loading, error, load }
-}
-
-export function useLCFCEmail() {
+export function useLCFCNotification() {
   const [params, setParams] = useState<LCFCEmailParam[]>([])
   const [loading, setLoading] = useState(false)
   const [sending, setSending] = useState(false)
@@ -137,18 +134,21 @@ export function useLCFCEmail() {
     }
   }, [])
 
-  const send = useCallback(async (request: LCFCSendRequest, onSuccess?: () => void) => {
-    setSending(true)
-    setError(null)
-    try {
-      await sendLCFCEmail(request)
-      onSuccess?.()
-    } catch (e) {
-      setError((e as Error).message)
-    } finally {
-      setSending(false)
-    }
-  }, [])
+  const send = useCallback(
+    async (request: LCFCNotificationSendRequest, onSuccess?: () => void) => {
+      setSending(true)
+      setError(null)
+      try {
+        await sendLCFCNotification(request)
+        onSuccess?.()
+      } catch (e) {
+        setError((e as Error).message)
+      } finally {
+        setSending(false)
+      }
+    },
+    []
+  )
 
   return { params, loading, sending, error, loadParams, send }
 }
@@ -173,9 +173,9 @@ export function useLCFCUpload() {
     setSuccess(false)
     try {
       const escuelaActual =
-        typeof localStorage !== 'undefined'
-          ? JSON.parse(localStorage.getItem('escuela') ?? 'null')
-          : null
+        typeof localStorage === 'undefined'
+          ? null
+          : JSON.parse(localStorage.getItem('escuela') ?? 'null')
       await uploadLCFCMassive(file, escuelaActual ?? undefined)
       setSuccess(true)
     } catch (e) {
@@ -191,9 +191,7 @@ export function useLCFCUpload() {
 export function useLCFCReports() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [reportData, setReportData] = useState<{
-    pdfFiles?: Array<{ fileName: string; base64Content: string }>
-  } | null>(null)
+  const [reportData, setReportData] = useState<DashboardResponse | null>(null)
 
   const generate = useCallback(
     async (params: {
@@ -205,8 +203,7 @@ export function useLCFCReports() {
       setLoading(true)
       setError(null)
       try {
-        const res = await generateLCFCPerceptionReport(params)
-        setReportData(res.data ?? null)
+        setReportData(await generateLCFCPerceptionReport(params))
       } catch (e) {
         setError((e as Error).message)
       } finally {

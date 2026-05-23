@@ -13,7 +13,7 @@ const TABS = [
 ]
 
 export function GRAConfiguration() {
-  const { valueModality } = useABET()
+  const { modalityTypeId } = useABET()
   const { cycles, load: loadCycles } = useGRACycles()
   const {
     competences,
@@ -32,7 +32,7 @@ export function GRAConfiguration() {
     open: false, type: 'success', msg: '',
   })
 
-  useEffect(() => { loadCycles(valueModality) }, [valueModality, loadCycles])
+  useEffect(() => { loadCycles(modalityTypeId) }, [modalityTypeId, loadCycles])
 
   useEffect(() => {
     if (!selectedCycle) return

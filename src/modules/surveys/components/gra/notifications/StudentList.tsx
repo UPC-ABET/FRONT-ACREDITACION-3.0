@@ -2,38 +2,57 @@
 
 import React, { useEffect, useState } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { DataTable, Button, Badge, Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, Toast } from '@/shared/components'
+import {
+  DataTable,
+  Button,
+  Badge,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  Input,
+  Toast,
+} from '@/shared/components'
 import { TrashIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import { useGRAStudents, useGRAEmail } from '../../../hooks'
-import type { GRAStudent, SendEmailRequest } from '../../../types'
+import type { GRAStudent, GRAEmailSendRequest } from '../../../types'
 
 interface StudentListProps {
-  idEncuesta: number
+  readonly programId: number
+  readonly academicPeriodId: number
 }
 
-export function StudentList({ idEncuesta }: StudentListProps) {
-  const { students, loading, error, load, remove } = useGRAStudents(idEncuesta)
-  const { sending, send } = useGRAEmail(idEncuesta)
+export function StudentList({ programId, academicPeriodId }: StudentListProps) {
+  const { students, loading, error, load, remove } = useGRAStudents()
+  const { sending, send } = useGRAEmail(0)
   const [deleteId, setDeleteId] = useState<number | null>(null)
-  const [sendMode, setSendMode] = useState<'TODOS' | 'SELECCIONADOS' | null>(null)
+  const [sendDialogOpen, setSendDialogOpen] = useState(false)
+  const [surveyBaseUrl, setSurveyBaseUrl] = useState('')
   const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
     open: false, type: 'success', msg: '',
   })
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    load({ program_id: programId, academic_period_id: academicPeriodId })
+  }, [programId, academicPeriodId, load])
 
   function handleDelete(id: number) {
     remove(id, () => {
       setDeleteId(null)
       setToast({ open: true, type: 'success', msg: 'Estudiante eliminado de la notificación.' })
-      load()
+      load({ program_id: programId, academic_period_id: academicPeriodId })
     })
   }
 
   function handleSendAll() {
-    const req: SendEmailRequest = { idEncuesta, destinatarios: 'TODOS' }
+    const req: GRAEmailSendRequest = {
+      academic_period_id: academicPeriodId,
+      program_id: programId,
+      survey_base_url: surveyBaseUrl.trim(),
+    }
     send(req, () => {
-      setSendMode(null)
+      setSendDialogOpen(false)
       setToast({ open: true, type: 'success', msg: 'Encuestas enviadas exitosamente.' })
     })
   }
@@ -91,8 +110,8 @@ export function StudentList({ idEncuesta }: StudentListProps) {
         title={`Estudiantes Notificados (${students.length})`}
         actions={[
           {
-            label: 'Enviar Encuesta a Todos',
-            onClick: () => setSendMode('TODOS'),
+            label: 'Enviar Encuesta',
+            onClick: () => setSendDialogOpen(true),
             icon: <PaperAirplaneIcon className="h-4 w-4" />,
           },
         ]}
@@ -115,17 +134,26 @@ export function StudentList({ idEncuesta }: StudentListProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Send confirm */}
-      <Dialog open={sendMode !== null} onOpenChange={() => setSendMode(null)}>
+      {/* Send dialog */}
+      <Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Enviar encuesta</DialogTitle>
+            <DialogTitle>Enviar encuesta GRA</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-zinc-600 py-2">
-            ¿Confirmas el envío de la encuesta a <strong>todos</strong> los estudiantes notificados?
-          </p>
+          <div className="space-y-4 py-2">
+            <p className="text-sm text-zinc-600">
+              Se enviará la encuesta a <strong>todos</strong> los estudiantes registrados para el período y programa actuales.
+            </p>
+            <Input
+              label="URL base de la encuesta"
+              value={surveyBaseUrl}
+              onChange={(e) => setSurveyBaseUrl(e.target.value)}
+              placeholder="https://tu-dominio.com/encuesta/gra"
+              type="url"
+            />
+          </div>
           <DialogFooter showCloseButton>
-            <Button onClick={handleSendAll} disabled={sending}>
+            <Button onClick={handleSendAll} disabled={sending || !surveyBaseUrl.trim()}>
               {sending ? 'Enviando...' : 'Confirmar envío'}
             </Button>
           </DialogFooter>

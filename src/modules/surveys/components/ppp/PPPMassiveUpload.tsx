@@ -7,13 +7,13 @@ import { usePPPUpload, usePPPCycles } from '../../hooks'
 import { useABET } from '@/providers'
 
 export function PPPMassiveUpload() {
-  const { valueModality } = useABET()
+  const { modalityTypeId } = useABET()
   const { cycles, load: loadCycles } = usePPPCycles()
   const { loading, error, success, upload } = usePPPUpload()
 
   const [selectedCycle, setSelectedCycle] = React.useState<{ label: string; value: number } | null>(null)
 
-  useEffect(() => { loadCycles(valueModality) }, [valueModality, loadCycles])
+  useEffect(() => { loadCycles(modalityTypeId) }, [modalityTypeId, loadCycles])
 
   const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }))
 
@@ -46,7 +46,7 @@ export function PPPMassiveUpload() {
         uploading={loading}
         success={success}
         error={error}
-        onUpload={upload}
+        onUpload={(file) => selectedCycle ? upload(file, selectedCycle.value) : Promise.resolve()}
         onDownloadTemplate={selectedCycle ? handleDownloadTemplate : undefined}
         downloadLabel="Descargar Plantilla PPP"
       />

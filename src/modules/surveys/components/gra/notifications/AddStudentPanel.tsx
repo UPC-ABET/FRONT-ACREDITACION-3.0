@@ -6,12 +6,13 @@ import { MagnifyingGlassIcon, UserPlusIcon } from '@heroicons/react/24/outline'
 import { useGRAStudentSearch } from '../../../hooks'
 
 interface AddStudentPanelProps {
-  idEncuesta: number
-  idCarrera?: number
-  onStudentAdded?: () => void
+  readonly programId: number
+  readonly academicPeriodId: number
+  readonly idCarrera?: number
+  readonly onStudentAdded?: () => void
 }
 
-export function AddStudentPanel({ idEncuesta, idCarrera = 0, onStudentAdded }: AddStudentPanelProps) {
+export function AddStudentPanel({ programId, academicPeriodId, idCarrera = 0, onStudentAdded }: AddStudentPanelProps) {
   const { result, loading, error, search, add, reset } = useGRAStudentSearch()
   const [codigo, setCodigo] = useState('')
   const [adding, setAdding] = useState(false)
@@ -21,7 +22,7 @@ export function AddStudentPanel({ idEncuesta, idCarrera = 0, onStudentAdded }: A
 
   async function handleSearch() {
     if (!codigo.trim()) return
-    await search(codigo.trim(), idCarrera)
+    await search(codigo.trim(), idCarrera || programId)
   }
 
   async function handleAdd() {
@@ -29,10 +30,9 @@ export function AddStudentPanel({ idEncuesta, idCarrera = 0, onStudentAdded }: A
     setAdding(true)
     await add(
       {
-        idEstudiante: result.idEstudiante,
-        idEncuesta,
-        emailEstudiante: result.email,
-        nombreEstudiante: result.nombre,
+        student_id: result.idEstudiante,
+        program_id: programId,
+        academic_period_id: academicPeriodId,
       },
       () => {
         setToast({ open: true, type: 'success', msg: `${result.nombre} agregado exitosamente.` })
