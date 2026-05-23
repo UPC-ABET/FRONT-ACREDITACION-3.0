@@ -119,8 +119,7 @@ export interface FindingAction {
 	code: string;
 	description: I18nText;
 	correlative: number;
-	completeness_code: string;
-	completeness_name: I18nText;
+	completeness: { code: string; name: I18nText; color?: string };
 }
 
 export interface Finding {
@@ -137,16 +136,13 @@ export interface Finding {
 export interface PreviousAction {
 	id: number;
 	finding_action_id: number;
-	finding_id: number;
+	finding: { id: number; code: string };
 	code: string;
 	correlative: number;
 	description: I18nText;
 	evidences: I18nText | null;
-	completeness_code: string;
-	completeness_name: I18nText;
-	academic_period_id: number;
-	academic_period_code: string;
-	source: 'direct' | 'both' | string;
+	completeness: { code: string; name: I18nText; color?: string };
+	source: 'direct' | 'plan' | string;
 }
 
 export interface IFCViewPayload {
@@ -219,6 +215,7 @@ export interface IFCFormState {
 	actions: FormAction[];
 	deleted_finding_ids: number[];
 	deleted_action_ids: number[];
+	previous_actions: Record<number, I18nText | null>;
 }
 
 // ---- Outbound payloads -----------------------------------------------------
@@ -237,6 +234,11 @@ export interface PayloadAction {
 	finding_temp_id: string;
 }
 
+export interface PayloadPreviousActionEvidence {
+	finding_action_id: number;
+	evidences: I18nText | null;
+}
+
 export interface CreateIFCBody {
 	chart_id: number;
 	period_id: number;
@@ -246,6 +248,7 @@ export interface CreateIFCBody {
 	actions: PayloadAction[];
 	deleted_finding_ids?: number[];
 	deleted_action_ids?: number[];
+	previous_actions?: PayloadPreviousActionEvidence[];
 }
 
 export type PatchIFCBody = Omit<CreateIFCBody, 'chart_id' | 'period_id'>;
@@ -264,8 +267,7 @@ export interface FindingActionRow {
 	id: number;
 	action_code: string;
 	description: I18nText;
-	completeness_code: string;
-	completeness_name: I18nText;
+	completeness: { code: string; name: I18nText; color?: string };
 }
 
 export interface FindingDetailPayload {

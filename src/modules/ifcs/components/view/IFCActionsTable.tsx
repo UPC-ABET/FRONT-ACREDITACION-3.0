@@ -5,7 +5,6 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, Card, DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { VIEW_LABELS } from './viewLabels';
-import { COMPLETENESS_VARIANT } from '../../constants';
 import type { Finding, FindingAction } from '../../services/types';
 
 type ActionRow = FindingAction & { parentFindingCode: string };
@@ -34,11 +33,12 @@ export function IFCActionsTable({ findings }: Props) {
 				),
 			},
 			{
-				accessorKey: 'completeness_code',
+				id: 'completeness',
+				accessorFn: (row) => row.completeness.code,
 				header: VIEW_LABELS.col_completeness[lang],
 				cell: ({ row }) => (
-					<Badge variant={COMPLETENESS_VARIANT[row.original.completeness_code] ?? 'default'}>
-						{row.original.completeness_name?.[lang] ?? row.original.completeness_name?.es ?? ''}
+					<Badge color={row.original.completeness.color}>
+						{row.original.completeness.name?.[lang] ?? row.original.completeness.name?.es ?? ''}
 					</Badge>
 				),
 			},

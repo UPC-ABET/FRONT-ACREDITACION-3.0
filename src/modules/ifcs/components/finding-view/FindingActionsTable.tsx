@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { COMPLETENESS_VARIANT } from '../../constants';
 import type { FindingActionRow } from '../../services/types';
 import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
 
@@ -27,11 +26,12 @@ export function FindingActionsTable({ actions }: Props) {
 				),
 			},
 			{
-				accessorKey: 'completeness_code',
+				id: 'completeness',
+				accessorFn: (row) => row.completeness.code,
 				header: L.col_action_status[lang],
 				cell: ({ row }) => (
-					<Badge variant={COMPLETENESS_VARIANT[row.original.completeness_code] ?? 'default'}>
-						{row.original.completeness_name?.[lang] ?? row.original.completeness_name?.es ?? ''}
+					<Badge color={row.original.completeness.color}>
+						{row.original.completeness.name?.[lang] ?? row.original.completeness.name?.es ?? ''}
 					</Badge>
 				),
 			},

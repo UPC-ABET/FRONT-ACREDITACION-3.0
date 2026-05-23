@@ -56,7 +56,8 @@ export function IFCForm(props: Props) {
 		updateAction,
 		deleteAction,
 		setInformation,
-	} = useIFCFormState(props.existing);
+		updatePreviousActionEvidence,
+	} = useIFCFormState(props.existing, props.prefill.previous_actions);
 
 	const [submitting, setSubmitting] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
@@ -111,6 +112,12 @@ export function IFCForm(props: Props) {
 			description: a.description,
 			finding_temp_id: a.finding_temp_id,
 		}));
+		const previousActionsPayload = Object.entries(state.previous_actions).map(
+			([findingActionId, evidences]) => ({
+				finding_action_id: Number(findingActionId),
+				evidences,
+			}),
+		);
 
 		try {
 			const result =
@@ -122,6 +129,7 @@ export function IFCForm(props: Props) {
 							information: state.information,
 							findings: findingsPayload,
 							actions: actionsPayload,
+							previous_actions: previousActionsPayload,
 						})
 					: await patchIFC(props.existing!.ifc.id, {
 							submit,
@@ -130,6 +138,7 @@ export function IFCForm(props: Props) {
 							actions: actionsPayload,
 							deleted_finding_ids: state.deleted_finding_ids,
 							deleted_action_ids: state.deleted_action_ids,
+							previous_actions: previousActionsPayload,
 						});
 
 			if (submit) {
@@ -190,7 +199,12 @@ export function IFCForm(props: Props) {
 				</Card>
 			)}
 
-			<PreviousActionsTable previousActions={props.prefill.previous_actions} />
+			<PreviousActionsTable
+				previousActions={props.prefill.previous_actions}
+				mode="edit"
+				evidencesByActionId={state.previous_actions}
+				onEvidenceChange={updatePreviousActionEvidence}
+			/>
 
 			<IFCFindingsEditor
 				findings={state.findings}

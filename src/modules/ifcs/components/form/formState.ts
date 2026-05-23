@@ -4,6 +4,7 @@ import type {
 	I18nText,
 	IFCFormState,
 	IFCViewPayload,
+	PreviousAction,
 } from '../../services/types';
 
 function newTempId(): string {
@@ -13,7 +14,18 @@ function newTempId(): string {
 	return `tmp-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-export function initFormState(existing: IFCViewPayload | null): IFCFormState {
+function seedPreviousActions(rows: PreviousAction[]): Record<number, I18nText | null> {
+	const out: Record<number, I18nText | null> = {};
+	for (const p of rows ?? []) {
+		out[p.finding_action_id] = p.evidences;
+	}
+	return out;
+}
+
+export function initFormState(
+	existing: IFCViewPayload | null,
+	prefillPreviousActions: PreviousAction[] = [],
+): IFCFormState {
 	if (!existing) {
 		return {
 			information: {},
@@ -21,6 +33,7 @@ export function initFormState(existing: IFCViewPayload | null): IFCFormState {
 			actions: [],
 			deleted_finding_ids: [],
 			deleted_action_ids: [],
+			previous_actions: seedPreviousActions(prefillPreviousActions),
 		};
 	}
 
@@ -60,6 +73,7 @@ export function initFormState(existing: IFCViewPayload | null): IFCFormState {
 		actions,
 		deleted_finding_ids: [],
 		deleted_action_ids: [],
+		previous_actions: seedPreviousActions(existing.previous_actions ?? []),
 	};
 }
 
@@ -95,6 +109,19 @@ export const applyFinding = {
 			deleted_finding_ids:
 				target.id !== null ? [...state.deleted_finding_ids, target.id] : state.deleted_finding_ids,
 			deleted_action_ids: [...state.deleted_action_ids, ...droppedActionDbIds],
+		};
+	},
+};
+
+export const applyPreviousAction = {
+	updateEvidence(
+		state: IFCFormState,
+		findingActionId: number,
+		evidences: I18nText | null,
+	): IFCFormState {
+		return {
+			...state,
+			previous_actions: { ...state.previous_actions, [findingActionId]: evidences },
 		};
 	},
 };
