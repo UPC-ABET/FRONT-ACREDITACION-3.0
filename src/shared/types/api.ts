@@ -1,8 +1,7 @@
 export type ApiResponse<T> = {
-	ok: boolean;
-	data: T;
-	message?: string;
-	errors?: string[];
+	code: number
+	message: string
+	data: T
 };
 
 export type ApiEnvelope<T> = {

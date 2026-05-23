@@ -1,6 +1,11 @@
 {
 	"nav": {
 		"home": "Inicio",
+		"rubrics": "Rúbricas",
+		"rubricsList": "Rúbricas",
+		"projects": "Proyectos Académicos",
+		"gradeProjects": "Calificar Proyectos",
+		"ifcs": "IFCs",
 		"ifc": {
 			"label": "IFC",
 			"dashboard": "Dashboard",
@@ -290,6 +295,10 @@
 		},
 		"cycle": {
 			"label": "Ciclo"
+		},
+		"program": {
+			"regular": "Regular",
+			"epe": "EPE"
 		}
 	},
 	"language": {
@@ -485,5 +494,251 @@
 		"title": "Pagina no encontrada",
 		"message": "Lo sentimos, no pudimos encontrar la pagina que estas buscando.",
 		"action": "Ir al inicio"
+	},
+	"rubrics": {
+		"list": {
+			"title": "Rúbricas",
+			"description": "Listado de rúbricas.",
+			"createButton": "Crear rúbrica",
+			"loading": "Cargando rúbricas...",
+			"error": "No fue posible cargar las rúbricas.",
+			"empty": "No hay rúbricas registradas."
+		},
+		"editor": {
+			"error": {
+				"saveError": "Error al guardar la rúbrica.",
+				"notFound": "Rúbrica no encontrada.",
+				"load": "Error al cargar la rúbrica."
+			},
+			"save": {
+				"autosaveRetry": "Reintentar guardado.",
+				"saveRubricSuccess": "Rúbrica guardada exitosamente."
+			},
+			"capstone": {
+				"saveRubric": "Guardar rúbrica",
+				"saving": "Guardando rúbrica...",
+				"noCommissions": "No se encontraron comisiones.",
+				"tooltips": {
+					"commissionCheckboxIncomplete": "Criterios incompletos para los outcomes.",
+					"saveDisabled": "Rúbrica no válida. Guardado deshabilitado."
+				},
+				"validation": {
+					"emptyOutcome": "No se han agregado criterios a este outcome. Agrega al menos un criterio para validar la rúbrica.",
+					"emptyOutcomeReadonly": "No se han agregado criterios a este outcome.",
+					"validationIncomplete": "Por favor, agrega al menos un criterio por cada outcome",
+					"validationComplete": "Rúbrica validada correctamente. Puede guardar los cambios."
+				},
+				"criteria": {
+					"saving": "Guardando criterio...",
+					"confirmDelete": "¿Estás seguro de que deseas eliminar este criterio? Esta acción no se puede deshacer.",
+					"criteriaLabel": "Criterio",
+					"criteriaPlaceholder": "Ingrese la descripción del criterio"
+				}
+			},
+			"nonCapstone": {
+				"totalScore": "Puntaje total",
+				"points": "puntos",
+				"saveRubric": "Guardar rúbrica",
+				"saving": "Guardando rúbrica...",
+				"tooltips": {
+					"saveDisabled": "Rúbrica no válida. Guardado deshabilitado.",
+					"maxCols": "Has alcanzado el número máximo de criterios."
+				},
+				"validation": {
+					"validationComplete": "Rúbrica validada correctamente. Puede guardar los cambios.",
+					"allFieldsRequired": "Todos los campos son obligatorios.",
+					"totalMustBe20": "La suma total de puntos debe ser 20.",
+					"minMustBeLessThanMax": "El puntaje mínimo debe ser menor que el máximo para cada criterio.",
+					"continuityRequired": "Los rangos de puntaje deben ser continuos entre criterios."
+				},
+				"question": {
+					"column": "Pregunta",
+					"label": "Pregunta",
+					"placeholder": "Ingrese la pregunta",
+					"addQuestion": "Agregar pregunta"
+				},
+				"criteria": {
+					"label": "Criterio",
+					"addCriteria": "Agregar criterio",
+					"placeholder": "Ingrese la descripción del criterio"
+				},
+				"score": {
+					"minScoreLabel": "Mín.",
+					"maxScoreLabel": "Máx."
+				}
+			},
+			"header": {
+				"academicPeriod": "Período académico",
+				"maxScore": "Puntaje máximo",
+				"units": {
+					"points": "puntos"
+				},
+				"editable": "Editable",
+				"readonly": "Solo lectura"
+			},
+			"performanceLevels": {
+				"title": "Niveles de aceptación",
+				"helper": "Los niveles de aceptación son aplicables a todos los criterios.",
+				"empty": "No se han definido niveles de aceptación para esta rúbrica."
+			}
+		}
+	},
+	"projects": {
+		"list": {
+			"title": "Proyectos Académicos",
+			"description": "Listado de proyectos académicos.",
+			"addButton": "Agregar proyecto",
+			"clearFilters": "Limpiar filtros",
+			"loading": "Cargando proyectos...",
+			"error": "No fue posible cargar los proyectos.",
+			"empty": "No hay proyectos registrados.",
+			"selectPeriod": "Selecciona un período académico para comenzar.",
+			"filters": {
+				"academicPeriod": "Período Académico",
+				"program": "Programa",
+				"course": "Curso"
+			},
+			"table": {
+				"code": "Código",
+				"name": "Nombre",
+				"evaluators": "Evaluadores",
+				"students": "Estudiantes",
+				"actions": "Acciones",
+				"view": "Ver",
+				"edit": "Editar"
+			}
+		},
+		"grade": {
+			"title": "Calificar Proyectos",
+			"description": "Proyectos académicos asignados para evaluación.",
+			"loading": "Cargando proyectos...",
+			"loadingProfessor": "Obteniendo datos del docente...",
+			"error": "No fue posible cargar los proyectos.",
+			"errorProfessor": "No se encontró el docente asociado a tu usuario.",
+			"empty": "No tienes proyectos asignados para evaluar.",
+			"table": {
+				"code": "Código",
+				"name": "Nombre del Proyecto",
+				"course": "Curso",
+				"evaluator": "Evaluador",
+				"students": "Estudiantes",
+				"evaluationDate": "Fecha de Evaluación",
+				"actions": "Acciones",
+				"grade": "Evaluar"
+			},
+			"tabs": {
+				"partial": "Rúbrica Parcial",
+				"final": "Rúbrica Final",
+				"ariaLabel": "Tipo de rúbrica"
+			},
+			"filters": {
+				"academicPeriod": "Período Académico"
+			}
+		},
+		"evaluate": {
+			"loading": "Cargando proyecto...",
+			"error": "No fue posible cargar el proyecto.",
+			"notFound": "Proyecto no encontrado.",
+			"backButton": "Volver",
+			"header": {
+				"course": "Curso",
+				"rubric": "Rúbrica",
+				"gradeType": "Tipo de nota"
+			},
+			"students": {
+				"title": "Estudiantes",
+				"grade": "Nota",
+				"noGrade": "Sin nota",
+				"empty": "No hay estudiantes en este proyecto."
+			},
+			"rubric": {
+				"question": "Pregunta",
+				"criteria": "Criterios",
+				"score": "Puntaje",
+				"duplicateGrades": "Duplicar notas",
+				"duplicateGradesInfo": "Al activar esta opción, la nota ingresada se asignará a todos los estudiantes del proyecto.",
+				"errorNaN": "Ingresa un número válido.",
+				"errorRange": "Uno o más puntajes están fuera del rango permitido para su pregunta.",
+				"fillAll": "Completa todos los puntajes para guardar.",
+				"saveButton": "Guardar calificaciones",
+				"saving": "Guardando..."
+			},
+			"capstone": {
+				"outcome": "Outcome",
+				"criteria": "Criterios",
+				"loadingLevels": "Cargando niveles de desempeño...",
+				"noLevels": "No se encontraron niveles de desempeño para este período.",
+				"fillAll": "Selecciona un nivel de desempeño para cada outcome y estudiante.",
+				"score": "Puntaje"
+			}
+		},
+		"edit": {
+			"loading": "Cargando proyecto...",
+			"error": "No fue posible cargar el proyecto.",
+			"backButton": "Volver a proyectos",
+			"header": {
+				"course": "Curso",
+				"rubricType": "Tipo de rúbrica",
+				"gradeType": "Tipo de nota",
+				"editButton": "Editar proyecto",
+				"saveButton": "Guardar cambios",
+				"cancelButton": "Cancelar",
+				"saving": "Guardando...",
+				"saveSuccess": "Proyecto actualizado correctamente.",
+				"saveError": "No se pudo actualizar el proyecto.",
+				"fieldCode": "Código",
+				"fieldName": "Nombre",
+				"fieldDesc": "Descripción"
+			},
+			"students": {
+				"title": "Estudiantes",
+				"empty": "No hay estudiantes en este proyecto.",
+				"addPlaceholder": "ID de matrícula",
+				"addButton": "Agregar",
+				"adding": "Agregando...",
+				"addError": "No se pudo agregar el estudiante.",
+				"removeError": "No se pudo eliminar el estudiante.",
+				"removeSuccess": "Estudiante eliminado correctamente.",
+				"modal": {
+					"title": "Agregar estudiantes",
+					"searchPlaceholder": "Buscar por nombre, código o correo...",
+					"loading": "Cargando estudiantes...",
+					"empty": "No hay estudiantes matriculados en este curso.",
+					"noResults": "Sin resultados para la búsqueda.",
+					"selected": "seleccionado(s)",
+					"section": "Sección",
+					"confirmButton": "Agregar seleccionados",
+					"adding": "Agregando...",
+					"successMessage": "Estudiantes agregados correctamente.",
+					"errorMessage": "No se pudo agregar los estudiantes."
+				}
+			},
+			"evaluators": {
+				"title": "Evaluadores",
+				"empty": "No hay evaluadores asignados.",
+				"addPlaceholder": "ID de docente",
+				"addButton": "Agregar",
+				"adding": "Agregando...",
+				"addError": "No se pudo agregar el evaluador.",
+				"removeError": "No se pudo eliminar el evaluador.",
+				"modal": {
+					"title": "Agregar evaluador",
+					"searchPlaceholder": "Buscar por nombre o apellido...",
+					"searchLabel": "Docente",
+					"searchPrompt": "Escribe para buscar un docente.",
+					"noResults": "Sin resultados.",
+					"roleLabel": "Rol del evaluador",
+					"rolePlaceholder": "Selecciona un rol",
+					"loadingRoles": "Cargando roles...",
+					"confirmButton": "Agregar evaluador",
+					"adding": "Agregando...",
+					"selectProfessorFirst": "Selecciona un docente primero.",
+					"selectRoleFirst": "Selecciona un rol para continuar.",
+					"successMessage": "Evaluador agregado correctamente.",
+					"errorMessage": "No se pudo agregar el evaluador."
+				},
+				"removeSuccess": "Evaluador eliminado correctamente."
+			}
+		}
 	}
 }

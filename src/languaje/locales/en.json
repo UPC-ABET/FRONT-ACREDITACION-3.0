@@ -1,11 +1,16 @@
 {
 	"nav": {
 		"home": "Home",
+		"ifcs": "IFCs",
 		"ifc": {
 			"label": "IFC",
 			"dashboard": "Dashboard",
 			"findings": "Findings"
 		},
+		"rubrics": "Rubrics",
+		"rubricsList": "Rubrics",
+		"projects": "Academic Projects",
+		"gradeProjects": "Grade Projects",
 		"surveys": {
 			"label": "Surveys",
 			"ppp": "PPP — Pre-Professional",
@@ -290,6 +295,10 @@
 		},
 		"cycle": {
 			"label": "Cycle"
+		},
+		"program": {
+			"regular": "Regular",
+			"epe": "EPE"
 		}
 	},
 	"language": {
@@ -483,7 +492,253 @@
 	},
 	"notFound": {
 		"title": "Page not found",
-		"message": "Sorry, we couldn’t find the page you’re looking for.",
+		"message": "Sorry, we couldn't find the page you're looking for.",
 		"action": "Go home"
+	},
+	"rubrics": {
+		"list": {
+			"title": "Rubrics",
+			"description": "List of rubrics.",
+			"createButton": "Create rubric",
+			"loading": "Loading rubrics...",
+			"error": "Rubrics could not be loaded.",
+			"empty": "No rubrics registered."
+		},
+		"editor": {
+			"error": {
+				"saveError": "Error saving the rubric.",
+				"notFound": "Rubric not found.",
+				"load": "Error loading the rubric."
+			},
+			"save": {
+				"autosaveRetry": "Retry save.",
+				"saveRubricSuccess": "Rubric saved successfully."
+			},
+			"capstone": {
+				"saveRubric": "Save rubric",
+				"saving": "Saving rubric...",
+				"noCommissions": "No commissions found.",
+				"tooltips": {
+					"commissionCheckboxIncomplete": "Incomplete criteria for the outcomes.",
+					"saveDisabled": "Invalid rubric. Saving disabled."
+				},
+				"validation": {
+					"emptyOutcome": "No criteria have been added to this outcome. Add at least one criterion to validate the rubric.",
+					"emptyOutcomeReadonly": "No criteria have been added to this outcome.",
+					"validationIncomplete": "Please add at least one criterion per outcome.",
+					"validationComplete": "Rubric validated successfully. You can save the changes."
+				},
+				"criteria": {
+					"saving": "Saving criterion...",
+					"confirmDelete": "Are you sure you want to delete this criterion? This action cannot be undone.",
+					"criteriaLabel": "Criterion",
+					"criteriaPlaceholder": "Enter the criterion description"
+				}
+			},
+			"nonCapstone": {
+				"totalScore": "Total score",
+				"points": "points",
+				"saveRubric": "Save rubric",
+				"saving": "Saving rubric...",
+				"tooltips": {
+					"saveDisabled": "Invalid rubric. Saving disabled.",
+					"maxCols": "You have reached the maximum number of criteria."
+				},
+				"validation": {
+					"validationComplete": "Rubric validated successfully. You can save the changes.",
+					"allFieldsRequired": "All fields are required.",
+					"totalMustBe20": "The total sum of points must be 20.",
+					"minMustBeLessThanMax": "The minimum score must be less than the maximum for each criterion.",
+					"continuityRequired": "Score ranges must be continuous between criteria."
+				},
+				"question": {
+					"column": "Question",
+					"label": "Question",
+					"placeholder": "Enter the question",
+					"addQuestion": "Add question"
+				},
+				"criteria": {
+					"label": "Criterion",
+					"addCriteria": "Add criterion",
+					"placeholder": "Enter the criterion description"
+				},
+				"score": {
+					"minScoreLabel": "Min.",
+					"maxScoreLabel": "Max."
+				}
+			},
+			"header": {
+				"academicPeriod": "Academic period",
+				"maxScore": "Maximum score",
+				"units": {
+					"points": "points"
+				},
+				"editable": "Editable",
+				"readonly": "Read only"
+			},
+			"performanceLevels": {
+				"title": "Acceptance levels",
+				"helper": "Acceptance levels apply to all criteria.",
+				"empty": "No acceptance levels have been defined for this rubric."
+			}
+		}
+	},
+	"projects": {
+		"list": {
+			"title": "Academic Projects",
+			"description": "List of academic projects.",
+			"addButton": "Add Project",
+			"clearFilters": "Clear Filters",
+			"loading": "Loading projects...",
+			"error": "Could not load projects.",
+			"empty": "No projects registered.",
+			"selectPeriod": "Select an academic period to get started.",
+			"filters": {
+				"academicPeriod": "Academic Period",
+				"program": "Program",
+				"course": "Course"
+			},
+			"table": {
+				"code": "Code",
+				"name": "Name",
+				"evaluators": "Evaluators",
+				"students": "Students",
+				"actions": "Actions",
+				"view": "View",
+				"edit": "Edit"
+			}
+		},
+		"grade": {
+			"title": "Grade Projects",
+			"description": "Academic projects assigned for evaluation.",
+			"loading": "Loading projects...",
+			"loadingProfessor": "Fetching professor data...",
+			"error": "Could not load projects.",
+			"errorProfessor": "No professor found for your user account.",
+			"empty": "You have no projects assigned for evaluation.",
+			"table": {
+				"code": "Code",
+				"name": "Project Name",
+				"course": "Course",
+				"evaluator": "Evaluator",
+				"students": "Students",
+				"evaluationDate": "Evaluation Date",
+				"actions": "Actions",
+				"grade": "Evaluate"
+			},
+			"tabs": {
+				"partial": "Partial Rubric",
+				"final": "Final Rubric",
+				"ariaLabel": "Rubric type"
+			},
+			"filters": {
+				"academicPeriod": "Academic Period"
+			}
+		},
+		"evaluate": {
+			"loading": "Loading project...",
+			"error": "Could not load the project.",
+			"notFound": "Project not found.",
+			"backButton": "Back",
+			"header": {
+				"course": "Course",
+				"rubric": "Rubric",
+				"gradeType": "Grade type"
+			},
+			"students": {
+				"title": "Students",
+				"grade": "Grade",
+				"noGrade": "No grade",
+				"empty": "No students in this project."
+			},
+			"rubric": {
+				"question": "Question",
+				"criteria": "Criteria",
+				"score": "Score",
+				"duplicateGrades": "Duplicate grades",
+				"duplicateGradesInfo": "When enabled, the entered grade will be assigned to all students in the project.",
+				"errorNaN": "Enter a valid number.",
+				"errorRange": "One or more scores are outside the allowed range for their question.",
+				"fillAll": "Fill in all scores to save.",
+				"saveButton": "Save grades",
+				"saving": "Saving..."
+			},
+			"capstone": {
+				"outcome": "Outcome",
+				"criteria": "Criteria",
+				"loadingLevels": "Loading performance levels...",
+				"noLevels": "No performance levels found for this period.",
+				"fillAll": "Select a performance level for each outcome and student.",
+				"score": "Score"
+			}
+		},
+		"edit": {
+			"loading": "Loading project...",
+			"error": "Could not load the project.",
+			"backButton": "Back to projects",
+			"header": {
+				"course": "Course",
+				"rubricType": "Rubric type",
+				"gradeType": "Grade type",
+				"editButton": "Edit project",
+				"saveButton": "Save changes",
+				"cancelButton": "Cancel",
+				"saving": "Saving...",
+				"saveSuccess": "Project updated successfully.",
+				"saveError": "Could not update the project.",
+				"fieldCode": "Code",
+				"fieldName": "Name",
+				"fieldDesc": "Description"
+			},
+			"students": {
+				"title": "Students",
+				"empty": "No students in this project.",
+				"addPlaceholder": "Enrollment ID",
+				"addButton": "Add",
+				"adding": "Adding...",
+				"addError": "Could not add the student.",
+				"removeError": "Could not remove the student.",
+				"removeSuccess": "Student removed successfully.",
+				"modal": {
+					"title": "Add students",
+					"searchPlaceholder": "Search by name, code or email...",
+					"loading": "Loading students...",
+					"empty": "No students enrolled in this course.",
+					"noResults": "No results for your search.",
+					"selected": "selected",
+					"section": "Section",
+					"confirmButton": "Add selected",
+					"adding": "Adding...",
+					"successMessage": "Students added successfully.",
+					"errorMessage": "Could not add the students."
+				}
+			},
+			"evaluators": {
+				"title": "Evaluators",
+				"empty": "No evaluators assigned.",
+				"addPlaceholder": "Professor ID",
+				"addButton": "Add",
+				"adding": "Adding...",
+				"addError": "Could not add the evaluator.",
+				"removeError": "Could not remove the evaluator.",
+				"modal": {
+					"title": "Add evaluator",
+					"searchPlaceholder": "Search by name or lastname...",
+					"searchLabel": "Professor",
+					"searchPrompt": "Type to search for a professor.",
+					"noResults": "No results found.",
+					"roleLabel": "Evaluator role",
+					"rolePlaceholder": "Select a role",
+					"loadingRoles": "Loading roles...",
+					"confirmButton": "Add evaluator",
+					"adding": "Adding...",
+					"selectProfessorFirst": "Select a professor first.",
+					"selectRoleFirst": "Select a role to continue.",
+					"successMessage": "Evaluator added successfully.",
+					"errorMessage": "Could not add the evaluator."
+				},
+				"removeSuccess": "Evaluator removed successfully."
+			}
+		}
 	}
 }
