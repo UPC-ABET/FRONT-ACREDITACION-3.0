@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline'
+import { useQuery } from '@tanstack/react-query'
 import {
   Table,
   TableBody,
@@ -10,19 +11,36 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tabs,
 } from '@/shared/components/ui'
+import { Select } from '@/shared/components/ui/Select'
 import { cn } from '@/shared/lib/utils'
 import { useI18n } from '@/providers'
-import { getUserIdFromToken } from '@/shared/lib/jwt'
+import { getUserIdFromToken, getSchoolIdFromToken } from '@/shared/lib/jwt'
+import { academicPeriodsService } from '@/modules/academic/services'
 import { useProfessorByUserId } from '@/modules/academic/hooks'
 import { useProjectsByProfessor } from '../hooks'
 
+type RubricTab = 'partial' | 'final'
+
+const GRADE_TYPE_ID: Record<RubricTab, number> = {
+  partial: 70,
+  final: 55,
+}
+
+type SelectOption = { label: string; value: number }
+
 export function GradeProjectsPage() {
   const { t, locale } = useI18n()
+
   const [userId, setUserId] = useState<string | number | null>(null)
+  const [schoolId, setSchoolId] = useState<number | null>(null)
+  const [activeTab, setActiveTab] = useState<RubricTab>('partial')
+  const [selectedPeriod, setSelectedPeriod] = useState<SelectOption | null>(null)
 
   useEffect(() => {
     setUserId(getUserIdFromToken())
+    setSchoolId(getSchoolIdFromToken())
   }, [])
 
   const professorEnabled = userId != null
@@ -39,13 +57,28 @@ export function GradeProjectsPage() {
     isLoading: isLoadingProjects,
     isError: isErrorProjects,
     error: projectsError,
-  } = useProjectsByProfessor(professor?.id)
+  } = useProjectsByProfessor(
+    professor?.id,
+    {
+      ...(schoolId != null ? { schoolId } : {}),
+      ...(selectedPeriod != null ? { academicPeriodId: selectedPeriod.value } : {}),
+      gradeTypeId: GRADE_TYPE_ID[activeTab],
+    },
+  )
 
-  // "loading" cubre: userId aún null, petición de docente en curso, petición de proyectos en curso
+  const { data: academicPeriods = [] } = useQuery({
+    queryKey: ['academic-periods', 'filtered', { is_active: true }],
+    queryFn: () => academicPeriodsService.getByFilters({ is_active: true }).then((r) => r.data),
+  })
+
+  const periodOptions = useMemo(
+    () => academicPeriods.map((p) => ({ label: p.code, value: p.id })),
+    [academicPeriods],
+  )
+
   const isLoading =
     !professorEnabled || isFetchingProfessor || isLoadingProfessor || isLoadingProjects
 
-  // Error de docente sólo después de que la query se habilitó y terminó sin datos
   const professorNotFound =
     professorEnabled && !isLoadingProfessor && !isFetchingProfessor && !professor
 
@@ -58,12 +91,44 @@ export function GradeProjectsPage() {
     })
   }
 
+  const tabs = [
+    { id: 'partial' as const, label: t('projects.grade.tabs.partial') },
+    { id: 'final' as const, label: t('projects.grade.tabs.final') },
+  ]
+
+  const handleTabChange = (id: string) => {
+    setActiveTab(id as RubricTab)
+  }
+
+  const handlePeriodChange = (_: string | undefined, opt: any) => {
+    setSelectedPeriod(opt ? { label: String(opt.label), value: Number(opt.value) } : null)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-zinc-900">{t('projects.grade.title')}</h1>
         <p className="mt-2 text-zinc-600">{t('projects.grade.description')}</p>
+      </div>
+
+      {/* Tabs */}
+      <Tabs
+        tabs={tabs}
+        activeTab={activeTab}
+        onChange={handleTabChange}
+        ariaLabel={t('projects.grade.tabs.ariaLabel')}
+      />
+
+      {/* Period filter */}
+      <div className="w-full max-w-xs">
+        <Select
+          label={t('projects.grade.filters.academicPeriod')}
+          options={periodOptions}
+          value={selectedPeriod}
+          isClearable
+          onChange={handlePeriodChange}
+        />
       </div>
 
       {/* States */}
@@ -166,7 +231,7 @@ export function GradeProjectsPage() {
                 {/* Acciones */}
                 <TableCell className="text-center">
                   <Link
-                    href={`/grade-projects/${project.project_id}/evaluate`}
+                    href={`/grade-projects/${activeTab}/${project.project_id}/evaluate`}
                     title={t('projects.grade.table.grade')}
                     className={cn(
                       'inline-flex items-center justify-center w-8 h-8 rounded-lg',

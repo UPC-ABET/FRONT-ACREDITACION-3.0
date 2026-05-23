@@ -332,6 +332,14 @@
 				"evaluationDate": "Evaluation Date",
 				"actions": "Actions",
 				"grade": "Evaluate"
+			},
+			"tabs": {
+				"partial": "Partial Rubric",
+				"final": "Final Rubric",
+				"ariaLabel": "Rubric type"
+			},
+			"filters": {
+				"academicPeriod": "Academic Period"
 			}
 		},
 		"evaluate": {
@@ -349,6 +357,25 @@
 				"grade": "Grade",
 				"noGrade": "No grade",
 				"empty": "No students in this project."
+			},
+			"rubric": {
+				"question": "Question",
+				"criteria": "Criteria",
+				"score": "Score",
+				"duplicateGrades": "Duplicate grades",
+				"duplicateGradesInfo": "When enabled, the entered grade will be assigned to all students in the project.",
+				"errorNaN": "Enter a valid number.",
+				"errorRange": "One or more scores are outside the allowed range for their question.",
+				"fillAll": "Fill in all scores to save.",
+				"saveButton": "Save grades"
+			},
+			"capstone": {
+				"outcome": "Outcome",
+				"criteria": "Criteria",
+				"loadingLevels": "Loading performance levels...",
+				"noLevels": "No performance levels found for this period.",
+				"fillAll": "Select a performance level for each outcome and student.",
+				"score": "Score"
 			}
 		}
 	}

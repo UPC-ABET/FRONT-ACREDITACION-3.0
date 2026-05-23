@@ -6,5 +6,5 @@ interface Params {
 
 export default async function Page({ params }: Params) {
   const { projectId } = await params
-  return <ProjectEvaluatePage projectId={projectId} />
+  return <ProjectEvaluatePage projectId={projectId} gradeTypeId={55} />
 }

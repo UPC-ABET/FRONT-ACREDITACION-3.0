@@ -36,6 +36,11 @@ export type ProjectDetailsResponse = {
     name: { en: string; es: string }
     description: { en: string; es: string }
   }
+  academic_period: {
+    id: number
+    modality_type_id: number
+    code: string
+  } | null
   students: ProjectDetailsStudentResponse[]
   rubric: {
     rubric: {
@@ -52,6 +57,7 @@ export type ProjectDetailsResponse = {
       id: number
       code: string
       name: { en: string; es: string }
+      description: { en: string; es: string }
       questionIds: number[]
     }[]
     questions: RubricQuestionDetailsResponse[]

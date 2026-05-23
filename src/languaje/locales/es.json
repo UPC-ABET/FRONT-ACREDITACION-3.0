@@ -332,6 +332,14 @@
 				"evaluationDate": "Fecha de Evaluación",
 				"actions": "Acciones",
 				"grade": "Evaluar"
+			},
+			"tabs": {
+				"partial": "Rúbrica Parcial",
+				"final": "Rúbrica Final",
+				"ariaLabel": "Tipo de rúbrica"
+			},
+			"filters": {
+				"academicPeriod": "Período Académico"
 			}
 		},
 		"evaluate": {
@@ -349,6 +357,25 @@
 				"grade": "Nota",
 				"noGrade": "Sin nota",
 				"empty": "No hay estudiantes en este proyecto."
+			},
+			"rubric": {
+				"question": "Pregunta",
+				"criteria": "Criterios",
+				"score": "Puntaje",
+				"duplicateGrades": "Duplicar notas",
+				"duplicateGradesInfo": "Al activar esta opción, la nota ingresada se asignará a todos los estudiantes del proyecto.",
+				"errorNaN": "Ingresa un número válido.",
+				"errorRange": "Uno o más puntajes están fuera del rango permitido para su pregunta.",
+				"fillAll": "Completa todos los puntajes para guardar.",
+				"saveButton": "Guardar calificaciones"
+			},
+			"capstone": {
+				"outcome": "Outcome",
+				"criteria": "Criterios",
+				"loadingLevels": "Cargando niveles de desempeño...",
+				"noLevels": "No se encontraron niveles de desempeño para este período.",
+				"fillAll": "Selecciona un nivel de desempeño para cada outcome y estudiante.",
+				"score": "Puntaje"
 			}
 		}
 	}

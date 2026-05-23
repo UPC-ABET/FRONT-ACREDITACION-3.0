@@ -33,16 +33,37 @@ export const projectsService = {
     return request(`${BASE_URL}/projects/evaluator/${evaluatorId}`)
   },
 
-  getByProfessor(professorId: string | number): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
-    return request(`${BASE_URL}/projects/professor/${professorId}`)
+  getByProfessor(
+    professorId: string | number,
+    params?: {
+      academicPeriodId?: number
+      schoolId?: number
+      gradeTypeId?: number
+    },
+  ): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
+    const qs = new URLSearchParams()
+    if (params?.academicPeriodId != null) qs.set('academicPeriodId', String(params.academicPeriodId))
+    if (params?.schoolId != null) qs.set('schoolId', String(params.schoolId))
+    if (params?.gradeTypeId != null) qs.set('gradeTypeId', String(params.gradeTypeId))
+    const query = qs.toString()
+    return request(`${BASE_URL}/projects/professor/${professorId}${query ? `?${query}` : ''}`)
   },
 
   getById(projectId: string | number): Promise<ApiResponse<any>> {
     return request(`${BASE_URL}/projects/project/${projectId}`)
   },
 
-  getDetails(projectId: string | number): Promise<ApiResponse<ProjectDetailsResponse>> {
-    return request(`${BASE_URL}/projects/project/${projectId}?is_evaluation_mode=true`)
+  getDetails(
+    projectId: string | number,
+    params?: {
+      gradeTypeId?: number
+      rubricTypeId?: number
+    },
+  ): Promise<ApiResponse<ProjectDetailsResponse>> {
+    const qs = new URLSearchParams({ is_evaluation_mode: 'true' })
+    if (params?.gradeTypeId != null) qs.set('grade_type_id', String(params.gradeTypeId))
+    if (params?.rubricTypeId != null) qs.set('rubric_type_id', String(params.rubricTypeId))
+    return request(`${BASE_URL}/projects/project/${projectId}?${qs.toString()}`)
   },
 
   update(id: string | number, body: Record<string, unknown>): Promise<ApiResponse<any>> {

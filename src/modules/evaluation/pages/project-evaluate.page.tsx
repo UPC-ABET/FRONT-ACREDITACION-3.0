@@ -5,15 +5,20 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { Skeleton } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
 import { useProjectDetails } from '../hooks'
+import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable'
+import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable'
+
+const CAPSTONE_RUBRIC_TYPE_ID = 29
 
 interface ProjectEvaluatePageProps {
   projectId: string
+  gradeTypeId: number
 }
 
-export function ProjectEvaluatePage({ projectId }: ProjectEvaluatePageProps) {
+export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluatePageProps) {
   const { t, locale } = useI18n()
 
-  const { data, isLoading, isError, error } = useProjectDetails(projectId)
+  const { data, isLoading, isError, error } = useProjectDetails(projectId, { gradeTypeId })
 
   if (isLoading) {
     return (
@@ -45,6 +50,7 @@ export function ProjectEvaluatePage({ projectId }: ProjectEvaluatePageProps) {
   }
 
   const { project, students, rubric } = data
+
   const projectName = project.name[locale as 'es' | 'en'] ?? project.name.es
   const courseName = rubric.course.name[locale as 'es' | 'en'] ?? rubric.course.name.es
   const rubricTypeName =
@@ -55,6 +61,8 @@ export function ProjectEvaluatePage({ projectId }: ProjectEvaluatePageProps) {
     rubric.rubric.grade_type?.name[locale as 'es' | 'en'] ??
     rubric.rubric.grade_type?.name.es ??
     '—'
+
+  const isCapstone = rubric.rubric.rubric_type?.id === CAPSTONE_RUBRIC_TYPE_ID
 
   return (
     <div className="space-y-6">
@@ -100,7 +108,7 @@ export function ProjectEvaluatePage({ projectId }: ProjectEvaluatePageProps) {
         </div>
       </div>
 
-      {/* Students section */}
+      {/* Students summary */}
       <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
         <div className="border-b border-zinc-100 px-6 py-4">
           <h2 className="text-base font-semibold text-zinc-900">
@@ -131,7 +139,7 @@ export function ProjectEvaluatePage({ projectId }: ProjectEvaluatePageProps) {
                   </div>
                 </div>
 
-                {/* Grade */}
+                {/* Total grade */}
                 <div className="flex flex-col items-end gap-0.5">
                   <span className="text-xs font-medium text-zinc-400">
                     {t('projects.evaluate.students.grade')}
@@ -152,6 +160,23 @@ export function ProjectEvaluatePage({ projectId }: ProjectEvaluatePageProps) {
           )}
         </div>
       </div>
+
+      {/* Rubric table */}
+      {isCapstone ? (
+        <ProjectRubricCapstoneTable
+          outcomes={rubric.outcomes}
+          questions={rubric.questions}
+          students={students}
+          academicPeriodId={data.academic_period?.id ?? null}
+        />
+      ) : (
+        rubric.questions.length > 0 && (
+          <ProjectRubricNonCapstoneTable
+            questions={rubric.questions}
+            students={students}
+          />
+        )
+      )}
     </div>
   )
 }
