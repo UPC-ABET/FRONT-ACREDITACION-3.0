@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeftIcon, PencilIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Input, Skeleton, TextArea, Toast } from '@/shared/components/ui'
+import { Button, Input, Skeleton, TextArea, Toast, buttonVariants } from '@/shared/components/ui'
+import { cn } from '@/shared/lib/utils'
 import { useI18n } from '@/providers'
 import { useProjectDetails, projectsQueryKeys } from '../hooks'
 import { projectsService } from '../services'
@@ -85,16 +86,6 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
     onError: () => showToast('error', t('projects.edit.header.saveError')),
   })
 
-  const addStudentMutation = useMutation({
-    mutationFn: (enrollmentIds: number[]) =>
-      projectsService.addStudents(projectId, enrollmentIds),
-    onSuccess: () => {
-      invalidate()
-      setStudentError(null)
-    },
-    onError: () => setStudentError(t('projects.edit.students.addError')),
-  })
-
   const removeStudentMutation = useMutation({
     mutationFn: (projectStudentId: number) =>
       projectsService.removeStudent(projectStudentId),
@@ -107,16 +98,6 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
       setStudentError(t('projects.edit.students.removeError'))
       showToast('error', t('projects.edit.students.removeError'))
     },
-  })
-
-  const addEvaluatorMutation = useMutation({
-    mutationFn: (professorIds: number[]) =>
-      projectsService.addEvaluators(projectId, professorIds),
-    onSuccess: () => {
-      invalidate()
-      setEvaluatorError(null)
-    },
-    onError: () => setEvaluatorError(t('projects.edit.evaluators.addError')),
   })
 
   const removeEvaluatorMutation = useMutation({
@@ -220,24 +201,24 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 
             {/* Edit mode actions */}
             <div className="flex items-center justify-end gap-2 border-t border-zinc-100 pt-4">
-              <button
-                type="button"
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => setIsEditingHeader(false)}
                 disabled={updateMutation.isPending}
-                className="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {t('projects.edit.header.cancelButton')}
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="dark"
+                size="sm"
                 onClick={() => updateMutation.mutate()}
                 disabled={updateMutation.isPending}
-                className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {updateMutation.isPending
                   ? t('projects.edit.header.saving')
                   : t('projects.edit.header.saveButton')}
-              </button>
+              </Button>
             </div>
           </div>
         ) : (
@@ -249,14 +230,10 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
                   {project.code}
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={enterEditMode}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900"
-              >
+              <Button variant="secondary" size="sm" className={"bg-transparent border border-zinc-200 hover:bg-zinc-100"} onClick={enterEditMode}>
                 <PencilIcon className="h-4 w-4" />
                 {t('projects.edit.header.editButton')}
-              </button>
+              </Button>
             </div>
 
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-zinc-600">
@@ -290,14 +267,10 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
             </h2>
             <span className="text-xs text-zinc-400">{students.length}</span>
           </div>
-          <button
-            type="button"
-            onClick={() => setStudentModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900"
-          >
+          <Button variant="primary" size="sm" onClick={() => setStudentModalOpen(true)}>
             <PlusIcon className="h-4 w-4" />
             {t('projects.edit.students.addButton')}
-          </button>
+          </Button>
         </div>
 
         <div className="divide-y divide-zinc-100">
@@ -326,7 +299,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
                   type="button"
                   onClick={() => removeStudentMutation.mutate(student.id)}
                   disabled={removeStudentMutation.isPending}
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'text-zinc-400 hover:bg-red-50 hover:text-red-600')}
                   title="Eliminar"
                 >
                   <XMarkIcon className="h-4 w-4" />
@@ -347,14 +320,10 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
             </h2>
             <span className="text-xs text-zinc-400">{evaluators?.length ?? 0}</span>
           </div>
-          <button
-            type="button"
-            onClick={() => setEvaluatorModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900"
-          >
+          <Button variant="primary" size="sm" onClick={() => setEvaluatorModalOpen(true)}>
             <PlusIcon className="h-4 w-4" />
             {t('projects.edit.evaluators.addButton')}
-          </button>
+          </Button>
         </div>
 
         <div className="divide-y divide-zinc-100">
@@ -384,7 +353,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
                   type="button"
                   onClick={() => removeEvaluatorMutation.mutate(evaluator.id)}
                   disabled={removeEvaluatorMutation.isPending}
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'text-zinc-400 hover:bg-red-50 hover:text-red-600')}
                   title="Eliminar"
                 >
                   <XMarkIcon className="h-4 w-4" />
