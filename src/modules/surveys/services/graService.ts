@@ -160,7 +160,11 @@ export async function listGRAAcceptanceLevels(academic_period_id: number): Promi
   const survey_type_id = await getSurveyTypeId('GRA')
   const res = await apiPost<Array<{ id: number; min_score: number; max_score: number; name: { es?: string }; color?: string; order?: number }>>(
     'acceptance-levels/list',
-    { survey_type_id, academic_period_id }
+    {
+      survey_type_code: 'GRA',
+      ...(survey_type_id > 0 && { survey_type_id }),
+      academic_period_id,
+    }
   )
   const list = Array.isArray(res) ? res : []
   return list.map((l, i) => ({

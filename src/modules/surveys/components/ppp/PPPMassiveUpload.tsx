@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useEffect } from 'react'
-import { Select } from '@/shared/components'
+import React, { useEffect, useState } from 'react'
+import { Select, Toast } from '@/shared/components'
 import { FileUploadPanel } from '../shared/FileUploadPanel'
 import { usePPPUpload, usePPPCycles } from '../../hooks'
 import { useABET } from '@/providers'
@@ -11,7 +11,10 @@ export function PPPMassiveUpload() {
   const { cycles, load: loadCycles } = usePPPCycles()
   const { loading, error, success, upload } = usePPPUpload()
 
-  const [selectedCycle, setSelectedCycle] = React.useState<{ label: string; value: number } | null>(null)
+  const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null)
+  const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
+    open: false, type: 'error', msg: '',
+  })
 
   useEffect(() => { loadCycles(modalityTypeId) }, [modalityTypeId, loadCycles])
 
@@ -19,8 +22,13 @@ export function PPPMassiveUpload() {
 
   async function handleDownloadTemplate() {
     if (!selectedCycle) return
-    const { downloadPPPTemplate } = await import('../../services/pppService')
-    await downloadPPPTemplate(selectedCycle.value)
+    try {
+      const { downloadPPPTemplate } = await import('../../services/pppService')
+      await downloadPPPTemplate(selectedCycle.value)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error al descargar la plantilla.'
+      setToast({ open: true, type: 'error', msg })
+    }
   }
 
   return (
@@ -49,6 +57,13 @@ export function PPPMassiveUpload() {
         onUpload={(file) => selectedCycle ? upload(file, selectedCycle.value) : Promise.resolve()}
         onDownloadTemplate={selectedCycle ? handleDownloadTemplate : undefined}
         downloadLabel="Descargar Plantilla PPP"
+      />
+
+      <Toast
+        isOpen={toast.open}
+        type={toast.type}
+        message={toast.msg}
+        onClose={() => setToast({ ...toast, open: false })}
       />
     </div>
   )

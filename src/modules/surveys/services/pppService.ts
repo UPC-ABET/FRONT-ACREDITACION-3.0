@@ -1,4 +1,4 @@
-import { apiPost, apiGet, apiDelete, apiPostBlob, triggerBlobDownload, fileToBase64 } from './apiClient'
+import { apiPost, apiGet, apiDelete, fileToBase64 } from './apiClient'
 import { getSurveyTypeId } from './academicService'
 import type {
   CompetenceConfig,
@@ -6,8 +6,6 @@ import type {
   AcceptanceLevel,
   DashboardResponse,
 } from '../types'
-
-const SCHOOL = '1'
 
 // ─── Internal backend shapes ───────────────────────────────────────────────
 
@@ -153,7 +151,11 @@ export async function listAcceptanceLevels(academic_period_id: number): Promise<
   const survey_type_id = await getSurveyTypeId('PPP')
   const res = await apiPost<BackendAcceptanceLevel[] | { data?: BackendAcceptanceLevel[] }>(
     'acceptance-levels/list',
-    { survey_type_id, academic_period_id }
+    {
+      survey_type_code: 'PPP',
+      ...(survey_type_id > 0 && { survey_type_id }),
+      academic_period_id,
+    }
   )
   const obj = res as { data?: BackendAcceptanceLevel[] }
   const list = Array.isArray(res) ? res : (obj.data ?? [])
@@ -191,17 +193,8 @@ export async function uploadPPPMassive(
   }
 }
 
-export async function uploadPPPMassiveLegacy(file: File, escuelaActual?: unknown): Promise<void> {
-  const archivoBase64 = await fileToBase64(file)
-  const blob = await apiPostBlob('excel/upload-PPP', {
-    idCarrera: 0,
-    validarCarrera: false,
-    escuelaId: SCHOOL,
-    escuelaActual: escuelaActual ?? { id: 1, nombre: 'Escuela', cod: 'E' },
-    archivoBase64,
-    nombreArchivo: file.name,
-  })
-  triggerBlobDownload(blob, `Reporte_Carga_PPP_${Date.now()}.xlsx`)
+export async function uploadPPPMassiveLegacy(_file: File, _escuelaActual?: unknown): Promise<void> {
+  throw new Error('La carga masiva PPP (legacy) no está disponible en esta versión del backend.')
 }
 
 // ─── Dashboard / Reports ───────────────────────────────────────────────────

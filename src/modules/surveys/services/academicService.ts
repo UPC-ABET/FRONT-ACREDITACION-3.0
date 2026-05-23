@@ -60,24 +60,56 @@ export async function getPrograms(): Promise<Program[]> {
 
 // ─── Survey Type IDs (cached from /types/by-group-code/TG601) ────────────────
 // The acceptance-levels endpoint requires survey_type_id (numeric FK to types table).
-// We fetch the catalog once per session and cache it.
-
-interface BackendType {
-  id: number
-  code: string
-}
 
 let _surveyTypeIds: Map<string, number> | null = null
+
+function extractTypesList(raw: unknown): Array<{ id: number; code: string }> {
+  if (Array.isArray(raw)) return raw as Array<{ id: number; code: string }>
+  if (raw && typeof raw === 'object') {
+    const obj = raw as Record<string, unknown>
+    // try common envelope shapes: .data, .data.items, .items, .types, .result
+    const inner = obj.data ?? obj.items ?? obj.types ?? obj.result
+    if (Array.isArray(inner)) return inner as Array<{ id: number; code: string }>
+    if (inner && typeof inner === 'object') {
+      const nested = inner as Record<string, unknown>
+      const deep = nested.items ?? nested.types ?? nested.data
+      if (Array.isArray(deep)) return deep as Array<{ id: number; code: string }>
+    }
+  }
+  return []
+}
 
 export async function getSurveyTypeId(code: string): Promise<number> {
   if (!_surveyTypeIds) {
     try {
-      const res = await apiGet<Envelope<BackendType>>('types/by-group-code/TG601')
-      const list = unwrapList(res)
-      _surveyTypeIds = new Map(list.map((t) => [t.code, t.id]))
-    } catch {
-      _surveyTypeIds = new Map()
+      const res = await apiGet('types/by-group-code/TG601')
+      const list = extractTypesList(res)
+      const map = new Map<string, number>()
+      for (const item of list) {
+        if (item && typeof item === 'object') {
+          const t = item as Record<string, unknown>
+          const id = typeof t.id === 'number' ? t.id : Number(t.id)
+          // accept any field that looks like a code: code, type_code, survey_type_code, codigo
+          const rawCode = String(t.code ?? t.type_code ?? t.survey_type_code ?? t.codigo ?? '').toUpperCase()
+          if (id > 0 && rawCode) map.set(rawCode, id)
+        }
+      }
+      if (map.size > 0) {
+        _surveyTypeIds = map
+      } else {
+        console.warn('[getSurveyTypeId] types/by-group-code/TG601 returned no usable items:', res)
+      }
+    } catch (err) {
+      console.warn('[getSurveyTypeId] failed to fetch survey type catalog:', err)
+      // don't set _surveyTypeIds — allow retry on next call
     }
   }
-  return _surveyTypeIds.get(code) ?? 0
+  const id = _surveyTypeIds?.get(code.toUpperCase()) ?? 0
+  if (id === 0 && _surveyTypeIds && _surveyTypeIds.size > 0) {
+    console.warn(
+      `[getSurveyTypeId] code "${code}" not found in catalog. Available keys:`,
+      [..._surveyTypeIds.keys()]
+    )
+  }
+  return id
 }
