@@ -7,6 +7,7 @@ import { Toggle } from '@/shared/components/ui'
 import { cn } from '@/shared/lib/utils'
 import { useI18n } from '@/providers'
 import { performanceLevelsService } from '@/modules/academic/services'
+import { useSubmitEvaluation } from '../../hooks/use-evaluations'
 import type {
   RubricQuestionDetailsResponse,
   ProjectDetailsStudentResponse,
@@ -39,6 +40,7 @@ interface ProjectRubricCapstoneTableProps {
   questions: RubricQuestionDetailsResponse[]
   students: ProjectDetailsStudentResponse[]
   academicPeriodId: number | null
+  evaluatorId: number
 }
 
 export function ProjectRubricCapstoneTable({
@@ -46,8 +48,10 @@ export function ProjectRubricCapstoneTable({
   questions,
   students,
   academicPeriodId,
+  evaluatorId,
 }: ProjectRubricCapstoneTableProps) {
   const { t, locale } = useI18n()
+  const { mutate: submitEvaluation, isPending } = useSubmitEvaluation()
 
   const [duplicateMode, setDuplicateMode] = useState(false)
 
@@ -118,40 +122,80 @@ export function ProjectRubricCapstoneTable({
   const [selections, setSelections] = useState<Selections>(initialSelections)
   const [dupSelections, setDupSelections] = useState<DupSelections>(initialDupSelections)
 
-  // ── Validation ────────────────────────────────────────────────────────────
+   // ── Validation ────────────────────────────────────────────────────────────
+   const allFilled = useMemo(() => {
+     if (!allCriteriaIds.length || !students.length) return false
+     for (const cId of allCriteriaIds) {
+       if (duplicateMode) {
+         if (dupSelections[cId] == null) return false
+       } else {
+         for (const st of students) {
+           if (selections[cId]?.[st.id] == null) return false
+         }
+       }
+     }
+     return true
+   }, [allCriteriaIds, students, duplicateMode, selections, dupSelections])
 
-  const allFilled = useMemo(() => {
-    if (!allCriteriaIds.length || !students.length) return false
-    for (const cId of allCriteriaIds) {
-      if (duplicateMode) {
-        if (dupSelections[cId] == null) return false
-      } else {
-        for (const st of students) {
-          if (selections[cId]?.[st.id] == null) return false
+   // ── Handlers ──────────────────────────────────────────────────────────────
+
+   const handleSelect = (criteriaId: number, studentId: number, value: number) =>
+     setSelections((prev) => ({
+       ...prev,
+       [criteriaId]: {
+         ...prev[criteriaId],
+         [studentId]: prev[criteriaId]?.[studentId] === value ? null : value,
+       },
+     }))
+
+   const handleDupSelect = (criteriaId: number, value: number) =>
+     setDupSelections((prev) => ({
+       ...prev,
+       [criteriaId]: prev[criteriaId] === value ? null : value,
+     }))
+
+    const handleSave = () => {
+      // Build a map: studentId → scores[]
+      const studentScores = new Map<number, { rubric_question_criteria_id: number; score: number; commentaries: Record<string, string> }[]>();
+
+      for (const outcome of outcomes) {
+        const q = questionByOutcome.get(outcome.id);
+        for (const c of q?.criterias ?? []) {
+          const selectedValue = duplicateMode ? dupSelections[c.id] : null;
+          if (selectedValue === null && !duplicateMode) {
+            // Individual mode: score may differ per student
+            for (const st of students) {
+              const val = selections[c.id]?.[st.id];
+              if (val != null) {
+                const existing = studentScores.get(st.id) ?? [];
+                existing.push({ rubric_question_criteria_id: c.id, score: val, commentaries: {} });
+                studentScores.set(st.id, existing);
+              }
+            }
+          } else if (selectedValue !== null) {
+            // Duplicate mode: same score for all students
+            for (const st of students) {
+              const existing = studentScores.get(st.id) ?? [];
+              existing.push({ rubric_question_criteria_id: c.id, score: selectedValue, commentaries: {} });
+              studentScores.set(st.id, existing);
+            }
+          }
         }
       }
+
+      // Submit one request per student with all their scores
+      const entries = studentScores.entries();
+      for (const [studentId, scores] of entries) {
+        submitEvaluation({
+          project_student_id: studentId,
+          project_evaluator_id: evaluatorId,
+          observation: { es: "", en: "" },
+          scores,
+        });
+      }
     }
-    return true
-  }, [allCriteriaIds, students, duplicateMode, selections, dupSelections])
 
-  // ── Handlers ──────────────────────────────────────────────────────────────
-
-  const handleSelect = (criteriaId: number, studentId: number, value: number) =>
-    setSelections((prev) => ({
-      ...prev,
-      [criteriaId]: {
-        ...prev[criteriaId],
-        [studentId]: prev[criteriaId]?.[studentId] === value ? null : value,
-      },
-    }))
-
-  const handleDupSelect = (criteriaId: number, value: number) =>
-    setDupSelections((prev) => ({
-      ...prev,
-      [criteriaId]: prev[criteriaId] === value ? null : value,
-    }))
-
-  // ── Render ────────────────────────────────────────────────────────────────
+   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
@@ -287,20 +331,21 @@ export function ProjectRubricCapstoneTable({
             </li>
           </ul>
         )}
-        <div className="flex justify-end">
-          <button
-            type="button"
-            disabled={!allFilled}
-            className={cn(
-              'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-              allFilled
-                ? 'bg-red-600 text-white hover:bg-red-700'
-                : 'cursor-not-allowed bg-zinc-100 text-zinc-400',
-            )}
-          >
-            {t('projects.evaluate.rubric.saveButton')}
-          </button>
-        </div>
+         <div className="flex justify-end">
+           <button
+             type="button"
+             disabled={!allFilled || isPending}
+             className={cn(
+               'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
+               allFilled && !isPending
+                 ? 'bg-red-600 text-white hover:bg-red-700'
+                 : 'cursor-not-allowed bg-zinc-100 text-zinc-400',
+             )}
+             onClick={handleSave}
+           >
+             {isPending ? t('projects.evaluate.rubric.saving') : t('projects.evaluate.rubric.saveButton')}
+           </button>
+         </div>
       </div>
     </div>
   )

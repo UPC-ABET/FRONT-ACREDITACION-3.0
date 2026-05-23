@@ -5,6 +5,7 @@ import { InformationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react
 import { Toggle } from '@/shared/components/ui'
 import { cn } from '@/shared/lib/utils'
 import { useI18n } from '@/providers'
+import { useSubmitEvaluation } from '../../hooks/use-evaluations'
 import type {
   RubricQuestionDetailsResponse,
   ProjectDetailsStudentResponse,
@@ -42,10 +43,12 @@ type DupScores = Record<number, string>              // questionId → value (du
 interface ProjectRubricNonCapstoneTableProps {
   questions: RubricQuestionDetailsResponse[]
   students: ProjectDetailsStudentResponse[]
+  evaluatorId: number
 }
 
-export function ProjectRubricNonCapstoneTable({ questions, students }: ProjectRubricNonCapstoneTableProps) {
+export function ProjectRubricNonCapstoneTable({ questions, students, evaluatorId }: ProjectRubricNonCapstoneTableProps) {
   const { t, locale } = useI18n()
+  const { mutate: submitEvaluation, isPending } = useSubmitEvaluation()
 
   const [duplicateMode, setDuplicateMode] = useState(false)
 
@@ -123,13 +126,55 @@ export function ProjectRubricNonCapstoneTable({ questions, students }: ProjectRu
     return false
   }, [questions, students, duplicateMode, scores, dupScores, ranges, msgNaN, msgRange])
 
-  const canSave = allFilled && !hasErrors
+   const canSave = allFilled && !hasErrors
 
-  const handleScore = (qId: number, stId: number, val: string) =>
-    setScores((prev) => ({ ...prev, [qId]: { ...prev[qId], [stId]: val } }))
+   const handleScore = (qId: number, stId: number, val: string) =>
+     setScores((prev) => ({ ...prev, [qId]: { ...prev[qId], [stId]: val } }))
 
-  const handleDupScore = (qId: number, val: string) =>
-    setDupScores((prev) => ({ ...prev, [qId]: val }))
+   const handleDupScore = (qId: number, val: string) =>
+     setDupScores((prev) => ({ ...prev, [qId]: val }))
+
+    const handleSave = () => {
+      // Build a map: studentId → scores[]
+      const studentScores = new Map<number, { rubric_question_criteria_id: number; score: number; commentaries: Record<string, string> }[]>();
+
+      for (const q of questions) {
+        // For No-Capstone, each question has exactly 1 criterion
+        const criterionId = q.criterias[0].id;
+
+        if (duplicateMode) {
+          const scoreValue = dupScores[q.id]?.trim();
+          if (scoreValue) {
+            const parsed = parseFloat(scoreValue);
+            for (const st of students) {
+              const existing = studentScores.get(st.id) ?? [];
+              existing.push({ rubric_question_criteria_id: criterionId, score: parsed, commentaries: {} });
+              studentScores.set(st.id, existing);
+            }
+          }
+        } else {
+          for (const st of students) {
+            const scoreValue = scores[q.id]?.[st.id]?.trim();
+            if (scoreValue) {
+              const existing = studentScores.get(st.id) ?? [];
+              existing.push({ rubric_question_criteria_id: criterionId, score: parseFloat(scoreValue), commentaries: {} });
+              studentScores.set(st.id, existing);
+            }
+          }
+        }
+      }
+
+      // Submit one request per student with all their scores
+      const entries = studentScores.entries();
+      for (const [studentId, scores] of entries) {
+        submitEvaluation({
+          project_student_id: studentId,
+          project_evaluator_id: evaluatorId,
+          observation: { es: "", en: "" },
+          scores,
+        });
+      }
+    }
 
   return (
     <div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
@@ -253,20 +298,21 @@ export function ProjectRubricNonCapstoneTable({ questions, students }: ProjectRu
           ]}
         />
 
-        <div className="flex justify-end">
-          <button
-            type="button"
-            disabled={!canSave}
-            className={cn(
-              'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-              canSave
-                ? 'bg-red-600 text-white hover:bg-red-700'
-                : 'cursor-not-allowed bg-zinc-100 text-zinc-400',
-            )}
-          >
-            {t('projects.evaluate.rubric.saveButton')}
-          </button>
-        </div>
+         <div className="flex justify-end">
+           <button
+             type="button"
+             disabled={!canSave || isPending}
+             className={cn(
+               'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
+               canSave && !isPending
+                 ? 'bg-red-600 text-white hover:bg-red-700'
+                 : 'cursor-not-allowed bg-zinc-100 text-zinc-400',
+             )}
+             onClick={handleSave}
+           >
+             {isPending ? t('projects.evaluate.rubric.saving') : t('projects.evaluate.rubric.saveButton')}
+           </button>
+         </div>
       </div>
     </div>
   )

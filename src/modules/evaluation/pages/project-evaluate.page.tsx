@@ -49,7 +49,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
     )
   }
 
-  const { project, students, rubric } = data
+   const { project, students, rubric, evaluators } = data
 
   const projectName = project.name[locale as 'es' | 'en'] ?? project.name.es
   const courseName = rubric.course.name[locale as 'es' | 'en'] ?? rubric.course.name.es
@@ -161,22 +161,24 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
         </div>
       </div>
 
-      {/* Rubric table */}
-      {isCapstone ? (
-        <ProjectRubricCapstoneTable
-          outcomes={rubric.outcomes}
-          questions={rubric.questions}
-          students={students}
-          academicPeriodId={data.academic_period?.id ?? null}
-        />
-      ) : (
-        rubric.questions.length > 0 && (
-          <ProjectRubricNonCapstoneTable
+        {/* Rubric table */}
+        {isCapstone ? (
+          <ProjectRubricCapstoneTable
+            outcomes={rubric.outcomes}
             questions={rubric.questions}
             students={students}
+            academicPeriodId={data.academic_period?.id ?? null}
+            evaluatorId={evaluators?.[0]?.id ?? 0}
           />
-        )
-      )}
+        ) : (
+          rubric.questions.length > 0 && (
+            <ProjectRubricNonCapstoneTable
+              questions={rubric.questions}
+              students={students}
+              evaluatorId={evaluators?.[0]?.id ?? 0}
+            />
+          )
+        )}
     </div>
   )
 }

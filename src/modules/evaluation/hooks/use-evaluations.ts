@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { evaluationsService } from '../services'
 
@@ -10,5 +11,16 @@ export function useEvaluationsByEvaluator(evaluatorId: string | number | undefin
     queryKey: evaluationsQueryKeys.byEvaluator(evaluatorId!),
     queryFn: () => evaluationsService.getByEvaluator(evaluatorId!).then((r) => r.data),
     enabled: evaluatorId != null,
+  })
+}
+
+export function useSubmitEvaluation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: evaluationsService.submit,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['evaluations'] })
+    },
   })
 }
