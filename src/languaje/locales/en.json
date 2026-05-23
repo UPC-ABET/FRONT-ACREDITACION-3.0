@@ -1,410 +1,450 @@
 {
-	"nav": {
-		"home": "Home",
-		"ifcs": "IFCs",
-		"rubrics": "Rubrics",
-		"rubricsList": "Rubrics",
-		"projects": "Academic Projects",
-		"gradeProjects": "Grade Projects",
-		"tests": {
-			"label": "Tests",
-			"modals": "Modals",
-			"charts": "Charts",
-			"tables": "Tables",
-			"public": "Public"
-		},
-		"logout": "Logout"
-	},
-	"ifcs": {
-		"page": {
-			"title": "End of Course Report",
-			"period": "Academic Period"
-		},
-		"table": {
-			"code": "Code",
-			"program": "Program",
-			"course": "Course",
-			"coordinator": "Professor",
-			"status": "Status",
-			"actions": "Options",
-			"statusFilter": "Filter by status",
-			"empty": "No IFCs"
-		}
-	},
-	"welcome": "Welcome to the ABET.",
-	"navbar": {
-		"user": {
-			"name": "Administrator",
-			"role": "Admi"
-		},
-		"openMenu": "Open menu",
-		"school": {
-			"label": "School",
-			"default": "QA"
-		},
-		"cycle": {
-			"label": "Cycle"
-		},
-		"program": {
-			"regular": "Regular",
-			"epe": "EPE"
-		}
-	},
-	"language": {
-		"es": "ES",
-		"en": "EN"
-	},
-	"sidebar": {
-		"open": "Open sidebar",
-		"close": "Close sidebar",
-		"logoAlt": "ABET Logo"
-	},
-	"dialog": {
-		"close": "Close",
-		"actions": {
-			"accept": "Accept",
-			"decline": "Decline",
-			"cancel": "Cancel",
-			"save": "Save"
-		},
-		"title": {
-			"form": "New Registration",
-			"error": "Something went wrong",
-			"success": "Confirmation",
-			"info": "Information",
-			"warning": "Important notice",
-			"confirm": "Confirmation"
-		},
-		"message": {
-			"error": "There was an error processing the request.",
-			"success": "Operation completed successfully.",
-			"info": "New information is available.",
-			"warning": "Review the data before continuing.",
-			"confirm": "Confirm to continue."
-		}
-	},
-	"toast": {
-		"title": {
-			"success": "Success",
-			"error": "Error",
-			"warning": "Warning",
-			"info": "Info"
-		},
-		"message": {
-			"success": "Operation completed successfully.",
-			"error": "There was an error processing the request.",
-			"warning": "Attention: review the data you entered.",
-			"info": "A new update is available in the system."
-		},
-		"close": "Close notification"
-	},
-	"tabs": {
-		"label": "Tabs"
-	},
-	"loading": {
-		"default": "Loading ..."
-	},
-	"login": {
-		"title": "Accreditation system",
-		"school": {
-			"placeholder": "Select school"
-		},
-		"user": {
-			"placeholder": "User"
-		},
-		"password": {
-			"placeholder": "Password"
-		},
-		"remember": "Remember me",
-		"submit": "Sign in",
-		"microsoft": "Continue with Microsoft",
-		"forgot": "Forgot your password?",
-		"loading": "Signing in...",
-		"error": {
-			"required": "All fields are required",
-			"generic": "Error during login",
-			"schoolRequired": "Select a school before continuing"
-		}
-	},
-	"forgotPassword": {
-		"title": "Recover password",
-		"subtitle": "We will send a recovery link to your email.",
-		"loading": "Sending request...",
-		"form": {
-			"emailLabel": "Institutional email",
-			"emailPlaceholder": "email@upc.pe",
-			"submit": "Send recovery link",
-			"backToLogin": "Back to sign in"
-		},
-		"error": {
-			"emailRequired": "Enter your institutional email.",
-			"emailInvalid": "Enter a valid email.",
-			"requestFailed": "Could not process the request"
-		},
-		"success": {
-			"defaultMessage": "If the email exists, a recovery link will be sent"
-		}
-	},
-	"auth": {
-		"invalidCredentials": "Invalid credentials"
-	},
-	"error": {
-		"school": {
-			"notFound": "The selected school does not exist"
-		}
-	},
-	"table": {
-		"search": {
-			"placeholder": "Search..."
-		},
-		"empty": "No results found.",
-		"pagination": {
-			"previous": "Previous",
-			"next": "Next",
-			"page": "Page",
-			"of": "of"
-		}
-	},
-	"select": {
-		"placeholder": {
-			"default": "Select an option"
-		},
-		"createLabel": "Create: \"{value}\""
-	},
-	"school": {
-		"sch_soft": "SCHOOL OF SOFTWARE ENGINEERING",
-		"sch_sist": "SCHOOL OF SYSTEMS ENGINEERING",
-		"sch_admin": "SCHOOL OF BUSINESS ADMINISTRATION",
-		"eiscb": "SCHOOL OF SOFTWARE ENGINEERING",
-		"eiscc": "SCHOOL OF COMPUTER SCIENCE ENGINEERING",
-		"inggmi": "GMI ENGINEERING",
-		"inggem": "GEM ENGINEERING",
-		"escel": "SCHOOL OF ELECTRONICS",
-		"ingamb": "ENVIRONMENTAL ENGINEERING",
-		"ingbio": "BIOMEDICAL ENGINEERING",
-		"ingciv": "CIVIL ENGINEERING",
-		"ingind": "INDUSTRIAL ENGINEERING"
-	},
-	"app": {
-		"name": "ABET Accreditation System",
-		"description": "ABET"
-	},
-	"page": {
-		"home": "Home",
-		"login": "Login",
-		"charts": "Charts",
-		"tables": "Tables",
-		"modals": "Modals",
-		"public": "Public"
-	},
-	"notFound": {
-		"title": "Page not found",
-		"message": "Sorry, we couldn’t find the page you’re looking for.",
-		"action": "Go home"
-	},
-	"rubrics": {
-		"list": {
-			"title": "Rubrics",
-			"description": "List of rubrics.",
-			"createButton": "Create rubric",
-			"loading": "Loading rubrics...",
-			"error": "Rubrics could not be loaded.",
-			"empty": "No rubrics registered."
-		},
-		"editor": {
-			"error": {
-				"saveError": "Error saving the rubric.",
-				"notFound": "Rubric not found.",
-				"load": "Error loading the rubric."
-			},
-			"save": {
-				"autosaveRetry": "Retry save.",
-				"saveRubricSuccess": "Rubric saved successfully."
-			},
-			"capstone": {
-				"saveRubric": "Save rubric",
-				"saving": "Saving rubric...",
-				"noCommissions": "No commissions found.",
-				"tooltips": {
-					"commissionCheckboxIncomplete": "Incomplete criteria for the outcomes.",
-					"saveDisabled": "Invalid rubric. Saving disabled."
-				},
-				"validation": {
-					"emptyOutcome": "No criteria have been added to this outcome. Add at least one criterion to validate the rubric.",
-					"emptyOutcomeReadonly": "No criteria have been added to this outcome.",
-					"validationIncomplete": "Please add at least one criterion per outcome.",
-					"validationComplete": "Rubric validated successfully. You can save the changes."
-				},
-				"criteria": {
-					"saving": "Saving criterion...",
-					"confirmDelete": "Are you sure you want to delete this criterion? This action cannot be undone.",
-					"criteriaLabel": "Criterion",
-					"criteriaPlaceholder": "Enter the criterion description"
-				}
-			},
-			"nonCapstone": {
-				"totalScore": "Total score",
-				"points": "points",
-				"saveRubric": "Save rubric",
-				"saving": "Saving rubric...",
-				"tooltips": {
-					"saveDisabled": "Invalid rubric. Saving disabled.",
-					"maxCols": "You have reached the maximum number of criteria."
-				},
-				"validation": {
-					"validationComplete": "Rubric validated successfully. You can save the changes.",
-					"allFieldsRequired": "All fields are required.",
-					"totalMustBe20": "The total sum of points must be 20.",
-					"minMustBeLessThanMax": "The minimum score must be less than the maximum for each criterion.",
-					"continuityRequired": "Score ranges must be continuous between criteria."
-				},
-				"question": {
-					"column": "Question",
-					"label": "Question",
-					"placeholder": "Enter the question",
-					"addQuestion": "Add question"
-				},
-				"criteria": {
-					"label": "Criterion",
-					"addCriteria": "Add criterion",
-					"placeholder": "Enter the criterion description"
-				},
-				"score": {
-					"minScoreLabel": "Min.",
-					"maxScoreLabel": "Max."
-				}
-			},
-			"header": {
-				"academicPeriod": "Academic period",
-				"maxScore": "Maximum score",
-				"units": {
-					"points": "points"
-				},
-				"editable": "Editable",
-				"readonly": "Read only"
-			},
-			"performanceLevels": {
-				"title": "Acceptance levels",
-				"helper": "Acceptance levels apply to all criteria.",
-				"empty": "No acceptance levels have been defined for this rubric."
-			}
-		}
-	},
-	"projects": {
-		"list": {
-			"title": "Academic Projects",
-			"description": "List of academic projects.",
-			"addButton": "Add Project",
-			"clearFilters": "Clear Filters",
-			"loading": "Loading projects...",
-			"error": "Could not load projects.",
-			"empty": "No projects registered.",
-			"selectPeriod": "Select an academic period to get started.",
-			"filters": {
-				"academicPeriod": "Academic Period",
-				"program": "Program",
-				"course": "Course"
-			},
-			"table": {
-				"code": "Code",
-				"name": "Name",
-				"evaluators": "Evaluators",
-				"students": "Students",
-				"actions": "Actions",
-				"view": "View",
-				"edit": "Edit"
-			}
-		},
-		"grade": {
-			"title": "Grade Projects",
-			"description": "Academic projects assigned for evaluation.",
-			"loading": "Loading projects...",
-			"loadingProfessor": "Fetching professor data...",
-			"error": "Could not load projects.",
-			"errorProfessor": "No professor found for your user account.",
-			"empty": "You have no projects assigned for evaluation.",
-			"table": {
-				"code": "Code",
-				"name": "Project Name",
-				"course": "Course",
-				"evaluator": "Evaluator",
-				"students": "Students",
-				"evaluationDate": "Evaluation Date",
-				"actions": "Actions",
-				"grade": "Evaluate"
-			},
-			"tabs": {
-				"partial": "Partial Rubric",
-				"final": "Final Rubric",
-				"ariaLabel": "Rubric type"
-			},
-			"filters": {
-				"academicPeriod": "Academic Period"
-			}
-		},
-		"evaluate": {
-			"loading": "Loading project...",
-			"error": "Could not load the project.",
-			"notFound": "Project not found.",
-			"backButton": "Back",
-			"header": {
-				"course": "Course",
-				"rubric": "Rubric",
-				"gradeType": "Grade type"
-			},
-			"students": {
-				"title": "Students",
-				"grade": "Grade",
-				"noGrade": "No grade",
-				"empty": "No students in this project."
-			},
-			"rubric": {
-				"question": "Question",
-				"criteria": "Criteria",
-				"score": "Score",
-				"duplicateGrades": "Duplicate grades",
-				"duplicateGradesInfo": "When enabled, the entered grade will be assigned to all students in the project.",
-				"errorNaN": "Enter a valid number.",
-				"errorRange": "One or more scores are outside the allowed range for their question.",
-				"fillAll": "Fill in all scores to save.",
-				"saveButton": "Save grades"
-			},
-			"capstone": {
-				"outcome": "Outcome",
-				"criteria": "Criteria",
-				"loadingLevels": "Loading performance levels...",
-				"noLevels": "No performance levels found for this period.",
-				"fillAll": "Select a performance level for each outcome and student.",
-				"score": "Score"
-			}
-		},
-		"edit": {
-			"loading": "Loading project...",
-			"error": "Could not load the project.",
-			"backButton": "Back to projects",
-			"header": {
-				"course": "Course",
-				"rubricType": "Rubric type",
-				"gradeType": "Grade type"
-			},
-			"students": {
-				"title": "Students",
-				"empty": "No students in this project.",
-				"addPlaceholder": "Enrollment ID",
-				"addButton": "Add",
-				"adding": "Adding...",
-				"addError": "Could not add the student.",
-				"removeError": "Could not remove the student."
-			},
-			"evaluators": {
-				"title": "Evaluators",
-				"empty": "No evaluators assigned.",
-				"addPlaceholder": "Professor ID",
-				"addButton": "Add",
-				"adding": "Adding...",
-				"addError": "Could not add the evaluator.",
-				"removeError": "Could not remove the evaluator."
-			}
-		}
-	}
+  "nav": {
+    "home": "Home",
+    "ifcs": "IFCs",
+    "rubrics": "Rubrics",
+    "rubricsList": "Rubrics",
+    "projects": "Academic Projects",
+    "gradeProjects": "Grade Projects",
+    "tests": {
+      "label": "Tests",
+      "modals": "Modals",
+      "charts": "Charts",
+      "tables": "Tables",
+      "public": "Public"
+    },
+    "logout": "Logout"
+  },
+  "ifcs": {
+    "page": {
+      "title": "End of Course Report",
+      "period": "Academic Period"
+    },
+    "table": {
+      "code": "Code",
+      "program": "Program",
+      "course": "Course",
+      "coordinator": "Professor",
+      "status": "Status",
+      "actions": "Options",
+      "statusFilter": "Filter by status",
+      "empty": "No IFCs"
+    }
+  },
+  "welcome": "Welcome to the ABET.",
+  "navbar": {
+    "user": {
+      "name": "Administrator",
+      "role": "Admi"
+    },
+    "openMenu": "Open menu",
+    "school": {
+      "label": "School",
+      "default": "QA"
+    },
+    "cycle": {
+      "label": "Cycle"
+    },
+    "program": {
+      "regular": "Regular",
+      "epe": "EPE"
+    }
+  },
+  "language": {
+    "es": "ES",
+    "en": "EN"
+  },
+  "sidebar": {
+    "open": "Open sidebar",
+    "close": "Close sidebar",
+    "logoAlt": "ABET Logo"
+  },
+  "dialog": {
+    "close": "Close",
+    "actions": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "title": {
+      "form": "New Registration",
+      "error": "Something went wrong",
+      "success": "Confirmation",
+      "info": "Information",
+      "warning": "Important notice",
+      "confirm": "Confirmation"
+    },
+    "message": {
+      "error": "There was an error processing the request.",
+      "success": "Operation completed successfully.",
+      "info": "New information is available.",
+      "warning": "Review the data before continuing.",
+      "confirm": "Confirm to continue."
+    }
+  },
+  "toast": {
+    "title": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Info"
+    },
+    "message": {
+      "success": "Operation completed successfully.",
+      "error": "There was an error processing the request.",
+      "warning": "Attention: review the data you entered.",
+      "info": "A new update is available in the system."
+    },
+    "close": "Close notification"
+  },
+  "tabs": {
+    "label": "Tabs"
+  },
+  "loading": {
+    "default": "Loading ..."
+  },
+  "login": {
+    "title": "Accreditation system",
+    "school": {
+      "placeholder": "Select school"
+    },
+    "user": {
+      "placeholder": "User"
+    },
+    "password": {
+      "placeholder": "Password"
+    },
+    "remember": "Remember me",
+    "submit": "Sign in",
+    "microsoft": "Continue with Microsoft",
+    "forgot": "Forgot your password?",
+    "loading": "Signing in...",
+    "error": {
+      "required": "All fields are required",
+      "generic": "Error during login",
+      "schoolRequired": "Select a school before continuing"
+    }
+  },
+  "forgotPassword": {
+    "title": "Recover password",
+    "subtitle": "We will send a recovery link to your email.",
+    "loading": "Sending request...",
+    "form": {
+      "emailLabel": "Institutional email",
+      "emailPlaceholder": "email@upc.pe",
+      "submit": "Send recovery link",
+      "backToLogin": "Back to sign in"
+    },
+    "error": {
+      "emailRequired": "Enter your institutional email.",
+      "emailInvalid": "Enter a valid email.",
+      "requestFailed": "Could not process the request"
+    },
+    "success": {
+      "defaultMessage": "If the email exists, a recovery link will be sent"
+    }
+  },
+  "auth": {
+    "invalidCredentials": "Invalid credentials"
+  },
+  "error": {
+    "school": {
+      "notFound": "The selected school does not exist"
+    }
+  },
+  "table": {
+    "search": {
+      "placeholder": "Search..."
+    },
+    "empty": "No results found.",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
+    }
+  },
+  "select": {
+    "placeholder": {
+      "default": "Select an option"
+    },
+    "createLabel": "Create: \"{value}\""
+  },
+  "school": {
+    "sch_soft": "SCHOOL OF SOFTWARE ENGINEERING",
+    "sch_sist": "SCHOOL OF SYSTEMS ENGINEERING",
+    "sch_admin": "SCHOOL OF BUSINESS ADMINISTRATION",
+    "eiscb": "SCHOOL OF SOFTWARE ENGINEERING",
+    "eiscc": "SCHOOL OF COMPUTER SCIENCE ENGINEERING",
+    "inggmi": "GMI ENGINEERING",
+    "inggem": "GEM ENGINEERING",
+    "escel": "SCHOOL OF ELECTRONICS",
+    "ingamb": "ENVIRONMENTAL ENGINEERING",
+    "ingbio": "BIOMEDICAL ENGINEERING",
+    "ingciv": "CIVIL ENGINEERING",
+    "ingind": "INDUSTRIAL ENGINEERING"
+  },
+  "app": {
+    "name": "ABET Accreditation System",
+    "description": "ABET"
+  },
+  "page": {
+    "home": "Home",
+    "login": "Login",
+    "charts": "Charts",
+    "tables": "Tables",
+    "modals": "Modals",
+    "public": "Public"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "Sorry, we couldn’t find the page you’re looking for.",
+    "action": "Go home"
+  },
+  "rubrics": {
+    "list": {
+      "title": "Rubrics",
+      "description": "List of rubrics.",
+      "createButton": "Create rubric",
+      "loading": "Loading rubrics...",
+      "error": "Rubrics could not be loaded.",
+      "empty": "No rubrics registered."
+    },
+    "editor": {
+      "error": {
+        "saveError": "Error saving the rubric.",
+        "notFound": "Rubric not found.",
+        "load": "Error loading the rubric."
+      },
+      "save": {
+        "autosaveRetry": "Retry save.",
+        "saveRubricSuccess": "Rubric saved successfully."
+      },
+      "capstone": {
+        "saveRubric": "Save rubric",
+        "saving": "Saving rubric...",
+        "noCommissions": "No commissions found.",
+        "tooltips": {
+          "commissionCheckboxIncomplete": "Incomplete criteria for the outcomes.",
+          "saveDisabled": "Invalid rubric. Saving disabled."
+        },
+        "validation": {
+          "emptyOutcome": "No criteria have been added to this outcome. Add at least one criterion to validate the rubric.",
+          "emptyOutcomeReadonly": "No criteria have been added to this outcome.",
+          "validationIncomplete": "Please add at least one criterion per outcome.",
+          "validationComplete": "Rubric validated successfully. You can save the changes."
+        },
+        "criteria": {
+          "saving": "Saving criterion...",
+          "confirmDelete": "Are you sure you want to delete this criterion? This action cannot be undone.",
+          "criteriaLabel": "Criterion",
+          "criteriaPlaceholder": "Enter the criterion description"
+        }
+      },
+      "nonCapstone": {
+        "totalScore": "Total score",
+        "points": "points",
+        "saveRubric": "Save rubric",
+        "saving": "Saving rubric...",
+        "tooltips": {
+          "saveDisabled": "Invalid rubric. Saving disabled.",
+          "maxCols": "You have reached the maximum number of criteria."
+        },
+        "validation": {
+          "validationComplete": "Rubric validated successfully. You can save the changes.",
+          "allFieldsRequired": "All fields are required.",
+          "totalMustBe20": "The total sum of points must be 20.",
+          "minMustBeLessThanMax": "The minimum score must be less than the maximum for each criterion.",
+          "continuityRequired": "Score ranges must be continuous between criteria."
+        },
+        "question": {
+          "column": "Question",
+          "label": "Question",
+          "placeholder": "Enter the question",
+          "addQuestion": "Add question"
+        },
+        "criteria": {
+          "label": "Criterion",
+          "addCriteria": "Add criterion",
+          "placeholder": "Enter the criterion description"
+        },
+        "score": {
+          "minScoreLabel": "Min.",
+          "maxScoreLabel": "Max."
+        }
+      },
+      "header": {
+        "academicPeriod": "Academic period",
+        "maxScore": "Maximum score",
+        "units": {
+          "points": "points"
+        },
+        "editable": "Editable",
+        "readonly": "Read only"
+      },
+      "performanceLevels": {
+        "title": "Acceptance levels",
+        "helper": "Acceptance levels apply to all criteria.",
+        "empty": "No acceptance levels have been defined for this rubric."
+      }
+    }
+  },
+  "projects": {
+    "list": {
+      "title": "Academic Projects",
+      "description": "List of academic projects.",
+      "addButton": "Add Project",
+      "clearFilters": "Clear Filters",
+      "loading": "Loading projects...",
+      "error": "Could not load projects.",
+      "empty": "No projects registered.",
+      "selectPeriod": "Select an academic period to get started.",
+      "filters": {
+        "academicPeriod": "Academic Period",
+        "program": "Program",
+        "course": "Course"
+      },
+      "table": {
+        "code": "Code",
+        "name": "Name",
+        "evaluators": "Evaluators",
+        "students": "Students",
+        "actions": "Actions",
+        "view": "View",
+        "edit": "Edit"
+      }
+    },
+    "grade": {
+      "title": "Grade Projects",
+      "description": "Academic projects assigned for evaluation.",
+      "loading": "Loading projects...",
+      "loadingProfessor": "Fetching professor data...",
+      "error": "Could not load projects.",
+      "errorProfessor": "No professor found for your user account.",
+      "empty": "You have no projects assigned for evaluation.",
+      "table": {
+        "code": "Code",
+        "name": "Project Name",
+        "course": "Course",
+        "evaluator": "Evaluator",
+        "students": "Students",
+        "evaluationDate": "Evaluation Date",
+        "actions": "Actions",
+        "grade": "Evaluate"
+      },
+      "tabs": {
+        "partial": "Partial Rubric",
+        "final": "Final Rubric",
+        "ariaLabel": "Rubric type"
+      },
+      "filters": {
+        "academicPeriod": "Academic Period"
+      }
+    },
+    "evaluate": {
+      "loading": "Loading project...",
+      "error": "Could not load the project.",
+      "notFound": "Project not found.",
+      "backButton": "Back",
+      "header": {
+        "course": "Course",
+        "rubric": "Rubric",
+        "gradeType": "Grade type"
+      },
+      "students": {
+        "title": "Students",
+        "grade": "Grade",
+        "noGrade": "No grade",
+        "empty": "No students in this project."
+      },
+      "rubric": {
+        "question": "Question",
+        "criteria": "Criteria",
+        "score": "Score",
+        "duplicateGrades": "Duplicate grades",
+        "duplicateGradesInfo": "When enabled, the entered grade will be assigned to all students in the project.",
+        "errorNaN": "Enter a valid number.",
+        "errorRange": "One or more scores are outside the allowed range for their question.",
+        "fillAll": "Fill in all scores to save.",
+        "saveButton": "Save grades"
+      },
+      "capstone": {
+        "outcome": "Outcome",
+        "criteria": "Criteria",
+        "loadingLevels": "Loading performance levels...",
+        "noLevels": "No performance levels found for this period.",
+        "fillAll": "Select a performance level for each outcome and student.",
+        "score": "Score"
+      }
+    },
+    "edit": {
+      "loading": "Loading project...",
+      "error": "Could not load the project.",
+      "backButton": "Back to projects",
+      "header": {
+        "course": "Course",
+        "rubricType": "Rubric type",
+        "gradeType": "Grade type",
+        "editButton": "Edit project",
+        "saveButton": "Save changes",
+        "cancelButton": "Cancel",
+        "saving": "Saving...",
+        "saveSuccess": "Project updated successfully.",
+        "saveError": "Could not update the project.",
+        "fieldCode": "Code",
+        "fieldName": "Name",
+        "fieldDesc": "Description"
+      },
+      "students": {
+        "title": "Students",
+        "empty": "No students in this project.",
+        "addPlaceholder": "Enrollment ID",
+        "addButton": "Add",
+        "adding": "Adding...",
+        "addError": "Could not add the student.",
+        "removeError": "Could not remove the student.",
+        "removeSuccess": "Student removed successfully.",
+        "modal": {
+          "title": "Add students",
+          "searchPlaceholder": "Search by name, code or email...",
+          "loading": "Loading students...",
+          "empty": "No students enrolled in this course.",
+          "noResults": "No results for your search.",
+          "selected": "selected",
+          "section": "Section",
+          "confirmButton": "Add selected",
+          "adding": "Adding...",
+          "successMessage": "Students added successfully.",
+          "errorMessage": "Could not add the students."
+        }
+      },
+      "evaluators": {
+        "title": "Evaluators",
+        "empty": "No evaluators assigned.",
+        "addPlaceholder": "Professor ID",
+        "addButton": "Add",
+        "adding": "Adding...",
+        "addError": "Could not add the evaluator.",
+        "removeError": "Could not remove the evaluator.",
+        "modal": {
+          "title": "Add evaluator",
+          "searchPlaceholder": "Search by name or lastname...",
+          "searchLabel": "Professor",
+          "searchPrompt": "Type to search for a professor.",
+          "noResults": "No results found.",
+          "roleLabel": "Evaluator role",
+          "rolePlaceholder": "Select a role",
+          "loadingRoles": "Loading roles...",
+          "confirmButton": "Add evaluator",
+          "adding": "Adding...",
+          "selectProfessorFirst": "Select a professor first.",
+          "selectRoleFirst": "Select a role to continue.",
+          "successMessage": "Evaluator added successfully.",
+          "errorMessage": "Could not add the evaluator."
+        },
+        "removeSuccess": "Evaluator removed successfully."
+      }
+    }
+  }
 }

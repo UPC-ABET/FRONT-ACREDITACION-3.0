@@ -1,11 +1,11 @@
 export type ProjectDetailsStudentResponse = {
-  id: number
+  id: number          // project_student_id
+  student_id: number  // Student entity ID
   first_name: string
   last_name: string
   email: string
   student_code: string
   total_grade: number | null
-  student_section_enrollment_id?: number
 }
 
 export type ProjectDetailsEvaluatorResponse = {
