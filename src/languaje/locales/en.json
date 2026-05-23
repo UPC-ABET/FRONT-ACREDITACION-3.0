@@ -377,6 +377,34 @@
 				"fillAll": "Select a performance level for each outcome and student.",
 				"score": "Score"
 			}
+		},
+		"edit": {
+			"loading": "Loading project...",
+			"error": "Could not load the project.",
+			"backButton": "Back to projects",
+			"header": {
+				"course": "Course",
+				"rubricType": "Rubric type",
+				"gradeType": "Grade type"
+			},
+			"students": {
+				"title": "Students",
+				"empty": "No students in this project.",
+				"addPlaceholder": "Enrollment ID",
+				"addButton": "Add",
+				"adding": "Adding...",
+				"addError": "Could not add the student.",
+				"removeError": "Could not remove the student."
+			},
+			"evaluators": {
+				"title": "Evaluators",
+				"empty": "No evaluators assigned.",
+				"addPlaceholder": "Professor ID",
+				"addButton": "Add",
+				"adding": "Adding...",
+				"addError": "Could not add the evaluator.",
+				"removeError": "Could not remove the evaluator."
+			}
 		}
 	}
 }

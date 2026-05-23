@@ -11,6 +11,7 @@ type ByProfessorParams = {
 type DetailsParams = {
   gradeTypeId?: number
   rubricTypeId?: number
+  isEvaluationMode?: boolean
 }
 
 export const projectsQueryKeys = {

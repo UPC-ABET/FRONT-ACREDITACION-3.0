@@ -58,9 +58,11 @@ export const projectsService = {
     params?: {
       gradeTypeId?: number
       rubricTypeId?: number
+      isEvaluationMode?: boolean
     },
   ): Promise<ApiResponse<ProjectDetailsResponse>> {
-    const qs = new URLSearchParams({ is_evaluation_mode: 'true' })
+    const qs = new URLSearchParams()
+    if (params?.isEvaluationMode) qs.set('is_evaluation_mode', String(params.isEvaluationMode))
     if (params?.gradeTypeId != null) qs.set('grade_type_id', String(params.gradeTypeId))
     if (params?.rubricTypeId != null) qs.set('rubric_type_id', String(params.rubricTypeId))
     return request(`${BASE_URL}/projects/project/${projectId}?${qs.toString()}`)
@@ -85,6 +87,38 @@ export const projectsService = {
     return request(`${BASE_URL}/projects/get-by-filters`, {
       method: 'POST',
       body: JSON.stringify(filters),
+    })
+  },
+
+  addStudents(
+    projectId: string | number,
+    studentSectionEnrollmentIds: number[],
+  ): Promise<ApiResponse<any>> {
+    return request(`${BASE_URL}/projects/project/${projectId}/students`, {
+      method: 'POST',
+      body: JSON.stringify({ student_section_enrollment_ids: studentSectionEnrollmentIds }),
+    })
+  },
+
+  removeStudent(projectStudentId: number): Promise<ApiResponse<any>> {
+    return request(`${BASE_URL}/projects/project-students/${projectStudentId}`, {
+      method: 'DELETE',
+    })
+  },
+
+  addEvaluators(
+    projectId: string | number,
+    professorIds: number[],
+  ): Promise<ApiResponse<any>> {
+    return request(`${BASE_URL}/projects/project/${projectId}/evaluators`, {
+      method: 'POST',
+      body: JSON.stringify({ evaluator_professor_ids: professorIds }),
+    })
+  },
+
+  removeEvaluator(projectEvaluatorId: number): Promise<ApiResponse<any>> {
+    return request(`${BASE_URL}/projects/project-evaluators/${projectEvaluatorId}`, {
+      method: 'DELETE',
     })
   },
 }

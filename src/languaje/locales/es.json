@@ -377,6 +377,34 @@
 				"fillAll": "Selecciona un nivel de desempeño para cada outcome y estudiante.",
 				"score": "Puntaje"
 			}
+		},
+		"edit": {
+			"loading": "Cargando proyecto...",
+			"error": "No fue posible cargar el proyecto.",
+			"backButton": "Volver a proyectos",
+			"header": {
+				"course": "Curso",
+				"rubricType": "Tipo de rúbrica",
+				"gradeType": "Tipo de nota"
+			},
+			"students": {
+				"title": "Estudiantes",
+				"empty": "No hay estudiantes en este proyecto.",
+				"addPlaceholder": "ID de matrícula",
+				"addButton": "Agregar",
+				"adding": "Agregando...",
+				"addError": "No se pudo agregar el estudiante.",
+				"removeError": "No se pudo eliminar el estudiante."
+			},
+			"evaluators": {
+				"title": "Evaluadores",
+				"empty": "No hay evaluadores asignados.",
+				"addPlaceholder": "ID de docente",
+				"addButton": "Agregar",
+				"adding": "Agregando...",
+				"addError": "No se pudo agregar el evaluador.",
+				"removeError": "No se pudo eliminar el evaluador."
+			}
 		}
 	}
 }

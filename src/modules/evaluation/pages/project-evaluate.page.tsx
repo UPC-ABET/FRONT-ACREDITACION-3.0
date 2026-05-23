@@ -18,7 +18,7 @@ interface ProjectEvaluatePageProps {
 export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluatePageProps) {
   const { t, locale } = useI18n()
 
-  const { data, isLoading, isError, error } = useProjectDetails(projectId, { gradeTypeId })
+  const { data, isLoading, isError, error } = useProjectDetails(projectId, { gradeTypeId, isEvaluationMode: true })
 
   if (isLoading) {
     return (

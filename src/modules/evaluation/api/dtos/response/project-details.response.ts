@@ -5,6 +5,15 @@ export type ProjectDetailsStudentResponse = {
   email: string
   student_code: string
   total_grade: number | null
+  student_section_enrollment_id?: number
+}
+
+export type ProjectDetailsEvaluatorResponse = {
+  id: number
+  professor_id: number
+  first_name: string
+  last_name: string
+  evaluator_type_name?: { en: string; es: string }
 }
 
 export type CriteriaScoreResponse = {
@@ -42,6 +51,7 @@ export type ProjectDetailsResponse = {
     code: string
   } | null
   students: ProjectDetailsStudentResponse[]
+  evaluators?: ProjectDetailsEvaluatorResponse[]
   rubric: {
     rubric: {
       id: number
