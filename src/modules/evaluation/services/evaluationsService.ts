@@ -1,5 +1,6 @@
 import { ApiResponse } from "@/shared"
 import { buildJsonHeaders } from '@/shared/lib'
+import { EvaluationResponse } from '../api/dtos/response'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? ''
 
@@ -38,7 +39,7 @@ export const evaluationsService = {
     return request(`${BASE_URL}/evaluations/student/${studentId}`)
   },
 
-  getByEvaluator(evaluatorId: string | number): Promise<ApiResponse<any[]>> {
+  getByEvaluator(evaluatorId: string | number): Promise<ApiResponse<EvaluationResponse[]>> {
     return request(`${BASE_URL}/evaluations/evaluator/${evaluatorId}`)
   },
 

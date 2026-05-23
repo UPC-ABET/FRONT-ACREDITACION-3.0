@@ -1,9 +1,13 @@
 export type RubricScoreResponse = {
-  id: string,
+  id: number
+  extra?: Record<string, unknown>
+  is_active: boolean
+  created_at: string
+  updated_at: string | null
   evaluation_id: number
   rubric_question_criteria_id: number
   score: number
-  commentaries?: string
+  commentaries?: { en: string; es: string }
 }
 
-export { }
+export {}

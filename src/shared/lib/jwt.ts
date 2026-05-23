@@ -11,6 +11,7 @@ export function decodeToken(): Record<string, any> | null {
 
     // JWT format: header.payload.signature
     const parts = token.split('.')
+    if (parts.length !== 3) return null
 
     // Decode payload (base64url to base64 to JSON)
     const payloadPart = parts[1]
