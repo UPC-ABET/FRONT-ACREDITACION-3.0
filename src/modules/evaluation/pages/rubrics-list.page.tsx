@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import { useMemo } from 'react'
+import { PencilSquareIcon, LockClosedIcon } from '@heroicons/react/24/outline'
 import {
     Badge,
+    buttonVariants,
     Table,
     TableBody,
     TableCell,
@@ -11,7 +13,6 @@ import {
     TableHeader,
     TableRow,
 } from '@/shared/components/ui'
-import { buttonVariants } from '@/shared/components/ui/Button'
 import { cn } from '@/shared/lib/utils'
 import { useI18n } from '@/providers'
 import { useRubrics } from '../hooks'
@@ -58,7 +59,7 @@ export function RubricsListPage() {
                                 <TableHead>Periodo Académico</TableHead>
                                 <TableHead>Tipo de Evaluación</TableHead>
                                 <TableHead>Tipo de rúbrica</TableHead>
-                                <TableHead className="text-right">Acciones</TableHead>
+                                <TableHead className="text-center">Acciones</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -82,22 +83,25 @@ export function RubricsListPage() {
                                             <Badge variant="outline">No Capstone</Badge>
                                         )}
                                     </TableCell>
-                                    <TableCell className="text-right">
+                                    <TableCell className="text-center">
                                         {row.canEdit ? (
                                             <Link
                                                 href={`/rubrics/${row.id}/edit`}
-                                                className={cn(buttonVariants({ variant: 'surface', size: 'sm' }), 'inline-flex')}
+                                                title="Editar"
+                                                className={cn(
+                                                    'inline-flex items-center justify-center w-8 h-8 rounded-lg',
+                                                    'text-zinc-500 transition-colors',
+                                                    'hover:bg-blue-50 hover:text-blue-600'
+                                                )}
                                             >
-                                                Editar
+                                                <PencilSquareIcon className="h-4 w-4" />
                                             </Link>
                                         ) : (
                                             <span
-                                                className={cn(
-                                                    buttonVariants({ variant: 'surface', size: 'sm' }),
-                                                    'inline-flex cursor-not-allowed opacity-50'
-                                                )}
+                                                title="Solo lectura"
+                                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 cursor-not-allowed"
                                             >
-                                                Editar
+                                                <LockClosedIcon className="h-4 w-4" />
                                             </span>
                                         )}
                                     </TableCell>

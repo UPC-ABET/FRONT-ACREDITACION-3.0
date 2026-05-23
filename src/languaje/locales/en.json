@@ -5,6 +5,7 @@
 		"rubrics": "Rubrics",
 		"rubricsList": "Rubrics",
 		"projects": "Academic Projects",
+		"gradeProjects": "Grade Projects",
 		"tests": {
 			"label": "Tests",
 			"modals": "Modals",
@@ -333,6 +334,25 @@
 				"actions": "Actions",
 				"view": "View",
 				"edit": "Edit"
+			}
+		},
+		"grade": {
+			"title": "Grade Projects",
+			"description": "Academic projects assigned for evaluation.",
+			"loading": "Loading projects...",
+			"loadingProfessor": "Fetching professor data...",
+			"error": "Could not load projects.",
+			"errorProfessor": "No professor found for your user account.",
+			"empty": "You have no projects assigned for evaluation.",
+			"table": {
+				"code": "Code",
+				"name": "Project Name",
+				"course": "Course",
+				"evaluator": "Evaluator",
+				"students": "Students",
+				"evaluationDate": "Evaluation Date",
+				"actions": "Actions",
+				"grade": "Evaluate"
 			}
 		}
 	}

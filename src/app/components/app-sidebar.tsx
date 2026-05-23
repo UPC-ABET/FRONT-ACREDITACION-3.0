@@ -60,6 +60,7 @@ export function AppSidebar() {
 			children: [
 				{ name: t('nav.rubricsList'), href: '/rubrics' },
 				{ name: t('nav.projects'), href: '/projects' },
+				{ name: t('nav.gradeProjects'), href: '/grade-projects' },
 			],
 		},
 		{

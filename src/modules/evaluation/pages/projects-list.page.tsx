@@ -188,7 +188,7 @@ export function ProjectsListPage() {
               <TableHead>{t('projects.list.table.name')}</TableHead>
               <TableHead>{t('projects.list.table.evaluators')}</TableHead>
               <TableHead>{t('projects.list.table.students')}</TableHead>
-              <TableHead className="text-right">{t('projects.list.table.actions')}</TableHead>
+              <TableHead className="text-center">{t('projects.list.table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -242,18 +242,18 @@ export function ProjectsListPage() {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-center">
                   <div className="inline-flex gap-2">
                     <Link
                       href={`/projects/${project.id}`}
-                      className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+                      className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
                       title={t('projects.list.table.view')}
                     >
                       <EyeIcon className="h-4 w-4" />
                     </Link>
                     <Link
                       href={`/projects/${project.id}/edit`}
-                      className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+                      className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
                       title={t('projects.list.table.edit')}
                     >
                       <PencilIcon className="h-4 w-4" />

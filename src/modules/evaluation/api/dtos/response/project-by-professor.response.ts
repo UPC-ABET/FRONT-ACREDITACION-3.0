@@ -4,7 +4,7 @@ export type ProjectEvaluatorInfoResponse = {
   first_name: string
   last_name: string
   email: string
-  evaluator_type: string
+  evaluator_type: {en: string; es: string }
 }
 
 export type ProjectStudentInfoResponse = {
@@ -21,7 +21,7 @@ export type ProjectByProfessorResponse = {
   project_name: { en: string; es: string }
   evaluation_date: string
   course_name: string
-  evaluator: ProjectEvaluatorInfoResponse
+  evaluators: ProjectEvaluatorInfoResponse[]
   students: ProjectStudentInfoResponse[]
 }
 

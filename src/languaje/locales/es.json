@@ -4,6 +4,7 @@
 		"rubrics": "Rúbricas",
 		"rubricsList": "Rúbricas",
 		"projects": "Proyectos Académicos",
+		"gradeProjects": "Calificar Proyectos",
 		"ifcs": "IFCs",
 		"tests": {
 			"label": "Pruebas",
@@ -333,6 +334,25 @@
 				"actions": "Acciones",
 				"view": "Ver",
 				"edit": "Editar"
+			}
+		},
+		"grade": {
+			"title": "Calificar Proyectos",
+			"description": "Proyectos académicos asignados para evaluación.",
+			"loading": "Cargando proyectos...",
+			"loadingProfessor": "Obteniendo datos del docente...",
+			"error": "No fue posible cargar los proyectos.",
+			"errorProfessor": "No se encontró el docente asociado a tu usuario.",
+			"empty": "No tienes proyectos asignados para evaluar.",
+			"table": {
+				"code": "Código",
+				"name": "Nombre del Proyecto",
+				"course": "Curso",
+				"evaluator": "Evaluador",
+				"students": "Estudiantes",
+				"evaluationDate": "Fecha de Evaluación",
+				"actions": "Acciones",
+				"grade": "Evaluar"
 			}
 		}
 	}
