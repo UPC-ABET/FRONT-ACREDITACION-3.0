@@ -68,9 +68,17 @@ export const projectsService = {
     return request(`${BASE_URL}/projects/project/${projectId}?${qs.toString()}`)
   },
 
-  update(id: string | number, body: Record<string, unknown>): Promise<ApiResponse<any>> {
+  update(
+    id: string | number,
+    body: {
+      code?: string
+      name?: { es: string; en: string }
+      description?: { es: string; en: string }
+      is_active?: boolean
+    },
+  ): Promise<ApiResponse<any>> {
     return request(`${BASE_URL}/projects/update/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       body: JSON.stringify(body),
     })
   },
@@ -100,8 +108,19 @@ export const projectsService = {
     })
   },
 
+  createStudent(body: {
+    project_id: number
+    student_section_enrollment_id: number
+    is_active: true
+  }): Promise<ApiResponse<any>> {
+    return request(`${BASE_URL}/project-students/create`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    })
+  },
+
   removeStudent(projectStudentId: number): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/projects/project-students/${projectStudentId}`, {
+    return request(`${BASE_URL}/project-students/delete/${projectStudentId}`, {
       method: 'DELETE',
     })
   },
@@ -117,8 +136,20 @@ export const projectsService = {
   },
 
   removeEvaluator(projectEvaluatorId: number): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/projects/project-evaluators/${projectEvaluatorId}`, {
+    return request(`${BASE_URL}/project-evaluators/delete/${projectEvaluatorId}`, {
       method: 'DELETE',
+    })
+  },
+
+  createEvaluator(body: {
+    project_id: number
+    professor_id: number
+    evaluator_type_id: number
+    is_active: true
+  }): Promise<ApiResponse<any>> {
+    return request(`${BASE_URL}/project-evaluators/create`, {
+      method: 'POST',
+      body: JSON.stringify(body),
     })
   },
 }
