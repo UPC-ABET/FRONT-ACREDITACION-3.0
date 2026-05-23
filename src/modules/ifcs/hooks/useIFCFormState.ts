@@ -1,17 +1,28 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { applyAction, applyFinding, initFormState } from '../components/form/formState';
+import {
+	applyAction,
+	applyFinding,
+	applyPreviousAction,
+	initFormState,
+} from '../components/form/formState';
 import type {
 	FormAction,
 	FormFinding,
 	I18nText,
 	IFCFormState,
 	IFCViewPayload,
+	PreviousAction,
 } from '../services/types';
 
-export function useIFCFormState(existing: IFCViewPayload | null) {
-	const [state, setState] = useState<IFCFormState>(() => initFormState(existing));
+export function useIFCFormState(
+	existing: IFCViewPayload | null,
+	prefillPreviousActions: PreviousAction[] = [],
+) {
+	const [state, setState] = useState<IFCFormState>(() =>
+		initFormState(existing, prefillPreviousActions),
+	);
 
 	const addFinding = useCallback(() => setState((s) => applyFinding.add(s)), []);
 	const updateFinding = useCallback(
@@ -38,6 +49,11 @@ export function useIFCFormState(existing: IFCViewPayload | null) {
 			setState((s) => ({ ...s, information: { ...s.information, [key]: value } })),
 		[],
 	);
+	const updatePreviousActionEvidence = useCallback(
+		(findingActionId: number, evidences: I18nText | null) =>
+			setState((s) => applyPreviousAction.updateEvidence(s, findingActionId, evidences)),
+		[],
+	);
 
 	return {
 		state,
@@ -48,5 +64,6 @@ export function useIFCFormState(existing: IFCViewPayload | null) {
 		updateAction,
 		deleteAction,
 		setInformation,
+		updatePreviousActionEvidence,
 	};
 }

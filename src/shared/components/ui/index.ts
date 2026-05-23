@@ -19,6 +19,7 @@ export * from './Navbar';
 export * from './LoadingDialog';
 export * from './checkbox';
 export * from './hover-card';
+export * from './Popover';
 export * from './label';
 export * from './separator';
 export * from './alert';

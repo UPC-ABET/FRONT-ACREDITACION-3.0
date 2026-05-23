@@ -2,10 +2,9 @@
 
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { Button, Card, ErrorDialog, I18nTextField } from '@/shared/components';
+import { Badge, Button, Card, ErrorDialog, I18nTextField } from '@/shared/components';
 import { formatDateTime } from '@/shared/utils';
 import { IFCPageTitle } from '../shared/IFCPageTitle';
-import { StatusBadge } from '../StatusBadge';
 import { VIEW_LABELS } from './viewLabels';
 import { TYPE_CODES } from '../../constants';
 import { usePdfDownload } from '../../hooks/usePdfDownload';
@@ -77,7 +76,7 @@ export function IFCHeaderCard({
 							{VIEW_LABELS.status[lang]}
 						</dt>
 						<dd className="mt-1.5 flex flex-wrap items-center gap-2 text-base text-zinc-900">
-							<StatusBadge status={statusCode} label={statusLabel} color={ifc.status?.color} />
+							<Badge color={ifc.status?.color}>{statusLabel}</Badge>
 							{ifc.status && (
 								<span className="text-sm text-zinc-600">
 									{VIEW_LABELS.by[lang]} {ifc.status.by ?? '—'} · {formatDateTime(ifc.status.at)}

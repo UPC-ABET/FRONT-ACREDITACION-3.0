@@ -59,8 +59,7 @@ export async function getIFCView(id: number): Promise<IFCViewPayload> {
 		...p,
 		id: Number(p.id),
 		finding_action_id: Number(p.finding_action_id),
-		finding_id: Number(p.finding_id),
-		academic_period_id: Number(p.academic_period_id),
+		finding: { id: Number(p.finding.id), code: p.finding.code },
 	}));
 	return body.data;
 }
@@ -120,8 +119,7 @@ export async function getIFCPrefill(chartId: number, periodId: number): Promise<
 		...p,
 		id: Number(p.id),
 		finding_action_id: Number(p.finding_action_id),
-		finding_id: Number(p.finding_id),
-		academic_period_id: Number(p.academic_period_id),
+		finding: { id: Number(p.finding.id), code: p.finding.code },
 	}));
 	return body.data;
 }

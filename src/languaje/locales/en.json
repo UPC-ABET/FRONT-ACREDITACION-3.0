@@ -1,177 +1,489 @@
 {
-  "nav": {
-    "home": "Home",
-    "surveys": {
-      "label": "Surveys",
-      "ppp": "PPP — Pre-Professional",
-      "gra": "GRA — Graduating",
-      "lcfc": "LCFC — End of Cycle"
-    },
-    "tests": {
-      "label": "Tests",
-      "modals": "Modals",
-      "charts": "Charts",
-      "tables": "Tables",
-      "public": "Public"
-    },
-    "logout": "Logout"
-  },
-
-  "welcome": "Welcome to the ABET.",
-
-  "navbar": {
-    "user": {
-      "name": "Administrator",
-      "role": "Admi"
-    },
-    "openMenu": "Open menu",
-    "school": {
-      "label": "School",
-      "default": "QA"
-    },
-    "cycle": {
-      "label": "Cycle"
-    },
-    "program": {
-      "regular": "Regular",
-      "epe": "EPE"
-    }
-  },
-
-  "language": {
-    "es": "ES",
-    "en": "EN"
-  },
-
-  "sidebar": {
-    "open": "Open sidebar",
-    "close": "Close sidebar",
-    "logoAlt": "ABET Logo"
-  },
-
-  "dialog": {
-    "close": "Close",
-    "actions": {
-      "accept": "Accept",
-      "decline": "Decline",
-      "cancel": "Cancel",
-      "save": "Save"
-    },
-    "title": {
-      "form": "New Registration",
-      "error": "Something went wrong",
-      "success": "Confirmation",
-      "info": "Information",
-      "warning": "Important notice",
-      "confirm": "Confirmation"
-    },
-    "message": {
-      "error": "There was an error processing the request.",
-      "success": "Operation completed successfully.",
-      "info": "New information is available.",
-      "warning": "Review the data before continuing.",
-      "confirm": "Confirm to continue."
-    }
-  },
-
-  "toast": {
-    "title": {
-      "success": "Success",
-      "error": "Error",
-      "warning": "Warning",
-      "info": "Info"
-    },
-    "message": {
-      "success": "Operation completed successfully.",
-      "error": "There was an error processing the request.",
-      "warning": "Attention: review the data you entered.",
-      "info": "A new update is available in the system."
-    },
-    "close": "Close notification"
-  },
-
-  "tabs": {
-    "label": "Tabs"
-  },
-
-  "loading": {
-    "default": "Loading ..."
-  },
-
-  "login": {
-    "title": "Accreditation system",
-    "school": {
-      "placeholder": "Select school"
-    },
-    "user": {
-      "placeholder": "User"
-    },
-    "password": {
-      "placeholder": "Password"
-    },
-    "remember": "Remember me",
-    "submit": "Sign in",
-    "forgot": "Forgot your password?",
-    "loading": "Signing in...",
-    "error": {
-      "required": "All fields are required",
-      "generic": "Error during login"
-    }
-  },
-
-  "auth": {
-    "invalidCredentials": "Invalid credentials"
-  },
-
-  "table": {
-    "search": {
-      "placeholder": "Search..."
-    },
-    "empty": "No results found.",
-    "pagination": {
-      "previous": "Previous",
-      "next": "Next",
-      "page": "Page",
-      "of": "of"
-    }
-  },
-
-  "select": {
-    "placeholder": {
-      "default": "Select an option"
-    },
-    "createLabel": "Create: \"{value}\""
-  },
-
-  "school": {
-    "eiscc": "SCHOOL OF SOFTWARE ENGINEERING AND COMPUTER SCIENCE",
-    "eiscb": "SCHOOL OF SYSTEMS ENGINEERING AND CYBER SECURITY",
-    "inggmi": "SCHOOL OF MINING MANAGEMENT ENGINEERING",
-    "inggem": "SCHOOL OF BUSINESS MANAGEMENT ENGINEERING",
-    "escel": "SCHOOL OF ELECTRONICS, MECHATRONICS AND NETWORKS ENGINEERING",
-    "ingamb": "SCHOOL OF ENVIRONMENTAL ENGINEERING",
-    "ingbio": "SCHOOL OF BIOMEDICAL ENGINEERING",
-    "ingciv": "SCHOOL OF CIVIL ENGINEERING",
-    "ingind": "SCHOOL OF INDUSTRIAL ENGINEERING"
-  },
-
-  "app": {
-    "name": "ABET Accreditation System",
-    "description": "ABET"
-  },
-
-  "page": {
-    "home": "Home",
-    "login": "Login",
-    "charts": "Charts",
-    "tables": "Tables",
-    "modals": "Modals",
-    "public": "Public"
-  },
-
-  "notFound": {
-    "title": "Page not found",
-    "message": "Sorry, we couldn’t find the page you’re looking for.",
-    "action": "Go home"
-  }
+	"nav": {
+		"home": "Home",
+		"ifc": {
+			"label": "IFC",
+			"dashboard": "Dashboard",
+			"findings": "Findings"
+		},
+		"surveys": {
+			"label": "Surveys",
+			"ppp": "PPP — Pre-Professional",
+			"gra": "GRA — Graduating",
+			"lcfc": "LCFC — End of Cycle"
+		},
+		"tests": {
+			"label": "Tests",
+			"modals": "Modals",
+			"charts": "Charts",
+			"tables": "Tables",
+			"public": "Public"
+		},
+		"admin": {
+			"label": "Administration",
+			"notifications": "IFC Notifications",
+			"ifcCodes": "IFC Codes",
+			"ifcFields": "IFC Form Fields"
+		},
+		"logout": "Logout"
+	},
+	"ifcs": {
+		"page": {
+			"title": "End of Course Report",
+			"period": "Academic Period",
+			"searchBtn": "Search"
+		},
+		"table": {
+			"code": "Code",
+			"program": "Program",
+			"course": "Course",
+			"coordinator": "Professor",
+			"status": "Status",
+			"actions": "Options",
+			"statusFilter": "Status",
+			"empty": "No IFCs",
+			"actionView": "View",
+			"actionRegister": "Register"
+		},
+		"status": {
+			"all": "All"
+		},
+		"view": {
+			"col": {
+				"completeness": "Completeness"
+			},
+			"toast": {
+				"submitted": "IFC submitted for review",
+				"approved": "IFC approved",
+				"rejected": "IFC returned to the coordinator"
+			},
+			"rejectEmpty": "An observation is required to reject"
+		},
+		"pdf": {
+			"downloadPdf": "Download PDF",
+			"downloadAll": "Download All",
+			"exportNotApproved": "The IFC must be approved to export",
+			"error": {
+				"downloadFailed": "Could not download the PDF",
+				"bulkFailed": "Could not generate the PDF ZIP (at least one IFC is not approved)"
+			}
+		},
+		"statusReport": {
+			"btn": "Status Report",
+			"tooltipNoScope": "Run a search first",
+			"error": {
+				"downloadFailed": "Could not download the status report"
+			}
+		},
+		"form": {
+			"err": {
+				"requiredFields": "Required fields are missing or empty",
+				"findingIncomplete": "Every finding needs a description and a criticality",
+				"actionIncomplete": "Every action needs a description and a linked finding"
+			}
+		},
+		"submit": {
+			"modal": {
+				"title": "Submit IFC?",
+				"body": "Once submitted, no one can edit the IFC until a reviewer either approves or observes it.",
+				"confirm": "Submit",
+				"saveInstead": "Save instead"
+			},
+			"toast": {
+				"successWithNotify": "IFC submitted. Reviewers have been notified.",
+				"successNoConfig": "IFC submitted. No notification configuration for this stage.",
+				"successNoNotify": "IFC submitted. The notification could not be sent."
+			}
+		},
+		"notify": {
+			"btn": {
+				"tooltip": "Notify",
+				"notifyAll": "Notify All"
+			},
+			"toast": {
+				"success": "Notification sent",
+				"successAll": "{{count}} notification(s) sent",
+				"partial": "{{sent}} sent, {{skipped}} skipped (no configuration)",
+				"allSkipped": "All skipped — no notification configuration for this scenario",
+				"error": "{{count}} notification(s) failed to send"
+			},
+			"reason": {
+				"no_course_chart": "Course chart not found",
+				"no_config": "No notification configuration for this scenario",
+				"no_recipients": "No recipients configured",
+				"send_failed": "The email provider rejected the message",
+				"unknown": "Could not send the notification"
+			},
+			"error": {
+				"generic": "Could not send the notification"
+			}
+		},
+		"error": {
+			"viewFailed": "Could not load the IFC",
+			"submitFailed": "Could not submit the IFC",
+			"approveFailed": "Could not approve the IFC",
+			"rejectFailed": "Could not reject the IFC",
+			"prefillFailed": "Could not load the course information",
+			"createFailed": "Could not create the IFC",
+			"patchFailed": "Could not save the IFC",
+			"saveFailed": "Could not save the IFC",
+			"bootstrapFailed": "Could not load the form",
+			"generic": "Something went wrong"
+		}
+	},
+	"ifcFindings": {
+		"page": {
+			"title": "Findings"
+		},
+		"col": {
+			"criticality": "Criticality",
+			"code": "Code",
+			"period": "Academic Period",
+			"description": "Description",
+			"actions": "Options"
+		},
+		"action": {
+			"view": "View",
+			"delete": "Delete"
+		},
+		"empty": "No findings in scope",
+		"toast": {
+			"deleted": "Finding deleted"
+		},
+		"findingView": {
+			"col": {
+				"actionCode": "Code",
+				"actionDesc": "Description",
+				"actionStatus": "Status"
+			},
+			"actionsEmpty": "No actions associated",
+			"toast": {
+				"saved": "Finding updated"
+			},
+			"err": {
+				"descriptionEmpty": "Description must have at least one language filled"
+			}
+		},
+		"error": {
+			"listFailed": "Could not load findings",
+			"deleteFailed": "Could not delete the finding",
+			"viewFailed": "Could not load the finding",
+			"patchFailed": "Could not save the finding"
+		}
+	},
+	"admin": {
+		"notify": {
+			"page": {
+				"title": "IFC Notification Configuration",
+				"selectPeriod": "Select a period to continue"
+			},
+			"field": {
+				"title": "Subject",
+				"body": "Body (HTML)",
+				"to": "Recipients (To)",
+				"cc": "Cc",
+				"isActive": "Active",
+				"noLevels": "No levels available"
+			},
+			"legend": {
+				"title": "Available variables",
+				"empty": "No variables available for this status"
+			},
+			"btn": {
+				"save": "Save",
+				"delete": "Delete",
+				"confirmDelete": "Confirm delete"
+			},
+			"confirm": {
+				"delete": "Delete this configuration?"
+			},
+			"toast": {
+				"saved": "Configuration saved",
+				"deleted": "Configuration deleted"
+			},
+			"error": {
+				"listFailed": "Could not load the configuration",
+				"saveFailed": "Could not save the configuration",
+				"deleteFailed": "Could not delete the configuration"
+			}
+		},
+		"params": {
+			"codes": {
+				"page": {
+					"title": "IFC Codes",
+					"subtitle": "Prefixes for generated codes",
+					"intro": "These prefixes are used to compose finding and action codes automatically (e.g. H-2026-001 or A-2026-001). Changing them does not affect existing codes; the new prefix is applied to records created after the change."
+				}
+			},
+			"fields": {
+				"page": {
+					"title": "IFC form fields",
+					"subtitle": "Information collected when creating or editing an IFC",
+					"intro": "Configure the information fields that appear on the IFC form. Each field needs a unique technical key, Spanish and English labels, and a display order. Changes apply to IFCs created from now on."
+				},
+				"row": {
+					"title": "Field"
+				},
+				"field": {
+					"key": "Technical key",
+					"keyPlaceholder": "e.g. context",
+					"keyHelp": "Internal identifier. No spaces; use letters, numbers, and underscores.",
+					"labelEs": "Label (ES)",
+					"labelEn": "Label (EN)",
+					"required": "Required",
+					"requiredHelp": "When on, the user must fill this field before submitting."
+				},
+				"btn": {
+					"add": "Add field",
+					"moveUp": "Move up",
+					"moveDown": "Move down",
+					"delete": "Delete field"
+				},
+				"empty": "No fields configured yet. Add the first one to make it appear on the IFC form.",
+				"unsaved": "You have unsaved changes.",
+				"allSaved": "Everything is in sync.",
+				"confirmDelete": {
+					"title": "Delete field",
+					"body": "This field will be removed from the form. Continue?",
+					"confirm": "Delete"
+				},
+				"err": {
+					"keyRequired": "Technical key is required",
+					"keyDuplicate": "Keys must be unique",
+					"labelRequired": "Label is required",
+					"fixBeforeSave": "Fix the errors before saving"
+				}
+			},
+			"field": {
+				"value": "Value",
+				"valuePlaceholder": "e.g. H",
+				"prefixHint": "Short text prepended to the generated code."
+			},
+			"btn": {
+				"save": "Save",
+				"discard": "Discard changes",
+				"reset": "Reset",
+				"retry": "Retry",
+				"saveDisabledNoChanges": "No changes to save",
+				"saveDisabledInvalid": "Fill the field before saving"
+			},
+			"toast": {
+				"saved": "Parameter saved"
+			},
+			"error": {
+				"loadFailed": "Could not load the parameter",
+				"saveFailed": "Could not save the parameter",
+				"notFound": "Parameter not found"
+			}
+		}
+	},
+	"welcome": "Welcome to the ABET.",
+	"navbar": {
+		"user": {
+			"name": "Administrator",
+			"role": "Admi"
+		},
+		"openMenu": "Open menu",
+		"school": {
+			"label": "School",
+			"default": "QA"
+		},
+		"cycle": {
+			"label": "Cycle"
+		}
+	},
+	"language": {
+		"es": "ES",
+		"en": "EN",
+		"name": {
+			"es": "Spanish",
+			"en": "English"
+		}
+	},
+	"sidebar": {
+		"open": "Open sidebar",
+		"close": "Close sidebar",
+		"logoAlt": "ABET Logo"
+	},
+	"dialog": {
+		"close": "Close",
+		"actions": {
+			"accept": "Accept",
+			"decline": "Decline",
+			"cancel": "Cancel",
+			"save": "Save"
+		},
+		"title": {
+			"form": "New Registration",
+			"error": "Something went wrong",
+			"success": "Confirmation",
+			"info": "Information",
+			"warning": "Important notice",
+			"confirm": "Confirmation"
+		},
+		"message": {
+			"error": "There was an error processing the request.",
+			"success": "Operation completed successfully.",
+			"info": "New information is available.",
+			"warning": "Review the data before continuing.",
+			"confirm": "Confirm to continue."
+		}
+	},
+	"toast": {
+		"title": {
+			"success": "Success",
+			"error": "Error",
+			"warning": "Warning",
+			"info": "Info"
+		},
+		"message": {
+			"success": "Operation completed successfully.",
+			"error": "There was an error processing the request.",
+			"warning": "Attention: review the data you entered.",
+			"info": "A new update is available in the system."
+		},
+		"close": "Close notification"
+	},
+	"tabs": {
+		"label": "Tabs"
+	},
+	"loading": {
+		"default": "Loading ..."
+	},
+	"sessionExpired": {
+		"title": "Session expired",
+		"message": "Sign in again",
+		"action": "Sign out"
+	},
+	"login": {
+		"title": "Accreditation system",
+		"school": {
+			"placeholder": "Select school"
+		},
+		"user": {
+			"placeholder": "User"
+		},
+		"password": {
+			"placeholder": "Password"
+		},
+		"remember": "Remember me",
+		"submit": "Sign in",
+		"microsoft": "Continue with Microsoft",
+		"forgot": "Forgot your password?",
+		"loading": "Signing in...",
+		"error": {
+			"required": "All fields are required",
+			"generic": "Error during login",
+			"schoolRequired": "Select a school before continuing"
+		}
+	},
+	"forgotPassword": {
+		"title": "Recover password",
+		"subtitle": "We will send a recovery link to your email.",
+		"loading": "Sending request...",
+		"form": {
+			"emailLabel": "Institutional email",
+			"emailPlaceholder": "email@upc.pe",
+			"submit": "Send recovery link",
+			"backToLogin": "Back to sign in"
+		},
+		"error": {
+			"emailRequired": "Enter your institutional email.",
+			"emailInvalid": "Enter a valid email.",
+			"requestFailed": "Could not process the request"
+		},
+		"success": {
+			"defaultMessage": "If the email exists, a recovery link will be sent"
+		}
+	},
+	"resetPassword": {
+		"title": "Reset password",
+		"subtitle": "Enter and confirm your new password.",
+		"loading": "Updating password...",
+		"form": {
+			"passwordPlaceholder": "New password",
+			"confirmPasswordPlaceholder": "Confirm new password",
+			"submit": "Change password"
+		},
+		"error": {
+			"required": "All fields are required",
+			"passwordMinLength": "Password must be at least 8 characters long",
+			"passwordMismatch": "Passwords do not match",
+			"invalidToken": "The recovery link is invalid or expired",
+			"requestFailed": "Could not process the request"
+		},
+		"success": {
+			"title": "Password updated",
+			"defaultMessage": "Your password was updated successfully",
+			"goToLogin": "Go to sign in"
+		}
+	},
+	"auth": {
+		"invalidCredentials": "Invalid credentials",
+		"missingApiUrl": "Authentication service URL is not configured"
+	},
+	"parameters": {
+		"error": {
+			"notFound": "Parameter not found"
+		}
+	},
+	"error": {
+		"school": {
+			"notFound": "The selected school does not exist"
+		},
+		"ifc": {
+			"findingsRequired": "At least one finding is required",
+			"actionsRequiredPerFinding": "Every finding needs at least one action"
+		}
+	},
+	"table": {
+		"search": {
+			"placeholder": "Search..."
+		},
+		"empty": "No results found.",
+		"pagination": {
+			"previous": "Previous",
+			"next": "Next",
+			"page": "Page",
+			"of": "of"
+		}
+	},
+	"select": {
+		"placeholder": {
+			"default": "Select an option"
+		},
+		"createLabel": "Create: \"{value}\""
+	},
+	"school": {
+		"sch_soft": "SCHOOL OF SOFTWARE ENGINEERING",
+		"sch_sist": "SCHOOL OF SYSTEMS ENGINEERING",
+		"sch_admin": "SCHOOL OF BUSINESS ADMINISTRATION",
+		"eiscb": "SCHOOL OF SOFTWARE ENGINEERING",
+		"eiscc": "SCHOOL OF COMPUTER SCIENCE ENGINEERING",
+		"inggmi": "GMI ENGINEERING",
+		"inggem": "GEM ENGINEERING",
+		"escel": "SCHOOL OF ELECTRONICS",
+		"ingamb": "ENVIRONMENTAL ENGINEERING",
+		"ingbio": "BIOMEDICAL ENGINEERING",
+		"ingciv": "CIVIL ENGINEERING",
+		"ingind": "INDUSTRIAL ENGINEERING"
+	},
+	"app": {
+		"name": "ABET Accreditation System",
+		"description": "ABET",
+		"missingApiUrl": "API URL is not configured"
+	},
+	"page": {
+		"home": "Home",
+		"login": "Login",
+		"charts": "Charts",
+		"tables": "Tables",
+		"modals": "Modals",
+		"public": "Public"
+	},
+	"notFound": {
+		"title": "Page not found",
+		"message": "Sorry, we couldn’t find the page you’re looking for.",
+		"action": "Go home"
+	}
 }

@@ -36,17 +36,6 @@ export const PARAMETER_CODES = {
 	IFC_FIELDS: 'PARAMETER_IFC_FIELDS',
 } as const;
 
-export const CRITICALITY_VARIANT: Record<string, 'default' | 'danger' | 'success' | 'outline'> = {
-	[TYPE_CODES.CRITICALITY.CRITICAL]: 'danger',
-	[TYPE_CODES.CRITICALITY.WORRYING]: 'default',
-	[TYPE_CODES.CRITICALITY.NORMAL]: 'outline',
-};
-
-export const COMPLETENESS_VARIANT: Record<string, 'default' | 'danger' | 'success' | 'outline'> = {
-	[TYPE_CODES.ACTION_COMPLETENESS.PENDING]: 'outline',
-	[TYPE_CODES.ACTION_COMPLETENESS.IMPLEMENTED]: 'success',
-};
-
 export const LEVEL_LABELS: Record<string, { en: string; es: string }> = {
 	[TYPE_CODES.CHART_LEVEL_TYPE.DEAN]: { en: "Dean's Office", es: 'Decanato' },
 	[TYPE_CODES.CHART_LEVEL_TYPE.SCHOOL_DIRECTOR]: { en: 'School', es: 'Escuela' },

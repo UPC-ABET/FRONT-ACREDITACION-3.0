@@ -145,7 +145,7 @@ export default function IFCViewPage() {
 
 			<IFCInformationBlock information={ifc.information} />
 
-			<PreviousActionsTable previousActions={data.previous_actions} />
+			<PreviousActionsTable previousActions={data.previous_actions} mode="view" />
 
 			<IFCFindingsTable findings={data.findings} />
 			<IFCActionsTable findings={data.findings} />
