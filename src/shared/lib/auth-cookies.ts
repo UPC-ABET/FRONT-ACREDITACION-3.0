@@ -10,12 +10,11 @@ const COOKIE_OPTIONS: Cookies.CookieAttributes = {
 	path: '/',
 };
 
-export function setAuthCookies(user: unknown, escuela: string, expiresIn: number): void {
+export function setAuthCookies(user: unknown, expiresIn: number): void {
 	const expiresDays = expiresIn / 86400;
 	const expiresAtMs = Date.now() + expiresIn * 1000;
 
 	Cookies.set(USER_KEY, JSON.stringify(user), { ...COOKIE_OPTIONS, expires: expiresDays });
-	Cookies.set(SCHOOL_KEY, JSON.stringify(escuela), { ...COOKIE_OPTIONS, expires: expiresDays });
 	Cookies.set(TOKEN_EXPIRY_KEY, String(expiresAtMs), { ...COOKIE_OPTIONS, expires: expiresDays });
 }
 

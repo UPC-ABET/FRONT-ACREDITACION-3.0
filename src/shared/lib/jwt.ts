@@ -13,11 +13,17 @@ function getUserFromCookie(): Record<string, unknown> | null {
 	}
 }
 
-export function getSchoolIdFromToken(): number | null {
-	const user = getUserFromCookie();
-	if (!user) return null;
-	const id = (user as Record<string, unknown>).school_id;
-	return typeof id === 'number' ? id : null;
+export function getSchoolFromCookie(): Record<string, unknown> | null {
+	if (typeof window === 'undefined') return null;
+
+	try {
+		const raw = getAuthCookie('escuela');
+		if (!raw) return null;
+		const parsed = JSON.parse(raw);
+		return typeof parsed === 'object' && parsed !== null ? parsed : null;
+	} catch {
+		return null;
+	}
 }
 
 export function getUserIdFromToken(): string | number | null {

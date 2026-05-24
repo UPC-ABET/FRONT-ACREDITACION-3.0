@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
-import { getAuthCookie } from '@/shared/lib';
+import { getAuthCookie, getSchoolFromCookie } from '@/shared/lib';
 import { useABET, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
 import { DEFAULT_USER_INITIALS } from '@/shared/constants';
@@ -25,14 +25,11 @@ function readCookieUser(): StoredUser | null {
 }
 
 function readCookieSchool(): string {
-	if (typeof window === 'undefined') return '';
-	const raw = getAuthCookie('escuela');
-	if (!raw) return '';
-	try {
-		return JSON.parse(raw) as string;
-	} catch {
-		return raw;
-	}
+
+	const school = getSchoolFromCookie();
+	const schoolName = school?.code as string | undefined;
+
+	return typeof schoolName === 'string' ? schoolName : '';
 }
 
 const Sep = () => <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />;
