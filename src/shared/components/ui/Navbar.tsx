@@ -49,6 +49,7 @@ function PillSwitcher({
 						<button
 							key={opt.value}
 							onClick={() => onSelectProgram(opt.value)}
+							aria-pressed={active}
 							className={`px-5 py-2 rounded-xl text-[14px] font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap border-[1.5px] ${
 								active
 									? 'bg-white text-[var(--brand)] border-zinc-200 shadow-sm'
@@ -70,6 +71,7 @@ function PillSwitcher({
 					<button
 						key={opt.value}
 						onClick={() => onSelectProgram(opt.value)}
+						aria-pressed={active}
 						className={`px-3.5 py-1.5 rounded-md text-[11px] font-bold tracking-wide transition-all duration-150 cursor-pointer border ${
 							active
 								? 'bg-white text-[var(--brand)] border-[var(--brand-border)] shadow-sm'
