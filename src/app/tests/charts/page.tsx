@@ -1,11 +1,10 @@
-import dynamic from 'next/dynamic';
+import { Metadata } from 'next';
+import ChartsPageClient from './ChartsPageClient';
 
-const ChartsPage = dynamic(() => import('@/modules/tests').then((m) => m.ChartsPage), {
-	ssr: false,
-});
-
-export const metadata = {
+export const metadata: Metadata = {
 	title: 'Graficos',
 };
 
-export default ChartsPage;
+export default function Page() {
+	return <ChartsPageClient />;
+}
