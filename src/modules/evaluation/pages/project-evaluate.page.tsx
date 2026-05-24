@@ -1,12 +1,12 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { Skeleton } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
 import { getUserIdFromToken } from '@/shared/lib/jwt'
-import { useProjectDetails } from '../hooks'
+import { useProjectDetails, useQualificationStatusTypes } from '../hooks'
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable'
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable'
 
@@ -21,6 +21,12 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
   const { t, locale } = useI18n()
 
   const { data, isLoading, isError, error } = useProjectDetails(projectId, { gradeTypeId, isEvaluationMode: true })
+  const { statusTypes, isLoading: isLoadingStatuses } = useQualificationStatusTypes()
+
+  const nrNaTypeIds = useMemo(() => {
+    const nrNaCodes = new Set(['TG404-T002', 'TG404-T003'])
+    return new Set(statusTypes.filter((s) => nrNaCodes.has(s.code)).map((s) => s.id))
+  }, [statusTypes])
 
   // Resolve the current professor's project_evaluator_id from the evaluators list.
   // getUserIdFromToken() returns the professor_id stored in the JWT.
@@ -30,6 +36,18 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
     const match = data.evaluators.find((e) => e.professor_id === myProfessorId)
     return match?.id ?? data.evaluators[0]?.id ?? 0
   }, [data?.evaluators])
+
+  const initialQualifStatuses = useMemo<Record<number, number | null>>(() => {
+    const result: Record<number, number | null> = {}
+    for (const st of data?.students ?? []) {
+      const entry = (st.evaluations ?? []).find((e) => e.evaluator_id === evaluatorId)
+      result[st.id] = entry?.qualification_status_type_id ?? null
+    }
+    return result
+  }, [data?.students, evaluatorId])
+
+  const [qualifStatuses, setQualifStatuses] = useState<Record<number, number | null>>(initialQualifStatuses)
+  useEffect(() => { setQualifStatuses(initialQualifStatuses) }, [initialQualifStatuses])
 
   if (isLoading) {
     return (
@@ -150,6 +168,26 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
                   </div>
                 </div>
 
+                {/* Qualification status */}
+                <select
+                  value={qualifStatuses[student.id] ?? ''}
+                  onChange={(e) =>
+                    setQualifStatuses((prev) => ({
+                      ...prev,
+                      [student.id]: Number(e.target.value),
+                    }))
+                  }
+                  disabled={isLoadingStatuses}
+                  className="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-red-600 disabled:opacity-50"
+                >
+                  <option value="">—</option>
+                  {statusTypes.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name[locale as 'es' | 'en'] ?? s.name.es}
+                    </option>
+                  ))}
+                </select>
+
                 {/* Total grade */}
                 <div className="flex flex-col items-end gap-0.5">
                   <span className="text-xs font-medium text-zinc-400">
@@ -180,6 +218,9 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
             students={students}
             academicPeriodId={data.academic_period?.id ?? null}
             evaluatorId={evaluatorId}
+            rubricId={rubric.rubric.id}
+            qualifStatuses={qualifStatuses}
+            nrNaTypeIds={nrNaTypeIds}
           />
         ) : (
           rubric.questions.length > 0 && (
@@ -187,6 +228,9 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
               questions={rubric.questions}
               students={students}
               evaluatorId={evaluatorId}
+              rubricId={rubric.rubric.id}
+              qualifStatuses={qualifStatuses}
+              nrNaTypeIds={nrNaTypeIds}
             />
           )
         )}

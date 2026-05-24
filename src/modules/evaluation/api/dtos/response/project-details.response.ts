@@ -1,3 +1,8 @@
+export type StudentEvaluationResponse = {
+  evaluator_id: number
+  qualification_status_type_id: number
+}
+
 export type ProjectDetailsStudentResponse = {
   id: number
   student_id: number
@@ -6,6 +11,7 @@ export type ProjectDetailsStudentResponse = {
   email: string
   student_code: string
   total_grade: number | null
+  evaluations: StudentEvaluationResponse[] | undefined
 }
 
 export type ProjectDetailsEvaluatorResponse = {
