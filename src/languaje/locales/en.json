@@ -10,6 +10,7 @@
     },
     "rubrics": "Rubrics",
     "rubricsList": "Rubrics",
+    "evaluationCourses": "Courses to Grade",
     "projects": "Academic Projects",
     "gradeProjects": "Grade Projects",
     "surveys": {
@@ -585,7 +586,7 @@
     },
     "wizard": {
       "title": "New rubric",
-      "subtitle": "Create an evaluation rubric in three steps.",
+      "subtitle": "Create an evaluation rubric.",
       "steps": {
         "step1": {
           "label": "Course",
@@ -864,6 +865,47 @@
         },
         "removeSuccess": "Evaluator removed successfully."
       }
+    }
+  },
+  "evaluationCourses": {
+    "list": {
+      "title": "Courses to Grade",
+      "description": "Courses enabled for project creation.",
+      "addButton": "Add course",
+      "periodLabel": "Academic period",
+      "periodPlaceholder": "Select a period",
+      "periodLoading": "Loading periods...",
+      "selectPeriodFirst": "Select an academic period to view courses.",
+      "loading": "Loading courses...",
+      "error": "Could not load courses.",
+      "empty": "No courses enabled for this period.",
+      "removeButton": "Remove course",
+      "columns": {
+        "course": "Course",
+        "period": "Period",
+        "actions": "Actions"
+      }
+    },
+    "confirm": {
+      "title": "Remove course?",
+      "body": "Are you sure you want to remove \"{{course}}\" from the courses to grade?",
+      "confirm": "Remove",
+      "removing": "Removing..."
+    },
+    "modal": {
+      "title": "Add course to grade",
+      "periodLabel": "Academic period",
+      "periodPlaceholder": "Select a period",
+      "periodLoading": "Loading periods...",
+      "loadingCourses": "Loading courses...",
+      "empty": "No courses available for this period.",
+      "select": "Select",
+      "deselect": "Deselect",
+      "alreadyAdded": "Already enabled",
+      "selectedCount": "{{count}} course(s) selected",
+      "confirm": "Accept",
+      "adding": "Saving...",
+      "errorAdd": "Could not enable the course. Please try again."
     }
   }
 }
