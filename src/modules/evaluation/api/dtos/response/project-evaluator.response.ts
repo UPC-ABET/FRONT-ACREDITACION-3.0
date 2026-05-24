@@ -1,10 +1,3 @@
-export type ProjectEvaluatorInfoResponse = {
-	first_name: string;
-	last_name: string;
-	evaluator_type_name: { en: string; es: string };
-	evaluator_type_code: string;
-};
-
 export type ProjectEvaluatorResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
@@ -14,7 +7,12 @@ export type ProjectEvaluatorResponse = {
 	project_id: number;
 	professor_id: number;
 	evaluator_type_id: number;
-	evaluator_info?: ProjectEvaluatorInfoResponse;
+	evaluator_info?: {
+		first_name: string;
+		last_name: string;
+		evaluator_type_name: { en: string; es: string };
+		evaluator_type_code: string;
+	};
 };
 
-export {};
+export { };

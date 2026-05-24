@@ -93,7 +93,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 			const allApiQuestions: any[] = data.questions ?? [];
 
 			const commissions = (data.commissions ?? []).map((commission: any) => {
-				const outcomeIdsList: number[] = commission.outcomeIds ?? commission.outcome_ids ?? [];
+				const outcomeIdsList: number[] = commission.outcomeIds ?? commission.outcome_ids ?? []
 				const outcomes = outcomeIdsList
 					.map((outcomeId: number) => {
 						const outcome = outcomesById.get(outcomeId);

@@ -18,7 +18,7 @@ import { Select } from '@/shared/components/ui/Select';
 import { buttonVariants } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import { getSchoolIdFromToken } from '@/shared/lib/jwt';
+import { getSchoolFromCookie } from '@/shared/lib/jwt';
 import {
 	academicPeriodsService,
 	programsService,
@@ -37,7 +37,8 @@ export function ProjectsListPage() {
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
 	useEffect(() => {
-		setSchoolId(getSchoolIdFromToken());
+		const school = getSchoolFromCookie();
+		setSchoolId(school?.id as number | null);
 	}, []);
 
 	const { data: academicPeriods = [] } = useQuery({

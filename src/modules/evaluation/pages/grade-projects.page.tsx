@@ -18,7 +18,7 @@ import {
 import { Select } from '@/shared/components/ui/Select';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import { getUserIdFromToken, getSchoolIdFromToken } from '@/shared/lib/jwt';
+import { getUserIdFromToken, getSchoolFromCookie } from '@/shared/lib/jwt';
 import { academicPeriodsService } from '@/modules/academic/services';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
@@ -42,7 +42,8 @@ export function GradeProjectsPage() {
 
 	useEffect(() => {
 		setUserId(getUserIdFromToken());
-		setSchoolId(getSchoolIdFromToken());
+		const school = getSchoolFromCookie();
+		setSchoolId(school?.id as number | null);
 	}, []);
 
 	const professorEnabled = userId != null;
