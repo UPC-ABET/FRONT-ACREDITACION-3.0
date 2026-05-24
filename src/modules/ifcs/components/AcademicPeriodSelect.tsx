@@ -42,7 +42,7 @@ export function AcademicPeriodSelect({ value, onChange }: Props) {
 
 	const options = useMemo(() => periods.map((p) => ({ value: p.id, label: p.code })), [periods]);
 
-	const selected = useMemo(() => options.find((o) => o.value === value) ?? null, [options, value]);
+	const selected = options.find((o) => o.value === value) ?? null;
 
 	return (
 		<Select

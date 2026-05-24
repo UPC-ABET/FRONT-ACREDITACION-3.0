@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode, useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Navbar, SessionExpiredAlert } from '@/shared/components';
 import AppSidebar from '@/app/components/app-sidebar';
 import { ABETProvider, SidebarProvider } from '@/providers';
@@ -13,16 +13,19 @@ type LayoutClientProps = {
 	children: ReactNode;
 };
 
+function hasSession(): boolean {
+	return Boolean(getAuthCookie('token'));
+}
+
 export default function LayoutClient({ children }: LayoutClientProps) {
 	const pathname = usePathname();
+	const router = useRouter();
 	const isAuthRoute = pathname?.startsWith('/auth') ?? false;
 	const isSurveyPublicRoute = pathname?.startsWith('/survey/') ?? false;
 
 	const [mounted, setMounted] = useState(false);
 	const [sessionExpiredOpen, setSessionExpiredOpen] = useState(false);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-	const hasSession = () => Boolean(getAuthCookie('token'));
 
 	const expireSession = () => {
 		clearClientSession();
@@ -50,18 +53,18 @@ export default function LayoutClient({ children }: LayoutClientProps) {
 		if (!mounted) return;
 		if (isSurveyPublicRoute) return;
 
-		const hasToken = Boolean(hasSession());
+		const hasToken = hasSession();
 		setIsAuthenticated(hasToken);
 
 		if (hasToken && isAuthRoute) {
-			window.location.replace('/');
+			router.replace('/');
 			return;
 		}
 
 		if (!hasToken && !isAuthRoute) {
-			window.location.replace('/auth/login');
+			router.replace('/auth/login');
 		}
-	}, [mounted, pathname, isAuthRoute, isSurveyPublicRoute]);
+	}, [mounted, pathname, isAuthRoute, isSurveyPublicRoute, router]);
 
 	useSessionExpiry({
 		enabled: mounted && !isAuthRoute && !isSurveyPublicRoute && isAuthenticated,

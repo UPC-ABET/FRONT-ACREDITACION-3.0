@@ -44,7 +44,7 @@ export default function LoginForm() {
 		try {
 			const res = await loginByCredentials(payload);
 			setAuthCookies(res.user, schoolCode, res.expiresIn);
-			window.location.replace('/');
+			router.replace('/');
 		} catch (err: any) {
 			const rawMessage = typeof err?.message === 'string' ? err.message : '';
 			const translated = rawMessage ? t(rawMessage) : '';

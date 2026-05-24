@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -36,18 +36,16 @@ export function AppSidebar() {
 	const router = useRouter();
 	const { t } = useI18n();
 
-	const [isAdmin, setIsAdmin] = useState(false);
-	useEffect(() => {
-		let admin = false;
+	const [isAdmin] = useState(() => {
+		if (typeof window === 'undefined') return false;
 		try {
 			const raw = getAuthCookie('token');
 			const user = raw ? JSON.parse(raw) : null;
-			admin = user?.is_admin === true;
+			return user?.is_admin === true;
 		} catch {
-			admin = false;
+			return false;
 		}
-		setIsAdmin(admin);
-	}, []);
+	});
 
 	const isActive = (href?: string) => (href ? pathname === href : false);
 

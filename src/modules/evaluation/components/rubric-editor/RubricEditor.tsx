@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Skeleton } from '@/shared/components/ui'
 import { Toast } from '@/shared/components/ui/Toast'
 import { useI18n } from '@/providers'
@@ -28,22 +28,16 @@ export function RubricEditor({ rubricId, initialRubric }: RubricEditorProps) {
     setToastState({ open: true, type, message })
   }
 
-  const messages = useMemo(
-    () => ({
-      autosaveRetry: t('rubrics.editor.save.autosaveRetry'),
-      saveSuccess: t('rubrics.editor.save.saveRubricSuccess'),
-    }),
-    [t]
-  )
+  const messages = {
+    autosaveRetry: t('rubrics.editor.save.autosaveRetry'),
+    saveSuccess: t('rubrics.editor.save.saveRubricSuccess'),
+  }
 
   const { rubric, isLoading, isError, canEdit, queryKey, error } = useRubricEditor({ rubricId, initialRubric })
 
-  const errorMessage = useMemo(() => {
-    if (!isError) return ''
-    // show error message if available for easier debugging
-    const errMsg = (error as any)?.message ?? ''
-    return errMsg || t('rubrics.editor.error.load')
-  }, [isError, error, t])
+  const errorMessage = isError
+    ? ((error as Error | null)?.message || t('rubrics.editor.error.load'))
+    : ''
 
   if (isLoading && !rubric) {
     return (

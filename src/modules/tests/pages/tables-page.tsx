@@ -51,7 +51,7 @@ export default function TablesPage() {
 		},
 	];
 
-	const data = useMemo(() => allData, []);
+	const data = allData;
 
 	return (
 		<div className="space-y-6">
