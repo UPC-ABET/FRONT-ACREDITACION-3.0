@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
+import { getAuthCookie } from '@/shared/lib';
 import { useABET, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
 import { DEFAULT_USER_INITIALS } from '@/shared/constants';
@@ -19,12 +20,12 @@ function subscribeStoredUser(onStoreChange: () => void) {
 
 function readStoredUserRaw() {
 	if (typeof window === 'undefined') return '';
-	return localStorage.getItem('token') ?? '';
+	return getAuthCookie('token');
 }
 
 function readStoredSchoolCodeRaw() {
 	if (typeof window === 'undefined') return '';
-	return localStorage.getItem('escuela') ?? '';
+	return getAuthCookie('escuela');
 }
 
 const Sep = () => <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />;

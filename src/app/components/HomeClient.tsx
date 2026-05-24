@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
+import { getAuthCookie } from '@/shared/lib';
 
 export default function HomeClient() {
 	const router = useRouter();
@@ -10,7 +11,7 @@ export default function HomeClient() {
 	const [ready, setReady] = useState(false);
 
 	useEffect(() => {
-		const token = localStorage.getItem('bearerToken');
+		const token = getAuthCookie('bearerToken');
 
 		if (!token) {
 			router.replace('/auth/login');

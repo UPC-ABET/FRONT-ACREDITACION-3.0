@@ -1,8 +1,10 @@
+import { getAuthCookie } from './auth-cookies'
+
 export function getBearerToken(): string {
   if (typeof window === 'undefined') return ''
 
   try {
-    const raw = localStorage.getItem('bearerToken')
+    const raw = getAuthCookie('bearerToken')
     if (!raw) return ''
 
     try {

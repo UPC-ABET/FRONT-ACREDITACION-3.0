@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { getAuthCookie } from '@/shared/lib';
 
 type UseSessionExpiryParams = {
 	enabled: boolean;
@@ -9,8 +10,7 @@ type UseSessionExpiryParams = {
 const DEFAULT_IDLE_MS = 60 * 60 * 1000;
 
 function getStoredToken(): string {
-	if (typeof window === 'undefined') return '';
-	const raw = window.localStorage.getItem('bearerToken');
+	const raw = getAuthCookie('bearerToken');
 	if (!raw) return '';
 	try {
 		return JSON.parse(raw) as string;

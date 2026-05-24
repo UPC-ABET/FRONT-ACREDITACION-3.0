@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { getAuthCookie } from '@/shared/lib';
 
 export function useAuthGuard(enabled = true) {
 	const router = useRouter();
@@ -10,7 +11,7 @@ export function useAuthGuard(enabled = true) {
 			setChecking(false);
 			return;
 		}
-		const token = localStorage.getItem('bearerToken');
+		const token = getAuthCookie('bearerToken');
 		if (!token) {
 			setChecking(true);
 			router.replace('/auth/login');

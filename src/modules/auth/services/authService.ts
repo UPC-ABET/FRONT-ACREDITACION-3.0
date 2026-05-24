@@ -1,5 +1,5 @@
 import type { LoginPayload } from '@/shared/types';
-import { requestJson, getApiBaseUrl } from '@/shared/lib';
+import { requestJson, getApiBaseUrl, getAuthCookie, clearAuthCookies } from '@/shared/lib';
 import type { LoginResponse, ForgotPasswordResponse } from '@/modules/auth/types';
 
 const USERS_BASE_PATH = '/users';
@@ -30,7 +30,7 @@ export const loginByCredentials = async (
 };
 
 const getStoredToken = () => {
-	const raw = localStorage.getItem('bearerToken');
+	const raw = getAuthCookie('bearerToken');
 	if (!raw) return '';
 	try {
 		return JSON.parse(raw) as string;
@@ -41,9 +41,7 @@ const getStoredToken = () => {
 
 export const clearClientSession = () => {
 	if (typeof window === 'undefined') return;
-	window.localStorage.removeItem('bearerToken');
-	window.localStorage.removeItem('token');
-	window.localStorage.removeItem('escuela');
+	clearAuthCookies();
 };
 
 export const logoutUser = async (): Promise<void> => {

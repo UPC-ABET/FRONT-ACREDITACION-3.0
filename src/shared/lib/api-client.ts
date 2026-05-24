@@ -21,6 +21,8 @@ type RequestJsonOptions = {
 	token?: string;
 };
 
+import { getAuthCookie } from './auth-cookies';
+
 const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 export const API_URL = RAW_API_URL.replace(/\/$/, '');
 
@@ -34,7 +36,7 @@ export const getApiBaseUrl = (): string => {
 export function getToken(): string {
 	if (typeof window === 'undefined') return '';
 
-	const raw = window.localStorage.getItem('bearerToken');
+	const raw = getAuthCookie('bearerToken');
 	if (!raw) return '';
 
 	try {

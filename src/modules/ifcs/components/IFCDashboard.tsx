@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Button, Card, ErrorDialog, Select, SuccessDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { getAuthCookie } from '@/shared/lib';
 import { ORG_LABELS, TYPE_CODES } from '../constants';
 import {
 	useIFCList,
@@ -58,7 +59,7 @@ export function IFCDashboard() {
 	const currentUserId = useMemo<number | null>(() => {
 		if (typeof window === 'undefined') return null;
 		try {
-			const raw = localStorage.getItem('token');
+			const raw = getAuthCookie('token');
 			const user = raw ? JSON.parse(raw) : null;
 			return user?.id != null ? Number(user.id) : null;
 		} catch {

@@ -1,9 +1,11 @@
+import { getAuthCookie } from '@/shared/lib'
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? ''
 
 function getToken(): string {
   if (typeof window === 'undefined') return ''
   try {
-    const raw = localStorage.getItem('bearerToken')
+    const raw = getAuthCookie('bearerToken')
     if (!raw) return ''
     return JSON.parse(raw) as string
   } catch {

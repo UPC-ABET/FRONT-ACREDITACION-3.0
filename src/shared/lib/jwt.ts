@@ -1,13 +1,14 @@
+import { getAuthCookie } from './auth-cookies'
+
 /**
  * Decode JWT token payload.
- * Handles tokens stored raw or JSON-stringified in localStorage.
  * Returns the decoded payload object with all token data.
  */
 export function decodeToken(): Record<string, any> | null {
   if (typeof window === 'undefined') return null
 
   try {
-    const raw = localStorage.getItem('bearerToken')
+    const raw = getAuthCookie('bearerToken')
     if (!raw) return null
 
     // The token may be stored as JSON.stringify(token) → strip surrounding quotes

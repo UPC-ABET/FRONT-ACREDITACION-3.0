@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Input, Select, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
 import { LoginPayload } from '@/shared/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
+import { setAuthCookies } from '@/shared/lib';
 import { schoolOptions } from '@/modules/auth/constants';
 import { useI18n } from '@/providers';
 
@@ -42,9 +43,7 @@ export default function LoginForm() {
 		setLoading(true);
 		try {
 			const res = await loginByCredentials(payload);
-			localStorage.setItem('bearerToken', JSON.stringify(res.accessToken));
-			localStorage.setItem('token', JSON.stringify(res.user));
-			localStorage.setItem('escuela', JSON.stringify(schoolCode));
+			setAuthCookies(res.accessToken, res.user, schoolCode);
 			window.location.replace('/');
 		} catch (err: any) {
 			const rawMessage = typeof err?.message === 'string' ? err.message : '';

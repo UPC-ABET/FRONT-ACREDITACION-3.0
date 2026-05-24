@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ErrorDialog, LoadingDialog, SuccessDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { getAuthCookie } from '@/shared/lib';
 import { useIFCView } from '../../hooks/useIFCView';
 import { approveIFC, rejectIFC, submitIFC } from '../../services/ifcsService';
 import type { I18nText } from '../../services/types';
@@ -38,7 +39,7 @@ export default function IFCViewPage() {
 	const currentUserId = useMemo(() => {
 		if (typeof window === 'undefined') return null;
 		try {
-			const raw = localStorage.getItem('token');
+			const raw = getAuthCookie('token');
 			const user = raw ? JSON.parse(raw) : null;
 			return user?.id != null ? Number(user.id) : null;
 		} catch {

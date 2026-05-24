@@ -17,6 +17,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { logoutUser } from '@/modules/auth/services';
+import { getAuthCookie, clearAuthCookies } from '@/shared/lib';
 
 type NavChild = {
 	name: string;
@@ -39,7 +40,7 @@ export function AppSidebar() {
 	useEffect(() => {
 		let admin = false;
 		try {
-			const raw = localStorage.getItem('token');
+			const raw = getAuthCookie('token');
 			const user = raw ? JSON.parse(raw) : null;
 			admin = user?.is_admin === true;
 		} catch {
@@ -56,15 +57,8 @@ export function AppSidebar() {
 		} catch {
 			// Silencia errores de logout para no bloquear el cierre de sesión local.
 		} finally {
-			localStorage.removeItem('bearerToken');
-			localStorage.removeItem('token');
-			localStorage.removeItem('escuela');
+			clearAuthCookies();
 			sessionStorage.clear();
-			document.cookie.split(';').forEach((c) => {
-				document.cookie = c
-					.replace(/^ +/, '')
-					.replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
-			});
 			router.replace('/auth/login');
 		}
 	};

@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { getAuthCookie } from '@/shared/lib';
 
 function NotFoundPage() {
 	const router = useRouter();
@@ -15,7 +16,7 @@ function NotFoundPage() {
 	}, []);
 
 	const handleGoHome = () => {
-		const token = localStorage.getItem('bearerToken');
+		const token = getAuthCookie('bearerToken');
 
 		if (token) {
 			router.push('/');

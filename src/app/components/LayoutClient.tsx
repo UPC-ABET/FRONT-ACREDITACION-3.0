@@ -7,6 +7,7 @@ import AppSidebar from '@/app/components/app-sidebar';
 import { ABETProvider, SidebarProvider } from '@/providers';
 import { clearClientSession, logoutUser } from '@/modules/auth/services';
 import { useSessionExpiry } from '@/shared/hooks';
+import { getAuthCookie } from '@/shared/lib';
 
 type LayoutClientProps = {
 	children: ReactNode;
@@ -22,7 +23,7 @@ export default function LayoutClient({ children }: LayoutClientProps) {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 
 	const getStoredToken = () => {
-		const raw = localStorage.getItem('bearerToken');
+		const raw = getAuthCookie('bearerToken');
 		if (!raw) return '';
 
 		try {
