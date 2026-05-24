@@ -29,6 +29,7 @@ export async function listNotificationConfigs(periodId: number): Promise<Notific
 	const res = await fetch(url, {
 		method: 'GET',
 		headers: { accept: '*/*', ...authHeader() },
+		credentials: 'include',
 	});
 
 	const body = (await res.json().catch(() => null)) as Envelope<NotificationConfig[]> | null;
@@ -44,6 +45,7 @@ export async function upsertNotificationConfig(
 	const res = await fetch(`${BASE_URL}/ifc-notification-configs/upsert`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify(payload),
 	});
 
@@ -58,6 +60,7 @@ export async function deleteNotificationConfig(id: number): Promise<void> {
 	const res = await fetch(`${BASE_URL}/ifc-notification-configs/${Number(id)}`, {
 		method: 'DELETE',
 		headers: { accept: '*/*', ...authHeader() },
+		credentials: 'include',
 	});
 
 	if (!res.ok) {

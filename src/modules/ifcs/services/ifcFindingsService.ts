@@ -15,6 +15,7 @@ export async function listFindings(chartIds: number[], periodId: number): Promis
 	const res = await fetch(`${BASE_URL}/ifc-findings/list`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify({
 			chart_ids: chartIds.map(Number),
 			period_id: Number(periodId),
@@ -38,6 +39,7 @@ export async function getFindingDetail(id: number): Promise<FindingDetailPayload
 	const res = await fetch(`${BASE_URL}/ifc-findings/get-by-id/${id}`, {
 		method: 'GET',
 		headers: { accept: '*/*', ...authHeader() },
+		credentials: 'include',
 	});
 
 	const body = (await res.json().catch(() => null)) as Envelope<FindingDetailPayload> | null;
@@ -57,6 +59,7 @@ export async function patchFinding(id: number, payload: PatchFindingBody): Promi
 	const res = await fetch(`${BASE_URL}/ifc-findings/${id}`, {
 		method: 'PATCH',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify(payload),
 	});
 
@@ -72,6 +75,7 @@ export async function deleteFinding(id: number): Promise<void> {
 	const res = await fetch(`${BASE_URL}/ifc-findings/${id}`, {
 		method: 'DELETE',
 		headers: { accept: '*/*', ...authHeader() },
+		credentials: 'include',
 	});
 
 	const body = (await res.json().catch(() => null)) as Envelope<null> | null;

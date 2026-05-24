@@ -23,6 +23,7 @@ export async function listIFCs(chartIds: number[], periodId: number): Promise<IF
 	const res = await fetch(`${BASE_URL}/ifcs/list`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify({
 			chart_ids: chartIds.map(Number),
 			period_id: Number(periodId),
@@ -40,6 +41,7 @@ export async function getIFCView(id: number): Promise<IFCViewPayload> {
 	const res = await fetch(`${BASE_URL}/ifcs/get-by-id/${id}`, {
 		method: 'GET',
 		headers: { accept: '*/*', ...authHeader() },
+		credentials: 'include',
 	});
 
 	const body = (await res.json().catch(() => null)) as Envelope<IFCViewPayload> | null;
@@ -70,6 +72,7 @@ export async function submitIFC(id: number): Promise<SubmitResult> {
 	const res = await fetch(`${BASE_URL}/ifcs/${id}/submit`, {
 		method: 'POST',
 		headers: { accept: '*/*', ...authHeader() },
+		credentials: 'include',
 	});
 
 	const body = (await res.json().catch(() => null)) as Envelope<SubmitResult> | null;
@@ -97,6 +100,7 @@ export async function rejectIFC(id: number, comment: RejectIFCBody['comment']): 
 	const res = await fetch(`${BASE_URL}/ifcs/${id}/reject`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify({ comment }),
 	});
 
@@ -111,6 +115,7 @@ export async function getIFCPrefill(chartId: number, periodId: number): Promise<
 	const res = await fetch(url, {
 		method: 'GET',
 		headers: { accept: '*/*', ...authHeader() },
+		credentials: 'include',
 	});
 
 	const body = (await res.json().catch(() => null)) as Envelope<IFCPrefill> | null;
@@ -146,6 +151,7 @@ export async function createIFC(payload: CreateIFCBody): Promise<SubmitResult> {
 	const res = await fetch(`${BASE_URL}/ifcs/create`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify(payload),
 	});
 
@@ -163,6 +169,7 @@ export async function patchIFC(id: number, payload: PatchIFCBody): Promise<Submi
 	const res = await fetch(`${BASE_URL}/ifcs/${id}`, {
 		method: 'PATCH',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify(payload),
 	});
 
@@ -180,6 +187,7 @@ async function postNoBody(url: string, fallbackErrorKey: string): Promise<void> 
 	const res = await fetch(url, {
 		method: 'POST',
 		headers: { accept: '*/*', ...authHeader() },
+		credentials: 'include',
 	});
 
 	const body = (await res.json().catch(() => null)) as Envelope<unknown> | null;

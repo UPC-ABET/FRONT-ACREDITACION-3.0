@@ -22,17 +22,7 @@ export default function LayoutClient({ children }: LayoutClientProps) {
 	const [sessionExpiredOpen, setSessionExpiredOpen] = useState(false);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-	const getStoredToken = () => {
-		const raw = getAuthCookie('bearerToken');
-		if (!raw) return '';
-
-		try {
-			const parsed = JSON.parse(raw);
-			return typeof parsed === 'string' ? parsed : raw;
-		} catch {
-			return raw;
-		}
-	};
+	const hasSession = () => Boolean(getAuthCookie('token'));
 
 	const expireSession = () => {
 		clearClientSession();
@@ -60,7 +50,7 @@ export default function LayoutClient({ children }: LayoutClientProps) {
 		if (!mounted) return;
 		if (isSurveyPublicRoute) return;
 
-		const hasToken = Boolean(getStoredToken());
+		const hasToken = Boolean(hasSession());
 		setIsAuthenticated(hasToken);
 
 		if (hasToken && isAuthRoute) {

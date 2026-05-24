@@ -43,7 +43,7 @@ export default function LoginForm() {
 		setLoading(true);
 		try {
 			const res = await loginByCredentials(payload);
-			setAuthCookies(res.accessToken, res.user, schoolCode);
+			setAuthCookies(res.user, schoolCode, res.expiresIn);
 			window.location.replace('/');
 		} catch (err: any) {
 			const rawMessage = typeof err?.message === 'string' ? err.message : '';

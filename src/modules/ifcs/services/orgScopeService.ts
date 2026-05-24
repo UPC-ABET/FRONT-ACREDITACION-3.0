@@ -15,6 +15,7 @@ export async function getOrgScope(periodId: number): Promise<ScopeTree> {
 	const res = await fetch(`${BASE_URL}/org-scope/get-scope`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify({ period_id: periodId }),
 	});
 

@@ -25,6 +25,7 @@ export async function downloadStatusReport(
 			accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 			...authHeader(),
 		},
+		credentials: 'include',
 		body: JSON.stringify({
 			chart_ids: chartIds.map(Number),
 			period_id: Number(periodId),

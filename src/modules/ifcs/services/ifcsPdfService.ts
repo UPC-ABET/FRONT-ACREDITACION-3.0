@@ -20,6 +20,7 @@ export async function downloadIfcPdf(
 	const res = await fetch(`${BASE_URL}/ifcs/${ifcId}/pdf?lang=${lang}`, {
 		method: 'GET',
 		headers: { accept: 'application/pdf', ...authHeader() },
+		credentials: 'include',
 	});
 	if (!res.ok) throw new Error(await readErrorMessage(res, 'ifcs.pdf.error.downloadFailed'));
 	const blob = await res.blob();
@@ -39,6 +40,7 @@ export async function downloadIfcPdfBulk(
 			accept: 'application/zip',
 			...authHeader(),
 		},
+		credentials: 'include',
 		body: JSON.stringify({ ifc_ids: ifcIds.map(Number), lang }),
 	});
 	if (!res.ok) throw new Error(await readErrorMessage(res, 'ifcs.pdf.error.bulkFailed'));

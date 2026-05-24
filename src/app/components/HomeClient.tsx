@@ -11,7 +11,7 @@ export default function HomeClient() {
 	const [ready, setReady] = useState(false);
 
 	useEffect(() => {
-		const token = getAuthCookie('bearerToken');
+		const token = getAuthCookie('token');
 
 		if (!token) {
 			router.replace('/auth/login');

@@ -23,14 +23,12 @@ export function ChartContainer({
 	children: React.ReactElement;
 	className?: string;
 }) {
-	// Generamos los estilos inyectando las variables de color
-	const chartStyles = React.useMemo(() => {
-		return Object.entries(config)
-			.map(([key, value]) => {
-				if (!value.color) return null;
-				return `--color-${key}: ${value.color};`;
-			})
-			.join('\n');
+	const cssVars = React.useMemo(() => {
+		const vars: Record<string, string> = {};
+		for (const [key, value] of Object.entries(config)) {
+			if (value.color) vars[`--color-${key}`] = value.color;
+		}
+		return vars;
 	}, [config]);
 
 	const [isMounted, setIsMounted] = React.useState(false);
@@ -41,8 +39,7 @@ export function ChartContainer({
 
 	return (
 		<ChartContext.Provider value={{ config }}>
-			<style dangerouslySetInnerHTML={{ __html: `:root { ${chartStyles} }` }} />
-			<div className={`w-full ${className}`}>
+			<div className={`w-full ${className}`} style={cssVars}>
 				{isMounted ? (
 					<ResponsiveContainer width="100%" height="100%">
 						{children}

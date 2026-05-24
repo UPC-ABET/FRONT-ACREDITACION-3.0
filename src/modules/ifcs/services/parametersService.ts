@@ -24,6 +24,7 @@ export async function getParameterByCode<T>(code: string): Promise<T> {
 	const res = await fetch(`${BASE_URL}/parameters/get-by-filters`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify({ code }),
 	});
 

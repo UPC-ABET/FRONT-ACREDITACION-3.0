@@ -22,6 +22,7 @@ export async function getAcademicPeriodsByFilters(
 	const res = await fetch(`${BASE_URL}/academic-periods/get-by-filters`, {
 		method: 'POST',
 		headers: { accept: '*/*', 'Content-Type': 'application/json', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify(filters),
 	});
 

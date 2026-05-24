@@ -4,6 +4,7 @@ export type LoginResponse = {
 	data: {
 		user: unknown;
 		access_token: string;
+		expires_in: number;
 	};
 };
 

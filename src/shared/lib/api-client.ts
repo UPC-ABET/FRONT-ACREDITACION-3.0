@@ -21,8 +21,6 @@ type RequestJsonOptions = {
 	token?: string;
 };
 
-import { getAuthCookie } from './auth-cookies';
-
 const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 export const API_URL = RAW_API_URL.replace(/\/$/, '');
 
@@ -34,17 +32,7 @@ export const getApiBaseUrl = (): string => {
 };
 
 export function getToken(): string {
-	if (typeof window === 'undefined') return '';
-
-	const raw = getAuthCookie('bearerToken');
-	if (!raw) return '';
-
-	try {
-		const parsed = JSON.parse(raw);
-		return typeof parsed === 'string' ? parsed : raw;
-	} catch {
-		return raw;
-	}
+	return '';
 }
 
 export function authHeader(): Record<string, string> {
@@ -120,6 +108,7 @@ async function request<T>(
 	const res = await fetch(url, {
 		...init,
 		headers: mergedHeaders,
+		credentials: 'include',
 	});
 
 	if (!res.ok) {
@@ -192,6 +181,7 @@ export async function apiPostBlob(path: string, body: unknown): Promise<Blob> {
 	const res = await fetch(url, {
 		method: 'POST',
 		headers: buildHeaders(),
+		credentials: 'include',
 		body: JSON.stringify(body),
 	});
 
@@ -210,6 +200,7 @@ export const requestJson = async <T>(
 	const response = await fetch(joinUrl(path), {
 		method,
 		headers: buildHeaders(headers ?? {}, false, token),
+		credentials: 'include',
 		...(body !== undefined ? { body: JSON.stringify(body) } : {}),
 	});
 

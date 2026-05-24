@@ -1,16 +1,7 @@
-import { getAuthCookie } from '@/shared/lib'
-
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? ''
 
 function getToken(): string {
-  if (typeof window === 'undefined') return ''
-  try {
-    const raw = getAuthCookie('bearerToken')
-    if (!raw) return ''
-    return JSON.parse(raw) as string
-  } catch {
-    return ''
-  }
+  return ''
 }
 
 function buildHeaders(extra: Record<string, string> = {}): Record<string, string> {
@@ -27,6 +18,7 @@ export async function apiPost<T = unknown>(path: string, body: unknown): Promise
   const res = await fetch(`${BASE_URL}/${path}`, {
     method: 'POST',
     headers: buildHeaders(),
+    credentials: 'include',
     body: JSON.stringify(body),
   })
   if (!res.ok) {
@@ -40,6 +32,7 @@ export async function apiGet<T = unknown>(path: string): Promise<T> {
   const res = await fetch(`${BASE_URL}/${path}`, {
     method: 'GET',
     headers: buildHeaders(),
+    credentials: 'include',
   })
   if (!res.ok) {
     const text = await res.text().catch(() => res.statusText)
@@ -52,6 +45,7 @@ export async function apiDelete<T = unknown>(path: string, body?: unknown): Prom
   const res = await fetch(`${BASE_URL}/${path}`, {
     method: 'DELETE',
     headers: buildHeaders(),
+    credentials: 'include',
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   })
   if (!res.ok) {
@@ -65,6 +59,7 @@ export async function apiPostBlob(path: string, body: unknown): Promise<Blob> {
   const res = await fetch(`${BASE_URL}/${path}`, {
     method: 'POST',
     headers: buildHeaders(),
+    credentials: 'include',
     body: JSON.stringify(body),
   })
   if (!res.ok) {

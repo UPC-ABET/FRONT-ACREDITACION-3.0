@@ -1,25 +1,5 @@
-import { getAuthCookie } from './auth-cookies'
-
 export function getBearerToken(): string {
-  if (typeof window === 'undefined') return ''
-
-  try {
-    const raw = getAuthCookie('bearerToken')
-    if (!raw) return ''
-
-    try {
-      const parsed = JSON.parse(raw)
-      if (typeof parsed === 'string' && parsed.trim()) {
-        return parsed.replace(/"/g, '')
-      }
-    } catch {
-      // ignore JSON parse errors and fall back to raw value
-    }
-
-    return raw.replace(/"/g, '').trim()
-  } catch {
-    return ''
-  }
+  return ''
 }
 
 export function buildJsonHeaders(headers: HeadersInit = {}, includeAuth = true): HeadersInit {

@@ -16,7 +16,7 @@ function NotFoundPage() {
 	}, []);
 
 	const handleGoHome = () => {
-		const token = getAuthCookie('bearerToken');
+		const token = getAuthCookie('token');
 
 		if (token) {
 			router.push('/');

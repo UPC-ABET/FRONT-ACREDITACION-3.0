@@ -15,6 +15,7 @@ export async function getTypesByGroupCode(groupCode: string): Promise<Criticalit
 	const res = await fetch(`${BASE_URL}/types/by-group-code/${encodeURIComponent(groupCode)}`, {
 		method: 'GET',
 		headers: { accept: '*/*', ...authHeader() },
+		credentials: 'include',
 	});
 
 	const body = (await res.json().catch(() => null)) as Envelope<CriticalityOption[]> | null;

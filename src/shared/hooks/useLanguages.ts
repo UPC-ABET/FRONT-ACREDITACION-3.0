@@ -16,6 +16,7 @@ async function fetchLanguages(): Promise<string[]> {
 	const res = await fetch(`${baseUrl}/parameters/get-by-filters`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify({ code: PARAMETER_CODE }),
 	});
 

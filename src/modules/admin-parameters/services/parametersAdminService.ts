@@ -15,6 +15,7 @@ export async function getParameterByFilters<T>(code: string): Promise<ParameterR
 	const res = await fetch(`${BASE_URL}/parameters/get-by-filters`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify({ code }),
 	});
 
@@ -35,6 +36,7 @@ export async function updateParameter<T>(
 	const res = await fetch(`${BASE_URL}/parameters/update/${Number(id)}`, {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify(payload),
 	});
 

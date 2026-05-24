@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('bearerToken')?.value
+  const token = request.cookies.get('token')?.value
   const { pathname } = request.nextUrl
   const isAuthRoute = pathname.startsWith('/auth')
   const isPublicSurvey = pathname.startsWith('/survey')

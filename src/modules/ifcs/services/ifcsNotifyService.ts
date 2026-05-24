@@ -15,6 +15,7 @@ export async function notifyIfc(chartId: number, periodId: number): Promise<Noti
 	const res = await fetch(`${BASE_URL}/ifcs/notify`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify({ chart_id: Number(chartId), period_id: Number(periodId) }),
 	});
 
@@ -29,6 +30,7 @@ export async function notifyIfcAll(chartIds: number[], periodId: number): Promis
 	const res = await fetch(`${BASE_URL}/ifcs/notify-all`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
+		credentials: 'include',
 		body: JSON.stringify({
 			chart_ids: chartIds.map(Number),
 			period_id: Number(periodId),

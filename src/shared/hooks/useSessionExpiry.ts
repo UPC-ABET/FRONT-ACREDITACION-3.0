@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { getAuthCookie } from '@/shared/lib';
+import { getAuthCookie, getTokenExpiry } from '@/shared/lib';
 
 type UseSessionExpiryParams = {
 	enabled: boolean;
@@ -8,27 +8,6 @@ type UseSessionExpiryParams = {
 };
 
 const DEFAULT_IDLE_MS = 60 * 60 * 1000;
-
-function getStoredToken(): string {
-	const raw = getAuthCookie('bearerToken');
-	if (!raw) return '';
-	try {
-		return JSON.parse(raw) as string;
-	} catch {
-		return '';
-	}
-}
-
-function getJwtExpirationMs(token: string): number | null {
-	try {
-		const parts = token.split('.');
-		if (parts.length < 2) return null;
-		const payload = JSON.parse(atob(parts[1])) as { exp?: number };
-		return payload.exp ? payload.exp * 1000 : null;
-	} catch {
-		return null;
-	}
-}
 
 export function useSessionExpiry({
 	enabled,
@@ -40,8 +19,7 @@ export function useSessionExpiry({
 	useEffect(() => {
 		if (!enabled) return;
 
-		const token = getStoredToken();
-		if (!token) return;
+		if (!getAuthCookie('token')) return;
 
 		const runExpire = () => {
 			if (expiredRef.current) return;
@@ -69,7 +47,7 @@ export function useSessionExpiry({
 		);
 		resetInactivityTimer();
 
-		const expAt = getJwtExpirationMs(token);
+		const expAt = getTokenExpiry();
 		if (expAt) {
 			const remaining = expAt - Date.now();
 			if (remaining <= 0) {
@@ -80,7 +58,7 @@ export function useSessionExpiry({
 		}
 
 		const syncTimer = setInterval(() => {
-			if (!getStoredToken()) runExpire();
+			if (!getAuthCookie('token')) runExpire();
 		}, 5000);
 
 		return () => {

@@ -1,12 +1,12 @@
 import type { LoginPayload } from '@/shared/types';
-import { requestJson, getApiBaseUrl, getAuthCookie, clearAuthCookies } from '@/shared/lib';
+import { requestJson, getApiBaseUrl, clearAuthCookies } from '@/shared/lib';
 import type { LoginResponse, ForgotPasswordResponse } from '@/modules/auth/types';
 
 const USERS_BASE_PATH = '/users';
 
 export const loginByCredentials = async (
 	payload: LoginPayload,
-): Promise<{ accessToken: string; user: unknown }> => {
+): Promise<{ user: unknown; expiresIn: number }> => {
 	const { response, body } = await requestJson<LoginResponse>(
 		`${USERS_BASE_PATH}/login-by-credentials`,
 		{
@@ -24,19 +24,9 @@ export const loginByCredentials = async (
 	}
 
 	return {
-		accessToken: body.data.access_token,
 		user: body.data.user,
+		expiresIn: body.data.expires_in,
 	};
-};
-
-const getStoredToken = () => {
-	const raw = getAuthCookie('bearerToken');
-	if (!raw) return '';
-	try {
-		return JSON.parse(raw) as string;
-	} catch {
-		return '';
-	}
 };
 
 export const clearClientSession = () => {
@@ -45,11 +35,8 @@ export const clearClientSession = () => {
 };
 
 export const logoutUser = async (): Promise<void> => {
-	const token = getStoredToken();
-
 	await requestJson(`${USERS_BASE_PATH}/logout`, {
 		method: 'POST',
-		token,
 	});
 };
 
