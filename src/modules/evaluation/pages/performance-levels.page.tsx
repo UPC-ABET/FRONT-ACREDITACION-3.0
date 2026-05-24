@@ -63,16 +63,20 @@ const emptyForm: FormState = {
 	color: '#000000',
 };
 
+function round2(n: number) {
+	return Number(n.toFixed(2));
+}
+
 function formToDto(form: FormState): CreatePerformanceLevelDto {
 	return {
 		instrument_type_id: form.instrument_type_id,
 		academic_period_id: form.academic_period_id,
 		name: { es: form.name_es, en: form.name_en },
 		code: form.code,
-		unique_value: form.unique_value,
-		min_score: form.min_score,
-		max_score: form.max_score,
-		max_value: form.max_value,
+		unique_value: round2(form.unique_value),
+		min_score: round2(form.min_score),
+		max_score: round2(form.max_score),
+		max_value: round2(form.max_value),
 		extra: { color: form.color },
 	};
 }
@@ -143,7 +147,7 @@ function PerformanceLevelForm({
 			<Input
 				label="Valor único"
 				type="number"
-				step="any"
+				step="0.01"
 				value={form.unique_value}
 				onChange={set('unique_value')}
 				required
@@ -151,7 +155,7 @@ function PerformanceLevelForm({
 			<Input
 				label="Puntaje mínimo"
 				type="number"
-				step="any"
+				step="0.01"
 				value={form.min_score}
 				onChange={set('min_score')}
 				required
@@ -159,7 +163,7 @@ function PerformanceLevelForm({
 			<Input
 				label="Puntaje máximo"
 				type="number"
-				step="any"
+				step="0.01"
 				value={form.max_score}
 				onChange={set('max_score')}
 				required
@@ -167,7 +171,7 @@ function PerformanceLevelForm({
 			<Input
 				label="Valor máximo"
 				type="number"
-				step="any"
+				step="0.01"
 				value={form.max_value}
 				onChange={set('max_value')}
 				required
@@ -428,11 +432,11 @@ export function PerformanceLevelsPage() {
 											<span className="text-zinc-700">{acadPeriod?.code ?? '-'}</span>
 										</TableCell>
 										<TableCell>
-											<span className="text-zinc-700">{level.unique_value}</span>
+											<span className="text-zinc-700">{Number(level.unique_value).toFixed(2)}</span>
 										</TableCell>
 										<TableCell>
 											<span className="text-zinc-700">
-												{level.min_score} - {level.max_score} / {level.max_value}
+												{Number(level.min_score).toFixed(2)} - {Number(level.max_score).toFixed(2)} / {Number(level.max_value).toFixed(2)}
 											</span>
 										</TableCell>
 										<TableCell>
