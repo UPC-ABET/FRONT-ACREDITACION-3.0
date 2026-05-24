@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { InformationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Toggle } from '@/shared/components/ui'
@@ -41,6 +41,9 @@ interface ProjectRubricCapstoneTableProps {
   students: ProjectDetailsStudentResponse[]
   academicPeriodId: number | null
   evaluatorId: number
+  rubricId: number
+  qualifStatuses: Record<number, number | null>
+  nrNaTypeIds: Set<number>
 }
 
 export function ProjectRubricCapstoneTable({
@@ -49,6 +52,9 @@ export function ProjectRubricCapstoneTable({
   students,
   academicPeriodId,
   evaluatorId,
+  rubricId,
+  qualifStatuses,
+  nrNaTypeIds,
 }: ProjectRubricCapstoneTableProps) {
   const { t, locale } = useI18n()
   const { mutate: submitEvaluation, isPending } = useSubmitEvaluation()
@@ -105,13 +111,15 @@ export function ProjectRubricCapstoneTable({
       for (const c of q?.criterias ?? []) {
         result[c.id] = {}
         for (const st of students) {
-          const entry = c.scores.find((s) => s.student_id === st.student_id)
-          result[c.id][st.id] = entry ? entry.score : null
+          const entry = c.scores.find(
+            (s) => s.student_id === st.id && s.evaluator_id === evaluatorId,
+          )
+          result[c.id][st.id] = entry != null ? entry.score : null
         }
       }
     }
     return result
-  }, [outcomes, students, questionByOutcome])
+  }, [outcomes, students, questionByOutcome, evaluatorId])
 
   const initialDupSelections = useMemo<DupSelections>(() => {
     const result: DupSelections = {}
@@ -122,20 +130,28 @@ export function ProjectRubricCapstoneTable({
   const [selections, setSelections] = useState<Selections>(initialSelections)
   const [dupSelections, setDupSelections] = useState<DupSelections>(initialDupSelections)
 
+  // Sync when data arrives after mount (React Query stale-while-revalidate)
+  useEffect(() => { setSelections(initialSelections) }, [initialSelections])
+  useEffect(() => { setDupSelections(initialDupSelections) }, [initialDupSelections])
+
    // ── Validation ────────────────────────────────────────────────────────────
    const allFilled = useMemo(() => {
      if (!allCriteriaIds.length || !students.length) return false
+     for (const st of students) {
+       if (qualifStatuses[st.id] == null) return false
+     }
+     const gradedStudents = students.filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1))
      for (const cId of allCriteriaIds) {
        if (duplicateMode) {
-         if (dupSelections[cId] == null) return false
+         if (gradedStudents.length > 0 && dupSelections[cId] == null) return false
        } else {
-         for (const st of students) {
+         for (const st of gradedStudents) {
            if (selections[cId]?.[st.id] == null) return false
          }
        }
      }
      return true
-   }, [allCriteriaIds, students, duplicateMode, selections, dupSelections])
+   }, [allCriteriaIds, students, duplicateMode, selections, dupSelections, qualifStatuses, nrNaTypeIds])
 
    // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -155,28 +171,25 @@ export function ProjectRubricCapstoneTable({
      }))
 
     const handleSave = () => {
-      // Build a map: project_student_id → scores[]
       const studentScores = new Map<number, { rubric_question_criteria_id: number; score: number; commentaries: Record<string, string> }[]>()
 
-      for (const outcome of outcomes) {
-        const q = questionByOutcome.get(outcome.id)
-        for (const c of q?.criterias ?? []) {
-          if (duplicateMode) {
-            const selectedValue = dupSelections[c.id]
-            if (selectedValue == null) continue
-            for (const st of students) {
-              const existing = studentScores.get(st.id) ?? []
-              existing.push({ rubric_question_criteria_id: c.id, score: selectedValue, commentaries: {} })
-              studentScores.set(st.id, existing)
+      for (const st of students) {
+        const isNrNa = nrNaTypeIds.has(qualifStatuses[st.id] ?? -1)
+        for (const outcome of outcomes) {
+          const q = questionByOutcome.get(outcome.id)
+          for (const c of q?.criterias ?? []) {
+            let score: number | null
+            if (isNrNa) {
+              score = 0
+            } else if (duplicateMode) {
+              score = dupSelections[c.id] ?? null
+            } else {
+              score = selections[c.id]?.[st.id] ?? null
             }
-          } else {
-            for (const st of students) {
-              const val = selections[c.id]?.[st.id]
-              if (val == null) continue
-              const existing = studentScores.get(st.id) ?? []
-              existing.push({ rubric_question_criteria_id: c.id, score: val, commentaries: {} })
-              studentScores.set(st.id, existing)
-            }
+            if (score == null) continue
+            const existing = studentScores.get(st.id) ?? []
+            existing.push({ rubric_question_criteria_id: c.id, score, commentaries: {} })
+            studentScores.set(st.id, existing)
           }
         }
       }
@@ -185,8 +198,10 @@ export function ProjectRubricCapstoneTable({
         submitEvaluation({
           project_student_id: projectStudentId,
           project_evaluator_id: evaluatorId,
+          rubric_id: rubricId,
           observation: { es: '', en: '' },
           scores,
+          qualification_status_type_id: qualifStatuses[projectStudentId],
         } as any)
       }
     }
@@ -288,9 +303,11 @@ export function ProjectRubricCapstoneTable({
                           onChange={(val) => handleDupSelect(criteria.id, val)}
                         />
                       ) : (
-                        /* One row per student */
+                        /* One row per student (NR/NA hidden) */
                         <div className="flex flex-col gap-2">
-                          {students.map((st) => {
+                          {students
+                            .filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1))
+                            .map((st) => {
                             const current = selections[criteria.id]?.[st.id] ?? null
                             return (
                               <div key={st.id} className="flex flex-wrap items-center gap-2">

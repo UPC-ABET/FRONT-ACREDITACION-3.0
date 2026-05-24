@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, JSX } from 'react'
+import { useState, useMemo, useEffect, JSX } from 'react'
 import { InformationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Toggle } from '@/shared/components/ui'
 import { cn } from '@/shared/lib/utils'
@@ -50,12 +50,18 @@ interface ProjectRubricNonCapstoneTableProps {
   questions: RubricQuestionDetailsResponse[]
   students: ProjectDetailsStudentResponse[]
   evaluatorId: number
+  rubricId: number
+  qualifStatuses: Record<number, number | null>
+  nrNaTypeIds: Set<number>
 }
 
 export function ProjectRubricNonCapstoneTable({
   questions,
   students,
   evaluatorId,
+  rubricId,
+  qualifStatuses,
+  nrNaTypeIds,
 }: ProjectRubricNonCapstoneTableProps) {
   const { t, locale } = useI18n()
   const { mutate: submitEvaluation, isPending } = useSubmitEvaluation()
@@ -72,23 +78,24 @@ export function ProjectRubricNonCapstoneTable({
     for (const q of questions) {
       result[q.id] = {}
 
-      // 1. Find the single criteria that has scores (may be undefined if ungraded)
-      const scoredCriteria = q.criterias.find((c) => c.scores && c.scores.length > 0)
-
       students.forEach((st, stIdx) => {
-        if (!scoredCriteria) {
-          result[q.id][stIdx] = ''
-          return
+        // Each student has at most one graded criteria — search across all of them
+        let found = ''
+        for (const c of q.criterias) {
+          const entry = c.scores?.find(
+            (s) => s.student_id === st.id && s.evaluator_id === evaluatorId,
+          )
+          if (entry != null) {
+            found = String(entry.score)
+            break
+          }
         }
-
-        // 2. Find this student's entry inside that criteria
-        const entry = scoredCriteria.scores!.find((s) => s.student_id === st.id)
-        result[q.id][stIdx] = entry ? String(entry.score) : ''
+        result[q.id][stIdx] = found
       })
     }
 
     return result
-  }, [questions, students])
+  }, [questions, students, evaluatorId])
 
   const initialDupScores = useMemo<DupScores>(() => {
     const result: DupScores = {}
@@ -98,6 +105,8 @@ export function ProjectRubricNonCapstoneTable({
 
   const [scores, setScores] = useState<Scores>(initialScores)
   const [dupScores, setDupScores] = useState<DupScores>(initialDupScores)
+
+  useEffect(() => { setScores(initialScores) }, [initialScores])
 
   // ── Ranges per question ───────────────────────────────────────────────────
 
@@ -118,17 +127,22 @@ export function ProjectRubricNonCapstoneTable({
 
   const allFilled = useMemo(() => {
     if (!questions.length) return false
+    for (const st of students) {
+      if (qualifStatuses[st.id] == null) return false
+    }
+    const hasGraded = students.some((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1))
     for (const q of questions) {
       if (duplicateMode) {
-        if (!dupScores[q.id]?.trim()) return false
+        if (hasGraded && !dupScores[q.id]?.trim()) return false
       } else {
         for (let stIdx = 0; stIdx < students.length; stIdx++) {
+          if (nrNaTypeIds.has(qualifStatuses[students[stIdx].id] ?? -1)) continue
           if (!scores[q.id]?.[stIdx]?.trim()) return false
         }
       }
     }
     return true
-  }, [questions, students.length, duplicateMode, scores, dupScores])
+  }, [questions, students, duplicateMode, scores, dupScores, qualifStatuses, nrNaTypeIds])
 
   const hasErrors = useMemo(() => {
     for (const q of questions) {
@@ -170,48 +184,42 @@ export function ProjectRubricNonCapstoneTable({
     const studentPayloads = new Map<number, CriteriaScoreEntry[]>()
 
     for (const q of questions) {
+      // Lowest-range criteria used for NR/NA students (score 0)
+      const lowestCriteria = q.criterias.reduce((a, b) =>
+        parseFloat(a.min_value) <= parseFloat(b.min_value) ? a : b,
+      )
+
       if (duplicateMode) {
-        // ── Duplicate mode: same score → same matched criteria → all students ──
         const raw = dupScores[q.id]?.trim()
-        if (!raw) continue
-
-        const score = parseFloat(raw)
-        if (isNaN(score)) continue
-
-        const matchedCriteria = findMatchingCriteria(q, score)
-        if (!matchedCriteria) continue
+        const dupScore = raw ? parseFloat(raw) : NaN
+        const matchedCriteria = !isNaN(dupScore) ? findMatchingCriteria(q, dupScore) : undefined
 
         for (const st of students) {
-          if (st.id == null) continue
-
+          const isNrNa = nrNaTypeIds.has(qualifStatuses[st.id] ?? -1)
           const existing: CriteriaScoreEntry[] = studentPayloads.get(st.id) ?? []
-          existing.push({
-            rubric_question_criteria_id: matchedCriteria.id,
-            score,
-            commentaries: {},
-          })
+          if (isNrNa) {
+            existing.push({ rubric_question_criteria_id: lowestCriteria.id, score: 0, commentaries: {} })
+          } else {
+            if (!matchedCriteria || isNaN(dupScore)) continue
+            existing.push({ rubric_question_criteria_id: matchedCriteria.id, score: dupScore, commentaries: {} })
+          }
           studentPayloads.set(st.id, existing)
         }
       } else {
-        // ── Individual mode: each student may have a different score/criteria ──
         students.forEach((st, stIdx) => {
-          if (st.id == null) return
-
-          const raw = scores[q.id]?.[stIdx]?.trim()
-          if (!raw) return
-
-          const score = parseFloat(raw)
-          if (isNaN(score)) return
-
-          const matchedCriteria = findMatchingCriteria(q, score)
-          if (!matchedCriteria) return
-
+          const isNrNa = nrNaTypeIds.has(qualifStatuses[st.id] ?? -1)
           const existing: CriteriaScoreEntry[] = studentPayloads.get(st.id) ?? []
-          existing.push({
-            rubric_question_criteria_id: matchedCriteria.id,
-            score,
-            commentaries: {},
-          })
+          if (isNrNa) {
+            existing.push({ rubric_question_criteria_id: lowestCriteria.id, score: 0, commentaries: {} })
+          } else {
+            const raw = scores[q.id]?.[stIdx]?.trim()
+            if (!raw) return
+            const score = parseFloat(raw)
+            if (isNaN(score)) return
+            const matchedCriteria = findMatchingCriteria(q, score)
+            if (!matchedCriteria) return
+            existing.push({ rubric_question_criteria_id: matchedCriteria.id, score, commentaries: {} })
+          }
           studentPayloads.set(st.id, existing)
         })
       }
@@ -224,8 +232,10 @@ export function ProjectRubricNonCapstoneTable({
       submitEvaluation({
         project_student_id,
         project_evaluator_id: evaluatorId,
+        rubric_id: rubricId,
         observation: { es: '', en: '' },
         scores: criteriaScores,
+        qualification_status_type_id: qualifStatuses[project_student_id],
       } as any)
     }
   }
@@ -313,7 +323,10 @@ export function ProjectRubricNonCapstoneTable({
                       </div>
                     ) : (
                       <div className="flex flex-col items-center gap-3">
-                        {students.map((st, stIdx) => {
+                        {students
+                          .map((st, stIdx) => ({ st, stIdx }))
+                          .filter(({ st }) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1))
+                          .map(({ st, stIdx }) => {
                           const val = scores[q.id]?.[stIdx] ?? ''
                           return (
                             <div key={stIdx} className="flex items-center gap-2">
