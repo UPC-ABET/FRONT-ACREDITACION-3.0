@@ -1,4 +1,5 @@
 import { AcademicPeriodResponse } from './academic-period.response';
+import { TypeItemResponse } from './type-item.response';
 
 export type PerformanceLevelResponse = {
 	id: number;
@@ -15,4 +16,5 @@ export type PerformanceLevelResponse = {
 	max_score: string;
 	max_value: string;
 	academic_period: AcademicPeriodResponse;
+	instrument_type?: TypeItemResponse;
 };

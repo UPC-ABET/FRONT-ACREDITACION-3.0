@@ -8,4 +8,6 @@ export type PerformanceLevel = {
 	minValue: number;
 	/** Upper bound of the score range (from max_score) */
 	maxValue: number;
+	/** Optional hex color from extra.color (e.g. "#d12323"). Null when not set. */
+	color: string | null;
 };

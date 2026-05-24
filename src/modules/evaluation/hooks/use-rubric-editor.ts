@@ -84,6 +84,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				uniqueValue: level.unique_value != null ? Number(level.unique_value) : null,
 				minValue: level.min_score != null ? Number(level.min_score) : 0,
 				maxValue: level.max_score != null ? Number(level.max_score) : 0,
+				color: level.extra?.color ?? null,
 			}));
 
 			// ── Build lookup map for outcomes ────────────────────────────────────────
@@ -93,7 +94,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 			const allApiQuestions: any[] = data.questions ?? [];
 
 			const commissions = (data.commissions ?? []).map((commission: any) => {
-				const outcomeIdsList: number[] = commission.outcomeIds ?? commission.outcome_ids ?? [];
+				const outcomeIdsList: number[] = commission.outcomeIds ?? commission.outcome_ids ?? []
 				const outcomes = outcomeIdsList
 					.map((outcomeId: number) => {
 						const outcome = outcomesById.get(outcomeId);
