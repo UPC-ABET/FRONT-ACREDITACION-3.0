@@ -1,4 +1,8 @@
-import { LCFCManagementView } from '@/modules/surveys'
+import dynamic from 'next/dynamic';
+
+const LCFCManagementView = dynamic(() =>
+	import('@/modules/surveys').then((m) => m.LCFCManagementView),
+);
 
 export default function LCFCPage() {
   return <LCFCManagementView />

@@ -1,4 +1,8 @@
-import { GRAManagementView } from '@/modules/surveys'
+import dynamic from 'next/dynamic';
+
+const GRAManagementView = dynamic(() =>
+	import('@/modules/surveys').then((m) => m.GRAManagementView),
+);
 
 export default function GRAPage() {
   return <GRAManagementView />

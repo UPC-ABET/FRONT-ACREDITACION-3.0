@@ -1,4 +1,8 @@
-import { ProjectEvaluatePage } from '@/modules/evaluation/pages'
+import dynamic from 'next/dynamic';
+
+const ProjectEvaluatePage = dynamic(() =>
+	import('@/modules/evaluation/pages').then((m) => m.ProjectEvaluatePage),
+);
 
 interface Params {
   params: Promise<{ projectId: string }>

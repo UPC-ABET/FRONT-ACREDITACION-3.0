@@ -27,4 +27,3 @@ export * from './tests';
 export * from './core';
 export * from './evaluation';
 export * from './ifcs';
-export * from '../shared/components/errors';

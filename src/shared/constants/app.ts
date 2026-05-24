@@ -8,5 +8,4 @@ export const DEFAULT_USER_INITIALS = 'UA';
 
 export const STORAGE_KEYS = {
 	locale: 'app_locale',
-	sidebarOpen: 'sidebar_open',
 } as const;

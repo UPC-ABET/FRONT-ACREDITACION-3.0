@@ -1,5 +1,5 @@
-'use client';
+import dynamic from 'next/dynamic';
 
-import { IFCsPage } from '@/modules/ifcs';
+const IFCsPage = dynamic(() => import('@/modules/ifcs').then((m) => m.IFCsPage));
 
 export default IFCsPage;

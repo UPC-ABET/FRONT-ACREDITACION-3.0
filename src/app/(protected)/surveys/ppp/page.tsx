@@ -1,4 +1,8 @@
-import { PPPManagementView } from '@/modules/surveys'
+import dynamic from 'next/dynamic';
+
+const PPPManagementView = dynamic(() =>
+	import('@/modules/surveys').then((m) => m.PPPManagementView),
+);
 
 export default function PPPPage() {
   return <PPPManagementView />

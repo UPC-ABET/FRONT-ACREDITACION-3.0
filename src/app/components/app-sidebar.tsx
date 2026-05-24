@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarItem, SidebarNavGroup,
 } from '@/shared/components'
@@ -16,8 +16,7 @@ import {
   DocumentCheckIcon
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { logoutUser } from '@/modules/auth/services';
-import { getAuthCookie, clearAuthCookies } from '@/shared/lib';
+import { useIsAdmin, useLogout } from '@/shared/hooks';
 
 type NavChild = {
 	name: string;
@@ -33,33 +32,11 @@ type NavItem = {
 
 export function AppSidebar() {
 	const pathname = usePathname();
-	const router = useRouter();
 	const { t } = useI18n();
-
-	const [isAdmin] = useState(() => {
-		if (typeof window === 'undefined') return false;
-		try {
-			const raw = getAuthCookie('token');
-			const user = raw ? JSON.parse(raw) : null;
-			return user?.is_admin === true;
-		} catch {
-			return false;
-		}
-	});
+	const isAdmin = useIsAdmin();
+	const handleLogout = useLogout();
 
 	const isActive = (href?: string) => (href ? pathname === href : false);
-
-	const handleLogout = async () => {
-		try {
-			await logoutUser();
-		} catch {
-			// Silencia errores de logout para no bloquear el cierre de sesión local.
-		} finally {
-			clearAuthCookies();
-			sessionStorage.clear();
-			router.replace('/auth/login');
-		}
-	};
 
 	const navigation: NavItem[] = [
 		{ name: t('nav.home'), href: '/', icon: HomeIcon },

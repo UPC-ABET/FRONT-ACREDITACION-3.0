@@ -1,4 +1,8 @@
-import { RubricEditorPage } from '@/modules/evaluation/pages'
+import dynamic from 'next/dynamic';
+
+const RubricEditorPage = dynamic(() =>
+	import('@/modules/evaluation/pages').then((m) => m.RubricEditorPage),
+);
 
 interface Params {
   params: {
@@ -7,7 +11,6 @@ interface Params {
 }
 
 export default async function Page({ params }: Params) {
-  // Next.js may provide `params` as a Promise in some setups — await to unwrap
   const resolved = await params
   return <RubricEditorPage rubricId={resolved.rubricId} />
 }
