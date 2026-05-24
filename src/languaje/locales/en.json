@@ -504,7 +504,25 @@
       "createButton": "Create rubric",
       "loading": "Loading rubrics...",
       "error": "Rubrics could not be loaded.",
-      "empty": "No rubrics registered."
+      "empty": "No rubrics registered.",
+      "columns": {
+        "course": "Course",
+        "period": "Academic Period",
+        "gradeType": "Evaluation Type",
+        "rubricType": "Rubric Type",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "view": "View",
+        "delete": "Delete"
+      },
+      "deleteModal": {
+        "title": "Delete rubric?",
+        "body": "Are you sure you want to delete the rubric for \"{{course}}\"? This action cannot be undone.",
+        "confirm": "Delete",
+        "deleting": "Deleting..."
+      }
     },
     "editor": {
       "error": {

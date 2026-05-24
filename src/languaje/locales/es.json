@@ -504,7 +504,25 @@
 			"createButton": "Crear rúbrica",
 			"loading": "Cargando rúbricas...",
 			"error": "No fue posible cargar las rúbricas.",
-			"empty": "No hay rúbricas registradas."
+			"empty": "No hay rúbricas registradas.",
+			"columns": {
+				"course": "Curso",
+				"period": "Período Académico",
+				"gradeType": "Tipo de Evaluación",
+				"rubricType": "Tipo de Rúbrica",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"edit": "Editar",
+				"view": "Ver",
+				"delete": "Eliminar"
+			},
+			"deleteModal": {
+				"title": "¿Eliminar rúbrica?",
+				"body": "¿Estás seguro de que deseas eliminar la rúbrica de \"{{course}}\"? Esta acción no se puede deshacer.",
+				"confirm": "Eliminar",
+				"deleting": "Eliminando..."
+			}
 		},
 		"editor": {
 			"error": {
