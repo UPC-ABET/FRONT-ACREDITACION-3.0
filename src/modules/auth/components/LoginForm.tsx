@@ -78,7 +78,7 @@ export default function LoginForm() {
 
 				<div>
 					<Select
-						name="escuela"
+						name="school"
 						value={localizedSchools.find((s) => s.value === schoolCode) || null}
 						onChange={(_, v) => setSchoolCode((v as any)?.value || '')}
 						options={localizedSchools}

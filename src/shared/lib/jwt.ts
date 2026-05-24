@@ -17,7 +17,7 @@ export function getSchoolFromCookie(): Record<string, unknown> | null {
 	if (typeof window === 'undefined') return null;
 
 	try {
-		const raw = getAuthCookie('escuela');
+		const raw = getAuthCookie('school');
 		if (!raw) return null;
 		const parsed = JSON.parse(raw);
 		return typeof parsed === 'object' && parsed !== null ? parsed : null;

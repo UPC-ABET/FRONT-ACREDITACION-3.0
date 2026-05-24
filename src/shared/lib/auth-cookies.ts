@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
 
 const USER_KEY = 'token';
-const SCHOOL_KEY = 'escuela';
+const SCHOOL_KEY = 'school';
 const TOKEN_EXPIRY_KEY = 'tokenExpiry';
 
 const COOKIE_OPTIONS: Cookies.CookieAttributes = {
@@ -18,7 +18,7 @@ export function setAuthCookies(user: unknown, expiresIn: number): void {
 	Cookies.set(TOKEN_EXPIRY_KEY, String(expiresAtMs), { ...COOKIE_OPTIONS, expires: expiresDays });
 }
 
-export function getAuthCookie(key: 'token' | 'escuela'): string {
+export function getAuthCookie(key: 'token' | 'school'): string {
 	if (typeof window === 'undefined') return '';
 	return Cookies.get(key) ?? '';
 }
