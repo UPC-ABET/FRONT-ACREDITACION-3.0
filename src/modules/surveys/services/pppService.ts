@@ -1,4 +1,4 @@
-import { apiPost, apiGet, apiDelete, fileToBase64 } from './apiClient'
+import { apiPost, apiGet, apiDelete, fileToBase64 } from '@/shared/lib'
 import { getSurveyTypeId } from './academicService'
 import type {
   CompetenceConfig,

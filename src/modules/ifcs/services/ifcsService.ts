@@ -1,4 +1,4 @@
-import { authHeader } from '@/shared/lib';
+import { apiGet, apiPatch, apiPost } from '@/shared/lib';
 import type {
 	CreateIFCBody,
 	IFCPrefill,
@@ -9,8 +9,6 @@ import type {
 	SubmitResult,
 } from './types';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
-
 interface Envelope<T> {
 	code: number;
 	message: string;
@@ -18,69 +16,44 @@ interface Envelope<T> {
 }
 
 export async function listIFCs(chartIds: number[], periodId: number): Promise<IFCRow[]> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
-
-	const res = await fetch(`${BASE_URL}/ifcs/list`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
-		credentials: 'include',
-		body: JSON.stringify({
-			chart_ids: chartIds.map(Number),
-			period_id: Number(periodId),
-		}),
+	const envelope = await apiPost<Envelope<IFCRow[]>>('/ifcs/list', {
+		chart_ids: chartIds.map(Number),
+		period_id: Number(periodId),
 	});
-
-	const body = (await res.json().catch(() => null)) as Envelope<IFCRow[]> | null;
-	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.generic');
-	return body.data;
+	if (!envelope?.data) throw new Error('ifcs.error.generic');
+	return envelope.data;
 }
 
 export async function getIFCView(id: number): Promise<IFCViewPayload> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
+	const envelope = await apiGet<Envelope<IFCViewPayload>>(`/ifcs/get-by-id/${id}`);
+	if (!envelope?.data) throw new Error('ifcs.error.viewFailed');
 
-	const res = await fetch(`${BASE_URL}/ifcs/get-by-id/${id}`, {
-		method: 'GET',
-		headers: { accept: '*/*', ...authHeader() },
-		credentials: 'include',
-	});
-
-	const body = (await res.json().catch(() => null)) as Envelope<IFCViewPayload> | null;
-	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.viewFailed');
-
-	body.data.ifc.id = Number(body.data.ifc.id);
-	if (body.data.ifc.coordinator.user_id != null) {
-		body.data.ifc.coordinator.user_id = Number(body.data.ifc.coordinator.user_id);
+	envelope.data.ifc.id = Number(envelope.data.ifc.id);
+	if (envelope.data.ifc.coordinator.user_id != null) {
+		envelope.data.ifc.coordinator.user_id = Number(envelope.data.ifc.coordinator.user_id);
 	}
-	body.data.findings.forEach((f) => {
+	envelope.data.findings.forEach((f) => {
 		f.id = Number(f.id);
 		f.actions.forEach((a) => {
 			a.id = Number(a.id);
 		});
 	});
-	body.data.previous_actions = (body.data.previous_actions ?? []).map((p) => ({
+	envelope.data.previous_actions = (envelope.data.previous_actions ?? []).map((p) => ({
 		...p,
 		id: Number(p.id),
 		finding_action_id: Number(p.finding_action_id),
 		finding: { id: Number(p.finding.id), code: p.finding.code },
 	}));
-	return body.data;
+	return envelope.data;
 }
 
 export async function submitIFC(id: number): Promise<SubmitResult> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
+	const envelope = await apiPost<Envelope<SubmitResult>>(`/ifcs/${id}/submit`);
+	if (!envelope?.data) throw new Error('ifcs.error.submitFailed');
 
-	const res = await fetch(`${BASE_URL}/ifcs/${id}/submit`, {
-		method: 'POST',
-		headers: { accept: '*/*', ...authHeader() },
-		credentials: 'include',
-	});
-
-	const body = (await res.json().catch(() => null)) as Envelope<SubmitResult> | null;
-	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.submitFailed');
-
-	const n = body.data.notification;
+	const n = envelope.data.notification;
 	return {
-		id: Number(body.data.id),
+		id: Number(envelope.data.id),
 		notification: {
 			sent: Boolean(n?.sent),
 			recipients_count: Number(n?.recipients_count ?? 0),
@@ -91,42 +64,25 @@ export async function submitIFC(id: number): Promise<SubmitResult> {
 }
 
 export async function approveIFC(id: number): Promise<void> {
-	await postNoBody(`${BASE_URL}/ifcs/${id}/approve`, 'ifcs.error.approveFailed');
+	await apiPost(`/ifcs/${id}/approve`);
 }
 
 export async function rejectIFC(id: number, comment: RejectIFCBody['comment']): Promise<void> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
-
-	const res = await fetch(`${BASE_URL}/ifcs/${id}/reject`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
-		credentials: 'include',
-		body: JSON.stringify({ comment }),
-	});
-
-	const body = (await res.json().catch(() => null)) as Envelope<unknown> | null;
-	if (!res.ok) throw new Error(body?.message ?? 'ifcs.error.rejectFailed');
+	await apiPost(`/ifcs/${id}/reject`, { comment });
 }
 
 export async function getIFCPrefill(chartId: number, periodId: number): Promise<IFCPrefill> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
-
-	const url = `${BASE_URL}/ifcs/prefill?chart_id=${chartId}&period_id=${periodId}`;
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: { accept: '*/*', ...authHeader() },
-		credentials: 'include',
-	});
-
-	const body = (await res.json().catch(() => null)) as Envelope<IFCPrefill> | null;
-	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.prefillFailed');
-	body.data.previous_actions = (body.data.previous_actions ?? []).map((p) => ({
+	const envelope = await apiGet<Envelope<IFCPrefill>>(
+		`/ifcs/prefill?chart_id=${chartId}&period_id=${periodId}`,
+	);
+	if (!envelope?.data) throw new Error('ifcs.error.prefillFailed');
+	envelope.data.previous_actions = (envelope.data.previous_actions ?? []).map((p) => ({
 		...p,
 		id: Number(p.id),
 		finding_action_id: Number(p.finding_action_id),
 		finding: { id: Number(p.finding.id), code: p.finding.code },
 	}));
-	return body.data;
+	return envelope.data;
 }
 
 function parseSaveResult(data: {
@@ -146,50 +102,19 @@ function parseSaveResult(data: {
 }
 
 export async function createIFC(payload: CreateIFCBody): Promise<SubmitResult> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
-
-	const res = await fetch(`${BASE_URL}/ifcs/create`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
-		credentials: 'include',
-		body: JSON.stringify(payload),
-	});
-
-	const body = (await res.json().catch(() => null)) as Envelope<{
+	const envelope = await apiPost<Envelope<{
 		id: number;
 		notification?: SubmitResult['notification'];
-	}> | null;
-	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.createFailed');
-	return parseSaveResult(body.data);
+	}>>('/ifcs/create', payload);
+	if (!envelope?.data) throw new Error('ifcs.error.createFailed');
+	return parseSaveResult(envelope.data);
 }
 
 export async function patchIFC(id: number, payload: PatchIFCBody): Promise<SubmitResult> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
-
-	const res = await fetch(`${BASE_URL}/ifcs/${id}`, {
-		method: 'PATCH',
-		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
-		credentials: 'include',
-		body: JSON.stringify(payload),
-	});
-
-	const body = (await res.json().catch(() => null)) as Envelope<{
+	const envelope = await apiPatch<Envelope<{
 		id: number;
 		notification?: SubmitResult['notification'];
-	}> | null;
-	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'ifcs.error.patchFailed');
-	return parseSaveResult(body.data);
-}
-
-async function postNoBody(url: string, fallbackErrorKey: string): Promise<void> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
-
-	const res = await fetch(url, {
-		method: 'POST',
-		headers: { accept: '*/*', ...authHeader() },
-		credentials: 'include',
-	});
-
-	const body = (await res.json().catch(() => null)) as Envelope<unknown> | null;
-	if (!res.ok) throw new Error(body?.message ?? fallbackErrorKey);
+	}>>(`/ifcs/${id}`, payload);
+	if (!envelope?.data) throw new Error('ifcs.error.patchFailed');
+	return parseSaveResult(envelope.data);
 }

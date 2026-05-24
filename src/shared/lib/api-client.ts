@@ -147,6 +147,14 @@ export function apiPut<T = unknown>(path: string, body?: unknown, init?: Request
 	});
 }
 
+export function apiPatch<T = unknown>(path: string, body?: unknown, init?: RequestInit): Promise<T> {
+	return request<T>(path, {
+		method: 'PATCH',
+		body: body !== undefined ? JSON.stringify(body) : undefined,
+		...init,
+	});
+}
+
 export function apiDelete<T = unknown>(
 	path: string,
 	body?: unknown,

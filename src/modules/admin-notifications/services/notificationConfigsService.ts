@@ -1,7 +1,5 @@
-import { authHeader } from '@/shared/lib';
+import { apiGet, apiPost, apiDelete } from '@/shared/lib';
 import type { NotificationConfig, UpsertConfigBody } from './types';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 interface Envelope<T> {
 	code: number;
@@ -23,48 +21,26 @@ function normalizeConfig(c: NotificationConfig): NotificationConfig {
 }
 
 export async function listNotificationConfigs(periodId: number): Promise<NotificationConfig[]> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
+	const body = await apiGet<Envelope<NotificationConfig[]>>(
+		`/ifc-notification-configs/by-period?period_id=${Number(periodId)}`,
+	);
 
-	const url = `${BASE_URL}/ifc-notification-configs/by-period?period_id=${Number(periodId)}`;
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: { accept: '*/*', ...authHeader() },
-		credentials: 'include',
-	});
-
-	const body = (await res.json().catch(() => null)) as Envelope<NotificationConfig[]> | null;
-	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'admin.notify.error.listFailed');
+	if (!body?.data) throw new Error(body?.message ?? 'admin.notify.error.listFailed');
 	return body.data.map(normalizeConfig);
 }
 
 export async function upsertNotificationConfig(
 	payload: UpsertConfigBody,
 ): Promise<NotificationConfig> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
+	const body = await apiPost<Envelope<NotificationConfig>>(
+		'/ifc-notification-configs/upsert',
+		payload,
+	);
 
-	const res = await fetch(`${BASE_URL}/ifc-notification-configs/upsert`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
-		credentials: 'include',
-		body: JSON.stringify(payload),
-	});
-
-	const body = (await res.json().catch(() => null)) as Envelope<NotificationConfig> | null;
-	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'admin.notify.error.saveFailed');
+	if (!body?.data) throw new Error(body?.message ?? 'admin.notify.error.saveFailed');
 	return normalizeConfig(body.data);
 }
 
 export async function deleteNotificationConfig(id: number): Promise<void> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
-
-	const res = await fetch(`${BASE_URL}/ifc-notification-configs/${Number(id)}`, {
-		method: 'DELETE',
-		headers: { accept: '*/*', ...authHeader() },
-		credentials: 'include',
-	});
-
-	if (!res.ok) {
-		const body = (await res.json().catch(() => null)) as Envelope<unknown> | null;
-		throw new Error(body?.message ?? 'admin.notify.error.deleteFailed');
-	}
+	await apiDelete<Envelope<unknown>>(`/ifc-notification-configs/${Number(id)}`);
 }

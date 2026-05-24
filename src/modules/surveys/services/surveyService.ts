@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from './apiClient'
+import { apiGet, apiPost } from '@/shared/lib'
 import type {
   SurveyTokenVerification,
   SurveyOutcomesResponse,

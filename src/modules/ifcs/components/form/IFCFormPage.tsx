@@ -28,18 +28,19 @@ export function IFCFormPage({ mode }: Props) {
 				}
 			: { kind: 'edit', ifcId: Number(params?.id) };
 
-	const { data, loading, error } = useIFCFormBootstrap(bootstrapMode);
+	const { data, isLoading, error } = useIFCFormBootstrap(bootstrapMode);
 
-	if (loading) {
+	if (isLoading) {
 		return <LoadingDialog isOpen label={t('loading.default')} />;
 	}
 
 	if (error || !data) {
+		const errorMessage = error instanceof Error ? error.message : 'ifcs.error.bootstrapFailed';
 		return (
 			<ErrorDialog
 				isOpen
 				onClose={() => router.push('/ifcs')}
-				message={tryTranslate(t, error ?? 'ifcs.error.bootstrapFailed')}
+				message={tryTranslate(t, errorMessage)}
 			/>
 		);
 	}

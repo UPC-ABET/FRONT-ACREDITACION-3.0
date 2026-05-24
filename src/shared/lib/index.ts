@@ -18,7 +18,6 @@
 
 export {};
 export * from './api-client';
-export * from './api-request'
 export * from './jwt'
 export * from './utils'
 export * from './auth-cookies'

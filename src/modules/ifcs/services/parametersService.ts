@@ -1,7 +1,5 @@
-import { authHeader } from '@/shared/lib';
+import { apiPost } from '@/shared/lib';
 import type { I18nText } from './types';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 interface Envelope<T> {
 	code: number;
@@ -19,19 +17,12 @@ interface ParameterRow<T> {
 }
 
 export async function getParameterByCode<T>(code: string): Promise<T> {
-	if (!BASE_URL) throw new Error('app.missingApiUrl');
-
-	const res = await fetch(`${BASE_URL}/parameters/get-by-filters`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json', accept: '*/*', ...authHeader() },
-		credentials: 'include',
-		body: JSON.stringify({ code }),
+	const envelope = await apiPost<Envelope<Array<ParameterRow<T>>>>('/parameters/get-by-filters', {
+		code,
 	});
+	if (!envelope?.data) throw new Error('parameters.error.notFound');
 
-	const body = (await res.json().catch(() => null)) as Envelope<Array<ParameterRow<T>>> | null;
-	if (!res.ok || !body?.data) throw new Error(body?.message ?? 'parameters.error.notFound');
-
-	const row = body.data[0];
+	const row = envelope.data[0];
 	if (!row) throw new Error('parameters.error.notFound');
 	return row.value;
 }

@@ -53,7 +53,7 @@ export function IFCDashboard() {
 
 	const { scope, load: loadScope } = useOrgScope();
 	const { rows, load: loadList, setRows } = useIFCList();
-	const { types: statusTypes } = useStatusTypes();
+	const { data: statusTypes = [] } = useStatusTypes();
 	const { notifyOne, notifyMany, notifyingChartId, notifyingAll } = useIfcNotify();
 
 	const currentUserId = useMemo<number | null>(() => {

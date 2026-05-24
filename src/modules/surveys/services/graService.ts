@@ -5,7 +5,7 @@ import {
   apiPostBlob,
   triggerBlobDownload,
   fileToBase64,
-} from './apiClient'
+} from '@/shared/lib'
 import { getSurveyTypeId } from './academicService'
 import type {
   CompetenceConfig,

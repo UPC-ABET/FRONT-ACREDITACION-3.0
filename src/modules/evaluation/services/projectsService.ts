@@ -1,36 +1,19 @@
 import { ApiResponse } from "@/shared";
-import { buildJsonHeaders } from '@/shared/lib'
+import { apiGet, apiPost, apiPatch, apiDelete } from '@/shared/lib'
 import { FilterProjectDto } from '../api/dtos/request'
 import { ProjectByProfessorResponse, ProjectDetailsResponse, ProjectResponse } from '../api/dtos/response'
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
-
-async function request<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: buildJsonHeaders(options?.headers),
-    ...options,
-  })
-  if (!res.ok) throw new Error(`[${res.status}] ${res.statusText} — ${url}`)
-  return (res.json() as unknown) as T
-}
-
 export const projectsService = {
   create(body: Record<string, unknown>): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/projects/create`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    })
+    return apiPost('/projects/create', body)
   },
 
   createFull(body: Record<string, unknown>): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/projects/create-full`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    })
+    return apiPost('/projects/create-full', body)
   },
 
   getByEvaluator(evaluatorId: string | number): Promise<ApiResponse<any[]>> {
-    return request(`${BASE_URL}/projects/evaluator/${evaluatorId}`)
+    return apiGet(`/projects/evaluator/${evaluatorId}`)
   },
 
   getByProfessor(
@@ -46,11 +29,11 @@ export const projectsService = {
     if (params?.schoolId != null) qs.set('schoolId', String(params.schoolId))
     if (params?.gradeTypeId != null) qs.set('gradeTypeId', String(params.gradeTypeId))
     const query = qs.toString()
-    return request(`${BASE_URL}/projects/professor/${professorId}${query ? `?${query}` : ''}`)
+    return apiGet(`/projects/professor/${professorId}${query ? `?${query}` : ''}`)
   },
 
   getById(projectId: string | number): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/projects/project/${projectId}`)
+    return apiGet(`/projects/project/${projectId}`)
   },
 
   getDetails(
@@ -65,7 +48,7 @@ export const projectsService = {
     if (params?.isEvaluationMode) qs.set('is_evaluation_mode', String(params.isEvaluationMode))
     if (params?.gradeTypeId != null) qs.set('grade_type_id', String(params.gradeTypeId))
     if (params?.rubricTypeId != null) qs.set('rubric_type_id', String(params.rubricTypeId))
-    return request(`${BASE_URL}/projects/project/${projectId}?${qs.toString()}`)
+    return apiGet(`/projects/project/${projectId}?${qs.toString()}`)
   },
 
   update(
@@ -77,35 +60,26 @@ export const projectsService = {
       is_active?: boolean
     },
   ): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/projects/update/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(body),
-    })
+    return apiPatch(`/projects/update/${id}`, body)
   },
 
   delete(id: string | number): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/projects/delete/${id}`, { method: 'DELETE' })
+    return apiDelete(`/projects/delete/${id}`)
   },
 
   getAll(): Promise<ApiResponse<any[]>> {
-    return request(`${BASE_URL}/projects/get-all`)
+    return apiGet('/projects/get-all')
   },
 
   getByFilters(filters: FilterProjectDto = {}): Promise<ApiResponse<ProjectResponse[]>> {
-    return request(`${BASE_URL}/projects/get-by-filters`, {
-      method: 'POST',
-      body: JSON.stringify(filters),
-    })
+    return apiPost('/projects/get-by-filters', filters)
   },
 
   addStudents(
     projectId: string | number,
     studentSectionEnrollmentIds: number[],
   ): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/projects/project/${projectId}/students`, {
-      method: 'POST',
-      body: JSON.stringify({ student_section_enrollment_ids: studentSectionEnrollmentIds }),
-    })
+    return apiPost(`/projects/project/${projectId}/students`, { student_section_enrollment_ids: studentSectionEnrollmentIds })
   },
 
   createStudent(body: {
@@ -113,32 +87,22 @@ export const projectsService = {
     student_section_enrollment_id: number
     is_active: true
   }): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/project-students/create`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    })
+    return apiPost('/project-students/create', body)
   },
 
   removeStudent(projectStudentId: number): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/project-students/delete/${projectStudentId}`, {
-      method: 'DELETE',
-    })
+    return apiDelete(`/project-students/delete/${projectStudentId}`)
   },
 
   addEvaluators(
     projectId: string | number,
     professorIds: number[],
   ): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/projects/project/${projectId}/evaluators`, {
-      method: 'POST',
-      body: JSON.stringify({ evaluator_professor_ids: professorIds }),
-    })
+    return apiPost(`/projects/project/${projectId}/evaluators`, { evaluator_professor_ids: professorIds })
   },
 
   removeEvaluator(projectEvaluatorId: number): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/project-evaluators/delete/${projectEvaluatorId}`, {
-      method: 'DELETE',
-    })
+    return apiDelete(`/project-evaluators/delete/${projectEvaluatorId}`)
   },
 
   createEvaluator(body: {
@@ -147,9 +111,6 @@ export const projectsService = {
     evaluator_type_id: number
     is_active: true
   }): Promise<ApiResponse<any>> {
-    return request(`${BASE_URL}/project-evaluators/create`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    })
+    return apiPost('/project-evaluators/create', body)
   },
 }

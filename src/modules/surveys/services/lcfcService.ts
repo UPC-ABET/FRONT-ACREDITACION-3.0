@@ -1,4 +1,4 @@
-import { apiPost, apiGet } from './apiClient'
+import { apiPost, apiGet } from '@/shared/lib'
 import type {
   LCFCCourse,
   LCFCNotificationSendRequest,

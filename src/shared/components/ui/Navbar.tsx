@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useSyncExternalStore } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
 import { getAuthCookie } from '@/shared/lib';
@@ -160,7 +161,17 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 		() => '',
 	);
 
-	const [modalityOptions, setModalityOptions] = useState<CriticalityOption[]>([]);
+	const { data: modalityOptions = [] } = useQuery({
+		queryKey: ['types', TYPE_GROUP_CODES.PROGRAM_MODALITY],
+		queryFn: () => getTypesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY),
+		staleTime: Infinity,
+	});
+
+	useEffect(() => {
+		if (modalityOptions.length > 0 && modalityTypeId === null) {
+			setModalityTypeId(modalityOptions[0].id);
+		}
+	}, [modalityOptions, modalityTypeId, setModalityTypeId]);
 
 	const storedUser = useMemo<StoredUser | null>(() => {
 		if (!storedUserRaw) return null;
@@ -179,25 +190,6 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 			return storedSchoolCodeRaw;
 		}
 	}, [storedSchoolCodeRaw]);
-
-	useEffect(() => {
-		let active = true;
-		getTypesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY)
-			.then((rows) => {
-				if (!active) return;
-				setModalityOptions(rows);
-				if (rows.length > 0 && modalityTypeId === null) {
-					setModalityTypeId(rows[0].id);
-				}
-			})
-			.catch(() => {
-				if (active) setModalityOptions([]);
-			});
-		return () => {
-			active = false;
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	const pillOptions = useMemo(
 		() =>

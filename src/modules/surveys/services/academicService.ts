@@ -1,4 +1,4 @@
-import { apiGet } from './apiClient'
+import { apiGet } from '@/shared/lib'
 import type { AcademicPeriod, Program } from '../types'
 
 // ─── Shared helpers ───────────────────────────────────────────────────────────
