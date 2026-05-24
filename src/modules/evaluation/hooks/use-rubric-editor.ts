@@ -84,6 +84,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				uniqueValue: level.unique_value != null ? Number(level.unique_value) : null,
 				minValue: level.min_score != null ? Number(level.min_score) : 0,
 				maxValue: level.max_score != null ? Number(level.max_score) : 0,
+				color: level.extra?.color ?? null,
 			}));
 
 			// ── Build lookup map for outcomes ────────────────────────────────────────
