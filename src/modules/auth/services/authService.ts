@@ -1,5 +1,5 @@
 import type { LoginPayload } from '@/shared/types';
-import { requestJson, getApiBaseUrl, clearAuthCookies } from '@/shared/lib';
+import { requestJson, getApiBaseUrl, clearAuthCookies, ApiError } from '@/shared/lib';
 import type { LoginResponse, ForgotPasswordResponse } from '@/modules/auth/types';
 
 const USERS_BASE_PATH = '/users';
@@ -20,7 +20,7 @@ export const loginByCredentials = async (
 	);
 
 	if (!response.ok || !body?.data?.access_token) {
-		throw new Error(body?.message);
+		throw new ApiError(body?.message ?? 'auth.error.loginFailed', response.status);
 	}
 
 	return {
@@ -42,7 +42,7 @@ export const logoutUser = async (): Promise<void> => {
 
 export const getMicrosoftLoginUrl = (school_code: string): string => {
 	if (!school_code) {
-		throw new Error('login.error.schoolRequired');
+		throw new ApiError('login.error.schoolRequired');
 	}
 
 	return `${getApiBaseUrl()}/auth/microsoft?school_code=${encodeURIComponent(school_code)}`;
@@ -55,7 +55,7 @@ export const requestForgotPassword = async (email: string): Promise<string> => {
 	});
 
 	if (!response.ok) {
-		throw new Error(body?.message);
+		throw new ApiError(body?.message ?? 'auth.error.forgotPasswordFailed', response.status);
 	}
 
 	return body?.data?.message ?? body?.message ?? '';
@@ -70,13 +70,13 @@ export const requestResetPassword = async (
 	await new Promise((resolve) => setTimeout(resolve, 500));
 
 	if (!token) {
-		throw new Error('resetPassword.error.invalidToken');
+		throw new ApiError('resetPassword.error.invalidToken');
 	}
 	if (password.length < 8) {
-		throw new Error('resetPassword.error.passwordMinLength');
+		throw new ApiError('resetPassword.error.passwordMinLength');
 	}
 	if (password !== confirmPassword) {
-		throw new Error('resetPassword.error.passwordMismatch');
+		throw new ApiError('resetPassword.error.passwordMismatch');
 	}
 
 	return 'resetPassword.success.defaultMessage';

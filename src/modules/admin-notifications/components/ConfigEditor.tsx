@@ -8,6 +8,7 @@ import {
 	UsersIcon,
 } from '@heroicons/react/24/outline';
 import { Button, I18nTextField, Toggle } from '@/shared/components';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { useI18n } from '@/providers';
 import type { I18nText } from '@/modules/ifcs/services/types';
 import {
@@ -151,8 +152,7 @@ export function ConfigEditor({
 			onSuccess(t('admin.notify.toast.saved'));
 			onSaved();
 		} catch (e) {
-			const msg = e instanceof Error ? e.message : 'admin.notify.error.saveFailed';
-			onError(msg);
+			onError(getErrorMessage(e, 'admin.notify.error.saveFailed'));
 		} finally {
 			setSaving(false);
 		}
@@ -166,8 +166,7 @@ export function ConfigEditor({
 			onSuccess(t('admin.notify.toast.deleted'));
 			onSaved();
 		} catch (e) {
-			const msg = e instanceof Error ? e.message : 'admin.notify.error.deleteFailed';
-			onError(msg);
+			onError(getErrorMessage(e, 'admin.notify.error.deleteFailed'));
 		} finally {
 			setSaving(false);
 			setConfirmDelete(false);

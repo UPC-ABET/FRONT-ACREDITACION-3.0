@@ -5,6 +5,7 @@ import {
   apiPostBlob,
   triggerBlobDownload,
   fileToBase64,
+  ApiError,
 } from '@/shared/lib'
 import { getSurveyTypeId } from './academicService'
 import type {
@@ -259,7 +260,7 @@ export async function saveGRAEmailTemplate(template: {
 // ─── Excel template & upload ───────────────────────────────────────────────
 
 export async function downloadGRATemplate(_idPeriodoAcademico: number): Promise<void> {
-  throw new Error('La descarga de plantilla GRA no está disponible en esta versión del backend.')
+  throw new ApiError('La descarga de plantilla GRA no está disponible en esta versión del backend.')
 }
 
 export async function uploadGRAMassive(file: File, _escuelaActual?: unknown): Promise<void> {

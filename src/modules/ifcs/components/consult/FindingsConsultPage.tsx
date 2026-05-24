@@ -7,8 +7,9 @@ import {
 	InboxIcon,
 	MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Card, ErrorDialog, LoadingDialog, SuccessDialog } from '@/shared/components';
+import { Button, Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { TYPE_CODES } from '../../constants';
 import { useFindingsList, useOrgScope } from '../../hooks';
 import { deleteFinding } from '../../services/ifcFindingsService';
@@ -104,8 +105,7 @@ export function FindingsConsultPage() {
 			setDeleteTarget(null);
 			await refetch();
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'ifcFindings.error.deleteFailed';
-			setErrorMsg(message);
+			setErrorMsg(getErrorMessage(e, 'ifcFindings.error.deleteFailed'));
 		} finally {
 			setSubmitting(false);
 		}
@@ -165,7 +165,7 @@ export function FindingsConsultPage() {
 			/>
 
 			{submitting && <LoadingDialog isOpen label={t('loading.default')} />}
-			{errorMsg && <ErrorDialog isOpen onClose={() => setErrorMsg(null)} message={t(errorMsg)} />}
+			{errorMsg && <Toast isOpen type="error" onClose={() => setErrorMsg(null)} message={t(errorMsg)} />}
 			{successMsg && (
 				<SuccessDialog isOpen onClose={() => setSuccessMsg(null)} message={successMsg} />
 			)}

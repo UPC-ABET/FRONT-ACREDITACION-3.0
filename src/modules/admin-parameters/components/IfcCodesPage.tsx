@@ -2,16 +2,12 @@
 
 import { useState } from 'react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { Card, ErrorDialog, LoadingDialog, SuccessDialog } from '@/shared/components';
+import { Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils/try-translate';
 import { useParameter } from '../hooks/useParameter';
 import { PARAM_CODES, type ParameterRow } from '../services/types';
 import { PrefixParameterCard } from './PrefixParameterCard';
-
-function tryTranslate(t: (k: string) => string, key: string) {
-	const translated = t(key);
-	return translated === key ? key : translated;
-}
 
 export function IfcCodesPage() {
 	const { t } = useI18n();
@@ -75,8 +71,9 @@ export function IfcCodesPage() {
 				)}
 
 				{errorMsg && (
-					<ErrorDialog
+					<Toast
 						isOpen
+						type="error"
 						onClose={() => setErrorMsg(null)}
 						message={tryTranslate(t, errorMsg)}
 					/>

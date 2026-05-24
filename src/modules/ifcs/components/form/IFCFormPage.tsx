@@ -3,13 +3,10 @@
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ErrorDialog, LoadingDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { getErrorMessage } from '@/shared/lib/api-error';
+import { tryTranslate } from '@/shared/utils/try-translate';
 import { useIFCFormBootstrap, type IFCFormMode } from '../../hooks/useIFCFormBootstrap';
 import { IFCForm } from './IFCForm';
-
-function tryTranslate(t: (k: string) => string, key: string) {
-	const translated = t(key);
-	return translated === key ? key : translated;
-}
 
 type Props = { mode: 'create' | 'edit' };
 
@@ -35,7 +32,7 @@ export function IFCFormPage({ mode }: Props) {
 	}
 
 	if (error || !data) {
-		const errorMessage = error instanceof Error ? error.message : 'ifcs.error.bootstrapFailed';
+		const errorMessage = getErrorMessage(error, 'ifcs.error.bootstrapFailed');
 		return (
 			<ErrorDialog
 				isOpen

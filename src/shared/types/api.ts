@@ -10,12 +10,6 @@ export type ApiEnvelope<T> = {
 	message?: string;
 };
 
-export type ApiError = {
-	message: string;
-	code?: string;
-	details?: string[];
-};
-
 export type Pagination = {
 	page: number;
 	pageSize: number;

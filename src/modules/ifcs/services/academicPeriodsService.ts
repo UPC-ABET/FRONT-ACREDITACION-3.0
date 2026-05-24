@@ -1,4 +1,4 @@
-import { apiPost } from '@/shared/lib';
+import { apiPost, ApiError } from '@/shared/lib';
 import type { AcademicPeriod } from './types';
 
 interface Envelope<T> {
@@ -19,7 +19,7 @@ export async function getAcademicPeriodsByFilters(
 		'/academic-periods/get-by-filters',
 		filters,
 	);
-	if (!envelope?.data) throw new Error('academicPeriods.error.generic');
+	if (!envelope?.data) throw new ApiError('academicPeriods.error.generic');
 
 	// Newest period first (codes like "202502" sort lexicographically).
 	return envelope.data.slice().sort((a, b) => b.code.localeCompare(a.code));

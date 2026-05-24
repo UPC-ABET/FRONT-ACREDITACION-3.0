@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiDelete } from '@/shared/lib';
+import { apiGet, apiPost, apiDelete, ApiError } from '@/shared/lib';
 import type { NotificationConfig, UpsertConfigBody } from './types';
 
 interface Envelope<T> {
@@ -25,7 +25,7 @@ export async function listNotificationConfigs(periodId: number): Promise<Notific
 		`/ifc-notification-configs/by-period?period_id=${Number(periodId)}`,
 	);
 
-	if (!body?.data) throw new Error(body?.message ?? 'admin.notify.error.listFailed');
+	if (!body?.data) throw new ApiError(body?.message ?? 'admin.notify.error.listFailed');
 	return body.data.map(normalizeConfig);
 }
 
@@ -37,7 +37,7 @@ export async function upsertNotificationConfig(
 		payload,
 	);
 
-	if (!body?.data) throw new Error(body?.message ?? 'admin.notify.error.saveFailed');
+	if (!body?.data) throw new ApiError(body?.message ?? 'admin.notify.error.saveFailed');
 	return normalizeConfig(body.data);
 }
 

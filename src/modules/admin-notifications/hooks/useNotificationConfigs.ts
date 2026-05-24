@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { getParameterByCode, getTypesByGroupCode } from '@/modules/ifcs/services';
 import { listNotificationConfigs } from '../services/notificationConfigsService';
 import type { CoreType, NotificationConfig, NotifyVar } from '../services/types';
@@ -41,8 +42,7 @@ export function useNotificationConfigs(periodId: number | null) {
 				chartLevels,
 			});
 		} catch (e) {
-			const msg = e instanceof Error ? e.message : 'admin.notify.error.listFailed';
-			setError(msg);
+			setError(getErrorMessage(e, 'admin.notify.error.listFailed'));
 		} finally {
 			setLoading(false);
 		}

@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { useI18n } from '@/providers';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { triggerBrowserDownload } from '@/shared/utils';
 import { downloadIfcPdf, downloadIfcPdfBulk } from '../services/ifcsPdfService';
 
@@ -19,8 +20,7 @@ export function usePdfDownload() {
 				const { blob, filename } = await downloadIfcPdf(ifcId, locale as 'es' | 'en');
 				triggerBrowserDownload(blob, filename);
 			} catch (e: unknown) {
-				const msg = e instanceof Error ? e.message : 'ifcs.pdf.error.downloadFailed';
-				setError(msg);
+				setError(getErrorMessage(e, 'ifcs.pdf.error.downloadFailed'));
 			} finally {
 				setDownloadingId(null);
 			}
@@ -37,8 +37,7 @@ export function usePdfDownload() {
 				const { blob, filename } = await downloadIfcPdfBulk(ifcIds, locale as 'es' | 'en');
 				triggerBrowserDownload(blob, filename);
 			} catch (e: unknown) {
-				const msg = e instanceof Error ? e.message : 'ifcs.pdf.error.bulkFailed';
-				setError(msg);
+				setError(getErrorMessage(e, 'ifcs.pdf.error.bulkFailed'));
 			} finally {
 				setDownloadingAll(false);
 			}

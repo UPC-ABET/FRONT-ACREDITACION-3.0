@@ -1,4 +1,4 @@
-import { apiPost } from '@/shared/lib';
+import { apiPost, ApiError } from '@/shared/lib';
 import type { NotifyAllResult, NotifyResult } from './types';
 
 interface Envelope<T> {
@@ -12,7 +12,7 @@ export async function notifyIfc(chartId: number, periodId: number): Promise<Noti
 		chart_id: Number(chartId),
 		period_id: Number(periodId),
 	});
-	if (!envelope?.data) throw new Error('ifcs.notify.error.generic');
+	if (!envelope?.data) throw new ApiError('ifcs.notify.error.generic');
 	return envelope.data;
 }
 
@@ -21,7 +21,7 @@ export async function notifyIfcAll(chartIds: number[], periodId: number): Promis
 		chart_ids: chartIds.map(Number),
 		period_id: Number(periodId),
 	});
-	if (!envelope?.data) throw new Error('ifcs.notify.error.generic');
+	if (!envelope?.data) throw new ApiError('ifcs.notify.error.generic');
 	return {
 		sent: envelope.data.sent.map(Number),
 		skipped: envelope.data.skipped.map(Number),

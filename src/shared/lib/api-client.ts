@@ -4,6 +4,8 @@
  * Cliente HTTP base compartido para toda la app.
  */
 
+import { ApiError } from './api-error';
+
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export { triggerFileDownload, triggerBlobDownload, fileToBase64 } from '@/shared/lib/file-download';
@@ -123,11 +125,7 @@ async function request<T>(
 		const message =
 			(errorBody as { message?: string } | null)?.message ?? `${res.status} ${res.statusText}`;
 
-		const err = new Error(message) as Error & { status?: number; body?: unknown };
-		err.status = res.status;
-		err.body = errorBody;
-
-		throw err;
+		throw new ApiError(message, res.status, errorBody);
 	}
 
 	return parseBody<T>(res);
@@ -201,7 +199,7 @@ export async function apiPostBlob(path: string, body: unknown): Promise<Blob> {
 
 	if (!res.ok) {
 		const text = await res.text().catch(() => res.statusText);
-		throw new Error(text || `HTTP ${res.status}`);
+		throw new ApiError(text || `HTTP ${res.status}`, res.status);
 	}
 
 	return res.blob();

@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { useI18n } from '@/providers';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { triggerBrowserDownload } from '@/shared/utils';
 import { downloadStatusReport } from '../services/ifcsStatusReportService';
 
@@ -23,8 +24,7 @@ export function useStatusReportDownload() {
 				);
 				triggerBrowserDownload(blob, filename);
 			} catch (e: unknown) {
-				const msg = e instanceof Error ? e.message : 'ifcs.statusReport.error.downloadFailed';
-				setError(msg);
+				setError(getErrorMessage(e, 'ifcs.statusReport.error.downloadFailed'));
 			} finally {
 				setDownloading(false);
 			}

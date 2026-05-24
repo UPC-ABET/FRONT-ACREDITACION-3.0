@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { getIFCView } from '../services/ifcsService';
 import type { IFCViewPayload } from '../services/types';
 
@@ -16,8 +17,7 @@ export function useIFCView(id: number) {
 			const payload = await getIFCView(id);
 			setData(payload);
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'ifcs.error.viewFailed';
-			setError(message);
+			setError(getErrorMessage(e, 'ifcs.error.viewFailed'));
 			setData(null);
 		} finally {
 			setLoading(false);

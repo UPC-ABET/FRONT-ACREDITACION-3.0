@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from '@/shared/lib'
+import { apiGet, apiPost, ApiError } from '@/shared/lib'
 import type {
   SurveyTokenVerification,
   SurveyOutcomesResponse,
@@ -130,7 +130,7 @@ export async function verifyLCFCSurveyToken(
     const res = await apiGet<{ success: boolean; resource?: BackendTokenValidation }>(
       `lcfc/notificacion/escuela/${encodeURIComponent(_escuela)}/token/${encodeURIComponent(token)}`
     )
-    if (!res.resource) throw new Error('Token inválido o expirado')
+    if (!res.resource) throw new ApiError('Token inválido o expirado')
     return adaptTokenVerification(res.resource, token)
   }
 }
@@ -170,7 +170,7 @@ export async function getLCFCSurveyOutcomes(
     success: boolean
     data?: { resource?: SurveyOutcomesResponse }
   }>(url)
-  if (!res.data?.resource) throw new Error('No se pudieron obtener los outcomes')
+  if (!res.data?.resource) throw new ApiError('No se pudieron obtener los outcomes')
   return res.data.resource
 }
 

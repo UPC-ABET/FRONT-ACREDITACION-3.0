@@ -1,4 +1,4 @@
-import { apiPost, apiGet } from '@/shared/lib'
+import { apiPost, apiGet, ApiError } from '@/shared/lib'
 import type {
   LCFCCourse,
   LCFCNotificationSendRequest,
@@ -72,7 +72,7 @@ export async function generateLCFCConfiguration(
 }
 
 export async function cloneLCFCConfiguration(_idPeriodoOrigen: number, _idPeriodoDestino: number): Promise<void> {
-  throw new Error('La clonación de configuración LCFC no está disponible en esta versión del backend.')
+  throw new ApiError('La clonación de configuración LCFC no está disponible en esta versión del backend.')
 }
 
 export async function changeLCFCConfigStatus(
@@ -110,11 +110,11 @@ export async function getLCFCEmailParams(): Promise<Array<{ nombre: string; desc
 // ─── Excel template & upload ───────────────────────────────────────────────
 
 export async function downloadLCFCTemplate(_idPeriodoAcademico: number): Promise<void> {
-  throw new Error('La descarga de plantilla LCFC no está disponible en esta versión del backend.')
+  throw new ApiError('La descarga de plantilla LCFC no está disponible en esta versión del backend.')
 }
 
 export async function uploadLCFCMassive(_file: File, _escuelaActual?: unknown): Promise<void> {
-  throw new Error('La carga masiva LCFC no está disponible en esta versión del backend.')
+  throw new ApiError('La carga masiva LCFC no está disponible en esta versión del backend.')
 }
 
 // ─── Dashboard ─────────────────────────────────────────────────────────────

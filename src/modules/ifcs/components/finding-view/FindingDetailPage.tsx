@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, Card, ErrorDialog, LoadingDialog, SuccessDialog } from '@/shared/components';
+import { Button, Card, ErrorDialog, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { getErrorMessage } from '@/shared/lib/api-error';
+import { tryTranslate } from '@/shared/utils/try-translate';
 import { useFindingDetail } from '../../hooks/useFindingDetail';
 import { deleteFinding, patchFinding } from '../../services/ifcFindingsService';
 import { getParameterByCode } from '../../services/parametersService';
@@ -13,11 +15,6 @@ import { DeleteFindingModal } from '../shared/DeleteFindingModal';
 import { FindingActionsTable } from './FindingActionsTable';
 import { FindingGeneralInfo } from './FindingGeneralInfo';
 import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
-
-function tryTranslate(t: (k: string) => string, key: string) {
-	const translated = t(key);
-	return translated === key ? key : translated;
-}
 
 export default function FindingDetailPage() {
 	const { t, locale: lang } = useI18n();
@@ -55,8 +52,7 @@ export default function FindingDetailPage() {
 			setSuccessMsg(t('ifcFindings.findingView.toast.saved'));
 			await refetch();
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'ifcFindings.error.patchFailed';
-			setActionError(message);
+			setActionError(getErrorMessage(e, 'ifcFindings.error.patchFailed'));
 			throw e;
 		} finally {
 			setSaving(false);
@@ -71,8 +67,7 @@ export default function FindingDetailPage() {
 			setPendingDelete(false);
 			router.push('/ifc-findings');
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'ifcFindings.error.deleteFailed';
-			setActionError(message);
+			setActionError(getErrorMessage(e, 'ifcFindings.error.deleteFailed'));
 		} finally {
 			setDeleting(false);
 		}
@@ -131,8 +126,9 @@ export default function FindingDetailPage() {
 
 			{(saving || deleting) && <LoadingDialog isOpen label={t('loading.default')} />}
 			{actionError && (
-				<ErrorDialog
+				<Toast
 					isOpen
+					type="error"
 					onClose={() => setActionError(null)}
 					message={tryTranslate(t, actionError)}
 				/>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { getFindingDetail } from '../services/ifcFindingsService';
 import type { FindingDetailPayload } from '../services/types';
 
@@ -16,8 +17,7 @@ export function useFindingDetail(id: number) {
 			const payload = await getFindingDetail(id);
 			setData(payload);
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'ifcFindings.error.viewFailed';
-			setError(message);
+			setError(getErrorMessage(e, 'ifcFindings.error.viewFailed'));
 			setData(null);
 		} finally {
 			setLoading(false);

@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
-import { Button, Card, ErrorDialog, LoadingDialog, SuccessDialog } from '@/shared/components';
+import { Button, Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
+import { getErrorMessage } from '@/shared/lib/api-error';
+import { tryTranslate } from '@/shared/utils/try-translate';
 import { useIFCFormState } from '../../hooks/useIFCFormState';
 import { createIFC, patchIFC } from '../../services/ifcsService';
 import type {
@@ -37,11 +39,6 @@ type Props = {
 function hasAnyLang(value: I18nText | undefined, languages: string[]): boolean {
 	if (!value) return false;
 	return languages.some((l) => value[l]?.trim());
-}
-
-function tryTranslate(t: (k: string) => string, key: string) {
-	const translated = t(key);
-	return translated === key ? key : translated;
 }
 
 export function IFCForm(props: Props) {
@@ -155,8 +152,7 @@ export function IFCForm(props: Props) {
 				router.push(`/ifcs/${result.id}`);
 			}
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'ifcs.error.saveFailed';
-			setError(message);
+			setError(getErrorMessage(e, 'ifcs.error.saveFailed'));
 		} finally {
 			setSubmitting(false);
 		}
@@ -249,7 +245,7 @@ export function IFCForm(props: Props) {
 
 			{submitting && <LoadingDialog isOpen label={t('loading.default')} />}
 			{error && (
-				<ErrorDialog isOpen onClose={() => setError(null)} message={tryTranslate(t, error)} />
+				<Toast isOpen type="error" onClose={() => setError(null)} message={tryTranslate(t, error)} />
 			)}
 			{successMsg && (
 				<SuccessDialog

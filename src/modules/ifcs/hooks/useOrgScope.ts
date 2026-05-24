@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { getOrgScope } from '../services/orgScopeService';
 import type { ScopeTree } from '../services/types';
 
@@ -17,8 +18,7 @@ export function useOrgScope() {
 			setScope(tree);
 			return tree;
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'orgScope.error.generic';
-			setError(message);
+			setError(getErrorMessage(e, 'orgScope.error.generic'));
 			setScope(null);
 			return null;
 		} finally {

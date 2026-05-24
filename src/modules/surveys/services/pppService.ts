@@ -1,4 +1,4 @@
-import { apiPost, apiGet, apiDelete, fileToBase64 } from '@/shared/lib'
+import { apiPost, apiGet, apiDelete, fileToBase64, ApiError } from '@/shared/lib'
 import { getSurveyTypeId } from './academicService'
 import type {
   CompetenceConfig,
@@ -174,7 +174,7 @@ export async function updateAcceptanceLevels(
 // ─── Excel template & upload ───────────────────────────────────────────────
 
 export async function downloadPPPTemplate(_idPeriodoAcademico: number): Promise<void> {
-  throw new Error('La descarga de plantilla PPP no está disponible en esta versión del backend.')
+  throw new ApiError('La descarga de plantilla PPP no está disponible en esta versión del backend.')
 }
 
 export async function uploadPPPMassive(
@@ -194,7 +194,7 @@ export async function uploadPPPMassive(
 }
 
 export async function uploadPPPMassiveLegacy(_file: File, _escuelaActual?: unknown): Promise<void> {
-  throw new Error('La carga masiva PPP (legacy) no está disponible en esta versión del backend.')
+  throw new ApiError('La carga masiva PPP (legacy) no está disponible en esta versión del backend.')
 }
 
 // ─── Dashboard / Reports ───────────────────────────────────────────────────

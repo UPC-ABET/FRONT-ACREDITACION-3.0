@@ -1,4 +1,4 @@
-import { apiDelete, apiGet, apiPatch, apiPost } from '@/shared/lib';
+import { apiDelete, apiGet, apiPatch, apiPost, ApiError } from '@/shared/lib';
 import type { FindingDetailPayload, FindingRow, PatchFindingBody } from './types';
 
 interface Envelope<T> {
@@ -12,7 +12,7 @@ export async function listFindings(chartIds: number[], periodId: number): Promis
 		chart_ids: chartIds.map(Number),
 		period_id: Number(periodId),
 	});
-	if (!envelope?.data) throw new Error('ifcFindings.error.listFailed');
+	if (!envelope?.data) throw new ApiError('ifcFindings.error.listFailed');
 
 	return envelope.data.map((r) => ({
 		...r,
@@ -24,7 +24,7 @@ export async function listFindings(chartIds: number[], periodId: number): Promis
 
 export async function getFindingDetail(id: number): Promise<FindingDetailPayload> {
 	const envelope = await apiGet<Envelope<FindingDetailPayload>>(`/ifc-findings/get-by-id/${id}`);
-	if (!envelope?.data) throw new Error('ifcFindings.error.viewFailed');
+	if (!envelope?.data) throw new ApiError('ifcFindings.error.viewFailed');
 
 	const data = envelope.data;
 	data.finding.id = Number(data.finding.id);
@@ -36,7 +36,7 @@ export async function getFindingDetail(id: number): Promise<FindingDetailPayload
 
 export async function patchFinding(id: number, payload: PatchFindingBody): Promise<{ id: number }> {
 	const envelope = await apiPatch<Envelope<{ id: number }>>(`/ifc-findings/${id}`, payload);
-	if (!envelope?.data) throw new Error('ifcFindings.error.patchFailed');
+	if (!envelope?.data) throw new ApiError('ifcFindings.error.patchFailed');
 
 	return { id: Number(envelope.data.id) };
 }

@@ -1,4 +1,4 @@
-import { buildHeaders, getApiBaseUrl } from '@/shared/lib';
+import { buildHeaders, getApiBaseUrl, ApiError } from '@/shared/lib';
 import { parseFilename } from '@/shared/utils';
 
 export async function downloadStatusReport(
@@ -22,7 +22,7 @@ export async function downloadStatusReport(
 	});
 	if (!res.ok) {
 		const text = await res.text().catch(() => res.statusText);
-		throw new Error(text || 'ifcs.statusReport.error.downloadFailed');
+		throw new ApiError(text || 'ifcs.statusReport.error.downloadFailed');
 	}
 	const blob = await res.blob();
 	const filename = parseFilename(

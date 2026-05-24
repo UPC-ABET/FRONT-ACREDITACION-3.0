@@ -11,20 +11,17 @@ import {
 	Button,
 	Card,
 	ConfirmDialog,
-	ErrorDialog,
 	LoadingDialog,
 	SuccessDialog,
+	Toast,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { getErrorMessage } from '@/shared/lib/api-error';
+import { tryTranslate } from '@/shared/utils/try-translate';
 import { useParameter } from '../hooks/useParameter';
 import { updateParameter } from '../services/parametersAdminService';
 import { PARAM_CODES, type IFCFieldDescriptor } from '../services/types';
 import { IfcFieldEditor } from './IfcFieldEditor';
-
-function tryTranslate(t: (k: string) => string, key: string) {
-	const translated = t(key);
-	return translated === key ? key : translated;
-}
 
 function cloneFields(fields: IFCFieldDescriptor[]): IFCFieldDescriptor[] {
 	return fields.map((f) => ({
@@ -169,8 +166,7 @@ export function IfcFieldsPage() {
 			setData(updated);
 			setSuccessMsg(t('admin.params.toast.saved'));
 		} catch (e) {
-			const msg = e instanceof Error ? e.message : 'admin.params.error.saveFailed';
-			setErrorMsg(msg);
+			setErrorMsg(getErrorMessage(e, 'admin.params.error.saveFailed'));
 		} finally {
 			setSaving(false);
 		}
@@ -275,8 +271,9 @@ export function IfcFieldsPage() {
 				)}
 
 				{errorMsg && (
-					<ErrorDialog
+					<Toast
 						isOpen
+						type="error"
 						onClose={() => setErrorMsg(null)}
 						message={tryTranslate(t, errorMsg)}
 					/>

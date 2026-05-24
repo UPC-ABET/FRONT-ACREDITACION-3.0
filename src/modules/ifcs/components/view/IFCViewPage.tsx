@@ -2,9 +2,11 @@
 
 import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ErrorDialog, LoadingDialog, SuccessDialog } from '@/shared/components';
+import { ErrorDialog, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getAuthCookie } from '@/shared/lib';
+import { getErrorMessage } from '@/shared/lib/api-error';
+import { tryTranslate } from '@/shared/utils/try-translate';
 import { useIFCView } from '../../hooks/useIFCView';
 import { approveIFC, rejectIFC, submitIFC } from '../../services/ifcsService';
 import type { I18nText } from '../../services/types';
@@ -17,11 +19,6 @@ import { SubmitConfirmModal } from '../shared/SubmitConfirmModal';
 import { IFCFindingsTable } from './IFCFindingsTable';
 import { IFCActionsTable } from './IFCActionsTable';
 import { IFCActionButtons, computeActionFlags } from './IFCActionButtons';
-
-function tryTranslate(t: (k: string) => string, key: string) {
-	const translated = t(key);
-	return translated === key ? key : translated;
-}
 
 export default function IFCViewPage() {
 	const { t } = useI18n();
@@ -72,8 +69,7 @@ export default function IFCViewPage() {
 			setSuccessMsg(t(successKey));
 			await refetch();
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'ifcs.error.generic';
-			setActionError(message);
+			setActionError(getErrorMessage(e, 'ifcs.error.generic'));
 		} finally {
 			setSubmitting(false);
 		}
@@ -98,8 +94,7 @@ export default function IFCViewPage() {
 			}
 			await refetch();
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'ifcs.error.generic';
-			setActionError(message);
+			setActionError(getErrorMessage(e, 'ifcs.error.generic'));
 		} finally {
 			setSubmitting(false);
 		}
@@ -172,8 +167,9 @@ export default function IFCViewPage() {
 			/>
 
 			{actionError && (
-				<ErrorDialog
+				<Toast
 					isOpen
+					type="error"
 					onClose={() => setActionError(null)}
 					message={tryTranslate(t, actionError)}
 				/>

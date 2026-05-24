@@ -1,4 +1,4 @@
-import { apiGet } from '@/shared/lib';
+import { apiGet, ApiError } from '@/shared/lib';
 import type { CriticalityOption } from './types';
 
 interface Envelope<T> {
@@ -11,6 +11,6 @@ export async function getTypesByGroupCode(groupCode: string): Promise<Criticalit
 	const envelope = await apiGet<Envelope<CriticalityOption[]>>(
 		`/types/by-group-code/${encodeURIComponent(groupCode)}`,
 	);
-	if (!envelope?.data) throw new Error('types.error.byGroupFailed');
+	if (!envelope?.data) throw new ApiError('types.error.byGroupFailed');
 	return envelope.data.map((tp) => ({ ...tp, id: Number(tp.id) }));
 }

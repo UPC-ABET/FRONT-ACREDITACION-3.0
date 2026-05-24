@@ -9,17 +9,13 @@ import {
 	PencilSquareIcon,
 } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge, DataTable, ErrorDialog } from '@/shared/components';
+import { Badge, DataTable, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils/try-translate';
 import { TYPE_CODES } from '../constants';
 import { usePdfDownload } from '../hooks/usePdfDownload';
 import { effectiveStatus } from '../services/scope';
 import type { IFCRow } from '../services/types';
-
-function tryTranslate(t: (k: string) => string, key: string) {
-	const translated = t(key);
-	return translated === key ? key : translated;
-}
 
 type Props = {
 	rows: IFCRow[];
@@ -155,7 +151,7 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 	return (
 		<>
 			<DataTable<IFCRow, unknown> columns={columns} data={rows} showSearch={false} showPagination />
-			{pdfError && <ErrorDialog isOpen onClose={clearError} message={tryTranslate(t, pdfError)} />}
+			{pdfError && <Toast isOpen type="error" onClose={clearError} message={tryTranslate(t, pdfError)} />}
 		</>
 	);
 }

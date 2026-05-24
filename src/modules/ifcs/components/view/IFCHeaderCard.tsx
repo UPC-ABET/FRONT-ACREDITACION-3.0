@@ -2,18 +2,13 @@
 
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { Badge, Button, Card, ErrorDialog, I18nTextField } from '@/shared/components';
-import { formatDateTime } from '@/shared/utils';
+import { Badge, Button, Card, I18nTextField, Toast } from '@/shared/components';
+import { formatDateTime, tryTranslate } from '@/shared/utils';
 import { IFCPageTitle } from '../shared/IFCPageTitle';
 import { VIEW_LABELS } from './viewLabels';
 import { TYPE_CODES } from '../../constants';
 import { usePdfDownload } from '../../hooks/usePdfDownload';
 import type { I18nText, IFCHeader } from '../../services/types';
-
-function tryTranslate(t: (k: string) => string, key: string) {
-	const translated = t(key);
-	return translated === key ? key : translated;
-}
 
 type Props = {
 	ifc: IFCHeader;
@@ -107,7 +102,7 @@ export function IFCHeaderCard({
 				)}
 			</div>
 
-			{pdfError && <ErrorDialog isOpen onClose={clearError} message={tryTranslate(t, pdfError)} />}
+			{pdfError && <Toast isOpen type="error" onClose={clearError} message={tryTranslate(t, pdfError)} />}
 		</Card>
 	);
 }

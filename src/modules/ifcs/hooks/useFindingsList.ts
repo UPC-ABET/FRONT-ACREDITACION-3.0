@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { listFindings } from '../services/ifcFindingsService';
 import type { FindingRow } from '../services/types';
 
@@ -23,8 +24,7 @@ export function useFindingsList() {
 			setRows(data);
 			return data;
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'ifcFindings.error.listFailed';
-			setError(message);
+			setError(getErrorMessage(e, 'ifcFindings.error.listFailed'));
 			setRows([]);
 			return [];
 		} finally {

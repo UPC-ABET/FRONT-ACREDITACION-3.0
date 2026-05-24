@@ -8,9 +8,11 @@ import {
 	ExclamationTriangleIcon,
 	MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Card, ErrorDialog, Select, SuccessDialog } from '@/shared/components';
+import { Button, Card, Select, SuccessDialog, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getAuthCookie } from '@/shared/lib';
+import { getErrorMessage } from '@/shared/lib/api-error';
+import { tryTranslate } from '@/shared/utils/try-translate';
 import { ORG_LABELS, TYPE_CODES } from '../constants';
 import {
 	useIFCList,
@@ -25,11 +27,6 @@ import type { IFCStatusFilter, ScopeTree, SelectionValue } from '../services/typ
 import { AcademicPeriodSelect } from './AcademicPeriodSelect';
 import { IFCTable } from './IFCTable';
 import { ScopeDropdowns } from './ScopeDropdowns';
-
-function tryTranslate(t: (k: string) => string, key: string) {
-	const translated = t(key);
-	return translated === key ? key : translated;
-}
 
 function formatTemplate(template: string, vars: Record<string, string | number>): string {
 	let out = template;
@@ -208,8 +205,7 @@ export function IFCDashboard() {
 				setNotifyError(t(`ifcs.notify.reason.${r.reason ?? 'unknown'}`));
 			}
 		} catch (e) {
-			const msg = e instanceof Error ? e.message : 'ifcs.notify.error.generic';
-			setNotifyError(msg);
+			setNotifyError(getErrorMessage(e, 'ifcs.notify.error.generic'));
 		}
 	}
 
@@ -236,8 +232,7 @@ export function IFCDashboard() {
 				);
 			}
 		} catch (e) {
-			const msg = e instanceof Error ? e.message : 'ifcs.notify.error.generic';
-			setNotifyError(msg);
+			setNotifyError(getErrorMessage(e, 'ifcs.notify.error.generic'));
 		}
 	}
 
@@ -335,16 +330,17 @@ export function IFCDashboard() {
 				)}
 
 				{pdfError && (
-					<ErrorDialog isOpen onClose={clearPdfError} message={tryTranslate(t, pdfError)} />
+					<Toast isOpen type="error" onClose={clearPdfError} message={tryTranslate(t, pdfError)} />
 				)}
 
 				{reportError && (
-					<ErrorDialog isOpen onClose={clearReportError} message={tryTranslate(t, reportError)} />
+					<Toast isOpen type="error" onClose={clearReportError} message={tryTranslate(t, reportError)} />
 				)}
 
 				{notifyError && (
-					<ErrorDialog
+					<Toast
 						isOpen
+						type="error"
 						onClose={() => setNotifyError(null)}
 						message={tryTranslate(t, notifyError)}
 					/>

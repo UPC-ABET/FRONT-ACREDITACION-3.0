@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { CheckCircleIcon, HashtagIcon } from '@heroicons/react/24/outline';
 import { Button, Input } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { updateParameter } from '../services/parametersAdminService';
 import type { ParameterRow } from '../services/types';
 
@@ -35,8 +36,7 @@ export function PrefixParameterCard({ parameter, onSaved, onError, onSuccess }: 
 			onSuccess(t('admin.params.toast.saved'));
 			onSaved(updated);
 		} catch (e) {
-			const msg = e instanceof Error ? e.message : 'admin.params.error.saveFailed';
-			onError(msg);
+			onError(getErrorMessage(e, 'admin.params.error.saveFailed'));
 		} finally {
 			setSaving(false);
 		}

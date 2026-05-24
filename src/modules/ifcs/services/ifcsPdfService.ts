@@ -1,4 +1,4 @@
-import { buildHeaders, getApiBaseUrl } from '@/shared/lib';
+import { buildHeaders, getApiBaseUrl, ApiError } from '@/shared/lib';
 import { parseFilename } from '@/shared/utils';
 
 export async function downloadIfcPdf(
@@ -13,7 +13,7 @@ export async function downloadIfcPdf(
 	});
 	if (!res.ok) {
 		const text = await res.text().catch(() => res.statusText);
-		throw new Error(text || 'ifcs.pdf.error.downloadFailed');
+		throw new ApiError(text || 'ifcs.pdf.error.downloadFailed');
 	}
 	const blob = await res.blob();
 	const filename = parseFilename(res.headers.get('Content-Disposition'), `IFC-${ifcId}.pdf`);
@@ -33,7 +33,7 @@ export async function downloadIfcPdfBulk(
 	});
 	if (!res.ok) {
 		const text = await res.text().catch(() => res.statusText);
-		throw new Error(text || 'ifcs.pdf.error.bulkFailed');
+		throw new ApiError(text || 'ifcs.pdf.error.bulkFailed');
 	}
 	const blob = await res.blob();
 	const filename = parseFilename(

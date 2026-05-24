@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { listIFCs } from '../services/ifcsService';
 import type { IFCRow } from '../services/types';
 
@@ -21,8 +22,7 @@ export function useIFCList() {
 			setRows(data);
 			return data;
 		} catch (e) {
-			const message = e instanceof Error ? e.message : 'ifcs.error.generic';
-			setError(message);
+			setError(getErrorMessage(e, 'ifcs.error.generic'));
 			setRows([]);
 			return [];
 		} finally {

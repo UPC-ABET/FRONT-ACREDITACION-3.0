@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { ApiError } from '@/shared/lib/api-error'
 import { rubricsService } from '../services'
 import { RubricDetail } from '../types'
 import { performanceLevelsService } from '@/modules/academic/services'
@@ -52,18 +53,18 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
       const res = await rubricsService.getById(rubricId)
       console.debug('[useRubricEditor] rubricsService.getById response', res)
       if (!res) {
-        throw new Error('Empty rubric response from API')
+        throw new ApiError('Empty rubric response from API')
       }
 
       const data = unwrapApiData<any>(res)
       console.debug('[useRubricEditor] normalized data', data)
       if (!data) {
-        throw new Error('Could not normalize rubric response from API')
+        throw new ApiError('Could not normalize rubric response from API')
       }
 
       const rubric = data.rubric
       if (!rubric) {
-        throw new Error('Missing rubric field in API response')
+        throw new ApiError('Missing rubric field in API response')
       }
 
       // ── Step 2: GET /performance-levels/get-by-filters ──────────────────────

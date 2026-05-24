@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { getErrorMessage } from '@/shared/lib/api-error';
 import { getParameterByFilters } from '../services/parametersAdminService';
 import type { ParameterRow } from '../services/types';
 
@@ -16,8 +17,7 @@ export function useParameter<T>(code: string) {
 			const row = await getParameterByFilters<T>(code);
 			setData(row);
 		} catch (e) {
-			const msg = e instanceof Error ? e.message : 'admin.params.error.loadFailed';
-			setError(msg);
+			setError(getErrorMessage(e, 'admin.params.error.loadFailed'));
 		} finally {
 			setLoading(false);
 		}
