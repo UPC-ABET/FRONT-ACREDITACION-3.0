@@ -9,7 +9,7 @@ type UseSessionExpiryParams = {
 };
 
 const DEFAULT_IDLE_MS = 60 * 60 * 1000;
-const DEFAULT_SYNC_POLL_MS = 5_000;
+const DEFAULT_SYNC_POLL_MS = 60_000;
 
 export function useSessionExpiry({
 	enabled,
@@ -28,6 +28,10 @@ export function useSessionExpiry({
 			if (expiredRef.current) return;
 			expiredRef.current = true;
 			onExpire();
+		};
+
+		const checkSession = () => {
+			if (!getAuthCookie('token')) runExpire();
 		};
 
 		let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
@@ -60,14 +64,18 @@ export function useSessionExpiry({
 			}
 		}
 
-		const syncTimer = setInterval(() => {
-			if (!getAuthCookie('token')) runExpire();
-		}, syncPollMs);
+		const handleVisibilityChange = () => {
+			if (document.visibilityState === 'visible') checkSession();
+		};
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+
+		const syncTimer = setInterval(checkSession, syncPollMs);
 
 		return () => {
 			if (inactivityTimer) clearTimeout(inactivityTimer);
 			if (tokenTimer) clearTimeout(tokenTimer);
 			clearInterval(syncTimer);
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
 			events.forEach((eventName) => window.removeEventListener(eventName, resetInactivityTimer));
 		};
 	}, [enabled, idleMs, syncPollMs, onExpire]);

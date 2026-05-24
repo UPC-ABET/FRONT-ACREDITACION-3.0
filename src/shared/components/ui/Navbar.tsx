@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
@@ -13,20 +13,18 @@ import { getTypesByGroupCode } from '@/modules/ifcs/services';
 import type { CriticalityOption } from '@/modules/ifcs/services';
 import type { NavbarProps, StoredUser } from '@/shared/types';
 
-function subscribeStoredUser(onStoreChange: () => void) {
-	if (typeof window === 'undefined') return () => {};
-	window.addEventListener('storage', onStoreChange);
-	return () => window.removeEventListener('storage', onStoreChange);
+function readCookieUser(): StoredUser | null {
+	if (typeof window === 'undefined') return null;
+	const raw = getAuthCookie('token');
+	if (!raw) return null;
+	try { return JSON.parse(raw) as StoredUser; } catch { return null; }
 }
 
-function readStoredUserRaw() {
+function readCookieSchool(): string {
 	if (typeof window === 'undefined') return '';
-	return getAuthCookie('token');
-}
-
-function readStoredSchoolCodeRaw() {
-	if (typeof window === 'undefined') return '';
-	return getAuthCookie('escuela');
+	const raw = getAuthCookie('escuela');
+	if (!raw) return '';
+	try { return JSON.parse(raw) as string; } catch { return raw; }
 }
 
 const Sep = () => <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />;
@@ -123,8 +121,7 @@ function UserAvatar({
 }) {
 	return (
 		<div
-			className="flex items-center gap-2 rounded-xl cursor-pointer hover:bg-zinc-100 transition-colors flex-shrink-0"
-			style={{ padding: withName ? '4px 8px 4px 4px' : '4px 6px 4px 4px' }}>
+			className={`flex items-center gap-2 rounded-xl cursor-pointer hover:bg-zinc-100 transition-colors flex-shrink-0 ${withName ? 'py-1 pl-1 pr-2' : 'py-1 pl-1 pr-1.5'}`}>
 			<div
 				className="w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-extrabold text-white flex-shrink-0 bg-[var(--brand)]">
 				{initials}
@@ -148,12 +145,8 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 	const { isMobile, isTablet } = useScreen();
 	const { modalityTypeId, setModalityTypeId } = useABET();
 
-	const storedUserRaw = useSyncExternalStore(subscribeStoredUser, readStoredUserRaw, () => '');
-	const storedSchoolCodeRaw = useSyncExternalStore(
-		subscribeStoredUser,
-		readStoredSchoolCodeRaw,
-		() => '',
-	);
+	const [storedUser] = useState(readCookieUser);
+	const [storedSchoolCode] = useState(readCookieSchool);
 
 	const { data: modalityOptions = [] } = useQuery({
 		queryKey: ['types', TYPE_GROUP_CODES.PROGRAM_MODALITY],
@@ -166,24 +159,6 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 			setModalityTypeId(modalityOptions[0].id);
 		}
 	}, [modalityOptions, modalityTypeId, setModalityTypeId]);
-
-	const storedUser = useMemo<StoredUser | null>(() => {
-		if (!storedUserRaw) return null;
-		try {
-			return JSON.parse(storedUserRaw) as StoredUser;
-		} catch {
-			return null;
-		}
-	}, [storedUserRaw]);
-
-	const storedSchoolCode = useMemo(() => {
-		if (!storedSchoolCodeRaw) return '';
-		try {
-			return JSON.parse(storedSchoolCodeRaw) as string;
-		} catch {
-			return storedSchoolCodeRaw;
-		}
-	}, [storedSchoolCodeRaw]);
 
 	const pillOptions = useMemo(
 		() =>
