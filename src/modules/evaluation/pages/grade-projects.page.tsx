@@ -8,6 +8,8 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableEmptyState,
+  TableErrorState,
   TableHead,
   TableHeader,
   TableRow,
@@ -139,19 +141,11 @@ export function GradeProjectsPage() {
             : t('projects.grade.loading')}
         </div>
       ) : isErrorProfessor || professorNotFound ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-10 text-sm text-red-700 shadow-sm">
-          {t('projects.grade.errorProfessor')}
-        </div>
+        <TableErrorState message={t('projects.grade.errorProfessor')} />
       ) : isErrorProjects ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-10 text-sm text-red-700 shadow-sm">
-          {projectsError instanceof Error
-            ? projectsError.message
-            : t('projects.grade.error')}
-        </div>
+        <TableErrorState message={projectsError instanceof Error ? projectsError.message : t('projects.grade.error')} />
       ) : !projects.length ? (
-        <div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500 shadow-sm">
-          {t('projects.grade.empty')}
-        </div>
+        <TableEmptyState message={t('projects.grade.empty')} />
       ) : (
         <Table>
           <TableHeader>

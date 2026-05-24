@@ -8,6 +8,8 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableEmptyState,
+  TableErrorState,
   TableHead,
   TableHeader,
   TableRow,
@@ -173,13 +175,9 @@ export function ProjectsListPage() {
           {t('projects.list.loading')}
         </div>
       ) : isError ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-10 text-sm text-red-700 shadow-sm">
-          {error instanceof Error ? error.message : t('projects.list.error')}
-        </div>
+        <TableErrorState message={error instanceof Error ? error.message : t('projects.list.error')} />
       ) : !projects.length ? (
-        <div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500 shadow-sm">
-          {t('projects.list.empty')}
-        </div>
+        <TableEmptyState message={t('projects.list.empty')} />
       ) : (
         <Table>
           <TableHeader>

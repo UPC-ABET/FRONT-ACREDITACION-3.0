@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
+import { Card, LoadingDialog, SuccessDialog, TableErrorState, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/try-translate';
 import { useParameter } from '../hooks/useParameter';
@@ -43,13 +42,7 @@ export function IfcCodesPage() {
 				{loading && <LoadingDialog isOpen label={t('loading.default')} />}
 
 				{!loading && loadError && (
-					<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
-						<ExclamationTriangleIcon
-							className="h-6 w-6 flex-shrink-0 text-red-600"
-							aria-hidden="true"
-						/>
-						<p>{tryTranslate(t, loadError)}</p>
-					</div>
+					<TableErrorState message={tryTranslate(t, loadError)} />
 				)}
 
 				{!loading && !loadError && finding.data && (

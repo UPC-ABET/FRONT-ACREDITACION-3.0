@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeftIcon, PencilIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Button, Input, Skeleton, TextArea, Toast, buttonVariants } from '@/shared/components/ui'
+import { Button, Input, Skeleton, TableEmptyState, TextArea, Toast, buttonVariants } from '@/shared/components/ui'
 import { cn } from '@/shared/lib/utils'
 import { useI18n } from '@/providers'
 import { useProjectDetails, projectsQueryKeys } from '../hooks'
@@ -275,9 +275,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 
         <div className="divide-y divide-zinc-100">
           {students.length === 0 ? (
-            <p className="px-6 py-8 text-center text-sm text-zinc-400">
-              {t('projects.edit.students.empty')}
-            </p>
+            <TableEmptyState message={t('projects.edit.students.empty')} />
           ) : (
             students.map((student) => (
               <div
@@ -328,9 +326,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 
         <div className="divide-y divide-zinc-100">
           {!evaluators?.length ? (
-            <p className="px-6 py-8 text-center text-sm text-zinc-400">
-              {t('projects.edit.evaluators.empty')}
-            </p>
+            <TableEmptyState message={t('projects.edit.evaluators.empty')} />
           ) : (
             evaluators.map((evaluator) => (
               <div

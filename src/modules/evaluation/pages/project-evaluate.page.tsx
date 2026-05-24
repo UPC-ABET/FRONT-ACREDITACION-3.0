@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
-import { Skeleton } from '@/shared/components/ui'
+import { Skeleton, TableEmptyState } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
 import { getUserIdFromToken } from '@/shared/lib/jwt'
 import { useProjectDetails, useQualificationStatusTypes } from '../hooks'
@@ -147,9 +147,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 
         <div className="divide-y divide-zinc-100">
           {students.length === 0 ? (
-            <p className="px-6 py-8 text-center text-sm text-zinc-400">
-              {t('projects.evaluate.students.empty')}
-            </p>
+            <TableEmptyState message={t('projects.evaluate.students.empty')} />
           ) : (
             students.map((student) => (
               <div

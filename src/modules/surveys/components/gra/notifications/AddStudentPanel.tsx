@@ -55,7 +55,7 @@ export function AddStudentPanel({ programId, academicPeriodId, idCarrera = 0, on
           onChange={(e) => setCodigo(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
-        <Button onClick={handleSearch} disabled={loading || !codigo.trim()} size="md">
+        <Button onClick={handleSearch} disabled={loading || !codigo.trim()} size="md" aria-label="Buscar estudiante">
           <MagnifyingGlassIcon className="h-4 w-4" />
         </Button>
       </div>

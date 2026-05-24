@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import {
-	ExclamationTriangleIcon,
-	InboxIcon,
 	PlusIcon,
 	ArrowUturnLeftIcon,
 } from '@heroicons/react/24/outline';
@@ -13,6 +11,8 @@ import {
 	ConfirmDialog,
 	LoadingDialog,
 	SuccessDialog,
+	TableEmptyState,
+	TableErrorState,
 	Toast,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
@@ -187,35 +187,25 @@ export function IfcFieldsPage() {
 				{loading && <LoadingDialog isOpen label={t('loading.default')} />}
 
 				{!loading && error && (
-					<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
-						<ExclamationTriangleIcon
-							className="h-6 w-6 flex-shrink-0 text-red-600"
-							aria-hidden="true"
-						/>
-						<div className="flex-1">
-							<p>{tryTranslate(t, error)}</p>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="mt-2 text-red-700 hover:bg-red-100"
-								onClick={() => void refetch()}>
-								{t('admin.params.btn.retry')}
-							</Button>
-						</div>
-					</div>
+					<TableErrorState
+						message={tryTranslate(t, error)}
+						onRetry={() => void refetch()}
+						retryLabel={t('admin.params.btn.retry')}
+					/>
 				)}
 
 				{!loading && !error && (
 					<>
 						{fields.length === 0 ? (
-							<div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-zinc-300 bg-white py-16 text-zinc-500">
-								<InboxIcon className="h-12 w-12 text-zinc-400" aria-hidden="true" />
-								<p className="text-base italic">{t('admin.params.fields.empty')}</p>
-								<Button variant="primary" size="lg" onClick={addField}>
-									<PlusIcon className="h-5 w-5" />
-									{t('admin.params.fields.btn.add')}
-								</Button>
-							</div>
+							<TableEmptyState
+								message={t('admin.params.fields.empty')}
+								action={
+									<Button variant="primary" size="lg" onClick={addField}>
+										<PlusIcon className="h-5 w-5" />
+										{t('admin.params.fields.btn.add')}
+									</Button>
+								}
+							/>
 						) : (
 							<div className="space-y-4">
 								{fields.map((field, index) => {

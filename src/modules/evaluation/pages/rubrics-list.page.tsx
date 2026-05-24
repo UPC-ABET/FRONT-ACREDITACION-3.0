@@ -9,6 +9,8 @@ import {
     Table,
     TableBody,
     TableCell,
+    TableEmptyState,
+    TableErrorState,
     TableHead,
     TableHeader,
     TableRow,
@@ -43,13 +45,9 @@ export function RubricsListPage() {
                     {t('rubrics.list.loading')}
                 </div>
             ) : isError ? (
-                <div className="rounded-xl border border-red-200 bg-red-50 p-10 text-sm text-red-700 shadow-sm">
-                    {error instanceof Error ? error.message : t('rubrics.list.error')}
-                </div>
+                <TableErrorState message={error instanceof Error ? error.message : t('rubrics.list.error')} />
             ) : !items.length ? (
-                <div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500 shadow-sm">
-                    {t('rubrics.list.empty')}
-                </div>
+                <TableEmptyState message={t('rubrics.list.empty')} />
             ) : (
                 <div className="space-y-3">
                     <Table>

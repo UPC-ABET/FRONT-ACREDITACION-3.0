@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge, DataTable } from '@/shared/components';
+import { Badge, DataTable, TableEmptyState } from '@/shared/components';
 import { useI18n } from '@/providers';
 import type { FindingActionRow } from '../../services/types';
 import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
@@ -40,7 +40,7 @@ export function FindingActionsTable({ actions }: Props) {
 	);
 
 	if (actions.length === 0) {
-		return <p className="text-sm text-zinc-500 italic text-center py-6">{L.actions_empty[lang]}</p>;
+		return <TableEmptyState message={L.actions_empty[lang]} />;
 	}
 
 	return (

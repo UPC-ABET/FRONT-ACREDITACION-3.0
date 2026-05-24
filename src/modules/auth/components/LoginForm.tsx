@@ -70,7 +70,7 @@ export default function LoginForm() {
 	return (
 		<form onSubmit={handleSubmit} className="space-y-6">
 			<div className="space-y-2">
-				{error && <div className="text-sm text-red-600">{error}</div>}
+				{error && <div role="alert" className="text-sm text-red-600">{error}</div>}
 
 				<div>
 					<Select
@@ -103,8 +103,8 @@ export default function LoginForm() {
 			</div>
 
 			<div className="flex items-center">
-				<label className="flex items-center text-sm">
-					<input type="checkbox" className="mr-2" /> {t('login.remember')}
+				<label htmlFor="remember-me" className="flex items-center text-sm">
+					<input id="remember-me" type="checkbox" className="mr-2" /> {t('login.remember')}
 				</label>
 			</div>
 

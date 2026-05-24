@@ -8,7 +8,7 @@ import {
 	ExclamationTriangleIcon,
 	MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Card, Select, SuccessDialog, Toast } from '@/shared/components';
+import { Button, Card, Select, SuccessDialog, TableEmptyState, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getAuthCookie } from '@/shared/lib';
 import { getErrorMessage } from '@/shared/lib/api-error';
@@ -322,9 +322,7 @@ export function IFCDashboard() {
 							onNotify={handleNotifyOne}
 						/>
 						{hasSearched && !hasResults && (
-							<p className="py-8 text-center text-base italic text-zinc-500">
-								{t('ifcs.table.empty')}
-							</p>
+							<TableEmptyState message={t('ifcs.table.empty')} />
 						)}
 					</div>
 				)}

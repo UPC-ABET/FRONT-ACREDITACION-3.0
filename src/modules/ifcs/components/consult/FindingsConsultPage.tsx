@@ -4,10 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
 	ExclamationTriangleIcon,
-	InboxIcon,
 	MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
+import { Button, Card, LoadingDialog, SuccessDialog, TableEmptyState, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { TYPE_CODES } from '../../constants';
@@ -140,10 +139,7 @@ export function FindingsConsultPage() {
 				)}
 
 				{!chartIncomplete && hasSearched && rows.length === 0 && !submitting && (
-					<div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-white py-14 text-zinc-500">
-						<InboxIcon className="h-10 w-10 text-zinc-400" />
-						<p className="text-base italic">{CONSULT_LABELS.empty[lang]}</p>
-					</div>
+					<TableEmptyState message={CONSULT_LABELS.empty[lang]} />
 				)}
 
 				{!chartIncomplete && rows.length > 0 && (

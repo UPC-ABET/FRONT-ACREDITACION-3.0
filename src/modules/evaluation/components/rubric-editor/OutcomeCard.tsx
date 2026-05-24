@@ -17,7 +17,7 @@ interface OutcomeCardProps {
 const TRUNC = 100
 
 export function OutcomeCard({ outcome, canEdit, emptyMessage, emptyMessageWithHint, onAdd, children }: OutcomeCardProps) {
-  const { locale } = useI18n()
+  const { locale, t } = useI18n()
   const description = outcome.outcomeDescription[locale]
   const short = description.length > TRUNC ? `${description.slice(0, TRUNC)}…` : description
   const hasContent = (outcome.questions[0]?.criteria.length ?? 0) > 0
@@ -44,6 +44,7 @@ export function OutcomeCard({ outcome, canEdit, emptyMessage, emptyMessageWithHi
               size="icon"
               className="h-7 w-7 shrink-0"
               onClick={onAdd}
+              aria-label={t('rubrics.editor.outcome.addQuestion')}
             >
               <PlusIcon className="h-4 w-4" />
             </Button>
