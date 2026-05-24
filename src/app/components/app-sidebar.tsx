@@ -11,7 +11,6 @@ import {
 	Cog6ToothIcon,
 	ArrowRightStartOnRectangleIcon,
 	ClipboardDocumentListIcon,
-	FolderIcon,
 	DocumentChartBarIcon,
 	ShieldCheckIcon,
   DocumentCheckIcon
@@ -111,9 +110,7 @@ export function AppSidebar() {
 			],
 		},
 
-		{ name: 'Portfolio', href: '/Portfolio', icon: FolderIcon },
-
-		...(isAdmin
+...(isAdmin
 			? [
 					{
 						name: t('nav.admin.label'),
