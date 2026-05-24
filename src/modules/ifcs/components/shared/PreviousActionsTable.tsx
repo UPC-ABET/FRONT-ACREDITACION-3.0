@@ -125,11 +125,7 @@ function EvidenceCell({ action, mode, liveEvidences, onChange }: CellProps) {
 					size="sm"
 					onClick={() => setModalOpen(true)}
 					className="inline-flex items-center gap-1.5">
-					{hasContent ? (
-						<PencilSquareIcon className="h-4 w-4" />
-					) : (
-						<PlusIcon className="h-4 w-4" />
-					)}
+					{hasContent ? <PencilSquareIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
 					{hasContent ? L.evidence_edit[lang] : L.evidence_add[lang]}
 				</Button>
 				{modalOpen && (

@@ -70,7 +70,11 @@ export default function LoginForm() {
 	return (
 		<form onSubmit={handleSubmit} className="space-y-6">
 			<div className="space-y-2">
-				{error && <div role="alert" className="text-sm text-red-600">{error}</div>}
+				{error && (
+					<div role="alert" className="text-sm text-red-600">
+						{error}
+					</div>
+				)}
 
 				<div>
 					<Select

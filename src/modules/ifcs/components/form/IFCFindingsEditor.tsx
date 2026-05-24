@@ -14,13 +14,7 @@ type Props = {
 	onDelete: (tempId: string) => void;
 };
 
-export function IFCFindingsEditor({
-	findings,
-	criticalities,
-	onAdd,
-	onUpdate,
-	onDelete,
-}: Props) {
+export function IFCFindingsEditor({ findings, criticalities, onAdd, onUpdate, onDelete }: Props) {
 	const { locale: lang } = useI18n();
 
 	return (

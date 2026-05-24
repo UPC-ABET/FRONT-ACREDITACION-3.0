@@ -2,11 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ExclamationTriangleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {
-	ExclamationTriangleIcon,
-	MagnifyingGlassIcon,
-} from '@heroicons/react/24/outline';
-import { Button, Card, LoadingDialog, SuccessDialog, TableEmptyState, Toast } from '@/shared/components';
+	Button,
+	Card,
+	LoadingDialog,
+	SuccessDialog,
+	TableEmptyState,
+	Toast,
+} from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { TYPE_CODES } from '../../constants';
@@ -161,7 +165,9 @@ export function FindingsConsultPage() {
 			/>
 
 			{submitting && <LoadingDialog isOpen label={t('loading.default')} />}
-			{errorMsg && <Toast isOpen type="error" onClose={() => setErrorMsg(null)} message={t(errorMsg)} />}
+			{errorMsg && (
+				<Toast isOpen type="error" onClose={() => setErrorMsg(null)} message={t(errorMsg)} />
+			)}
 			{successMsg && (
 				<SuccessDialog isOpen onClose={() => setSuccessMsg(null)} message={successMsg} />
 			)}

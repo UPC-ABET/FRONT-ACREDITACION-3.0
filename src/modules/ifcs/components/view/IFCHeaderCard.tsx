@@ -102,7 +102,9 @@ export function IFCHeaderCard({
 				)}
 			</div>
 
-			{pdfError && <Toast isOpen type="error" onClose={clearError} message={tryTranslate(t, pdfError)} />}
+			{pdfError && (
+				<Toast isOpen type="error" onClose={clearError} message={tryTranslate(t, pdfError)} />
+			)}
 		</Card>
 	);
 }

@@ -4,8 +4,14 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarItem, SidebarNavGroup,
-} from '@/shared/components'
+	Sidebar,
+	SidebarHeader,
+	SidebarContent,
+	SidebarFooter,
+	SidebarGroup,
+	SidebarItem,
+	SidebarNavGroup,
+} from '@/shared/components';
 import {
 	HomeIcon,
 	Cog6ToothIcon,
@@ -13,7 +19,7 @@ import {
 	ClipboardDocumentListIcon,
 	DocumentChartBarIcon,
 	ShieldCheckIcon,
-  DocumentCheckIcon
+	DocumentCheckIcon,
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { useIsAdmin, useLogout } from '@/shared/hooks';
@@ -79,7 +85,7 @@ export function AppSidebar() {
 			],
 		},
 
-...(isAdmin
+		...(isAdmin
 			? [
 					{
 						name: t('nav.admin.label'),
@@ -94,59 +100,54 @@ export function AppSidebar() {
 			: []),
 	];
 
-  return (
-    <Sidebar>
-      <SidebarHeader />
+	return (
+		<Sidebar>
+			<SidebarHeader />
 
-      <SidebarContent>
-        <SidebarGroup>
-          {navigation.map((item) => {
-            const childActive = item.children?.some((child) => isActive(child.href)) ?? false
+			<SidebarContent>
+				<SidebarGroup>
+					{navigation.map((item) => {
+						const childActive = item.children?.some((child) => isActive(child.href)) ?? false;
 
-            return (
-              <div key={item.name}>
-                {!item.children ? (
-                  <Link href={item.href ?? '#'}>
-                    <SidebarItem
-                      label={item.name}
-                      icon={<item.icon className="h-5 w-5" />}
-                      active={isActive(item.href)}
-                    />
-                  </Link>
-                ) : (
-                  <SidebarNavGroup
-                    label={item.name}
-                    icon={<item.icon className="h-5 w-5" />}
-                    active={childActive}
-                    defaultOpen={childActive}
-                  >
-                    {item.children.map((child) => (
-                      <Link key={child.name} href={child.href}>
-                        <SidebarItem
-                          label={child.name}
-                          icon={null}
-                          active={isActive(child.href)}
-                        />
-                      </Link>
-                    ))}
-                  </SidebarNavGroup>
-                )}
-              </div>
-            )
-          })}
-        </SidebarGroup>
-      </SidebarContent>
+						return (
+							<div key={item.name}>
+								{!item.children ? (
+									<Link href={item.href ?? '#'}>
+										<SidebarItem
+											label={item.name}
+											icon={<item.icon className="h-5 w-5" />}
+											active={isActive(item.href)}
+										/>
+									</Link>
+								) : (
+									<SidebarNavGroup
+										label={item.name}
+										icon={<item.icon className="h-5 w-5" />}
+										active={childActive}
+										defaultOpen={childActive}>
+										{item.children.map((child) => (
+											<Link key={child.name} href={child.href}>
+												<SidebarItem label={child.name} icon={null} active={isActive(child.href)} />
+											</Link>
+										))}
+									</SidebarNavGroup>
+								)}
+							</div>
+						);
+					})}
+				</SidebarGroup>
+			</SidebarContent>
 
-      <SidebarFooter>
-        <button type="button" onClick={handleLogout} className="w-full text-left">
-          <SidebarItem
-            label={t('nav.logout')}
-            icon={<ArrowRightStartOnRectangleIcon className="h-5 w-5" />}
-          />
-        </button>
-      </SidebarFooter>
-    </Sidebar>
-  )
+			<SidebarFooter>
+				<button type="button" onClick={handleLogout} className="w-full text-left">
+					<SidebarItem
+						label={t('nav.logout')}
+						icon={<ArrowRightStartOnRectangleIcon className="h-5 w-5" />}
+					/>
+				</button>
+			</SidebarFooter>
+		</Sidebar>
+	);
 }
 
 export default AppSidebar;

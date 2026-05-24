@@ -17,7 +17,7 @@
  * esta carpeta centraliza contextos/proveedores globales.
  */
 
-export * from './locale-provider'
-export * from './sidebar-provider'
-export * from './abet-provider'
-export * from './query-provider'
+export * from './locale-provider';
+export * from './sidebar-provider';
+export * from './abet-provider';
+export * from './query-provider';

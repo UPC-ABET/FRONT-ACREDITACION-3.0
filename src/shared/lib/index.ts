@@ -19,6 +19,7 @@
 export {};
 export * from './api-client';
 export * from './api-error';
-export * from './jwt'
-export * from './utils'
-export * from './auth-cookies'
+export * from './jwt';
+export * from './logger';
+export * from './utils';
+export * from './auth-cookies';

@@ -41,9 +41,7 @@ export function IfcCodesPage() {
 
 				{loading && <LoadingDialog isOpen label={t('loading.default')} />}
 
-				{!loading && loadError && (
-					<TableErrorState message={tryTranslate(t, loadError)} />
-				)}
+				{!loading && loadError && <TableErrorState message={tryTranslate(t, loadError)} />}
 
 				{!loading && !loadError && finding.data && (
 					<PrefixParameterCard

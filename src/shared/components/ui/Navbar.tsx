@@ -17,14 +17,22 @@ function readCookieUser(): StoredUser | null {
 	if (typeof window === 'undefined') return null;
 	const raw = getAuthCookie('token');
 	if (!raw) return null;
-	try { return JSON.parse(raw) as StoredUser; } catch { return null; }
+	try {
+		return JSON.parse(raw) as StoredUser;
+	} catch {
+		return null;
+	}
 }
 
 function readCookieSchool(): string {
 	if (typeof window === 'undefined') return '';
 	const raw = getAuthCookie('escuela');
 	if (!raw) return '';
-	try { return JSON.parse(raw) as string; } catch { return raw; }
+	try {
+		return JSON.parse(raw) as string;
+	} catch {
+		return raw;
+	}
 }
 
 const Sep = () => <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />;
@@ -124,8 +132,7 @@ function UserAvatar({
 	return (
 		<div
 			className={`flex items-center gap-2 rounded-xl cursor-pointer hover:bg-zinc-100 transition-colors flex-shrink-0 ${withName ? 'py-1 pl-1 pr-2' : 'py-1 pl-1 pr-1.5'}`}>
-			<div
-				className="w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-extrabold text-white flex-shrink-0 bg-[var(--brand)]">
+			<div className="w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-extrabold text-white flex-shrink-0 bg-[var(--brand)]">
 				{initials}
 			</div>
 			{withName && (

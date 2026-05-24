@@ -17,7 +17,6 @@ export function setAuthCookies(user: unknown, escuela: string, expiresIn: number
 	Cookies.set(USER_KEY, JSON.stringify(user), { ...COOKIE_OPTIONS, expires: expiresDays });
 	Cookies.set(SCHOOL_KEY, JSON.stringify(escuela), { ...COOKIE_OPTIONS, expires: expiresDays });
 	Cookies.set(TOKEN_EXPIRY_KEY, String(expiresAtMs), { ...COOKIE_OPTIONS, expires: expiresDays });
-
 }
 
 export function getAuthCookie(key: 'token' | 'escuela'): string {

@@ -109,7 +109,6 @@ export default function ModalsDemoPage() {
 				onClose={() => setOpenConfirm(false)}
 				message=""
 				onConfirm={() => {
-					console.log('Eliminado...');
 					setOpenConfirm(false);
 				}}
 				onDecline={() => setOpenConfirm(false)}

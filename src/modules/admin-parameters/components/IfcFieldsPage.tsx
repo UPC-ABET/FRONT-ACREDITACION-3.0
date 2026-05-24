@@ -1,10 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import {
-	PlusIcon,
-	ArrowUturnLeftIcon,
-} from '@heroicons/react/24/outline';
+import { PlusIcon, ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
 	Card,

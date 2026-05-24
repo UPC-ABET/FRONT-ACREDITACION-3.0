@@ -5,12 +5,12 @@ const RubricEditorPage = dynamic(() =>
 );
 
 interface Params {
-  params: {
-    rubricId: string
-  }
+	params: {
+		rubricId: string;
+	};
 }
 
 export default async function Page({ params }: Params) {
-  const resolved = await params
-  return <RubricEditorPage rubricId={resolved.rubricId} />
+	const resolved = await params;
+	return <RubricEditorPage rubricId={resolved.rubricId} />;
 }

@@ -1,8 +1,8 @@
-import { QuestionCriteria } from "./question-criteria.type"
+import { QuestionCriteria } from './question-criteria.type';
 
 export type RubricQuestion = {
-  id: string | null
-  order: number
-  questionText: { en: string; es: string }
-  criteria: QuestionCriteria[]
-}
+	id: string | null;
+	order: number;
+	questionText: { en: string; es: string };
+	criteria: QuestionCriteria[];
+};

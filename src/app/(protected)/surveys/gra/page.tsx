@@ -5,9 +5,9 @@ const GRAManagementView = dynamic(() =>
 );
 
 export default function GRAPage() {
-  return <GRAManagementView />
+	return <GRAManagementView />;
 }
 
 export const metadata = {
-  title: 'GRA — Encuestas de Graduandos | ABET',
-}
+	title: 'GRA — Encuestas de Graduandos | ABET',
+};

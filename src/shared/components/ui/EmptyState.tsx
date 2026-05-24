@@ -8,11 +8,7 @@ interface TableEmptyStateProps {
 	action?: React.ReactNode;
 }
 
-export function TableEmptyState({
-	message,
-	icon: Icon = InboxIcon,
-	action,
-}: TableEmptyStateProps) {
+export function TableEmptyState({ message, icon: Icon = InboxIcon, action }: TableEmptyStateProps) {
 	return (
 		<div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-white py-14 text-zinc-500">
 			<Icon className="h-10 w-10 text-zinc-400" aria-hidden="true" />

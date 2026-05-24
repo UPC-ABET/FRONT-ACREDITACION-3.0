@@ -4,4 +4,4 @@
  * Constantes del módulo rubrics.
  */
 
-export {}
+export {};

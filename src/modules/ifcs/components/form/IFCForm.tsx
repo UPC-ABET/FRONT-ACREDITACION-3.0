@@ -245,7 +245,12 @@ export function IFCForm(props: Props) {
 
 			{submitting && <LoadingDialog isOpen label={t('loading.default')} />}
 			{error && (
-				<Toast isOpen type="error" onClose={() => setError(null)} message={tryTranslate(t, error)} />
+				<Toast
+					isOpen
+					type="error"
+					onClose={() => setError(null)}
+					message={tryTranslate(t, error)}
+				/>
 			)}
 			{successMsg && (
 				<SuccessDialog

@@ -65,7 +65,11 @@ export default function ForgotPasswordForm() {
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
 					placeholder={t('forgotPassword.form.emailPlaceholder')}
 				/>
-				{error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+				{error && (
+					<p role="alert" className="text-sm text-red-600">
+						{error}
+					</p>
+				)}
 			</div>
 
 			<div className="space-y-3">

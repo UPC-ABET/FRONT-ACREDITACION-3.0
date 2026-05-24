@@ -1,17 +1,19 @@
-'use client'
+'use client';
 
 interface LastColumnSumIndicatorProps {
-  sum: number
-  target: number
-  label: string
+	sum: number;
+	target: number;
+	label: string;
 }
 
 export function LastColumnSumIndicator({ sum, target, label }: LastColumnSumIndicatorProps) {
-  const valid = Math.abs(sum - target) < 0.0001
+	const valid = Math.abs(sum - target) < 0.0001;
 
-  return (
-    <p className={`text-sm font-medium ${valid ? 'text-emerald-600' : 'text-red-600'}`} role="status">
-      {label.replace('{{sum}}', sum.toFixed(1)).replace('{{target}}', String(target))}
-    </p>
-  )
+	return (
+		<p
+			className={`text-sm font-medium ${valid ? 'text-emerald-600' : 'text-red-600'}`}
+			role="status">
+			{label.replace('{{sum}}', sum.toFixed(1)).replace('{{target}}', String(target))}
+		</p>
+	);
 }

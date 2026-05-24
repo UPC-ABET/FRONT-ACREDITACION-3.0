@@ -5,9 +5,9 @@ const LCFCManagementView = dynamic(() =>
 );
 
 export default function LCFCPage() {
-  return <LCFCManagementView />
+	return <LCFCManagementView />;
 }
 
 export const metadata = {
-  title: 'LCFC — Logro de Fin de Ciclo | ABET',
-}
+	title: 'LCFC — Logro de Fin de Ciclo | ABET',
+};

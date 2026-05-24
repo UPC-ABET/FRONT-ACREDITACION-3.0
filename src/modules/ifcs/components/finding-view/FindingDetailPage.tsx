@@ -3,7 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, Card, ErrorDialog, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
+import {
+	Button,
+	Card,
+	ErrorDialog,
+	LoadingDialog,
+	SuccessDialog,
+	Toast,
+} from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { tryTranslate } from '@/shared/utils/try-translate';

@@ -321,9 +321,7 @@ export function IFCDashboard() {
 							notifyingChartId={notifyingChartId}
 							onNotify={handleNotifyOne}
 						/>
-						{hasSearched && !hasResults && (
-							<TableEmptyState message={t('ifcs.table.empty')} />
-						)}
+						{hasSearched && !hasResults && <TableEmptyState message={t('ifcs.table.empty')} />}
 					</div>
 				)}
 
@@ -332,7 +330,12 @@ export function IFCDashboard() {
 				)}
 
 				{reportError && (
-					<Toast isOpen type="error" onClose={clearReportError} message={tryTranslate(t, reportError)} />
+					<Toast
+						isOpen
+						type="error"
+						onClose={clearReportError}
+						message={tryTranslate(t, reportError)}
+					/>
 				)}
 
 				{notifyError && (

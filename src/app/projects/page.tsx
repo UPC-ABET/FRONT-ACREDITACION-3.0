@@ -1,5 +1,5 @@
-import { ProjectsListPage } from '@/modules/evaluation/pages'
+import { ProjectsListPage } from '@/modules/evaluation/pages';
 
 export default function Page() {
-  return <ProjectsListPage />
+	return <ProjectsListPage />;
 }

@@ -58,8 +58,7 @@ export function I18nTextField(props: I18nTextFieldProps) {
 	} = props;
 	const as = props.as ?? 'textarea';
 	const rows = as === 'textarea' ? ((props as TextAreaVariantProps).rows ?? 4) : 0;
-	const fieldsClass =
-		layout === 'row' ? 'grid grid-cols-1 gap-3 sm:grid-cols-2' : 'space-y-3';
+	const fieldsClass = layout === 'row' ? 'grid grid-cols-1 gap-3 sm:grid-cols-2' : 'space-y-3';
 
 	return (
 		<div className={`space-y-2 ${className}`}>

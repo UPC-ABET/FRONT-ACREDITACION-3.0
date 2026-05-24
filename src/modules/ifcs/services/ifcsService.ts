@@ -102,19 +102,23 @@ function parseSaveResult(data: {
 }
 
 export async function createIFC(payload: CreateIFCBody): Promise<SubmitResult> {
-	const envelope = await apiPost<Envelope<{
-		id: number;
-		notification?: SubmitResult['notification'];
-	}>>('/ifcs/create', payload);
+	const envelope = await apiPost<
+		Envelope<{
+			id: number;
+			notification?: SubmitResult['notification'];
+		}>
+	>('/ifcs/create', payload);
 	if (!envelope?.data) throw new ApiError('ifcs.error.createFailed');
 	return parseSaveResult(envelope.data);
 }
 
 export async function patchIFC(id: number, payload: PatchIFCBody): Promise<SubmitResult> {
-	const envelope = await apiPatch<Envelope<{
-		id: number;
-		notification?: SubmitResult['notification'];
-	}>>(`/ifcs/${id}`, payload);
+	const envelope = await apiPatch<
+		Envelope<{
+			id: number;
+			notification?: SubmitResult['notification'];
+		}>
+	>(`/ifcs/${id}`, payload);
 	if (!envelope?.data) throw new ApiError('ifcs.error.patchFailed');
 	return parseSaveResult(envelope.data);
 }

@@ -1,10 +1,10 @@
-import { RubricQuestionCriteriaResponse } from "./rubric-question-criteria.response"
+import { RubricQuestionCriteriaResponse } from './rubric-question-criteria.response';
 
 export type RubricQuestionResponse = {
-  id: number
-  text: string
-  outcomeId: number
-  criterias?: RubricQuestionCriteriaResponse[]
-}
+	id: number;
+	text: string;
+	outcomeId: number;
+	criterias?: RubricQuestionCriteriaResponse[];
+};
 
-export {}
+export {};

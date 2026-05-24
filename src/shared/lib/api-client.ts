@@ -27,9 +27,7 @@ const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 export const API_URL = RAW_API_URL.replace(/\/$/, '');
 
 if (typeof window !== 'undefined' && !API_URL) {
-	throw new Error(
-		'NEXT_PUBLIC_API_URL is not configured. Check your .env.local file.',
-	);
+	throw new Error('NEXT_PUBLIC_API_URL is not configured. Check your .env.local file.');
 }
 
 export const getApiBaseUrl = (): string => {
@@ -151,7 +149,11 @@ export function apiPut<T = unknown>(path: string, body?: unknown, init?: Request
 	});
 }
 
-export function apiPatch<T = unknown>(path: string, body?: unknown, init?: RequestInit): Promise<T> {
+export function apiPatch<T = unknown>(
+	path: string,
+	body?: unknown,
+	init?: RequestInit,
+): Promise<T> {
 	return request<T>(path, {
 		method: 'PATCH',
 		body: body !== undefined ? JSON.stringify(body) : undefined,

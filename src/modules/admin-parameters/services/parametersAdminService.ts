@@ -8,7 +8,9 @@ interface Envelope<T> {
 }
 
 export async function getParameterByFilters<T>(code: string): Promise<ParameterRow<T>> {
-	const body = await apiPost<Envelope<Array<ParameterRow<T>>>>('/parameters/get-by-filters', { code });
+	const body = await apiPost<Envelope<Array<ParameterRow<T>>>>('/parameters/get-by-filters', {
+		code,
+	});
 
 	if (!body?.data) throw new ApiError(body?.message ?? 'admin.params.error.loadFailed');
 

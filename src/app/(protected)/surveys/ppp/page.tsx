@@ -5,9 +5,9 @@ const PPPManagementView = dynamic(() =>
 );
 
 export default function PPPPage() {
-  return <PPPManagementView />
+	return <PPPManagementView />;
 }
 
 export const metadata = {
-  title: 'PPP — Prácticas Pre-Profesionales | ABET',
-}
+	title: 'PPP — Prácticas Pre-Profesionales | ABET',
+};

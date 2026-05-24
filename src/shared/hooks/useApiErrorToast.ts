@@ -43,7 +43,12 @@ export function useApiErrorToast(autoDismissMs = AUTO_DISMISS_MS) {
 		[showToast],
 	);
 
-	useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
+	useEffect(
+		() => () => {
+			if (timerRef.current) clearTimeout(timerRef.current);
+		},
+		[],
+	);
 
 	return { toast, showToast, handleError, clearToast } as const;
 }

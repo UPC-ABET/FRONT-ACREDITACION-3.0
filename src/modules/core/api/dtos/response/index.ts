@@ -1,3 +1,3 @@
-export * from './type.response'
+export * from './type.response';
 
-export {}
+export {};

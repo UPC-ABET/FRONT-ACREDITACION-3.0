@@ -1,5 +1,5 @@
-import { GradeProjectsPage } from '@/modules/evaluation/pages'
+import { GradeProjectsPage } from '@/modules/evaluation/pages';
 
 export default function Page() {
-  return <GradeProjectsPage />
+	return <GradeProjectsPage />;
 }
