@@ -4,6 +4,8 @@
   /* Forzamos que estas variables sean siempre claras */
   --background: #f9fafb; /* Un gris muy sutil (zinc-50) */
   --foreground: #18181b; /* Un negro casi total (zinc-900) */
+  --brand: #C8102E;
+  --brand-border: rgba(200, 16, 46, 0.15);
 }
 
 /* ELIMINAMOS TODO EL BLOQUE @media (prefers-color-scheme: dark)

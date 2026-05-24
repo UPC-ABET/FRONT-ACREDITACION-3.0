@@ -51,13 +51,11 @@ function PillSwitcher({
 						<button
 							key={opt.value}
 							onClick={() => onSelectProgram(opt.value)}
-							className="px-5 py-2 rounded-xl text-[14px] font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap"
-							style={{
-								background: active ? '#fff' : 'transparent',
-								color: active ? '#C8102E' : '#a1a1aa',
-								border: active ? '1.5px solid #e2e2e6' : '1.5px solid transparent',
-								boxShadow: active ? '0 1px 5px rgba(0,0,0,0.08)' : 'none',
-							}}>
+							className={`px-5 py-2 rounded-xl text-[14px] font-semibold transition-all duration-150 cursor-pointer whitespace-nowrap border-[1.5px] ${
+								active
+									? 'bg-white text-[var(--brand)] border-zinc-200 shadow-sm'
+									: 'bg-transparent text-zinc-400 border-transparent shadow-none'
+							}`}>
 							{opt.label}
 						</button>
 					);
@@ -74,13 +72,11 @@ function PillSwitcher({
 					<button
 						key={opt.value}
 						onClick={() => onSelectProgram(opt.value)}
-						className="px-3.5 py-1.5 rounded-md text-[11px] font-bold tracking-wide transition-all duration-150 cursor-pointer border"
-						style={{
-							background: active ? '#fff' : 'transparent',
-							color: active ? '#C8102E' : '#a1a1aa',
-							borderColor: active ? 'rgba(200,16,46,0.15)' : 'transparent',
-							boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
-						}}>
+						className={`px-3.5 py-1.5 rounded-md text-[11px] font-bold tracking-wide transition-all duration-150 cursor-pointer border ${
+							active
+								? 'bg-white text-[var(--brand)] border-[var(--brand-border)] shadow-sm'
+								: 'bg-transparent text-zinc-400 border-transparent shadow-none'
+						}`}>
 						{opt.label}
 					</button>
 				);
@@ -101,8 +97,7 @@ function SchoolName({
 	return (
 		<div className="flex items-center min-w-0 text-zinc-800 leading-none">
 			<span
-				className={`font-semibold ${short ? 'text-[14px]' : 'text-[18px]'} flex-shrink-0`}
-				style={{ color: '#C8102E' }}>
+				className={`font-semibold ${short ? 'text-[14px]' : 'text-[18px]'} flex-shrink-0 text-[var(--brand)]`}>
 				{label}:&nbsp;
 			</span>
 			<span
@@ -131,8 +126,7 @@ function UserAvatar({
 			className="flex items-center gap-2 rounded-xl cursor-pointer hover:bg-zinc-100 transition-colors flex-shrink-0"
 			style={{ padding: withName ? '4px 8px 4px 4px' : '4px 6px 4px 4px' }}>
 			<div
-				className="w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-extrabold text-white flex-shrink-0"
-				style={{ background: '#C8102E' }}>
+				className="w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-extrabold text-white flex-shrink-0 bg-[var(--brand)]">
 				{initials}
 			</div>
 			{withName && (

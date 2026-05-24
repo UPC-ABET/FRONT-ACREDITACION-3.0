@@ -5,14 +5,17 @@ type UseSessionExpiryParams = {
 	enabled: boolean;
 	onExpire: () => void;
 	idleMs?: number;
+	syncPollMs?: number;
 };
 
 const DEFAULT_IDLE_MS = 60 * 60 * 1000;
+const DEFAULT_SYNC_POLL_MS = 5_000;
 
 export function useSessionExpiry({
 	enabled,
 	onExpire,
 	idleMs = DEFAULT_IDLE_MS,
+	syncPollMs = DEFAULT_SYNC_POLL_MS,
 }: UseSessionExpiryParams) {
 	const expiredRef = useRef(false);
 
@@ -59,7 +62,7 @@ export function useSessionExpiry({
 
 		const syncTimer = setInterval(() => {
 			if (!getAuthCookie('token')) runExpire();
-		}, 5000);
+		}, syncPollMs);
 
 		return () => {
 			if (inactivityTimer) clearTimeout(inactivityTimer);
@@ -67,5 +70,5 @@ export function useSessionExpiry({
 			clearInterval(syncTimer);
 			events.forEach((eventName) => window.removeEventListener(eventName, resetInactivityTimer));
 		};
-	}, [enabled, idleMs, onExpire]);
+	}, [enabled, idleMs, syncPollMs, onExpire]);
 }
