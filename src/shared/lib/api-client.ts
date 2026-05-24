@@ -24,6 +24,12 @@ type RequestJsonOptions = {
 const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 export const API_URL = RAW_API_URL.replace(/\/$/, '');
 
+if (typeof window !== 'undefined' && !API_URL) {
+	throw new Error(
+		'NEXT_PUBLIC_API_URL is not configured. Check your .env.local file.',
+	);
+}
+
 export const getApiBaseUrl = (): string => {
 	if (!API_URL) {
 		throw new Error('auth.missingApiUrl');
