@@ -22,4 +22,5 @@ export * from './hover-card';
 export * from './Popover';
 export * from './label';
 export * from './separator';
-export * from './alert';
+export * from './Alert';
+export * from './SessionExpiredAlert';
