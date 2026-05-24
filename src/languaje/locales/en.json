@@ -9,6 +9,7 @@
 		},
 		"rubrics": "Rubrics",
 		"rubricsList": "Rubrics",
+		"performanceLevels": "Performance Levels",
 		"projects": "Academic Projects",
 		"gradeProjects": "Grade Projects",
 		"surveys": {
@@ -581,6 +582,50 @@
 				"helper": "Acceptance levels apply to all criteria.",
 				"empty": "No acceptance levels have been defined for this rubric."
 			}
+		}
+	},
+	"performanceLevels": {
+		"list": {
+			"title": "Performance Levels",
+			"description": "Configure performance levels by period and instrument.",
+			"createButton": "New level",
+			"clearFilters": "Clear filters",
+			"loading": "Loading performance levels...",
+			"error": "Could not load performance levels.",
+			"empty": "No performance levels registered for the selected filters.",
+			"selectFilter": "Select an academic period and/or instrument to start.",
+			"periodFilter": "Academic Period",
+			"instrumentFilter": "Instrument",
+			"allPeriods": "All periods",
+			"allInstruments": "All instruments"
+		},
+		"table": {
+			"code": "Code",
+			"name": "Name",
+			"instrument": "Instrument",
+			"period": "Period",
+			"uniqueValue": "Unique value",
+			"scoreRange": "Score range",
+			"color": "Color",
+			"actions": "Actions"
+		},
+		"form": {
+			"createTitle": "Create performance level",
+			"createDescription": "Fill in the fields to create a new performance level.",
+			"editTitle": "Edit performance level",
+			"editDescription": "Modify the performance level fields.",
+			"cancel": "Cancel",
+			"create": "Create",
+			"update": "Update",
+			"saving": "Saving...",
+			"deleting": "Deleting...",
+			"saveError": "An error occurred while saving."
+		},
+		"delete": {
+			"title": "Delete performance level",
+			"description": "Are you sure you want to delete the level",
+			"cancel": "Cancel",
+			"confirm": "Delete"
 		}
 	},
 	"projects": {

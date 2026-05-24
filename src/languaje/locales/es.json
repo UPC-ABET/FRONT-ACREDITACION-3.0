@@ -3,6 +3,7 @@
 		"home": "Inicio",
 		"rubrics": "Rúbricas",
 		"rubricsList": "Rúbricas",
+		"performanceLevels": "Niveles de Desempeño",
 		"projects": "Proyectos Académicos",
 		"gradeProjects": "Calificar Proyectos",
 		"ifcs": "IFCs",
@@ -581,6 +582,50 @@
 				"helper": "Los niveles de aceptación son aplicables a todos los criterios.",
 				"empty": "No se han definido niveles de aceptación para esta rúbrica."
 			}
+		}
+	},
+	"performanceLevels": {
+		"list": {
+			"title": "Niveles de Desempeño",
+			"description": "Configura los niveles de desempeño por período e instrumento.",
+			"createButton": "Nuevo nivel",
+			"clearFilters": "Limpiar filtros",
+			"loading": "Cargando niveles de desempeño...",
+			"error": "No fue posible cargar los niveles de desempeño.",
+			"empty": "No hay niveles de desempeño registrados para los filtros seleccionados.",
+			"selectFilter": "Selecciona un período académico y/o instrumento para comenzar.",
+			"periodFilter": "Período Académico",
+			"instrumentFilter": "Instrumento",
+			"allPeriods": "Todos los períodos",
+			"allInstruments": "Todos los instrumentos"
+		},
+		"table": {
+			"code": "Código",
+			"name": "Nombre",
+			"instrument": "Instrumento",
+			"period": "Período",
+			"uniqueValue": "Valor único",
+			"scoreRange": "Rango puntaje",
+			"color": "Color",
+			"actions": "Acciones"
+		},
+		"form": {
+			"createTitle": "Crear nivel de desempeño",
+			"createDescription": "Completa los campos para crear un nuevo nivel de desempeño.",
+			"editTitle": "Editar nivel de desempeño",
+			"editDescription": "Modifica los campos del nivel de desempeño.",
+			"cancel": "Cancelar",
+			"create": "Crear",
+			"update": "Actualizar",
+			"saving": "Guardando...",
+			"deleting": "Eliminando...",
+			"saveError": "Ocurrió un error al guardar."
+		},
+		"delete": {
+			"title": "Eliminar nivel de desempeño",
+			"description": "¿Estás seguro de que deseas eliminar el nivel",
+			"cancel": "Cancelar",
+			"confirm": "Eliminar"
 		}
 	},
 	"projects": {
