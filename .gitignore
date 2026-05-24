@@ -32,6 +32,8 @@
 *.launch
 .settings/
 *.sublime-workspace
+.idea/
+.vscode/
 
 # debug
 npm-debug.log*
@@ -48,3 +50,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude
+.claude
+
+# cursor
+.cursor

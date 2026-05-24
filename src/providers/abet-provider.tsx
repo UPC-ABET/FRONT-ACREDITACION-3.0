@@ -6,11 +6,11 @@ import type { ABETContextType } from '@/shared/types';
 const ABETContext = createContext<ABETContextType | null>(null);
 
 export function ABETProvider({ children }: { children: React.ReactNode }) {
-	const [valueModality, setValueModality] = useState<string | number>('default');
+	const [modalityTypeId, setModalityTypeId] = useState<number | null>(null);
 
 	const value = useMemo<ABETContextType>(
-		() => ({ valueModality, setValueModality }),
-		[valueModality],
+		() => ({ modalityTypeId, setModalityTypeId }),
+		[modalityTypeId],
 	);
 
 	return <ABETContext.Provider value={value}>{children}</ABETContext.Provider>;

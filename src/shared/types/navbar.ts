@@ -18,4 +18,3 @@ export type StoredUser = {
 	last_name?: string;
 	is_admin?: boolean;
 };
-

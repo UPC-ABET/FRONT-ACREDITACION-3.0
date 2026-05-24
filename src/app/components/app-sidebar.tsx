@@ -1,18 +1,23 @@
 'use client';
 
-import React from 'react'
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarItem, SidebarNavGroup,
 } from '@/shared/components'
 import {
-  HomeIcon, DocumentCheckIcon,
-  Cog6ToothIcon,
-  ArrowRightStartOnRectangleIcon,
-} from '@heroicons/react/24/outline'
-import { useI18n } from '@/providers'
-import { logoutUser } from '@/modules/auth/services'
+	HomeIcon,
+	Cog6ToothIcon,
+	ArrowRightStartOnRectangleIcon,
+	ClipboardDocumentListIcon,
+	FolderIcon,
+	DocumentChartBarIcon,
+	ShieldCheckIcon,
+  DocumentCheckIcon
+} from '@heroicons/react/24/outline';
+import { useI18n } from '@/providers';
+import { logoutUser } from '@/modules/auth/services';
 
 type NavChild = {
 	name: string;
@@ -30,6 +35,19 @@ export function AppSidebar() {
 	const pathname = usePathname();
 	const router = useRouter();
 	const { t } = useI18n();
+
+	const [isAdmin, setIsAdmin] = useState(false);
+	useEffect(() => {
+		let admin = false;
+		try {
+			const raw = localStorage.getItem('token');
+			const user = raw ? JSON.parse(raw) : null;
+			admin = user?.is_admin === true;
+		} catch {
+			admin = false;
+		}
+		setIsAdmin(admin);
+	}, []);
 
 	const isActive = (href?: string) => (href ? pathname === href : false);
 
@@ -64,6 +82,25 @@ export function AppSidebar() {
 			],
 		},
 		{
+			name: t('nav.ifc.label'),
+			icon: DocumentChartBarIcon,
+			children: [
+				{ name: t('nav.ifc.dashboard'), href: '/ifcs' },
+				{ name: t('nav.ifc.findings'), href: '/ifc-findings' },
+			],
+		},
+
+		{
+			name: t('nav.surveys.label'),
+			icon: ClipboardDocumentListIcon,
+			children: [
+				{ name: t('nav.surveys.ppp'), href: '/surveys/ppp' },
+				{ name: t('nav.surveys.gra'), href: '/surveys/gra' },
+				{ name: t('nav.surveys.lcfc'), href: '/surveys/lcfc' },
+			],
+		},
+
+		{
 			name: t('nav.tests.label'),
 			icon: Cog6ToothIcon,
 			children: [
@@ -73,6 +110,22 @@ export function AppSidebar() {
 				{ name: t('nav.tests.public'), href: '/tests/public' },
 			],
 		},
+
+		{ name: 'Portfolio', href: '/Portfolio', icon: FolderIcon },
+
+		...(isAdmin
+			? [
+					{
+						name: t('nav.admin.label'),
+						icon: ShieldCheckIcon,
+						children: [
+							{ name: t('nav.admin.notifications'), href: '/admin/ifc-notification-config' },
+							{ name: t('nav.admin.ifcCodes'), href: '/admin/ifc-codes' },
+							{ name: t('nav.admin.ifcFields'), href: '/admin/ifc-fields' },
+						],
+					} as NavItem,
+				]
+			: []),
 	];
 
   return (
