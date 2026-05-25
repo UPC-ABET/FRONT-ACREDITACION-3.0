@@ -7,10 +7,8 @@ import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
 import { getAuthCookie, getSchoolFromCookie } from '@/shared/lib';
 import { useABET, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
-import { DEFAULT_USER_INITIALS } from '@/shared/constants';
-import { TYPE_GROUP_CODES } from '@/modules/ifcs/constants';
-import { getTypesByGroupCode } from '@/modules/ifcs/services';
-import type { CriticalityOption } from '@/modules/ifcs/services';
+import { DEFAULT_USER_INITIALS, PROGRAM_MODALITY_GROUP_CODE } from '@/shared/constants';
+import { getTypesByGroupCode } from '@/shared/lib';
 import type { NavbarProps, StoredUser } from '@/shared/types';
 
 function readCookieUser(): StoredUser | null {
@@ -155,8 +153,8 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 	const [storedSchoolCode] = useState(readCookieSchool);
 
 	const { data: modalityOptions = [] } = useQuery({
-		queryKey: ['types', TYPE_GROUP_CODES.PROGRAM_MODALITY],
-		queryFn: () => getTypesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY),
+		queryKey: ['types', PROGRAM_MODALITY_GROUP_CODE],
+		queryFn: () => getTypesByGroupCode(PROGRAM_MODALITY_GROUP_CODE),
 		staleTime: Infinity,
 	});
 

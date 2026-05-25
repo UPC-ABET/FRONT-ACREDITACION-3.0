@@ -28,7 +28,6 @@ export const TYPE_CODES = {
 
 export const TYPE_GROUP_CODES = {
 	CRITICALITY: 'TG801',
-	PROGRAM_MODALITY: 'TG102',
 } as const;
 
 export const PARAMETER_CODES = {
