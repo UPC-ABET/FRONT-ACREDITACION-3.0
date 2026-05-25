@@ -150,7 +150,13 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 
 	return (
 		<>
-			<DataTable<IFCRow, unknown> columns={columns} data={rows} showSearch={false} showPagination />
+			<DataTable<IFCRow, unknown>
+				columns={columns}
+				data={rows}
+				showSearch={false}
+				showPagination
+				aria-label={t('ifcs.table.ariaLabel')}
+			/>
 			{pdfError && (
 				<Toast isOpen type="error" onClose={clearError} message={tryTranslate(t, pdfError)} />
 			)}

@@ -82,6 +82,7 @@ export function FindingsTable({ rows, onView, onDelete }: Props) {
 			data={rows}
 			showSearch={false}
 			showPagination
+			aria-label={t('ifcFindings.table.ariaLabel')}
 		/>
 	);
 }

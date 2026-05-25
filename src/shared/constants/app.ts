@@ -9,3 +9,5 @@ export const DEFAULT_USER_INITIALS = 'UA';
 export const STORAGE_KEYS = {
 	locale: 'app_locale',
 } as const;
+
+export const PROGRAM_MODALITY_GROUP_CODE = 'TG102';

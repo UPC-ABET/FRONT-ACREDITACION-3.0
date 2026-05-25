@@ -7,10 +7,10 @@ import { Button, Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/comp
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { tryTranslate } from '@/shared/utils/try-translate';
 import { useIFCFormState } from '../../hooks/useIFCFormState';
+import { validateIFCForm } from '../../schemas';
 import { createIFC, patchIFC } from '../../services/ifcsService';
 import type {
 	CriticalityOption,
-	I18nText,
 	IFCField,
 	IFCPrefill,
 	IFCViewPayload,
@@ -36,11 +36,6 @@ type Props = {
 	criticalities: CriticalityOption[];
 };
 
-function hasAnyLang(value: I18nText | undefined, languages: string[]): boolean {
-	if (!value) return false;
-	return languages.some((l) => value[l]?.trim());
-}
-
 export function IFCForm(props: Props) {
 	const { t, locale: lang } = useI18n();
 	const router = useRouter();
@@ -62,34 +57,8 @@ export function IFCForm(props: Props) {
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 	const [pendingNavId, setPendingNavId] = useState<number | null>(null);
 
-	function validate(): string | null {
-		const missingRequired = props.ifcFields
-			.filter((f) => f.required)
-			.some((f) => !hasAnyLang(state.information[f.key], props.languages));
-		if (missingRequired) return 'ifcs.form.err.requiredFields';
-
-		if (state.findings.length === 0) return 'error.ifc.findingsRequired';
-
-		const findingInvalid = state.findings.some(
-			(f) => !hasAnyLang(f.description, props.languages) || !f.criticality_code,
-		);
-		if (findingInvalid) return 'ifcs.form.err.findingIncomplete';
-
-		const actionInvalid = state.actions.some(
-			(a) => !hasAnyLang(a.description, props.languages) || !a.finding_temp_id,
-		);
-		if (actionInvalid) return 'ifcs.form.err.actionIncomplete';
-
-		const findingWithoutActions = state.findings.some(
-			(f) => !state.actions.some((a) => a.finding_temp_id === f.tempId),
-		);
-		if (findingWithoutActions) return 'error.ifc.actionsRequiredPerFinding';
-
-		return null;
-	}
-
 	async function onSave(submit: boolean) {
-		const err = validate();
+		const err = validateIFCForm(state, props.ifcFields, props.languages);
 		if (err) {
 			setError(err);
 			return;

@@ -50,7 +50,8 @@
       "statusFilter": "Status",
       "empty": "No IFCs",
       "actionView": "View",
-      "actionRegister": "Register"
+      "actionRegister": "Register",
+      "ariaLabel": "IFC table"
     },
     "status": {
       "all": "All"
@@ -152,6 +153,9 @@
     "action": {
       "view": "View",
       "delete": "Delete"
+    },
+    "table": {
+      "ariaLabel": "Findings table"
     },
     "empty": "No findings in scope",
     "toast": {

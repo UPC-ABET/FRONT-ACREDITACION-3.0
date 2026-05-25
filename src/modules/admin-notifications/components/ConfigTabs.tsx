@@ -3,20 +3,14 @@
 import { useMemo, useState } from 'react';
 import { Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type { CoreType, NotificationConfig, NotifyVar } from '../services/types';
+import type { CoreType, NotificationConfig } from '../services/types';
 import { TRIGGER_FALLBACK_LABEL } from './adminLabels';
 import { ConfigEditor } from './ConfigEditor';
 
 type Props = {
-	periodId: number;
 	triggers: CoreType[];
 	statuses: CoreType[];
-	chartLevels: CoreType[];
-	notifyVars: NotifyVar[];
 	configs: NotificationConfig[];
-	onSaved: () => void;
-	onError: (msg: string) => void;
-	onSuccess: (msg: string) => void;
 };
 
 function labelFor(c: CoreType, lang: string): string {
@@ -25,15 +19,9 @@ function labelFor(c: CoreType, lang: string): string {
 }
 
 export function ConfigTabs({
-	periodId,
 	triggers,
 	statuses,
-	chartLevels,
-	notifyVars,
 	configs,
-	onSaved,
-	onError,
-	onSuccess,
 }: Props) {
 	const { t, locale: lang } = useI18n();
 
@@ -102,16 +90,10 @@ export function ConfigTabs({
 
 			<ConfigEditor
 				key={`${triggerId}-${statusId}`}
-				periodId={periodId}
 				triggerTypeId={triggerId}
 				statusTypeId={statusId}
 				statusCode={statusCode ?? ''}
-				chartLevels={chartLevels}
-				notifyVars={notifyVars}
 				existingConfig={existing}
-				onSaved={onSaved}
-				onError={onError}
-				onSuccess={onSuccess}
 			/>
 		</div>
 	);
