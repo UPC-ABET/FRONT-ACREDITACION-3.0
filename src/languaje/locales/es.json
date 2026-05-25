@@ -50,7 +50,8 @@
 			"statusFilter": "Estado",
 			"empty": "Sin IFCs",
 			"actionView": "Ver",
-			"actionRegister": "Registrar"
+			"actionRegister": "Registrar",
+			"ariaLabel": "Tabla de IFCs"
 		},
 		"status": {
 			"all": "Todos"
@@ -152,6 +153,9 @@
 		"action": {
 			"view": "Ver",
 			"delete": "Eliminar"
+		},
+		"table": {
+			"ariaLabel": "Tabla de hallazgos"
 		},
 		"empty": "No hay hallazgos en este alcance",
 		"toast": {
