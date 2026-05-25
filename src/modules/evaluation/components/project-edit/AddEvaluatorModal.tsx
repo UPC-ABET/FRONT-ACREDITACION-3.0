@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { MagnifyingGlassIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { CheckIcon } from '@heroicons/react/24/outline';
 import {
 	Dialog,
 	DialogContent,
@@ -19,8 +19,9 @@ import { professorsService, typeGroupsService, typesService } from '@/modules/ac
 import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
 import type { ProfessorSearchResponse } from '@/modules/academic/api/dtos/response';
+import { EVALUATOR_CODES } from '../../constants/type-codes';
 
-const EVALUATOR_TYPE_GROUP_CODE = 'TG403';
+const EVALUATOR_TYPE_GROUP_CODE = EVALUATOR_CODES.TYPE_GROUP;
 
 interface AddEvaluatorModalProps {
 	open: boolean;
@@ -42,6 +43,8 @@ export function AddEvaluatorModal({
 
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
+	const [professors, setProfessors] = useState<ProfessorSearchResponse[]>([]);
+	const [loadingProfessors, setLoadingProfessors] = useState(false);
 	const [selectedProfessor, setSelectedProfessor] = useState<ProfessorSearchResponse | null>(null);
 	const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
 	const [submitError, setSubmitError] = useState<string | null>(null);
@@ -57,23 +60,25 @@ export function AddEvaluatorModal({
 		if (!open) {
 			setSearch('');
 			setDebouncedSearch('');
+			setProfessors([]);
 			setSelectedProfessor(null);
 			setSelectedRoleId(null);
 			setSubmitError(null);
 		}
 	}, [open]);
 
-	// Professors search — only fires when there is a non-empty search term
-	const { data: professors = [], isFetching: loadingProfessors } = useQuery({
-		queryKey: ['professors', 'search', debouncedSearch],
-		queryFn: () =>
-			professorsService
-				.getByFilters({ search: debouncedSearch, is_active: true })
-				.then((r) => r.data),
-		enabled: open && debouncedSearch.trim().length > 0,
-	});
+	// Fetch professors on open and on debounced search change
+	useEffect(() => {
+		if (!open) return;
+		setLoadingProfessors(true);
+		professorsService
+			.getByFilters({ search: debouncedSearch.trim() || undefined, is_active: true })
+			.then((r) => setProfessors(r.data ?? []))
+			.catch(() => setProfessors([]))
+			.finally(() => setLoadingProfessors(false));
+	}, [open, debouncedSearch]);
 
-	// Step 1: resolve TG403 type-group id
+	// Types — stable, use useQuery
 	const { data: evaluatorTypeGroup } = useQuery({
 		queryKey: ['type-groups', EVALUATOR_TYPE_GROUP_CODE],
 		queryFn: () =>
@@ -84,7 +89,6 @@ export function AddEvaluatorModal({
 		staleTime: Infinity,
 	});
 
-	// Step 2: fetch evaluator types once we have the group id
 	const { data: evaluatorTypes = [], isLoading: loadingRoles } = useQuery({
 		queryKey: ['types', 'by-type-group', evaluatorTypeGroup?.id],
 		queryFn: () =>
@@ -126,10 +130,6 @@ export function AddEvaluatorModal({
 		createMutation.mutate();
 	};
 
-	const handleRoleChange = (_: string | undefined, opt: any) => {
-		setSelectedRoleId(opt ? Number(opt.value) : null);
-	};
-
 	const professorDisplayName = (p: ProfessorSearchResponse) => {
 		const user = p.staff?.user;
 		if (user?.first_name || user?.last_name) {
@@ -138,8 +138,7 @@ export function AddEvaluatorModal({
 		return p.staff?.staff_email ?? `ID ${p.id}`;
 	};
 
-	const canSubmit =
-		selectedProfessor !== null && selectedRoleId !== null && !createMutation.isPending;
+	const canSubmit = selectedProfessor !== null && selectedRoleId !== null && !createMutation.isPending;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -149,7 +148,6 @@ export function AddEvaluatorModal({
 				</DialogHeader>
 
 				<div className="space-y-5">
-					{/* Professor search */}
 					<div className="space-y-2">
 						<Input
 							label={t('projects.edit.evaluators.modal.searchLabel')}
@@ -161,16 +159,11 @@ export function AddEvaluatorModal({
 							}}
 						/>
 
-						{/* Professor list */}
 						<div className="h-45 overflow-y-auto rounded-lg border border-zinc-200 bg-white">
 							{loadingProfessors ? (
 								<div className="px-4 py-6 text-center text-sm text-zinc-400">
 									<span className="animate-pulse">...</span>
 								</div>
-							) : debouncedSearch.trim().length === 0 ? (
-								<p className="px-4 py-6 text-center text-sm text-zinc-400">
-									{t('projects.edit.evaluators.modal.searchPrompt')}
-								</p>
 							) : professors.length === 0 ? (
 								<p className="px-4 py-6 text-center text-sm text-zinc-400">
 									{t('projects.edit.evaluators.modal.noResults')}
@@ -209,7 +202,6 @@ export function AddEvaluatorModal({
 						</div>
 					</div>
 
-					{/* Role select */}
 					<Select
 						label={t('projects.edit.evaluators.modal.roleLabel')}
 						placeholder={
@@ -219,11 +211,10 @@ export function AddEvaluatorModal({
 						}
 						options={roleOptions}
 						value={roleOptions.find((o) => o.value === selectedRoleId) ?? null}
-						onChange={handleRoleChange}
+						onChange={(_: string | undefined, opt: any) => setSelectedRoleId(opt ? Number(opt.value) : null)}
 						isDisabled={loadingRoles || roleOptions.length === 0}
 					/>
 
-					{/* Error */}
 					{submitError && <p className="text-xs text-red-600">{submitError}</p>}
 				</div>
 

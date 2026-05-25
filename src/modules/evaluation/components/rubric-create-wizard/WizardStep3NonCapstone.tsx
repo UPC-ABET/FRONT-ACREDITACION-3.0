@@ -9,10 +9,7 @@ import { RubricTable } from '../rubric-editor/RubricTable'
 import type { RubricQuestion, QuestionCriteria } from '../../types'
 import type { Step1Data } from './WizardStep1'
 import type { Step2Data } from './WizardStep2'
-
-const TARGET_SUM = 20
-const MAX_QUESTIONS = 20
-const MAX_COLS = 10
+import { MAX_COLS, MAX_QUESTIONS, TARGET_SUM } from '../../constants'
 
 export interface NonCapstonePayloadQuestion {
   question: { es: string; en: string }

@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo } from 'react';
-import { PencilSquareIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { useMemo, useState } from 'react';
+import { PencilSquareIcon, EyeIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Badge,
+	Button,
 	buttonVariants,
 	Table,
 	TableBody,
@@ -14,17 +16,36 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+	DialogClose,
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import { useRubrics } from '../hooks';
+import { useRubrics, rubricsQueryKeys } from '../hooks';
+import { rubricsService } from '../services';
 import { mapRubricToRow } from '../utils/rubrics-mappers.utils';
+import type { RubricListRow } from '../types';
 
 export function RubricsListPage() {
-	const { locale } = useI18n();
+	const { locale, t } = useI18n();
+	const queryClient = useQueryClient();
 	const { data, isLoading, isError, error } = useRubrics();
-	const { t } = useI18n();
 	const items = useMemo(() => (data ?? []).map(mapRubricToRow), [data]);
+
+	const [confirmTarget, setConfirmTarget] = useState<RubricListRow | null>(null);
+
+	const deleteMutation = useMutation({
+		mutationFn: (id: number) => rubricsService.delete(id),
+		onSuccess: () => {
+			setConfirmTarget(null);
+			queryClient.invalidateQueries({ queryKey: rubricsQueryKeys.all });
+		},
+		onError: () => setConfirmTarget(null),
+	});
 
 	return (
 		<div className="space-y-8">
@@ -35,7 +56,8 @@ export function RubricsListPage() {
 				</div>
 				<Link
 					href="/rubrics/new"
-					className={cn(buttonVariants({ variant: 'primary', size: 'md' }), 'shrink-0')}>
+					className={cn(buttonVariants({ variant: 'primary', size: 'md' }), 'shrink-0 inline-flex items-center gap-1.5')}>
+					<PlusIcon className="h-4 w-4" />
 					{t('rubrics.list.createButton')}
 				</Link>
 			</div>
@@ -55,20 +77,18 @@ export function RubricsListPage() {
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead>Curso</TableHead>
-								<TableHead>Periodo Académico</TableHead>
-								<TableHead>Tipo de Evaluación</TableHead>
-								<TableHead>Tipo de rúbrica</TableHead>
-								<TableHead className="text-center">Acciones</TableHead>
+								<TableHead>{t('rubrics.list.columns.course')}</TableHead>
+								<TableHead>{t('rubrics.list.columns.period')}</TableHead>
+								<TableHead>{t('rubrics.list.columns.gradeType')}</TableHead>
+								<TableHead>{t('rubrics.list.columns.rubricType')}</TableHead>
+								<TableHead className="w-24 text-center">{t('rubrics.list.columns.actions')}</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
 							{items.map((row) => (
 								<TableRow key={row.id}>
 									<TableCell>
-										<div className="flex flex-col">
-											<span className="font-medium text-zinc-900">{row.courseLabel[locale]}</span>
-										</div>
+										<span className="font-medium text-zinc-900">{row.courseLabel[locale]}</span>
 									</TableCell>
 									<TableCell>
 										<span className="text-zinc-700">{row.periodLabel}</span>
@@ -83,25 +103,31 @@ export function RubricsListPage() {
 											<Badge variant="outline">No Capstone</Badge>
 										)}
 									</TableCell>
-									<TableCell className="text-center">
-										{row.canEdit ? (
+									<TableCell>
+										<div className="flex items-center justify-center gap-1">
 											<Link
 												href={`/rubrics/${row.id}/edit`}
-												title="Editar"
+												title={row.canEdit ? t('rubrics.list.actions.edit') : t('rubrics.list.actions.view')}
 												className={cn(
-													'inline-flex items-center justify-center w-8 h-8 rounded-lg',
-													'text-zinc-500 transition-colors',
-													'hover:bg-blue-50 hover:text-blue-600',
+													'inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors',
+													row.canEdit
+														? 'text-zinc-500 hover:bg-blue-50 hover:text-blue-600'
+														: 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700',
 												)}>
-												<PencilSquareIcon className="h-4 w-4" />
+												{row.canEdit
+													? <PencilSquareIcon className="h-4 w-4" />
+													: <EyeIcon className="h-4 w-4" />}
 											</Link>
-										) : (
-											<span
-												title="Solo lectura"
-												className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 cursor-not-allowed">
-												<LockClosedIcon className="h-4 w-4" />
-											</span>
-										)}
+											<button
+												type="button"
+												disabled={!row.canEdit}
+												onClick={() => setConfirmTarget(row)}
+												title={t('rubrics.list.actions.delete')}
+												className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30"
+											>
+												<TrashIcon className="h-4 w-4" />
+											</button>
+										</div>
 									</TableCell>
 								</TableRow>
 							))}
@@ -109,6 +135,40 @@ export function RubricsListPage() {
 					</Table>
 				</div>
 			)}
+
+			{/* Confirm delete modal */}
+			<Dialog open={!!confirmTarget} onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}>
+				<DialogContent className="sm:max-w-sm">
+					<DialogHeader>
+						<DialogTitle>{t('rubrics.list.deleteModal.title')}</DialogTitle>
+					</DialogHeader>
+					<p className="text-sm text-zinc-600">
+						{t('rubrics.list.deleteModal.body').replace(
+							'{{course}}',
+							confirmTarget ? confirmTarget.courseLabel[locale] : '',
+						)}
+					</p>
+					<DialogFooter>
+						<DialogClose
+							render={
+								<Button variant="secondary" disabled={deleteMutation.isPending}>
+									{t('dialog.close')}
+								</Button>
+							}
+						/>
+						<Button
+							variant="primary"
+							className="bg-red-600 hover:bg-red-700"
+							disabled={deleteMutation.isPending}
+							onClick={() => confirmTarget && deleteMutation.mutate(confirmTarget.id)}
+						>
+							{deleteMutation.isPending
+								? t('rubrics.list.deleteModal.deleting')
+								: t('rubrics.list.deleteModal.confirm')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }

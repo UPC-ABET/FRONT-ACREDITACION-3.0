@@ -1,3 +1,4 @@
+import { GRADE_IDS } from '@/modules';
 import dynamic from 'next/dynamic';
 
 const ProjectEvaluatePage = dynamic(() =>
@@ -10,5 +11,5 @@ interface Params {
 
 export default async function Page({ params }: Params) {
 	const { projectId } = await params;
-	return <ProjectEvaluatePage projectId={projectId} gradeTypeId={55} />;
+	return <ProjectEvaluatePage projectId={projectId} gradeTypeId={GRADE_IDS.FINAL} />;
 }

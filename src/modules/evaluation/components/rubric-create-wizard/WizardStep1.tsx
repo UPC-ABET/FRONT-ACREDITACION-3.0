@@ -5,12 +5,15 @@ import { Select, Button } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
 import { getSchoolFromCookie } from '@/shared/lib/jwt'
 import { rubricWizardService } from '../../services/rubricWizardService'
-import type { AcademicPeriodResponse, CourseResponse } from '@/modules/academic/api/dtos/response'
+import { studyPlanCoursesService } from '../../services/studyPlanCoursesService'
+import type { AcademicPeriodResponse } from '@/modules/academic/api/dtos/response'
+import type { StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response'
 
 export interface Step1Data {
   periodId: number
   courseId: number
   studyPlanCourseId: number
+  studyPlanAcademicPeriodId: number
   courseName: { en: string; es: string }
   periodCode: string
 }
@@ -21,17 +24,23 @@ interface WizardStep1Props {
 
 type SelectOption = { label: string; value: string | number }
 
+function getSpcCourseName(spc: StudyPlanCourseResponse): { en: string; es: string } {
+  const raw = spc.course?.name
+  if (!raw) return { en: '', es: '' }
+  return typeof raw === 'string' ? { en: raw, es: raw } : raw
+}
+
 export function WizardStep1({ onNext }: WizardStep1Props) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [periods, setPeriods] = useState<AcademicPeriodResponse[]>([])
-  const [courses, setCourses] = useState<CourseResponse[]>([])
+  const [spcList, setSpcList] = useState<StudyPlanCourseResponse[]>([])
   const [selectedPeriod, setSelectedPeriod] = useState<SelectOption | null>(null)
-  const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null)
+  const [selectedSpcId, setSelectedSpcId] = useState<SelectOption | null>(null)
   const [loadingPeriods, setLoadingPeriods] = useState(true)
   const [loadingCourses, setLoadingCourses] = useState(false)
-  const [loadingSpc, setLoadingSpc] = useState(false)
   const [error, setError] = useState('')
 
+  // Load active periods once
   useEffect(() => {
     rubricWizardService
       .getAcademicPeriods()
@@ -40,65 +49,55 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
       .finally(() => setLoadingPeriods(false))
   }, [t])
 
+  // Load study-plan-courses filtered by period, school and is_evaluate_rubric
   useEffect(() => {
     if (!selectedPeriod) {
-      setCourses([])
-      setSelectedCourse(null)
+      setSpcList([])
+      setSelectedSpcId(null)
       return
     }
-    const school = getSchoolFromCookie()
-    const schoolId = school?.id as number | null
+    const schoolId = getSchoolFromCookie()?.id as number | undefined
     if (!schoolId) {
       setError(t('rubrics.wizard.step1.error.noSchool'))
       return
     }
     setLoadingCourses(true)
-    setSelectedCourse(null)
-    rubricWizardService
-      .getCoursesByFilters({
-        school_id: schoolId,
+    setSelectedSpcId(null)
+    setError('')
+    studyPlanCoursesService
+      .getByFilters({
         academic_period_id: Number(selectedPeriod.value),
+        school_id: schoolId,
+        extra: { is_evaluate_rubric: true },
         is_active: true,
       })
-      .then((res) => setCourses(res.data))
+      .then((res) => setSpcList(res.data))
       .catch(() => setError(t('rubrics.wizard.step1.error.loadCourses')))
       .finally(() => setLoadingCourses(false))
   }, [selectedPeriod, t])
 
-  const handleNext = async () => {
-    if (!selectedPeriod || !selectedCourse) return
-    setLoadingSpc(true)
-    setError('')
-    try {
-      const res = await rubricWizardService.getStudyPlanCoursesByFilters({
-        course_id: Number(selectedCourse.value),
-        academic_period_id: Number(selectedPeriod.value),
-        is_active: true,
-      })
-      const spc = res.data[0]
-      if (!spc) {
-        setError(t('rubrics.wizard.step1.error.noStudyPlan'))
-        return
-      }
-      const course = courses.find((c) => c.id === Number(selectedCourse.value))!
-      const period = periods.find((p) => p.id === Number(selectedPeriod.value))!
-      onNext({
-        periodId: period.id,
-        courseId: course.id,
-        studyPlanCourseId: spc.id,
-        courseName: course.name,
-        periodCode: period.code,
-      })
-    } catch {
-      setError(t('rubrics.wizard.step1.error.studyPlan'))
-    } finally {
-      setLoadingSpc(false)
-    }
+  const handleNext = () => {
+    if (!selectedPeriod || !selectedSpcId) return
+    const spc = spcList.find((s) => s.id === Number(selectedSpcId.value))
+    const period = periods.find((p) => p.id === Number(selectedPeriod.value))
+    if (!spc || !period) return
+    onNext({
+      periodId: period.id,
+      courseId: spc.course?.id ?? spc.course_id,
+      studyPlanCourseId: spc.id,
+      studyPlanAcademicPeriodId: spc.study_plan_academic_period_id,
+      courseName: getSpcCourseName(spc),
+      periodCode: period.code,
+    })
   }
 
   const periodOptions: SelectOption[] = periods.map((p) => ({ label: p.code, value: p.id }))
-  const courseOptions: SelectOption[] = courses.map((c) => ({ label: c.name.es, value: c.id }))
-  const canContinue = !!selectedPeriod && !!selectedCourse && !loadingSpc
+  const courseOptions: SelectOption[] = spcList.map((s) => ({
+    label: getSpcCourseName(s)[locale] || String(s.course?.id ?? s.course_id),
+    value: s.id,
+  }))
+
+  const canContinue = !!selectedPeriod && !!selectedSpcId
 
   return (
     <div className="space-y-6">
@@ -125,23 +124,23 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
               ? t('rubrics.wizard.step1.courseSelectPeriodFirst')
               : loadingCourses
                 ? t('rubrics.wizard.step1.courseLoading')
-                : courses.length === 0
+                : spcList.length === 0
                   ? t('rubrics.wizard.step1.courseNoOptions')
                   : t('rubrics.wizard.step1.coursePlaceholder')
           }
           options={courseOptions}
-          value={selectedCourse}
-          isDisabled={!selectedPeriod || loadingCourses || courses.length === 0}
+          value={selectedSpcId}
+          isDisabled={!selectedPeriod || loadingCourses || spcList.length === 0}
           isSearchable
-          onChange={(_, v) => setSelectedCourse(v as SelectOption | null)}
+          onChange={(_, v) => setSelectedSpcId(v as SelectOption | null)}
         />
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       <div className="flex justify-end">
-        <Button variant="primary" disabled={!canContinue} onClick={() => void handleNext()}>
-          {loadingSpc ? t('rubrics.wizard.step1.verifying') : t('rubrics.wizard.step1.next')}
+        <Button variant="primary" disabled={!canContinue} onClick={handleNext}>
+          {t('rubrics.wizard.step1.next')}
         </Button>
       </div>
     </div>

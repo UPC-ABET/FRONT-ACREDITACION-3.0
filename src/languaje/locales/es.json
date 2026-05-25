@@ -3,6 +3,7 @@
 		"home": "Inicio",
 		"rubrics": "Rúbricas",
 		"rubricsList": "Rúbricas",
+		"evaluationCourses": "Cursos a Calificar",
 		"performanceLevels": "Niveles de Desempeño",
 		"projects": "Proyectos Académicos",
 		"gradeProjects": "Calificar Proyectos",
@@ -503,7 +504,25 @@
 			"createButton": "Crear rúbrica",
 			"loading": "Cargando rúbricas...",
 			"error": "No fue posible cargar las rúbricas.",
-			"empty": "No hay rúbricas registradas."
+			"empty": "No hay rúbricas registradas.",
+			"columns": {
+				"course": "Curso",
+				"period": "Período Académico",
+				"gradeType": "Tipo de Evaluación",
+				"rubricType": "Tipo de Rúbrica",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"edit": "Editar",
+				"view": "Ver",
+				"delete": "Eliminar"
+			},
+			"deleteModal": {
+				"title": "¿Eliminar rúbrica?",
+				"body": "¿Estás seguro de que deseas eliminar la rúbrica de \"{{course}}\"? Esta acción no se puede deshacer.",
+				"confirm": "Eliminar",
+				"deleting": "Eliminando..."
+			}
 		},
 		"editor": {
 			"error": {
@@ -582,6 +601,86 @@
 				"helper": "Los niveles de desempeño son aplicables a todos los criterios.",
 				"empty": "No se han definido niveles de desempeño para esta rúbrica."
 			}
+		},
+		"wizard": {
+			"title": "Nueva rúbrica",
+			"subtitle": "Crea una rúbrica de evaluación.",
+			"steps": {
+				"step1": {
+					"label": "Curso",
+					"description": "Periodo y curso"
+				},
+				"step2": {
+					"label": "Evaluación",
+					"description": "Tipo y rúbrica"
+				},
+				"step3": {
+					"label": "Rúbrica",
+					"description": "Preguntas y criterios"
+				}
+			},
+			"step1": {
+				"title": "Seleccionar curso",
+				"subtitle": "Elige el periodo académico y el curso.",
+				"periodLabel": "Periodo académico",
+				"periodPlaceholder": "Selecciona un periodo",
+				"periodLoading": "Cargando periodos...",
+				"courseLabel": "Curso",
+				"coursePlaceholder": "Selecciona un curso",
+				"courseLoading": "Cargando cursos...",
+				"courseNoOptions": "Sin cursos disponibles",
+				"courseSelectPeriodFirst": "Selecciona un periodo primero",
+				"next": "Siguiente",
+				"verifying": "Verificando...",
+				"error": {
+					"loadPeriods": "No se pudieron cargar los periodos académicos.",
+					"loadCourses": "No se pudieron cargar los cursos.",
+					"noSchool": "No se pudo obtener la escuela del usuario.",
+					"noStudyPlan": "No se encontró un plan de estudios para este curso y periodo.",
+					"studyPlan": "Error al obtener datos del plan de estudios."
+				}
+			},
+			"step2": {
+				"title": "Tipo de evaluación",
+				"subtitle": "Selecciona el tipo de evaluación. El tipo de rúbrica se determinará automáticamente.",
+				"gradeTypeLabel": "Tipo de evaluación",
+				"gradeTypePlaceholder": "Selecciona un tipo",
+				"gradeTypeLoading": "Cargando tipos...",
+				"rubricTypeLabel": "Tipo de rúbrica:",
+				"verifyingOutcomes": "Verificando outcomes del curso...",
+				"back": "Atrás",
+				"next": "Siguiente",
+				"error": {
+					"loadTypes": "No se pudieron cargar los tipos de evaluación.",
+					"verifyOutcomes": "Error al verificar los outcomes del curso."
+				}
+			},
+			"step3": {
+				"back": "Atrás",
+				"submit": "Crear rúbrica",
+				"submitting": "Creando rúbrica...",
+				"capstone": {
+					"title": "Criterios por outcome",
+					"subtitle": "Define los niveles de evaluación para cada outcome.",
+					"criteriaLabel": "Criterio",
+					"criteriaPlaceholder": "Descripción del nivel de desempeño",
+					"addCriteria": "Agregar nivel",
+					"deleteCriteria": "Eliminar",
+					"commissionTooltipIncomplete": "Completa todos los criterios para marcar la comisión",
+					"emptyOutcome": "Sin criterios",
+					"emptyOutcomeHint": "Agrega al menos un criterio con el botón +",
+					"error": {
+						"loadOutcomes": "No se pudieron cargar los outcomes del curso."
+					},
+					"validation": {
+						"incomplete": "Completa la descripción de todos los criterios en todas las comisiones.",
+						"complete": "Rúbrica lista para guardar"
+					}
+				}
+			},
+			"error": {
+				"createRubric": "Error al crear la rúbrica. Intenta de nuevo."
+			}
 		}
 	},
 	"performanceLevels": {
@@ -629,6 +728,64 @@
 		}
 	},
 	"projects": {
+		"create": {
+			"title": "Crear Proyecto Académico",
+			"subtitle": "Completa los pasos para registrar un nuevo proyecto.",
+			"steps": {
+				"step1": {
+					"label": "Curso",
+					"description": "Selecciona el período y el curso"
+				},
+				"step2": {
+					"label": "Detalle",
+					"description": "Código, nombre, estudiantes y evaluadores"
+				}
+			},
+			"error": {
+				"create": "No fue posible crear el proyecto. Intenta de nuevo."
+			},
+			"step2": {
+				"infoTitle": "Información del Proyecto",
+				"fieldCode": "Código",
+				"fieldCodePlaceholder": "Ej. PROY-001",
+				"fieldName": "Nombre",
+				"fieldNamePlaceholder": "Nombre del proyecto",
+				"fieldDesc": "Descripción",
+				"fieldDescPlaceholder": "Descripción del proyecto",
+				"studentsTitle": "Estudiantes",
+				"studentsAdd": "Agregar estudiantes",
+				"studentsEmpty": "Aún no se han seleccionado estudiantes.",
+				"studentsLoading": "Cargando estudiantes...",
+				"studentsNoResults": "Sin resultados para la búsqueda.",
+				"studentsModal": {
+					"title": "Seleccionar estudiantes",
+					"searchPlaceholder": "Buscar por nombre o código...",
+					"searchPrompt": "Escribe para buscar un estudiante.",
+					"selected": "seleccionados",
+					"confirmButton": "Confirmar"
+				},
+				"evaluatorsTitle": "Evaluadores",
+				"evaluatorsAdd": "Agregar evaluador",
+				"evaluatorsEmpty": "Aún no se han agregado evaluadores.",
+				"evaluatorsSearch": "Buscar docente",
+				"evaluatorsSearchPlaceholder": "Nombre o correo del docente...",
+				"evaluatorsSearchPrompt": "Escribe para buscar un docente.",
+				"evaluatorsNoResults": "No se encontraron docentes.",
+				"evaluatorsRole": "Rol",
+				"evaluatorsRolePlaceholder": "Selecciona un rol",
+				"evaluatorsRoleLoading": "Cargando roles...",
+				"evaluatorsModal": {
+					"title": "Agregar evaluador",
+					"confirmButton": "Agregar"
+				},
+				"evaluators": {
+					"errorDuplicateRole": "Este docente ya tiene asignado ese rol."
+				},
+				"back": "Atrás",
+				"submit": "Crear Proyecto",
+				"submitting": "Creando..."
+			}
+		},
 		"list": {
 			"title": "Proyectos Académicos",
 			"description": "Listado de proyectos académicos.",
@@ -784,6 +941,47 @@
 				},
 				"removeSuccess": "Evaluador eliminado correctamente."
 			}
+		}
+	},
+	"evaluationCourses": {
+		"list": {
+			"title": "Cursos a Calificar",
+			"description": "Cursos habilitados para la creación de rúbricas y proyectos.",
+			"addButton": "Agregar curso",
+			"periodLabel": "Periodo académico",
+			"periodPlaceholder": "Selecciona un periodo",
+			"periodLoading": "Cargando periodos...",
+			"selectPeriodFirst": "Selecciona un periodo académico para ver los cursos.",
+			"loading": "Cargando cursos...",
+			"error": "No se pudieron cargar los cursos.",
+			"empty": "No hay cursos habilitados para este periodo.",
+			"removeButton": "Quitar curso",
+			"columns": {
+				"course": "Curso",
+				"period": "Periodo",
+				"actions": "Acciones"
+			}
+		},
+		"confirm": {
+			"title": "¿Quitar curso?",
+			"body": "¿Estás seguro de que deseas quitar \"{{course}}\" de la lista de cursos a calificar?",
+			"confirm": "Quitar",
+			"removing": "Quitando..."
+		},
+		"modal": {
+			"title": "Agregar curso a calificar",
+			"periodLabel": "Periodo académico",
+			"periodPlaceholder": "Selecciona un periodo",
+			"periodLoading": "Cargando periodos...",
+			"loadingCourses": "Cargando cursos...",
+			"empty": "No hay cursos disponibles para este periodo.",
+			"select": "Seleccionar",
+			"deselect": "Deseleccionar",
+			"alreadyAdded": "Ya habilitado",
+			"selectedCount": "{{count}} curso(s) seleccionado(s)",
+			"confirm": "Aceptar",
+			"adding": "Guardando...",
+			"errorAdd": "No se pudo habilitar el curso. Intenta de nuevo."
 		}
 	}
 }

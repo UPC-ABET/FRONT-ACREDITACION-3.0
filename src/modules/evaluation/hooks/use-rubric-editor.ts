@@ -73,9 +73,13 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 			}
 
 			// ── Step 2: GET /performance-levels/get-by-filters ──────────────────────
-			// The new endpoint no longer exposes academicPeriodId or instrumentTypeId,
-			// so we fetch active performance levels without those filters.
-			const levelsRes = await performanceLevelsService.getByFilters({ is_active: true } as any);
+			// Filter by the academic period of the rubric's study plan course.
+			const academicPeriodId: number | undefined =
+				data.academicPeriod?.id != null ? Number(data.academicPeriod.id) : undefined;
+			const levelsRes = await performanceLevelsService.getByFilters({
+				is_active: true,
+				...(academicPeriodId != null ? { academic_period_id: academicPeriodId } : {}),
+			});
 			logger.debug('[useRubricEditor] performance levels response', levelsRes);
 			const performanceLevels = (levelsRes?.data ?? []).map((level: any) => ({
 				id: String(level.id),
@@ -229,7 +233,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 					id: String(data.academicPeriod?.id ?? ''),
 					code: data.academicPeriod?.code ?? '',
 				},
-				canEdit: Boolean(!rubric.isUsed),
+				canEdit: Boolean(!data.isUsed),
 				hasScores: Boolean(data.isUsed),
 				maxScore: 0,
 				performanceLevels,

@@ -4,6 +4,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { OutcomeWithCriteria } from '../../types';
+import { TRUNC } from '../../constants';
 
 interface OutcomeCardProps {
 	outcome: OutcomeWithCriteria;
@@ -13,8 +14,6 @@ interface OutcomeCardProps {
 	onAdd?: () => void;
 	children: React.ReactNode;
 }
-
-const TRUNC = 100;
 
 export function OutcomeCard({
 	outcome,

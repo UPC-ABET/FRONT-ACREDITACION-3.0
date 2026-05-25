@@ -11,8 +11,9 @@ import { WizardStep1, type Step1Data } from './WizardStep1'
 import { WizardStep2, type Step2Data } from './WizardStep2'
 import { WizardStep3NonCapstone, type NonCapstonePayloadQuestion } from './WizardStep3NonCapstone'
 import { WizardStep3Capstone, type CapstonePayloadQuestion } from './WizardStep3Capstone'
+import { GRADE_CODES } from '../../constants/type-codes'
 
-const FINAL_EVAL_CODE = 'TG205-T002' // EB
+const FINAL_EVAL_CODE =  GRADE_CODES.FINAL
 
 export function RubricCreateWizard() {
   const router = useRouter()

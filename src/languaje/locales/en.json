@@ -10,6 +10,7 @@
     },
     "rubrics": "Rubrics",
     "rubricsList": "Rubrics",
+    "evaluationCourses": "Courses to Grade",
     "projects": "Academic Projects",
     "gradeProjects": "Grade Projects",
     "surveys": {
@@ -503,7 +504,25 @@
       "createButton": "Create rubric",
       "loading": "Loading rubrics...",
       "error": "Rubrics could not be loaded.",
-      "empty": "No rubrics registered."
+      "empty": "No rubrics registered.",
+      "columns": {
+        "course": "Course",
+        "period": "Academic Period",
+        "gradeType": "Evaluation Type",
+        "rubricType": "Rubric Type",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "view": "View",
+        "delete": "Delete"
+      },
+      "deleteModal": {
+        "title": "Delete rubric?",
+        "body": "Are you sure you want to delete the rubric for \"{{course}}\"? This action cannot be undone.",
+        "confirm": "Delete",
+        "deleting": "Deleting..."
+      }
     },
     "editor": {
       "error": {
@@ -585,7 +604,7 @@
     },
     "wizard": {
       "title": "New rubric",
-      "subtitle": "Create an evaluation rubric in three steps.",
+      "subtitle": "Create an evaluation rubric.",
       "steps": {
         "step1": {
           "label": "Course",
@@ -709,6 +728,64 @@
 		}
 	},
   "projects": {
+    "create": {
+      "title": "Create Academic Project",
+      "subtitle": "Complete the steps to register a new project.",
+      "steps": {
+        "step1": {
+          "label": "Course",
+          "description": "Select the period and course"
+        },
+        "step2": {
+          "label": "Details",
+          "description": "Code, name, students and evaluators"
+        }
+      },
+      "error": {
+        "create": "Could not create the project. Please try again."
+      },
+      "step2": {
+        "infoTitle": "Project Information",
+        "fieldCode": "Code",
+        "fieldCodePlaceholder": "e.g. PROJ-001",
+        "fieldName": "Name",
+        "fieldNamePlaceholder": "Project name",
+        "fieldDesc": "Description",
+        "fieldDescPlaceholder": "Project description",
+        "studentsTitle": "Students",
+        "studentsAdd": "Add students",
+        "studentsEmpty": "No students selected yet.",
+        "studentsLoading": "Loading students...",
+        "studentsNoResults": "No results for your search.",
+        "studentsModal": {
+          "title": "Select students",
+          "searchPlaceholder": "Search by name or code...",
+          "searchPrompt": "Type to search for a student.",
+          "selected": "selected",
+          "confirmButton": "Confirm"
+        },
+        "evaluatorsTitle": "Evaluators",
+        "evaluatorsAdd": "Add evaluator",
+        "evaluatorsEmpty": "No evaluators added yet.",
+        "evaluatorsSearch": "Search professor",
+        "evaluatorsSearchPlaceholder": "Name or email...",
+        "evaluatorsSearchPrompt": "Type to search for a professor.",
+        "evaluatorsNoResults": "No professors found.",
+        "evaluatorsRole": "Role",
+        "evaluatorsRolePlaceholder": "Select a role",
+        "evaluatorsRoleLoading": "Loading roles...",
+        "evaluatorsModal": {
+          "title": "Add evaluator",
+          "confirmButton": "Add"
+        },
+        "evaluators": {
+          "errorDuplicateRole": "This professor already has that role assigned."
+        },
+        "back": "Back",
+        "submit": "Create Project",
+        "submitting": "Creating..."
+      }
+    },
     "list": {
       "title": "Academic Projects",
       "description": "List of academic projects.",
@@ -864,6 +941,47 @@
         },
         "removeSuccess": "Evaluator removed successfully."
       }
+    }
+  },
+  "evaluationCourses": {
+    "list": {
+      "title": "Courses to Grade",
+      "description": "Courses enabled for rubrics and projects creation.",
+      "addButton": "Add course",
+      "periodLabel": "Academic period",
+      "periodPlaceholder": "Select a period",
+      "periodLoading": "Loading periods...",
+      "selectPeriodFirst": "Select an academic period to view courses.",
+      "loading": "Loading courses...",
+      "error": "Could not load courses.",
+      "empty": "No courses enabled for this period.",
+      "removeButton": "Remove course",
+      "columns": {
+        "course": "Course",
+        "period": "Period",
+        "actions": "Actions"
+      }
+    },
+    "confirm": {
+      "title": "Remove course?",
+      "body": "Are you sure you want to remove \"{{course}}\" from the courses to grade?",
+      "confirm": "Remove",
+      "removing": "Removing..."
+    },
+    "modal": {
+      "title": "Add course to grade",
+      "periodLabel": "Academic period",
+      "periodPlaceholder": "Select a period",
+      "periodLoading": "Loading periods...",
+      "loadingCourses": "Loading courses...",
+      "empty": "No courses available for this period.",
+      "select": "Select",
+      "deselect": "Deselect",
+      "alreadyAdded": "Already enabled",
+      "selectedCount": "{{count}} course(s) selected",
+      "confirm": "Accept",
+      "adding": "Saving...",
+      "errorAdd": "Could not enable the course. Please try again."
     }
   }
 }

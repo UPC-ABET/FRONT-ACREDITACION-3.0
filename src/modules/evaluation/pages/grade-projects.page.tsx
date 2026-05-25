@@ -22,12 +22,13 @@ import { getUserIdFromToken, getSchoolFromCookie } from '@/shared/lib/jwt';
 import { academicPeriodsService } from '@/modules/academic/services';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
+import { GRADE_IDS } from '../constants/type-codes';
 
 type RubricTab = 'partial' | 'final';
 
 const GRADE_TYPE_ID: Record<RubricTab, number> = {
-	partial: 70,
-	final: 55,
+	partial: GRADE_IDS.PARTIAL, //EA
+	final: GRADE_IDS.FINAL, //EB
 };
 
 type SelectOption = { label: string; value: number };

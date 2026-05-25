@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { EyeIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { PencilIcon } from '@heroicons/react/24/outline';
 import {
 	Table,
 	TableBody,
@@ -225,7 +225,7 @@ export function ProjectsListPage() {
 							<TableHead>{t('projects.list.table.name')}</TableHead>
 							<TableHead>{t('projects.list.table.evaluators')}</TableHead>
 							<TableHead>{t('projects.list.table.students')}</TableHead>
-							<TableHead className="text-center">{t('projects.list.table.actions')}</TableHead>
+							<TableHead className="!text-center">{t('projects.list.table.actions')}</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -280,13 +280,7 @@ export function ProjectsListPage() {
 									</div>
 								</TableCell>
 								<TableCell className="text-center">
-									<div className="inline-flex gap-2">
-										<Link
-											href={`/projects/${project.id}`}
-											className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
-											title={t('projects.list.table.view')}>
-											<EyeIcon className="h-4 w-4" />
-										</Link>
+									<div className="flex justify-center">
 										<Link
 											href={`/projects/${project.id}/edit`}
 											className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600"

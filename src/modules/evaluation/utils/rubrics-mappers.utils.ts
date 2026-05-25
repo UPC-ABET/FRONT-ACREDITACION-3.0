@@ -12,13 +12,14 @@ export function mapRubricToRow(rubric: RubricResponse): RubricListRow {
 	return {
 		id: rubric.id,
 		courseLabel: course?.name ?? empty,
-		periodLabel: studyPlanAcademicPeriod?.id,
+		periodLabel: studyPlanAcademicPeriod?.academic_period.code ?? empty,
 		gradeTypeLabel: gradeType
 			? {
 					en: [gradeType.name.en].filter(Boolean).join(' · '),
 					es: [gradeType.name.es].filter(Boolean).join(' · '),
 				}
 			: empty,
+		gradeTypeCode: gradeType?.code ?? '',
 		rubricTypeLabel: rubricType?.name ?? empty,
 		isCapstone: rubric.rubric_type_id === 29,
 		canEdit: !rubric.isUsed,
