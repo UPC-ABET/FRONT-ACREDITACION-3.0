@@ -11,24 +11,19 @@ import { Button, I18nTextField, Toggle } from '@/shared/components';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { useI18n } from '@/providers';
 import type { I18nText } from '@/modules/ifcs/services/types';
+import { useNotificationConfigContext } from '../hooks/useNotificationConfigContext';
 import {
 	deleteNotificationConfig,
 	upsertNotificationConfig,
 } from '../services/notificationConfigsService';
-import type { CoreType, NotificationConfig, NotifyVar, UpsertConfigBody } from '../services/types';
+import type { NotificationConfig, UpsertConfigBody } from '../services/types';
 import { VariableLegend } from './VariableLegend';
 
 type Props = {
-	periodId: number;
 	triggerTypeId: number;
 	statusTypeId: number;
 	statusCode: string;
-	chartLevels: CoreType[];
-	notifyVars: NotifyVar[];
 	existingConfig: NotificationConfig | null;
-	onSaved: () => void;
-	onError: (msg: string) => void;
-	onSuccess: (msg: string) => void;
 };
 
 function emptyI18n(): I18nText {
@@ -98,18 +93,14 @@ function RecipientsField({
 }
 
 export function ConfigEditor({
-	periodId,
 	triggerTypeId,
 	statusTypeId,
 	statusCode,
-	chartLevels,
-	notifyVars,
 	existingConfig,
-	onSaved,
-	onError,
-	onSuccess,
 }: Props) {
 	const { t, locale: lang } = useI18n();
+	const { periodId, chartLevels, notifyVars, onSaved, onError, onSuccess } =
+		useNotificationConfigContext();
 	const [title, setTitle] = useState<I18nText>(() =>
 		existingConfig ? asI18n(existingConfig.title) : emptyI18n(),
 	);
