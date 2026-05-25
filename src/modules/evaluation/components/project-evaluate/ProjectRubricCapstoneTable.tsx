@@ -42,6 +42,7 @@ interface ProjectRubricCapstoneTableProps {
 	academicPeriodId: number | null;
 	evaluatorId: number;
 	rubricId: number;
+	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
 	nrNaTypeIds: Set<number>;
 }
@@ -53,11 +54,12 @@ export function ProjectRubricCapstoneTable({
 	academicPeriodId,
 	evaluatorId,
 	rubricId,
+	projectId,
 	qualifStatuses,
 	nrNaTypeIds,
 }: ProjectRubricCapstoneTableProps) {
 	const { t, locale } = useI18n();
-	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation();
+	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 

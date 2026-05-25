@@ -224,6 +224,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 					academicPeriodId={data.academic_period?.id ?? null}
 					evaluatorId={evaluatorId}
 					rubricId={rubric.rubric.id}
+					projectId={projectId}
 					qualifStatuses={qualifStatuses}
 					nrNaTypeIds={nrNaTypeIds}
 				/>
@@ -234,6 +235,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 						students={students}
 						evaluatorId={evaluatorId}
 						rubricId={rubric.rubric.id}
+						projectId={projectId}
 						qualifStatuses={qualifStatuses}
 						nrNaTypeIds={nrNaTypeIds}
 					/>

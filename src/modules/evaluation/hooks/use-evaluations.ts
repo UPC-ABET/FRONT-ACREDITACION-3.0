@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { evaluationsService } from '../services';
+import { projectsQueryKeys } from './use-projects';
 
 export const evaluationsQueryKeys = {
 	byEvaluator: (evaluatorId: string | number) =>
@@ -15,13 +16,16 @@ export function useEvaluationsByEvaluator(evaluatorId: string | number | undefin
 	});
 }
 
-export function useSubmitEvaluation() {
+export function useSubmitEvaluation(projectId?: string | number) {
 	const queryClient = useQueryClient();
 
 	return useMutation({
 		mutationFn: evaluationsService.submit,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['evaluations'] });
+			if (projectId != null) {
+				queryClient.invalidateQueries({ queryKey: projectsQueryKeys.details(projectId) });
+			}
 		},
 	});
 }
