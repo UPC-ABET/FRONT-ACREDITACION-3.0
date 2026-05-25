@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	ArrowDownTrayIcon,
 	BellAlertIcon,
@@ -53,14 +53,14 @@ export function IFCDashboard() {
 	const { data: statusTypes = [] } = useStatusTypes();
 	const { notifyOne, notifyMany, notifyingChartId, notifyingAll } = useIfcNotify();
 
-	const currentUserId = useMemo<number | null>(() => {
-		if (typeof window === 'undefined') return null;
+	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+	useEffect(() => {
 		try {
 			const raw = getAuthCookie('token');
 			const user = raw ? JSON.parse(raw) : null;
-			return user?.id != null ? Number(user.id) : null;
+			setCurrentUserId(user?.id != null ? Number(user.id) : null);
 		} catch {
-			return null;
+			setCurrentUserId(null);
 		}
 	}, []);
 
