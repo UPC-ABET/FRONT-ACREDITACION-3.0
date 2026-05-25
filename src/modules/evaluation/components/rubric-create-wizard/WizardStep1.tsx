@@ -13,6 +13,7 @@ export interface Step1Data {
   periodId: number
   courseId: number
   studyPlanCourseId: number
+  studyPlanAcademicPeriodId: number
   courseName: { en: string; es: string }
   periodCode: string
 }
@@ -82,8 +83,9 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
     if (!spc || !period) return
     onNext({
       periodId: period.id,
-      courseId: spc.course_id,
+      courseId: spc.course?.id ?? spc.course_id,
       studyPlanCourseId: spc.id,
+      studyPlanAcademicPeriodId: spc.study_plan_academic_period_id,
       courseName: getSpcCourseName(spc),
       periodCode: period.code,
     })
@@ -91,7 +93,7 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 
   const periodOptions: SelectOption[] = periods.map((p) => ({ label: p.code, value: p.id }))
   const courseOptions: SelectOption[] = spcList.map((s) => ({
-    label: getSpcCourseName(s)[locale] || String(s.course_id),
+    label: getSpcCourseName(s)[locale] || String(s.course?.id ?? s.course_id),
     value: s.id,
   }))
 

@@ -728,6 +728,64 @@
 		}
 	},
 	"projects": {
+		"create": {
+			"title": "Crear Proyecto Académico",
+			"subtitle": "Completa los pasos para registrar un nuevo proyecto.",
+			"steps": {
+				"step1": {
+					"label": "Curso",
+					"description": "Selecciona el período y el curso"
+				},
+				"step2": {
+					"label": "Detalle",
+					"description": "Código, nombre, estudiantes y evaluadores"
+				}
+			},
+			"error": {
+				"create": "No fue posible crear el proyecto. Intenta de nuevo."
+			},
+			"step2": {
+				"infoTitle": "Información del Proyecto",
+				"fieldCode": "Código",
+				"fieldCodePlaceholder": "Ej. PROY-001",
+				"fieldName": "Nombre",
+				"fieldNamePlaceholder": "Nombre del proyecto",
+				"fieldDesc": "Descripción",
+				"fieldDescPlaceholder": "Descripción del proyecto",
+				"studentsTitle": "Estudiantes",
+				"studentsAdd": "Agregar estudiantes",
+				"studentsEmpty": "Aún no se han seleccionado estudiantes.",
+				"studentsLoading": "Cargando estudiantes...",
+				"studentsNoResults": "Sin resultados para la búsqueda.",
+				"studentsModal": {
+					"title": "Seleccionar estudiantes",
+					"searchPlaceholder": "Buscar por nombre o código...",
+					"searchPrompt": "Escribe para buscar un estudiante.",
+					"selected": "seleccionados",
+					"confirmButton": "Confirmar"
+				},
+				"evaluatorsTitle": "Evaluadores",
+				"evaluatorsAdd": "Agregar evaluador",
+				"evaluatorsEmpty": "Aún no se han agregado evaluadores.",
+				"evaluatorsSearch": "Buscar docente",
+				"evaluatorsSearchPlaceholder": "Nombre o correo del docente...",
+				"evaluatorsSearchPrompt": "Escribe para buscar un docente.",
+				"evaluatorsNoResults": "No se encontraron docentes.",
+				"evaluatorsRole": "Rol",
+				"evaluatorsRolePlaceholder": "Selecciona un rol",
+				"evaluatorsRoleLoading": "Cargando roles...",
+				"evaluatorsModal": {
+					"title": "Agregar evaluador",
+					"confirmButton": "Agregar"
+				},
+				"evaluators": {
+					"errorDuplicateRole": "Este docente ya tiene asignado ese rol."
+				},
+				"back": "Atrás",
+				"submit": "Crear Proyecto",
+				"submitting": "Creando..."
+			}
+		},
 		"list": {
 			"title": "Proyectos Académicos",
 			"description": "Listado de proyectos académicos.",
@@ -888,7 +946,7 @@
 	"evaluationCourses": {
 		"list": {
 			"title": "Cursos a Calificar",
-			"description": "Cursos habilitados para la creación de proyectos.",
+			"description": "Cursos habilitados para la creación de rúbricas y proyectos.",
 			"addButton": "Agregar curso",
 			"periodLabel": "Periodo académico",
 			"periodPlaceholder": "Selecciona un periodo",

@@ -6,15 +6,16 @@ import { useI18n } from '@/providers'
 import { rubricWizardService } from '../../services/rubricWizardService'
 import type { TypeItemResponse } from '@/modules/academic/api/dtos/response'
 import type { Step1Data } from './WizardStep1'
+import { GRADE_CODES, OUTCOME_CODES, RUBRIC_CODES } from '../../constants/type-codes'
 
-const GRADE_TYPE_GROUP = 'TG205'
-const RUBRIC_TYPE_GROUP = 'TG401'
-const OUTCOME_TYPE_GROUP = 'TG302'
-const VERIFICATION_CODE = 'TG302-T001'
-const CONTROL_CODE = 'TG302-T002'
-const PARTIAL_EVAL_CODE = 'TG205-T001'
-const FINAL_EVAL_CODE = 'TG205-T002'
-const CAPSTONE_RUBRIC_CODE = 'TG401-T001'
+const GRADE_TYPE_GROUP = GRADE_CODES.TYPE_GROUP
+const RUBRIC_TYPE_GROUP = RUBRIC_CODES.TYPE_GROUP
+const OUTCOME_TYPE_GROUP = OUTCOME_CODES.TYPE_GROUP
+const VERIFICATION_CODE = OUTCOME_CODES.VERIFICATION
+const CONTROL_CODE = OUTCOME_CODES.CONTROL
+const PARTIAL_EVAL_CODE = GRADE_CODES.PARTIAL
+const FINAL_EVAL_CODE = GRADE_CODES.FINAL
+const CAPSTONE_RUBRIC_CODE = RUBRIC_CODES.CAPSTONE
 
 export interface Step2Data {
   gradeTypeId: number

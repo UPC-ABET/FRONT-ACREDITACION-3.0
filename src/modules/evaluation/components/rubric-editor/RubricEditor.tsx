@@ -66,7 +66,7 @@ export function RubricEditor({ rubricId, initialRubric }: RubricEditorProps) {
 
 			{!canEdit ? <ReadonlyBanner /> : null}
 
-			{rubric.isCapstone ? (
+			{rubric.isCapstone && rubric.gradeTypeCode === 'TG205-T002' ? (
 				<RubricEditorCapstone
 					rubric={rubric}
 					rubricId={rubricId}

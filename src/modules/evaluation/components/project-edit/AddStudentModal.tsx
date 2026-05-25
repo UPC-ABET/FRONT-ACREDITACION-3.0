@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import {
 	Dialog,
@@ -41,8 +41,9 @@ export function AddStudentModal({
 	const { t } = useI18n();
 	const queryClient = useQueryClient();
 
+	const [students, setStudents] = useState<EnrolledStudentResponse[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
 	const [search, setSearch] = useState('');
-	// Map<student_section_enrollment_id, full student object>
 	const [selectedStudents, setSelectedStudents] = useState<Map<number, EnrolledStudentResponse>>(
 		new Map(),
 	);
@@ -54,22 +55,23 @@ export function AddStudentModal({
 			setSearch('');
 			setSelectedStudents(new Map());
 			setSubmitError(null);
+			setStudents([]);
 		}
 	}, [open]);
 
-	// Load all enrolled students once on open
-	const { data: students = [], isLoading } = useQuery({
-		queryKey: ['courses', courseId, 'enrolled-students', academicPeriodId],
-		queryFn: () =>
-			coursesService
-				.getEnrolledStudents(courseId, {
-					is_active: true,
-					...(academicPeriodId != null ? { academic_period_id: academicPeriodId } : {}),
-				})
-				.then((r) => r.data),
-		enabled: open && courseId > 0,
-		staleTime: 1000 * 60 * 5,
-	});
+	// Fetch on open
+	useEffect(() => {
+		if (!open) return;
+		setIsLoading(true);
+		coursesService
+			.getEnrolledStudents(courseId, {
+				is_active: true,
+				...(academicPeriodId != null ? { academic_period_id: academicPeriodId } : {}),
+			})
+			.then((r) => setStudents(r.data ?? []))
+			.catch(() => setStudents([]))
+			.finally(() => setIsLoading(false));
+	}, [open]);
 
 	// Client-side filter
 	const filtered = useMemo(() => {
@@ -80,7 +82,7 @@ export function AddStudentModal({
 				s.first_name.toLowerCase().includes(term) ||
 				s.last_name.toLowerCase().includes(term) ||
 				s.student_code.toLowerCase().includes(term) ||
-				s.email.toLowerCase().includes(term),
+				(s.email ?? '').toLowerCase().includes(term),
 		);
 	}, [students, search]);
 
@@ -134,14 +136,12 @@ export function AddStudentModal({
 				</DialogHeader>
 
 				<div className="space-y-3">
-					{/* Search */}
 					<Input
 						placeholder={t('projects.edit.students.modal.searchPlaceholder')}
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 					/>
 
-					{/* Count badge */}
 					{selectedStudents.size > 0 && (
 						<p className="text-xs text-zinc-500">
 							<span className="font-semibold text-zinc-900">{selectedStudents.size}</span>{' '}
@@ -149,7 +149,6 @@ export function AddStudentModal({
 						</p>
 					)}
 
-					{/* List */}
 					<div className="h-45 overflow-y-auto rounded-lg border border-zinc-200 bg-white">
 						{isLoading ? (
 							<p className="px-4 py-6 text-center text-sm text-zinc-400 animate-pulse">
@@ -184,10 +183,14 @@ export function AddStudentModal({
 															isSelected ? 'text-zinc-300' : 'text-zinc-400'
 														}`}>
 														<span className="font-mono">{student.student_code}</span>
-														<span>·</span>
-														<span>
-															{t('projects.edit.students.modal.section')} {student.section_code}
-														</span>
+														{student.section_code && (
+															<>
+																<span>·</span>
+																<span>
+																	{t('projects.edit.students.modal.section')} {student.section_code}
+																</span>
+															</>
+														)}
 													</div>
 												</div>
 												{isSelected && <CheckIcon className="h-4 w-4 shrink-0" />}
@@ -199,7 +202,6 @@ export function AddStudentModal({
 						)}
 					</div>
 
-					{/* Error */}
 					{submitError && <p className="text-xs text-red-600">{submitError}</p>}
 				</div>
 

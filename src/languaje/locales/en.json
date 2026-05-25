@@ -728,6 +728,64 @@
 		}
 	},
   "projects": {
+    "create": {
+      "title": "Create Academic Project",
+      "subtitle": "Complete the steps to register a new project.",
+      "steps": {
+        "step1": {
+          "label": "Course",
+          "description": "Select the period and course"
+        },
+        "step2": {
+          "label": "Details",
+          "description": "Code, name, students and evaluators"
+        }
+      },
+      "error": {
+        "create": "Could not create the project. Please try again."
+      },
+      "step2": {
+        "infoTitle": "Project Information",
+        "fieldCode": "Code",
+        "fieldCodePlaceholder": "e.g. PROJ-001",
+        "fieldName": "Name",
+        "fieldNamePlaceholder": "Project name",
+        "fieldDesc": "Description",
+        "fieldDescPlaceholder": "Project description",
+        "studentsTitle": "Students",
+        "studentsAdd": "Add students",
+        "studentsEmpty": "No students selected yet.",
+        "studentsLoading": "Loading students...",
+        "studentsNoResults": "No results for your search.",
+        "studentsModal": {
+          "title": "Select students",
+          "searchPlaceholder": "Search by name or code...",
+          "searchPrompt": "Type to search for a student.",
+          "selected": "selected",
+          "confirmButton": "Confirm"
+        },
+        "evaluatorsTitle": "Evaluators",
+        "evaluatorsAdd": "Add evaluator",
+        "evaluatorsEmpty": "No evaluators added yet.",
+        "evaluatorsSearch": "Search professor",
+        "evaluatorsSearchPlaceholder": "Name or email...",
+        "evaluatorsSearchPrompt": "Type to search for a professor.",
+        "evaluatorsNoResults": "No professors found.",
+        "evaluatorsRole": "Role",
+        "evaluatorsRolePlaceholder": "Select a role",
+        "evaluatorsRoleLoading": "Loading roles...",
+        "evaluatorsModal": {
+          "title": "Add evaluator",
+          "confirmButton": "Add"
+        },
+        "evaluators": {
+          "errorDuplicateRole": "This professor already has that role assigned."
+        },
+        "back": "Back",
+        "submit": "Create Project",
+        "submitting": "Creating..."
+      }
+    },
     "list": {
       "title": "Academic Projects",
       "description": "List of academic projects.",
@@ -888,7 +946,7 @@
   "evaluationCourses": {
     "list": {
       "title": "Courses to Grade",
-      "description": "Courses enabled for project creation.",
+      "description": "Courses enabled for rubrics and projects creation.",
       "addButton": "Add course",
       "periodLabel": "Academic period",
       "periodPlaceholder": "Select a period",

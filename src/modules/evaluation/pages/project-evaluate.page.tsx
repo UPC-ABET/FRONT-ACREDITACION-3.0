@@ -9,8 +9,9 @@ import { getUserIdFromToken } from '@/shared/lib/jwt';
 import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable';
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable';
+import { GRADE_IDS, QUALIFICATION_STATUS_CODES, RUBRIC_IDS } from '../constants/type-codes';
 
-const CAPSTONE_RUBRIC_TYPE_ID = 29;
+const CAPSTONE_RUBRIC_TYPE_ID = RUBRIC_IDS.CAPSTONE;
 
 interface ProjectEvaluatePageProps {
 	projectId: string;
@@ -27,7 +28,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 	const { statusTypes, isLoading: isLoadingStatuses } = useQualificationStatusTypes();
 
 	const nrNaTypeIds = useMemo(() => {
-		const nrNaCodes = new Set(['TG404-T002', 'TG404-T003']);
+		const nrNaCodes = new Set([QUALIFICATION_STATUS_CODES.NR, QUALIFICATION_STATUS_CODES.NA]);
 		return new Set(statusTypes.filter((s) => nrNaCodes.has(s.code)).map((s) => s.id));
 	}, [statusTypes]);
 
@@ -95,6 +96,8 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 		'—';
 
 	const isCapstone = rubric.rubric.rubric_type?.id === CAPSTONE_RUBRIC_TYPE_ID;
+	const isFinal = gradeTypeId === GRADE_IDS.FINAL;
+	const isCapstoneFinal = isCapstone && isFinal;
 
 	return (
 		<div className="space-y-6">
@@ -213,7 +216,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 			</div>
 
 			{/* Rubric table */}
-			{isCapstone ? (
+			{isCapstoneFinal ? (
 				<ProjectRubricCapstoneTable
 					outcomes={rubric.outcomes}
 					questions={rubric.questions}

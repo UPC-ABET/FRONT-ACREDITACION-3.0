@@ -9,10 +9,7 @@ import { useI18n } from '@/providers';
 import { RubricTable } from './RubricTable';
 import { rubricsService } from '../../services';
 import type { RubricDetail, RubricQuestion, QuestionCriteria } from '../../types';
-
-const TARGET_SUM = 20;
-const MAX_QUESTIONS = 20;
-const MAX_COLS = 10;
+import { MAX_COLS, MAX_QUESTIONS, TARGET_SUM } from '../../constants';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
