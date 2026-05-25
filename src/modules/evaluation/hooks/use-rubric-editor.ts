@@ -233,7 +233,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 					id: String(data.academicPeriod?.id ?? ''),
 					code: data.academicPeriod?.code ?? '',
 				},
-				canEdit: Boolean(!rubric.isUsed),
+				canEdit: Boolean(!data.isUsed),
 				hasScores: Boolean(data.isUsed),
 				maxScore: 0,
 				performanceLevels,
