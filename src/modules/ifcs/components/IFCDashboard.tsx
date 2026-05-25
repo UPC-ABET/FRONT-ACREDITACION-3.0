@@ -8,7 +8,15 @@ import {
 	ExclamationTriangleIcon,
 	MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Card, Select, SuccessDialog, TableEmptyState, Toast } from '@/shared/components';
+import {
+	Button,
+	Card,
+	Select,
+	Skeleton,
+	SuccessDialog,
+	TableEmptyState,
+	Toast,
+} from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getAuthCookie } from '@/shared/lib';
 import { getErrorMessage } from '@/shared/lib/api-error';
@@ -47,9 +55,22 @@ export function IFCDashboard() {
 	const [lastSearchedPeriodId, setLastSearchedPeriodId] = useState<number | null>(null);
 	const [notifyError, setNotifyError] = useState<string | null>(null);
 	const [notifySuccess, setNotifySuccess] = useState<string | null>(null);
+	const [scopeErrorDismissed, setScopeErrorDismissed] = useState(false);
+	const [listErrorDismissed, setListErrorDismissed] = useState(false);
 
-	const { scope, load: loadScope } = useOrgScope();
-	const { rows, load: loadList, setRows } = useIFCList();
+	const {
+		scope,
+		loading: scopeLoading,
+		error: scopeError,
+		load: loadScope,
+	} = useOrgScope();
+	const {
+		rows,
+		loading: listLoading,
+		error: listError,
+		load: loadList,
+		setRows,
+	} = useIFCList();
 	const { data: statusTypes = [] } = useStatusTypes();
 	const { notifyOne, notifyMany, notifyingChartId, notifyingAll } = useIfcNotify();
 
@@ -94,6 +115,7 @@ export function IFCDashboard() {
 		setRows([]);
 		setLastSearchedChartIds(null);
 		setLastSearchedPeriodId(null);
+		setScopeErrorDismissed(false);
 		const tree = await loadScope(p);
 		if (tree && tree.levels.length > 0) {
 			const first = tree.levels[0].level_num;
@@ -116,6 +138,7 @@ export function IFCDashboard() {
 
 	async function handleSearch() {
 		if (!canSearch || !scope || lastLevel === null || periodId === null) return;
+		setListErrorDismissed(false);
 		const chartIds =
 			lastSel === 'ALL'
 				? optionsForLevel(scope, lastLevel, selections).map((o) => o.id)
@@ -245,7 +268,13 @@ export function IFCDashboard() {
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6">
 					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 						<AcademicPeriodSelect value={periodId} onChange={handlePeriod} />
-						{!chartIncomplete && scope && scope.levels.length > 0 && (
+						{scopeLoading && (
+							<>
+								<Skeleton className="h-10 w-full" />
+								<Skeleton className="h-10 w-full" />
+							</>
+						)}
+						{!scopeLoading && !chartIncomplete && scope && scope.levels.length > 0 && (
 							<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
 						)}
 					</div>
@@ -312,7 +341,17 @@ export function IFCDashboard() {
 					</div>
 				)}
 
-				{!chartIncomplete && (
+				{!chartIncomplete && listLoading && (
+					<div className="space-y-3">
+						<Skeleton className="h-10 w-full" />
+						<Skeleton className="h-10 w-full" />
+						<Skeleton className="h-10 w-full" />
+						<Skeleton className="h-10 w-full" />
+						<Skeleton className="h-10 w-full" />
+					</div>
+				)}
+
+				{!chartIncomplete && !listLoading && (
 					<div className="overflow-x-auto">
 						<IFCTable
 							rows={visibleRows}
@@ -323,6 +362,24 @@ export function IFCDashboard() {
 						/>
 						{hasSearched && !hasResults && <TableEmptyState message={t('ifcs.table.empty')} />}
 					</div>
+				)}
+
+				{scopeError && !scopeErrorDismissed && (
+					<Toast
+						isOpen
+						type="error"
+						onClose={() => setScopeErrorDismissed(true)}
+						message={tryTranslate(t, scopeError)}
+					/>
+				)}
+
+				{listError && !listErrorDismissed && (
+					<Toast
+						isOpen
+						type="error"
+						onClose={() => setListErrorDismissed(true)}
+						message={tryTranslate(t, listError)}
+					/>
 				)}
 
 				{pdfError && (
