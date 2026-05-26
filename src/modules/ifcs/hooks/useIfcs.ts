@@ -36,7 +36,7 @@ export function useIFCView(id: number | undefined) {
 	return useQuery({
 		queryKey: ifcQueryKeys.view(id!),
 		queryFn: () => getIFCView(id!),
-		enabled: id != null,
+		enabled: id != null && Number.isFinite(id),
 	});
 }
 

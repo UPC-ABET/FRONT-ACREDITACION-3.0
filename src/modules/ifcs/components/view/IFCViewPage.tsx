@@ -6,7 +6,7 @@ import { ErrorDialog, LoadingDialog, SuccessDialog, Toast } from '@/shared/compo
 import { useAuth, useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
-import { useIFCView } from '../../hooks/useIFCView';
+import { useIFCView } from '../../hooks/useIfcs';
 import { approveIFC, rejectIFC, submitIFC } from '../../services/ifcsService';
 import type { I18nText } from '../../types';
 import { IFCHeaderCard } from './IFCHeaderCard';
@@ -25,7 +25,7 @@ export default function IFCViewPage() {
 	const params = useParams<{ id: string }>();
 	const id = Number(params?.id);
 
-	const { data, loading, error, refetch } = useIFCView(id);
+	const { data, isLoading, error, refetch } = useIFCView(id);
 	const [observationText, setObservationText] = useState<I18nText>({});
 	const [submitting, setSubmitting] = useState(false);
 	const [actionError, setActionError] = useState<string | null>(null);
@@ -35,7 +35,7 @@ export default function IFCViewPage() {
 	const { user: authUser } = useAuth();
 	const currentUserId = authUser?.id ?? null;
 
-	if (loading) {
+	if (isLoading) {
 		return <LoadingDialog isOpen label={t('loading.default')} />;
 	}
 
@@ -44,7 +44,7 @@ export default function IFCViewPage() {
 			<ErrorDialog
 				isOpen
 				onClose={() => router.push('/ifcs')}
-				message={tryTranslate(t, error ?? 'ifcs.error.viewFailed')}
+				message={tryTranslate(t, getErrorMessage(error, 'ifcs.error.viewFailed'))}
 			/>
 		);
 	}
