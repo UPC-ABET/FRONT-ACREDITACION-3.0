@@ -194,12 +194,16 @@ export function apiUploadFormData<T = unknown>(
 	);
 }
 
-export async function apiPostBlob(path: string, body: unknown): Promise<Blob> {
+export async function apiPostBlobResponse(
+	path: string,
+	body: unknown,
+	extraHeaders?: Record<string, string>,
+): Promise<{ blob: Blob; response: Response }> {
 	const url = joinUrl(path);
 
 	const res = await fetch(url, {
 		method: 'POST',
-		headers: buildHeaders(),
+		headers: { ...buildHeaders(), ...extraHeaders },
 		credentials: 'include',
 		body: JSON.stringify(body),
 	});
@@ -209,7 +213,12 @@ export async function apiPostBlob(path: string, body: unknown): Promise<Blob> {
 		throw new ApiError(text || `HTTP ${res.status}`, res.status);
 	}
 
-	return res.blob();
+	return { blob: await res.blob(), response: res };
+}
+
+export async function apiPostBlob(path: string, body: unknown): Promise<Blob> {
+	const { blob } = await apiPostBlobResponse(path, body);
+	return blob;
 }
 
 export const requestJson = async <T>(
