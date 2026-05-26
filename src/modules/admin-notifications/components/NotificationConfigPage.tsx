@@ -5,7 +5,7 @@ import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/try-translate';
-import { AcademicPeriodSelect } from '@/modules/ifcs/components/AcademicPeriodSelect';
+import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { useNotificationConfigs } from '../hooks/useNotificationConfigs';
 import { NotificationConfigProvider } from '../hooks/useNotificationConfigContext';
 import { ConfigTabs } from './ConfigTabs';

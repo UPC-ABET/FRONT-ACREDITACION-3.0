@@ -1,4 +1,4 @@
-import type { I18nText } from '@/modules/ifcs/services/types';
+import type { I18nText } from '@/shared/types';
 
 export interface NotificationConfig {
 	id: number;

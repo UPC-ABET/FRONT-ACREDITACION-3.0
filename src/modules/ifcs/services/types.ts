@@ -1,4 +1,5 @@
-export type I18nText = Record<string, string>;
+import type { I18nText } from '@/shared/types';
+export type { I18nText };
 
 export interface ScopeOption {
 	id: number;
@@ -36,13 +37,6 @@ export interface IFCRow {
 	coordinator_user_id: number | null;
 	coordinator_name: string | null;
 	ifc: IFCRecord | null;
-}
-
-export interface AcademicPeriod {
-	id: number;
-	code: string;
-	start_date: string;
-	end_date: string;
 }
 
 export type SelectionValue = number | 'ALL' | null;

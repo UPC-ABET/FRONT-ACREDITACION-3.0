@@ -10,7 +10,7 @@ import {
 import { Button, I18nTextField, Toggle } from '@/shared/components';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { useI18n } from '@/providers';
-import type { I18nText } from '@/modules/ifcs/services/types';
+import type { I18nText } from '@/shared/types';
 import { useNotificationConfigContext } from '../hooks/useNotificationConfigContext';
 import {
 	deleteNotificationConfig,
