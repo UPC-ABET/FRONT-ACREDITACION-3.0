@@ -221,6 +221,26 @@ export async function apiPostBlob(path: string, body: unknown): Promise<Blob> {
 	return blob;
 }
 
+export async function apiGetBlobResponse(
+	path: string,
+	extraHeaders?: Record<string, string>,
+): Promise<{ blob: Blob; response: Response }> {
+	const url = joinUrl(path);
+
+	const res = await fetch(url, {
+		method: 'GET',
+		headers: { ...buildHeaders(), ...extraHeaders },
+		credentials: 'include',
+	});
+
+	if (!res.ok) {
+		const text = await res.text().catch(() => res.statusText);
+		throw new ApiError(text || `HTTP ${res.status}`, res.status);
+	}
+
+	return { blob: await res.blob(), response: res };
+}
+
 export const requestJson = async <T>(
 	path: string,
 	{ method = 'GET', body, headers, token }: RequestJsonOptions = {},
