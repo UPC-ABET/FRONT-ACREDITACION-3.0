@@ -5,6 +5,7 @@
  */
 
 import { ApiError } from './api-error';
+import { logger } from './logger';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -94,7 +95,8 @@ async function parseBody<T>(res: Response): Promise<T> {
 
 	try {
 		return JSON.parse(text) as T;
-	} catch {
+	} catch (e) {
+		logger.warn('[api-client] Response body is not valid JSON, returning as text', { contentType, text: text.slice(0, 200), error: e });
 		return text as T;
 	}
 }
@@ -118,7 +120,10 @@ async function request<T>(
 	});
 
 	if (!res.ok) {
-		const errorBody = await parseBody<unknown>(res).catch(() => null);
+		const errorBody = await parseBody<unknown>(res).catch((e) => {
+			logger.warn('[api-client] Failed to parse error response body', { url, status: res.status, error: e });
+			return null;
+		});
 
 		const message =
 			(errorBody as { message?: string } | null)?.message ?? `${res.status} ${res.statusText}`;
