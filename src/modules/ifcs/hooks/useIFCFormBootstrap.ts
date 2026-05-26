@@ -1,11 +1,9 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { PARAMETER_CODES, TYPE_GROUP_CODES } from '../constants';
+import { getParameterByCode, getTypesByGroupCode, PARAMETER_CODES, TYPE_GROUP_CODES } from '@/modules/core';
 import { getIFCPrefill, getIFCView } from '../services/ifcsService';
-import { getParameterByCode } from '../services/parametersService';
-import { getTypesByGroupCode } from '../services/typesService';
-import type { CriticalityOption, IFCField, IFCPrefill, IFCViewPayload } from '../services/types';
+import type { CriticalityOption, IFCField, IFCPrefill, IFCViewPayload } from '../types';
 
 export type IFCFormMode =
 	| { kind: 'create'; chartId: number; periodId: number }
@@ -33,7 +31,7 @@ export function useIFCFormBootstrap(mode: IFCFormMode) {
 			const [languages, ifcFields, criticalities, existing, prefillCreate] = await Promise.all([
 				getParameterByCode<string[]>(PARAMETER_CODES.LANGUAGES),
 				getParameterByCode<IFCField[]>(PARAMETER_CODES.IFC_FIELDS),
-				getTypesByGroupCode(TYPE_GROUP_CODES.CRITICALITY),
+				getTypesByGroupCode(TYPE_GROUP_CODES.FINDING_CRITICALITY),
 				mode.kind === 'edit' ? getIFCView(mode.ifcId) : Promise.resolve(null),
 				mode.kind === 'create' ? getIFCPrefill(mode.chartId, mode.periodId) : Promise.resolve(null),
 			]);

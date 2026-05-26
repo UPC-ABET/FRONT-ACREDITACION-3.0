@@ -1,5 +1,5 @@
 import { apiPost, ApiError } from '@/shared/lib';
-import type { ScopeTree } from './types';
+import type { ScopeTree } from '../types';
 
 interface Envelope<T> {
 	code: number;

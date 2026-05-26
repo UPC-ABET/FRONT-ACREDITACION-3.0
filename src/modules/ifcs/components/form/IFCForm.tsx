@@ -4,20 +4,20 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
 import { Button, Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
-import { getErrorMessage } from '@/shared/lib/api-error';
-import { tryTranslate } from '@/shared/utils/try-translate';
+import { getErrorMessage } from '@/shared/lib/apiError';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useIFCFormState } from '../../hooks/useIFCFormState';
+import { validateIFCForm } from '../../schemas';
 import { createIFC, patchIFC } from '../../services/ifcsService';
 import type {
 	CriticalityOption,
-	I18nText,
 	IFCField,
 	IFCPrefill,
 	IFCViewPayload,
-} from '../../services/types';
+} from '../../types';
 import { IFCPageTitle } from '../shared/IFCPageTitle';
-import { IFCResultadoAlcanzado } from '../shared/IFCResultadoAlcanzado';
-import { IFCResultadoLogros } from '../shared/IFCResultadoLogros';
+import { IFCLearningOutcomeReached } from '../shared/IFCLearningOutcomeReached';
+import { IFCOutcomeResults } from '../shared/IFCOutcomeResults';
 import { PreviousActionsTable } from '../shared/PreviousActionsTable';
 import { SubmitConfirmModal } from '../shared/SubmitConfirmModal';
 import { FORM_LABELS } from './formLabels';
@@ -35,11 +35,6 @@ type Props = {
 	ifcFields: IFCField[];
 	criticalities: CriticalityOption[];
 };
-
-function hasAnyLang(value: I18nText | undefined, languages: string[]): boolean {
-	if (!value) return false;
-	return languages.some((l) => value[l]?.trim());
-}
 
 export function IFCForm(props: Props) {
 	const { t, locale: lang } = useI18n();
@@ -62,34 +57,8 @@ export function IFCForm(props: Props) {
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 	const [pendingNavId, setPendingNavId] = useState<number | null>(null);
 
-	function validate(): string | null {
-		const missingRequired = props.ifcFields
-			.filter((f) => f.required)
-			.some((f) => !hasAnyLang(state.information[f.key], props.languages));
-		if (missingRequired) return 'ifcs.form.err.requiredFields';
-
-		if (state.findings.length === 0) return 'error.ifc.findingsRequired';
-
-		const findingInvalid = state.findings.some(
-			(f) => !hasAnyLang(f.description, props.languages) || !f.criticality_code,
-		);
-		if (findingInvalid) return 'ifcs.form.err.findingIncomplete';
-
-		const actionInvalid = state.actions.some(
-			(a) => !hasAnyLang(a.description, props.languages) || !a.finding_temp_id,
-		);
-		if (actionInvalid) return 'ifcs.form.err.actionIncomplete';
-
-		const findingWithoutActions = state.findings.some(
-			(f) => !state.actions.some((a) => a.finding_temp_id === f.tempId),
-		);
-		if (findingWithoutActions) return 'error.ifc.actionsRequiredPerFinding';
-
-		return null;
-	}
-
 	async function onSave(submit: boolean) {
-		const err = validate();
+		const err = validateIFCForm(state, props.ifcFields, props.languages);
 		if (err) {
 			setError(err);
 			return;
@@ -181,8 +150,8 @@ export function IFCForm(props: Props) {
 			</Card>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-				<IFCResultadoLogros outcomeResult={props.prefill.outcome_course_result} />
-				<IFCResultadoAlcanzado learningOutcome={props.prefill.course_learning_outcome} />
+				<IFCOutcomeResults outcomeResult={props.prefill.outcome_course_result} />
+				<IFCLearningOutcomeReached learningOutcome={props.prefill.course_learning_outcome} />
 			</div>
 
 			{props.ifcFields.length > 0 && (

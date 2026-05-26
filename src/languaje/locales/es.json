@@ -50,7 +50,8 @@
 			"statusFilter": "Estado",
 			"empty": "Sin IFCs",
 			"actionView": "Ver",
-			"actionRegister": "Registrar"
+			"actionRegister": "Registrar",
+			"ariaLabel": "Tabla de IFCs"
 		},
 		"status": {
 			"all": "Todos"
@@ -152,6 +153,9 @@
 		"action": {
 			"view": "Ver",
 			"delete": "Eliminar"
+		},
+		"table": {
+			"ariaLabel": "Tabla de hallazgos"
 		},
 		"empty": "No hay hallazgos en este alcance",
 		"toast": {
@@ -438,13 +442,111 @@
 			"notFound": "Parámetro no encontrado"
 		}
 	},
+	"success": {
+		"ok": "Operación exitosa",
+		"created": "Registro creado exitosamente"
+	},
 	"error": {
-		"school": {
-			"notFound": "La escuela seleccionada no existe"
+		"generic": "Ocurrió un error inesperado",
+		"validation": "Los datos ingresados no son válidos",
+		"badRequest": "Solicitud inválida",
+		"unauthorized": "No estás autenticado",
+		"forbidden": "No tienes permiso para realizar esta acción",
+		"notFound": "El recurso solicitado no fue encontrado",
+		"conflict": "Conflicto con el estado actual del recurso",
+		"internalServer": "Error interno del servidor",
+		"auth": {
+			"accessDenied": "Acceso denegado — no tienes permisos suficientes",
+			"noPermissionsConfigured": "No hay permisos configurados para esta operación"
+		},
+		"user": {
+			"noRolesAssigned": "El usuario no tiene roles activos asignados",
+			"inactiveOrNotFound": "El usuario no existe o se encuentra inactivo",
+			"notFound": "Usuario no encontrado",
+			"invalidCredentials": "Correo o contraseña incorrectos",
+			"schoolNotFound": "La escuela seleccionada no existe",
+			"documentCodeExists": "Ya existe un usuario con ese código de documento",
+			"emailExists": "Ya existe un usuario con ese correo electrónico",
+			"createFailed": "No se pudo crear el usuario",
+			"updateFailed": "No se pudo actualizar el usuario",
+			"deleteFailed": "No se pudo eliminar el usuario"
 		},
 		"ifc": {
+			"notFound": "IFC no encontrado",
+			"ifcExists": "Ya existe un IFC con estos datos",
+			"invalidTransition": "Transición de estado no permitida",
+			"staffRequired": "No hay personal vinculado al solicitante",
+			"ownCoordinatorForbidden": "El coordinador no puede aprobar su propio IFC",
+			"notInChain": "El solicitante no pertenece a la cadena del organigrama",
+			"chartNotFound": "Organigrama no encontrado",
+			"alreadyExists": "Ya existe un IFC para este curso y período",
+			"notEditable": "El IFC no se puede editar en su estado actual",
 			"findingsRequired": "Se requiere al menos un hallazgo",
-			"actionsRequiredPerFinding": "Cada hallazgo necesita al menos una acción"
+			"actionsRequiredPerFinding": "Cada hallazgo necesita al menos una acción",
+			"findingTempIdMissing": "El ID temporal del hallazgo no fue resuelto",
+			"ifcInstrumentMissing": "El instrumento del IFC no está configurado",
+			"pdfRequiresApproved": "El PDF solo está disponible para IFCs aprobados",
+			"previousActionNotEligible": "La acción previa no puede ser reutilizada",
+			"createFailed": "No se pudo crear el IFC",
+			"updateFailed": "No se pudo actualizar el IFC",
+			"deleteFailed": "No se pudo eliminar el IFC",
+			"viewFailed": "No se pudo cargar el IFC",
+			"submitFailed": "No se pudo enviar el IFC",
+			"approveFailed": "No se pudo aprobar el IFC",
+			"rejectFailed": "No se pudo rechazar el IFC",
+			"patchFailed": "No se pudo guardar el IFC",
+			"prefillFailed": "No se pudo cargar la información previa",
+			"pdfFailed": "No se pudo generar el PDF",
+			"pdfBulkFailed": "No se pudo generar el ZIP de PDFs",
+			"statusReportFailed": "No se pudo generar el reporte de estado"
+		},
+		"ifcFinding": {
+			"notFound": "Hallazgo no encontrado",
+			"relationExists": "Ya existe una relación IFC-hallazgo duplicada",
+			"courseChartNotFound": "Organigrama del curso no encontrado",
+			"notInChainForPatch": "No perteneces a la cadena para editar este hallazgo",
+			"createFailed": "No se pudo crear el hallazgo",
+			"updateFailed": "No se pudo actualizar el hallazgo",
+			"deleteFailed": "No se pudo eliminar el hallazgo",
+			"listFailed": "No se pudo cargar la lista de hallazgos",
+			"viewFailed": "No se pudo cargar el hallazgo",
+			"patchFailed": "No se pudo guardar el hallazgo"
+		},
+		"notificationConfig": {
+			"notFound": "Configuración de notificación no encontrada",
+			"targetExists": "Ya existe una configuración duplicada",
+			"notAdmin": "No eres administrador",
+			"adminOnly": "Esta operación es solo para administradores",
+			"createFailed": "No se pudo crear la configuración",
+			"updateFailed": "No se pudo actualizar la configuración",
+			"deleteFailed": "No se pudo eliminar la configuración"
+		},
+		"parameter": {
+			"notFound": "Parámetro no encontrado",
+			"codeExists": "Ya existe un parámetro con ese código",
+			"createFailed": "No se pudo crear el parámetro",
+			"updateFailed": "No se pudo actualizar el parámetro",
+			"deleteFailed": "No se pudo eliminar el parámetro"
+		},
+		"orgScope": {
+			"userNotFound": "Usuario no encontrado",
+			"schoolNotFound": "Escuela no encontrada",
+			"getScopeFailed": "No se pudo obtener el alcance organizacional"
+		},
+		"academicPeriod": {
+			"notFound": "Período académico no encontrado",
+			"codeExists": "Ya existe un período con ese código",
+			"invalidDateRange": "La fecha de inicio es posterior a la fecha de fin",
+			"createFailed": "No se pudo crear el período académico",
+			"updateFailed": "No se pudo actualizar el período académico",
+			"deleteFailed": "No se pudo eliminar el período académico"
+		},
+		"type": {
+			"notFound": "Tipo no encontrado",
+			"codeExists": "Ya existe un tipo con ese código",
+			"createFailed": "No se pudo crear el tipo",
+			"updateFailed": "No se pudo actualizar el tipo",
+			"deleteFailed": "No se pudo eliminar el tipo"
 		}
 	},
 	"table": {

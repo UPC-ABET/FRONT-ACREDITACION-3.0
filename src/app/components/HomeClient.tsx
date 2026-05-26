@@ -1,29 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useI18n } from '@/providers';
-import { getAuthCookie } from '@/shared/lib';
 
 export default function HomeClient() {
-	const router = useRouter();
 	const { t } = useI18n();
-	const [ready, setReady] = useState(false);
-
-	useEffect(() => {
-		const token = getAuthCookie('token');
-
-		if (!token) {
-			router.replace('/auth/login');
-			return;
-		}
-
-		setReady(true);
-	}, [router]);
-
-	if (!ready) {
-		return null;
-	}
 
 	return (
 		<div className="space-y-2">

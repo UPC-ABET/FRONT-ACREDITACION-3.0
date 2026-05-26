@@ -1,1 +1,1 @@
-export { default as IfcNotificationConfigPageEntry } from './ifc-notification-config-page';
+export { default as IfcNotificationConfigPageEntry } from './IFCNotificationConfigPage';

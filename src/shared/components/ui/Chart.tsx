@@ -3,6 +3,13 @@
 import * as React from 'react';
 import { ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
+type TooltipEntry = {
+	name?: string;
+	value?: string | number;
+	color?: string;
+	fill?: string;
+};
+
 export type ChartConfig = {
 	[key: string]: {
 		label?: React.ReactNode;
@@ -52,14 +59,22 @@ export function ChartContainer({
 	);
 }
 
-export function ChartTooltipContent({ active, payload, label }: any) {
+export function ChartTooltipContent({
+	active,
+	payload,
+	label,
+}: {
+	active?: boolean;
+	payload?: TooltipEntry[];
+	label?: string;
+}) {
 	if (!active || !payload) return null;
 
 	return (
 		<div className="rounded-lg border border-zinc-200 bg-white p-3 shadow-md">
 			<p className="mb-2 text-xs font-bold text-zinc-500 uppercase">{label}</p>
 			<div className="space-y-1.5">
-				{payload.map((item: any, index: number) => (
+				{payload.map((item, index) => (
 					<div key={index} className="flex items-center gap-2">
 						<div
 							className="h-2 w-2 rounded-full"
@@ -74,16 +89,18 @@ export function ChartTooltipContent({ active, payload, label }: any) {
 	);
 }
 
-export function ChartLegendContent({ payload }: any) {
+export function ChartLegendContent({
+	payload,
+}: {
+	payload?: Array<{ color?: string; value: string }>;
+}) {
 	if (!payload) return null;
 
 	return (
 		<div className="flex flex-wrap items-center justify-center gap-6 mt-4">
-			{payload.map((entry: any, index: number) => (
+			{payload.map((entry, index) => (
 				<div key={index} className="flex items-center gap-2">
-					{/* El circulito de color */}
 					<div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
-					{/* El texto de la configuración */}
 					<span className="text-xs font-medium text-zinc-600">{entry.value}</span>
 				</div>
 			))}

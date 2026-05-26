@@ -1,7 +1,7 @@
 'use client';
 
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
-import { verificationOutcomes } from '../../utils/capstone-utils';
+import { verificationOutcomes } from '../../utils/capstoneUtils';
 import { CommissionTab, CriteriaItem } from '../../types';
 
 interface CommissionValidatorProps {

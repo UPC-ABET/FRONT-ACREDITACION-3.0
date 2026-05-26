@@ -1,0 +1,296 @@
+import type { I18nText } from '@/shared/types';
+export type { I18nText };
+
+export interface ScopeOption {
+	id: number;
+	label: I18nText;
+	parent_id: number | null;
+}
+
+export interface ScopeLevel {
+	level_num: number;
+	type_code: string;
+	options: ScopeOption[];
+}
+
+export interface ScopeTree {
+	highest_level: number | null;
+	levels: ScopeLevel[];
+}
+
+export interface IFCRecord {
+	id: number;
+	information: Record<string, unknown>;
+	extra: Record<string, unknown>;
+	created_at: string;
+	updated_at: string;
+	status_code: string;
+	status_label: I18nText;
+	status_color?: string;
+}
+
+export interface IFCRow {
+	chart_id: number;
+	course_code: string;
+	course_name: I18nText;
+	program_label: I18nText;
+	coordinator_user_id: number | null;
+	coordinator_name: string | null;
+	ifc: IFCRecord | null;
+}
+
+export type SelectionValue = number | 'ALL' | null;
+
+export type IFCStatusFilter = 'ALL' | string;
+
+export interface FindingRow {
+	id: number;
+	ifc_id: number;
+	course_id: number;
+	criticality_code: string;
+	criticality_name: I18nText;
+	criticality_color?: string;
+	criticality_order: number;
+	finding_code: string;
+	academic_period_code: string;
+	description: I18nText;
+}
+
+// ---- View payload --------------------------------------------------------
+
+export interface IFCHeader {
+	id: number;
+	information: Record<string, unknown>;
+	extra: Record<string, unknown>;
+	created_at: string;
+	academic_period_code: string;
+	area_label: I18nText;
+	subarea_label: I18nText;
+	program_label: I18nText;
+	course_code: string;
+	course_name: I18nText;
+	course_learning_outcome: I18nText;
+	coordinator: {
+		user_id: number | null;
+		code: string | null;
+		name: string | null;
+	};
+	status: {
+		code: string;
+		name: I18nText;
+		color?: string;
+		at: string;
+		comment: I18nText | null;
+		by: string | null;
+	} | null;
+	requester_in_chain: boolean;
+}
+
+export interface OutcomeItem {
+	outcome_code: string;
+	outcome_name: I18nText;
+	outcome_description: I18nText;
+}
+
+export interface CommissionGroup {
+	commission_code: string;
+	commission_name: I18nText;
+	outcomes: OutcomeItem[];
+}
+
+export interface ProgramGroup {
+	program_code: string;
+	program_name: I18nText;
+	commissions: CommissionGroup[];
+}
+
+export interface FindingOutcome extends OutcomeItem {
+	commission: { code: string; name: I18nText };
+}
+
+export interface FindingAction {
+	id: number;
+	code: string;
+	description: I18nText;
+	correlative: number;
+	completeness: { code: string; name: I18nText; color?: string };
+}
+
+export interface Finding {
+	id: number;
+	code: string;
+	description: I18nText;
+	correlative: number;
+	is_automatic: boolean;
+	criticality: { code: string; name: I18nText; color?: string };
+	outcomes: FindingOutcome[];
+	actions: FindingAction[];
+}
+
+export interface PreviousAction {
+	id: number;
+	finding_action_id: number;
+	finding: { id: number; code: string };
+	code: string;
+	correlative: number;
+	description: I18nText;
+	evidences: I18nText | null;
+	completeness: { code: string; name: I18nText; color?: string };
+	source: 'direct' | 'plan' | string;
+}
+
+export interface IFCViewPayload {
+	ifc: IFCHeader;
+	outcome_course_result: ProgramGroup[];
+	findings: Finding[];
+	previous_actions: PreviousAction[];
+}
+
+export interface IFCInformationEntry {
+	label: I18nText;
+	value: I18nText;
+	order: number;
+}
+
+export interface RejectIFCBody {
+	comment: I18nText;
+}
+
+// ---- Form schema -----------------------------------------------------------
+
+export interface IFCField {
+	key: string;
+	label: I18nText;
+	required: boolean;
+	order: number;
+}
+
+export interface CriticalityOption {
+	id: number;
+	code: string;
+	name: I18nText;
+	description: I18nText;
+}
+
+// ---- Prefill ---------------------------------------------------------------
+
+export interface IFCPrefill {
+	course_name: I18nText;
+	course_learning_outcome: I18nText;
+	area_label: I18nText;
+	subarea_label: I18nText;
+	academic_period_code: string;
+	coordinator_code: string | null;
+	coordinator_name: string | null;
+	coordinator_user_id: number | null;
+	outcome_course_result: ProgramGroup[];
+	previous_actions: PreviousAction[];
+}
+
+// ---- Form state ------------------------------------------------------------
+
+export interface FormFinding {
+	tempId: string;
+	id: number | null;
+	description: I18nText;
+	criticality_code: string;
+}
+
+export interface FormAction {
+	tempId: string;
+	id: number | null;
+	description: I18nText;
+	finding_temp_id: string;
+}
+
+export interface IFCFormState {
+	information: Record<string, I18nText>;
+	findings: FormFinding[];
+	actions: FormAction[];
+	deleted_finding_ids: number[];
+	deleted_action_ids: number[];
+	previous_actions: Record<number, I18nText | null>;
+}
+
+// ---- Outbound payloads -----------------------------------------------------
+
+export interface PayloadFinding {
+	tempId: string;
+	id: number | null;
+	description: I18nText;
+	criticality_code: string;
+}
+
+export interface PayloadAction {
+	tempId: string;
+	id: number | null;
+	description: I18nText;
+	finding_temp_id: string;
+}
+
+export interface PayloadPreviousActionEvidence {
+	finding_action_id: number;
+	evidences: I18nText | null;
+}
+
+export interface CreateIFCBody {
+	chart_id: number;
+	period_id: number;
+	submit: boolean;
+	information?: Record<string, I18nText>;
+	findings: PayloadFinding[];
+	actions: PayloadAction[];
+	deleted_finding_ids?: number[];
+	deleted_action_ids?: number[];
+	previous_actions?: PayloadPreviousActionEvidence[];
+}
+
+export type PatchIFCBody = Omit<CreateIFCBody, 'chart_id' | 'period_id'>;
+
+// ---- Finding detail view ---------------------------------------------------
+
+export interface FindingDetail {
+	id: number;
+	finding_code: string;
+	academic_period_code: string;
+	description: I18nText;
+	criticality: { code: string; name: I18nText; color?: string };
+}
+
+export interface FindingActionRow {
+	id: number;
+	action_code: string;
+	description: I18nText;
+	completeness: { code: string; name: I18nText; color?: string };
+}
+
+export interface FindingDetailPayload {
+	finding: FindingDetail;
+	actions: FindingActionRow[];
+}
+
+export interface PatchFindingBody {
+	description: I18nText;
+}
+
+// ---- Notify ----------------------------------------------------------------
+
+export type NotifyReason = 'no_course_chart' | 'no_config' | 'no_recipients' | 'send_failed';
+
+export interface NotifyResult {
+	sent: boolean;
+	recipients_count: number;
+	cc_count: number;
+	reason: NotifyReason | null;
+}
+
+export interface NotifyAllResult {
+	sent: number[];
+	skipped: number[];
+	errors: Array<{ chart_id: number; message: string }>;
+}
+
+export interface SubmitResult {
+	id: number;
+	notification: NotifyResult;
+}

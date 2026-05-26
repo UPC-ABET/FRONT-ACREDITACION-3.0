@@ -5,7 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, Card, DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { VIEW_LABELS } from './viewLabels';
-import type { Finding } from '../../services/types';
+import type { Finding } from '../../types';
 
 type Props = { findings: Finding[] };
 

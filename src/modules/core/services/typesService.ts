@@ -1,13 +1,23 @@
-import { ApiResponse } from '@/shared';
-import { apiGet, apiPost } from '@/shared/lib';
-import type { TypeItemResponse } from '../api/dtos/response';
+import { apiGet } from '@/shared/lib/apiClient';
+import { ApiError } from '@/shared/lib/apiError';
 
-export const typesService = {
-	getByFilters(filters: { type_group_id?: number }): Promise<ApiResponse<TypeItemResponse[]>> {
-		return apiPost('/types/get-by-filters', filters);
-	},
+export interface TypeOption {
+	id: number;
+	code: string;
+	name: Record<string, string>;
+	description: Record<string, string>;
+}
 
-	getByGroupCode(groupCode: string): Promise<ApiResponse<TypeItemResponse[]>> {
-		return apiGet(`/types/by-group-code/${groupCode}`);
-	},
-};
+interface Envelope<T> {
+	code: number;
+	message: string;
+	data: T;
+}
+
+export async function getTypesByGroupCode(groupCode: string): Promise<TypeOption[]> {
+	const envelope = await apiGet<Envelope<TypeOption[]>>(
+		`/types/by-group-code/${encodeURIComponent(groupCode)}`,
+	);
+	if (!envelope?.data) throw new ApiError('types.error.byGroupFailed');
+	return envelope.data.map((tp) => ({ ...tp, id: Number(tp.id) }));
+}

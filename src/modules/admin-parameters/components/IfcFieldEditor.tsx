@@ -3,7 +3,7 @@
 import { ArrowDownIcon, ArrowUpIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Button, Input, Toggle } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type { IFCFieldDescriptor } from '../services/types';
+import type { IFCFieldDescriptor } from '../types';
 
 type Props = {
 	field: IFCFieldDescriptor;

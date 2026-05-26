@@ -12,12 +12,12 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/api-error';
-import { tryTranslate } from '@/shared/utils/try-translate';
-import { useFindingDetail } from '../../hooks/useFindingDetail';
+import { getErrorMessage } from '@/shared/lib/apiError';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
+import { useFindingDetail } from '../../hooks/useIfcFindings';
 import { deleteFinding, patchFinding } from '../../services/ifcFindingsService';
-import { getParameterByCode } from '../../services/parametersService';
-import type { I18nText } from '../../services/types';
+import { getParameterByCode, PARAMETER_CODES } from '@/modules/core';
+import type { I18nText } from '../../types';
 import { DeleteFindingModal } from '../shared/DeleteFindingModal';
 import { FindingActionsTable } from './FindingActionsTable';
 import { FindingGeneralInfo } from './FindingGeneralInfo';
@@ -29,7 +29,7 @@ export default function FindingDetailPage() {
 	const params = useParams<{ id: string }>();
 	const id = Number(params?.id);
 
-	const { data, loading, error, refetch } = useFindingDetail(id);
+	const { data, isLoading, error, refetch } = useFindingDetail(id);
 	const [languages, setLanguages] = useState<string[]>([]);
 	const [saving, setSaving] = useState(false);
 	const [deleting, setDeleting] = useState(false);
@@ -39,7 +39,7 @@ export default function FindingDetailPage() {
 
 	useEffect(() => {
 		let alive = true;
-		getParameterByCode<string[]>('PARAMETER_LANGUAGES')
+		getParameterByCode<string[]>(PARAMETER_CODES.LANGUAGES)
 			.then((langs) => {
 				if (alive) setLanguages(langs);
 			})
@@ -80,7 +80,7 @@ export default function FindingDetailPage() {
 		}
 	}
 
-	if (loading) {
+	if (isLoading) {
 		return <LoadingDialog isOpen label={t('loading.default')} />;
 	}
 
@@ -89,7 +89,7 @@ export default function FindingDetailPage() {
 			<ErrorDialog
 				isOpen
 				onClose={() => router.push('/ifc-findings')}
-				message={tryTranslate(t, error ?? 'ifcFindings.error.viewFailed')}
+				message={tryTranslate(t, getErrorMessage(error, 'ifcFindings.error.viewFailed'))}
 			/>
 		);
 	}

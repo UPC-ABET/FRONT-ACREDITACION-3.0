@@ -50,7 +50,8 @@
       "statusFilter": "Status",
       "empty": "No IFCs",
       "actionView": "View",
-      "actionRegister": "Register"
+      "actionRegister": "Register",
+      "ariaLabel": "IFC table"
     },
     "status": {
       "all": "All"
@@ -152,6 +153,9 @@
     "action": {
       "view": "View",
       "delete": "Delete"
+    },
+    "table": {
+      "ariaLabel": "Findings table"
     },
     "empty": "No findings in scope",
     "toast": {
@@ -438,13 +442,111 @@
       "notFound": "Parameter not found"
     }
   },
+  "success": {
+    "ok": "Operation successful",
+    "created": "Record created successfully"
+  },
   "error": {
-    "school": {
-      "notFound": "The selected school does not exist"
+    "generic": "An unexpected error occurred",
+    "validation": "The submitted data is not valid",
+    "badRequest": "Invalid request",
+    "unauthorized": "You are not authenticated",
+    "forbidden": "You do not have permission to perform this action",
+    "notFound": "The requested resource was not found",
+    "conflict": "Conflict with the current state of the resource",
+    "internalServer": "Internal server error",
+    "auth": {
+      "accessDenied": "Access denied — insufficient permissions",
+      "noPermissionsConfigured": "No permissions configured for this operation"
+    },
+    "user": {
+      "noRolesAssigned": "The user has no active roles assigned",
+      "inactiveOrNotFound": "The user does not exist or is inactive",
+      "notFound": "User not found",
+      "invalidCredentials": "Incorrect email or password",
+      "schoolNotFound": "The selected school does not exist",
+      "documentCodeExists": "A user with this document code already exists",
+      "emailExists": "A user with this email already exists",
+      "createFailed": "Could not create the user",
+      "updateFailed": "Could not update the user",
+      "deleteFailed": "Could not delete the user"
     },
     "ifc": {
+      "notFound": "IFC not found",
+      "ifcExists": "An IFC with this data already exists",
+      "invalidTransition": "Invalid status transition",
+      "staffRequired": "No staff linked to the requester",
+      "ownCoordinatorForbidden": "The coordinator cannot approve their own IFC",
+      "notInChain": "The requester is not in the org chart chain",
+      "chartNotFound": "Org chart not found",
+      "alreadyExists": "An IFC already exists for this course and period",
+      "notEditable": "The IFC cannot be edited in its current status",
       "findingsRequired": "At least one finding is required",
-      "actionsRequiredPerFinding": "Every finding needs at least one action"
+      "actionsRequiredPerFinding": "Every finding needs at least one action",
+      "findingTempIdMissing": "Finding temp ID was not resolved",
+      "ifcInstrumentMissing": "IFC instrument is not configured",
+      "pdfRequiresApproved": "PDF is only available for approved IFCs",
+      "previousActionNotEligible": "The previous action cannot be reused",
+      "createFailed": "Could not create the IFC",
+      "updateFailed": "Could not update the IFC",
+      "deleteFailed": "Could not delete the IFC",
+      "viewFailed": "Could not load the IFC",
+      "submitFailed": "Could not submit the IFC",
+      "approveFailed": "Could not approve the IFC",
+      "rejectFailed": "Could not reject the IFC",
+      "patchFailed": "Could not save the IFC",
+      "prefillFailed": "Could not load the prefill data",
+      "pdfFailed": "Could not generate the PDF",
+      "pdfBulkFailed": "Could not generate the PDF ZIP",
+      "statusReportFailed": "Could not generate the status report"
+    },
+    "ifcFinding": {
+      "notFound": "Finding not found",
+      "relationExists": "A duplicate IFC-finding relation already exists",
+      "courseChartNotFound": "Course chart not found",
+      "notInChainForPatch": "You are not in the chain to edit this finding",
+      "createFailed": "Could not create the finding",
+      "updateFailed": "Could not update the finding",
+      "deleteFailed": "Could not delete the finding",
+      "listFailed": "Could not load findings",
+      "viewFailed": "Could not load the finding",
+      "patchFailed": "Could not save the finding"
+    },
+    "notificationConfig": {
+      "notFound": "Notification configuration not found",
+      "targetExists": "A duplicate configuration already exists",
+      "notAdmin": "You are not an administrator",
+      "adminOnly": "This operation is for administrators only",
+      "createFailed": "Could not create the configuration",
+      "updateFailed": "Could not update the configuration",
+      "deleteFailed": "Could not delete the configuration"
+    },
+    "parameter": {
+      "notFound": "Parameter not found",
+      "codeExists": "A parameter with this code already exists",
+      "createFailed": "Could not create the parameter",
+      "updateFailed": "Could not update the parameter",
+      "deleteFailed": "Could not delete the parameter"
+    },
+    "orgScope": {
+      "userNotFound": "User not found",
+      "schoolNotFound": "School not found",
+      "getScopeFailed": "Could not retrieve the organizational scope"
+    },
+    "academicPeriod": {
+      "notFound": "Academic period not found",
+      "codeExists": "A period with this code already exists",
+      "invalidDateRange": "Start date is after end date",
+      "createFailed": "Could not create the academic period",
+      "updateFailed": "Could not update the academic period",
+      "deleteFailed": "Could not delete the academic period"
+    },
+    "type": {
+      "notFound": "Type not found",
+      "codeExists": "A type with this code already exists",
+      "createFailed": "Could not create the type",
+      "updateFailed": "Could not update the type",
+      "deleteFailed": "Could not delete the type"
     }
   },
   "table": {

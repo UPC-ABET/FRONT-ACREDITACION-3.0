@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { tryTranslate } from '@/shared/utils/try-translate';
-import { AcademicPeriodSelect } from '@/modules/ifcs/components/AcademicPeriodSelect';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
+import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { useNotificationConfigs } from '../hooks/useNotificationConfigs';
+import { NotificationConfigProvider } from '../hooks/useNotificationConfigContext';
 import { ConfigTabs } from './ConfigTabs';
 
 export function NotificationConfigPage() {
@@ -36,19 +37,21 @@ export function NotificationConfigPage() {
 				{periodId !== null && loading && <LoadingDialog isOpen label={t('loading.default')} />}
 
 				{periodId !== null && data && (
-					<ConfigTabs
+					<NotificationConfigProvider
 						periodId={periodId}
-						triggers={data.triggers}
-						statuses={data.statuses}
 						chartLevels={data.chartLevels}
 						notifyVars={data.notifyVars}
-						configs={data.configs}
 						onSaved={() => {
 							void refetch();
 						}}
 						onError={setErrorMsg}
-						onSuccess={setSuccessMsg}
-					/>
+						onSuccess={setSuccessMsg}>
+						<ConfigTabs
+							triggers={data.triggers}
+							statuses={data.statuses}
+							configs={data.configs}
+						/>
+					</NotificationConfigProvider>
 				)}
 
 				{(error || errorMsg) && (

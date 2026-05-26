@@ -5,7 +5,7 @@ import { EyeIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type { FindingRow } from '../../services/types';
+import type { FindingRow } from '../../types';
 
 type Props = {
 	rows: FindingRow[];
@@ -82,6 +82,7 @@ export function FindingsTable({ rows, onView, onDelete }: Props) {
 			data={rows}
 			showSearch={false}
 			showPagination
+			aria-label={t('ifcFindings.table.ariaLabel')}
 		/>
 	);
 }

@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { Skeleton } from '@/shared/components/ui';
 import { Toast } from '@/shared/components/ui/Toast';
 import { useI18n } from '@/providers';
-import { useRubricEditor } from '../../hooks/use-rubric-editor';
+import { useRubricEditor } from '../../hooks/useRubricEditor';
 import { RubricHeader } from './RubricHeader';
 import { ReadonlyBanner } from './ReadonlyBanner';
 import { RubricDetail } from '../../types';

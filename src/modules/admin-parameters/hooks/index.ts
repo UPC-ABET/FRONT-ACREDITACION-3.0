@@ -1,2 +1,2 @@
 export * from './useParameter';
-export * from './use-parameters';
+export * from './useParameters';

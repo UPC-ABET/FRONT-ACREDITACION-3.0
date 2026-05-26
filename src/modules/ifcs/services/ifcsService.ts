@@ -1,4 +1,9 @@
 import { apiGet, apiPatch, apiPost, ApiError } from '@/shared/lib';
+import {
+	ifcViewPayloadSchema,
+	previousActionsSchema,
+	submitResultSchema,
+} from '../schemas/ifcResponseSchemas';
 import type {
 	CreateIFCBody,
 	IFCPrefill,
@@ -7,7 +12,7 @@ import type {
 	PatchIFCBody,
 	RejectIFCBody,
 	SubmitResult,
-} from './types';
+} from '../types';
 
 interface Envelope<T> {
 	code: number;
@@ -25,42 +30,15 @@ export async function listIFCs(chartIds: number[], periodId: number): Promise<IF
 }
 
 export async function getIFCView(id: number): Promise<IFCViewPayload> {
-	const envelope = await apiGet<Envelope<IFCViewPayload>>(`/ifcs/get-by-id/${id}`);
+	const envelope = await apiGet<Envelope<unknown>>(`/ifcs/get-by-id/${id}`);
 	if (!envelope?.data) throw new ApiError('ifcs.error.viewFailed');
-
-	envelope.data.ifc.id = Number(envelope.data.ifc.id);
-	if (envelope.data.ifc.coordinator.user_id != null) {
-		envelope.data.ifc.coordinator.user_id = Number(envelope.data.ifc.coordinator.user_id);
-	}
-	envelope.data.findings.forEach((f) => {
-		f.id = Number(f.id);
-		f.actions.forEach((a) => {
-			a.id = Number(a.id);
-		});
-	});
-	envelope.data.previous_actions = (envelope.data.previous_actions ?? []).map((p) => ({
-		...p,
-		id: Number(p.id),
-		finding_action_id: Number(p.finding_action_id),
-		finding: { id: Number(p.finding.id), code: p.finding.code },
-	}));
-	return envelope.data;
+	return ifcViewPayloadSchema.parse(envelope.data) as unknown as IFCViewPayload;
 }
 
 export async function submitIFC(id: number): Promise<SubmitResult> {
-	const envelope = await apiPost<Envelope<SubmitResult>>(`/ifcs/${id}/submit`);
+	const envelope = await apiPost<Envelope<unknown>>(`/ifcs/${id}/submit`);
 	if (!envelope?.data) throw new ApiError('ifcs.error.submitFailed');
-
-	const n = envelope.data.notification;
-	return {
-		id: Number(envelope.data.id),
-		notification: {
-			sent: Boolean(n?.sent),
-			recipients_count: Number(n?.recipients_count ?? 0),
-			cc_count: Number(n?.cc_count ?? 0),
-			reason: (n?.reason ?? null) as SubmitResult['notification']['reason'],
-		},
-	};
+	return submitResultSchema.parse(envelope.data) as unknown as SubmitResult;
 }
 
 export async function approveIFC(id: number): Promise<void> {
@@ -76,49 +54,24 @@ export async function getIFCPrefill(chartId: number, periodId: number): Promise<
 		`/ifcs/prefill?chart_id=${chartId}&period_id=${periodId}`,
 	);
 	if (!envelope?.data) throw new ApiError('ifcs.error.prefillFailed');
-	envelope.data.previous_actions = (envelope.data.previous_actions ?? []).map((p) => ({
-		...p,
-		id: Number(p.id),
-		finding_action_id: Number(p.finding_action_id),
-		finding: { id: Number(p.finding.id), code: p.finding.code },
-	}));
+	envelope.data.previous_actions = previousActionsSchema.parse(
+		envelope.data.previous_actions,
+	) as unknown as IFCPrefill['previous_actions'];
 	return envelope.data;
 }
 
-function parseSaveResult(data: {
-	id: number;
-	notification?: SubmitResult['notification'];
-}): SubmitResult {
-	const n = data.notification;
-	return {
-		id: Number(data.id),
-		notification: {
-			sent: Boolean(n?.sent),
-			recipients_count: Number(n?.recipients_count ?? 0),
-			cc_count: Number(n?.cc_count ?? 0),
-			reason: (n?.reason ?? null) as SubmitResult['notification']['reason'],
-		},
-	};
+function parseSaveResult(data: unknown): SubmitResult {
+	return submitResultSchema.parse(data) as unknown as SubmitResult;
 }
 
 export async function createIFC(payload: CreateIFCBody): Promise<SubmitResult> {
-	const envelope = await apiPost<
-		Envelope<{
-			id: number;
-			notification?: SubmitResult['notification'];
-		}>
-	>('/ifcs/create', payload);
+	const envelope = await apiPost<Envelope<unknown>>('/ifcs/create', payload);
 	if (!envelope?.data) throw new ApiError('ifcs.error.createFailed');
 	return parseSaveResult(envelope.data);
 }
 
 export async function patchIFC(id: number, payload: PatchIFCBody): Promise<SubmitResult> {
-	const envelope = await apiPatch<
-		Envelope<{
-			id: number;
-			notification?: SubmitResult['notification'];
-		}>
-	>(`/ifcs/${id}`, payload);
+	const envelope = await apiPatch<Envelope<unknown>>(`/ifcs/${id}`, payload);
 	if (!envelope?.data) throw new ApiError('ifcs.error.patchFailed');
 	return parseSaveResult(envelope.data);
 }

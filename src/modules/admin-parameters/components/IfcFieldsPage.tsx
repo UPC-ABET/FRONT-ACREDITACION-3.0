@@ -13,11 +13,13 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/api-error';
-import { tryTranslate } from '@/shared/utils/try-translate';
+import { getErrorMessage } from '@/shared/lib/apiError';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useParameter } from '../hooks/useParameter';
 import { updateParameter } from '../services/parametersAdminService';
-import { PARAM_CODES, type IFCFieldDescriptor } from '../services/types';
+import { PARAMETER_CODES } from '@/modules/core';
+import { validateIFCFields, hasValidationErrors } from '../schemas';
+import type { IFCFieldDescriptor } from '../types';
 import { IfcFieldEditor } from './IfcFieldEditor';
 
 function cloneFields(fields: IFCFieldDescriptor[]): IFCFieldDescriptor[] {
@@ -54,7 +56,7 @@ function sameFields(a: IFCFieldDescriptor[], b: IFCFieldDescriptor[]): boolean {
 export function IfcFieldsPage() {
 	const { t } = useI18n();
 	const { data, loading, error, refetch, setData } = useParameter<IFCFieldDescriptor[]>(
-		PARAM_CODES.IFC_FIELDS,
+		PARAMETER_CODES.IFC_FIELDS,
 	);
 
 	const [fields, setFields] = useState<IFCFieldDescriptor[]>([]);
@@ -75,32 +77,8 @@ export function IfcFieldsPage() {
 		setShowValidation(false);
 	}, [data]);
 
-	const duplicateKeys = useMemo(() => {
-		const counts = new Map<string, number>();
-		for (const f of fields) {
-			const k = f.key.trim();
-			if (!k) continue;
-			counts.set(k, (counts.get(k) ?? 0) + 1);
-		}
-		return new Set(
-			Array.from(counts.entries())
-				.filter(([, count]) => count > 1)
-				.map(([key]) => key),
-		);
-	}, [fields]);
-
-	const validationByIndex = useMemo(() => {
-		return fields.map((f) => ({
-			keyMissing: f.key.trim().length === 0,
-			keyDuplicate: f.key.trim().length > 0 && duplicateKeys.has(f.key.trim()),
-			esMissing: (f.label.es ?? '').trim().length === 0,
-			enMissing: (f.label.en ?? '').trim().length === 0,
-		}));
-	}, [fields, duplicateKeys]);
-
-	const hasErrors = validationByIndex.some(
-		(v) => v.keyMissing || v.keyDuplicate || v.esMissing || v.enMissing,
-	);
+	const validationByIndex = useMemo(() => validateIFCFields(fields), [fields]);
+	const hasErrors = hasValidationErrors(validationByIndex);
 
 	const dirty = !sameFields(fields, original);
 

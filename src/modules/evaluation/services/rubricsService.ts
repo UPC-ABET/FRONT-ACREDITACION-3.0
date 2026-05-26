@@ -5,8 +5,9 @@ import type {
 	CreateRubricFullDto,
 	FilterRubricDto,
 	UpdateRubricDto,
-} from '../api/dtos/request';
-import { GetRubricByIdResponse, RubricResponse } from '../api/dtos';
+	GetRubricByIdResponse,
+	RubricResponse,
+} from '../types';
 
 export const rubricsService = {
 	getAll(): Promise<ApiResponse<RubricResponse[]>> {
