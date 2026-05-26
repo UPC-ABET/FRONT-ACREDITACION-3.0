@@ -17,6 +17,3 @@
  */
 
 export * from './schools';
-
-export const LOGIN_BACKGROUND_URL =
-	'https://aulavirtual.upc.edu.pe/bbcswebdav/institution/Branding/New_Login/fondo-bb.jpg';

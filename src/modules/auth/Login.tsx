@@ -5,15 +5,11 @@ import LoginForm from './components/LoginForm';
 import { Card } from '@/shared/components/ui/Card';
 import { Title } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { LOGIN_BACKGROUND_URL } from '@/modules/auth/constants';
-
 export default function Login() {
 	const { t } = useI18n();
 
 	return (
-		<div
-			className="min-h-screen w-full bg-cover bg-center flex items-center justify-center"
-			style={{ backgroundImage: `url(${LOGIN_BACKGROUND_URL})` }}>
+		<div className="min-h-screen w-full bg-[image:var(--login-bg)] bg-cover bg-center flex items-center justify-center">
 			<div className="w-full px-4 py-8">
 				<div className="mx-auto w-full max-w-[360px] sm:max-w-[480px] md:max-w-[540px]">
 					<Card className="w-full px-8 py-8 flex flex-col justify-center gap-4 aspect-auto md:aspect-square">
