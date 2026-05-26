@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { getParameterByCode, getTypesByGroupCode } from '@/modules/ifcs/services';
 import { listNotificationConfigs } from '../services/notificationConfigsService';
-import type { CoreType, NotificationConfig, NotifyVar } from '../services/types';
+import type { CoreType, NotificationConfig, NotifyVar } from '../types';
 
 interface ConfigsBundle {
 	configs: NotificationConfig[];

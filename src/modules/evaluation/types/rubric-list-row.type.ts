@@ -1,4 +1,4 @@
-import { RubricResponse } from '../services/types';
+import { RubricResponse } from '.';
 
 export type RubricListRow = {
 	id: number;

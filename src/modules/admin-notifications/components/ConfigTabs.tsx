@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type { CoreType, NotificationConfig } from '../services/types';
+import type { CoreType, NotificationConfig } from '../types';
 import { TRIGGER_FALLBACK_LABEL } from './adminLabels';
 import { ConfigEditor } from './ConfigEditor';
 

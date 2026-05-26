@@ -9,7 +9,7 @@ import { CommissionTabs } from '../rubric-editor/CommissionTabs'
 import { OutcomeCard } from '../rubric-editor/OutcomeCard'
 import { rubricWizardService } from '../../services/rubricWizardService'
 import type { OutcomeWithCriteria, CriteriaItem } from '../../types'
-import type { OutcomeResponse } from '../../services/types'
+import type { OutcomeResponse } from '../../types'
 import type { Step1Data } from './WizardStep1'
 import type { Step2Data } from './WizardStep2'
 

@@ -13,7 +13,7 @@ import type {
 	UpdateRubricDto,
 	GetRubricByIdResponse,
 	RubricResponse,
-} from './types';
+} from '../types';
 
 export const rubricsService = {
 	/** Obtiene todas las rúbricas (sin paginación) */

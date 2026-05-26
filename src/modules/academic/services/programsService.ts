@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/shared';
-import { FilterProgramRequest, ProgramResponse } from './types';
+import { FilterProgramRequest, ProgramResponse } from '../types';
 import { apiPost } from '@/shared/lib';
 
 export const programsService = {

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import type { CoreType, NotifyVar } from '../services/types';
+import type { CoreType, NotifyVar } from '../types';
 
 interface NotificationConfigContextValue {
 	periodId: number;

@@ -5,7 +5,7 @@ import { Card, LoadingDialog, SuccessDialog, TableErrorState, Toast } from '@/sh
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/try-translate';
 import { useParameter } from '../hooks/useParameter';
-import { PARAM_CODES, type ParameterRow } from '../services/types';
+import { PARAM_CODES, type ParameterRow } from '../types';
 import { PrefixParameterCard } from './PrefixParameterCard';
 
 export function IfcCodesPage() {

@@ -1,5 +1,5 @@
 import { apiDelete, apiGet, apiPatch, apiPost, ApiError } from '@/shared/lib';
-import type { FindingDetailPayload, FindingRow, PatchFindingBody } from './types';
+import type { FindingDetailPayload, FindingRow, PatchFindingBody } from '../types';
 
 interface Envelope<T> {
 	code: number;

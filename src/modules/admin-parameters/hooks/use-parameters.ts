@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getParameterByFilters, updateParameter } from '../services/parametersAdminService';
-import type { ParameterRow, UpdateParameterBody } from '../services/types';
+import type { ParameterRow, UpdateParameterBody } from '../types';
 
 export const parametersQueryKeys = {
 	all: ['parameters'] as const,

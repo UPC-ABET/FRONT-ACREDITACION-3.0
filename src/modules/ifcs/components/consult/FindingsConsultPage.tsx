@@ -17,7 +17,7 @@ import { TYPE_CODES } from '../../constants';
 import { useFindingsList, useOrgScope } from '../../hooks';
 import { deleteFinding } from '../../services/ifcFindingsService';
 import { optionsForLevel } from '../../services/scope';
-import type { FindingRow, ScopeTree, SelectionValue } from '../../services/types';
+import type { FindingRow, ScopeTree, SelectionValue } from '../../types';
 import { AcademicPeriodSelect } from '../AcademicPeriodSelect';
 import { ScopeDropdowns } from '../ScopeDropdowns';
 import { DeleteFindingModal } from '../shared/DeleteFindingModal';

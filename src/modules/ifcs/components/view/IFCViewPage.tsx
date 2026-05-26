@@ -8,7 +8,7 @@ import { getErrorMessage } from '@/shared/lib/api-error';
 import { tryTranslate } from '@/shared/utils/try-translate';
 import { useIFCView } from '../../hooks/useIFCView';
 import { approveIFC, rejectIFC, submitIFC } from '../../services/ifcsService';
-import type { I18nText } from '../../services/types';
+import type { I18nText } from '../../types';
 import { IFCHeaderCard } from './IFCHeaderCard';
 import { IFCInformationBlock } from './IFCInformationBlock';
 import { IFCResultadoLogros } from '../shared/IFCResultadoLogros';

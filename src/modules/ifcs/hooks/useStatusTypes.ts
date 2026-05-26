@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getTypesByGroupCode } from '../services/typesService';
-import type { CriticalityOption } from '../services/types';
+import type { CriticalityOption } from '../types';
 
 export type StatusType = CriticalityOption;
 

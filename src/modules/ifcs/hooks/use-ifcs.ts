@@ -16,7 +16,7 @@ import type {
 	PatchIFCBody,
 	RejectIFCBody,
 	SubmitResult,
-} from '../services/types';
+} from '../types';
 
 export const ifcQueryKeys = {
 	all: ['ifcs'] as const,

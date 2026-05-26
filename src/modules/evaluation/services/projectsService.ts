@@ -5,7 +5,7 @@ import type {
 	ProjectByProfessorResponse,
 	ProjectDetailsResponse,
 	ProjectResponse,
-} from './types';
+} from '../types';
 
 export const projectsService = {
 	create(body: Record<string, unknown>): Promise<ApiResponse<any>> {

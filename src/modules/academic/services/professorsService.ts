@@ -1,6 +1,6 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost } from '@/shared/lib';
-import { ProfessorResponse, ProfessorSearchResponse } from './types';
+import { ProfessorResponse, ProfessorSearchResponse } from '../types';
 
 export const professorsService = {
 	getByUserId(userId: string | number): Promise<ApiResponse<ProfessorResponse>> {

@@ -1,4 +1,4 @@
-import type { I18nText, IFCField, IFCFormState } from '../services/types';
+import type { I18nText, IFCField, IFCFormState } from '../types';
 
 export function hasAnyLang(value: I18nText | undefined, languages: string[]): boolean {
 	if (!value) return false;

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { getParameterByFilters } from '../services/parametersAdminService';
-import type { ParameterRow } from '../services/types';
+import type { ParameterRow } from '../types';
 
 export function useParameter<T>(code: string) {
 	const [data, setData] = useState<ParameterRow<T> | null>(null);

@@ -7,7 +7,7 @@ import type {
 	PatchIFCBody,
 	RejectIFCBody,
 	SubmitResult,
-} from './types';
+} from '../types';
 
 interface Envelope<T> {
 	code: number;

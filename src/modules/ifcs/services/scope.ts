@@ -1,5 +1,5 @@
 import { TYPE_CODES } from '../constants';
-import type { IFCRow, ScopeOption, ScopeTree, SelectionValue } from './types';
+import type { IFCRow, ScopeOption, ScopeTree, SelectionValue } from '../types';
 
 /**
  * Cascading-dropdown helper.

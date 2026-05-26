@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { listFindings } from '../services/ifcFindingsService';
-import type { FindingRow } from '../services/types';
+import type { FindingRow } from '../types';
 
 export function useFindingsList() {
 	const [rows, setRows] = useState<FindingRow[]>([]);

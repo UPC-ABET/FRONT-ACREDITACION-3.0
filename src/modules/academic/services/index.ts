@@ -1,4 +1,3 @@
-export * from './types';
 export * from './academicPeriodsService';
 export * from './coursesService';
 export * from './performanceLevelsService';

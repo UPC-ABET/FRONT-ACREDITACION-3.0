@@ -4,7 +4,7 @@ import {
 	upsertNotificationConfig,
 	deleteNotificationConfig,
 } from '../services/notificationConfigsService';
-import type { UpsertConfigBody } from '../services/types';
+import type { UpsertConfigBody } from '../types';
 
 export const notificationConfigsQueryKeys = {
 	all: ['notification-configs'] as const,

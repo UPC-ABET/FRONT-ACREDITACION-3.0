@@ -6,7 +6,7 @@ import { Button, Input } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { updateParameter } from '../services/parametersAdminService';
-import type { ParameterRow } from '../services/types';
+import type { ParameterRow } from '../types';
 
 type Props = {
 	parameter: ParameterRow<string>;

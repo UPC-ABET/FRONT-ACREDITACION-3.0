@@ -2,7 +2,7 @@
 
 import { useI18n } from '@/providers';
 import { I18nTextField } from '@/shared/components';
-import type { I18nText, IFCField } from '../../services/types';
+import type { I18nText, IFCField } from '../../types';
 
 type Props = {
 	fields: IFCField[];

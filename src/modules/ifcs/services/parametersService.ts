@@ -1,5 +1,5 @@
 import { apiPost, ApiError } from '@/shared/lib';
-import type { I18nText } from './types';
+import type { I18nText } from '../types';
 
 interface Envelope<T> {
 	code: number;

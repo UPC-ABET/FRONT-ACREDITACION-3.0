@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/shared';
-import { FilterCourseRequest, CourseResponse, EnrolledStudentResponse } from './types';
+import { FilterCourseRequest, CourseResponse, EnrolledStudentResponse } from '../types';
 import { apiPost } from '@/shared/lib';
 
 export const coursesService = {

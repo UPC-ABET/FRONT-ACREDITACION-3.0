@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { programsService } from '../services';
-import { FilterProgramRequest } from '../services/types';
+import { FilterProgramRequest } from '../types';
 
 export const programsQueryKeys = {
 	all: ['programs'] as const,

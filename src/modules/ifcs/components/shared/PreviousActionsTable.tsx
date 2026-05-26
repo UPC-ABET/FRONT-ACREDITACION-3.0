@@ -16,7 +16,7 @@ import {
 } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { TYPE_CODES } from '../../constants';
-import type { I18nText, PreviousAction } from '../../services/types';
+import type { I18nText, PreviousAction } from '../../types';
 import { IFC_SHARED_LABELS as L } from './ifc.labels';
 
 type Mode = 'view' | 'edit';

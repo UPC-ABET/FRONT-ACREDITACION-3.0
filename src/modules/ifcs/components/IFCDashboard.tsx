@@ -30,7 +30,7 @@ import {
 	useStatusTypes,
 } from '../hooks';
 import { effectiveStatus, optionsForLevel } from '../services/scope';
-import type { IFCStatusFilter, ScopeTree, SelectionValue } from '../services/types';
+import type { IFCStatusFilter, ScopeTree, SelectionValue } from '../types';
 import { AcademicPeriodSelect } from './AcademicPeriodSelect';
 import { IFCTable } from './IFCTable';
 import { ScopeDropdowns } from './ScopeDropdowns';

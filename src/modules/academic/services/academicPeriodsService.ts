@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/shared';
-import { FilterAcademicPeriodRequest, AcademicPeriodResponse } from './types';
+import { FilterAcademicPeriodRequest, AcademicPeriodResponse } from '../types';
 import { apiPost } from '@/shared/lib';
 
 export const academicPeriodsService = {

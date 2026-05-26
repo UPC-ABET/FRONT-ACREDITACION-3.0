@@ -1,5 +1,5 @@
 import { apiPost, ApiError } from '@/shared/lib';
-import type { NotifyAllResult, NotifyResult } from './types';
+import type { NotifyAllResult, NotifyResult } from '../types';
 
 interface Envelope<T> {
 	code: number;

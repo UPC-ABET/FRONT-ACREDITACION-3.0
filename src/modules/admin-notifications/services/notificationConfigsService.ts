@@ -1,5 +1,5 @@
 import { apiGet, apiPost, apiDelete, ApiError } from '@/shared/lib';
-import type { NotificationConfig, UpsertConfigBody } from './types';
+import type { NotificationConfig, UpsertConfigBody } from '../types';
 
 interface Envelope<T> {
 	code: number;

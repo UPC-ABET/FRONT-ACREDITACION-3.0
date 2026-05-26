@@ -2,7 +2,7 @@
 
 import { useI18n } from '@/providers';
 import { Card } from '@/shared/components';
-import type { IFCInformationEntry } from '../../services/types';
+import type { IFCInformationEntry } from '../../types';
 
 type Props = { information: Record<string, unknown> };
 

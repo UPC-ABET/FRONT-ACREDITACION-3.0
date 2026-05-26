@@ -5,7 +5,7 @@ import { PARAMETER_CODES, TYPE_GROUP_CODES } from '../constants';
 import { getIFCPrefill, getIFCView } from '../services/ifcsService';
 import { getParameterByCode } from '../services/parametersService';
 import { getTypesByGroupCode } from '../services/typesService';
-import type { CriticalityOption, IFCField, IFCPrefill, IFCViewPayload } from '../services/types';
+import type { CriticalityOption, IFCField, IFCPrefill, IFCViewPayload } from '../types';
 
 export type IFCFormMode =
 	| { kind: 'create'; chartId: number; periodId: number }

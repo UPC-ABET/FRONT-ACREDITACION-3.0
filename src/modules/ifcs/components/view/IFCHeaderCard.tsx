@@ -8,7 +8,7 @@ import { IFCPageTitle } from '../shared/IFCPageTitle';
 import { VIEW_LABELS } from './viewLabels';
 import { TYPE_CODES } from '../../constants';
 import { usePdfDownload } from '../../hooks/usePdfDownload';
-import type { I18nText, IFCHeader } from '../../services/types';
+import type { I18nText, IFCHeader } from '../../types';
 
 type Props = {
 	ifc: IFCHeader;

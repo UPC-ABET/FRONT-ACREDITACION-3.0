@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { notifyIfc, notifyIfcAll } from '../services/ifcsNotifyService';
-import type { NotifyAllResult, NotifyResult } from '../services/types';
+import type { NotifyAllResult, NotifyResult } from '../types';
 
 export function useIfcNotify() {
 	const [notifyingChartId, setNotifyingChartId] = useState<number | null>(null);

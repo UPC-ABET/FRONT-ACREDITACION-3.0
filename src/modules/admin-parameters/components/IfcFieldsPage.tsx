@@ -17,7 +17,7 @@ import { getErrorMessage } from '@/shared/lib/api-error';
 import { tryTranslate } from '@/shared/utils/try-translate';
 import { useParameter } from '../hooks/useParameter';
 import { updateParameter } from '../services/parametersAdminService';
-import { PARAM_CODES, type IFCFieldDescriptor } from '../services/types';
+import { PARAM_CODES, type IFCFieldDescriptor } from '../types';
 import { IfcFieldEditor } from './IfcFieldEditor';
 
 function cloneFields(fields: IFCFieldDescriptor[]): IFCFieldDescriptor[] {

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { academicPeriodsService } from '../services';
-import { FilterAcademicPeriodRequest } from '../services/types';
+import { FilterAcademicPeriodRequest } from '../types';
 
 export const academicPeriodsQueryKeys = {
 	all: ['academic-periods'] as const,

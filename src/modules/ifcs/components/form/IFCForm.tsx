@@ -14,7 +14,7 @@ import type {
 	IFCField,
 	IFCPrefill,
 	IFCViewPayload,
-} from '../../services/types';
+} from '../../types';
 import { IFCPageTitle } from '../shared/IFCPageTitle';
 import { IFCResultadoAlcanzado } from '../shared/IFCResultadoAlcanzado';
 import { IFCResultadoLogros } from '../shared/IFCResultadoLogros';

@@ -16,7 +16,7 @@ import {
 	deleteNotificationConfig,
 	upsertNotificationConfig,
 } from '../services/notificationConfigsService';
-import type { NotificationConfig, UpsertConfigBody } from '../services/types';
+import type { NotificationConfig, UpsertConfigBody } from '../types';
 import { VariableLegend } from './VariableLegend';
 
 type Props = {

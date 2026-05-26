@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { getIFCView } from '../services/ifcsService';
-import type { IFCViewPayload } from '../services/types';
+import type { IFCViewPayload } from '../types';
 
 export function useIFCView(id: number) {
 	const [data, setData] = useState<IFCViewPayload | null>(null);

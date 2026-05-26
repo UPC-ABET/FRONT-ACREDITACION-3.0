@@ -15,7 +15,7 @@ import { tryTranslate } from '@/shared/utils/try-translate';
 import { TYPE_CODES } from '../constants';
 import { usePdfDownload } from '../hooks/usePdfDownload';
 import { effectiveStatus } from '../services/scope';
-import type { IFCRow } from '../services/types';
+import type { IFCRow } from '../types';
 
 type Props = {
 	rows: IFCRow[];

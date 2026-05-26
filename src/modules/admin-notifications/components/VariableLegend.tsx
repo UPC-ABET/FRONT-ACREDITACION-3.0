@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { CodeBracketIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import type { NotifyVar } from '../services/types';
+import type { NotifyVar } from '../types';
 
 type Props = {
 	notifyVars: NotifyVar[];

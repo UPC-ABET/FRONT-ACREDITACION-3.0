@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { getFindingDetail } from '../services/ifcFindingsService';
-import type { FindingDetailPayload } from '../services/types';
+import type { FindingDetailPayload } from '../types';
 
 export function useFindingDetail(id: number) {
 	const [data, setData] = useState<FindingDetailPayload | null>(null);

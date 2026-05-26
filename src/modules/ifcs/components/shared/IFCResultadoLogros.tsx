@@ -3,7 +3,7 @@
 import { useI18n } from '@/providers';
 import { Card } from '@/shared/components';
 import { IFC_SHARED_LABELS } from './ifc.labels';
-import type { ProgramGroup } from '../../services/types';
+import type { ProgramGroup } from '../../types';
 
 type Props = { outcomeResult: ProgramGroup[] };
 

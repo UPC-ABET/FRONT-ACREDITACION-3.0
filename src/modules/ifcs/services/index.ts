@@ -1,4 +1,3 @@
-export * from './types';
 export * from './scope';
 export * from './orgScopeService';
 export * from './ifcsService';
