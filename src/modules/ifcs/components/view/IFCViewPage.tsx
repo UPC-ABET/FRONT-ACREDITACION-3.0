@@ -11,8 +11,8 @@ import { approveIFC, rejectIFC, submitIFC } from '../../services/ifcsService';
 import type { I18nText } from '../../types';
 import { IFCHeaderCard } from './IFCHeaderCard';
 import { IFCInformationBlock } from './IFCInformationBlock';
-import { IFCResultadoLogros } from '../shared/IFCResultadoLogros';
-import { IFCResultadoAlcanzado } from '../shared/IFCResultadoAlcanzado';
+import { IFCOutcomeResults } from '../shared/IFCOutcomeResults';
+import { IFCLearningOutcomeReached } from '../shared/IFCLearningOutcomeReached';
 import { PreviousActionsTable } from '../shared/PreviousActionsTable';
 import { SubmitConfirmModal } from '../shared/SubmitConfirmModal';
 import { IFCFindingsTable } from './IFCFindingsTable';
@@ -126,8 +126,8 @@ export default function IFCViewPage() {
 			/>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-				<IFCResultadoLogros outcomeResult={data.outcome_course_result} />
-				<IFCResultadoAlcanzado learningOutcome={ifc.course_learning_outcome} />
+				<IFCOutcomeResults outcomeResult={data.outcome_course_result} />
+				<IFCLearningOutcomeReached learningOutcome={ifc.course_learning_outcome} />
 			</div>
 
 			<IFCInformationBlock information={ifc.information} />
