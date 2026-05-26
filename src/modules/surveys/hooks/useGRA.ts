@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { getAuthCookie } from '@/shared/lib';
+import { getSchoolCookie } from '@/shared/lib';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
@@ -268,7 +268,7 @@ export function useGRAUpload() {
 		setError(null);
 		setSuccess(false);
 		try {
-			const escuelaActual = JSON.parse(getAuthCookie('escuela') || 'null');
+			const escuelaActual = getSchoolCookie();
 			await uploadGRAMassive(file, escuelaActual ?? undefined);
 			setSuccess(true);
 		} catch (e) {

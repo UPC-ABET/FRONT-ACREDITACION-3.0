@@ -1,30 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { IfcCodesPage } from '../components/IfcCodesPage';
-import { getAuthCookie } from '@/shared/lib';
+import { useAuth } from '@/providers';
 
 export default function IfcCodesPageEntry() {
 	const router = useRouter();
-	const [status, setStatus] = useState<'pending' | 'allowed' | 'denied'>('pending');
+	const { isAdmin, isLoading } = useAuth();
 
 	useEffect(() => {
-		try {
-			const raw = getAuthCookie('token');
-			const user = raw ? JSON.parse(raw) : null;
-			if (user?.is_admin === true) {
-				// eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: defer localStorage check past hydration
-				setStatus('allowed');
-				return;
-			}
-		} catch {
-			// fall through
+		if (!isLoading && !isAdmin) {
+			router.replace('/ifcs');
 		}
-		setStatus('denied');
-		router.replace('/ifcs');
-	}, [router]);
+	}, [isLoading, isAdmin, router]);
 
-	if (status !== 'allowed') return null;
+	if (isLoading || !isAdmin) return null;
 	return <IfcCodesPage />;
 }

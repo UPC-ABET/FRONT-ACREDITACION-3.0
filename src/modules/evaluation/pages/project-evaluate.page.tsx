@@ -4,8 +4,7 @@ import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { Skeleton, TableEmptyState } from '@/shared/components/ui';
-import { useI18n } from '@/providers';
-import { getUserIdFromToken } from '@/shared/lib/jwt';
+import { useAuth, useI18n } from '@/providers';
 import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable';
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable';
@@ -20,6 +19,7 @@ interface ProjectEvaluatePageProps {
 
 export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluatePageProps) {
 	const { t, locale } = useI18n();
+	const { user: authUser } = useAuth();
 
 	const { data, isLoading, isError, error } = useProjectDetails(projectId, {
 		gradeTypeId,
@@ -32,14 +32,12 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 		return new Set(statusTypes.filter((s) => nrNaCodes.has(s.code)).map((s) => s.id));
 	}, [statusTypes]);
 
-	// Resolve the current professor's project_evaluator_id from the evaluators list.
-	// getUserIdFromToken() returns the professor_id stored in the JWT.
 	const evaluatorId = useMemo(() => {
 		if (!data?.evaluators?.length) return 0;
-		const myProfessorId = Number(getUserIdFromToken());
+		const myProfessorId = authUser?.id ?? 0;
 		const match = data.evaluators.find((e) => e.professor_id === myProfessorId);
 		return match?.id ?? data.evaluators[0]?.id ?? 0;
-	}, [data?.evaluators]);
+	}, [data?.evaluators, authUser?.id]);
 
 	const initialQualifStatuses = useMemo<Record<number, number | null>>(() => {
 		const result: Record<number, number | null> = {};

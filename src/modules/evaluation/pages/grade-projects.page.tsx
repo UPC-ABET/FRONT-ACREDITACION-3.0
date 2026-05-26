@@ -17,8 +17,8 @@ import {
 } from '@/shared/components/ui';
 import { Select } from '@/shared/components/ui/Select';
 import { cn } from '@/shared/lib/utils';
-import { useI18n } from '@/providers';
-import { getUserIdFromToken, getSchoolFromCookie } from '@/shared/lib/jwt';
+import { useAuth, useI18n } from '@/providers';
+import { getSchoolFromCookie } from '@/shared/lib/jwt';
 import { academicPeriodsService } from '@/modules/academic/services';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
@@ -35,14 +35,15 @@ type SelectOption = { label: string; value: number };
 
 export function GradeProjectsPage() {
 	const { t, locale } = useI18n();
+	const { user: authUser } = useAuth();
 
-	const [userId, setUserId] = useState<string | number | null>(null);
 	const [schoolId, setSchoolId] = useState<number | null>(null);
 	const [activeTab, setActiveTab] = useState<RubricTab>('partial');
 	const [selectedPeriod, setSelectedPeriod] = useState<SelectOption | null>(null);
 
+	const userId = authUser?.id ?? null;
+
 	useEffect(() => {
-		setUserId(getUserIdFromToken());
 		const school = getSchoolFromCookie();
 		setSchoolId(school?.id as number | null);
 	}, []);

@@ -17,8 +17,7 @@ import {
 	TableEmptyState,
 	Toast,
 } from '@/shared/components';
-import { useI18n } from '@/providers';
-import { getAuthCookie } from '@/shared/lib';
+import { useAuth, useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/api-error';
 import { tryTranslate } from '@/shared/utils/try-translate';
 import { ORG_LABELS, TYPE_CODES } from '../constants';
@@ -74,16 +73,8 @@ export function IFCDashboard() {
 	const { data: statusTypes = [] } = useStatusTypes();
 	const { notifyOne, notifyMany, notifyingChartId, notifyingAll } = useIfcNotify();
 
-	const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-	useEffect(() => {
-		try {
-			const raw = getAuthCookie('token');
-			const user = raw ? JSON.parse(raw) : null;
-			setCurrentUserId(user?.id != null ? Number(user.id) : null);
-		} catch {
-			setCurrentUserId(null);
-		}
-	}, []);
+	const { user: authUser } = useAuth();
+	const currentUserId = authUser?.id ?? null;
 
 	const chartIncomplete =
 		scope !== null &&

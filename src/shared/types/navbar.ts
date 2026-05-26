@@ -13,8 +13,3 @@ export type NavbarProps = {
 	userInitials?: string;
 };
 
-export type StoredUser = {
-	first_name?: string;
-	last_name?: string;
-	is_admin?: boolean;
-};

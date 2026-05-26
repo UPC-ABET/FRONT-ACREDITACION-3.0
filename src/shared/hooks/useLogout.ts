@@ -2,11 +2,13 @@
 
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { clearAuthCookies } from '@/shared/lib';
+import { clearPreferenceCookies } from '@/shared/lib';
 import { logoutUser } from '@/modules/auth/services';
+import { useAuth } from '@/providers';
 
 export function useLogout() {
 	const router = useRouter();
+	const { clearUser } = useAuth();
 
 	return useCallback(async () => {
 		try {
@@ -14,9 +16,10 @@ export function useLogout() {
 		} catch {
 			// Silent — don't block local session cleanup.
 		} finally {
-			clearAuthCookies();
+			clearUser();
+			clearPreferenceCookies();
 			sessionStorage.clear();
 			router.replace('/auth/login');
 		}
-	}, [router]);
+	}, [router, clearUser]);
 }

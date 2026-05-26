@@ -1,0 +1,117 @@
+'use client';
+
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { apiGet } from '@/shared/lib';
+
+export type AuthUser = {
+	id: number;
+	first_name: string;
+	last_name: string;
+	email: string;
+	is_admin: boolean;
+};
+
+export type AuthRole = {
+	id: number;
+	code: string;
+	name: string;
+};
+
+type AuthState = {
+	user: AuthUser | null;
+	activeRole: AuthRole | null;
+	permissions: string[];
+	schoolId: number | null;
+	isAuthenticated: boolean;
+	isLoading: boolean;
+	isAdmin: boolean;
+	refreshUser: () => Promise<AuthUser | null>;
+	clearUser: () => void;
+};
+
+const AuthContext = createContext<AuthState | null>(null);
+
+interface MePayload {
+	user: AuthUser;
+	activeRole: AuthRole;
+	allowedRoles: AuthRole[];
+	permissions: string[];
+	school_id: number;
+}
+
+interface Envelope<T> {
+	code: number;
+	message: string;
+	data: T;
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+	const [user, setUser] = useState<AuthUser | null>(null);
+	const [activeRole, setActiveRole] = useState<AuthRole | null>(null);
+	const [permissions, setPermissions] = useState<string[]>([]);
+	const [schoolId, setSchoolId] = useState<number | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+
+	const fetchUser = useCallback(async (): Promise<AuthUser | null> => {
+		try {
+			const envelope = await apiGet<Envelope<MePayload>>('/users/me');
+			const payload = envelope?.data;
+			if (!payload?.user) {
+				setUser(null);
+				return null;
+			}
+			setUser(payload.user);
+			setActiveRole(payload.activeRole ?? null);
+			setPermissions(payload.permissions ?? []);
+			setSchoolId(payload.school_id ?? null);
+			return payload.user;
+		} catch {
+			setUser(null);
+			setActiveRole(null);
+			setPermissions([]);
+			setSchoolId(null);
+			return null;
+		}
+	}, []);
+
+	const refreshUser = useCallback(async () => {
+		setIsLoading(true);
+		const u = await fetchUser();
+		setIsLoading(false);
+		return u;
+	}, [fetchUser]);
+
+	const clearUser = useCallback(() => {
+		setUser(null);
+		setActiveRole(null);
+		setPermissions([]);
+		setSchoolId(null);
+	}, []);
+
+	useEffect(() => {
+		fetchUser().finally(() => setIsLoading(false));
+	}, [fetchUser]);
+
+	const value = useMemo<AuthState>(
+		() => ({
+			user,
+			activeRole,
+			permissions,
+			schoolId,
+			isAuthenticated: user !== null,
+			isLoading,
+			isAdmin: user?.is_admin === true,
+			refreshUser,
+			clearUser,
+		}),
+		[user, activeRole, permissions, schoolId, isLoading, refreshUser, clearUser],
+	);
+
+	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth(): AuthState {
+	const ctx = useContext(AuthContext);
+	if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+	return ctx;
+}

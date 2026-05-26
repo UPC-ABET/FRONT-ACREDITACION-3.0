@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { getAuthCookie, getTokenExpiry } from '@/shared/lib';
+import { apiGet } from '@/shared/lib';
 
 type UseSessionExpiryParams = {
 	enabled: boolean;
@@ -22,20 +22,21 @@ export function useSessionExpiry({
 	useEffect(() => {
 		if (!enabled) return;
 
-		if (!getAuthCookie('token')) return;
-
 		const runExpire = () => {
 			if (expiredRef.current) return;
 			expiredRef.current = true;
 			onExpire();
 		};
 
-		const checkSession = () => {
-			if (!getAuthCookie('token')) runExpire();
+		const checkSession = async () => {
+			try {
+				await apiGet('/users/me');
+			} catch {
+				runExpire();
+			}
 		};
 
 		let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
-		let tokenTimer: ReturnType<typeof setTimeout> | null = null;
 
 		const resetInactivityTimer = () => {
 			if (inactivityTimer) clearTimeout(inactivityTimer);
@@ -54,16 +55,6 @@ export function useSessionExpiry({
 		);
 		resetInactivityTimer();
 
-		const expAt = getTokenExpiry();
-		if (expAt) {
-			const remaining = expAt - Date.now();
-			if (remaining <= 0) {
-				setTimeout(runExpire, 0);
-			} else {
-				tokenTimer = setTimeout(runExpire, remaining);
-			}
-		}
-
 		const handleVisibilityChange = () => {
 			if (document.visibilityState === 'visible') checkSession();
 		};
@@ -73,7 +64,6 @@ export function useSessionExpiry({
 
 		return () => {
 			if (inactivityTimer) clearTimeout(inactivityTimer);
-			if (tokenTimer) clearTimeout(tokenTimer);
 			clearInterval(syncTimer);
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 			events.forEach((eventName) => window.removeEventListener(eventName, resetInactivityTimer));

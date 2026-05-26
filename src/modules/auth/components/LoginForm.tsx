@@ -5,9 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Input, Select, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
 import { LoginPayload } from '@/shared/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
-import { setAuthCookies } from '@/shared/lib';
 import { schoolOptions } from '@/modules/auth/constants';
-import { useI18n } from '@/providers';
+import { useAuth, useI18n } from '@/providers';
 
 export default function LoginForm() {
 	const [schoolCode, setSchoolCode] = useState('');
@@ -19,6 +18,7 @@ export default function LoginForm() {
 	const [dialogMessage, setDialogMessage] = useState('');
 	const router = useRouter();
 	const { t } = useI18n();
+	const { refreshUser } = useAuth();
 
 	const localizedSchools = useMemo(
 		() =>
@@ -42,8 +42,8 @@ export default function LoginForm() {
 		const payload: LoginPayload = { school_code: schoolCode, email, password };
 		setLoading(true);
 		try {
-			const res = await loginByCredentials(payload);
-			setAuthCookies(res.user, res.expiresIn);
+			await loginByCredentials(payload);
+			await refreshUser();
 			router.replace('/');
 		} catch (err: any) {
 			const rawMessage = typeof err?.message === 'string' ? err.message : '';

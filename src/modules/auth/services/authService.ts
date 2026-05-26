@@ -1,12 +1,10 @@
 import type { LoginPayload } from '@/shared/types';
-import { requestJson, getApiBaseUrl, clearAuthCookies, ApiError } from '@/shared/lib';
-import type { LoginResponse, ForgotPasswordResponse } from '@/modules/auth/types';
+import { requestJson, getApiBaseUrl, clearPreferenceCookies, ApiError } from '@/shared/lib';
+import type { LoginResponse } from '@/modules/auth/types';
 
 const USERS_BASE_PATH = '/users';
 
-export const loginByCredentials = async (
-	payload: LoginPayload,
-): Promise<{ user: unknown; expiresIn: number }> => {
+export const loginByCredentials = async (payload: LoginPayload): Promise<void> => {
 	const { response, body } = await requestJson<LoginResponse>(
 		`${USERS_BASE_PATH}/login-by-credentials`,
 		{
@@ -19,19 +17,14 @@ export const loginByCredentials = async (
 		},
 	);
 
-	if (!response.ok || !body?.data?.access_token) {
+	if (!response.ok) {
 		throw new ApiError(body?.message ?? 'auth.error.loginFailed', response.status);
 	}
-
-	return {
-		user: body.data.user,
-		expiresIn: body.data.expires_in,
-	};
 };
 
 export const clearClientSession = () => {
 	if (typeof window === 'undefined') return;
-	clearAuthCookies();
+	clearPreferenceCookies();
 };
 
 export const logoutUser = async (): Promise<void> => {
@@ -49,7 +42,11 @@ export const getMicrosoftLoginUrl = (school_code: string): string => {
 };
 
 export const requestForgotPassword = async (email: string): Promise<string> => {
-	const { response, body } = await requestJson<ForgotPasswordResponse>('/auth/forgot-password', {
+	const { response, body } = await requestJson<{
+		code: number;
+		message: string;
+		data?: { message?: string };
+	}>('/auth/forgot-password', {
 		method: 'POST',
 		body: { email },
 	});
@@ -66,7 +63,6 @@ export const requestResetPassword = async (
 	password: string,
 	confirmPassword: string,
 ): Promise<string> => {
-	// Temporal mock until backend endpoint is available.
 	await new Promise((resolve) => setTimeout(resolve, 500));
 
 	if (!token) {
