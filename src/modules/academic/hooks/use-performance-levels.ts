@@ -6,20 +6,15 @@ import {
 	type FilterPerformanceLevelDto,
 	type CreatePerformanceLevelDto,
 	type UpdatePerformanceLevelDto,
-} from '@/modules/academic/services/performanceLevelsService';
-
-export const performanceLevelsQueryKeys = {
-	all: ['performance-levels'] as const,
-	filtered: (filters: FilterPerformanceLevelDto) =>
-		['performance-levels', 'filtered', filters] as const,
-};
+} from '../services/performanceLevelsService';
+import { academicQueryKeys } from './query-keys';
 
 export function usePerformanceLevels(
 	filters: FilterPerformanceLevelDto,
 	options?: { enabled?: boolean },
 ) {
 	return useQuery({
-		queryKey: performanceLevelsQueryKeys.filtered(filters),
+		queryKey: academicQueryKeys.performanceLevelsByFilter(filters),
 		queryFn: () => performanceLevelsService.getByFilters(filters).then((r) => r.data),
 		enabled: options?.enabled ?? true,
 	});
@@ -31,7 +26,7 @@ export function useCreatePerformanceLevel() {
 		mutationFn: (dto: CreatePerformanceLevelDto) =>
 			performanceLevelsService.create(dto).then((r) => r.data),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['performance-levels'] });
+			queryClient.invalidateQueries({ queryKey: academicQueryKeys.performanceLevels() });
 		},
 	});
 }
@@ -42,7 +37,7 @@ export function useUpdatePerformanceLevel() {
 		mutationFn: ({ id, ...dto }: { id: number } & UpdatePerformanceLevelDto) =>
 			performanceLevelsService.update(id, dto).then((r) => r.data),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['performance-levels'] });
+			queryClient.invalidateQueries({ queryKey: academicQueryKeys.performanceLevels() });
 		},
 	});
 }
@@ -52,7 +47,7 @@ export function useDeletePerformanceLevel() {
 	return useMutation({
 		mutationFn: (id: number) => performanceLevelsService.delete(id),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['performance-levels'] });
+			queryClient.invalidateQueries({ queryKey: academicQueryKeys.performanceLevels() });
 		},
 	});
 }

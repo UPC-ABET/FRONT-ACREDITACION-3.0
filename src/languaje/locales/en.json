@@ -602,6 +602,12 @@
         "empty": "No performance levels have been defined for this rubric."
       }
     },
+    "commission": {
+      "status": {
+        "complete": "Complete",
+        "incomplete": "Incomplete"
+      }
+    },
     "wizard": {
       "title": "New rubric",
       "subtitle": "Create an evaluation rubric.",

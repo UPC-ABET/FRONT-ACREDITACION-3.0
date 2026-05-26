@@ -4,5 +4,3 @@ export type TypeGroupResponse = {
 	name: { en: string; es: string };
 	description: { en: string; es: string };
 };
-
-export {};

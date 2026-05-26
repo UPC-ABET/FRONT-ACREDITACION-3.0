@@ -602,6 +602,12 @@
 				"empty": "No se han definido niveles de desempeño para esta rúbrica."
 			}
 		},
+		"commission": {
+			"status": {
+				"complete": "Completa",
+				"incomplete": "Incompleta"
+			}
+		},
 		"wizard": {
 			"title": "Nueva rúbrica",
 			"subtitle": "Crea una rúbrica de evaluación.",

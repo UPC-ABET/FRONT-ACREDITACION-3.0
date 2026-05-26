@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Toast } from '@/shared/components/ui/Toast'
 import { useI18n } from '@/providers'
-import { rubricsService } from '../../services'
+import { useCreateRubricFull } from '../../hooks'
 import type { CreateRubricFullDto } from '../../api/dtos/request'
 import { WizardStepIndicator } from './WizardStepIndicator'
 import { WizardStep1, type Step1Data } from './WizardStep1'
@@ -13,7 +13,7 @@ import { WizardStep3NonCapstone, type NonCapstonePayloadQuestion } from './Wizar
 import { WizardStep3Capstone, type CapstonePayloadQuestion } from './WizardStep3Capstone'
 import { GRADE_CODES } from '../../constants/type-codes'
 
-const FINAL_EVAL_CODE =  GRADE_CODES.FINAL
+const FINAL_EVAL_CODE = GRADE_CODES.FINAL
 
 export function RubricCreateWizard() {
   const router = useRouter()
@@ -21,8 +21,9 @@ export function RubricCreateWizard() {
   const [currentStep, setCurrentStep] = useState(1)
   const [step1Data, setStep1Data] = useState<Step1Data | null>(null)
   const [step2Data, setStep2Data] = useState<Step2Data | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [toast, setToast] = useState({ open: false, type: 'info' as 'success' | 'error', message: '' })
+
+  const createRubricFull = useCreateRubricFull()
 
   const showError = (message: string) => setToast({ open: true, type: 'error', message })
 
@@ -31,7 +32,6 @@ export function RubricCreateWizard() {
 
   const handleSubmit = async (questions: NonCapstonePayloadQuestion[] | CapstonePayloadQuestion[]) => {
     if (!step1Data || !step2Data) return
-    setIsSubmitting(true)
     try {
       const body: CreateRubricFullDto = {
         rubric_type_id: step2Data.rubricTypeId,
@@ -39,12 +39,11 @@ export function RubricCreateWizard() {
         study_plan_course_id: step1Data.studyPlanCourseId,
         questions: questions as CreateRubricFullDto['questions'],
       }
-      const res = await rubricsService.createFull(body)
-      const rubricId = res.data?.id ?? (res as any).id
+      const rubric = await createRubricFull.mutateAsync(body)
+      const rubricId = rubric?.id
       router.push(rubricId ? `/rubrics/${rubricId}/edit` : '/rubrics')
     } catch (err) {
       showError(err instanceof Error ? err.message : t('rubrics.wizard.error.createRubric'))
-      setIsSubmitting(false)
     }
   }
 
@@ -83,7 +82,7 @@ export function RubricCreateWizard() {
               step2={step2Data}
               onBack={() => setCurrentStep(2)}
               onSubmit={handleSubmit}
-              isSubmitting={isSubmitting}
+              isSubmitting={createRubricFull.isPending}
             />
           ) : (
             <WizardStep3NonCapstone
@@ -91,7 +90,7 @@ export function RubricCreateWizard() {
               step2={step2Data}
               onBack={() => setCurrentStep(2)}
               onSubmit={handleSubmit}
-              isSubmitting={isSubmitting}
+              isSubmitting={createRubricFull.isPending}
             />
           )
         )}
@@ -101,7 +100,7 @@ export function RubricCreateWizard() {
         isOpen={toast.open}
         type={toast.type}
         message={toast.message}
-        onClose={() => setToast((t) => ({ ...t, open: false }))}
+        onClose={() => setToast((prev) => ({ ...prev, open: false }))}
       />
     </div>
   )

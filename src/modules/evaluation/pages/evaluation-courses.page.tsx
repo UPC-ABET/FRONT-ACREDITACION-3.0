@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import {
   Button,
@@ -23,64 +22,47 @@ import {
 } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
 import { getSchoolFromCookie } from '@/shared/lib/jwt'
-import { rubricWizardService } from '../services/rubricWizardService'
-import { studyPlanCoursesService } from '../services/studyPlanCoursesService'
+import {
+  useAcademicPeriods,
+  useStudyPlanCourses,
+  useUpdateStudyPlanCourse,
+} from '@/modules/academic/hooks'
 import { AddEvaluationCourseModal } from '../components/evaluation-courses/AddEvaluationCourseModal'
-import type { AcademicPeriodResponse, StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response'
+import type { StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response'
 
-type SelectOption = { label: string; value: string | number }
+type AnyOption = { label: string; value: string | number }
 
 export function EvaluationCoursesPage() {
   const { t, locale } = useI18n()
-  const [selectedPeriod, setSelectedPeriod] = useState<SelectOption | null>(null)
+  const [selectedPeriod, setSelectedPeriod] = useState<AnyOption | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<StudyPlanCourseResponse | null>(null)
 
   const schoolId = getSchoolFromCookie()?.id as number | undefined
-  const queryClient = useQueryClient()
 
-  // Periods
-  const { data: periods = [], isLoading: loadingPeriods } = useQuery<AcademicPeriodResponse[]>({
-    queryKey: ['academic-periods-active'],
-    queryFn: () => rubricWizardService.getAcademicPeriods().then((r) => r.data.filter((p) => p.is_active)),
-    staleTime: 1000 * 60 * 5,
-  })
+  const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods({ is_active: true })
+  const periodOptions: AnyOption[] = periods.map((p) => ({ label: p.code, value: p.id }))
 
-  const periodOptions: SelectOption[] = periods.map((p) => ({ label: p.code, value: p.id }))
+  const { data: courses = [], isLoading: loadingCourses, isError, error, refetch } =
+    useStudyPlanCourses(
+      {
+        academic_period_id: Number(selectedPeriod?.value ?? 0),
+        school_id: schoolId,
+        extra: { is_evaluate_rubric: true },
+        is_active: true,
+      },
+      { enabled: !!selectedPeriod && !!schoolId },
+    )
 
-  // Evaluation courses list
-  const {
-    data: courses = [],
-    isLoading: loadingCourses,
-    isError,
-    error,
-    refetch,
-  } = useQuery<StudyPlanCourseResponse[]>({
-    queryKey: ['evaluation-courses', selectedPeriod?.value, schoolId],
-    queryFn: () =>
-      studyPlanCoursesService
-        .getByFilters({
-          academic_period_id: Number(selectedPeriod!.value),
-          school_id: schoolId,
-          extra: { is_evaluate_rubric: true },
-          is_active: true,
-        })
-        .then((r) => r.data),
-    enabled: !!selectedPeriod && !!schoolId,
-    staleTime: 0,
-  })
+  const updateSpc = useUpdateStudyPlanCourse()
 
-  const removeMutation = useMutation({
-    mutationFn: (spc: StudyPlanCourseResponse) => {
-      const { is_evaluate_rubric: _, ...rest } = (spc.extra ?? {}) as Record<string, unknown>
-      return studyPlanCoursesService.update(spc.id, { extra: rest })
-    },
-    onSuccess: () => {
-      setConfirmTarget(null)
-      queryClient.invalidateQueries({ queryKey: ['evaluation-courses'] })
-    },
-    onError: () => setConfirmTarget(null),
-  })
+  const handleRemove = (spc: StudyPlanCourseResponse) => {
+    const { is_evaluate_rubric: _, ...rest } = (spc.extra ?? {}) as Record<string, unknown>
+    updateSpc.mutate(
+      { id: spc.id, body: { extra: rest } },
+      { onSuccess: () => setConfirmTarget(null), onError: () => setConfirmTarget(null) },
+    )
+  }
 
   const courseName = (spc: StudyPlanCourseResponse) =>
     typeof spc.course?.name === 'string'
@@ -89,7 +71,6 @@ export function EvaluationCoursesPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-zinc-900">{t('evaluationCourses.list.title')}</h1>
@@ -101,7 +82,6 @@ export function EvaluationCoursesPage() {
         </Button>
       </div>
 
-      {/* Period filter */}
       <div className="max-w-xs">
         <Select
           label={t('evaluationCourses.list.periodLabel')}
@@ -114,11 +94,10 @@ export function EvaluationCoursesPage() {
           value={selectedPeriod}
           isDisabled={loadingPeriods}
           isSearchable
-          onChange={(_, v) => setSelectedPeriod(v as SelectOption | null)}
+          onChange={(_, v) => setSelectedPeriod(Array.isArray(v) ? (v[0] ?? null) : v)}
         />
       </div>
 
-      {/* Table */}
       {!selectedPeriod ? (
         <div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-400">
           {t('evaluationCourses.list.selectPeriodFirst')}
@@ -169,14 +148,12 @@ export function EvaluationCoursesPage() {
         </Table>
       )}
 
-      {/* Add modal */}
       <AddEvaluationCourseModal
         open={modalOpen}
         onOpenChange={setModalOpen}
-        onSuccess={() => refetch()}
+        onSuccess={() => void refetch()}
       />
 
-      {/* Confirm remove modal */}
       <Dialog open={!!confirmTarget} onOpenChange={(open) => { if (!open) setConfirmTarget(null) }}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
@@ -193,7 +170,7 @@ export function EvaluationCoursesPage() {
           <DialogFooter>
             <DialogClose
               render={
-                <Button variant="secondary" disabled={removeMutation.isPending}>
+                <Button variant="secondary" disabled={updateSpc.isPending}>
                   {t('dialog.close')}
                 </Button>
               }
@@ -201,10 +178,10 @@ export function EvaluationCoursesPage() {
             <Button
               variant="primary"
               className="bg-red-600 hover:bg-red-700"
-              disabled={removeMutation.isPending}
-              onClick={() => confirmTarget && removeMutation.mutate(confirmTarget)}
+              disabled={updateSpc.isPending}
+              onClick={() => confirmTarget && handleRemove(confirmTarget)}
             >
-              {removeMutation.isPending
+              {updateSpc.isPending
                 ? t('evaluationCourses.confirm.removing')
                 : t('evaluationCourses.confirm.confirm')}
             </Button>

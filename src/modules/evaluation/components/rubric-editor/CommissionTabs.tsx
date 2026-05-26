@@ -42,7 +42,7 @@ export function CommissionTabs({
 	onCommissionChange,
 	checkboxTooltipIncomplete,
 }: CommissionTabsProps) {
-	const { locale } = useI18n();
+	const { locale, t } = useI18n();
 	const [checked, setChecked] = useState<Record<string, boolean>>({});
 
 	return (
@@ -87,11 +87,14 @@ export function CommissionTabs({
 								/>
 							</span>
 							{status === 'complete' ? (
-								<CheckCircleIcon className="h-4 w-4 shrink-0 text-emerald-500" title="Complete" />
+								<CheckCircleIcon
+									className="h-4 w-4 shrink-0 text-emerald-500"
+									aria-label={t('rubrics.commission.status.complete')}
+								/>
 							) : status === 'partial' ? (
 								<ExclamationTriangleIcon
 									className="h-4 w-4 shrink-0 text-amber-500"
-									title="Incomplete"
+									aria-label={t('rubrics.commission.status.incomplete')}
 								/>
 							) : (
 								<span

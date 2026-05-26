@@ -1,7 +1,4 @@
-/**
- * ACCREDITATION module barrel
- */
-
 export * from './api/dtos';
+export * from './services';
+export * from './hooks';
 
-export {};

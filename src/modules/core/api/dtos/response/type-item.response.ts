@@ -5,5 +5,3 @@ export type TypeItemResponse = {
 	description: { en: string; es: string };
 	type_group_id: number;
 };
-
-export {};

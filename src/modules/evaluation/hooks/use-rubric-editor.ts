@@ -2,8 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { ApiError } from '@/shared/lib/api-error';
 import { logger } from '@/shared/lib/logger';
 import { rubricsService } from '../services';
-import { RubricDetail } from '../types';
+import { RubricDetail, OutcomeWithCriteria, CriteriaItem, CommissionTab, QuestionCriteria } from '../types';
 import { performanceLevelsService } from '@/modules/academic/services';
+import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
+import { evaluationQueryKeys } from './query-keys';
 
 /** Capstone rubric type id — update if the backend changes the seed */
 const CAPSTONE_RUBRIC_TYPE_ID = 29;
@@ -32,8 +34,65 @@ function unwrapApiData<T>(response: unknown): T | null {
 	return data as T;
 }
 
+// ── Local API response types ──────────────────────────────────────────────────
+// The actual API shapes returned inside GetRubricByIdResponse differ from the
+// DTO definitions in some field names (e.g. `code` vs `outcome_code`). These
+// private types capture what the API actually returns in this context.
+
+interface ApiRubricCriteria {
+	id: number;
+	text: string | { en: string; es: string };
+	min_value?: number | null;
+	max_value?: number | null;
+}
+
+interface ApiRubricQuestion {
+	id: number;
+	text: string | { en: string; es: string };
+	outcomeId?: number;
+	outcome_id?: number;
+	criterias?: ApiRubricCriteria[];
+}
+
+interface ApiRubricOutcome {
+	id: number;
+	code: string;
+	description: { en: string; es: string } | string;
+}
+
+interface ApiRubricCommission {
+	id: number;
+	code: string;
+	name: { en: string; es: string } | string;
+	outcomeIds?: number[];
+	outcome_ids?: number[];
+}
+
+interface ApiRubricDetailData {
+	rubric: {
+		id: number;
+		rubric_type_id: number;
+		grade_type?: { name: { en: string; es: string } | string; code?: string };
+		study_plan_course_id?: number;
+	};
+	course?: { id?: number; name?: { en: string; es: string } | string };
+	academicPeriod?: { id?: number; code?: string };
+	program?: { id?: number; code?: string; name?: { en: string; es: string } | string };
+	commissions?: ApiRubricCommission[];
+	outcomes?: ApiRubricOutcome[];
+	questions?: ApiRubricQuestion[];
+	isUsed?: boolean;
+}
+
+function toI18nText(raw: { en: string; es: string } | string | undefined): { en: string; es: string } {
+	if (!raw) return { en: '', es: '' };
+	return typeof raw === 'string' ? { en: raw, es: raw } : raw;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const rubricEditorQueryKeys = {
-	detail: (rubricId: string | number) => ['rubric-editor', rubricId] as const,
+	detail: (rubricId: string | number) => evaluationQueryKeys.rubricEditor(rubricId),
 };
 
 interface UseRubricEditorOptions {
@@ -61,7 +120,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				throw new ApiError('Empty rubric response from API');
 			}
 
-			const data = unwrapApiData<any>(res);
+			const data = unwrapApiData<ApiRubricDetailData>(res);
 			logger.debug('[useRubricEditor] normalized data', data);
 			if (!data) {
 				throw new ApiError('Could not normalize rubric response from API');
@@ -81,81 +140,67 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				...(academicPeriodId != null ? { academic_period_id: academicPeriodId } : {}),
 			});
 			logger.debug('[useRubricEditor] performance levels response', levelsRes);
-			const performanceLevels = (levelsRes?.data ?? []).map((level: any) => ({
+			const performanceLevels = (levelsRes?.data ?? []).map((level: PerformanceLevelResponse) => ({
 				id: String(level.id),
 				name: level.name ?? { en: '', es: '' },
 				code: level.code ?? '',
 				uniqueValue: level.unique_value != null ? Number(level.unique_value) : null,
 				minValue: level.min_score != null ? Number(level.min_score) : 0,
 				maxValue: level.max_score != null ? Number(level.max_score) : 0,
-				color: level.extra?.color ?? null,
+				color: (level.extra as { color?: string } | undefined)?.color ?? null,
 			}));
 
 			// ── Build lookup map for outcomes ────────────────────────────────────────
-			const outcomesById = new Map<number, any>((data.outcomes ?? []).map((o: any) => [o.id, o]));
+			const outcomesById = new Map<number, ApiRubricOutcome>(
+				(data.outcomes ?? []).map((o) => [o.id, o]),
+			);
 
 			// ── Build CommissionTab[] ─────────────────────────────────────────────────
-			const allApiQuestions: any[] = data.questions ?? [];
+			const allApiQuestions: ApiRubricQuestion[] = data.questions ?? [];
 
-			const commissions = (data.commissions ?? []).map((commission: any) => {
-				const outcomeIdsList: number[] = commission.outcomeIds ?? commission.outcome_ids ?? []
+			const commissions: CommissionTab[] = (data.commissions ?? []).map((commission) => {
+				const outcomeIdsList: number[] = commission.outcomeIds ?? commission.outcome_ids ?? [];
 				const outcomes = outcomeIdsList
-					.map((outcomeId: number) => {
+					.map((outcomeId: number): OutcomeWithCriteria | null => {
 						const outcome = outcomesById.get(outcomeId);
 						if (!outcome) return null;
 
 						// Outcome description — always used as the question text
-						const descRaw = outcome.description;
-						const outcomeDescription =
-							typeof descRaw === 'string'
-								? { en: descRaw, es: descRaw }
-								: (descRaw ?? { en: '', es: '' });
+						const outcomeDescription = toI18nText(outcome.description);
 
 						// Each outcome maps to exactly ONE question whose text = outcome description.
 						// The user-managed items are the criterias of that question.
-						const outcomeApiQuestions = allApiQuestions.filter((q: any) => {
+						const outcomeApiQuestions = allApiQuestions.filter((q) => {
 							const qOutcomeId = q.outcomeId ?? q.outcome_id;
 							return Number(qOutcomeId) === Number(outcomeId);
 						});
 						const firstApiQuestion = outcomeApiQuestions[0];
 
-						const criteria = (firstApiQuestion?.criterias ?? []).map((c: any) => {
-							const cText =
-								typeof c.text === 'string'
-									? { en: c.text, es: c.text }
-									: (c.text ?? { en: '', es: '' });
-							return {
-								id: String(c.id),
-								description: cText,
-								minValue: 0,
-								maxValue: 0,
-							};
-						});
-
-						const questions = [
-							{
-								id: firstApiQuestion ? String(firstApiQuestion.id) : `temp-${outcomeId}`,
-								questionText: outcomeDescription, // always mirrors outcome description
-								criteria,
-							},
-						];
+						const criteria: CriteriaItem[] = (firstApiQuestion?.criterias ?? []).map((c) => ({
+							id: String(c.id),
+							description: toI18nText(c.text),
+							minValue: 0,
+							maxValue: 0,
+						}));
 
 						return {
 							id: String(outcome.id),
 							outcomeCode: outcome.code ?? '',
 							outcomeDescription,
 							outcomeType: 'verificacion' as const,
-							questions,
+							questions: [
+								{
+									id: firstApiQuestion ? String(firstApiQuestion.id) : `temp-${outcomeId}`,
+									questionText: outcomeDescription,
+									criteria,
+								},
+							],
 						};
 					})
-					.filter(Boolean);
+					.filter((o): o is OutcomeWithCriteria => o !== null);
 
-				const verification = outcomes.filter((o: any) => o.outcomeType === 'verificacion');
-				const nameRaw = commission.name;
-				const commissionName =
-					typeof nameRaw === 'string'
-						? { en: nameRaw, es: nameRaw }
-						: (nameRaw ?? { en: '', es: '' });
+				const verification = outcomes.filter((o) => o.outcomeType === 'verificacion');
+				const commissionName = toI18nText(commission.name);
 
 				return {
 					id: String(commission.id),
@@ -164,53 +209,33 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 					accreditorCode: '',
 					isComplete:
 						verification.length > 0 &&
-						verification.every((o: any) => (o.questions[0]?.criteria?.length ?? 0) > 0),
+						verification.every((o) => (o.questions[0]?.criteria?.length ?? 0) > 0),
 					outcomes,
 				};
 			});
 
 			// ── Build RubricQuestion[] ───────────────────────────────────────────────
-			const questions = (data.questions ?? []).map((q: any, index: number) => {
-				const qText =
-					typeof q.text === 'string' ? { en: q.text, es: q.text } : (q.text ?? { en: '', es: '' });
-				return {
-					id: String(q.id),
-					order: index + 1,
-					questionText: qText,
-					criteria: (q.criterias ?? []).map((c: any) => {
-						const cText =
-							typeof c.text === 'string'
-								? { en: c.text, es: c.text }
-								: (c.text ?? { en: '', es: '' });
-						return {
-							id: String(c.id),
-							criteriaText: cText,
-							minValue: c.min_value != null ? Number(c.min_value) : '',
-							maxValue: c.max_value != null ? Number(c.max_value) : '',
-						};
-					}),
-				};
-			});
+			const questions = (data.questions ?? []).map((q, index: number) => ({
+				id: String(q.id),
+				order: index + 1,
+				questionText: toI18nText(q.text),
+				criteria: (q.criterias ?? []).map((c): QuestionCriteria => ({
+					id: String(c.id),
+					criteriaText: toI18nText(c.text),
+					minValue: c.min_value != null ? Number(c.min_value) : '',
+					maxValue: c.max_value != null ? Number(c.max_value) : '',
+				})),
+			}));
 
 			// ── Grade type name ──────────────────────────────────────────────────────
-			const gradeTypeName = rubric.grade_type?.name;
-			const gradeType =
-				typeof gradeTypeName === 'string'
-					? { en: gradeTypeName, es: gradeTypeName }
-					: (gradeTypeName ?? { en: '', es: '' });
+			const gradeType = toI18nText(rubric.grade_type?.name);
 
 			// ── Program (top-level in new API) ───────────────────────────────────────
 			const prog = data.program;
-			const programName =
-				typeof prog?.name === 'string'
-					? { en: prog.name, es: prog.name }
-					: (prog?.name ?? { en: '', es: '' });
+			const programName = toI18nText(prog?.name);
 
 			// ── Course name ──────────────────────────────────────────────────────────
-			const courseName =
-				typeof data.course?.name === 'string'
-					? { en: data.course.name, es: data.course.name }
-					: (data.course?.name ?? { en: '', es: '' });
+			const courseName = toI18nText(data.course?.name);
 
 			// ── Map to RubricDetail view model ───────────────────────────────────────
 			const rubricDetail: RubricDetail = {
@@ -237,7 +262,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				hasScores: Boolean(data.isUsed),
 				maxScore: 0,
 				performanceLevels,
-				commissions: commissions as any,
+				commissions,
 				questions,
 			};
 

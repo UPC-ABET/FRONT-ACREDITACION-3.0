@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { PencilSquareIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
@@ -25,76 +24,13 @@ import { Select } from '@/shared/components/ui/Select';
 import { Input } from '@/shared/components/ui/Input';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import { academicPeriodsService, typeGroupsService, typesService } from '@/modules/academic/services';
-import {
-	usePerformanceLevels,
-	useCreatePerformanceLevel,
-	useUpdatePerformanceLevel,
-	useDeletePerformanceLevel,
-} from '../hooks/use-performance-levels';
+import { useAcademicPeriods, usePerformanceLevels, useCreatePerformanceLevel, useUpdatePerformanceLevel, useDeletePerformanceLevel } from '@/modules/academic/hooks';
+import { useTypeGroups, useTypes } from '@/modules/core/hooks';
+import { usePerformanceLevelForm } from '../hooks';
 import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
-import type { CreatePerformanceLevelDto } from '@/modules/academic/services/performanceLevelsService';
+import type { PerformanceLevelFormState } from '../schemas/performance-level.schema';
 
 type OptionItem = { label: string; value: number };
-
-type FormState = {
-	instrument_type_id: number;
-	academic_period_id: number;
-	name_es: string;
-	name_en: string;
-	code: string;
-	unique_value: number;
-	min_score: number;
-	max_score: number;
-	max_value: number;
-	color: string;
-};
-
-const emptyForm: FormState = {
-	instrument_type_id: 0,
-	academic_period_id: 0,
-	name_es: '',
-	name_en: '',
-	code: '',
-	unique_value: 0,
-	min_score: 0,
-	max_score: 0,
-	max_value: 0,
-	color: '#000000',
-};
-
-function round2(n: number) {
-	return Number(n.toFixed(2));
-}
-
-function formToDto(form: FormState): CreatePerformanceLevelDto {
-	return {
-		instrument_type_id: form.instrument_type_id,
-		academic_period_id: form.academic_period_id,
-		name: { es: form.name_es, en: form.name_en },
-		code: form.code,
-		unique_value: round2(form.unique_value),
-		min_score: round2(form.min_score),
-		max_score: round2(form.max_score),
-		max_value: round2(form.max_value),
-		extra: { color: form.color },
-	};
-}
-
-function levelToForm(level: PerformanceLevelResponse): FormState {
-	return {
-		instrument_type_id: level.instrument_type_id,
-		academic_period_id: level.academic_period_id,
-		name_es: level.name?.es ?? '',
-		name_en: level.name?.en ?? '',
-		code: level.code,
-		unique_value: Number(level.unique_value),
-		min_score: Number(level.min_score),
-		max_score: Number(level.max_score),
-		max_value: Number(level.max_value),
-		color: (level.extra as { color?: string })?.color ?? '#000000',
-	};
-}
 
 function PerformanceLevelForm({
 	form,
@@ -102,13 +38,13 @@ function PerformanceLevelForm({
 	instrumentTypeOptions,
 	academicPeriodOptions,
 }: {
-	form: FormState;
-	onChange: (f: FormState) => void;
+	form: PerformanceLevelFormState;
+	onChange: (f: PerformanceLevelFormState) => void;
 	instrumentTypeOptions: OptionItem[];
 	academicPeriodOptions: OptionItem[];
 }) {
 	const set =
-		(key: keyof FormState) =>
+		(key: keyof PerformanceLevelFormState) =>
 		(e: React.ChangeEvent<HTMLInputElement>) =>
 			onChange({
 				...form,
@@ -201,30 +137,18 @@ export function PerformanceLevelsPage() {
 	// Modal state
 	const [modalOpen, setModalOpen] = useState(false);
 	const [editingLevel, setEditingLevel] = useState<PerformanceLevelResponse | null>(null);
-	const [form, setForm] = useState<FormState>(emptyForm);
 	const [deleteConfirm, setDeleteConfirm] = useState<PerformanceLevelResponse | null>(null);
+	const { form, setForm, resetForm, populateForm, toDto } = usePerformanceLevelForm();
 
-	// Fetch academic periods
-	const { data: academicPeriods = [] } = useQuery({
-		queryKey: ['academic-periods', 'all'],
-		queryFn: () => academicPeriodsService.getByFilters({}).then((r) => r.data),
-		staleTime: Infinity,
-	});
+	const { data: academicPeriods = [] } = useAcademicPeriods({});
 
-	// Fetch instrument type group (TG206)
-	const { data: typeGroups } = useQuery({
-		queryKey: ['type-groups', 'TG206'],
-		queryFn: () => typeGroupsService.getByFilters({ code: 'TG206' }).then((r) => r.data),
-		staleTime: Infinity,
-	});
+	const { data: typeGroups } = useTypeGroups({ code: 'TG206' });
 	const typeGroupId = typeGroups?.[0]?.id ?? null;
 
-	const { data: instrumentTypes = [] } = useQuery({
-		queryKey: ['types', 'instrument', typeGroupId],
-		queryFn: () => typesService.getByFilters({ type_group_id: typeGroupId! }).then((r) => r.data),
-		enabled: typeGroupId != null,
-		staleTime: Infinity,
-	});
+	const { data: instrumentTypes = [] } = useTypes(
+		{ type_group_id: typeGroupId ?? undefined },
+		{ enabled: typeGroupId != null },
+	);
 
 	// Performance levels
 	const filters = useMemo(
@@ -259,13 +183,13 @@ export function PerformanceLevelsPage() {
 	// Handlers
 	function openCreateModal() {
 		setEditingLevel(null);
-		setForm({ ...emptyForm });
+		resetForm();
 		setModalOpen(true);
 	}
 
 	function openEditModal(level: PerformanceLevelResponse) {
 		setEditingLevel(level);
-		setForm(levelToForm(level));
+		populateForm(level);
 		setModalOpen(true);
 	}
 
@@ -276,7 +200,7 @@ export function PerformanceLevelsPage() {
 	}
 
 	async function handleSubmit() {
-		const dto = formToDto(form);
+		const dto = toDto();
 		if (editingLevel) {
 			await updateMutation.mutateAsync({ id: editingLevel.id, ...dto });
 		} else {

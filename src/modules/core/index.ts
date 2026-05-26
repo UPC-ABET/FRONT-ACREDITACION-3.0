@@ -1,7 +1,3 @@
-/**
- * CORE module barrel
- */
-
 export * from './api/dtos';
-
-export {};
+export * from './services';
+export * from './hooks';

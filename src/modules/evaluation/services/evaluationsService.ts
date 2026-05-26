@@ -1,21 +1,25 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost, apiPut, apiDelete } from '@/shared/lib';
+import type { FinalizeEvaluationDto, SubmitEvaluationPayload } from '../api/dtos/request';
 import { EvaluationResponse } from '../api/dtos/response';
 
 export const evaluationsService = {
-	submit(body: Record<string, unknown>): Promise<ApiResponse<any>> {
+	submit(body: SubmitEvaluationPayload): Promise<ApiResponse<EvaluationResponse>> {
 		return apiPost('/evaluations/submit', body);
 	},
 
-	saveObservation(body: Record<string, unknown>): Promise<ApiResponse<any>> {
+	saveObservation(body: {
+		evaluation_id: number;
+		observation: { es: string; en: string };
+	}): Promise<ApiResponse<EvaluationResponse>> {
 		return apiPut('/evaluations/observation', body);
 	},
 
-	finalize(body: Record<string, unknown>): Promise<ApiResponse<any>> {
+	finalize(body: FinalizeEvaluationDto): Promise<ApiResponse<EvaluationResponse>> {
 		return apiPost('/evaluations/finalize', body);
 	},
 
-	getByStudent(studentId: string | number): Promise<ApiResponse<any[]>> {
+	getByStudent(studentId: string | number): Promise<ApiResponse<EvaluationResponse[]>> {
 		return apiGet(`/evaluations/student/${studentId}`);
 	},
 
@@ -23,28 +27,27 @@ export const evaluationsService = {
 		return apiGet(`/evaluations/evaluator/${evaluatorId}`);
 	},
 
-	getById(evaluationId: string | number): Promise<ApiResponse<any>> {
+	getById(evaluationId: string | number): Promise<ApiResponse<EvaluationResponse>> {
 		return apiGet(`/evaluations/evaluation/${evaluationId}`);
 	},
 
-	// Generic CRUD
-	create(body: Record<string, unknown>): Promise<ApiResponse<any>> {
+	create(body: Record<string, unknown>): Promise<ApiResponse<EvaluationResponse>> {
 		return apiPost('/evaluations/create', body);
 	},
 
-	update(id: string | number, body: Record<string, unknown>): Promise<ApiResponse<any>> {
+	update(id: string | number, body: Record<string, unknown>): Promise<ApiResponse<EvaluationResponse>> {
 		return apiPut(`/evaluations/update/${id}`, body);
 	},
 
-	delete(id: string | number): Promise<ApiResponse<any>> {
+	delete(id: string | number): Promise<ApiResponse<EvaluationResponse>> {
 		return apiDelete(`/evaluations/delete/${id}`);
 	},
 
-	getAll(): Promise<ApiResponse<any[]>> {
+	getAll(): Promise<ApiResponse<EvaluationResponse[]>> {
 		return apiGet('/evaluations/get-all');
 	},
 
-	getByFilters(filters: Record<string, unknown>): Promise<ApiResponse<any[]>> {
+	getByFilters(filters: Record<string, unknown>): Promise<ApiResponse<EvaluationResponse[]>> {
 		return apiPost('/evaluations/get-by-filters', filters);
 	},
 };
