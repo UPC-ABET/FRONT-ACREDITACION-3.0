@@ -29,7 +29,7 @@ export function useFindingDetail(id: number | undefined) {
 	return useQuery({
 		queryKey: findingQueryKeys.detail(id!),
 		queryFn: () => getFindingDetail(id!),
-		enabled: id != null,
+		enabled: id != null && Number.isFinite(id),
 	});
 }
 
