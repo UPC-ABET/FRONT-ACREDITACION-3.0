@@ -3,17 +3,16 @@
 import React from 'react';
 import { Card } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
-import { getLoginBackgroundUrl } from '@/modules/auth';
+import { LOGIN_BACKGROUND_URL } from '@/modules/auth/constants';
 import ResetPasswordForm from './components/ResetPasswordForm';
 
 export default function ResetPassword() {
 	const { t } = useI18n();
-	const background = getLoginBackgroundUrl();
 
 	return (
 		<div
 			className="min-h-screen w-full bg-cover bg-center flex items-center justify-center"
-			style={{ backgroundImage: `url(${background})` }}>
+			style={{ backgroundImage: `url(${LOGIN_BACKGROUND_URL})` }}>
 			<div className="w-full px-4 py-8">
 				<div className="mx-auto w-full max-w-[360px] sm:max-w-[480px] md:max-w-[540px]">
 					<Card className="w-full px-8 py-8 flex flex-col justify-center gap-5 aspect-auto md:aspect-square">

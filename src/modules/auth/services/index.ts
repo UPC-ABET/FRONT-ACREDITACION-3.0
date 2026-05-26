@@ -26,4 +26,3 @@
 
 export {};
 export * from './authService';
-export * from './backgroundService';
