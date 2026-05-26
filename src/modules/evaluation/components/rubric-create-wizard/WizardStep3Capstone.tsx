@@ -7,9 +7,8 @@ import { Button, Input, Skeleton } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
 import { CommissionTabs } from '../rubric-editor/CommissionTabs'
 import { OutcomeCard } from '../rubric-editor/OutcomeCard'
-import { rubricWizardService } from '../../services/rubricWizardService'
+import { useOutcomes } from '@/modules/accreditation/hooks'
 import type { OutcomeWithCriteria, CriteriaItem } from '../../types'
-import type { OutcomeResponse } from '../../api/dtos'
 import type { Step1Data } from './WizardStep1'
 import type { Step2Data } from './WizardStep2'
 
@@ -30,6 +29,7 @@ interface LocalOutcome {
   outcomeName: { en: string; es: string }
   commissionId: string
   criteria: LocalCriteria[]
+  _commissionMeta?: { code: string; name: { en: string; es: string } }
 }
 
 interface WizardStep3CapstoneProps {
@@ -44,9 +44,7 @@ function newLocalCriteria(): LocalCriteria {
   return { id: `temp-${Date.now()}-${Math.random()}`, text: { en: '', es: '' } }
 }
 
-
 export function WizardStep3Capstone({
-  step1,
   step2,
   onBack,
   onSubmit,
@@ -55,55 +53,44 @@ export function WizardStep3Capstone({
   const { t, locale } = useI18n()
   const [outcomes, setOutcomes] = useState<LocalOutcome[]>([])
   const [activeCommissionId, setActiveCommissionId] = useState('')
-  const [loadingOutcomes, setLoadingOutcomes] = useState(true)
-  const [loadError, setLoadError] = useState('')
+  const [outcomesInitialized, setOutcomesInitialized] = useState(false)
+
+  const { data: fetchedOutcomes = [], isLoading: loadingOutcomes, isError: loadErrored } =
+    useOutcomes(step2.capstoneOutcomeIds)
 
   useEffect(() => {
-    if (step2.capstoneOutcomeIds.length === 0) {
-      setLoadingOutcomes(false)
-      return
-    }
-    Promise.all(step2.capstoneOutcomeIds.map((id) => rubricWizardService.getOutcomeById(id)))
-      .then((responses) => {
-        const loaded: LocalOutcome[] = responses.map((r) => {
-          const o: OutcomeResponse = r.data
-          const commission = o.program_commission?.commission
-          const commissionId = String(o.program_commission?.id ?? o.program_commission_id ?? 'sin-comision')
-          return {
-            outcomeId: o.id,
-            outcomeCode: o.outcome_code,
-            outcomeName: o.outcome_name,
-            commissionId,
-            // Patch commission display code/name for tabs after building
-            _commission: commission,
-            criteria: [newLocalCriteria()],
-          } as LocalOutcome & { _commission: typeof commission }
-        })
+    if (outcomesInitialized || !fetchedOutcomes.length) return
 
-        // Build outcome list with enriched commission labels
-        const enriched: LocalOutcome[] = loaded.map((o: any) => {
-          const c = o._commission
-          if (c) {
-            return { ...o, commissionId: String(c.id), _commissionMeta: { code: c.code, name: c.name } }
-          }
-          return o
-        })
+    const loaded: LocalOutcome[] = fetchedOutcomes.map((o) => {
+      const commission = o.program_commission?.commission
+      const commissionId = String(
+        commission?.id ??
+          o.program_commission?.id ??
+          o.program_commission_id ??
+          'sin-comision',
+      )
+      return {
+        outcomeId: o.id,
+        outcomeCode: o.outcome_code,
+        outcomeName: o.outcome_name,
+        commissionId,
+        _commissionMeta: commission
+          ? { code: commission.code, name: commission.name }
+          : undefined,
+        criteria: [newLocalCriteria()],
+      }
+    })
 
-        setOutcomes(enriched)
-
-        // Activate first commission
-        const firstId = enriched[0]?.commissionId ?? ''
-        setActiveCommissionId(firstId)
-      })
-      .catch(() => setLoadError(t('rubrics.wizard.step3.capstone.error.loadOutcomes')))
-      .finally(() => setLoadingOutcomes(false))
-  }, [step2.capstoneOutcomeIds])
+    setOutcomes(loaded)
+    setActiveCommissionId(loaded[0]?.commissionId ?? '')
+    setOutcomesInitialized(true)
+  }, [fetchedOutcomes, outcomesInitialized])
 
   const commissionTabs = useMemo(() => {
     const map = new Map<string, { code: string; name: { en: string; es: string }; outcomes: LocalOutcome[] }>()
 
     for (const o of outcomes) {
-      const meta = (o as any)._commissionMeta
+      const meta = o._commissionMeta
       if (!map.has(o.commissionId)) {
         map.set(o.commissionId, {
           code: meta?.code ?? o.commissionId,
@@ -120,7 +107,7 @@ export function WizardStep3Capstone({
       name,
       accreditorCode: '',
       isComplete: cos.every(
-        (o) => o.criteria.length > 0 && o.criteria.every((c) => c.text[locale].trim().length > 0)
+        (o) => o.criteria.length > 0 && o.criteria.every((c) => c.text[locale].trim().length > 0),
       ),
       outcomes: cos.map<OutcomeWithCriteria>((o) => ({
         id: String(o.outcomeId),
@@ -149,9 +136,9 @@ export function WizardStep3Capstone({
     () =>
       outcomes.length > 0 &&
       outcomes.every(
-        (o) => o.criteria.length > 0 && o.criteria.every((c) => c.text[locale].trim().length > 0)
+        (o) => o.criteria.length > 0 && o.criteria.every((c) => c.text[locale].trim().length > 0),
       ),
-    [outcomes, locale]
+    [outcomes, locale],
   )
 
   const updateOutcome = (outcomeId: number, updater: (o: LocalOutcome) => LocalOutcome) =>
@@ -167,7 +154,7 @@ export function WizardStep3Capstone({
     updateOutcome(outcomeId, (o) => ({
       ...o,
       criteria: o.criteria.map((c, i) =>
-        i === ci ? { ...c, text: { ...c.text, [locale]: text } } : c
+        i === ci ? { ...c, text: { ...c.text, [locale]: text } } : c,
       ),
     }))
 
@@ -182,7 +169,7 @@ export function WizardStep3Capstone({
           min_value: 0,
           max_value: 0,
         })),
-      }))
+      })),
     )
   }
 
@@ -196,13 +183,16 @@ export function WizardStep3Capstone({
     )
   }
 
-  if (loadError) {
-    return <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{loadError}</p>
+  if (loadErrored) {
+    return (
+      <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        {t('rubrics.wizard.step3.capstone.error.loadOutcomes')}
+      </p>
+    )
   }
 
   return (
     <div className="space-y-6">
-      {/* Commission tabs — mismo componente que el editor */}
       {commissionTabs.length > 0 && (
         <CommissionTabs
           commissions={commissionTabs}
@@ -212,11 +202,10 @@ export function WizardStep3Capstone({
         />
       )}
 
-      {/* Outcomes de la comisión activa */}
       <div className="space-y-4">
         {(activeCommission?.outcomes ?? commissionTabs[0]?.outcomes ?? []).map((outcomeView) => {
           const outcomeId = Number(outcomeView.id)
-          const localOutcome = outcomes.find((o) => o.outcomeId === outcomeId)!
+          const localOutcome = outcomes.find((o) => o.outcomeId === outcomeId)
           if (!localOutcome) return null
 
           return (
@@ -262,7 +251,6 @@ export function WizardStep3Capstone({
         })}
       </div>
 
-      {/* Validación */}
       {!allFilled && outcomes.length > 0 && (
         <ul className="space-y-1 text-sm">
           <li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">

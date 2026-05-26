@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { PencilSquareIcon, EyeIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Badge,
 	Button,
@@ -25,27 +24,18 @@ import {
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import { useRubrics, rubricsQueryKeys } from '../hooks';
-import { rubricsService } from '../services';
+import { useRubrics, useDeleteRubric } from '../hooks';
 import { mapRubricToRow } from '../utils/rubrics-mappers.utils';
 import type { RubricListRow } from '../types';
 
 export function RubricsListPage() {
 	const { locale, t } = useI18n();
-	const queryClient = useQueryClient();
 	const { data, isLoading, isError, error } = useRubrics();
 	const items = useMemo(() => (data ?? []).map(mapRubricToRow), [data]);
 
 	const [confirmTarget, setConfirmTarget] = useState<RubricListRow | null>(null);
 
-	const deleteMutation = useMutation({
-		mutationFn: (id: number) => rubricsService.delete(id),
-		onSuccess: () => {
-			setConfirmTarget(null);
-			queryClient.invalidateQueries({ queryKey: rubricsQueryKeys.all });
-		},
-		onError: () => setConfirmTarget(null),
-	});
+	const deleteMutation = useDeleteRubric();
 
 	return (
 		<div className="space-y-8">
@@ -160,7 +150,14 @@ export function RubricsListPage() {
 							variant="primary"
 							className="bg-red-600 hover:bg-red-700"
 							disabled={deleteMutation.isPending}
-							onClick={() => confirmTarget && deleteMutation.mutate(confirmTarget.id)}
+							onClick={() => {
+								if (confirmTarget) {
+									deleteMutation.mutate(confirmTarget.id, {
+										onSuccess: () => setConfirmTarget(null),
+										onError: () => setConfirmTarget(null),
+									});
+								}
+							}}
 						>
 							{deleteMutation.isPending
 								? t('rubrics.list.deleteModal.deleting')

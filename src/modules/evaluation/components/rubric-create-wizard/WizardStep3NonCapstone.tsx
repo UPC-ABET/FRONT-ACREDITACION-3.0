@@ -211,13 +211,16 @@ export function WizardStep3NonCapstone({
 
   return (
     <div className="space-y-4">
-      {/* Add criteria button — top-right, outside table */}
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-2">
+        {columnCount >= MAX_COLS && (
+          <p className="text-xs text-zinc-500" role="status">
+            {t('rubrics.editor.nonCapstone.tooltips.maxCols')}
+          </p>
+        )}
         <Button
           type="button"
           variant="primary"
           disabled={columnCount >= MAX_COLS}
-          title={columnCount >= MAX_COLS ? t('rubrics.editor.nonCapstone.tooltips.maxCols') : undefined}
           onClick={handleAddColumn}
         >
           <PlusIcon className="mr-1 h-4 w-4" />
@@ -274,7 +277,6 @@ export function WizardStep3NonCapstone({
             type="button"
             variant="primary"
             disabled={!canSave || isSubmitting}
-            title={!canSave ? t('rubrics.editor.nonCapstone.tooltips.saveDisabled') : undefined}
             onClick={() => void handleSubmit()}
           >
             {isSubmitting ? t('rubrics.wizard.step3.submitting') : t('rubrics.wizard.step3.submit')}

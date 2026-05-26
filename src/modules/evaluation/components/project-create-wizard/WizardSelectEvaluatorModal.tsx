@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import {
   Dialog,
@@ -15,7 +14,8 @@ import { Input } from '@/shared/components/ui/Input'
 import { Select } from '@/shared/components/ui/Select'
 import { Button } from '@/shared/components/ui/Button'
 import { useI18n } from '@/providers'
-import { professorsService, typeGroupsService, typesService } from '@/modules/academic/services'
+import { professorsService } from '@/modules/academic/services'
+import { useTypeGroups, useTypes } from '@/modules/core/hooks'
 import type { ProfessorSearchResponse } from '@/modules/academic/api/dtos/response'
 import type { LocalEvaluator } from './ProjectWizardStep2'
 import { EVALUATOR_CODES } from '../../constants/type-codes'
@@ -75,21 +75,16 @@ export function WizardSelectEvaluatorModal({
       .finally(() => setLoadingProfs(false))
   }, [open, debouncedSearch])
 
-  // Types — stable data, use useQuery
-  const { data: typeGroup } = useQuery({
-    queryKey: ['type-groups', EVALUATOR_TYPE_GROUP_CODE],
-    queryFn: () =>
-      typeGroupsService.getByFilters({ code: EVALUATOR_TYPE_GROUP_CODE }).then((r) => r.data[0] ?? null),
-    enabled: open,
-    staleTime: Infinity,
-  })
+  const { data: typeGroups = [] } = useTypeGroups(
+    { code: EVALUATOR_TYPE_GROUP_CODE },
+    { enabled: open },
+  )
+  const typeGroupId = typeGroups[0]?.id ?? null
 
-  const { data: allTypes = [], isLoading: loadingTypes } = useQuery({
-    queryKey: ['types', 'by-type-group', typeGroup?.id],
-    queryFn: () => typesService.getByFilters({ type_group_id: typeGroup!.id }).then((r) => r.data),
-    enabled: !!typeGroup?.id,
-    staleTime: Infinity,
-  })
+  const { data: allTypes = [], isLoading: loadingTypes } = useTypes(
+    { type_group_id: typeGroupId ?? undefined },
+    { enabled: typeGroupId != null },
+  )
 
   const usedLimitedCodes = useMemo(
     () => new Set(existing.filter((e) => LIMITED_CODES.includes(e.typeCode)).map((e) => e.typeCode)),
@@ -191,7 +186,10 @@ export function WizardSelectEvaluatorModal({
             placeholder={loadingTypes ? t('projects.create.step2.evaluatorsRoleLoading') : t('projects.create.step2.evaluatorsRolePlaceholder')}
             options={typeOptions}
             value={typeOptions.find((o) => o.value === selectedTypeId) ?? null}
-            onChange={(_: string | undefined, opt: any) => setSelectedTypeId(opt ? Number(opt.value) : null)}
+            onChange={(_: string | undefined, opt) => {
+              const single = Array.isArray(opt) ? opt[0] : opt;
+              setSelectedTypeId(single ? Number(single.value) : null);
+            }}
             isDisabled={loadingTypes || typeOptions.length === 0}
           />
 

@@ -1,7 +1,5 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { CommissionTabs } from './CommissionTabs';
@@ -10,33 +8,10 @@ import { CriteriaInlineRow } from './CriteriaInlineRow';
 import { OutcomeCard } from './OutcomeCard';
 import { verificationOutcomes } from '../../utils/capstone-utils';
 import { PerformanceLevelsSummary } from './PerformanceLevelsSummary';
-import { rubricsService } from '../../services';
-import { CriteriaItem, RubricDetail } from '../../types';
-
-function updateOutcomeCriteria(
-	rubric: RubricDetail,
-	commissionId: string,
-	outcomeId: string,
-	updater: (criteria: CriteriaItem[]) => CriteriaItem[],
-): RubricDetail {
-	return {
-		...rubric,
-		commissions: rubric.commissions.map((commission) => {
-			if (commission.id !== commissionId) return commission;
-			const outcomes = commission.outcomes.map((outcome) => {
-				if (outcome.id !== outcomeId) return outcome;
-				const q = outcome.questions[0];
-				if (!q) return outcome;
-				return { ...outcome, questions: [{ ...q, criteria: updater(q.criteria) }] };
-			});
-			const verification = outcomes.filter((o) => o.outcomeType === 'verificacion');
-			const isComplete =
-				verification.length > 0 &&
-				verification.every((o) => (o.questions[0]?.criteria.length ?? 0) > 0);
-			return { ...commission, outcomes, isComplete };
-		}),
-	};
-}
+import type { RubricDetail } from '../../types';
+import { useRubricCapstoneState } from '../../hooks/use-rubric-capstone-state';
+import { useRubricCapstoneCriteria } from '../../hooks/use-rubric-capstone-criteria';
+import { useRubricCapstoneSave } from '../../hooks/use-rubric-capstone-save';
 
 interface RubricEditorCapstoneProps {
 	rubric: RubricDetail;
@@ -44,10 +19,7 @@ interface RubricEditorCapstoneProps {
 	canEdit: boolean;
 	queryKey: readonly unknown[];
 	onNotify: (type: 'success' | 'error' | 'warning' | 'info', message: string) => void;
-	messages: {
-		autosaveRetry: string;
-		saveSuccess: string;
-	};
+	messages: { autosaveRetry: string; saveSuccess: string };
 }
 
 export function RubricEditorCapstone({
@@ -59,177 +31,27 @@ export function RubricEditorCapstone({
 	messages,
 }: RubricEditorCapstoneProps) {
 	const { t, locale } = useI18n();
-	const queryClient = useQueryClient();
-	const [activeCommissionId, setActiveCommissionId] = useState(
-		() => rubric.commissions[0]?.id ?? '',
-	);
-	const [savingKey, setSavingKey] = useState<string | null>(null);
-	const [draftRubric, setDraftRubric] = useState<RubricDetail>(rubric);
 
-	const activeCommission = useMemo(
-		() => draftRubric.commissions.find((c) => c.id === activeCommissionId),
-		[draftRubric.commissions, activeCommissionId],
-	);
+	const { draftRubric, activeCommissionId, setActiveCommissionId, activeCommission, mergeRubric } =
+		useRubricCapstoneState({ rubric, queryKey });
 
-	/**
-	 * Locale-aware save validation.
-	 * A commission is "complete" when every verification outcome has at least
-	 * one criteria whose text in the CURRENT locale is non-empty.
-	 * Save is allowed when at least one commission is complete and none are partial.
-	 */
-	const saveAllowed = useMemo(() => {
-		const criteriaFilled = (c: CriteriaItem) => c.description[locale].trim().length > 0;
+	const { saveAllowed, isSaving, handleSave } = useRubricCapstoneSave({
+		rubricId,
+		draftRubric,
+		canEdit,
+		onNotify,
+		saveSuccessMessage: messages.saveSuccess,
+	});
 
-		const outcomeComplete = (
-			outcome: (typeof draftRubric.commissions)[number]['outcomes'][number],
-		) => {
-			const q = outcome.questions[0];
-			return q !== undefined && q.criteria.length > 0 && q.criteria.every(criteriaFilled);
-		};
-
-		const isComplete = (commission: (typeof draftRubric.commissions)[number]) => {
-			const outcomes = verificationOutcomes(commission);
-			return outcomes.length > 0 && outcomes.every(outcomeComplete);
-		};
-
-		const hasAnyFilled = (commission: (typeof draftRubric.commissions)[number]) =>
-			verificationOutcomes(commission).some((o) => {
-				const q = o.questions[0];
-				return q !== undefined && q.criteria.some(criteriaFilled);
-			});
-
-		const isPartial = (commission: (typeof draftRubric.commissions)[number]) =>
-			hasAnyFilled(commission) && !isComplete(commission);
-
-		const hasComplete = draftRubric.commissions.some(isComplete);
-		const hasPartial = draftRubric.commissions.some(isPartial);
-		return hasComplete && !hasPartial;
-	}, [draftRubric.commissions, locale]);
-
-	const [isSaving, setIsSaving] = useState(false);
-
-	const mergeRubric = (fn: (prev: RubricDetail) => RubricDetail) => {
-		setDraftRubric((prev) => fn(prev));
-		queryClient.setQueryData<RubricDetail>(queryKey, (prev) => (prev ? fn(prev) : prev));
-	};
-
-	const handleSave = useCallback(async () => {
-		if (!canEdit || !saveAllowed) return;
-		setIsSaving(true);
-		try {
-			const questions = draftRubric.commissions.flatMap((commission) =>
-				verificationOutcomes(commission).map((outcome) => {
-					const q = outcome.questions[0];
-					const qId = q && !q.id.startsWith('temp-') ? Number(q.id) : undefined;
-					return {
-						...(qId !== undefined && { id: qId }),
-						outcome_id: Number(outcome.id),
-						question: { es: outcome.outcomeDescription.es, en: outcome.outcomeDescription.en },
-						criterias: (q?.criteria ?? []).map((c) => {
-							const cId = !c.id.startsWith('temp-') ? Number(c.id) : undefined;
-							return {
-								...(cId !== undefined && { id: cId }),
-								criteria: { es: c.description.es, en: c.description.en },
-								min_value: 0,
-								max_value: 0,
-							};
-						}),
-					};
-				}),
-			);
-			await rubricsService.update(rubricId, { questions });
-			onNotify('success', messages.saveSuccess);
-		} catch {
-			onNotify('error', t('rubrics.editor.capstone.saveError'));
-		} finally {
-			setIsSaving(false);
-		}
-	}, [canEdit, saveAllowed, draftRubric.commissions, rubricId, onNotify, messages.saveSuccess, t]);
-
-	// ── criteria handlers ────────────────────────────────────────────────────────
-
-	const handleAddCriteria = (commissionId: string, outcomeId: string) => {
-		mergeRubric((prev) =>
-			updateOutcomeCriteria(prev, commissionId, outcomeId, (criteria) => [
-				...criteria,
-				{ id: `temp-${Date.now()}`, description: { en: '', es: '' }, minValue: 0, maxValue: 0 },
-			]),
-		);
-	};
-
-	const handlePatchCriteria = async (
-		commissionId: string,
-		outcomeId: string,
-		criteriaId: string,
-		text: string,
-	) => {
-		setSavingKey(criteriaId);
-		try {
-			mergeRubric((prev) =>
-				updateOutcomeCriteria(prev, commissionId, outcomeId, (criteria) =>
-					criteria.map((c) =>
-						c.id === criteriaId ? { ...c, description: { ...c.description, [locale]: text } } : c,
-					),
-				),
-			);
-		} finally {
-			setSavingKey(null);
-		}
-	};
-
-	const handleCreateCriteria = async (commissionId: string, outcomeId: string, text: string) => {
-		setSavingKey(`${outcomeId}__create`);
-		try {
-			mergeRubric((prev) =>
-				updateOutcomeCriteria(prev, commissionId, outcomeId, (criteria) => {
-					const tempIndex = criteria.findIndex((c) => c.id.startsWith('temp-'));
-					const next: CriteriaItem = {
-						id: `temp-${Date.now()}`,
-						description: { en: text, es: text },
-						minValue: 0,
-						maxValue: 0,
-					};
-					if (tempIndex === -1) return [...criteria, next];
-					const arr = [...criteria];
-					arr[tempIndex] = next;
-					return arr;
-				}),
-			);
-		} finally {
-			setSavingKey(null);
-		}
-	};
-
-	const handleDeleteCriteria = async (
-		commissionId: string,
-		outcomeId: string,
-		criteriaId: string,
-	) => {
-		setSavingKey(criteriaId);
-		try {
-			mergeRubric((prev) =>
-				updateOutcomeCriteria(prev, commissionId, outcomeId, (criteria) =>
-					criteria.filter((c) => c.id !== criteriaId),
-				),
-			);
-		} finally {
-			setSavingKey(null);
-		}
-	};
-
-	const handleDeleteCriteriaLocal = (
-		commissionId: string,
-		outcomeId: string,
-		criteriaId: string,
-	) => {
-		mergeRubric((prev) =>
-			updateOutcomeCriteria(prev, commissionId, outcomeId, (criteria) =>
-				criteria.filter((c) => c.id !== criteriaId),
-			),
-		);
-	};
-
-	// ── render ──────────────────────────────────────────────────────────────────
+	const {
+		savingKey,
+		handleAddCriteria,
+		handlePatchCriteria,
+		handleCreateCriteria,
+		handleDeleteCriteria,
+		handleDeleteCriteriaLocal,
+		handleTextChange,
+	} = useRubricCapstoneCriteria({ locale, mergeRubric });
 
 	if (!rubric.commissions.length) {
 		return (
@@ -245,9 +67,7 @@ export function RubricEditorCapstone({
 				commissions={draftRubric.commissions}
 				activeCommissionId={activeCommissionId}
 				onCommissionChange={setActiveCommissionId}
-				checkboxTooltipIncomplete={t(
-					'rubrics.editor.capstone.tooltips.commissionCheckboxIncomplete',
-				)}
+				checkboxTooltipIncomplete={t('rubrics.editor.capstone.tooltips.commissionCheckboxIncomplete')}
 			/>
 
 			<PerformanceLevelsSummary levels={rubric.performanceLevels} />
@@ -261,9 +81,7 @@ export function RubricEditorCapstone({
 							canEdit={canEdit}
 							emptyMessage={t('rubrics.editor.capstone.validation.emptyOutcomeReadonly')}
 							emptyMessageWithHint={t('rubrics.editor.capstone.validation.emptyOutcome')}
-							onAdd={
-								canEdit ? () => handleAddCriteria(activeCommission.id, outcome.id) : undefined
-							}>
+							onAdd={canEdit ? () => handleAddCriteria(activeCommission.id, outcome.id) : undefined}>
 							{(outcome.questions[0]?.criteria ?? []).map((criterion, index) => (
 								<CriteriaInlineRow
 									key={criterion.id}
@@ -272,21 +90,14 @@ export function RubricEditorCapstone({
 									canEdit={canEdit}
 									isSaving={
 										savingKey === criterion.id ||
-										(criterion.id.startsWith('temp-') && savingKey === `${outcome.id}__create`)
+										(criterion.id.startsWith('temp-') &&
+											savingKey === `${outcome.id}__create`)
 									}
 									savingLabel={t('rubrics.editor.criteria.saving')}
 									placeholder={t('rubrics.editor.capstone.criteria.criteriaPlaceholder')}
 									criteriaLabelPrefix={t('rubrics.editor.capstone.criteria.criteriaLabel')}
 									onTextChange={(criteriaId, text) =>
-										mergeRubric((prev) =>
-											updateOutcomeCriteria(prev, activeCommission.id, outcome.id, (criteria) =>
-												criteria.map((c) =>
-													c.id === criteriaId
-														? { ...c, description: { ...c.description, [locale]: text } }
-														: c,
-												),
-											),
-										)
+										handleTextChange(activeCommission.id, outcome.id, criteriaId, text)
 									}
 									onPatch={(criteriaId, text) =>
 										handlePatchCriteria(activeCommission.id, outcome.id, criteriaId, text)
@@ -316,14 +127,20 @@ export function RubricEditorCapstone({
 				labelIncomplete={t('rubrics.editor.capstone.validation.validationIncomplete')}
 			/>
 
-			<div className="flex justify-end">
+			<div className="flex flex-col items-end gap-2">
+				{!saveAllowed && (
+					<p className="text-xs text-zinc-500" role="status">
+						{t('rubrics.editor.capstone.tooltips.saveDisabled')}
+					</p>
+				)}
 				<Button
 					type="button"
 					variant="primary"
 					disabled={!canEdit || !saveAllowed || isSaving}
-					title={!saveAllowed ? t('rubrics.editor.capstone.tooltips.saveDisabled') : undefined}
 					onClick={() => void handleSave()}>
-					{isSaving ? t('rubrics.editor.capstone.saving') : t('rubrics.editor.capstone.saveRubric')}
+					{isSaving
+						? t('rubrics.editor.capstone.saving')
+						: t('rubrics.editor.capstone.saveRubric')}
 				</Button>
 			</div>
 		</div>

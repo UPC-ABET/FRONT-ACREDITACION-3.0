@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useMemo, useState } from 'react'
 import { CheckIcon, PlusIcon } from '@heroicons/react/24/outline'
 import {
   Dialog,
@@ -15,11 +14,14 @@ import {
 } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
 import { getSchoolFromCookie } from '@/shared/lib/jwt'
-import { rubricWizardService } from '../../services/rubricWizardService'
-import { studyPlanCoursesService } from '../../services/studyPlanCoursesService'
-import type { AcademicPeriodResponse, StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response'
+import {
+  useAcademicPeriods,
+  useStudyPlanCourses,
+  useUpdateStudyPlanCourse,
+} from '@/modules/academic/hooks'
+import type { StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response'
 
-type SelectOption = { label: string; value: string | number }
+type AnyOption = { label: string; value: string | number }
 
 interface AddEvaluationCourseModalProps {
   open: boolean
@@ -33,14 +35,12 @@ export function AddEvaluationCourseModal({
   onSuccess,
 }: AddEvaluationCourseModalProps) {
   const { t, locale } = useI18n()
-  const queryClient = useQueryClient()
+  const schoolId = getSchoolFromCookie()?.id as number | undefined
 
-  const [selectedPeriod, setSelectedPeriod] = useState<SelectOption | null>(null)
-  // IDs seleccionados localmente (pendientes de guardar)
+  const [selectedPeriod, setSelectedPeriod] = useState<AnyOption | null>(null)
   const [pendingIds, setPendingIds] = useState<Set<number>>(new Set())
   const [addError, setAddError] = useState<string | null>(null)
 
-  // Reset on close
   useEffect(() => {
     if (!open) {
       setSelectedPeriod(null)
@@ -49,36 +49,32 @@ export function AddEvaluationCourseModal({
     }
   }, [open])
 
-  // Fetch periods
-  const { data: periods = [], isLoading: loadingPeriods } = useQuery<AcademicPeriodResponse[]>({
-    queryKey: ['academic-periods-active'],
-    queryFn: () => rubricWizardService.getAcademicPeriods().then((r) => r.data.filter((p) => p.is_active)),
-    staleTime: 1000 * 60 * 5,
-  })
+  const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods(
+    { is_active: true },
+    { enabled: open },
+  )
 
-  const periodOptions: SelectOption[] = periods.map((p) => ({ label: p.code, value: p.id }))
+  const periodOptions: AnyOption[] = periods.map((p) => ({ label: p.code, value: p.id }))
 
-  const schoolId = getSchoolFromCookie()?.id as number | undefined
+  const spcFilters = useMemo(
+    () => ({
+      academic_period_id: Number(selectedPeriod?.value ?? 0),
+      school_id: schoolId,
+      is_active: true,
+    }),
+    [selectedPeriod?.value, schoolId],
+  )
 
-  const { data: spcList = [], isLoading: loadingCourses } = useQuery<StudyPlanCourseResponse[]>({
-    queryKey: ['spc-modal', selectedPeriod?.value, schoolId],
-    queryFn: () =>
-      studyPlanCoursesService
-        .getByFilters({
-          academic_period_id: Number(selectedPeriod!.value),
-          school_id: schoolId,
-          is_active: true,
-        })
-        .then((r) => r.data),
+  const { data: spcList = [], isLoading: loadingCourses } = useStudyPlanCourses(spcFilters, {
     enabled: !!selectedPeriod && !!schoolId,
-    staleTime: 0,
   })
 
-  // IDs que ya están marcados en el servidor
   const markedIds = useMemo(
     () => new Set(spcList.filter((s) => s.extra?.is_evaluate_rubric === true).map((s) => s.id)),
     [spcList],
   )
+
+  const updateSpc = useUpdateStudyPlanCourse()
 
   const togglePending = (id: number) => {
     setPendingIds((prev) => {
@@ -88,29 +84,23 @@ export function AddEvaluationCourseModal({
     })
   }
 
-  const addMutation = useMutation({
-    mutationFn: (toAdd: StudyPlanCourseResponse[]) =>
-      Promise.all(
-        toAdd.map((spc) => {
-          const mergedExtra = { ...(spc.extra ?? {}), is_evaluate_rubric: true }
-          return studyPlanCoursesService.update(spc.id, { extra: mergedExtra })
-        }),
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['spc-modal', selectedPeriod?.value, schoolId] })
-      queryClient.invalidateQueries({ queryKey: ['evaluation-courses'] })
-      setPendingIds(new Set())
-      onSuccess?.()
-      onOpenChange(false)
-    },
-    onError: () => setAddError(t('evaluationCourses.modal.errorAdd')),
-  })
-
   const handleConfirm = () => {
     setAddError(null)
     const toAdd = spcList.filter((s) => pendingIds.has(s.id))
     if (toAdd.length === 0) return
-    addMutation.mutate(toAdd)
+
+    Promise.all(
+      toAdd.map((spc) => {
+        const mergedExtra = { ...(spc.extra ?? {}), is_evaluate_rubric: true }
+        return updateSpc.mutateAsync({ id: spc.id, body: { extra: mergedExtra } })
+      }),
+    )
+      .then(() => {
+        setPendingIds(new Set())
+        onSuccess?.()
+        onOpenChange(false)
+      })
+      .catch(() => setAddError(t('evaluationCourses.modal.errorAdd')))
   }
 
   const courseName = (spc: StudyPlanCourseResponse) =>
@@ -118,7 +108,7 @@ export function AddEvaluationCourseModal({
       ? spc.course.name
       : (spc.course?.name?.[locale] ?? String(spc.course_id))
 
-  const canConfirm = pendingIds.size > 0 && !addMutation.isPending
+  const canConfirm = pendingIds.size > 0 && !updateSpc.isPending
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -140,7 +130,7 @@ export function AddEvaluationCourseModal({
             isDisabled={loadingPeriods}
             isSearchable
             onChange={(_, v) => {
-              setSelectedPeriod(v as SelectOption | null)
+              setSelectedPeriod(Array.isArray(v) ? (v[0] ?? null) : v)
               setPendingIds(new Set())
             }}
           />
@@ -185,9 +175,7 @@ export function AddEvaluationCourseModal({
                                 : 'border-zinc-300 bg-white text-zinc-400 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600'
                             }`}
                         >
-                          {isMarked ? (
-                            <CheckIcon className="h-4 w-4" />
-                          ) : isPending ? (
+                          {isMarked || isPending ? (
                             <CheckIcon className="h-4 w-4" />
                           ) : (
                             <PlusIcon className="h-4 w-4" />
@@ -213,13 +201,13 @@ export function AddEvaluationCourseModal({
         <DialogFooter>
           <DialogClose
             render={
-              <Button variant="secondary" disabled={addMutation.isPending}>
+              <Button variant="secondary" disabled={updateSpc.isPending}>
                 {t('dialog.close')}
               </Button>
             }
           />
           <Button variant="primary" disabled={!canConfirm} onClick={handleConfirm}>
-            {addMutation.isPending
+            {updateSpc.isPending
               ? t('evaluationCourses.modal.adding')
               : t('evaluationCourses.modal.confirm')}
           </Button>

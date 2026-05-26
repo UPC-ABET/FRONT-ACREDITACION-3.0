@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { rubricsService } from '../services';
+import type { CreateRubricDto, CreateRubricFullDto } from '../api/dtos/request';
 
 export const rubricsQueryKeys = {
 	all: ['rubrics'] as const,
@@ -24,5 +25,35 @@ export function useRubric(rubricId: string | number) {
 			return response.data;
 		},
 		enabled: Boolean(rubricId),
+	});
+}
+
+export function useCreateRubric() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (dto: CreateRubricDto) => rubricsService.create(dto).then((r) => r.data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: rubricsQueryKeys.all });
+		},
+	});
+}
+
+export function useCreateRubricFull() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (dto: CreateRubricFullDto) => rubricsService.createFull(dto).then((r) => r.data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: rubricsQueryKeys.all });
+		},
+	});
+}
+
+export function useDeleteRubric() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (id: string | number) => rubricsService.delete(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: rubricsQueryKeys.all });
+		},
 	});
 }

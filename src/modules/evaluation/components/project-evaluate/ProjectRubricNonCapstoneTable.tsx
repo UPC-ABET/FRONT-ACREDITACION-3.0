@@ -253,7 +253,7 @@ export function ProjectRubricNonCapstoneTable({
 				observation: { es: '', en: '' },
 				scores: criteriaScores,
 				qualification_status_type_id: qualifStatuses[project_student_id],
-			} as any);
+			});
 		}
 	};
 

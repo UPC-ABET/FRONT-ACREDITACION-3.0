@@ -1,6 +1,4 @@
-export * from './course-outcome-mapping.response';
 export * from './evaluation.response';
-export * from './outcome.response';
 export * from './project-details.response';
 export * from './project-by-professor.response';
 export * from './project-evaluator-info.response'

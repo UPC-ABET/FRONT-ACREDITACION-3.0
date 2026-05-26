@@ -1,5 +1,5 @@
 import { AcademicPeriodResponse } from './academic-period.response';
-import { TypeItemResponse } from './type-item.response';
+import type { TypeItemResponse } from '@/modules/core/api/dtos/response';
 
 export type PerformanceLevelResponse = {
 	id: number;

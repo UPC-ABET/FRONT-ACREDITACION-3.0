@@ -219,7 +219,7 @@ export function ProjectRubricCapstoneTable({
 				observation: { es: '', en: '' },
 				scores,
 				qualification_status_type_id: qualifStatuses[projectStudentId],
-			} as any);
+			});
 		}
 	};
 

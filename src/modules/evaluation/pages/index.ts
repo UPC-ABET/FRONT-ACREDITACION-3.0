@@ -1,9 +1,3 @@
-/**
- * PAGES
- *
- * Páginas del módulo evaluation.
- */
-
 export * from './grade-projects.page';
 export * from './project-edit.page';
 export * from './project-evaluate.page';

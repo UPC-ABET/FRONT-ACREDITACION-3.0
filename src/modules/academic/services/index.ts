@@ -1,9 +1,7 @@
 export * from './academicPeriodsService';
+export * from './courseOutcomeMappingsService';
 export * from './coursesService';
 export * from './performanceLevelsService';
 export * from './professorsService';
 export * from './programsService';
-export * from './typeGroupsService';
-export * from './typesService';
-
-export {};
+export * from './studyPlanCoursesService';

@@ -1,12 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Select, Button } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
 import { getSchoolFromCookie } from '@/shared/lib/jwt'
-import { rubricWizardService } from '../../services/rubricWizardService'
-import { studyPlanCoursesService } from '../../services/studyPlanCoursesService'
-import type { AcademicPeriodResponse } from '@/modules/academic/api/dtos/response'
+import { useAcademicPeriods, useStudyPlanCourses } from '@/modules/academic/hooks'
 import type { StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response'
 
 export interface Step1Data {
@@ -22,7 +20,7 @@ interface WizardStep1Props {
   onNext: (data: Step1Data) => void
 }
 
-type SelectOption = { label: string; value: string | number }
+type AnyOption = { label: string; value: string | number }
 
 function getSpcCourseName(spc: StudyPlanCourseResponse): { en: string; es: string } {
   const raw = spc.course?.name
@@ -32,49 +30,32 @@ function getSpcCourseName(spc: StudyPlanCourseResponse): { en: string; es: strin
 
 export function WizardStep1({ onNext }: WizardStep1Props) {
   const { t, locale } = useI18n()
-  const [periods, setPeriods] = useState<AcademicPeriodResponse[]>([])
-  const [spcList, setSpcList] = useState<StudyPlanCourseResponse[]>([])
-  const [selectedPeriod, setSelectedPeriod] = useState<SelectOption | null>(null)
-  const [selectedSpcId, setSelectedSpcId] = useState<SelectOption | null>(null)
-  const [loadingPeriods, setLoadingPeriods] = useState(true)
-  const [loadingCourses, setLoadingCourses] = useState(false)
-  const [error, setError] = useState('')
+  const schoolId = getSchoolFromCookie()?.id as number | undefined
 
-  // Load active periods once
-  useEffect(() => {
-    rubricWizardService
-      .getAcademicPeriods()
-      .then((res) => setPeriods(res.data.filter((p) => p.is_active)))
-      .catch(() => setError(t('rubrics.wizard.step1.error.loadPeriods')))
-      .finally(() => setLoadingPeriods(false))
-  }, [t])
+  const [selectedPeriod, setSelectedPeriod] = useState<AnyOption | null>(null)
+  const [selectedSpcId, setSelectedSpcId] = useState<AnyOption | null>(null)
 
-  // Load study-plan-courses filtered by period, school and is_evaluate_rubric
-  useEffect(() => {
-    if (!selectedPeriod) {
-      setSpcList([])
-      setSelectedSpcId(null)
-      return
-    }
-    const schoolId = getSchoolFromCookie()?.id as number | undefined
-    if (!schoolId) {
-      setError(t('rubrics.wizard.step1.error.noSchool'))
-      return
-    }
-    setLoadingCourses(true)
+  const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods({ is_active: true })
+
+  const spcFilters = useMemo(
+    () => ({
+      academic_period_id: Number(selectedPeriod?.value ?? 0),
+      school_id: schoolId,
+      extra: { is_evaluate_rubric: true },
+      is_active: true,
+    }),
+    [selectedPeriod?.value, schoolId],
+  )
+
+  const { data: spcList = [], isLoading: loadingCourses } = useStudyPlanCourses(spcFilters, {
+    enabled: !!selectedPeriod && !!schoolId,
+  })
+
+  const handlePeriodChange = (_: string | undefined, v: AnyOption | AnyOption[] | null) => {
+    const single = Array.isArray(v) ? (v[0] ?? null) : v
+    setSelectedPeriod(single)
     setSelectedSpcId(null)
-    setError('')
-    studyPlanCoursesService
-      .getByFilters({
-        academic_period_id: Number(selectedPeriod.value),
-        school_id: schoolId,
-        extra: { is_evaluate_rubric: true },
-        is_active: true,
-      })
-      .then((res) => setSpcList(res.data))
-      .catch(() => setError(t('rubrics.wizard.step1.error.loadCourses')))
-      .finally(() => setLoadingCourses(false))
-  }, [selectedPeriod, t])
+  }
 
   const handleNext = () => {
     if (!selectedPeriod || !selectedSpcId) return
@@ -91,8 +72,8 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
     })
   }
 
-  const periodOptions: SelectOption[] = periods.map((p) => ({ label: p.code, value: p.id }))
-  const courseOptions: SelectOption[] = spcList.map((s) => ({
+  const periodOptions: AnyOption[] = periods.map((p) => ({ label: p.code, value: p.id }))
+  const courseOptions: AnyOption[] = spcList.map((s) => ({
     label: getSpcCourseName(s)[locale] || String(s.course?.id ?? s.course_id),
     value: s.id,
   }))
@@ -114,7 +95,7 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
           value={selectedPeriod}
           isDisabled={loadingPeriods}
           isSearchable
-          onChange={(_, v) => setSelectedPeriod(v as SelectOption | null)}
+          onChange={handlePeriodChange}
         />
 
         <Select
@@ -132,11 +113,9 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
           value={selectedSpcId}
           isDisabled={!selectedPeriod || loadingCourses || spcList.length === 0}
           isSearchable
-          onChange={(_, v) => setSelectedSpcId(v as SelectOption | null)}
+          onChange={(_, v) => setSelectedSpcId(Array.isArray(v) ? (v[0] ?? null) : v)}
         />
       </div>
-
-      {error && <p className="text-sm text-red-600">{error}</p>}
 
       <div className="flex justify-end">
         <Button variant="primary" disabled={!canContinue} onClick={handleNext}>
