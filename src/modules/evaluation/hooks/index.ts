@@ -10,5 +10,3 @@ export * from './useQualificationStatus';
 export * from './useRubricEditor';
 export * from './useRubrics';
 export * from './usePerformanceLevels';
-
-export {};

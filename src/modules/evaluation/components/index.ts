@@ -6,5 +6,3 @@
 
 export * from './project-edit';
 export * from './rubric-editor';
-
-export {};

@@ -5,5 +5,3 @@
  */
 export * from './typeCodes';
 export * from './limits';
-
-export {};
