@@ -6,7 +6,7 @@ import {
 	StudyPlanResponse,
 } from '@/modules/academic';
 import { CommissionResponse, OutcomeResponse } from '@/modules/accreditation/api/dtos';
-import { TypeResponse } from '@/modules/core/api/dtos';
+import { TypeResponse } from '@/shared/types';
 import { RubricQuestionResponse } from './rubric-question.response';
 
 /** Shape returned by GET /rubrics/get-all and similar list endpoints */

@@ -9,5 +9,3 @@ export type TypeResponse = {
 	name: { en: string; es: string };
 	description: { en: string; es: string };
 };
-
-export {};
