@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Input, Select, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
 import { LoginPayload } from '@/shared/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
+import { safeRedirect } from '@/shared/lib';
 import { schoolOptions } from '@/modules/auth/constants';
 import { useAuth, useI18n } from '@/providers';
 
@@ -64,7 +65,7 @@ export default function LoginForm() {
 			setError(t('login.error.schoolRequired'));
 			return;
 		}
-		window.location.assign(getMicrosoftLoginUrl(schoolCode));
+		safeRedirect(getMicrosoftLoginUrl(schoolCode), 'assign');
 	};
 
 	return (

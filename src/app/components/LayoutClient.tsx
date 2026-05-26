@@ -7,7 +7,7 @@ import AppSidebar from '@/app/components/app-sidebar';
 import { ABETProvider, SidebarProvider, useAuth } from '@/providers';
 import { logoutUser } from '@/modules/auth/services';
 import { useSessionExpiry } from '@/shared/hooks';
-import { clearPreferenceCookies } from '@/shared/lib';
+import { clearPreferenceCookies, safeRedirect } from '@/shared/lib';
 
 type LayoutClientProps = {
 	children: ReactNode;
@@ -27,7 +27,7 @@ export default function LayoutClient({ children }: LayoutClientProps) {
 		clearUser();
 		clearPreferenceCookies();
 		setSessionExpiredOpen(true);
-		window.location.replace('/auth/login');
+		safeRedirect('/auth/login');
 	};
 
 	const handleGoToLogin = async () => {
@@ -38,7 +38,7 @@ export default function LayoutClient({ children }: LayoutClientProps) {
 		clearUser();
 		clearPreferenceCookies();
 		setSessionExpiredOpen(false);
-		window.location.replace('/auth/login');
+		safeRedirect('/auth/login');
 	};
 
 	useEffect(() => {
