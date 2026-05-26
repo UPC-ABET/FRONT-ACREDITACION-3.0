@@ -8,7 +8,7 @@ import { getSchoolCookie } from '@/shared/lib';
 import { useABET, useAuth, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
 import { DEFAULT_USER_INITIALS, PROGRAM_MODALITY_GROUP_CODE } from '@/shared/constants';
-import { getTypesByGroupCode } from '@/shared/lib';
+import { getTypesByGroupCode } from '@/modules/core';
 import type { NavbarProps } from '@/shared/types';
 
 

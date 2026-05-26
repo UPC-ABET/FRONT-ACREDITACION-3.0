@@ -1,5 +1,5 @@
-import { apiPost, ApiError } from '@/shared/lib';
-import type { I18nText } from '../types';
+import { apiPost } from '@/shared/lib/api-client';
+import { ApiError } from '@/shared/lib/api-error';
 
 interface Envelope<T> {
 	code: number;
@@ -11,8 +11,8 @@ interface ParameterRow<T> {
 	id: number;
 	code: string;
 	value: T;
-	name: I18nText;
-	description: I18nText;
+	name: Record<string, string>;
+	description: Record<string, string>;
 	is_active: boolean;
 }
 

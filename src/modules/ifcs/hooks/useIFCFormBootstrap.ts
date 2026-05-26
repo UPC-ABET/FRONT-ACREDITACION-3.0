@@ -3,8 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { PARAMETER_CODES, TYPE_GROUP_CODES } from '../constants';
 import { getIFCPrefill, getIFCView } from '../services/ifcsService';
-import { getParameterByCode } from '../services/parametersService';
-import { getTypesByGroupCode } from '../services/typesService';
+import { getParameterByCode, getTypesByGroupCode } from '@/modules/core';
 import type { CriticalityOption, IFCField, IFCPrefill, IFCViewPayload } from '../types';
 
 export type IFCFormMode =
