@@ -46,8 +46,8 @@ export default function LoginForm() {
 			await loginByCredentials(payload);
 			await refreshUser();
 			router.replace('/');
-		} catch (err: any) {
-			const rawMessage = typeof err?.message === 'string' ? err.message : '';
+		} catch (err: unknown) {
+			const rawMessage = err instanceof Error ? err.message : '';
 			const translated = rawMessage ? t(rawMessage) : '';
 			const resolvedMessage =
 				translated && translated !== rawMessage
@@ -81,7 +81,7 @@ export default function LoginForm() {
 					<Select
 						name="school"
 						value={localizedSchools.find((s) => s.value === schoolCode) || null}
-						onChange={(_, v) => setSchoolCode((v as any)?.value || '')}
+						onChange={(_, v) => setSchoolCode(!v || Array.isArray(v) ? '' : String(v.value))}
 						options={localizedSchools}
 						placeholder={t('login.school.placeholder')}
 					/>
@@ -91,7 +91,7 @@ export default function LoginForm() {
 					<Input
 						id="email"
 						value={email}
-						onChange={(e: any) => setEmail(e.target.value)}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
 						placeholder={t('login.user.placeholder')}
 					/>
 				</div>
@@ -101,7 +101,7 @@ export default function LoginForm() {
 						id="password"
 						type="password"
 						value={password}
-						onChange={(e: any) => setPassword(e.target.value)}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
 						placeholder={t('login.password.placeholder')}
 					/>
 				</div>
