@@ -7,7 +7,7 @@ import type { ProgramGroup } from '../../types';
 
 type Props = { outcomeResult: ProgramGroup[] };
 
-export function IFCResultadoLogros({ outcomeResult }: Props) {
+export function IFCOutcomeResults({ outcomeResult }: Props) {
 	const { locale: lang } = useI18n();
 	if (!outcomeResult || outcomeResult.length === 0) return null;
 

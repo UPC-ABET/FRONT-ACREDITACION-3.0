@@ -16,8 +16,8 @@ import type {
 	IFCViewPayload,
 } from '../../types';
 import { IFCPageTitle } from '../shared/IFCPageTitle';
-import { IFCResultadoAlcanzado } from '../shared/IFCResultadoAlcanzado';
-import { IFCResultadoLogros } from '../shared/IFCResultadoLogros';
+import { IFCLearningOutcomeReached } from '../shared/IFCLearningOutcomeReached';
+import { IFCOutcomeResults } from '../shared/IFCOutcomeResults';
 import { PreviousActionsTable } from '../shared/PreviousActionsTable';
 import { SubmitConfirmModal } from '../shared/SubmitConfirmModal';
 import { FORM_LABELS } from './formLabels';
@@ -150,8 +150,8 @@ export function IFCForm(props: Props) {
 			</Card>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-				<IFCResultadoLogros outcomeResult={props.prefill.outcome_course_result} />
-				<IFCResultadoAlcanzado learningOutcome={props.prefill.course_learning_outcome} />
+				<IFCOutcomeResults outcomeResult={props.prefill.outcome_course_result} />
+				<IFCLearningOutcomeReached learningOutcome={props.prefill.course_learning_outcome} />
 			</div>
 
 			{props.ifcFields.length > 0 && (

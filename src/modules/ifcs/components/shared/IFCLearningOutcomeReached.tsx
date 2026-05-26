@@ -7,7 +7,7 @@ import type { I18nText } from '../../types';
 
 type Props = { learningOutcome: I18nText };
 
-export function IFCResultadoAlcanzado({ learningOutcome }: Props) {
+export function IFCLearningOutcomeReached({ learningOutcome }: Props) {
 	const { locale: lang } = useI18n();
 	const text = learningOutcome?.[lang] ?? learningOutcome?.es ?? '';
 
