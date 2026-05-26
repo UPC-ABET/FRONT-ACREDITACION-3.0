@@ -18,7 +18,7 @@ import { useI18n } from '@/providers';
 import { professorsService, typeGroupsService, typesService } from '@/modules/academic/services';
 import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
-import type { ProfessorSearchResponse } from '@/modules/academic/api/dtos/response';
+import type { ProfessorSearchResponse } from '@/modules/academic';
 import { EVALUATOR_CODES } from '../../constants/type-codes';
 
 const EVALUATOR_TYPE_GROUP_CODE = EVALUATOR_CODES.TYPE_GROUP;

@@ -1,6 +1,6 @@
 import { ApiResponse } from '@/shared';
 import { apiPost } from '@/shared/lib';
-import { TypeGroupResponse } from '../api/dtos/response';
+import { TypeGroupResponse } from './types';
 
 export const typeGroupsService = {
 	getByFilters(filters: { code?: string }): Promise<ApiResponse<TypeGroupResponse[]>> {

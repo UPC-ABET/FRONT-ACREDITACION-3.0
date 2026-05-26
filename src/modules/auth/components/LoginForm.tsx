@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input, Select, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
-import { LoginPayload } from '@/shared/types';
+import type { LoginPayload } from '@/modules/auth/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
 import { safeRedirect } from '@/shared/lib';
 import { schoolOptions } from '@/modules/auth/constants';

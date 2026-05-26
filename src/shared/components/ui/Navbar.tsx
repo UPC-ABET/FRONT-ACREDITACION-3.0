@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
-import { getSchoolFromCookie } from '@/shared/lib';
+import { getSchoolCookie } from '@/shared/lib';
 import { useABET, useAuth, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
 import { DEFAULT_USER_INITIALS, PROGRAM_MODALITY_GROUP_CODE } from '@/shared/constants';
@@ -13,7 +13,7 @@ import type { NavbarProps } from '@/shared/types';
 
 
 function readCookieSchool(): string {
-	const school = getSchoolFromCookie();
+	const school = getSchoolCookie();
 	const schoolName = school?.code as string | undefined;
 	return typeof schoolName === 'string' ? schoolName : '';
 }

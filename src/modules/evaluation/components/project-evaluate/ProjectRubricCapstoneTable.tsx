@@ -11,7 +11,7 @@ import { useSubmitEvaluation } from '../../hooks/use-evaluations';
 import type {
 	RubricQuestionDetailsResponse,
 	ProjectDetailsStudentResponse,
-} from '../../api/dtos/response';
+} from '../../services/types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

@@ -1,11 +1,11 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost, apiPatch, apiDelete } from '@/shared/lib';
-import { FilterProjectDto } from '../api/dtos/request';
-import {
+import type {
+	FilterProjectDto,
 	ProjectByProfessorResponse,
 	ProjectDetailsResponse,
 	ProjectResponse,
-} from '../api/dtos/response';
+} from './types';
 
 export const projectsService = {
 	create(body: Record<string, unknown>): Promise<ApiResponse<any>> {

@@ -16,7 +16,7 @@ import { Select } from '@/shared/components/ui/Select'
 import { Button } from '@/shared/components/ui/Button'
 import { useI18n } from '@/providers'
 import { professorsService, typeGroupsService, typesService } from '@/modules/academic/services'
-import type { ProfessorSearchResponse } from '@/modules/academic/api/dtos/response'
+import type { ProfessorSearchResponse } from '@/modules/academic'
 import type { LocalEvaluator } from './ProjectWizardStep2'
 import { EVALUATOR_CODES } from '../../constants/type-codes'
 

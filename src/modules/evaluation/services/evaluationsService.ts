@@ -1,6 +1,6 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost, apiPut, apiDelete } from '@/shared/lib';
-import { EvaluationResponse } from '../api/dtos/response';
+import type { EvaluationResponse } from './types';
 
 export const evaluationsService = {
 	submit(body: Record<string, unknown>): Promise<ApiResponse<any>> {

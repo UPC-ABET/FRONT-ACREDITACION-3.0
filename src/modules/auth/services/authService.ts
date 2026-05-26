@@ -1,6 +1,5 @@
-import type { LoginPayload } from '@/shared/types';
 import { requestJson, getApiBaseUrl, clearPreferenceCookies, ApiError } from '@/shared/lib';
-import type { LoginResponse } from '@/modules/auth/types';
+import type { LoginPayload, LoginResponse } from '@/modules/auth/types';
 
 const USERS_BASE_PATH = '/users';
 

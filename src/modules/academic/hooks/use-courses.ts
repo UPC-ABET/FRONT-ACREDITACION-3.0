@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { coursesService } from '../services';
-import { FilterCourseRequest } from '../api/dtos/request';
+import { FilterCourseRequest } from '../services/types';
 
 export const coursesQueryKeys = {
 	all: ['courses'] as const,

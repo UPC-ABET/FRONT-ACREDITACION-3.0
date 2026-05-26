@@ -22,11 +22,11 @@ import {
   DialogClose,
 } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
-import { getSchoolFromCookie } from '@/shared/lib/jwt'
+import { getSchoolCookie } from '@/shared/lib'
 import { rubricWizardService } from '../services/rubricWizardService'
 import { studyPlanCoursesService } from '../services/studyPlanCoursesService'
 import { AddEvaluationCourseModal } from '../components/evaluation-courses/AddEvaluationCourseModal'
-import type { AcademicPeriodResponse, StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response'
+import type { AcademicPeriodResponse, StudyPlanCourseResponse } from '@/modules/academic'
 
 type SelectOption = { label: string; value: string | number }
 
@@ -36,7 +36,7 @@ export function EvaluationCoursesPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<StudyPlanCourseResponse | null>(null)
 
-  const schoolId = getSchoolFromCookie()?.id as number | undefined
+  const schoolId = getSchoolCookie()?.id as number | undefined
   const queryClient = useQueryClient()
 
   // Periods

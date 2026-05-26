@@ -14,10 +14,10 @@ import {
   Select,
 } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
-import { getSchoolFromCookie } from '@/shared/lib/jwt'
+import { getSchoolCookie } from '@/shared/lib'
 import { rubricWizardService } from '../../services/rubricWizardService'
 import { studyPlanCoursesService } from '../../services/studyPlanCoursesService'
-import type { AcademicPeriodResponse, StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response'
+import type { AcademicPeriodResponse, StudyPlanCourseResponse } from '@/modules/academic'
 
 type SelectOption = { label: string; value: string | number }
 
@@ -58,7 +58,7 @@ export function AddEvaluationCourseModal({
 
   const periodOptions: SelectOption[] = periods.map((p) => ({ label: p.code, value: p.id }))
 
-  const schoolId = getSchoolFromCookie()?.id as number | undefined
+  const schoolId = getSchoolCookie()?.id as number | undefined
 
   const { data: spcList = [], isLoading: loadingCourses } = useQuery<StudyPlanCourseResponse[]>({
     queryKey: ['spc-modal', selectedPeriod?.value, schoolId],

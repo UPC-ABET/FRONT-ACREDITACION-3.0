@@ -2,6 +2,6 @@
  * ACCREDITATION module barrel
  */
 
-export * from './api/dtos';
+export * from './types';
 
 export {};

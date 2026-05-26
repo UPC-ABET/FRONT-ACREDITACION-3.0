@@ -4,7 +4,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { usePathname, useRouter } from 'next/navigation';
 import { SessionExpiredAlert } from '@/shared/components';
 import { useAuth } from '@/providers/auth-provider';
-import { useSessionExpiry } from '@/shared/hooks';
+import { useSessionExpiry } from '@/modules/auth/hooks';
 import { logoutUser } from '@/modules/auth/services';
 import { clearPreferenceCookies, safeRedirect } from '@/shared/lib';
 

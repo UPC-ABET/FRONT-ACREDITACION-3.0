@@ -1,7 +1,7 @@
 import { ApiResponse } from '@/shared'
 import { apiGet, apiPost } from '@/shared/lib'
-import { AcademicPeriodResponse, CourseResponse, StudyPlanCourseResponse, TypeItemResponse } from '@/modules/academic/api/dtos/response'
-import { CourseOutcomeMappingResponse, OutcomeResponse } from '../api/dtos'
+import { AcademicPeriodResponse, CourseResponse, StudyPlanCourseResponse, TypeItemResponse } from '@/modules/academic'
+import type { CourseOutcomeMappingResponse, OutcomeResponse } from './types'
 
 export type { CourseOutcomeMappingResponse, OutcomeResponse }
 

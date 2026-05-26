@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { projectsService } from '../services';
-import { FilterProjectDto } from '../api/dtos/request';
+import type { FilterProjectDto } from '../services/types';
 
 type ByProfessorParams = {
 	academicPeriodId?: number;

@@ -18,7 +18,7 @@ import {
 import { Select } from '@/shared/components/ui/Select';
 import { cn } from '@/shared/lib/utils';
 import { useAuth, useI18n } from '@/providers';
-import { getSchoolFromCookie } from '@/shared/lib/jwt';
+import { getSchoolCookie } from '@/shared/lib';
 import { academicPeriodsService } from '@/modules/academic/services';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
@@ -44,7 +44,7 @@ export function GradeProjectsPage() {
 	const userId = authUser?.id ?? null;
 
 	useEffect(() => {
-		const school = getSchoolFromCookie();
+		const school = getSchoolCookie();
 		setSchoolId(school?.id as number | null);
 	}, []);
 

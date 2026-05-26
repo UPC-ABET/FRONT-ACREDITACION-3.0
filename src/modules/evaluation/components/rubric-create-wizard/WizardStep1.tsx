@@ -3,11 +3,10 @@
 import { useEffect, useState } from 'react'
 import { Select, Button } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
-import { getSchoolFromCookie } from '@/shared/lib/jwt'
+import { getSchoolCookie } from '@/shared/lib'
 import { rubricWizardService } from '../../services/rubricWizardService'
 import { studyPlanCoursesService } from '../../services/studyPlanCoursesService'
-import type { AcademicPeriodResponse } from '@/modules/academic/api/dtos/response'
-import type { StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response'
+import type { AcademicPeriodResponse, StudyPlanCourseResponse } from '@/modules/academic'
 
 export interface Step1Data {
   periodId: number
@@ -56,7 +55,7 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
       setSelectedSpcId(null)
       return
     }
-    const schoolId = getSchoolFromCookie()?.id as number | undefined
+    const schoolId = getSchoolCookie()?.id as number | undefined
     if (!schoolId) {
       setError(t('rubrics.wizard.step1.error.noSchool'))
       return

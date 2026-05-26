@@ -32,7 +32,7 @@ import {
 	useUpdatePerformanceLevel,
 	useDeletePerformanceLevel,
 } from '../hooks/use-performance-levels';
-import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
+import type { PerformanceLevelResponse } from '@/modules/academic';
 import type { CreatePerformanceLevelDto } from '@/modules/academic/services/performanceLevelsService';
 
 type OptionItem = { label: string; value: number };

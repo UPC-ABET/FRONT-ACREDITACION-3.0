@@ -1,4 +1,4 @@
-import { RubricResponse } from '../api/dtos';
+import { RubricResponse } from '../services/types';
 import { RubricListRow } from '../types/rubric-list-row.type';
 
 export function mapRubricToRow(rubric: RubricResponse): RubricListRow {

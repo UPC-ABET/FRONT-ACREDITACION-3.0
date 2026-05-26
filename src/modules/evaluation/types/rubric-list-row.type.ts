@@ -1,4 +1,4 @@
-import { RubricResponse } from '../api/dtos';
+import { RubricResponse } from '../services/types';
 
 export type RubricListRow = {
 	id: number;

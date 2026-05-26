@@ -14,7 +14,7 @@ import { Input } from '@/shared/components/ui/Input'
 import { Button } from '@/shared/components/ui/Button'
 import { useI18n } from '@/providers'
 import { coursesService } from '@/modules/academic/services'
-import type { EnrolledStudentResponse } from '@/modules/academic/api/dtos/response'
+import type { EnrolledStudentResponse } from '@/modules/academic'
 
 interface WizardSelectStudentsModalProps {
   open: boolean

@@ -1,6 +1,5 @@
 import { ApiResponse } from '@/shared';
-import { FilterProgramRequest } from '../api/dtos/request';
-import { ProgramResponse } from '../api/dtos/response';
+import { FilterProgramRequest, ProgramResponse } from './types';
 import { apiPost } from '@/shared/lib';
 
 export const programsService = {

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Select, Button, Badge } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
 import { rubricWizardService } from '../../services/rubricWizardService'
-import type { TypeItemResponse } from '@/modules/academic/api/dtos/response'
+import type { TypeItemResponse } from '@/modules/academic'
 import type { Step1Data } from './WizardStep1'
 import { GRADE_CODES, OUTCOME_CODES, RUBRIC_CODES } from '../../constants/type-codes'
 
