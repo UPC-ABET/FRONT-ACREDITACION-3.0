@@ -6,7 +6,7 @@ import { Input, Select, Button, LoadingDialog, ErrorDialog } from '@/shared/comp
 import type { LoginPayload } from '@/modules/auth/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
 import { safeRedirect } from '@/shared/lib';
-import { schoolOptions } from '@/modules/auth/constants';
+import { SCHOOL_OPTIONS } from '@/modules/auth/constants';
 import { useAuth, useI18n } from '@/providers';
 
 export default function LoginForm() {
@@ -23,7 +23,7 @@ export default function LoginForm() {
 
 	const localizedSchools = useMemo(
 		() =>
-			schoolOptions.map((option) => ({
+			SCHOOL_OPTIONS.map((option) => ({
 				value: option.id,
 				label: t(option.labelKey),
 			})),

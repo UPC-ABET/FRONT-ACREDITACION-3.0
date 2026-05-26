@@ -1,4 +1,4 @@
-export const schoolOptions = [
+export const SCHOOL_OPTIONS = [
 	{ id: 'EISCB', labelKey: 'school.eiscb' },
 	{ id: 'EISCC', labelKey: 'school.eiscc' },
 	{ id: 'INGGMI', labelKey: 'school.inggmi' },
