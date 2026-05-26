@@ -16,6 +16,10 @@ export type OutcomeResponse = {
 	created_at: string;
 	updated_at: string | null;
 	program_commission_id: number;
+	program_commission?: {
+		id: number;
+		commission: CommissionResponse;
+	};
 	outcome_code: string;
 	outcome_name: { en: string; es: string };
 	outcome_description: { en: string; es: string };
