@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createProjectSchema } from './create-project.schema';
+import { createProjectSchema } from './createProjectSchema';
 
 export const createProjectFullSchema = createProjectSchema.extend({
 	student_section_enrollment_ids: z.array(z.number()).optional(),

@@ -4,12 +4,12 @@
  * Cliente HTTP base compartido para toda la app.
  */
 
-import { ApiError } from './api-error';
+import { ApiError } from './apiError';
 import { logger } from './logger';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
-export { triggerFileDownload, triggerBlobDownload, fileToBase64 } from '@/shared/lib/file-download';
+export { triggerFileDownload, triggerBlobDownload, fileToBase64 } from '@/shared/lib/fileDownload';
 
 export type ApiEnvelope<T> = {
 	data?: T;

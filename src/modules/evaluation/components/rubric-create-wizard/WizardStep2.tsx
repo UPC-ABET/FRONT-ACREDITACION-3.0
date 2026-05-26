@@ -6,7 +6,7 @@ import { useI18n } from '@/providers'
 import { rubricWizardService } from '../../services/rubricWizardService'
 import type { TypeItemResponse } from '@/modules/academic'
 import type { Step1Data } from './WizardStep1'
-import { GRADE_CODES, OUTCOME_CODES, RUBRIC_CODES } from '../../constants/type-codes'
+import { GRADE_CODES, OUTCOME_CODES, RUBRIC_CODES } from '../../constants/typeCodes'
 
 const GRADE_TYPE_GROUP = GRADE_CODES.TYPE_GROUP
 const RUBRIC_TYPE_GROUP = RUBRIC_CODES.TYPE_GROUP

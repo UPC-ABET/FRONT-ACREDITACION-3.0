@@ -3,7 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { SessionExpiredAlert } from '@/shared/components';
-import { useAuth } from '@/providers/auth-provider';
+import { useAuth } from '@/providers/AuthProvider';
 import { useSessionExpiry } from '@/modules/auth/hooks';
 import { logoutUser } from '@/modules/auth/services';
 import { clearPreferenceCookies, safeRedirect } from '@/shared/lib';

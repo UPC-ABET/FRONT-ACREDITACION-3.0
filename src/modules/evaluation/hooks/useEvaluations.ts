@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { evaluationsService } from '../services';
-import { projectsQueryKeys } from './use-projects';
+import { projectsQueryKeys } from './useProjects';
 
 export const evaluationsQueryKeys = {
 	byEvaluator: (evaluatorId: string | number) =>

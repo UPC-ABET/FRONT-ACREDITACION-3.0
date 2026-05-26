@@ -18,8 +18,8 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useAuth, useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/api-error';
-import { tryTranslate } from '@/shared/utils/try-translate';
+import { getErrorMessage } from '@/shared/lib/apiError';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { ORG_LABELS, TYPE_CODES } from '../constants';
 import {
 	useIFCList,

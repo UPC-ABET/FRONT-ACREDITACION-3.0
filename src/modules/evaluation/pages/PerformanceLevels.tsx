@@ -31,7 +31,7 @@ import {
 	useCreatePerformanceLevel,
 	useUpdatePerformanceLevel,
 	useDeletePerformanceLevel,
-} from '../hooks/use-performance-levels';
+} from '../hooks/usePerformanceLevels';
 import type { PerformanceLevelResponse } from '@/modules/academic';
 import type { CreatePerformanceLevelDto } from '@/modules/academic/services/performanceLevelsService';
 

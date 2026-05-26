@@ -1,3 +1,3 @@
-export * from './use-mobile';
+export * from './useMobile';
 export * from './useApiErrorToast';
 export * from './useLanguages';

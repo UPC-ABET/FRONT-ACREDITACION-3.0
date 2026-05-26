@@ -1,5 +1,5 @@
 import { RubricResponse } from '../types';
-import { RubricListRow } from '../types/rubric-list-row.type';
+import { RubricListRow } from '../types/rubricListRow';
 
 export function mapRubricToRow(rubric: RubricResponse): RubricListRow {
 	const course = rubric.study_plan_course?.course;

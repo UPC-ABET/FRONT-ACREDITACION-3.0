@@ -11,7 +11,7 @@ import {
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, DataTable, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { tryTranslate } from '@/shared/utils/try-translate';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { TYPE_CODES } from '../constants';
 import { usePdfDownload } from '../hooks/usePdfDownload';
 import { effectiveStatus } from '../services/scope';

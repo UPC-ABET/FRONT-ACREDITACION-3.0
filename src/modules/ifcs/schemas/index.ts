@@ -1,1 +1,1 @@
-export { hasAnyLang, validateIFCForm } from './ifc-form.schema';
+export { hasAnyLang, validateIFCForm } from './ifcFormSchema';

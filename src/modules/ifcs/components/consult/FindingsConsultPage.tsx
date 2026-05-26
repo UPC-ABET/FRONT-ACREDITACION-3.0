@@ -12,7 +12,7 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/api-error';
+import { getErrorMessage } from '@/shared/lib/apiError';
 import { TYPE_CODES } from '../../constants';
 import { useFindingsList, useOrgScope } from '../../hooks';
 import { deleteFinding } from '../../services/ifcFindingsService';

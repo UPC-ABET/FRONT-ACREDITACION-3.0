@@ -1,5 +1,5 @@
-import { apiGet } from '@/shared/lib/api-client';
-import { ApiError } from '@/shared/lib/api-error';
+import { apiGet } from '@/shared/lib/apiClient';
+import { ApiError } from '@/shared/lib/apiError';
 
 export interface TypeOption {
 	id: number;

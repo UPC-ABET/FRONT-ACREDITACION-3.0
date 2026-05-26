@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { getErrorMessage } from '@/shared/lib/api-error';
+import { getErrorMessage } from '@/shared/lib/apiError';
 import { getFindingDetail } from '../services/ifcFindingsService';
 import type { FindingDetailPayload } from '../types';
 

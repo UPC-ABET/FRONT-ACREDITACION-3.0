@@ -1,4 +1,4 @@
-import { OutcomeWithCriteria } from './outcome-with-criteria.type';
+import { OutcomeWithCriteria } from './outcomeWithCriteria';
 
 export type CommissionTab = {
 	id: string;

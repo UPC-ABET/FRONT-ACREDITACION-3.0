@@ -1,6 +1,6 @@
-export * from './use-academic-periods';
-export * from './use-courses';
-export * from './use-professors';
-export * from './use-programs';
+export * from './useAcademicPeriods';
+export * from './useCourses';
+export * from './useProfessors';
+export * from './usePrograms';
 
 export {};

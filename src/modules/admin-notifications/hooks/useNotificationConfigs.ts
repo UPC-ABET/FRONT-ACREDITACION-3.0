@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { getErrorMessage } from '@/shared/lib/api-error';
+import { getErrorMessage } from '@/shared/lib/apiError';
 import { getParameterByCode, getTypesByGroupCode } from '@/modules/core';
 import { listNotificationConfigs } from '../services/notificationConfigsService';
 import type { CoreType, NotificationConfig, NotifyVar } from '../types';

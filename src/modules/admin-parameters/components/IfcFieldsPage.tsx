@@ -13,8 +13,8 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/api-error';
-import { tryTranslate } from '@/shared/utils/try-translate';
+import { getErrorMessage } from '@/shared/lib/apiError';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useParameter } from '../hooks/useParameter';
 import { updateParameter } from '../services/parametersAdminService';
 import { PARAM_CODES, type IFCFieldDescriptor } from '../types';

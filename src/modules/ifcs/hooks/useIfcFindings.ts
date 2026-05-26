@@ -8,7 +8,7 @@ import {
 	patchFinding,
 } from '../services/ifcFindingsService';
 import type { PatchFindingBody } from '../types';
-import { ifcQueryKeys } from './use-ifcs';
+import { ifcQueryKeys } from './useIfcs';
 
 export const findingQueryKeys = {
 	all: ['ifc-findings'] as const,

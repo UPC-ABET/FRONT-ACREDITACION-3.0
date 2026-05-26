@@ -8,7 +8,7 @@ import { CommissionTabs } from './CommissionTabs';
 import { CommissionValidator } from './CommissionValidator';
 import { CriteriaInlineRow } from './CriteriaInlineRow';
 import { OutcomeCard } from './OutcomeCard';
-import { verificationOutcomes } from '../../utils/capstone-utils';
+import { verificationOutcomes } from '../../utils/capstoneUtils';
 import { PerformanceLevelsSummary } from './PerformanceLevelsSummary';
 import { rubricsService } from '../../services';
 import { CriteriaItem, RubricDetail } from '../../types';

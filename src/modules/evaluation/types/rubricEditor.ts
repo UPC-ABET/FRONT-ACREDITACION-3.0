@@ -1,4 +1,4 @@
-import { CriteriaItem } from './criteria-item.type';
+import { CriteriaItem } from './criteriaItem';
 
 export type SaveCriteriaPayload = {
 	criteriaId: string | null;

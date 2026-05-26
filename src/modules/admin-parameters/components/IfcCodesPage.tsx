@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card, LoadingDialog, SuccessDialog, TableErrorState, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { tryTranslate } from '@/shared/utils/try-translate';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useParameter } from '../hooks/useParameter';
 import { PARAM_CODES, type ParameterRow } from '../types';
 import { PrefixParameterCard } from './PrefixParameterCard';

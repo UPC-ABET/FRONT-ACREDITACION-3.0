@@ -8,7 +8,7 @@ import { useAuth, useI18n } from '@/providers';
 import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable';
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable';
-import { GRADE_IDS, QUALIFICATION_STATUS_CODES, RUBRIC_IDS } from '../constants/type-codes';
+import { GRADE_IDS, QUALIFICATION_STATUS_CODES, RUBRIC_IDS } from '../constants/typeCodes';
 
 const CAPSTONE_RUBRIC_TYPE_ID = RUBRIC_IDS.CAPSTONE;
 

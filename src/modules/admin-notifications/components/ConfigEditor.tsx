@@ -8,7 +8,7 @@ import {
 	UsersIcon,
 } from '@heroicons/react/24/outline';
 import { Button, I18nTextField, Toggle } from '@/shared/components';
-import { getErrorMessage } from '@/shared/lib/api-error';
+import { getErrorMessage } from '@/shared/lib/apiError';
 import { useI18n } from '@/providers';
 import type { I18nText } from '@/shared/types';
 import { useNotificationConfigContext } from '../hooks/useNotificationConfigContext';

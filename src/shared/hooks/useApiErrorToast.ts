@@ -2,8 +2,8 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/api-error';
-import { tryTranslate } from '@/shared/utils/try-translate';
+import { getErrorMessage } from '@/shared/lib/apiError';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info';
 

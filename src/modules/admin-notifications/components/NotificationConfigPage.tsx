@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { tryTranslate } from '@/shared/utils/try-translate';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { useNotificationConfigs } from '../hooks/useNotificationConfigs';
 import { NotificationConfigProvider } from '../hooks/useNotificationConfigContext';

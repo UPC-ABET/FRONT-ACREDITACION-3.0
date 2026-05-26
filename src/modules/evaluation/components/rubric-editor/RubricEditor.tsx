@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Skeleton } from '@/shared/components/ui';
 import { Toast } from '@/shared/components/ui/Toast';
 import { useI18n } from '@/providers';
-import { useRubricEditor } from '../../hooks/use-rubric-editor';
+import { useRubricEditor } from '../../hooks/useRubricEditor';
 import { RubricHeader } from './RubricHeader';
 import { ReadonlyBanner } from './ReadonlyBanner';
 import { RubricEditorCapstone } from './RubricEditorCapstone';

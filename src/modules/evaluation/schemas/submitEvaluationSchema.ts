@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { evaluationScoreSchema } from './evaluation-score.schema';
+import { evaluationScoreSchema } from './evaluationScoreSchema';
 
 export const submitEvaluationSchema = z.object({
 	project_student_id: z.number(),

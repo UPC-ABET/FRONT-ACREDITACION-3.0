@@ -4,11 +4,11 @@
  * Hooks personalizados del módulo evaluation.
  */
 
-export * from './use-evaluations';
-export * from './use-projects';
-export * from './use-qualification-status';
-export * from './use-rubric-editor';
-export * from './use-rubrics';
-export * from './use-performance-levels';
+export * from './useEvaluations';
+export * from './useProjects';
+export * from './useQualificationStatus';
+export * from './useRubricEditor';
+export * from './useRubrics';
+export * from './usePerformanceLevels';
 
 export {};

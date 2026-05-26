@@ -1,6 +1,6 @@
-import { CommissionTab } from './commission-tab.type';
-import { PerformanceLevel } from './performance-level.type';
-import { RubricQuestion } from './rubric-question.type';
+import { CommissionTab } from './commissionTab';
+import { PerformanceLevel } from './performanceLevel';
+import { RubricQuestion } from './rubricQuestion';
 
 export type RubricDetail = {
 	id: string;

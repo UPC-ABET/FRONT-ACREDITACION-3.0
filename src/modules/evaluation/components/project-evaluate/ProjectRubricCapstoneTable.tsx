@@ -7,7 +7,7 @@ import { Toggle } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import { performanceLevelsService } from '@/modules/academic/services';
-import { useSubmitEvaluation } from '../../hooks/use-evaluations';
+import { useSubmitEvaluation } from '../../hooks/useEvaluations';
 import type {
 	RubricQuestionDetailsResponse,
 	ProjectDetailsStudentResponse,

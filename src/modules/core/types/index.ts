@@ -1,1 +1,1 @@
-export * from './type-response';
+export * from './typeResponse';

@@ -22,7 +22,7 @@ import { getSchoolCookie } from '@/shared/lib';
 import { academicPeriodsService } from '@/modules/academic/services';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
-import { GRADE_IDS } from '../constants/type-codes';
+import { GRADE_IDS } from '../constants/typeCodes';
 
 type RubricTab = 'partial' | 'final';
 

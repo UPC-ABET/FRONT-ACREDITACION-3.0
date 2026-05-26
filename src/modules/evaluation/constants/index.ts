@@ -3,7 +3,7 @@
  *
  * Constantes del módulo rubrics.
  */
-export * from './type-codes';
+export * from './typeCodes';
 export * from './limits';
 
 export {};

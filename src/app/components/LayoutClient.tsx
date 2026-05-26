@@ -2,9 +2,9 @@
 
 import React, { ReactNode } from 'react';
 import { Navbar } from '@/shared/components';
-import AppSidebar from '@/app/components/app-sidebar';
+import AppSidebar from '@/app/components/AppSidebar';
 import { ABETProvider, SidebarProvider } from '@/providers';
-import { useSessionGuard } from '@/providers/session-guard';
+import { useSessionGuard } from '@/providers/SessionGuard';
 
 type LayoutClientProps = {
 	children: ReactNode;

@@ -1,5 +1,5 @@
-import { apiPost } from '@/shared/lib/api-client';
-import { ApiError } from '@/shared/lib/api-error';
+import { apiPost } from '@/shared/lib/apiClient';
+import { ApiError } from '@/shared/lib/apiError';
 
 interface Envelope<T> {
 	code: number;

@@ -18,7 +18,7 @@ import { useI18n } from '@/providers'
 import { professorsService, typeGroupsService, typesService } from '@/modules/academic/services'
 import type { ProfessorSearchResponse } from '@/modules/academic'
 import type { LocalEvaluator } from './ProjectWizardStep2'
-import { EVALUATOR_CODES } from '../../constants/type-codes'
+import { EVALUATOR_CODES } from '../../constants/typeCodes'
 
 const EVALUATOR_TYPE_GROUP_CODE = EVALUATOR_CODES.TYPE_GROUP
 const LIMITED_CODES = EVALUATOR_CODES.LIMITED

@@ -1,4 +1,4 @@
-import { QuestionCriteria } from './question-criteria.type';
+import { QuestionCriteria } from './questionCriteria';
 
 export type RubricQuestion = {
 	id: string | null;

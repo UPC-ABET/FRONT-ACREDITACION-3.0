@@ -1,12 +1,12 @@
-export * from './commission-tab.type';
-export * from './criteria-item.type';
-export * from './outcome-with-criteria.type';
-export * from './performance-level.type';
-export * from './question-criteria.type';
-export * from './rubric-detail.type';
-export * from './rubric-editor.type';
-export * from './rubric-list-row.type';
-export * from './rubric-question.type';
+export * from './commissionTab';
+export * from './criteriaItem';
+export * from './outcomeWithCriteria';
+export * from './performanceLevel';
+export * from './questionCriteria';
+export * from './rubricDetail';
+export * from './rubricEditor';
+export * from './rubricListRow';
+export * from './rubricQuestion';
 
 // ── Request DTOs ─────────────────────────────────────────────────────────────
 

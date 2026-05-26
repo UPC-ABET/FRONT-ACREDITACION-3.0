@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { ApiError } from '@/shared/lib/api-error';
+import { ApiError } from '@/shared/lib/apiError';
 import { logger } from '@/shared/lib/logger';
 import { rubricsService } from '../services';
 import { RubricDetail } from '../types';
