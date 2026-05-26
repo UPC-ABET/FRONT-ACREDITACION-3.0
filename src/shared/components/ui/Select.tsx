@@ -113,46 +113,49 @@ function Select({
 		setInputValue('');
 	};
 
-	const controlHeight = size === 'sm' ? 32 : 40;
-	const fontSize = size === 'sm' ? 12 : 14;
-	const paddingY = size === 'sm' ? 2 : 6;
-	const paddingX = size === 'sm' ? 8 : 10;
+	const selectStyles = useMemo(() => {
+		const controlHeight = size === 'sm' ? 32 : 40;
+		const fontSize = size === 'sm' ? 12 : 14;
+		const paddingY = size === 'sm' ? 2 : 6;
+		const paddingX = size === 'sm' ? 8 : 10;
+		const hasError = Boolean(error);
 
-	const selectStyles = {
-		control: (base: CSSObjectWithLabel, state: { isFocused: boolean }) => ({
-			...base,
-			minHeight: controlHeight,
-			borderRadius: 6,
-			borderColor: error ? '#ef4444' : state.isFocused ? '#dc2626' : '#e4e4e7',
-			boxShadow: 'none',
-			fontSize,
-			':hover': {
-				borderColor: state.isFocused ? '#dc2626' : '#d4d4d8',
-			},
-		}),
-		valueContainer: (base: CSSObjectWithLabel) => ({
-			...base,
-			paddingTop: paddingY,
-			paddingBottom: paddingY,
-			paddingLeft: paddingX,
-			paddingRight: paddingX,
-		}),
-		input: (base: CSSObjectWithLabel) => ({
-			...base,
-			margin: 0,
-			padding: 0,
-		}),
-		indicatorsContainer: (base: CSSObjectWithLabel) => ({
-			...base,
-			minHeight: controlHeight,
-		}),
-		menuPortal: (base: CSSObjectWithLabel) => ({ ...base, zIndex: 9999 }),
-		option: (base: CSSObjectWithLabel, state: { isSelected: boolean; isFocused: boolean }) => ({
-			...base,
-			backgroundColor: state.isSelected ? '#dc2626' : state.isFocused ? '#fee2e2' : 'white',
-			color: state.isSelected ? 'white' : '#111827',
-		}),
-	};
+		return {
+			control: (base: CSSObjectWithLabel, state: { isFocused: boolean }) => ({
+				...base,
+				minHeight: controlHeight,
+				borderRadius: 6,
+				borderColor: hasError ? '#ef4444' : state.isFocused ? '#dc2626' : '#e4e4e7',
+				boxShadow: 'none',
+				fontSize,
+				':hover': {
+					borderColor: state.isFocused ? '#dc2626' : '#d4d4d8',
+				},
+			}),
+			valueContainer: (base: CSSObjectWithLabel) => ({
+				...base,
+				paddingTop: paddingY,
+				paddingBottom: paddingY,
+				paddingLeft: paddingX,
+				paddingRight: paddingX,
+			}),
+			input: (base: CSSObjectWithLabel) => ({
+				...base,
+				margin: 0,
+				padding: 0,
+			}),
+			indicatorsContainer: (base: CSSObjectWithLabel) => ({
+				...base,
+				minHeight: controlHeight,
+			}),
+			menuPortal: (base: CSSObjectWithLabel) => ({ ...base, zIndex: 9999 }),
+			option: (base: CSSObjectWithLabel, state: { isSelected: boolean; isFocused: boolean }) => ({
+				...base,
+				backgroundColor: state.isSelected ? '#dc2626' : state.isFocused ? '#fee2e2' : 'white',
+				color: state.isSelected ? 'white' : '#111827',
+			}),
+		};
+	}, [size, error]);
 
 	const commonProps = {
 		inputId: selectId,
