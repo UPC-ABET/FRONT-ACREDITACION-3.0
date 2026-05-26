@@ -294,7 +294,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 										buttonVariants({ variant: 'ghost', size: 'icon' }),
 										'text-zinc-400 hover:bg-red-50 hover:text-red-600',
 									)}
-									title="Eliminar">
+									title={t('projects.edit.students.removeButton')}>
 									<XMarkIcon className="h-4 w-4" />
 								</button>
 							</div>
@@ -356,7 +356,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 										buttonVariants({ variant: 'ghost', size: 'icon' }),
 										'text-zinc-400 hover:bg-red-50 hover:text-red-600',
 									)}
-									title="Eliminar">
+									title={t('projects.edit.evaluators.removeButton')}>
 									<XMarkIcon className="h-4 w-4" />
 								</button>
 							</div>

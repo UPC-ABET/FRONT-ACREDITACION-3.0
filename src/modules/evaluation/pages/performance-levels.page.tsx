@@ -27,6 +27,7 @@ import { useI18n } from '@/providers';
 import { useAcademicPeriods, usePerformanceLevels, useCreatePerformanceLevel, useUpdatePerformanceLevel, useDeletePerformanceLevel } from '@/modules/academic/hooks';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { usePerformanceLevelForm } from '../hooks';
+import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performance-levels';
 import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
 import type { PerformanceLevelFormState } from '../schemas/performance-level.schema';
 
@@ -332,7 +333,7 @@ export function PerformanceLevelsPage() {
 						</TableHeader>
 						<TableBody>
 							{sortedLevels.map((level) => {
-								const color = (level.extra as { color?: string })?.color ?? '#000000';
+								const color = (level.extra as { color?: string })?.color ?? DEFAULT_PERFORMANCE_LEVEL_COLOR;
 								const instrType = instrumentTypeMap.get(level.instrument_type_id);
 								const acadPeriod = academicPeriodMap.get(level.academic_period_id);
 								return (
@@ -376,14 +377,14 @@ export function PerformanceLevelsPage() {
 											<div className="flex items-center justify-center gap-1">
 												<button
 													type="button"
-													title="Editar"
+													title={t('performanceLevels.table.edit')}
 													onClick={() => openEditModal(level)}
 													className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600">
 													<PencilSquareIcon className="h-4 w-4" />
 												</button>
 												<button
 													type="button"
-													title="Eliminar"
+													title={t('performanceLevels.table.delete')}
 													onClick={() => setDeleteConfirm(level)}
 													className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600">
 													<TrashIcon className="h-4 w-4" />

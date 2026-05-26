@@ -704,16 +704,18 @@
 			"allPeriods": "All periods",
 			"allInstruments": "All instruments"
 		},
-		"table": {
-			"code": "Code",
-			"name": "Name",
-			"instrument": "Instrument",
-			"period": "Period",
-			"uniqueValue": "Unique value",
-			"scoreRange": "Score range",
-			"color": "Color",
-			"actions": "Actions"
-		},
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "instrument": "Instrument",
+      "period": "Period",
+      "uniqueValue": "Unique value",
+      "scoreRange": "Score range",
+      "color": "Color",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
 		"form": {
 			"createTitle": "Create performance level",
 			"createDescription": "Fill in the fields to create a new performance level.",
@@ -901,6 +903,7 @@
       "students": {
         "title": "Students",
         "empty": "No students in this project.",
+        "removeButton": "Remove",
         "addPlaceholder": "Enrollment ID",
         "addButton": "Add",
         "adding": "Adding...",
@@ -924,6 +927,7 @@
       "evaluators": {
         "title": "Evaluators",
         "empty": "No evaluators assigned.",
+        "removeButton": "Remove",
         "addPlaceholder": "Professor ID",
         "addButton": "Add",
         "adding": "Adding...",

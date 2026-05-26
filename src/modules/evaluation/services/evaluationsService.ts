@@ -1,7 +1,30 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost, apiPut, apiDelete } from '@/shared/lib';
 import type { FinalizeEvaluationDto, SubmitEvaluationPayload } from '../api/dtos/request';
-import { EvaluationResponse } from '../api/dtos/response';
+import type { EvaluationResponse } from '../api/dtos/response';
+
+interface CreateEvaluationPayload {
+	project_student_id: number;
+	project_evaluator_id: number;
+	rubric_id?: number;
+	observation?: { es: string; en: string };
+	scores?: Array<{ rubric_question_criteria_id: number; score: number }>;
+	qualification_status_type_id?: number | null;
+}
+
+interface UpdateEvaluationPayload {
+	observation?: { es: string; en: string };
+	scores?: Array<{ rubric_question_criteria_id: number; score: number }>;
+	qualification_status_type_id?: number | null;
+}
+
+interface EvaluationFilters {
+	project_student_id?: number;
+	project_evaluator_id?: number;
+	rubric_id?: number;
+	qualification_status_type_id?: number;
+	is_active?: boolean;
+}
 
 export const evaluationsService = {
 	submit(body: SubmitEvaluationPayload): Promise<ApiResponse<EvaluationResponse>> {
@@ -31,11 +54,11 @@ export const evaluationsService = {
 		return apiGet(`/evaluations/evaluation/${evaluationId}`);
 	},
 
-	create(body: Record<string, unknown>): Promise<ApiResponse<EvaluationResponse>> {
+	create(body: CreateEvaluationPayload): Promise<ApiResponse<EvaluationResponse>> {
 		return apiPost('/evaluations/create', body);
 	},
 
-	update(id: string | number, body: Record<string, unknown>): Promise<ApiResponse<EvaluationResponse>> {
+	update(id: string | number, body: UpdateEvaluationPayload): Promise<ApiResponse<EvaluationResponse>> {
 		return apiPut(`/evaluations/update/${id}`, body);
 	},
 
@@ -47,7 +70,7 @@ export const evaluationsService = {
 		return apiGet('/evaluations/get-all');
 	},
 
-	getByFilters(filters: Record<string, unknown>): Promise<ApiResponse<EvaluationResponse[]>> {
+	getByFilters(filters: EvaluationFilters): Promise<ApiResponse<EvaluationResponse[]>> {
 		return apiPost('/evaluations/get-by-filters', filters);
 	},
 };
