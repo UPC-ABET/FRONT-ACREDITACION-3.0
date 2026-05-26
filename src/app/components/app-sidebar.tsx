@@ -22,7 +22,8 @@ import {
 	DocumentCheckIcon,
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { useIsAdmin, useLogout } from '@/shared/hooks';
+import { useIsAdmin } from '@/shared/hooks';
+import { useLogout } from '@/modules/auth/hooks';
 
 type NavChild = {
 	name: string;
