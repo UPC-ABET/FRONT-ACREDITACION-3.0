@@ -1,81 +1,23 @@
 'use client';
 
-import React, { ReactNode, useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { Navbar, SessionExpiredAlert } from '@/shared/components';
+import React, { ReactNode } from 'react';
+import { Navbar } from '@/shared/components';
 import AppSidebar from '@/app/components/app-sidebar';
-import { ABETProvider, SidebarProvider, useAuth } from '@/providers';
-import { logoutUser } from '@/modules/auth/services';
-import { useSessionExpiry } from '@/shared/hooks';
-import { clearPreferenceCookies, safeRedirect } from '@/shared/lib';
+import { ABETProvider, SidebarProvider } from '@/providers';
+import { useSessionGuard } from '@/providers/session-guard';
 
 type LayoutClientProps = {
 	children: ReactNode;
 };
 
 export default function LayoutClient({ children }: LayoutClientProps) {
-	const pathname = usePathname();
-	const router = useRouter();
-	const { isAuthenticated, isLoading, clearUser } = useAuth();
-	const isAuthRoute = pathname?.startsWith('/auth') ?? false;
-	const isSurveyPublicRoute = pathname?.startsWith('/survey/') ?? false;
+	const { showApp, showAuth, showPublic } = useSessionGuard();
 
-	const [mounted, setMounted] = useState(false);
-	const [sessionExpiredOpen, setSessionExpiredOpen] = useState(false);
-
-	const expireSession = () => {
-		clearUser();
-		clearPreferenceCookies();
-		setSessionExpiredOpen(true);
-		safeRedirect('/auth/login');
-	};
-
-	const handleGoToLogin = async () => {
-		try {
-			await logoutUser();
-		} catch {}
-
-		clearUser();
-		clearPreferenceCookies();
-		setSessionExpiredOpen(false);
-		safeRedirect('/auth/login');
-	};
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	useEffect(() => {
-		if (!mounted || isLoading) return;
-		if (isSurveyPublicRoute) return;
-
-		if (isAuthenticated && isAuthRoute) {
-			router.replace('/');
-			return;
-		}
-
-		if (!isAuthenticated && !isAuthRoute) {
-			router.replace('/auth/login');
-		}
-	}, [mounted, isLoading, isAuthenticated, pathname, isAuthRoute, isSurveyPublicRoute, router]);
-
-	useSessionExpiry({
-		enabled: mounted && !isAuthRoute && !isSurveyPublicRoute && isAuthenticated,
-		onExpire: expireSession,
-	});
-
-	if (isSurveyPublicRoute) {
+	if (showPublic || showAuth) {
 		return <>{children}</>;
 	}
 
-	if (!mounted || isLoading) return null;
-
-	if (isAuthRoute) {
-		if (isAuthenticated) return null;
-		return <>{children}</>;
-	}
-
-	if (!isAuthenticated) return null;
+	if (!showApp) return null;
 
 	return (
 		<ABETProvider>
@@ -95,8 +37,6 @@ export default function LayoutClient({ children }: LayoutClientProps) {
 						</main>
 					</div>
 				</div>
-
-				<SessionExpiredAlert isOpen={sessionExpiredOpen} onLogout={handleGoToLogin} />
 			</SidebarProvider>
 		</ABETProvider>
 	);
