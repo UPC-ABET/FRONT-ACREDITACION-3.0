@@ -8,7 +8,8 @@ import { useAuth, useI18n } from '@/providers';
 import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable';
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable';
-import { GRADE_IDS, QUALIFICATION_STATUS_CODES, RUBRIC_IDS } from '../constants/typeCodes';
+import { TYPE_CODES } from '@/modules/core';
+import { GRADE_IDS, RUBRIC_IDS } from '../constants/typeCodes';
 
 const CAPSTONE_RUBRIC_TYPE_ID = RUBRIC_IDS.CAPSTONE;
 
@@ -28,7 +29,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 	const { statusTypes, isLoading: isLoadingStatuses } = useQualificationStatusTypes();
 
 	const nrNaTypeIds = useMemo(() => {
-		const nrNaCodes = new Set([QUALIFICATION_STATUS_CODES.NR, QUALIFICATION_STATUS_CODES.NA]);
+		const nrNaCodes = new Set<string>([TYPE_CODES.QUALIFICATION_STATUS.NR, TYPE_CODES.QUALIFICATION_STATUS.NA]);
 		return new Set(statusTypes.filter((s) => nrNaCodes.has(s.code)).map((s) => s.id));
 	}, [statusTypes]);
 

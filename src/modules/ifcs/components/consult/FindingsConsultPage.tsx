@@ -13,7 +13,7 @@ import {
 } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
-import { TYPE_CODES } from '../../constants';
+import { TYPE_CODES } from '@/modules/core';
 import { useFindingsList, useOrgScope } from '../../hooks';
 import { deleteFinding } from '../../services/ifcFindingsService';
 import { optionsForLevel } from '../../services/scope';

@@ -5,13 +5,14 @@ import { Card, LoadingDialog, SuccessDialog, TableErrorState, Toast } from '@/sh
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useParameter } from '../hooks/useParameter';
-import { PARAM_CODES, type ParameterRow } from '../types';
+import { PARAMETER_CODES } from '@/modules/core';
+import type { ParameterRow } from '../types';
 import { PrefixParameterCard } from './PrefixParameterCard';
 
 export function IfcCodesPage() {
 	const { t } = useI18n();
-	const finding = useParameter<string>(PARAM_CODES.FINDING_PREFIX);
-	const action = useParameter<string>(PARAM_CODES.ACTION_PREFIX);
+	const finding = useParameter<string>(PARAMETER_CODES.FINDING_PREFIX);
+	const action = useParameter<string>(PARAMETER_CODES.ACTION_PREFIX);
 
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);

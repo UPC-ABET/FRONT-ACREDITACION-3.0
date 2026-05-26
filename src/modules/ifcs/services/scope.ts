@@ -1,4 +1,4 @@
-import { TYPE_CODES } from '../constants';
+import { TYPE_CODES } from '@/modules/core';
 import type { IFCRow, ScopeOption, ScopeTree, SelectionValue } from '../types';
 
 /**

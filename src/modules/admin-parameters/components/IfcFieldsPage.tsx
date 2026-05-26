@@ -17,7 +17,8 @@ import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useParameter } from '../hooks/useParameter';
 import { updateParameter } from '../services/parametersAdminService';
-import { PARAM_CODES, type IFCFieldDescriptor } from '../types';
+import { PARAMETER_CODES } from '@/modules/core';
+import type { IFCFieldDescriptor } from '../types';
 import { IfcFieldEditor } from './IfcFieldEditor';
 
 function cloneFields(fields: IFCFieldDescriptor[]): IFCFieldDescriptor[] {
@@ -54,7 +55,7 @@ function sameFields(a: IFCFieldDescriptor[], b: IFCFieldDescriptor[]): boolean {
 export function IfcFieldsPage() {
 	const { t } = useI18n();
 	const { data, loading, error, refetch, setData } = useParameter<IFCFieldDescriptor[]>(
-		PARAM_CODES.IFC_FIELDS,
+		PARAMETER_CODES.IFC_FIELDS,
 	);
 
 	const [fields, setFields] = useState<IFCFieldDescriptor[]>([]);

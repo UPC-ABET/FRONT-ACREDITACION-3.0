@@ -1,8 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { getErrorMessage } from '@/shared/lib/apiError';
-import { getParameterByCode, getTypesByGroupCode } from '@/modules/core';
+import { useQuery } from '@tanstack/react-query';
+import { getParameterByCode, getTypesByGroupCode, PARAMETER_CODES, TYPE_GROUP_CODES } from '@/modules/core';
 import { listNotificationConfigs } from '../services/notificationConfigsService';
 import type { CoreType, NotificationConfig, NotifyVar } from '../types';
 
@@ -14,44 +13,39 @@ interface ConfigsBundle {
 	chartLevels: CoreType[];
 }
 
+const notificationConfigsKeys = {
+	all: ['notification-configs'] as const,
+	bundle: (periodId: number) => [...notificationConfigsKeys.all, 'bundle', periodId] as const,
+};
+
+async function fetchBundle(periodId: number): Promise<ConfigsBundle> {
+	const [configs, notifyVarsValue, statuses, triggers, chartLevels] = await Promise.all([
+		listNotificationConfigs(periodId),
+		getParameterByCode<NotifyVar[]>(PARAMETER_CODES.IFC_NOTIFICATION_VARS),
+		getTypesByGroupCode(TYPE_GROUP_CODES.IFC_STATUS) as Promise<CoreType[]>,
+		getTypesByGroupCode(TYPE_GROUP_CODES.NOTIFICATION_TRIGGER) as Promise<CoreType[]>,
+		getTypesByGroupCode(TYPE_GROUP_CODES.ORG_CHART_LEVEL) as Promise<CoreType[]>,
+	]);
+	return {
+		configs,
+		notifyVars: notifyVarsValue ?? [],
+		statuses,
+		triggers,
+		chartLevels,
+	};
+}
+
 export function useNotificationConfigs(periodId: number | null) {
-	const [data, setData] = useState<ConfigsBundle | null>(null);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const { data, isLoading, error, refetch } = useQuery({
+		queryKey: notificationConfigsKeys.bundle(periodId!),
+		queryFn: () => fetchBundle(periodId!),
+		enabled: periodId != null,
+	});
 
-	const load = useCallback(async () => {
-		if (periodId == null) {
-			setData(null);
-			return;
-		}
-		setLoading(true);
-		setError(null);
-		try {
-			const [configs, notifyVarsValue, statuses, triggers, chartLevels] = await Promise.all([
-				listNotificationConfigs(periodId),
-				getParameterByCode<NotifyVar[]>('PARAMETER_IFC_NOTIFICATION_VARS'),
-				getTypesByGroupCode('TG701') as Promise<CoreType[]>,
-				getTypesByGroupCode('TG1002') as Promise<CoreType[]>,
-				getTypesByGroupCode('TG902') as Promise<CoreType[]>,
-			]);
-			setData({
-				configs,
-				notifyVars: notifyVarsValue ?? [],
-				statuses,
-				triggers,
-				chartLevels,
-			});
-		} catch (e) {
-			setError(getErrorMessage(e, 'admin.notify.error.listFailed'));
-		} finally {
-			setLoading(false);
-		}
-	}, [periodId]);
-
-	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: hook auto-loads on mount and periodId change
-		void load();
-	}, [load]);
-
-	return { data, loading, error, refetch: load };
+	return {
+		data: data ?? null,
+		loading: isLoading,
+		error: error instanceof Error ? error.message : error ? String(error) : null,
+		refetch,
+	};
 }

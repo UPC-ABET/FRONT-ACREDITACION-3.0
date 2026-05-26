@@ -16,7 +16,7 @@ import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useFindingDetail } from '../../hooks/useFindingDetail';
 import { deleteFinding, patchFinding } from '../../services/ifcFindingsService';
-import { getParameterByCode } from '@/modules/core';
+import { getParameterByCode, PARAMETER_CODES } from '@/modules/core';
 import type { I18nText } from '../../types';
 import { DeleteFindingModal } from '../shared/DeleteFindingModal';
 import { FindingActionsTable } from './FindingActionsTable';
@@ -39,7 +39,7 @@ export default function FindingDetailPage() {
 
 	useEffect(() => {
 		let alive = true;
-		getParameterByCode<string[]>('PARAMETER_LANGUAGES')
+		getParameterByCode<string[]>(PARAMETER_CODES.LANGUAGES)
 			.then((langs) => {
 				if (alive) setLanguages(langs);
 			})

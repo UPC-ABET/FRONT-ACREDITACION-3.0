@@ -3,7 +3,7 @@
 import { useI18n } from '@/providers';
 import { Button } from '@/shared/components';
 import { VIEW_LABELS } from './viewLabels';
-import { TYPE_CODES } from '../../constants';
+import { TYPE_CODES } from '@/modules/core';
 import type { IFCHeader } from '../../types';
 
 const S = TYPE_CODES.IFC_STATUS;

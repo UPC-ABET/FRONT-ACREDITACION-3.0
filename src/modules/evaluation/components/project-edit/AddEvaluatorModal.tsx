@@ -19,9 +19,9 @@ import { professorsService, typeGroupsService, typesService } from '@/modules/ac
 import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
 import type { ProfessorSearchResponse } from '@/modules/academic';
-import { EVALUATOR_CODES } from '../../constants/typeCodes';
+import { TYPE_GROUP_CODES } from '@/modules/core';
 
-const EVALUATOR_TYPE_GROUP_CODE = EVALUATOR_CODES.TYPE_GROUP;
+const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
 
 interface AddEvaluatorModalProps {
 	open: boolean;

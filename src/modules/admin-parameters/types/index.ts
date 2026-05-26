@@ -21,11 +21,6 @@ export interface UpdateParameterBody<T = unknown> {
 	extra?: Record<string, unknown>;
 }
 
-export const PARAM_CODES = {
-	FINDING_PREFIX: 'PARAMETER_FINDING_PREFIX',
-	ACTION_PREFIX: 'PARAMETER_ACTION_PREFIX',
-	IFC_FIELDS: 'PARAMETER_IFC_FIELDS',
-} as const;
 
 export interface IFCFieldDescriptor {
 	key: string;

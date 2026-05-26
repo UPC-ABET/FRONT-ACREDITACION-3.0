@@ -6,7 +6,7 @@ import { Badge, Button, Card, I18nTextField, Toast } from '@/shared/components';
 import { formatDateTime, tryTranslate } from '@/shared/utils';
 import { IFCPageTitle } from '../shared/IFCPageTitle';
 import { VIEW_LABELS } from './viewLabels';
-import { TYPE_CODES } from '../../constants';
+import { TYPE_CODES } from '@/modules/core';
 import { usePdfDownload } from '../../hooks/usePdfDownload';
 import type { I18nText, IFCHeader } from '../../types';
 

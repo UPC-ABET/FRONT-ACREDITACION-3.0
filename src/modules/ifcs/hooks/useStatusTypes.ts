@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getTypesByGroupCode } from '@/modules/core';
+import { getTypesByGroupCode, TYPE_GROUP_CODES } from '@/modules/core';
 import type { CriticalityOption } from '../types';
 
 export type StatusType = CriticalityOption;
@@ -13,7 +13,7 @@ export const statusTypesQueryKeys = {
 
 export function useStatusTypes() {
 	return useQuery({
-		queryKey: statusTypesQueryKeys.byGroup('TG701'),
-		queryFn: () => getTypesByGroupCode('TG701'),
+		queryKey: statusTypesQueryKeys.byGroup(TYPE_GROUP_CODES.IFC_STATUS),
+		queryFn: () => getTypesByGroupCode(TYPE_GROUP_CODES.IFC_STATUS),
 	});
 }
