@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { typesService } from '../services/typesService';
-import { coreQueryKeys } from './query-keys';
+import { coreQueryKeys } from './queryKeys';
 
 export function useTypes(
 	filters: { type_group_id?: number },

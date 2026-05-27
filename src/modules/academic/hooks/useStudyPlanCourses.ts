@@ -5,7 +5,7 @@ import {
 	studyPlanCoursesService,
 	type StudyPlanCourseFilters,
 } from '../services/studyPlanCoursesService';
-import { academicQueryKeys } from './query-keys';
+import { academicQueryKeys } from './queryKeys';
 
 export function useStudyPlanCourses(
 	filters: StudyPlanCourseFilters,

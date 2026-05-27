@@ -27,9 +27,9 @@ import { useI18n } from '@/providers';
 import { useAcademicPeriods, usePerformanceLevels, useCreatePerformanceLevel, useUpdatePerformanceLevel, useDeletePerformanceLevel } from '@/modules/academic/hooks';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { usePerformanceLevelForm } from '../hooks';
-import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performance-levels';
+import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performanceLevels';
 import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
-import type { PerformanceLevelFormState } from '../schemas/performance-level.schema';
+import type { PerformanceLevelFormState } from '../schemas/performanceLevelSchema';
 
 type OptionItem = { label: string; value: number };
 

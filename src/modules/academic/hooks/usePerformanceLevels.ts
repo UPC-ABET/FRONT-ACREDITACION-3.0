@@ -7,7 +7,7 @@ import {
 	type CreatePerformanceLevelDto,
 	type UpdatePerformanceLevelDto,
 } from '../services/performanceLevelsService';
-import { academicQueryKeys } from './query-keys';
+import { academicQueryKeys } from './queryKeys';
 
 export function usePerformanceLevels(
 	filters: FilterPerformanceLevelDto,

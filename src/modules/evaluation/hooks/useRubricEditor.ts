@@ -5,7 +5,7 @@ import { rubricsService } from '../services';
 import { RubricDetail, OutcomeWithCriteria, CriteriaItem, CommissionTab, QuestionCriteria } from '../types';
 import { performanceLevelsService } from '@/modules/academic/services';
 import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
-import { evaluationQueryKeys } from './query-keys';
+import { evaluationQueryKeys } from './queryKeys';
 
 /** Capstone rubric type id — update if the backend changes the seed */
 const CAPSTONE_RUBRIC_TYPE_ID = 29;

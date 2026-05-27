@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { evaluationsService } from '../services';
 import { projectsQueryKeys } from './useProjects';
-import { evaluationQueryKeys } from './query-keys';
+import { evaluationQueryKeys } from './queryKeys';
 
 export function useEvaluationsByEvaluator(evaluatorId: string | number | undefined) {
 	return useQuery({

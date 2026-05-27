@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { CriteriaItem, RubricDetail } from '../types';
-import { updateOutcomeCriteria } from './use-rubric-capstone-state';
+import { updateOutcomeCriteria } from './useRubricCapstoneState';
 
 interface UseRubricCapstoneCriteriaOptions {
 	locale: string;

@@ -9,9 +9,9 @@ import { OutcomeCard } from './OutcomeCard';
 import { verificationOutcomes } from '../../utils/capstoneUtils';
 import { PerformanceLevelsSummary } from './PerformanceLevelsSummary';
 import type { RubricDetail } from '../../types';
-import { useRubricCapstoneState } from '../../hooks/use-rubric-capstone-state';
-import { useRubricCapstoneCriteria } from '../../hooks/use-rubric-capstone-criteria';
-import { useRubricCapstoneSave } from '../../hooks/use-rubric-capstone-save';
+import { useRubricCapstoneState } from '../../hooks/useRubricCapstoneState';
+import { useRubricCapstoneCriteria } from '../../hooks/useRubricCapstoneCriteria';
+import { useRubricCapstoneSave } from '../../hooks/useRubricCapstoneSave';
 
 interface RubricEditorCapstoneProps {
 	rubric: RubricDetail;

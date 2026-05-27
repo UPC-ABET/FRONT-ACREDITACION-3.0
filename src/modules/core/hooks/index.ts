@@ -1,3 +1,3 @@
-export * from './query-keys';
-export * from './use-types';
-export * from './use-type-groups';
+export * from './queryKeys';
+export * from './useTypes';
+export * from './useTypeGroups';

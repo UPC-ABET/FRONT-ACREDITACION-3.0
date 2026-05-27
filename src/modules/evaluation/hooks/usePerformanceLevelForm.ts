@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performance-levels';
-import type { PerformanceLevelFormState } from '../schemas/performance-level.schema';
+import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performanceLevels';
+import type { PerformanceLevelFormState } from '../schemas/performanceLevelSchema';
 import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
 import type { CreatePerformanceLevelDto } from '@/modules/academic/services/performanceLevelsService';
 

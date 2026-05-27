@@ -7,9 +7,9 @@ import { useI18n } from '@/providers';
 import { RubricTable } from './RubricTable';
 import type { RubricDetail } from '../../types';
 import { MAX_COLS, MAX_QUESTIONS, TARGET_SUM } from '../../constants';
-import { useRubricNonCapstoneState } from '../../hooks/use-rubric-non-capstone-state';
-import { useRubricNonCapstoneValidation } from '../../hooks/use-rubric-non-capstone-validation';
-import { useRubricNonCapstoneSave } from '../../hooks/use-rubric-non-capstone-save';
+import { useRubricNonCapstoneState } from '../../hooks/useRubricNonCapstoneState';
+import { useRubricNonCapstoneValidation } from '../../hooks/useRubricNonCapstoneValidation';
+import { useRubricNonCapstoneSave } from '../../hooks/useRubricNonCapstoneSave';
 
 // ── ValidationMessages ────────────────────────────────────────────────────────
 

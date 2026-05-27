@@ -5,7 +5,7 @@ import {
 	courseOutcomeMappingsService,
 	type CourseOutcomeMappingFilters,
 } from '../services/courseOutcomeMappingsService';
-import { academicQueryKeys } from './query-keys';
+import { academicQueryKeys } from './queryKeys';
 
 export function useCourseOutcomeMappings(
 	filters: CourseOutcomeMappingFilters,

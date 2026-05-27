@@ -1,2 +1,2 @@
-export * from './query-keys';
-export * from './use-outcomes';
+export * from './queryKeys';
+export * from './useOutcomes';

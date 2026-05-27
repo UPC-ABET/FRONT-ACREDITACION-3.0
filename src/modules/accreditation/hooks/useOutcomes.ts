@@ -2,7 +2,7 @@
 
 import { useQueries } from '@tanstack/react-query';
 import { outcomesService } from '../services/outcomesService';
-import { accreditationQueryKeys } from './query-keys';
+import { accreditationQueryKeys } from './queryKeys';
 import type { OutcomeResponse } from '../types';
 
 export function useOutcomes(ids: number[]) {
