@@ -2,8 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { apiPost } from '@/shared/lib';
-
-const PARAMETER_CODE = 'PARAMETER_LANGUAGES';
+import { PARAMETER_CODES } from '@/modules/core';
 const FALLBACK: string[] = ['es', 'en'];
 
 type ParameterRow = { value?: unknown };
@@ -12,7 +11,7 @@ type ParameterResponse = { data?: ParameterRow[] };
 async function fetchLanguages(): Promise<string[]> {
 	try {
 		const body = await apiPost<ParameterResponse>('/parameters/get-by-filters', {
-			code: PARAMETER_CODE,
+			code: PARAMETER_CODES.LANGUAGES,
 		});
 		const value = body?.data?.[0]?.value;
 		if (Array.isArray(value) && value.every((v) => typeof v === 'string')) {

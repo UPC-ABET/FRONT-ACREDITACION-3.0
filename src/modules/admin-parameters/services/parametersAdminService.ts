@@ -1,5 +1,5 @@
 import { apiPost, apiPut, ApiError } from '@/shared/lib';
-import type { ParameterRow, UpdateParameterBody } from './types';
+import type { ParameterRow, UpdateParameterBody } from '../types';
 
 interface Envelope<T> {
 	code: number;

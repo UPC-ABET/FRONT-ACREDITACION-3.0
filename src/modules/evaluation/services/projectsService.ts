@@ -1,13 +1,16 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost, apiPatch, apiDelete } from '@/shared/lib';
-import type { CreateProjectDto, CreateProjectFullDto, FilterProjectDto, UpdateProjectDto } from '../api/dtos/request';
 import type {
+	CreateProjectDto,
+	CreateProjectFullDto,
+	FilterProjectDto,
+	UpdateProjectDto,
 	ProjectByProfessorResponse,
 	ProjectDetailsResponse,
 	ProjectEvaluatorResponse,
 	ProjectResponse,
 	ProjectStudentResponse,
-} from '../api/dtos/response';
+} from '../types';
 
 export const projectsService = {
 	create(body: CreateProjectDto): Promise<ApiResponse<ProjectResponse>> {

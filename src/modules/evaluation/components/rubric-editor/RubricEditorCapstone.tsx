@@ -6,7 +6,7 @@ import { CommissionTabs } from './CommissionTabs';
 import { CommissionValidator } from './CommissionValidator';
 import { CriteriaInlineRow } from './CriteriaInlineRow';
 import { OutcomeCard } from './OutcomeCard';
-import { verificationOutcomes } from '../../utils/capstone-utils';
+import { verificationOutcomes } from '../../utils/capstoneUtils';
 import { PerformanceLevelsSummary } from './PerformanceLevelsSummary';
 import type { RubricDetail } from '../../types';
 import { useRubricCapstoneState } from '../../hooks/use-rubric-capstone-state';

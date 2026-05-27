@@ -1,6 +1,6 @@
-export { default as IFCsPage } from './ifcs-page';
-export { default as IFCViewPageEntry } from './ifc-view-page';
-export { default as IFCNewPageEntry } from './ifc-new-page';
-export { default as IFCEditPageEntry } from './ifc-edit-page';
-export { default as IFCFindingsConsultPageEntry } from './ifc-findings-consult-page';
-export { default as IFCFindingDetailPageEntry } from './ifc-finding-detail-page';
+export { default as IFCsPage } from './IFCsPage';
+export { default as IFCViewPageEntry } from './IFCView';
+export { default as IFCNewPageEntry } from './IFCNew';
+export { default as IFCEditPageEntry } from './IFCEdit';
+export { default as IFCFindingsConsultPageEntry } from './IFCFindingsConsult';
+export { default as IFCFindingDetailPageEntry } from './IFCFindingDetail';

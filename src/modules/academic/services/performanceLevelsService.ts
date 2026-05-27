@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/shared';
-import { PerformanceLevelResponse } from '../api/dtos';
+import { PerformanceLevelResponse } from '../types';
 import { apiPost, apiPut, apiDelete } from '@/shared/lib';
 
 export type FilterPerformanceLevelDto = Partial<{

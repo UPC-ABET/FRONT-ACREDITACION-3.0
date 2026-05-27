@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, DataTable, TableEmptyState } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type { FindingActionRow } from '../../services/types';
+import type { FindingActionRow } from '../../types';
 import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
 
 type Props = { actions: FindingActionRow[] };

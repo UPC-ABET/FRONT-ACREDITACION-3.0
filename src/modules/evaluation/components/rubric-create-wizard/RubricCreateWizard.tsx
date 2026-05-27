@@ -5,15 +5,15 @@ import { useRouter } from 'next/navigation'
 import { Toast } from '@/shared/components/ui/Toast'
 import { useI18n } from '@/providers'
 import { useCreateRubricFull } from '../../hooks'
-import type { CreateRubricFullDto } from '../../api/dtos/request'
+import type { CreateRubricFullDto } from '../../types'
 import { WizardStepIndicator } from './WizardStepIndicator'
 import { WizardStep1, type Step1Data } from './WizardStep1'
 import { WizardStep2, type Step2Data } from './WizardStep2'
 import { WizardStep3NonCapstone, type NonCapstonePayloadQuestion } from './WizardStep3NonCapstone'
 import { WizardStep3Capstone, type CapstonePayloadQuestion } from './WizardStep3Capstone'
-import { GRADE_CODES } from '../../constants/type-codes'
+import { GRADE_IDS } from '../../constants/typeCodes'
 
-const FINAL_EVAL_CODE = GRADE_CODES.FINAL
+const FINAL_EVAL_CODE = GRADE_IDS.FINAL
 
 export function RubricCreateWizard() {
   const router = useRouter()
@@ -53,7 +53,7 @@ export function RubricCreateWizard() {
     { label: t('rubrics.wizard.steps.step3.label'), description: t('rubrics.wizard.steps.step3.description') },
   ]
 
-  const useCapstoneEditor = step2Data?.isCapstone && step2Data?.gradeTypeCode === FINAL_EVAL_CODE
+  const useCapstoneEditor = step2Data?.isCapstone && step2Data?.gradeTypeId === FINAL_EVAL_CODE
 
   return (
     <div className="space-y-8">

@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { getErrorMessage } from '@/shared/lib/api-error';
+import { getErrorMessage } from '@/shared/lib/apiError';
 import { listIFCs } from '../services/ifcsService';
-import type { IFCRow } from '../services/types';
+import type { IFCRow } from '../types';
 
 export function useIFCList() {
 	const [rows, setRows] = useState<IFCRow[]>([]);

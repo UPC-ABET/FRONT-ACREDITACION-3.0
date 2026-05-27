@@ -3,17 +3,16 @@
 import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ErrorDialog, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
-import { useI18n } from '@/providers';
-import { getAuthCookie } from '@/shared/lib';
-import { getErrorMessage } from '@/shared/lib/api-error';
-import { tryTranslate } from '@/shared/utils/try-translate';
-import { useIFCView } from '../../hooks/useIFCView';
+import { useAuth, useI18n } from '@/providers';
+import { getErrorMessage } from '@/shared/lib/apiError';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
+import { useIFCView } from '../../hooks/useIfcs';
 import { approveIFC, rejectIFC, submitIFC } from '../../services/ifcsService';
-import type { I18nText } from '../../services/types';
+import type { I18nText } from '../../types';
 import { IFCHeaderCard } from './IFCHeaderCard';
 import { IFCInformationBlock } from './IFCInformationBlock';
-import { IFCResultadoLogros } from '../shared/IFCResultadoLogros';
-import { IFCResultadoAlcanzado } from '../shared/IFCResultadoAlcanzado';
+import { IFCOutcomeResults } from '../shared/IFCOutcomeResults';
+import { IFCLearningOutcomeReached } from '../shared/IFCLearningOutcomeReached';
 import { PreviousActionsTable } from '../shared/PreviousActionsTable';
 import { SubmitConfirmModal } from '../shared/SubmitConfirmModal';
 import { IFCFindingsTable } from './IFCFindingsTable';
@@ -26,25 +25,17 @@ export default function IFCViewPage() {
 	const params = useParams<{ id: string }>();
 	const id = Number(params?.id);
 
-	const { data, loading, error, refetch } = useIFCView(id);
+	const { data, isLoading, error, refetch } = useIFCView(id);
 	const [observationText, setObservationText] = useState<I18nText>({});
 	const [submitting, setSubmitting] = useState(false);
 	const [actionError, setActionError] = useState<string | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 	const [submitModalOpen, setSubmitModalOpen] = useState(false);
 
-	const currentUserId = useMemo(() => {
-		if (typeof window === 'undefined') return null;
-		try {
-			const raw = getAuthCookie('token');
-			const user = raw ? JSON.parse(raw) : null;
-			return user?.id != null ? Number(user.id) : null;
-		} catch {
-			return null;
-		}
-	}, []);
+	const { user: authUser } = useAuth();
+	const currentUserId = authUser?.id ?? null;
 
-	if (loading) {
+	if (isLoading) {
 		return <LoadingDialog isOpen label={t('loading.default')} />;
 	}
 
@@ -53,7 +44,7 @@ export default function IFCViewPage() {
 			<ErrorDialog
 				isOpen
 				onClose={() => router.push('/ifcs')}
-				message={tryTranslate(t, error ?? 'ifcs.error.viewFailed')}
+				message={tryTranslate(t, getErrorMessage(error, 'ifcs.error.viewFailed'))}
 			/>
 		);
 	}
@@ -135,8 +126,8 @@ export default function IFCViewPage() {
 			/>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-				<IFCResultadoLogros outcomeResult={data.outcome_course_result} />
-				<IFCResultadoAlcanzado learningOutcome={ifc.course_learning_outcome} />
+				<IFCOutcomeResults outcomeResult={data.outcome_course_result} />
+				<IFCLearningOutcomeReached learningOutcome={ifc.course_learning_outcome} />
 			</div>
 
 			<IFCInformationBlock information={ifc.information} />

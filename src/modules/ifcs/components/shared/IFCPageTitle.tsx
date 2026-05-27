@@ -1,7 +1,7 @@
 'use client';
 
 import { useI18n } from '@/providers';
-import type { I18nText } from '../../services/types';
+import type { I18nText } from '../../types';
 
 type Props = {
 	area: I18nText;

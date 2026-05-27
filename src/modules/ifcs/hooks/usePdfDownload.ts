@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/api-error';
+import { getErrorMessage } from '@/shared/lib/apiError';
 import { triggerBrowserDownload } from '@/shared/utils';
 import { downloadIfcPdf, downloadIfcPdfBulk } from '../services/ifcsPdfService';
 

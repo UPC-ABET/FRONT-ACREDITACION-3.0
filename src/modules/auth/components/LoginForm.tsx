@@ -3,11 +3,11 @@
 import React, { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input, Select, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
-import { LoginPayload } from '@/shared/types';
+import type { LoginPayload } from '@/modules/auth/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
-import { setAuthCookies } from '@/shared/lib';
-import { schoolOptions } from '@/modules/auth/constants';
-import { useI18n } from '@/providers';
+import { safeRedirect } from '@/shared/lib';
+import { SCHOOL_OPTIONS } from '@/modules/auth/constants';
+import { useAuth, useI18n } from '@/providers';
 
 export default function LoginForm() {
 	const [schoolCode, setSchoolCode] = useState('');
@@ -19,10 +19,11 @@ export default function LoginForm() {
 	const [dialogMessage, setDialogMessage] = useState('');
 	const router = useRouter();
 	const { t } = useI18n();
+	const { refreshUser } = useAuth();
 
 	const localizedSchools = useMemo(
 		() =>
-			schoolOptions.map((option) => ({
+			SCHOOL_OPTIONS.map((option) => ({
 				value: option.id,
 				label: t(option.labelKey),
 			})),
@@ -42,11 +43,11 @@ export default function LoginForm() {
 		const payload: LoginPayload = { school_code: schoolCode, email, password };
 		setLoading(true);
 		try {
-			const res = await loginByCredentials(payload);
-			setAuthCookies(res.user, res.expiresIn);
+			await loginByCredentials(payload);
+			await refreshUser();
 			router.replace('/');
-		} catch (err: any) {
-			const rawMessage = typeof err?.message === 'string' ? err.message : '';
+		} catch (err: unknown) {
+			const rawMessage = err instanceof Error ? err.message : '';
 			const translated = rawMessage ? t(rawMessage) : '';
 			const resolvedMessage =
 				translated && translated !== rawMessage
@@ -64,7 +65,7 @@ export default function LoginForm() {
 			setError(t('login.error.schoolRequired'));
 			return;
 		}
-		window.location.assign(getMicrosoftLoginUrl(schoolCode));
+		safeRedirect(getMicrosoftLoginUrl(schoolCode), 'assign');
 	};
 
 	return (
@@ -78,9 +79,9 @@ export default function LoginForm() {
 
 				<div>
 					<Select
-						name="escuela"
+						name="school"
 						value={localizedSchools.find((s) => s.value === schoolCode) || null}
-						onChange={(_, v) => setSchoolCode((v as any)?.value || '')}
+						onChange={(_, v) => setSchoolCode(!v || Array.isArray(v) ? '' : String(v.value))}
 						options={localizedSchools}
 						placeholder={t('login.school.placeholder')}
 					/>
@@ -90,7 +91,7 @@ export default function LoginForm() {
 					<Input
 						id="email"
 						value={email}
-						onChange={(e: any) => setEmail(e.target.value)}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
 						placeholder={t('login.user.placeholder')}
 					/>
 				</div>
@@ -100,7 +101,7 @@ export default function LoginForm() {
 						id="password"
 						type="password"
 						value={password}
-						onChange={(e: any) => setPassword(e.target.value)}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
 						placeholder={t('login.password.placeholder')}
 					/>
 				</div>

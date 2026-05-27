@@ -11,11 +11,11 @@ import {
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, DataTable, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { tryTranslate } from '@/shared/utils/try-translate';
-import { TYPE_CODES } from '../constants';
+import { tryTranslate } from '@/shared/utils/tryTranslate';
+import { TYPE_CODES } from '@/modules/core';
 import { usePdfDownload } from '../hooks/usePdfDownload';
 import { effectiveStatus } from '../services/scope';
-import type { IFCRow } from '../services/types';
+import type { IFCRow } from '../types';
 
 type Props = {
 	rows: IFCRow[];
@@ -150,7 +150,13 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 
 	return (
 		<>
-			<DataTable<IFCRow, unknown> columns={columns} data={rows} showSearch={false} showPagination />
+			<DataTable<IFCRow, unknown>
+				columns={columns}
+				data={rows}
+				showSearch={false}
+				showPagination
+				aria-label={t('ifcs.table.ariaLabel')}
+			/>
 			{pdfError && (
 				<Toast isOpen type="error" onClose={clearError} message={tryTranslate(t, pdfError)} />
 			)}

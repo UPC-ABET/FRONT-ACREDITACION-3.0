@@ -1,6 +1,6 @@
 import { ApiResponse } from '@/shared';
 import { apiGet } from '@/shared/lib';
-import type { OutcomeResponse } from '../api/dtos/response';
+import type { OutcomeResponse } from '../types';
 
 export const outcomesService = {
 	getById(outcomeId: number): Promise<ApiResponse<OutcomeResponse>> {

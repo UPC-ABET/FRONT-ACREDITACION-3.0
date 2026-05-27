@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { getErrorMessage } from '@/shared/lib/api-error';
+import { getErrorMessage } from '@/shared/lib/apiError';
 import { getOrgScope } from '../services/orgScopeService';
-import type { ScopeTree } from '../services/types';
+import type { ScopeTree } from '../types';
 
 export function useOrgScope() {
 	const [scope, setScope] = useState<ScopeTree | null>(null);

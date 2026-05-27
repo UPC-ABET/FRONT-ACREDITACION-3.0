@@ -1,4 +1,4 @@
-import { GRADE_IDS } from '@/modules/evaluation/constants/type-codes';
+import { GRADE_IDS } from '@/modules/evaluation/constants/typeCodes';
 import dynamic from 'next/dynamic';
 
 const ProjectEvaluatePage = dynamic(() =>

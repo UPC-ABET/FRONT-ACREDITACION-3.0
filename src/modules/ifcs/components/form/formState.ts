@@ -5,7 +5,7 @@ import type {
 	IFCFormState,
 	IFCViewPayload,
 	PreviousAction,
-} from '../../services/types';
+} from '../../types';
 
 function newTempId(): string {
 	if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {

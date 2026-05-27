@@ -12,12 +12,12 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/api-error';
-import { TYPE_CODES } from '../../constants';
+import { getErrorMessage } from '@/shared/lib/apiError';
+import { TYPE_CODES } from '@/modules/core';
 import { useFindingsList, useOrgScope } from '../../hooks';
 import { deleteFinding } from '../../services/ifcFindingsService';
 import { optionsForLevel } from '../../services/scope';
-import type { FindingRow, ScopeTree, SelectionValue } from '../../services/types';
+import type { FindingRow, ScopeTree, SelectionValue } from '../../types';
 import { AcademicPeriodSelect } from '../AcademicPeriodSelect';
 import { ScopeDropdowns } from '../ScopeDropdowns';
 import { DeleteFindingModal } from '../shared/DeleteFindingModal';

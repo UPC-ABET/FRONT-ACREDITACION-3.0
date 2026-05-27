@@ -1,4 +1,2 @@
-export * from './capstone-utils';
-export * from './rubrics-mappers.utils';
-
-export {};
+export * from './capstoneUtils';
+export * from './rubricsMappers';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { getAuthCookie } from '@/shared/lib';
+import { getSchoolCookie } from '@/shared/lib';
 import type {
 	AcademicPeriod,
 	DashboardResponse,
@@ -168,7 +168,7 @@ export function useLCFCUpload() {
 		setError(null);
 		setSuccess(false);
 		try {
-			const escuelaActual = JSON.parse(getAuthCookie('escuela') || 'null');
+			const escuelaActual = getSchoolCookie();
 			await uploadLCFCMassive(file, escuelaActual ?? undefined);
 			setSuccess(true);
 		} catch (e) {

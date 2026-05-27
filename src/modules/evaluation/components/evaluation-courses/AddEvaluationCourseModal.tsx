@@ -13,7 +13,7 @@ import {
   Select,
 } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
-import { getSchoolFromCookie } from '@/shared/lib/jwt'
+import { getSchoolCookie } from '@/shared/lib/authCookies'
 import {
   useAcademicPeriods,
   useStudyPlanCourses,
@@ -35,7 +35,7 @@ export function AddEvaluationCourseModal({
   onSuccess,
 }: AddEvaluationCourseModalProps) {
   const { t, locale } = useI18n()
-  const schoolId = getSchoolFromCookie()?.id as number | undefined
+  const schoolId = getSchoolCookie()?.id as number | undefined
 
   const [selectedPeriod, setSelectedPeriod] = useState<AnyOption | null>(null)
   const [pendingIds, setPendingIds] = useState<Set<number>>(new Set())

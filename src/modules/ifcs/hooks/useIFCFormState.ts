@@ -14,7 +14,7 @@ import type {
 	IFCFormState,
 	IFCViewPayload,
 	PreviousAction,
-} from '../services/types';
+} from '../types';
 
 export function useIFCFormState(
 	existing: IFCViewPayload | null,

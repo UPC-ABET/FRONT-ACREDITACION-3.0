@@ -4,31 +4,17 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
-import { getAuthCookie, getSchoolFromCookie } from '@/shared/lib';
-import { useABET, useI18n } from '@/providers';
+import { getSchoolCookie } from '@/shared/lib';
+import { useABET, useAuth, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
 import { DEFAULT_USER_INITIALS } from '@/shared/constants';
-import { TYPE_GROUP_CODES } from '@/modules/ifcs/constants';
-import { getTypesByGroupCode } from '@/modules/ifcs/services';
-import type { CriticalityOption } from '@/modules/ifcs/services';
-import type { NavbarProps, StoredUser } from '@/shared/types';
+import { getTypesByGroupCode, TYPE_GROUP_CODES } from '@/modules/core';
+import type { NavbarProps } from '@/shared/types';
 
-function readCookieUser(): StoredUser | null {
-	if (typeof window === 'undefined') return null;
-	const raw = getAuthCookie('token');
-	if (!raw) return null;
-	try {
-		return JSON.parse(raw) as StoredUser;
-	} catch {
-		return null;
-	}
-}
 
 function readCookieSchool(): string {
-
-	const school = getSchoolFromCookie();
+	const school = getSchoolCookie();
 	const schoolName = school?.code as string | undefined;
-
 	return typeof schoolName === 'string' ? schoolName : '';
 }
 
@@ -150,8 +136,8 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
 	const { modalityTypeId, setModalityTypeId } = useABET();
+	const { user } = useAuth();
 
-	const [storedUser] = useState(readCookieUser);
 	const [storedSchoolCode] = useState(readCookieSchool);
 
 	const { data: modalityOptions = [] } = useQuery({
@@ -185,17 +171,16 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 
 	const resolvedUserName =
 		userName ??
-		((storedUser ? `${storedUser.first_name ?? ''} ${storedUser.last_name ?? ''}`.trim() : '') ||
+		((user ? `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim() : '') ||
 			t('navbar.user.name'));
 
 	const resolvedUserRole =
 		userRole ??
-		((storedUser ? (storedUser.is_admin ? t('navbar.user.role') : '') : '') ||
-			t('navbar.user.role'));
+		((user ? (user.is_admin ? t('navbar.user.role') : '') : '') || t('navbar.user.role'));
 
 	const resolvedUserInitials =
 		userInitials ??
-		(`${storedUser?.first_name?.trim().charAt(0) ?? ''}${storedUser?.last_name?.trim().charAt(0) ?? ''}`.toUpperCase() ||
+		(`${user?.first_name?.trim().charAt(0) ?? ''}${user?.last_name?.trim().charAt(0) ?? ''}`.toUpperCase() ||
 			DEFAULT_USER_INITIALS);
 
 	const menuBtn = isSidebarMobile ? (

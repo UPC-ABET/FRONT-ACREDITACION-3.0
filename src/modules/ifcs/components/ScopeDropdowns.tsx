@@ -5,7 +5,7 @@ import { Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { LEVEL_LABELS } from '../constants';
 import { optionsForLevel } from '../services/scope';
-import type { ScopeTree, SelectionValue } from '../services/types';
+import type { ScopeTree, SelectionValue } from '../types';
 
 type Props = {
 	scope: ScopeTree;

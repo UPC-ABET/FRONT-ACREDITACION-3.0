@@ -19,10 +19,10 @@ import { professorsService } from '@/modules/academic/services';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
-import type { ProfessorSearchResponse } from '@/modules/academic/api/dtos/response';
-import { EVALUATOR_CODES } from '../../constants/type-codes';
+import type { ProfessorSearchResponse } from '@/modules/academic';
+import { TYPE_GROUP_CODES } from '@/modules/core';
 
-const EVALUATOR_TYPE_GROUP_CODE = EVALUATOR_CODES.TYPE_GROUP;
+const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
 
 interface AddEvaluatorModalProps {
 	open: boolean;

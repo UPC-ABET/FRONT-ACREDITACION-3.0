@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { CheckCircleIcon, HashtagIcon } from '@heroicons/react/24/outline';
 import { Button, Input } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/api-error';
+import { getErrorMessage } from '@/shared/lib/apiError';
+import { validatePrefixValue } from '../schemas';
 import { updateParameter } from '../services/parametersAdminService';
-import type { ParameterRow } from '../services/types';
+import type { ParameterRow } from '../types';
 
 type Props = {
 	parameter: ParameterRow<string>;
@@ -26,7 +27,7 @@ export function PrefixParameterCard({ parameter, onSaved, onError, onSuccess }: 
 	}, [parameter.value]);
 
 	const dirty = value.trim() !== initialValue.trim();
-	const validationError = value.trim().length === 0;
+	const validationError = !validatePrefixValue(value);
 
 	async function handleSave() {
 		if (!dirty || validationError) return;

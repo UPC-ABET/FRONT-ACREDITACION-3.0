@@ -1,7 +1,7 @@
 import React from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import { LocaleProvider, QueryProvider } from '@/providers';
+import { AuthProvider, LocaleProvider, QueryProvider, SessionGuard } from '@/providers';
 import LayoutClient from '@/app/components/LayoutClient';
 import { APP_DESCRIPTION, APP_NAME, DEFAULT_LOCALE } from '@/shared/constants';
 
@@ -36,7 +36,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 			<body className="h-full bg-zinc-50 text-zinc-900">
 				<QueryProvider>
 					<LocaleProvider>
-						<LayoutClient>{children}</LayoutClient>
+						<AuthProvider>
+							<SessionGuard>
+								<LayoutClient>{children}</LayoutClient>
+							</SessionGuard>
+						</AuthProvider>
 					</LocaleProvider>
 				</QueryProvider>
 			</body>

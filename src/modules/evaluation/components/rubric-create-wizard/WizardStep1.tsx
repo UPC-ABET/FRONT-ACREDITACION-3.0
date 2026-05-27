@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { Select, Button } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
-import { getSchoolFromCookie } from '@/shared/lib/jwt'
+import { getSchoolCookie } from '@/shared/lib/authCookies'
 import { useAcademicPeriods, useStudyPlanCourses } from '@/modules/academic/hooks'
 import type { StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response'
 
@@ -30,7 +30,7 @@ function getSpcCourseName(spc: StudyPlanCourseResponse): { en: string; es: strin
 
 export function WizardStep1({ onNext }: WizardStep1Props) {
   const { t, locale } = useI18n()
-  const schoolId = getSchoolFromCookie()?.id as number | undefined
+  const schoolId = getSchoolCookie()?.id as number | undefined
 
   const [selectedPeriod, setSelectedPeriod] = useState<AnyOption | null>(null)
   const [selectedSpcId, setSelectedSpcId] = useState<AnyOption | null>(null)

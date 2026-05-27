@@ -13,5 +13,5 @@ export * from './useStatusTypes';
 export * from './usePdfDownload';
 export * from './useStatusReportDownload';
 export * from './useIfcNotify';
-export * from './use-ifcs';
-export * from './use-ifc-findings';
+export * from './useIfcs';
+export * from './useIfcFindings';

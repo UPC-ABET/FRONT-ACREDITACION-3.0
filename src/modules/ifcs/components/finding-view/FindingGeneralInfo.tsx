@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Badge, Button, Card, I18nTextField } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type { FindingDetail, I18nText } from '../../services/types';
+import type { FindingDetail, I18nText } from '../../types';
 import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
 
 type Props = {

@@ -3,7 +3,7 @@
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { Button, I18nTextField, Select } from '@/shared/components';
-import type { CriticalityOption, FormFinding } from '../../services/types';
+import type { CriticalityOption, FormFinding } from '../../types';
 import { FORM_LABELS } from './formLabels';
 
 type Props = {
