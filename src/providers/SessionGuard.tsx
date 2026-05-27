@@ -71,8 +71,10 @@ export function SessionGuard({ children }: { children: React.ReactNode }) {
 
 	const value = useMemo<SessionGuardState>(() => {
 		if (isSurveyPublicRoute) return { mounted, showApp: false, showAuth: false, showPublic: true };
-		if (!mounted || isLoading) return { mounted, showApp: false, showAuth: false, showPublic: false };
-		if (isAuthRoute) return { mounted, showApp: false, showAuth: !isAuthenticated, showPublic: false };
+		if (!mounted || isLoading)
+			return { mounted, showApp: false, showAuth: false, showPublic: false };
+		if (isAuthRoute)
+			return { mounted, showApp: false, showAuth: !isAuthenticated, showPublic: false };
 		return { mounted, showApp: isAuthenticated, showAuth: false, showPublic: false };
 	}, [mounted, isLoading, isAuthenticated, isAuthRoute, isSurveyPublicRoute]);
 

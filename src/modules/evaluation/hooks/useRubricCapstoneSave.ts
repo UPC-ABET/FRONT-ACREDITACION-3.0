@@ -25,7 +25,8 @@ export function useRubricCapstoneSave({
 	const [isSaving, setIsSaving] = useState(false);
 
 	const saveAllowed = useMemo(() => {
-		const criteriaFilled = (c: CriteriaItem) => c.description[locale as 'en' | 'es'].trim().length > 0;
+		const criteriaFilled = (c: CriteriaItem) =>
+			c.description[locale as 'en' | 'es'].trim().length > 0;
 
 		const outcomeComplete = (
 			outcome: (typeof draftRubric.commissions)[number]['outcomes'][number],

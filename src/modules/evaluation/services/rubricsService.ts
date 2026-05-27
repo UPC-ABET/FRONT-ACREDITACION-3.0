@@ -37,5 +37,4 @@ export const rubricsService = {
 	getByFilters(filters: FilterRubricDto): Promise<ApiResponse<RubricResponse[]>> {
 		return apiPost('/rubrics/get-by-filters', filters);
 	},
-
 };

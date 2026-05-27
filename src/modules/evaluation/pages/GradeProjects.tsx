@@ -100,7 +100,7 @@ export function GradeProjectsPage() {
 	};
 
 	const handlePeriodChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
-		const single = Array.isArray(opt) ? opt[0] ?? null : opt;
+		const single = Array.isArray(opt) ? (opt[0] ?? null) : opt;
 		setSelectedPeriod(single ? { label: single.label, value: Number(single.value) } : null);
 	};
 

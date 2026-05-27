@@ -92,12 +92,7 @@ function RecipientsField({
 	);
 }
 
-export function ConfigEditor({
-	triggerTypeId,
-	statusTypeId,
-	statusCode,
-	existingConfig,
-}: Props) {
+export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existingConfig }: Props) {
 	const { t, locale: lang } = useI18n();
 	const { periodId, chartLevels, notifyVars, onSaved, onError, onSuccess } =
 		useNotificationConfigContext();

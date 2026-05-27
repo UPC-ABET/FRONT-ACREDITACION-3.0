@@ -131,7 +131,8 @@ export function AddEvaluatorModal({
 		return p.staff?.staff_email ?? `ID ${p.id}`;
 	};
 
-	const canSubmit = selectedProfessor !== null && selectedRoleId !== null && !createMutation.isPending;
+	const canSubmit =
+		selectedProfessor !== null && selectedRoleId !== null && !createMutation.isPending;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>

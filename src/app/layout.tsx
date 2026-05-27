@@ -24,8 +24,8 @@ export const metadata = {
 	icons: {
 		icon: '/assets/icon_upc.svg',
 		shortcut: '/assets/icon_upc.svg',
-        apple: '/assets/icon_upc.svg',
-	}
+		apple: '/assets/icon_upc.svg',
+	},
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

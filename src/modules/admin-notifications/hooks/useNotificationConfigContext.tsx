@@ -27,6 +27,7 @@ export function NotificationConfigProvider({
 
 export function useNotificationConfigContext(): NotificationConfigContextValue {
 	const ctx = useContext(NotificationConfigContext);
-	if (!ctx) throw new Error('useNotificationConfigContext must be used within NotificationConfigProvider');
+	if (!ctx)
+		throw new Error('useNotificationConfigContext must be used within NotificationConfigProvider');
 	return ctx;
 }

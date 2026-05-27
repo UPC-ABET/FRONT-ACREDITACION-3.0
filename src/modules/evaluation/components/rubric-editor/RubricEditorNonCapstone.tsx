@@ -166,7 +166,9 @@ export function RubricEditorNonCapstone({
 				<Button
 					type="button"
 					variant="primary"
-					disabled={!canEdit || !isFilled || !continuousValid || !sumValid || !rangeValid || isSaving}
+					disabled={
+						!canEdit || !isFilled || !continuousValid || !sumValid || !rangeValid || isSaving
+					}
 					onClick={() => void handleSave()}>
 					{isSaving
 						? t('rubrics.editor.nonCapstone.saving')

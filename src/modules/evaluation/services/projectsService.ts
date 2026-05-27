@@ -61,10 +61,7 @@ export const projectsService = {
 		return apiGet(`/projects/project/${projectId}?${qs.toString()}`);
 	},
 
-	update(
-		id: string | number,
-		body: UpdateProjectDto,
-	): Promise<ApiResponse<ProjectResponse>> {
+	update(id: string | number, body: UpdateProjectDto): Promise<ApiResponse<ProjectResponse>> {
 		return apiPatch(`/projects/update/${id}`, body);
 	},
 
@@ -101,7 +98,10 @@ export const projectsService = {
 		return apiDelete(`/project-students/delete/${projectStudentId}`);
 	},
 
-	addEvaluators(projectId: string | number, professorIds: number[]): Promise<ApiResponse<ProjectResponse>> {
+	addEvaluators(
+		projectId: string | number,
+		professorIds: number[],
+	): Promise<ApiResponse<ProjectResponse>> {
 		return apiPost(`/projects/project/${projectId}/evaluators`, {
 			evaluator_professor_ids: professorIds,
 		});

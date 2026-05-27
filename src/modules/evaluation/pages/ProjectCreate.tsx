@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { ProjectCreateWizard } from '../components/project-create-wizard/ProjectCreateWizard'
+import { ProjectCreateWizard } from '../components/project-create-wizard/ProjectCreateWizard';
 
 export function ProjectCreatePage() {
-  return <ProjectCreateWizard />
+	return <ProjectCreateWizard />;
 }

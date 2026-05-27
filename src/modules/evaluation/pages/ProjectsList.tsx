@@ -31,7 +31,7 @@ type SelectOption = { label: string; value: number };
 type AnyOption = { label: string; value: string | number };
 
 function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | null {
-	const single = Array.isArray(opt) ? opt[0] ?? null : opt;
+	const single = Array.isArray(opt) ? (opt[0] ?? null) : opt;
 	return single ? { label: single.label, value: Number(single.value) } : null;
 }
 

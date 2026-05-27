@@ -2,7 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { ApiError } from '@/shared/lib/apiError';
 import { logger } from '@/shared/lib/logger';
 import { rubricsService } from '../services';
-import { RubricDetail, OutcomeWithCriteria, CriteriaItem, CommissionTab, QuestionCriteria } from '../types';
+import {
+	RubricDetail,
+	OutcomeWithCriteria,
+	CriteriaItem,
+	CommissionTab,
+	QuestionCriteria,
+} from '../types';
 import { performanceLevelsService } from '@/modules/academic/services';
 import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
 import { evaluationQueryKeys } from './queryKeys';
@@ -84,7 +90,10 @@ interface ApiRubricDetailData {
 	isUsed?: boolean;
 }
 
-function toI18nText(raw: { en: string; es: string } | string | undefined): { en: string; es: string } {
+function toI18nText(raw: { en: string; es: string } | string | undefined): {
+	en: string;
+	es: string;
+} {
 	if (!raw) return { en: '', es: '' };
 	return typeof raw === 'string' ? { en: raw, es: raw } : raw;
 }
@@ -219,12 +228,14 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				id: String(q.id),
 				order: index + 1,
 				questionText: toI18nText(q.text),
-				criteria: (q.criterias ?? []).map((c): QuestionCriteria => ({
-					id: String(c.id),
-					criteriaText: toI18nText(c.text),
-					minValue: c.min_value != null ? Number(c.min_value) : '',
-					maxValue: c.max_value != null ? Number(c.max_value) : '',
-				})),
+				criteria: (q.criterias ?? []).map(
+					(c): QuestionCriteria => ({
+						id: String(c.id),
+						criteriaText: toI18nText(c.text),
+						minValue: c.min_value != null ? Number(c.min_value) : '',
+						maxValue: c.max_value != null ? Number(c.max_value) : '',
+					}),
+				),
 			}));
 
 			// ── Grade type name ──────────────────────────────────────────────────────

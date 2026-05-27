@@ -58,19 +58,8 @@ export function IFCDashboard() {
 	const [scopeErrorDismissed, setScopeErrorDismissed] = useState(false);
 	const [listErrorDismissed, setListErrorDismissed] = useState(false);
 
-	const {
-		scope,
-		loading: scopeLoading,
-		error: scopeError,
-		load: loadScope,
-	} = useOrgScope();
-	const {
-		rows,
-		loading: listLoading,
-		error: listError,
-		load: loadList,
-		setRows,
-	} = useIFCList();
+	const { scope, loading: scopeLoading, error: scopeError, load: loadScope } = useOrgScope();
+	const { rows, loading: listLoading, error: listError, load: loadList, setRows } = useIFCList();
 	const { data: statusTypes = [] } = useStatusTypes();
 	const { notifyOne, notifyMany, notifyingChartId, notifyingAll } = useIfcNotify();
 

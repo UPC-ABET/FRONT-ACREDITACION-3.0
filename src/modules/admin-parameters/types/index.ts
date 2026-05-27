@@ -21,7 +21,6 @@ export interface UpdateParameterBody<T = unknown> {
 	extra?: Record<string, unknown>;
 }
 
-
 export interface IFCFieldDescriptor {
 	key: string;
 	label: I18nText;

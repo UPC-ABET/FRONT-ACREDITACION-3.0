@@ -24,7 +24,13 @@ import { Select } from '@/shared/components/ui/Select';
 import { Input } from '@/shared/components/ui/Input';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import { useAcademicPeriods, usePerformanceLevels, useCreatePerformanceLevel, useUpdatePerformanceLevel, useDeletePerformanceLevel } from '@/modules/academic/hooks';
+import {
+	useAcademicPeriods,
+	usePerformanceLevels,
+	useCreatePerformanceLevel,
+	useUpdatePerformanceLevel,
+	useDeletePerformanceLevel,
+} from '@/modules/academic/hooks';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { usePerformanceLevelForm } from '../hooks';
 import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performanceLevels';
@@ -44,16 +50,16 @@ function PerformanceLevelForm({
 	instrumentTypeOptions: OptionItem[];
 	academicPeriodOptions: OptionItem[];
 }) {
-	const set =
-		(key: keyof PerformanceLevelFormState) =>
-		(e: React.ChangeEvent<HTMLInputElement>) =>
-			onChange({
-				...form,
-				[key]: e.target.type === 'number' ? Number(e.target.value) : e.target.value,
-			});
+	const set = (key: keyof PerformanceLevelFormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
+		onChange({
+			...form,
+			[key]: e.target.type === 'number' ? Number(e.target.value) : e.target.value,
+		});
 
-	const selectedInstrument = instrumentTypeOptions.find((o) => o.value === form.instrument_type_id) ?? null;
-	const selectedPeriod = academicPeriodOptions.find((o) => o.value === form.academic_period_id) ?? null;
+	const selectedInstrument =
+		instrumentTypeOptions.find((o) => o.value === form.instrument_type_id) ?? null;
+	const selectedPeriod =
+		academicPeriodOptions.find((o) => o.value === form.academic_period_id) ?? null;
 
 	return (
 		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -179,7 +185,8 @@ export function PerformanceLevelsPage() {
 	const updateMutation = useUpdatePerformanceLevel();
 	const deleteMutation = useDeletePerformanceLevel();
 
-	const isMutating = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
+	const isMutating =
+		createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
 
 	// Handlers
 	function openCreateModal() {
@@ -237,10 +244,7 @@ export function PerformanceLevelsPage() {
 	);
 
 	const academicPeriodOptions = useMemo<OptionItem[]>(
-		() =>
-			academicPeriods
-				.filter((p) => p.is_active)
-				.map((p) => ({ label: p.code, value: p.id })),
+		() => academicPeriods.filter((p) => p.is_active).map((p) => ({ label: p.code, value: p.id })),
 		[academicPeriods],
 	);
 
@@ -253,9 +257,7 @@ export function PerformanceLevelsPage() {
 		<div className="space-y-8">
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 				<div>
-					<h1 className="text-3xl font-bold text-zinc-900">
-						{t('performanceLevels.list.title')}
-					</h1>
+					<h1 className="text-3xl font-bold text-zinc-900">{t('performanceLevels.list.title')}</h1>
 					<p className="mt-2 text-zinc-600">{t('performanceLevels.list.description')}</p>
 				</div>
 				<Button variant="primary" size="md" onClick={openCreateModal}>
@@ -333,7 +335,8 @@ export function PerformanceLevelsPage() {
 						</TableHeader>
 						<TableBody>
 							{sortedLevels.map((level) => {
-								const color = (level.extra as { color?: string })?.color ?? DEFAULT_PERFORMANCE_LEVEL_COLOR;
+								const color =
+									(level.extra as { color?: string })?.color ?? DEFAULT_PERFORMANCE_LEVEL_COLOR;
 								const instrType = instrumentTypeMap.get(level.instrument_type_id);
 								const acadPeriod = academicPeriodMap.get(level.academic_period_id);
 								return (
@@ -348,9 +351,7 @@ export function PerformanceLevelsPage() {
 										</TableCell>
 										<TableCell>
 											<span className="text-zinc-700">
-												{instrType?.name?.[locale as 'es' | 'en'] ??
-													instrType?.code ??
-													'-'}
+												{instrType?.name?.[locale as 'es' | 'en'] ?? instrType?.code ?? '-'}
 											</span>
 										</TableCell>
 										<TableCell>
@@ -361,7 +362,8 @@ export function PerformanceLevelsPage() {
 										</TableCell>
 										<TableCell>
 											<span className="text-zinc-700">
-												{Number(level.min_score).toFixed(2)} - {Number(level.max_score).toFixed(2)} / {Number(level.max_value).toFixed(2)}
+												{Number(level.min_score).toFixed(2)} - {Number(level.max_score).toFixed(2)}{' '}
+												/ {Number(level.max_value).toFixed(2)}
 											</span>
 										</TableCell>
 										<TableCell>
@@ -468,7 +470,10 @@ export function PerformanceLevelsPage() {
 					)}
 
 					<DialogFooter>
-						<Button variant="secondary" onClick={() => setDeleteConfirm(null)} disabled={isMutating}>
+						<Button
+							variant="secondary"
+							onClick={() => setDeleteConfirm(null)}
+							disabled={isMutating}>
 							{t('performanceLevels.delete.cancel')}
 						</Button>
 						<Button variant="primary" onClick={handleDelete} disabled={isMutating}>

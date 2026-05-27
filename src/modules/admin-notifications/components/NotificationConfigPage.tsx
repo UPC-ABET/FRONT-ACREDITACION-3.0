@@ -46,11 +46,7 @@ export function NotificationConfigPage() {
 						}}
 						onError={setErrorMsg}
 						onSuccess={setSuccessMsg}>
-						<ConfigTabs
-							triggers={data.triggers}
-							statuses={data.statuses}
-							configs={data.configs}
-						/>
+						<ConfigTabs triggers={data.triggers} statuses={data.statuses} configs={data.configs} />
 					</NotificationConfigProvider>
 				)}
 

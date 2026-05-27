@@ -18,11 +18,7 @@ function labelFor(c: CoreType, lang: string): string {
 	return c.name?.[lang] ?? c.name?.es ?? fallback ?? c.code;
 }
 
-export function ConfigTabs({
-	triggers,
-	statuses,
-	configs,
-}: Props) {
+export function ConfigTabs({ triggers, statuses, configs }: Props) {
 	const { t, locale: lang } = useI18n();
 
 	const triggerTabs = useMemo(

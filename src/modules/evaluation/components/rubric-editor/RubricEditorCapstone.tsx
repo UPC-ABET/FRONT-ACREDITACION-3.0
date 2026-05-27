@@ -67,7 +67,9 @@ export function RubricEditorCapstone({
 				commissions={draftRubric.commissions}
 				activeCommissionId={activeCommissionId}
 				onCommissionChange={setActiveCommissionId}
-				checkboxTooltipIncomplete={t('rubrics.editor.capstone.tooltips.commissionCheckboxIncomplete')}
+				checkboxTooltipIncomplete={t(
+					'rubrics.editor.capstone.tooltips.commissionCheckboxIncomplete',
+				)}
 			/>
 
 			<PerformanceLevelsSummary levels={rubric.performanceLevels} />
@@ -81,7 +83,9 @@ export function RubricEditorCapstone({
 							canEdit={canEdit}
 							emptyMessage={t('rubrics.editor.capstone.validation.emptyOutcomeReadonly')}
 							emptyMessageWithHint={t('rubrics.editor.capstone.validation.emptyOutcome')}
-							onAdd={canEdit ? () => handleAddCriteria(activeCommission.id, outcome.id) : undefined}>
+							onAdd={
+								canEdit ? () => handleAddCriteria(activeCommission.id, outcome.id) : undefined
+							}>
 							{(outcome.questions[0]?.criteria ?? []).map((criterion, index) => (
 								<CriteriaInlineRow
 									key={criterion.id}
@@ -90,8 +94,7 @@ export function RubricEditorCapstone({
 									canEdit={canEdit}
 									isSaving={
 										savingKey === criterion.id ||
-										(criterion.id.startsWith('temp-') &&
-											savingKey === `${outcome.id}__create`)
+										(criterion.id.startsWith('temp-') && savingKey === `${outcome.id}__create`)
 									}
 									savingLabel={t('rubrics.editor.criteria.saving')}
 									placeholder={t('rubrics.editor.capstone.criteria.criteriaPlaceholder')}
@@ -138,9 +141,7 @@ export function RubricEditorCapstone({
 					variant="primary"
 					disabled={!canEdit || !saveAllowed || isSaving}
 					onClick={() => void handleSave()}>
-					{isSaving
-						? t('rubrics.editor.capstone.saving')
-						: t('rubrics.editor.capstone.saveRubric')}
+					{isSaving ? t('rubrics.editor.capstone.saving') : t('rubrics.editor.capstone.saveRubric')}
 				</Button>
 			</div>
 		</div>

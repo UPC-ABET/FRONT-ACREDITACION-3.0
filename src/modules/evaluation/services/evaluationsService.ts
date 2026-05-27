@@ -59,7 +59,10 @@ export const evaluationsService = {
 		return apiPost('/evaluations/create', body);
 	},
 
-	update(id: string | number, body: UpdateEvaluationPayload): Promise<ApiResponse<EvaluationResponse>> {
+	update(
+		id: string | number,
+		body: UpdateEvaluationPayload,
+	): Promise<ApiResponse<EvaluationResponse>> {
 		return apiPut(`/evaluations/update/${id}`, body);
 	},
 

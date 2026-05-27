@@ -59,7 +59,18 @@ export function useRubricNonCapstoneSave({
 		} finally {
 			setIsSaving(false);
 		}
-	}, [canEdit, isFilled, continuousValid, sumValid, rangeValid, rubricId, questions, onNotify, saveSuccessMessage, t]);
+	}, [
+		canEdit,
+		isFilled,
+		continuousValid,
+		sumValid,
+		rangeValid,
+		rubricId,
+		questions,
+		onNotify,
+		saveSuccessMessage,
+		t,
+	]);
 
 	return { isSaving, handleSave };
 }
