@@ -25,7 +25,7 @@ import {
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import { useRubrics, useDeleteRubric } from '../hooks';
-import { mapRubricToRow } from '../utils/rubrics-mappers.utils';
+import { mapRubricToRow } from '../utils/rubricsMappers';
 import type { RubricListRow } from '../types';
 
 export function RubricsListPage() {

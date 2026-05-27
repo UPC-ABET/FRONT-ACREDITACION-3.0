@@ -1,3 +1,1 @@
-export * from './type.response';
-export * from './type-item.response';
-export * from './type-group.response';
+export type { TypeResponse, TypeItemResponse, TypeGroupResponse } from '../../../types';

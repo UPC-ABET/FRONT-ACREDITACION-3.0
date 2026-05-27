@@ -7,12 +7,4 @@ export * from './RubricsList';
 export * from './PerformanceLevels';
 export * from './EvaluationCourses';
 export * from './ProjectCreate';
-export * from './grade-projects.page';
-export * from './project-edit.page';
-export * from './project-evaluate.page';
-export * from './projects-list.page';
-export * from './rubric-editor.page';
-export * from './rubrics-list.page';
-export * from './performance-levels.page';
-export * from './evaluation-courses.page';
-export * from './project-create.page';
+

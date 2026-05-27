@@ -1,7 +1,8 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost, apiPut, apiDelete } from '@/shared/lib';
-import type { FinalizeEvaluationDto, SubmitEvaluationPayload } from '../api/dtos/request';
-import type { EvaluationResponse } from '../api/dtos/response';
+import type { FinalizeEvaluationDto } from '../types';
+import type { SubmitEvaluationPayload } from '../api/dtos/request';
+import type { EvaluationResponse } from '../types';
 
 interface CreateEvaluationPayload {
 	project_student_id: number;

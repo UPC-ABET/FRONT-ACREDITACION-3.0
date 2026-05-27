@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useI18n } from '@/providers';
 import { rubricsService } from '../services';
 import type { CriteriaItem, RubricDetail } from '../types';
-import { verificationOutcomes } from '../utils/capstone-utils';
+import { verificationOutcomes } from '../utils/capstoneUtils';
 
 interface UseRubricCapstoneSaveOptions {
 	rubricId: string;

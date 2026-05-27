@@ -21,7 +21,7 @@ import {
   DialogClose,
 } from '@/shared/components/ui'
 import { useI18n } from '@/providers'
-import { getSchoolFromCookie } from '@/shared/lib/jwt'
+import { getSchoolCookie } from '@/shared/lib/authCookies'
 import {
   useAcademicPeriods,
   useStudyPlanCourses,
@@ -38,7 +38,7 @@ export function EvaluationCoursesPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<StudyPlanCourseResponse | null>(null)
 
-  const schoolId = getSchoolFromCookie()?.id as number | undefined
+  const schoolId = getSchoolCookie()?.id as number | undefined
 
   const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods({ is_active: true })
   const periodOptions: AnyOption[] = periods.map((p) => ({ label: p.code, value: p.id }))

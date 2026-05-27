@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { rubricsService } from '../services';
-import type { CreateRubricDto, CreateRubricFullDto } from '../api/dtos/request';
+import type { CreateRubricDto, CreateRubricFullDto } from '../types';
 
 export const rubricsQueryKeys = {
 	all: ['rubrics'] as const,

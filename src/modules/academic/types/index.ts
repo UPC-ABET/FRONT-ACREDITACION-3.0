@@ -90,7 +90,7 @@ export type EnrolledStudentResponse = {
 	is_active: boolean;
 };
 
-export type TypeItemResponse = {
+type TypeItemResponse = {
 	id: number;
 	code: string;
 	name: { en: string; es: string };
@@ -195,9 +195,13 @@ export type StudyPlanCourseResponse = {
 	course: CourseResponse;
 };
 
-export type TypeGroupResponse = {
+export type CourseOutcomeMappingResponse = {
 	id: number;
-	code: string;
-	name: { en: string; es: string };
-	description: { en: string; es: string };
+	is_active: boolean;
+	outcome_id: number;
+	study_plan_course_id: number;
+	outcome_type_id: number;
+	extra?: Record<string, unknown>;
+	created_at: string;
+	updated_at: string | null;
 };

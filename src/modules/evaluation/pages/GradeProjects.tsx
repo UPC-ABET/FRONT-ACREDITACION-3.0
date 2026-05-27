@@ -17,7 +17,8 @@ import {
 import { Select } from '@/shared/components/ui/Select';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import { getUserIdFromToken, getSchoolFromCookie } from '@/shared/lib/jwt';
+import { useAuth } from '@/providers';
+import { getSchoolCookie } from '@/shared/lib/authCookies';
 import { useAcademicPeriods, useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
 import { GRADE_IDS } from '../constants/typeCodes';
