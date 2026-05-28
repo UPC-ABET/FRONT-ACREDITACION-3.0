@@ -9,21 +9,18 @@ import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable';
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable';
 import { TYPE_CODES } from '@/modules/core';
-import { GRADE_IDS, RUBRIC_IDS } from '../constants/typeCodes';
-
-const CAPSTONE_RUBRIC_TYPE_ID = RUBRIC_IDS.CAPSTONE;
 
 interface ProjectEvaluatePageProps {
 	projectId: string;
-	gradeTypeId: number;
+	gradeTypeCode: string;
 }
 
-export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluatePageProps) {
+export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluatePageProps) {
 	const { t, locale } = useI18n();
 	const { user: authUser } = useAuth();
 
 	const { data, isLoading, isError, error } = useProjectDetails(projectId, {
-		gradeTypeId,
+		gradeTypeCode,
 		isEvaluationMode: true,
 	});
 	const { statusTypes, isLoading: isLoadingStatuses } = useQualificationStatusTypes();
@@ -97,8 +94,8 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 		rubric.rubric.grade_type?.name.es ??
 		'—';
 
-	const isCapstone = rubric.rubric.rubric_type?.id === CAPSTONE_RUBRIC_TYPE_ID;
-	const isFinal = gradeTypeId === GRADE_IDS.FINAL;
+	const isCapstone = rubric.rubric.rubric_type?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
+	const isFinal = gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
 	const isCapstoneFinal = isCapstone && isFinal;
 
 	return (

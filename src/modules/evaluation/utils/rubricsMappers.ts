@@ -1,5 +1,6 @@
 import { RubricResponse } from '../types';
 import { RubricListRow } from '../types/rubricListRow';
+import { TYPE_CODES } from '@/modules/core';
 
 export function mapRubricToRow(rubric: RubricResponse): RubricListRow {
 	const course = rubric.study_plan_course?.course;
@@ -21,7 +22,7 @@ export function mapRubricToRow(rubric: RubricResponse): RubricListRow {
 			: empty,
 		gradeTypeCode: gradeType?.code ?? '',
 		rubricTypeLabel: rubricType?.name ?? empty,
-		isCapstone: rubric.rubric_type_id === 29,
+		isCapstone: rubric.rubric_type?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE,
 		canEdit: !rubric.isUsed,
 		raw: rubric,
 	};

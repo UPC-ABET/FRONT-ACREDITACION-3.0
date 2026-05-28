@@ -5,12 +5,12 @@ import type { FilterProjectDto } from '../types';
 type ByProfessorParams = {
 	academicPeriodId?: number;
 	schoolId?: number;
-	gradeTypeId?: number;
+	gradeTypeCode?: string;
 };
 
 type DetailsParams = {
-	gradeTypeId?: number;
-	rubricTypeId?: number;
+	gradeTypeCode?: string;
+	rubricTypeCode?: string;
 	isEvaluationMode?: boolean;
 };
 

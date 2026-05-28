@@ -12,13 +12,7 @@ import {
 import { performanceLevelsService } from '@/modules/academic/services';
 import { evaluationQueryKeys } from './queryKeys';
 import { PerformanceLevelResponse } from '@/modules/academic';
-
-/** Capstone rubric type id — update if the backend changes the seed */
-const CAPSTONE_RUBRIC_TYPE_ID = 29;
-
-function isCapstoneRubricType(rubricTypeId: number): boolean {
-	return rubricTypeId === CAPSTONE_RUBRIC_TYPE_ID;
-}
+import { TYPE_CODES } from '@/modules/core';
 
 function unwrapApiData<T>(response: unknown): T | null {
 	if (!response || typeof response !== 'object') return null;
@@ -75,6 +69,7 @@ interface ApiRubricDetailData {
 	rubric: {
 		id: number;
 		rubric_type_id: number;
+		rubric_type?: { code?: string };
 		grade_type?: { name: { en: string; es: string } | string; code?: string };
 		study_plan_course_id?: number;
 	};
@@ -250,7 +245,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				id: String(rubric.id),
 				gradeTypeCode: rubric.grade_type?.code ?? '',
 				gradeType,
-				isCapstone: isCapstoneRubricType(rubric.rubric_type_id),
+				isCapstone: rubric.rubric_type?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE,
 				program: {
 					id: String(prog?.id ?? ''),
 					code: prog?.code ?? '',
