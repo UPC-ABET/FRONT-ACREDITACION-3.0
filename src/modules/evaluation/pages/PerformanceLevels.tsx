@@ -34,8 +34,8 @@ import {
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { usePerformanceLevelForm } from '../hooks';
 import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performanceLevels';
-import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
 import type { PerformanceLevelFormState } from '../schemas/performanceLevelSchema';
+import { PerformanceLevelResponse } from '@/modules/academic';
 
 type OptionItem = { label: string; value: number };
 

@@ -19,7 +19,7 @@ import {
 	useStudyPlanCourses,
 	useUpdateStudyPlanCourse,
 } from '@/modules/academic/hooks';
-import type { StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response';
+import { StudyPlanCourseResponse } from '@/modules/academic';
 
 type AnyOption = { label: string; value: string | number };
 

@@ -713,6 +713,9 @@
 		"wizard": {
 			"title": "Nueva rúbrica",
 			"subtitle": "Crea una rúbrica de evaluación.",
+			"stepIndicator": {
+				"ariaLabel": "Pasos para crear una rúbrica"
+			},
 			"steps": {
 				"step1": {
 					"label": "Curso",

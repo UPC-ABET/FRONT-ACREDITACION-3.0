@@ -5,7 +5,7 @@ import { Select, Button } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib/authCookies';
 import { useAcademicPeriods, useStudyPlanCourses } from '@/modules/academic/hooks';
-import type { StudyPlanCourseResponse } from '@/modules/academic/api/dtos/response';
+import { StudyPlanCourseResponse } from '@/modules/academic';
 
 export interface Step1Data {
 	periodId: number;

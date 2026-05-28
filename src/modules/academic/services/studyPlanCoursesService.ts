@@ -1,6 +1,6 @@
 import { ApiResponse } from '@/shared';
 import { apiPost, apiPut } from '@/shared/lib';
-import type { StudyPlanCourseResponse } from '../api/dtos/response';
+import { StudyPlanCourseResponse } from '../types';
 
 export type StudyPlanCourseFilters = {
 	academic_period_id?: number;

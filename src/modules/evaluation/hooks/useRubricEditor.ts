@@ -10,8 +10,8 @@ import {
 	QuestionCriteria,
 } from '../types';
 import { performanceLevelsService } from '@/modules/academic/services';
-import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
 import { evaluationQueryKeys } from './queryKeys';
+import { PerformanceLevelResponse } from '@/modules/academic';
 
 /** Capstone rubric type id — update if the backend changes the seed */
 const CAPSTONE_RUBRIC_TYPE_ID = 29;
@@ -41,9 +41,6 @@ function unwrapApiData<T>(response: unknown): T | null {
 }
 
 // ── Local API response types ──────────────────────────────────────────────────
-// The actual API shapes returned inside GetRubricByIdResponse differ from the
-// DTO definitions in some field names (e.g. `code` vs `outcome_code`). These
-// private types capture what the API actually returns in this context.
 
 interface ApiRubricCriteria {
 	id: number;

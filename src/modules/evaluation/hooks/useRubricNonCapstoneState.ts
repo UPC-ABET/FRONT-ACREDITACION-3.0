@@ -56,6 +56,7 @@ export function useRubricNonCapstoneState({
 		const { questions: q, columnCount: c } = buildShape(rubric.questions);
 		setQuestions(q);
 		setColumnCount(c);
+		// note: Intentionally depends only on rubric.id to re-sync state when switching between different rubrics
 	}, [rubric.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const update = useCallback(

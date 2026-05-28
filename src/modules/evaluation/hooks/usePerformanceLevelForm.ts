@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performanceLevels';
 import type { PerformanceLevelFormState } from '../schemas/performanceLevelSchema';
-import type { PerformanceLevelResponse } from '@/modules/academic/api/dtos';
 import type { CreatePerformanceLevelDto } from '@/modules/academic/services/performanceLevelsService';
+import { PerformanceLevelResponse } from '@/modules/academic';
 
 const EMPTY_FORM: PerformanceLevelFormState = {
 	instrument_type_id: 0,

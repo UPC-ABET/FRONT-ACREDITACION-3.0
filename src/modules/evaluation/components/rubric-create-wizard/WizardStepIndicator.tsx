@@ -1,5 +1,6 @@
 'use client';
 
+import { useI18n } from '@/providers';
 import { CheckIcon } from '@heroicons/react/24/solid';
 
 interface Step {
@@ -13,8 +14,10 @@ interface WizardStepIndicatorProps {
 }
 
 export function WizardStepIndicator({ steps, currentStep }: WizardStepIndicatorProps) {
+	const { t } = useI18n();
+	
 	return (
-		<nav aria-label="Pasos del wizard">
+		<nav aria-label={t('rubrics.wizard.stepIndicator.ariaLabel')}>
 			<ol className="flex items-start gap-0">
 				{steps.map((step, index) => {
 					const stepNumber = index + 1;

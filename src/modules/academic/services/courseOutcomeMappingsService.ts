@@ -1,6 +1,6 @@
 import { ApiResponse } from '@/shared';
 import { apiPost } from '@/shared/lib';
-import type { CourseOutcomeMappingResponse } from '../api/dtos/response';
+import { CourseOutcomeMappingResponse } from '../types';
 
 export type CourseOutcomeMappingFilters = {
 	study_plan_course_id?: number;

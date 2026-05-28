@@ -713,6 +713,9 @@
 		"wizard": {
 			"title": "New rubric",
 			"subtitle": "Create an evaluation rubric.",
+			"stepIndicator": {
+				"ariaLabel": "Steps to create a rubric"
+			},
 			"steps": {
 				"step1": {
 					"label": "Course",

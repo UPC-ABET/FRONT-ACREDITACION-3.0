@@ -16,10 +16,10 @@ import { Button } from '@/shared/components/ui/Button';
 import { useI18n } from '@/providers';
 import { professorsService } from '@/modules/academic/services';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
-import type { ProfessorSearchResponse } from '@/modules/academic/api/dtos/response';
 import type { LocalEvaluator } from './ProjectWizardStep2';
 import { TYPE_GROUP_CODES } from '@/modules/core';
 import { EVALUATOR_LIMITED_CODES } from '../../constants/typeCodes';
+import { ProfessorSearchResponse } from '@/modules/academic';
 
 const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
 const LIMITED_CODES: readonly string[] = EVALUATOR_LIMITED_CODES;
