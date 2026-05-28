@@ -29,7 +29,10 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 	const { statusTypes, isLoading: isLoadingStatuses } = useQualificationStatusTypes();
 
 	const nrNaTypeIds = useMemo(() => {
-		const nrNaCodes = new Set<string>([TYPE_CODES.QUALIFICATION_STATUS.NR, TYPE_CODES.QUALIFICATION_STATUS.NA]);
+		const nrNaCodes = new Set<string>([
+			TYPE_CODES.QUALIFICATION_STATUS.NR,
+			TYPE_CODES.QUALIFICATION_STATUS.NA,
+		]);
 		return new Set(statusTypes.filter((s) => nrNaCodes.has(s.code)).map((s) => s.id));
 	}, [statusTypes]);
 

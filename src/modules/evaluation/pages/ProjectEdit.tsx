@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeftIcon, PencilIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Input,
@@ -15,8 +14,12 @@ import {
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import { useProjectDetails, projectsQueryKeys } from '../hooks';
-import { projectsService } from '../services';
+import {
+	useProjectDetails,
+	useUpdateProject,
+	useRemoveProjectStudent,
+	useRemoveProjectEvaluator,
+} from '../hooks';
 import { AddEvaluatorModal, AddStudentModal } from '../components/project-edit';
 
 interface ProjectEditPageProps {
@@ -25,14 +28,12 @@ interface ProjectEditPageProps {
 
 export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	const { t, locale } = useI18n();
-	const queryClient = useQueryClient();
 
 	const [studentError, setStudentError] = useState<string | null>(null);
 	const [evaluatorError, setEvaluatorError] = useState<string | null>(null);
 	const [evaluatorModalOpen, setEvaluatorModalOpen] = useState(false);
 	const [studentModalOpen, setStudentModalOpen] = useState(false);
 
-	// Header edit mode
 	const [isEditingHeader, setIsEditingHeader] = useState(false);
 	const [draftCode, setDraftCode] = useState('');
 	const [draftName, setDraftName] = useState('');
@@ -54,10 +55,9 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 		isEvaluationMode: false,
 	});
 
-	const invalidate = () =>
-		queryClient.invalidateQueries({
-			queryKey: projectsQueryKeys.details(projectId, { isEvaluationMode: false }),
-		});
+	const updateMutation = useUpdateProject(projectId);
+	const removeStudentMutation = useRemoveProjectStudent(projectId);
+	const removeEvaluatorMutation = useRemoveProjectEvaluator(projectId);
 
 	const enterEditMode = () => {
 		if (!data) return;
@@ -68,63 +68,36 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 		setIsEditingHeader(true);
 	};
 
-	const updateMutation = useMutation({
-		mutationFn: () => {
-			const loc = locale as 'es' | 'en';
-			const other = loc === 'es' ? 'en' : 'es';
-			const body: Parameters<typeof projectsService.update>[1] = {};
+	const handleSaveHeader = () => {
+		if (!data) return;
+		const loc = locale as 'es' | 'en';
+		const other = loc === 'es' ? 'en' : 'es';
+		const body: Parameters<typeof updateMutation.mutate>[0] = {};
 
-			if (draftCode.trim() !== data!.project.code) {
-				body.code = draftCode.trim();
-			}
-			if (draftName.trim() !== (data!.project.name[loc] ?? data!.project.name.es)) {
-				body.name = { [loc]: draftName.trim(), [other]: data!.project.name[other] } as {
-					es: string;
-					en: string;
-				};
-			}
-			if (draftDesc.trim() !== (data!.project.description[loc] ?? data!.project.description.es)) {
-				body.description = {
-					[loc]: draftDesc.trim(),
-					[other]: data!.project.description[other],
-				} as { es: string; en: string };
-			}
+		if (draftCode.trim() !== data.project.code) {
+			body.code = draftCode.trim();
+		}
+		if (draftName.trim() !== (data.project.name[loc] ?? data.project.name.es)) {
+			body.name = { [loc]: draftName.trim(), [other]: data.project.name[other] } as {
+				es: string;
+				en: string;
+			};
+		}
+		if (draftDesc.trim() !== (data.project.description[loc] ?? data.project.description.es)) {
+			body.description = {
+				[loc]: draftDesc.trim(),
+				[other]: data.project.description[other],
+			} as { es: string; en: string };
+		}
 
-			return projectsService.update(data!.project.id, body);
-		},
-		onSuccess: () => {
-			invalidate();
-			setIsEditingHeader(false);
-			showToast('success', t('projects.edit.header.saveSuccess'));
-		},
-		onError: () => showToast('error', t('projects.edit.header.saveError')),
-	});
-
-	const removeStudentMutation = useMutation({
-		mutationFn: (projectStudentId: number) => projectsService.removeStudent(projectStudentId),
-		onSuccess: () => {
-			invalidate();
-			setStudentError(null);
-			showToast('success', t('projects.edit.students.removeSuccess'));
-		},
-		onError: () => {
-			setStudentError(t('projects.edit.students.removeError'));
-			showToast('error', t('projects.edit.students.removeError'));
-		},
-	});
-
-	const removeEvaluatorMutation = useMutation({
-		mutationFn: (projectEvaluatorId: number) => projectsService.removeEvaluator(projectEvaluatorId),
-		onSuccess: () => {
-			invalidate();
-			setEvaluatorError(null);
-			showToast('success', t('projects.edit.evaluators.removeSuccess'));
-		},
-		onError: () => {
-			setEvaluatorError(t('projects.edit.evaluators.removeError'));
-			showToast('error', t('projects.edit.evaluators.removeError'));
-		},
-	});
+		updateMutation.mutate(body, {
+			onSuccess: () => {
+				setIsEditingHeader(false);
+				showToast('success', t('projects.edit.header.saveSuccess'));
+			},
+			onError: () => showToast('error', t('projects.edit.header.saveError')),
+		});
+	};
 
 	if (isLoading) {
 		return (
@@ -219,7 +192,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 							<Button
 								variant="dark"
 								size="sm"
-								onClick={() => updateMutation.mutate()}
+								onClick={handleSaveHeader}
 								disabled={updateMutation.isPending}>
 								{updateMutation.isPending
 									? t('projects.edit.header.saving')
@@ -304,13 +277,24 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 
 								<button
 									type="button"
-									onClick={() => removeStudentMutation.mutate(student.id)}
+									onClick={() =>
+										removeStudentMutation.mutate(student.id, {
+											onSuccess: () => {
+												setStudentError(null);
+												showToast('success', t('projects.edit.students.removeSuccess'));
+											},
+											onError: () => {
+												setStudentError(t('projects.edit.students.removeError'));
+												showToast('error', t('projects.edit.students.removeError'));
+											},
+										})
+									}
 									disabled={removeStudentMutation.isPending}
 									className={cn(
 										buttonVariants({ variant: 'ghost', size: 'icon' }),
 										'text-zinc-400 hover:bg-red-50 hover:text-red-600',
 									)}
-									title="Eliminar">
+									title={t('projects.edit.students.removeButton')}>
 									<XMarkIcon className="h-4 w-4" />
 								</button>
 							</div>
@@ -355,13 +339,24 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 
 								<button
 									type="button"
-									onClick={() => removeEvaluatorMutation.mutate(evaluator.id)}
+									onClick={() =>
+										removeEvaluatorMutation.mutate(evaluator.id, {
+											onSuccess: () => {
+												setEvaluatorError(null);
+												showToast('success', t('projects.edit.evaluators.removeSuccess'));
+											},
+											onError: () => {
+												setEvaluatorError(t('projects.edit.evaluators.removeError'));
+												showToast('error', t('projects.edit.evaluators.removeError'));
+											},
+										})
+									}
 									disabled={removeEvaluatorMutation.isPending}
 									className={cn(
 										buttonVariants({ variant: 'ghost', size: 'icon' }),
 										'text-zinc-400 hover:bg-red-50 hover:text-red-600',
 									)}
-									title="Eliminar">
+									title={t('projects.edit.evaluators.removeButton')}>
 									<XMarkIcon className="h-4 w-4" />
 								</button>
 							</div>

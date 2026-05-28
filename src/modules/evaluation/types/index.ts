@@ -9,6 +9,20 @@ export * from './rubricListRow';
 export * from './rubricQuestion';
 
 // ── Request DTOs ─────────────────────────────────────────────────────────────
+export type EvaluationScorePayload = {
+	rubric_question_criteria_id: number;
+	score: number;
+	commentaries: Record<string, string>;
+};
+
+export type SubmitEvaluationPayload = {
+	project_student_id: number;
+	project_evaluator_id: number;
+	rubric_id: number;
+	observation: { es: string; en: string };
+	scores: EvaluationScorePayload[];
+	qualification_status_type_id?: number | null;
+};
 
 export type CreateProjectFullDto = {
 	code: string;
@@ -129,17 +143,6 @@ import {
 } from '@/modules/academic';
 import { CommissionResponse, OutcomeResponse } from '@/modules/accreditation';
 import { TypeResponse } from '@/modules/core';
-
-export type CourseOutcomeMappingResponse = {
-	id: number;
-	is_active: boolean;
-	outcome_id: number;
-	study_plan_course_id: number;
-	outcome_type_id: number;
-	extra?: Record<string, unknown>;
-	created_at: string;
-	updated_at: string | null;
-};
 
 export type RubricScoreResponse = {
 	id: number;

@@ -1,22 +1,27 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost, apiPatch, apiDelete } from '@/shared/lib';
 import type {
+	CreateProjectDto,
+	CreateProjectFullDto,
 	FilterProjectDto,
+	UpdateProjectDto,
 	ProjectByProfessorResponse,
 	ProjectDetailsResponse,
+	ProjectEvaluatorResponse,
 	ProjectResponse,
+	ProjectStudentResponse,
 } from '../types';
 
 export const projectsService = {
-	create(body: Record<string, unknown>): Promise<ApiResponse<any>> {
+	create(body: CreateProjectDto): Promise<ApiResponse<ProjectResponse>> {
 		return apiPost('/projects/create', body);
 	},
 
-	createFull(body: Record<string, unknown>): Promise<ApiResponse<any>> {
+	createFull(body: CreateProjectFullDto): Promise<ApiResponse<ProjectResponse>> {
 		return apiPost('/projects/create-full', body);
 	},
 
-	getByEvaluator(evaluatorId: string | number): Promise<ApiResponse<any[]>> {
+	getByEvaluator(evaluatorId: string | number): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
 		return apiGet(`/projects/evaluator/${evaluatorId}`);
 	},
 
@@ -37,7 +42,7 @@ export const projectsService = {
 		return apiGet(`/projects/professor/${professorId}${query ? `?${query}` : ''}`);
 	},
 
-	getById(projectId: string | number): Promise<ApiResponse<any>> {
+	getById(projectId: string | number): Promise<ApiResponse<ProjectResponse>> {
 		return apiGet(`/projects/project/${projectId}`);
 	},
 
@@ -56,23 +61,15 @@ export const projectsService = {
 		return apiGet(`/projects/project/${projectId}?${qs.toString()}`);
 	},
 
-	update(
-		id: string | number,
-		body: {
-			code?: string;
-			name?: { es: string; en: string };
-			description?: { es: string; en: string };
-			is_active?: boolean;
-		},
-	): Promise<ApiResponse<any>> {
+	update(id: string | number, body: UpdateProjectDto): Promise<ApiResponse<ProjectResponse>> {
 		return apiPatch(`/projects/update/${id}`, body);
 	},
 
-	delete(id: string | number): Promise<ApiResponse<any>> {
+	delete(id: string | number): Promise<ApiResponse<void>> {
 		return apiDelete(`/projects/delete/${id}`);
 	},
 
-	getAll(): Promise<ApiResponse<any[]>> {
+	getAll(): Promise<ApiResponse<ProjectResponse[]>> {
 		return apiGet('/projects/get-all');
 	},
 
@@ -83,7 +80,7 @@ export const projectsService = {
 	addStudents(
 		projectId: string | number,
 		studentSectionEnrollmentIds: number[],
-	): Promise<ApiResponse<any>> {
+	): Promise<ApiResponse<ProjectResponse>> {
 		return apiPost(`/projects/project/${projectId}/students`, {
 			student_section_enrollment_ids: studentSectionEnrollmentIds,
 		});
@@ -93,21 +90,24 @@ export const projectsService = {
 		project_id: number;
 		student_section_enrollment_id: number;
 		is_active: true;
-	}): Promise<ApiResponse<any>> {
+	}): Promise<ApiResponse<ProjectStudentResponse>> {
 		return apiPost('/project-students/create', body);
 	},
 
-	removeStudent(projectStudentId: number): Promise<ApiResponse<any>> {
+	removeStudent(projectStudentId: number): Promise<ApiResponse<void>> {
 		return apiDelete(`/project-students/delete/${projectStudentId}`);
 	},
 
-	addEvaluators(projectId: string | number, professorIds: number[]): Promise<ApiResponse<any>> {
+	addEvaluators(
+		projectId: string | number,
+		professorIds: number[],
+	): Promise<ApiResponse<ProjectResponse>> {
 		return apiPost(`/projects/project/${projectId}/evaluators`, {
 			evaluator_professor_ids: professorIds,
 		});
 	},
 
-	removeEvaluator(projectEvaluatorId: number): Promise<ApiResponse<any>> {
+	removeEvaluator(projectEvaluatorId: number): Promise<ApiResponse<void>> {
 		return apiDelete(`/project-evaluators/delete/${projectEvaluatorId}`);
 	},
 
@@ -116,7 +116,7 @@ export const projectsService = {
 		professor_id: number;
 		evaluator_type_id: number;
 		is_active: true;
-	}): Promise<ApiResponse<any>> {
+	}): Promise<ApiResponse<ProjectEvaluatorResponse>> {
 		return apiPost('/project-evaluators/create', body);
 	},
 };

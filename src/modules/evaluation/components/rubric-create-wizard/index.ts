@@ -1,1 +1,1 @@
-export * from './RubricCreateWizard'
+export * from './RubricCreateWizard';

@@ -28,6 +28,12 @@ import { projectsService } from '../services';
 import { TrashIcon } from 'lucide-react';
 
 type SelectOption = { label: string; value: number };
+type AnyOption = { label: string; value: string | number };
+
+function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | null {
+	const single = Array.isArray(opt) ? (opt[0] ?? null) : opt;
+	return single ? { label: single.label, value: Number(single.value) } : null;
+}
 
 export function ProjectsListPage() {
 	const { t, locale } = useI18n();
@@ -129,19 +135,19 @@ export function ProjectsListPage() {
 		[courses, locale],
 	);
 
-	const handlePeriodChange = (_: string | undefined, opt: any) => {
-		setSelectedPeriod(opt ? { label: String(opt.label), value: Number(opt.value) } : null);
+	const handlePeriodChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
+		setSelectedPeriod(toSelectOption(opt));
 		setSelectedProgram(null);
 		setSelectedCourse(null);
 	};
 
-	const handleProgramChange = (_: string | undefined, opt: any) => {
-		setSelectedProgram(opt ? { label: String(opt.label), value: Number(opt.value) } : null);
+	const handleProgramChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
+		setSelectedProgram(toSelectOption(opt));
 		setSelectedCourse(null);
 	};
 
-	const handleCourseChange = (_: string | undefined, opt: any) => {
-		setSelectedCourse(opt ? { label: String(opt.label), value: Number(opt.value) } : null);
+	const handleCourseChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
+		setSelectedCourse(toSelectOption(opt));
 	};
 
 	const handleClearFilters = () => {

@@ -21,6 +21,11 @@ export const metadata = {
 		template: `%s - ${APP_NAME}`,
 	},
 	description: APP_DESCRIPTION,
+	icons: {
+		icon: '/assets/icon_upc.svg',
+		shortcut: '/assets/icon_upc.svg',
+		apple: '/assets/icon_upc.svg',
+	},
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

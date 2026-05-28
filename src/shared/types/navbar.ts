@@ -12,4 +12,3 @@ export type NavbarProps = {
 	userRole?: string;
 	userInitials?: string;
 };
-

@@ -6,10 +6,7 @@ import { Toggle } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import { useSubmitEvaluation } from '../../hooks/useEvaluations';
-import type {
-	RubricQuestionDetailsResponse,
-	ProjectDetailsStudentResponse,
-} from '../../types';
+import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -253,7 +250,7 @@ export function ProjectRubricNonCapstoneTable({
 				observation: { es: '', en: '' },
 				scores: criteriaScores,
 				qualification_status_type_id: qualifStatuses[project_student_id],
-			} as any);
+			});
 		}
 	};
 

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { projectsService } from '../services';
 import type { FilterProjectDto } from '../types';
 
@@ -46,5 +46,36 @@ export function useProjectDetails(projectId: string | number | undefined, params
 		queryKey: projectsQueryKeys.details(projectId!, params),
 		queryFn: () => projectsService.getDetails(projectId!, params).then((r) => r.data),
 		enabled: projectId != null,
+	});
+}
+
+export function useUpdateProject(projectId: string | number) {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (body: Parameters<typeof projectsService.update>[1]) =>
+			projectsService.update(projectId, body),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: projectsQueryKeys.all });
+		},
+	});
+}
+
+export function useRemoveProjectStudent(projectId: string | number) {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (projectStudentId: number) => projectsService.removeStudent(projectStudentId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: projectsQueryKeys.details(projectId) });
+		},
+	});
+}
+
+export function useRemoveProjectEvaluator(projectId: string | number) {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (projectEvaluatorId: number) => projectsService.removeEvaluator(projectEvaluatorId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: projectsQueryKeys.details(projectId) });
+		},
 	});
 }

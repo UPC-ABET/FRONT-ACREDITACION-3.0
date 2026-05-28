@@ -1,7 +1,12 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getParameterByCode, getTypesByGroupCode, PARAMETER_CODES, TYPE_GROUP_CODES } from '@/modules/core';
+import {
+	getParameterByCode,
+	getTypesByGroupCode,
+	PARAMETER_CODES,
+	TYPE_GROUP_CODES,
+} from '@/modules/core';
 import { listNotificationConfigs } from '../services/notificationConfigsService';
 import type { CoreType, NotificationConfig, NotifyVar } from '../types';
 

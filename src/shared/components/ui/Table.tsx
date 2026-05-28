@@ -215,9 +215,7 @@ export function DataTable<TData, TValue>({
 				</div>
 			)}
 
-			<Table
-				aria-label={ariaLabel}
-				aria-rowcount={showPagination ? data.length : undefined}>
+			<Table aria-label={ariaLabel} aria-rowcount={showPagination ? data.length : undefined}>
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (
 						<TableRow key={headerGroup.id}>

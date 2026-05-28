@@ -9,12 +9,7 @@ import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useIFCFormState } from '../../hooks/useIFCFormState';
 import { validateIFCForm } from '../../schemas';
 import { createIFC, patchIFC } from '../../services/ifcsService';
-import type {
-	CriticalityOption,
-	IFCField,
-	IFCPrefill,
-	IFCViewPayload,
-} from '../../types';
+import type { CriticalityOption, IFCField, IFCPrefill, IFCViewPayload } from '../../types';
 import { IFCPageTitle } from '../shared/IFCPageTitle';
 import { IFCLearningOutcomeReached } from '../shared/IFCLearningOutcomeReached';
 import { IFCOutcomeResults } from '../shared/IFCOutcomeResults';

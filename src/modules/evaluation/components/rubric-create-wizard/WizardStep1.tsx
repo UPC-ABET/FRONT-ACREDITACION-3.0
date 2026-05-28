@@ -1,147 +1,131 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { Select, Button } from '@/shared/components/ui'
-import { useI18n } from '@/providers'
-import { getSchoolCookie } from '@/shared/lib'
-import { rubricWizardService } from '../../services/rubricWizardService'
-import { studyPlanCoursesService } from '../../services/studyPlanCoursesService'
-import type { AcademicPeriodResponse, StudyPlanCourseResponse } from '@/modules/academic'
+import { useMemo, useState } from 'react';
+import { Select, Button } from '@/shared/components/ui';
+import { useI18n } from '@/providers';
+import { getSchoolCookie } from '@/shared/lib/authCookies';
+import { useAcademicPeriods, useStudyPlanCourses } from '@/modules/academic/hooks';
+import { StudyPlanCourseResponse } from '@/modules/academic';
 
 export interface Step1Data {
-  periodId: number
-  courseId: number
-  studyPlanCourseId: number
-  studyPlanAcademicPeriodId: number
-  courseName: { en: string; es: string }
-  periodCode: string
+	periodId: number;
+	courseId: number;
+	studyPlanCourseId: number;
+	studyPlanAcademicPeriodId: number;
+	courseName: { en: string; es: string };
+	periodCode: string;
 }
 
 interface WizardStep1Props {
-  onNext: (data: Step1Data) => void
+	onNext: (data: Step1Data) => void;
 }
 
-type SelectOption = { label: string; value: string | number }
+type AnyOption = { label: string; value: string | number };
 
 function getSpcCourseName(spc: StudyPlanCourseResponse): { en: string; es: string } {
-  const raw = spc.course?.name
-  if (!raw) return { en: '', es: '' }
-  return typeof raw === 'string' ? { en: raw, es: raw } : raw
+	const raw = spc.course?.name;
+	if (!raw) return { en: '', es: '' };
+	return typeof raw === 'string' ? { en: raw, es: raw } : raw;
 }
 
 export function WizardStep1({ onNext }: WizardStep1Props) {
-  const { t, locale } = useI18n()
-  const [periods, setPeriods] = useState<AcademicPeriodResponse[]>([])
-  const [spcList, setSpcList] = useState<StudyPlanCourseResponse[]>([])
-  const [selectedPeriod, setSelectedPeriod] = useState<SelectOption | null>(null)
-  const [selectedSpcId, setSelectedSpcId] = useState<SelectOption | null>(null)
-  const [loadingPeriods, setLoadingPeriods] = useState(true)
-  const [loadingCourses, setLoadingCourses] = useState(false)
-  const [error, setError] = useState('')
+	const { t, locale } = useI18n();
+	const schoolId = getSchoolCookie()?.id as number | undefined;
 
-  // Load active periods once
-  useEffect(() => {
-    rubricWizardService
-      .getAcademicPeriods()
-      .then((res) => setPeriods(res.data.filter((p) => p.is_active)))
-      .catch(() => setError(t('rubrics.wizard.step1.error.loadPeriods')))
-      .finally(() => setLoadingPeriods(false))
-  }, [t])
+	const [selectedPeriod, setSelectedPeriod] = useState<AnyOption | null>(null);
+	const [selectedSpcId, setSelectedSpcId] = useState<AnyOption | null>(null);
 
-  // Load study-plan-courses filtered by period, school and is_evaluate_rubric
-  useEffect(() => {
-    if (!selectedPeriod) {
-      setSpcList([])
-      setSelectedSpcId(null)
-      return
-    }
-    const schoolId = getSchoolCookie()?.id as number | undefined
-    if (!schoolId) {
-      setError(t('rubrics.wizard.step1.error.noSchool'))
-      return
-    }
-    setLoadingCourses(true)
-    setSelectedSpcId(null)
-    setError('')
-    studyPlanCoursesService
-      .getByFilters({
-        academic_period_id: Number(selectedPeriod.value),
-        school_id: schoolId,
-        extra: { is_evaluate_rubric: true },
-        is_active: true,
-      })
-      .then((res) => setSpcList(res.data))
-      .catch(() => setError(t('rubrics.wizard.step1.error.loadCourses')))
-      .finally(() => setLoadingCourses(false))
-  }, [selectedPeriod, t])
+	const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods({ is_active: true });
 
-  const handleNext = () => {
-    if (!selectedPeriod || !selectedSpcId) return
-    const spc = spcList.find((s) => s.id === Number(selectedSpcId.value))
-    const period = periods.find((p) => p.id === Number(selectedPeriod.value))
-    if (!spc || !period) return
-    onNext({
-      periodId: period.id,
-      courseId: spc.course?.id ?? spc.course_id,
-      studyPlanCourseId: spc.id,
-      studyPlanAcademicPeriodId: spc.study_plan_academic_period_id,
-      courseName: getSpcCourseName(spc),
-      periodCode: period.code,
-    })
-  }
+	const spcFilters = useMemo(
+		() => ({
+			academic_period_id: Number(selectedPeriod?.value ?? 0),
+			school_id: schoolId,
+			extra: { is_evaluate_rubric: true },
+			is_active: true,
+		}),
+		[selectedPeriod?.value, schoolId],
+	);
 
-  const periodOptions: SelectOption[] = periods.map((p) => ({ label: p.code, value: p.id }))
-  const courseOptions: SelectOption[] = spcList.map((s) => ({
-    label: getSpcCourseName(s)[locale] || String(s.course?.id ?? s.course_id),
-    value: s.id,
-  }))
+	const { data: spcList = [], isLoading: loadingCourses } = useStudyPlanCourses(spcFilters, {
+		enabled: !!selectedPeriod && !!schoolId,
+	});
 
-  const canContinue = !!selectedPeriod && !!selectedSpcId
+	const handlePeriodChange = (_: string | undefined, v: AnyOption | AnyOption[] | null) => {
+		const single = Array.isArray(v) ? (v[0] ?? null) : v;
+		setSelectedPeriod(single);
+		setSelectedSpcId(null);
+	};
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold text-zinc-900">{t('rubrics.wizard.step1.title')}</h2>
-        <p className="mt-1 text-sm text-zinc-500">{t('rubrics.wizard.step1.subtitle')}</p>
-      </div>
+	const handleNext = () => {
+		if (!selectedPeriod || !selectedSpcId) return;
+		const spc = spcList.find((s) => s.id === Number(selectedSpcId.value));
+		const period = periods.find((p) => p.id === Number(selectedPeriod.value));
+		if (!spc || !period) return;
+		onNext({
+			periodId: period.id,
+			courseId: spc.course?.id ?? spc.course_id,
+			studyPlanCourseId: spc.id,
+			studyPlanAcademicPeriodId: spc.study_plan_academic_period_id,
+			courseName: getSpcCourseName(spc),
+			periodCode: period.code,
+		});
+	};
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <Select
-          label={t('rubrics.wizard.step1.periodLabel')}
-          placeholder={loadingPeriods ? t('rubrics.wizard.step1.periodLoading') : t('rubrics.wizard.step1.periodPlaceholder')}
-          options={periodOptions}
-          value={selectedPeriod}
-          isDisabled={loadingPeriods}
-          isSearchable
-          onChange={(_, v) => setSelectedPeriod(v as SelectOption | null)}
-        />
+	const periodOptions: AnyOption[] = periods.map((p) => ({ label: p.code, value: p.id }));
+	const courseOptions: AnyOption[] = spcList.map((s) => ({
+		label: getSpcCourseName(s)[locale] || String(s.course?.id ?? s.course_id),
+		value: s.id,
+	}));
 
-        <Select
-          label={t('rubrics.wizard.step1.courseLabel')}
-          placeholder={
-            !selectedPeriod
-              ? t('rubrics.wizard.step1.courseSelectPeriodFirst')
-              : loadingCourses
-                ? t('rubrics.wizard.step1.courseLoading')
-                : spcList.length === 0
-                  ? t('rubrics.wizard.step1.courseNoOptions')
-                  : t('rubrics.wizard.step1.coursePlaceholder')
-          }
-          options={courseOptions}
-          value={selectedSpcId}
-          isDisabled={!selectedPeriod || loadingCourses || spcList.length === 0}
-          isSearchable
-          onChange={(_, v) => setSelectedSpcId(v as SelectOption | null)}
-        />
-      </div>
+	const canContinue = !!selectedPeriod && !!selectedSpcId;
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+	return (
+		<div className="space-y-6">
+			<div>
+				<h2 className="text-lg font-semibold text-zinc-900">{t('rubrics.wizard.step1.title')}</h2>
+				<p className="mt-1 text-sm text-zinc-500">{t('rubrics.wizard.step1.subtitle')}</p>
+			</div>
 
-      <div className="flex justify-end">
-        <Button variant="primary" disabled={!canContinue} onClick={handleNext}>
-          {t('rubrics.wizard.step1.next')}
-        </Button>
-      </div>
-    </div>
-  )
+			<div className="grid gap-6 sm:grid-cols-2">
+				<Select
+					label={t('rubrics.wizard.step1.periodLabel')}
+					placeholder={
+						loadingPeriods
+							? t('rubrics.wizard.step1.periodLoading')
+							: t('rubrics.wizard.step1.periodPlaceholder')
+					}
+					options={periodOptions}
+					value={selectedPeriod}
+					isDisabled={loadingPeriods}
+					isSearchable
+					onChange={handlePeriodChange}
+				/>
+
+				<Select
+					label={t('rubrics.wizard.step1.courseLabel')}
+					placeholder={
+						!selectedPeriod
+							? t('rubrics.wizard.step1.courseSelectPeriodFirst')
+							: loadingCourses
+								? t('rubrics.wizard.step1.courseLoading')
+								: spcList.length === 0
+									? t('rubrics.wizard.step1.courseNoOptions')
+									: t('rubrics.wizard.step1.coursePlaceholder')
+					}
+					options={courseOptions}
+					value={selectedSpcId}
+					isDisabled={!selectedPeriod || loadingCourses || spcList.length === 0}
+					isSearchable
+					onChange={(_, v) => setSelectedSpcId(Array.isArray(v) ? (v[0] ?? null) : v)}
+				/>
+			</div>
+
+			<div className="flex justify-end">
+				<Button variant="primary" disabled={!canContinue} onClick={handleNext}>
+					{t('rubrics.wizard.step1.next')}
+				</Button>
+			</div>
+		</div>
+	);
 }

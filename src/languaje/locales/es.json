@@ -704,9 +704,18 @@
 				"empty": "No se han definido niveles de desempeño para esta rúbrica."
 			}
 		},
+		"commission": {
+			"status": {
+				"complete": "Completa",
+				"incomplete": "Incompleta"
+			}
+		},
 		"wizard": {
 			"title": "Nueva rúbrica",
 			"subtitle": "Crea una rúbrica de evaluación.",
+			"stepIndicator": {
+				"ariaLabel": "Pasos para crear una rúbrica"
+			},
 			"steps": {
 				"step1": {
 					"label": "Curso",
@@ -808,7 +817,9 @@
 			"uniqueValue": "Valor único",
 			"scoreRange": "Rango puntaje",
 			"color": "Color",
-			"actions": "Acciones"
+			"actions": "Acciones",
+			"edit": "Editar",
+			"delete": "Eliminar"
 		},
 		"form": {
 			"createTitle": "Crear nivel de desempeño",
@@ -997,6 +1008,7 @@
 			"students": {
 				"title": "Estudiantes",
 				"empty": "No hay estudiantes en este proyecto.",
+				"removeButton": "Eliminar",
 				"addPlaceholder": "ID de matrícula",
 				"addButton": "Agregar",
 				"adding": "Agregando...",
@@ -1020,6 +1032,7 @@
 			"evaluators": {
 				"title": "Evaluadores",
 				"empty": "No hay evaluadores asignados.",
+				"removeButton": "Eliminar",
 				"addPlaceholder": "ID de docente",
 				"addButton": "Agregar",
 				"adding": "Agregando...",

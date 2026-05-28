@@ -1,15 +1,24 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Skeleton } from '@/shared/components/ui';
 import { Toast } from '@/shared/components/ui/Toast';
 import { useI18n } from '@/providers';
 import { useRubricEditor } from '../../hooks/useRubricEditor';
 import { RubricHeader } from './RubricHeader';
 import { ReadonlyBanner } from './ReadonlyBanner';
-import { RubricEditorCapstone } from './RubricEditorCapstone';
-import { RubricEditorNonCapstone } from './RubricEditorNonCapstone';
 import { RubricDetail } from '../../types';
+
+const RubricEditorCapstone = dynamic(
+	() => import('./RubricEditorCapstone').then((m) => m.RubricEditorCapstone),
+	{ loading: () => <Skeleton className="h-96 w-full" />, ssr: false },
+);
+
+const RubricEditorNonCapstone = dynamic(
+	() => import('./RubricEditorNonCapstone').then((m) => m.RubricEditorNonCapstone),
+	{ loading: () => <Skeleton className="h-96 w-full" />, ssr: false },
+);
 
 interface RubricEditorProps {
 	rubricId: string;

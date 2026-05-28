@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
-import { useQuery } from '@tanstack/react-query';
 import {
 	Table,
 	TableBody,
@@ -17,10 +16,10 @@ import {
 } from '@/shared/components/ui';
 import { Select } from '@/shared/components/ui/Select';
 import { cn } from '@/shared/lib/utils';
-import { useAuth, useI18n } from '@/providers';
-import { getSchoolCookie } from '@/shared/lib';
-import { academicPeriodsService } from '@/modules/academic/services';
-import { useProfessorByUserId } from '@/modules/academic/hooks';
+import { useI18n } from '@/providers';
+import { useAuth } from '@/providers';
+import { getSchoolCookie } from '@/shared/lib/authCookies';
+import { useAcademicPeriods, useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
 import { GRADE_IDS } from '../constants/typeCodes';
 
@@ -32,6 +31,7 @@ const GRADE_TYPE_ID: Record<RubricTab, number> = {
 };
 
 type SelectOption = { label: string; value: number };
+type AnyOption = { label: string; value: string | number };
 
 export function GradeProjectsPage() {
 	const { t, locale } = useI18n();
@@ -68,10 +68,7 @@ export function GradeProjectsPage() {
 		gradeTypeId: GRADE_TYPE_ID[activeTab],
 	});
 
-	const { data: academicPeriods = [] } = useQuery({
-		queryKey: ['academic-periods', 'filtered', { is_active: true }],
-		queryFn: () => academicPeriodsService.getByFilters({ is_active: true }).then((r) => r.data),
-	});
+	const { data: academicPeriods = [] } = useAcademicPeriods({ is_active: true });
 
 	const periodOptions = useMemo(
 		() => academicPeriods.map((p) => ({ label: p.code, value: p.id })),
@@ -102,8 +99,9 @@ export function GradeProjectsPage() {
 		setActiveTab(id as RubricTab);
 	};
 
-	const handlePeriodChange = (_: string | undefined, opt: any) => {
-		setSelectedPeriod(opt ? { label: String(opt.label), value: Number(opt.value) } : null);
+	const handlePeriodChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
+		const single = Array.isArray(opt) ? (opt[0] ?? null) : opt;
+		setSelectedPeriod(single ? { label: single.label, value: Number(single.value) } : null);
 	};
 
 	return (

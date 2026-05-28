@@ -11,7 +11,6 @@ import { DEFAULT_USER_INITIALS } from '@/shared/constants';
 import { getTypesByGroupCode, TYPE_GROUP_CODES } from '@/modules/core';
 import type { NavbarProps } from '@/shared/types';
 
-
 function readCookieSchool(): string {
 	const school = getSchoolCookie();
 	const schoolName = school?.code as string | undefined;

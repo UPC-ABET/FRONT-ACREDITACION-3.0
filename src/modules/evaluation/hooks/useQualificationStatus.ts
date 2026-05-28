@@ -1,21 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
-import { typeGroupsService, typesService } from '@/modules/academic/services';
+'use client';
+
+import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 
 export function useQualificationStatusTypes() {
-	const { data: typeGroups = [], isLoading: isLoadingGroup } = useQuery({
-		queryKey: ['type-groups', 'TG404'],
-		queryFn: () => typeGroupsService.getByFilters({ code: 'TG404' }).then((r) => r.data),
-		staleTime: Infinity,
-	});
+	const { data: typeGroups = [], isLoading: isLoadingGroup } = useTypeGroups({ code: 'TG404' });
 
 	const typeGroupId = typeGroups[0]?.id ?? null;
 
-	const { data: statusTypes = [], isLoading: isLoadingTypes } = useQuery({
-		queryKey: ['types', 'qualification-status', typeGroupId],
-		queryFn: () => typesService.getByFilters({ type_group_id: typeGroupId! }).then((r) => r.data),
-		enabled: typeGroupId != null,
-		staleTime: Infinity,
-	});
+	const { data: statusTypes = [], isLoading: isLoadingTypes } = useTypes(
+		{ type_group_id: typeGroupId ?? undefined },
+		{ enabled: typeGroupId != null },
+	);
 
 	return {
 		statusTypes,

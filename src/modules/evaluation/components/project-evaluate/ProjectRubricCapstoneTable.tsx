@@ -8,10 +8,7 @@ import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import { performanceLevelsService } from '@/modules/academic/services';
 import { useSubmitEvaluation } from '../../hooks/useEvaluations';
-import type {
-	RubricQuestionDetailsResponse,
-	ProjectDetailsStudentResponse,
-} from '../../types';
+import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -219,7 +216,7 @@ export function ProjectRubricCapstoneTable({
 				observation: { es: '', en: '' },
 				scores,
 				qualification_status_type_id: qualifStatuses[projectStudentId],
-			} as any);
+			});
 		}
 	};
 

@@ -1,7 +1,12 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getParameterByCode, getTypesByGroupCode, PARAMETER_CODES, TYPE_GROUP_CODES } from '@/modules/core';
+import {
+	getParameterByCode,
+	getTypesByGroupCode,
+	PARAMETER_CODES,
+	TYPE_GROUP_CODES,
+} from '@/modules/core';
 import { getIFCPrefill, getIFCView } from '../services/ifcsService';
 import type { CriticalityOption, IFCField, IFCPrefill, IFCViewPayload } from '../types';
 

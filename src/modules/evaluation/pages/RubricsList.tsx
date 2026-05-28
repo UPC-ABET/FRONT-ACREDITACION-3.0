@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { PencilSquareIcon, EyeIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Badge,
 	Button,
@@ -25,27 +24,18 @@ import {
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import { useRubrics, rubricsQueryKeys } from '../hooks';
-import { rubricsService } from '../services';
+import { useRubrics, useDeleteRubric } from '../hooks';
 import { mapRubricToRow } from '../utils/rubricsMappers';
 import type { RubricListRow } from '../types';
 
 export function RubricsListPage() {
 	const { locale, t } = useI18n();
-	const queryClient = useQueryClient();
 	const { data, isLoading, isError, error } = useRubrics();
 	const items = useMemo(() => (data ?? []).map(mapRubricToRow), [data]);
 
 	const [confirmTarget, setConfirmTarget] = useState<RubricListRow | null>(null);
 
-	const deleteMutation = useMutation({
-		mutationFn: (id: number) => rubricsService.delete(id),
-		onSuccess: () => {
-			setConfirmTarget(null);
-			queryClient.invalidateQueries({ queryKey: rubricsQueryKeys.all });
-		},
-		onError: () => setConfirmTarget(null),
-	});
+	const deleteMutation = useDeleteRubric();
 
 	return (
 		<div className="space-y-8">
@@ -56,7 +46,10 @@ export function RubricsListPage() {
 				</div>
 				<Link
 					href="/rubrics/new"
-					className={cn(buttonVariants({ variant: 'primary', size: 'md' }), 'shrink-0 inline-flex items-center gap-1.5')}>
+					className={cn(
+						buttonVariants({ variant: 'primary', size: 'md' }),
+						'shrink-0 inline-flex items-center gap-1.5',
+					)}>
 					<PlusIcon className="h-4 w-4" />
 					{t('rubrics.list.createButton')}
 				</Link>
@@ -81,7 +74,9 @@ export function RubricsListPage() {
 								<TableHead>{t('rubrics.list.columns.period')}</TableHead>
 								<TableHead>{t('rubrics.list.columns.gradeType')}</TableHead>
 								<TableHead>{t('rubrics.list.columns.rubricType')}</TableHead>
-								<TableHead className="w-24 text-center">{t('rubrics.list.columns.actions')}</TableHead>
+								<TableHead className="w-24 text-center">
+									{t('rubrics.list.columns.actions')}
+								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -107,24 +102,29 @@ export function RubricsListPage() {
 										<div className="flex items-center justify-center gap-1">
 											<Link
 												href={`/rubrics/${row.id}/edit`}
-												title={row.canEdit ? t('rubrics.list.actions.edit') : t('rubrics.list.actions.view')}
+												title={
+													row.canEdit
+														? t('rubrics.list.actions.edit')
+														: t('rubrics.list.actions.view')
+												}
 												className={cn(
 													'inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors',
 													row.canEdit
 														? 'text-zinc-500 hover:bg-blue-50 hover:text-blue-600'
 														: 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700',
 												)}>
-												{row.canEdit
-													? <PencilSquareIcon className="h-4 w-4" />
-													: <EyeIcon className="h-4 w-4" />}
+												{row.canEdit ? (
+													<PencilSquareIcon className="h-4 w-4" />
+												) : (
+													<EyeIcon className="h-4 w-4" />
+												)}
 											</Link>
 											<button
 												type="button"
 												disabled={!row.canEdit}
 												onClick={() => setConfirmTarget(row)}
 												title={t('rubrics.list.actions.delete')}
-												className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30"
-											>
+												className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30">
 												<TrashIcon className="h-4 w-4" />
 											</button>
 										</div>
@@ -137,7 +137,11 @@ export function RubricsListPage() {
 			)}
 
 			{/* Confirm delete modal */}
-			<Dialog open={!!confirmTarget} onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}>
+			<Dialog
+				open={!!confirmTarget}
+				onOpenChange={(open) => {
+					if (!open) setConfirmTarget(null);
+				}}>
 				<DialogContent className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>{t('rubrics.list.deleteModal.title')}</DialogTitle>
@@ -160,8 +164,14 @@ export function RubricsListPage() {
 							variant="primary"
 							className="bg-red-600 hover:bg-red-700"
 							disabled={deleteMutation.isPending}
-							onClick={() => confirmTarget && deleteMutation.mutate(confirmTarget.id)}
-						>
+							onClick={() => {
+								if (confirmTarget) {
+									deleteMutation.mutate(confirmTarget.id, {
+										onSuccess: () => setConfirmTarget(null),
+										onError: () => setConfirmTarget(null),
+									});
+								}
+							}}>
 							{deleteMutation.isPending
 								? t('rubrics.list.deleteModal.deleting')
 								: t('rubrics.list.deleteModal.confirm')}

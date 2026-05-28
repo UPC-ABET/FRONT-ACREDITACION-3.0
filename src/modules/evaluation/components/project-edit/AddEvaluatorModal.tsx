@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import {
 	Dialog,
@@ -15,7 +15,8 @@ import { Input } from '@/shared/components/ui/Input';
 import { Select } from '@/shared/components/ui/Select';
 import { Button } from '@/shared/components/ui/Button';
 import { useI18n } from '@/providers';
-import { professorsService, typeGroupsService, typesService } from '@/modules/academic/services';
+import { professorsService } from '@/modules/academic/services';
+import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
 import type { ProfessorSearchResponse } from '@/modules/academic';
@@ -78,24 +79,16 @@ export function AddEvaluatorModal({
 			.finally(() => setLoadingProfessors(false));
 	}, [open, debouncedSearch]);
 
-	// Types — stable, use useQuery
-	const { data: evaluatorTypeGroup } = useQuery({
-		queryKey: ['type-groups', EVALUATOR_TYPE_GROUP_CODE],
-		queryFn: () =>
-			typeGroupsService
-				.getByFilters({ code: EVALUATOR_TYPE_GROUP_CODE })
-				.then((r) => r.data[0] ?? null),
-		enabled: open,
-		staleTime: Infinity,
-	});
+	const { data: typeGroups = [] } = useTypeGroups(
+		{ code: EVALUATOR_TYPE_GROUP_CODE },
+		{ enabled: open },
+	);
+	const evaluatorTypeGroupId = typeGroups[0]?.id ?? null;
 
-	const { data: evaluatorTypes = [], isLoading: loadingRoles } = useQuery({
-		queryKey: ['types', 'by-type-group', evaluatorTypeGroup?.id],
-		queryFn: () =>
-			typesService.getByFilters({ type_group_id: evaluatorTypeGroup!.id }).then((r) => r.data),
-		enabled: !!evaluatorTypeGroup?.id,
-		staleTime: Infinity,
-	});
+	const { data: evaluatorTypes = [], isLoading: loadingRoles } = useTypes(
+		{ type_group_id: evaluatorTypeGroupId ?? undefined },
+		{ enabled: evaluatorTypeGroupId != null },
+	);
 
 	const roleOptions = useMemo(
 		() =>
@@ -138,7 +131,8 @@ export function AddEvaluatorModal({
 		return p.staff?.staff_email ?? `ID ${p.id}`;
 	};
 
-	const canSubmit = selectedProfessor !== null && selectedRoleId !== null && !createMutation.isPending;
+	const canSubmit =
+		selectedProfessor !== null && selectedRoleId !== null && !createMutation.isPending;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -211,7 +205,10 @@ export function AddEvaluatorModal({
 						}
 						options={roleOptions}
 						value={roleOptions.find((o) => o.value === selectedRoleId) ?? null}
-						onChange={(_: string | undefined, opt: any) => setSelectedRoleId(opt ? Number(opt.value) : null)}
+						onChange={(_: string | undefined, opt) => {
+							const single = Array.isArray(opt) ? opt[0] : opt;
+							setSelectedRoleId(single ? Number(single.value) : null);
+						}}
 						isDisabled={loadingRoles || roleOptions.length === 0}
 					/>
 
