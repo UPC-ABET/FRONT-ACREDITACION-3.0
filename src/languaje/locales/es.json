@@ -1058,6 +1058,114 @@
 			}
 		}
 	},
+	"surveys": {
+		"shared": {
+			"academicCycle": "Ciclo Académico",
+			"selectCycle": "Selecciona un ciclo",
+			"noConfiguration": "Sin configuración para este ciclo",
+			"noConfigurationHint": "No existe configuración para el ciclo seleccionado. Puedes crear una nueva o clonar desde otro ciclo.",
+			"cloneConfiguration": "Clonar configuración"
+		},
+		"competence": {
+			"table": {
+				"title": "Competencias",
+				"general": "Competencia General",
+				"specific": "Competencia Específica",
+				"description": "Descripción",
+				"level": "Nivel",
+				"actions": "Acciones"
+			},
+			"modal": {
+				"addTitle": "Agregar Competencia",
+				"editTitle": "Editar Competencia",
+				"generalLabel": "Competencia General",
+				"generalPlaceholder": "Ej: Pensamiento Crítico",
+				"specificLabel": "Competencia Específica",
+				"specificPlaceholder": "Ej: Análisis de Problemas",
+				"descriptionLabel": "Descripción",
+				"descriptionPlaceholder": "Describe la competencia...",
+				"levelLabel": "Nivel de Aceptación ({{min}}–{{max}})",
+				"save": "Guardar",
+				"saving": "Guardando...",
+				"delete": "Eliminar",
+				"deleteTitle": "Confirmar eliminación",
+				"deleteBody": "¿Estás seguro de que deseas eliminar esta competencia? Esta acción no se puede deshacer."
+			},
+			"toast": {
+				"required": "Competencia y descripción son obligatorios.",
+				"saved": "Competencia guardada exitosamente.",
+				"deleted": "Competencia eliminada."
+			},
+			"add": "Agregar Competencia"
+		},
+		"acceptanceLevels": {
+			"title": "Niveles de Aceptación",
+			"description": "Configura las descripciones y rangos para cada nivel de evaluación ({{min}}–{{max}}).",
+			"loading": "Cargando niveles...",
+			"save": "Guardar Niveles",
+			"saving": "Guardando...",
+			"descriptionPlaceholder": "Descripción",
+			"rangePlaceholder": "Rango (ej: 0-40%)",
+			"toast": {
+				"saved": "Niveles de aceptación guardados."
+			}
+		},
+		"tabs": {
+			"competences": "Competencias",
+			"levels": "Niveles de Aceptación"
+		},
+		"gra": {
+			"notifications": {
+				"title": "Estudiantes Notificados ({{count}})",
+				"sendSurvey": "Enviar Encuesta",
+				"columns": {
+					"code": "Código",
+					"name": "Nombre",
+					"email": "Email",
+					"sendStatus": "Envío",
+					"responseStatus": "Respuesta",
+					"actions": "Acciones"
+				},
+				"deleteTitle": "Eliminar estudiante",
+				"deleteBody": "¿Deseas eliminar este estudiante de la notificación?",
+				"delete": "Eliminar",
+				"sendDialog": {
+					"title": "Enviar encuesta GRA",
+					"body": "Se enviará la encuesta a <strong>todos</strong> los estudiantes registrados para el período y programa actuales.",
+					"urlLabel": "URL base de la encuesta",
+					"urlPlaceholder": "https://tu-dominio.com/encuesta/gra",
+					"confirm": "Confirmar envío",
+					"sending": "Enviando..."
+				},
+				"status": {
+					"sent": "Enviado",
+					"pending": "Pendiente",
+					"responded": "Respondido"
+				},
+				"toast": {
+					"studentDeleted": "Estudiante eliminado de la notificación.",
+					"surveySent": "Encuestas enviadas exitosamente."
+				}
+			}
+		},
+		"lcfc": {
+			"notifications": {
+				"title": "Envío de Notificaciones LCFC",
+				"description": "Configura el período y la URL base de la encuesta. El sistema enviará el correo a todos los estudiantes del período seleccionado.",
+				"cycleLabel": "Ciclo / Período académico",
+				"cyclePlaceholder": "Selecciona un período",
+				"urlLabel": "URL base de la encuesta",
+				"urlPlaceholder": "https://tu-dominio.com/encuesta/lcfc",
+				"dateLabel": "Fecha límite de registro",
+				"send": "Enviar Notificaciones",
+				"sending": "Enviando...",
+				"toast": {
+					"required": "Completa todos los campos antes de enviar.",
+					"sent": "Notificaciones enviadas exitosamente."
+				}
+			}
+		}
+	},
 	"evaluationCourses": {
 		"list": {
 			"title": "Cursos a Calificar",

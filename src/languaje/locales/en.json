@@ -1058,6 +1058,114 @@
 			}
 		}
 	},
+	"surveys": {
+		"shared": {
+			"academicCycle": "Academic Cycle",
+			"selectCycle": "Select a cycle",
+			"noConfiguration": "No configuration for this cycle",
+			"noConfigurationHint": "There is no configuration for the selected cycle. You can create a new one or clone from another cycle.",
+			"cloneConfiguration": "Clone configuration"
+		},
+		"competence": {
+			"table": {
+				"title": "Competences",
+				"general": "General Competence",
+				"specific": "Specific Competence",
+				"description": "Description",
+				"level": "Level",
+				"actions": "Actions"
+			},
+			"modal": {
+				"addTitle": "Add Competence",
+				"editTitle": "Edit Competence",
+				"generalLabel": "General Competence",
+				"generalPlaceholder": "e.g. Critical Thinking",
+				"specificLabel": "Specific Competence",
+				"specificPlaceholder": "e.g. Problem Analysis",
+				"descriptionLabel": "Description",
+				"descriptionPlaceholder": "Describe the competence...",
+				"levelLabel": "Acceptance Level ({{min}}–{{max}})",
+				"save": "Save",
+				"saving": "Saving...",
+				"delete": "Delete",
+				"deleteTitle": "Confirm deletion",
+				"deleteBody": "Are you sure you want to delete this competence? This action cannot be undone."
+			},
+			"toast": {
+				"required": "Competence and description are required.",
+				"saved": "Competence saved successfully.",
+				"deleted": "Competence deleted."
+			},
+			"add": "Add Competence"
+		},
+		"acceptanceLevels": {
+			"title": "Acceptance Levels",
+			"description": "Configure descriptions and ranges for each evaluation level ({{min}}–{{max}}).",
+			"loading": "Loading levels...",
+			"save": "Save Levels",
+			"saving": "Saving...",
+			"descriptionPlaceholder": "Description",
+			"rangePlaceholder": "Range (e.g. 0-40%)",
+			"toast": {
+				"saved": "Acceptance levels saved."
+			}
+		},
+		"tabs": {
+			"competences": "Competences",
+			"levels": "Acceptance Levels"
+		},
+		"gra": {
+			"notifications": {
+				"title": "Notified Students ({{count}})",
+				"sendSurvey": "Send Survey",
+				"columns": {
+					"code": "Code",
+					"name": "Name",
+					"email": "Email",
+					"sendStatus": "Send Status",
+					"responseStatus": "Response",
+					"actions": "Actions"
+				},
+				"deleteTitle": "Remove student",
+				"deleteBody": "Do you want to remove this student from the notification?",
+				"delete": "Remove",
+				"sendDialog": {
+					"title": "Send GRA survey",
+					"body": "The survey will be sent to <strong>all</strong> registered students for the current period and program.",
+					"urlLabel": "Survey base URL",
+					"urlPlaceholder": "https://your-domain.com/survey/gra",
+					"confirm": "Confirm send",
+					"sending": "Sending..."
+				},
+				"status": {
+					"sent": "Sent",
+					"pending": "Pending",
+					"responded": "Responded"
+				},
+				"toast": {
+					"studentDeleted": "Student removed from notification.",
+					"surveySent": "Surveys sent successfully."
+				}
+			}
+		},
+		"lcfc": {
+			"notifications": {
+				"title": "LCFC Notification Send",
+				"description": "Configure the period and survey base URL. The system will send the email to all students in the selected period.",
+				"cycleLabel": "Cycle / Academic Period",
+				"cyclePlaceholder": "Select a period",
+				"urlLabel": "Survey base URL",
+				"urlPlaceholder": "https://your-domain.com/survey/lcfc",
+				"dateLabel": "Registration deadline",
+				"send": "Send Notifications",
+				"sending": "Sending...",
+				"toast": {
+					"required": "Complete all fields before sending.",
+					"sent": "Notifications sent successfully."
+				}
+			}
+		}
+	},
 	"evaluationCourses": {
 		"list": {
 			"title": "Courses to Grade",
