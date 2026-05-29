@@ -31,37 +31,37 @@ export interface Program {
 export interface CompetenceConfig {
 	id: number;
 	outcomeId?: number;
-	competenciaGeneral: string; // maps to extra.name_es
-	competenciaEspecifica: string; // maps to extra.name_en
-	descripcion: string; // maps to extra.description_es
-	nivelAceptacion: number; // maps to extra.order
+	generalCompetence: string;  // maps to extra.name_es
+	specificCompetence: string; // maps to extra.name_en
+	description: string;        // maps to extra.description_es
+	acceptanceLevel: number;    // maps to extra.order
 	estado?: string;
 	isActive?: boolean;
-	idCarrera?: number;
-	idPeriodo?: number;
+	programId?: number;
+	periodId?: number;
 }
 
 export interface CompetenceFormData {
 	id: number;
-	outcome_id?: number; // required by new backend on create
-	competenciaGeneral: string;
-	competenciaEspecifica: string;
-	descripcion: string;
-	nivelAceptacion: number;
-	idPeriodoAcademico: number;
-	idCarrera?: number;
-	escuela: string;
+	outcome_id?: number;
+	generalCompetence: string;
+	specificCompetence: string;
+	description: string;
+	acceptanceLevel: number;
+	academicPeriodId: number;
+	programId?: number;
+	school: string;
 }
 
-// ─── Acceptance levels ─────────────────────────────────────────────────────
+// ─── Acceptance / Performance levels ──────────────────────────────────────
 export interface AcceptanceLevel {
 	id?: number;
-	nivel: number; // maps to backend "order"
-	descripcion: string; // maps to backend "name.es"
-	rango: string; // derived from min_score – max_score
+	level: number;       // maps to performance_level unique_value
+	description: string; // maps to performance_level name.es
+	range: string;       // derived from min_score – max_score
 	minScore?: number;
 	maxScore?: number;
-	color?: string;
+	color?: string;      // maps to performance_level extra.color
 }
 
 // ─── File download response ────────────────────────────────────────────────
@@ -80,24 +80,24 @@ export interface PPPCloneRequest {
 
 // ─── GRA Student Notification ─────────────────────────────────────────────
 export interface GRAStudent {
-	idNotificacion: number;
-	idEstudiante: number;
-	codigoEstudiante: string;
-	nombreEstudiante: string;
-	emailEstudiante: string;
-	estadoEnvio: string;
-	fechaEnvio?: string;
-	estadoRespuesta?: string;
-	fechaRespuesta?: string;
+	notificationId: number;
+	studentId: number;
+	studentCode: string;
+	studentName: string;
+	studentEmail: string;
+	sendStatus: string;
+	sendDate?: string;
+	responseStatus?: string;
+	responseDate?: string;
 }
 
 export interface StudentSearchResult {
-	idEstudiante: number;
-	codigo: string;
-	nombre: string;
+	studentId: number;
+	code: string;
+	name: string;
 	email: string;
-	carrera: string;
-	ciclo?: string;
+	career: string;
+	cycle?: string;
 }
 
 export interface EmailTemplate {
@@ -245,7 +245,7 @@ export interface SurveySubmitItem {
 }
 
 export interface SurveySubmitRequest {
-	token?: string; // new backend uses token
+	token?: string;
 	comentario: string;
 	encuestaId: number;
 	escuela: string;
