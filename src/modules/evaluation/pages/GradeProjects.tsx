@@ -21,13 +21,13 @@ import { useAuth } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib/authCookies';
 import { useAcademicPeriods, useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
-import { GRADE_IDS } from '../constants/typeCodes';
+import { TYPE_CODES } from '@/modules/core';
 
 type RubricTab = 'partial' | 'final';
 
-const GRADE_TYPE_ID: Record<RubricTab, number> = {
-	partial: GRADE_IDS.PARTIAL, //EA
-	final: GRADE_IDS.FINAL, //EB
+const GRADE_TYPE_CODE: Record<RubricTab, string> = {
+	partial: TYPE_CODES.GRADE_TYPE.PARTIAL,
+	final: TYPE_CODES.GRADE_TYPE.FINAL,
 };
 
 type SelectOption = { label: string; value: number };
@@ -65,7 +65,7 @@ export function GradeProjectsPage() {
 	} = useProjectsByProfessor(professor?.id, {
 		...(schoolId != null ? { schoolId } : {}),
 		...(selectedPeriod != null ? { academicPeriodId: selectedPeriod.value } : {}),
-		gradeTypeId: GRADE_TYPE_ID[activeTab],
+		gradeTypeCode: GRADE_TYPE_CODE[activeTab],
 	});
 
 	const { data: academicPeriods = [] } = useAcademicPeriods({ is_active: true });

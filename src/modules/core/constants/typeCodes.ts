@@ -38,4 +38,12 @@ export const TYPE_CODES = {
 		NR: 'TG404-T002',
 		NA: 'TG404-T003',
 	},
+	EVALUATOR_LIMITED_CODES: { 
+		GER: 'TG403-T002', 
+		CLI: 'TG403-T004', 
+		COA: 'TG403-T005', 
+		DOC: 'TG403-T003',
+		COM: 'TG403-T001'
+	}
+
 } as const;

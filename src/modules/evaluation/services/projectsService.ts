@@ -30,14 +30,14 @@ export const projectsService = {
 		params?: {
 			academicPeriodId?: number;
 			schoolId?: number;
-			gradeTypeId?: number;
+			gradeTypeCode?: string;
 		},
 	): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
 		const qs = new URLSearchParams();
 		if (params?.academicPeriodId != null)
 			qs.set('academicPeriodId', String(params.academicPeriodId));
 		if (params?.schoolId != null) qs.set('schoolId', String(params.schoolId));
-		if (params?.gradeTypeId != null) qs.set('gradeTypeId', String(params.gradeTypeId));
+		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
 		const query = qs.toString();
 		return apiGet(`/projects/professor/${professorId}${query ? `?${query}` : ''}`);
 	},
@@ -49,15 +49,15 @@ export const projectsService = {
 	getDetails(
 		projectId: string | number,
 		params?: {
-			gradeTypeId?: number;
-			rubricTypeId?: number;
+			gradeTypeCode?: string;
+			rubricTypeCode?: string;
 			isEvaluationMode?: boolean;
 		},
 	): Promise<ApiResponse<ProjectDetailsResponse>> {
 		const qs = new URLSearchParams();
 		if (params?.isEvaluationMode) qs.set('is_evaluation_mode', String(params.isEvaluationMode));
-		if (params?.gradeTypeId != null) qs.set('grade_type_id', String(params.gradeTypeId));
-		if (params?.rubricTypeId != null) qs.set('rubric_type_id', String(params.rubricTypeId));
+		if (params?.gradeTypeCode != null) qs.set('grade_type_code', params.gradeTypeCode);
+		if (params?.rubricTypeCode != null) qs.set('rubric_type_code', params.rubricTypeCode);
 		return apiGet(`/projects/project/${projectId}?${qs.toString()}`);
 	},
 
