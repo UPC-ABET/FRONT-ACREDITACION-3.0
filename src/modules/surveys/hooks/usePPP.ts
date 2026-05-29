@@ -22,7 +22,6 @@ import {
 } from '../services';
 
 // Backward-compat alias: components that import usePPPCycles still work.
-// load() ignores the optional modalityId arg; periods come from getAcademicPeriods().
 export function usePPPCycles() {
 	const { periods, loading, error, load: _load } = usePPPPeriods();
 	const load = useCallback(
@@ -59,11 +58,11 @@ export function usePPPCompetences() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (idPeriodo: number, idCarrera = 0) => {
+	const load = useCallback(async (periodId: number, programId = 0) => {
 		setLoading(true);
 		setError(null);
 		try {
-			setCompetences(await listPPPCompetences(idPeriodo, idCarrera));
+			setCompetences(await listPPPCompetences(periodId, programId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -117,11 +116,11 @@ export function usePPPAcceptanceLevels() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (idPeriodo: number) => {
+	const load = useCallback(async (periodId: number) => {
 		setLoading(true);
 		setError(null);
 		try {
-			setLevels(await listAcceptanceLevels(idPeriodo));
+			setLevels(await listAcceptanceLevels(periodId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -130,9 +129,9 @@ export function usePPPAcceptanceLevels() {
 	}, []);
 
 	const save = useCallback(
-		async (idPeriodo: number, niveles: AcceptanceLevel[], onSuccess?: () => void) => {
+		async (periodId: number, levels: AcceptanceLevel[], onSuccess?: () => void) => {
 			try {
-				await updateAcceptanceLevels(idPeriodo, niveles);
+				await updateAcceptanceLevels(periodId, levels);
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);
@@ -148,11 +147,11 @@ export function usePPPDownload() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const download = useCallback(async (idPeriodo: number) => {
+	const download = useCallback(async (periodId: number) => {
 		setLoading(true);
 		setError(null);
 		try {
-			await downloadPPPTemplate(idPeriodo);
+			await downloadPPPTemplate(periodId);
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {

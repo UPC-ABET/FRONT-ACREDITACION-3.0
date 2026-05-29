@@ -66,11 +66,11 @@ export function useGRACompetences() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (idPeriodo: number, idCarrera = 0) => {
+	const load = useCallback(async (periodId: number, programId = 0) => {
 		setLoading(true);
 		setError(null);
 		try {
-			setCompetences(await listGRACompetences(idPeriodo, idCarrera));
+			setCompetences(await listGRACompetences(periodId, programId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -145,9 +145,9 @@ export function useGRAStudents() {
 		[],
 	);
 
-	const remove = useCallback(async (idNotificacion: number, onSuccess?: () => void) => {
+	const remove = useCallback(async (notificationId: number, onSuccess?: () => void) => {
 		try {
-			await deleteStudentNotification(idNotificacion);
+			await deleteStudentNotification(notificationId);
 			onSuccess?.();
 		} catch (e) {
 			setError((e as Error).message);
@@ -162,12 +162,12 @@ export function useGRAStudentSearch() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const search = useCallback(async (codigo: string, idCarrera: number) => {
+	const search = useCallback(async (code: string, programId: number) => {
 		setLoading(true);
 		setError(null);
 		setResult(null);
 		try {
-			setResult(await searchStudentByCode(codigo, idCarrera));
+			setResult(await searchStudentByCode(code, programId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -254,10 +254,10 @@ export function useGRAUpload() {
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
 
-	const downloadTemplate = useCallback(async (idPeriodo: number) => {
+	const downloadTemplate = useCallback(async (periodId: number) => {
 		setError(null);
 		try {
-			await downloadGRATemplate(idPeriodo);
+			await downloadGRATemplate(periodId);
 		} catch (e) {
 			setError((e as Error).message);
 		}
@@ -268,8 +268,8 @@ export function useGRAUpload() {
 		setError(null);
 		setSuccess(false);
 		try {
-			const escuelaActual = getSchoolCookie();
-			await uploadGRAMassive(file, escuelaActual ?? undefined);
+			const school = getSchoolCookie();
+			await uploadGRAMassive(file, school ?? undefined);
 			setSuccess(true);
 		} catch (e) {
 			setError((e as Error).message);
