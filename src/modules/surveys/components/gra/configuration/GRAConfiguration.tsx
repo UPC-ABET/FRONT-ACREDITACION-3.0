@@ -2,17 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { Select, Tabs, Toast } from '@/shared/components';
+import { useI18n, useABET } from '@/providers';
 import { useGRACompetences, useGRACycles, usePPPAcceptanceLevels } from '../../../hooks';
-import { useABET } from '@/providers';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
 import { AcceptanceLevels } from '../../ppp/configuration/AcceptanceLevels';
 
-const TABS = [
-	{ id: 'competences', label: 'Competencias' },
-	{ id: 'levels', label: 'Niveles de Aceptación' },
-];
-
 export function GRAConfiguration() {
+	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const { cycles, load: loadCycles } = useGRACycles();
 	const {
@@ -34,6 +30,11 @@ export function GRAConfiguration() {
 		msg: '',
 	});
 
+	const tabs = [
+		{ id: 'competences', label: t('surveys.tabs.competences') },
+		{ id: 'levels', label: t('surveys.tabs.levels') },
+	];
+
 	useEffect(() => {
 		loadCycles(modalityTypeId);
 	}, [modalityTypeId, loadCycles]);
@@ -50,18 +51,18 @@ export function GRAConfiguration() {
 		<div className="space-y-6">
 			<div className="max-w-sm">
 				<Select
-					label="Ciclo Académico"
+					label={t('surveys.shared.academicCycle')}
 					options={cycleOptions}
 					value={selectedCycle}
 					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-					placeholder="Selecciona un ciclo"
+					placeholder={t('surveys.shared.selectCycle')}
 					isSearchable
 				/>
 			</div>
 
 			{selectedCycle && (
 				<>
-					<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+					<Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
 					<div className="pt-2">
 						{activeTab === 'competences' && (

@@ -2,24 +2,26 @@
 
 import React, { useEffect } from 'react';
 import { Button, Input, Toast } from '@/shared/components';
+import { useI18n } from '@/providers';
 import type { AcceptanceLevel } from '../../../types';
+import { MIN_ACCEPTANCE_LEVEL, MAX_ACCEPTANCE_LEVEL } from '../../../constants/competence';
 
 interface AcceptanceLevelsProps {
-	cycleId: number;
-	levels: AcceptanceLevel[];
-	setLevels: React.Dispatch<React.SetStateAction<AcceptanceLevel[]>>;
-	loading: boolean;
-	error: string | null;
-	onLoad: (cycleId: number) => void;
-	onSave: (cycleId: number, niveles: AcceptanceLevel[], onSuccess?: () => void) => void;
+	readonly cycleId: number;
+	readonly levels: AcceptanceLevel[];
+	readonly setLevels: React.Dispatch<React.SetStateAction<AcceptanceLevel[]>>;
+	readonly loading: boolean;
+	readonly error: string | null;
+	readonly onLoad: (cycleId: number) => void;
+	readonly onSave: (cycleId: number, levels: AcceptanceLevel[], onSuccess?: () => void) => void;
 }
 
 const DEFAULT_LEVELS: AcceptanceLevel[] = [
-	{ nivel: 1, descripcion: 'Insuficiente', rango: '0-40%' },
-	{ nivel: 2, descripcion: 'Regular', rango: '41-60%' },
-	{ nivel: 3, descripcion: 'Bueno', rango: '61-75%' },
-	{ nivel: 4, descripcion: 'Muy Bueno', rango: '76-90%' },
-	{ nivel: 5, descripcion: 'Excelente', rango: '91-100%' },
+	{ level: 1, description: 'Insufficient', range: '0-40%' },
+	{ level: 2, description: 'Fair', range: '41-60%' },
+	{ level: 3, description: 'Good', range: '61-75%' },
+	{ level: 4, description: 'Very Good', range: '76-90%' },
+	{ level: 5, description: 'Excellent', range: '91-100%' },
 ];
 
 export function AcceptanceLevels({
@@ -31,6 +33,7 @@ export function AcceptanceLevels({
 	onLoad,
 	onSave,
 }: AcceptanceLevelsProps) {
+	const { t } = useI18n();
 	const [saving, setSaving] = React.useState(false);
 	const [toast, setToast] = React.useState<{
 		open: boolean;
@@ -60,14 +63,18 @@ export function AcceptanceLevels({
 		setSaving(true);
 		onSave(cycleId, displayLevels, () => {
 			setSaving(false);
-			setToast({ open: true, type: 'success', msg: 'Niveles de aceptación guardados.' });
+			setToast({
+				open: true,
+				type: 'success',
+				msg: t('surveys.acceptanceLevels.toast.saved'),
+			});
 		});
 	}
 
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center h-32">
-				<span className="text-sm text-zinc-400">Cargando niveles...</span>
+				<span className="text-sm text-zinc-400">{t('surveys.acceptanceLevels.loading')}</span>
 			</div>
 		);
 	}
@@ -75,9 +82,14 @@ export function AcceptanceLevels({
 	return (
 		<div className="space-y-4">
 			<div>
-				<h4 className="text-sm font-bold text-zinc-700">Niveles de Aceptación</h4>
+				<h4 className="text-sm font-bold text-zinc-700">
+					{t('surveys.acceptanceLevels.title')}
+				</h4>
 				<p className="text-xs text-zinc-500 mt-1">
-					Configura las descripciones y rangos para cada nivel de evaluación (1–5).
+					{t('surveys.acceptanceLevels.description', {
+						min: MIN_ACCEPTANCE_LEVEL,
+						max: MAX_ACCEPTANCE_LEVEL,
+					})}
 				</p>
 			</div>
 
@@ -86,21 +98,21 @@ export function AcceptanceLevels({
 			<div className="space-y-3">
 				{displayLevels.map((level, idx) => (
 					<div
-						key={level.nivel}
+						key={level.level}
 						className="flex items-center gap-3 p-3 bg-zinc-50 rounded-lg border border-zinc-200">
 						<span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-red-600 text-white text-sm font-bold shrink-0">
-							{level.nivel}
+							{level.level}
 						</span>
 						<div className="flex-1 grid grid-cols-2 gap-3">
 							<Input
-								placeholder="Descripción"
-								value={level.descripcion}
-								onChange={(e) => updateLevel(idx, 'descripcion', e.target.value)}
+								placeholder={t('surveys.acceptanceLevels.descriptionPlaceholder')}
+								value={level.description}
+								onChange={(e) => updateLevel(idx, 'description', e.target.value)}
 							/>
 							<Input
-								placeholder="Rango (ej: 0-40%)"
-								value={level.rango}
-								onChange={(e) => updateLevel(idx, 'rango', e.target.value)}
+								placeholder={t('surveys.acceptanceLevels.rangePlaceholder')}
+								value={level.range}
+								onChange={(e) => updateLevel(idx, 'range', e.target.value)}
 							/>
 						</div>
 					</div>
@@ -108,7 +120,9 @@ export function AcceptanceLevels({
 			</div>
 
 			<Button onClick={handleSave} disabled={saving}>
-				{saving ? 'Guardando...' : 'Guardar Niveles'}
+				{saving
+					? t('surveys.acceptanceLevels.saving')
+					: t('surveys.acceptanceLevels.save')}
 			</Button>
 
 			<Toast

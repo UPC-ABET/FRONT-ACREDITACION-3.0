@@ -2,17 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { Select, Button, Tabs, Toast } from '@/shared/components';
+import { useI18n, useABET } from '@/providers';
 import { usePPPCompetences, usePPPCycles, usePPPAcceptanceLevels } from '../../../hooks';
-import { useABET } from '@/providers';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
 import { AcceptanceLevels } from './AcceptanceLevels';
 
-const TABS = [
-	{ id: 'competences', label: 'Competencias' },
-	{ id: 'levels', label: 'Niveles de Aceptación' },
-];
-
 export function PPPConfiguration() {
+	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const { cycles, load: loadCycles } = usePPPCycles();
 	const {
@@ -34,6 +30,11 @@ export function PPPConfiguration() {
 		type: 'success',
 		msg: '',
 	});
+
+	const tabs = [
+		{ id: 'competences', label: t('surveys.tabs.competences') },
+		{ id: 'levels', label: t('surveys.tabs.levels') },
+	];
 
 	useEffect(() => {
 		loadCycles(modalityTypeId);
@@ -59,11 +60,11 @@ export function PPPConfiguration() {
 		<div className="space-y-6">
 			<div className="max-w-sm">
 				<Select
-					label="Ciclo Académico"
+					label={t('surveys.shared.academicCycle')}
 					options={cycleOptions}
 					value={selectedCycle}
 					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-					placeholder="Selecciona un ciclo"
+					placeholder={t('surveys.shared.selectCycle')}
 					isSearchable
 				/>
 			</div>
@@ -71,10 +72,11 @@ export function PPPConfiguration() {
 			{selectedCycle && showClone && (
 				<div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
 					<div className="flex-1">
-						<p className="text-sm font-bold text-amber-800">Sin configuración para este ciclo</p>
+						<p className="text-sm font-bold text-amber-800">
+							{t('surveys.shared.noConfiguration')}
+						</p>
 						<p className="text-xs text-amber-700 mt-1">
-							No existe configuración para el ciclo seleccionado. Puedes crear una nueva o clonar
-							desde otro ciclo.
+							{t('surveys.shared.noConfigurationHint')}
 						</p>
 					</div>
 					<Button
@@ -84,17 +86,17 @@ export function PPPConfiguration() {
 							setToast({
 								open: true,
 								type: 'info' as 'success',
-								msg: 'Función de clonado: selecciona un ciclo de origen en el modal.',
+								msg: t('surveys.shared.cloneConfiguration'),
 							});
 						}}>
-						Clonar configuración
+						{t('surveys.shared.cloneConfiguration')}
 					</Button>
 				</div>
 			)}
 
 			{selectedCycle && (
 				<>
-					<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+					<Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
 					<div className="pt-2">
 						{activeTab === 'competences' && (

@@ -3,17 +3,18 @@
 import React, { useEffect, useState } from 'react';
 import { Select, Button, Input, Toast } from '@/shared/components';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
-import { useLCFCNotification, useLCFCCycles } from '../../../hooks';
+import { useI18n } from '@/providers';
+import { useLCFCNotification, useLCFCCycles, useLCFCNotificationForm } from '../../../hooks';
 import { useABET } from '@/providers';
 
 export function LCFCNotificationView() {
+	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const { cycles, load: loadCycles } = useLCFCCycles();
 	const { sending, error: sendError, send } = useLCFCNotification();
+	const { form, isValid, setSelectedCycle, setSurveyBaseUrl, setMaxRegisterDate } =
+		useLCFCNotificationForm();
 
-	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
-	const [surveyBaseUrl, setSurveyBaseUrl] = useState('');
-	const [maxRegisterDate, setMaxRegisterDate] = useState('');
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -23,68 +24,82 @@ export function LCFCNotificationView() {
 	useEffect(() => {
 		loadCycles(modalityTypeId);
 	}, [modalityTypeId, loadCycles]);
+
 	useEffect(() => {
 		if (sendError) setToast({ open: true, type: 'error', msg: sendError });
 	}, [sendError]);
 
 	function handleSend() {
-		if (!selectedCycle || !surveyBaseUrl.trim() || !maxRegisterDate) {
-			setToast({ open: true, type: 'error', msg: 'Completa todos los campos antes de enviar.' });
+		if (!isValid) {
+			setToast({
+				open: true,
+				type: 'error',
+				msg: t('surveys.lcfc.notifications.toast.required'),
+			});
 			return;
 		}
 		send(
 			{
-				academic_period_id: selectedCycle.value,
+				academic_period_id: form.selectedCycle!.value,
 				program_id: 0,
-				max_register_date: new Date(maxRegisterDate).toISOString(),
-				survey_base_url: surveyBaseUrl.trim(),
+				max_register_date: new Date(form.maxRegisterDate).toISOString(),
+				survey_base_url: form.surveyBaseUrl.trim(),
 			},
-			() => setToast({ open: true, type: 'success', msg: 'Notificaciones enviadas exitosamente.' }),
+			() =>
+				setToast({
+					open: true,
+					type: 'success',
+					msg: t('surveys.lcfc.notifications.toast.sent'),
+				}),
 		);
 	}
 
 	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
-	const canSend = !!selectedCycle && !!surveyBaseUrl.trim() && !!maxRegisterDate && !sending;
 
 	return (
 		<div className="max-w-lg space-y-6">
 			<div>
-				<h3 className="text-base font-bold text-zinc-800">Envío de Notificaciones LCFC</h3>
+				<h3 className="text-base font-bold text-zinc-800">
+					{t('surveys.lcfc.notifications.title')}
+				</h3>
 				<p className="text-sm text-zinc-500 mt-1">
-					Configura el período y la URL base de la encuesta. El sistema enviará el correo a todos
-					los estudiantes del período seleccionado.
+					{t('surveys.lcfc.notifications.description')}
 				</p>
 			</div>
 
 			<div className="space-y-4">
 				<Select
-					label="Ciclo / Período académico"
+					label={t('surveys.lcfc.notifications.cycleLabel')}
 					options={cycleOptions}
-					value={selectedCycle}
-					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-					placeholder="Selecciona un período"
+					value={form.selectedCycle}
+					onChange={(_, val) =>
+						setSelectedCycle(val as { label: string; value: number } | null)
+					}
+					placeholder={t('surveys.lcfc.notifications.cyclePlaceholder')}
 					isSearchable
 				/>
 
 				<Input
-					label="URL base de la encuesta"
-					value={surveyBaseUrl}
+					label={t('surveys.lcfc.notifications.urlLabel')}
+					value={form.surveyBaseUrl}
 					onChange={(e) => setSurveyBaseUrl(e.target.value)}
-					placeholder="https://tu-dominio.com/encuesta/lcfc"
+					placeholder={t('surveys.lcfc.notifications.urlPlaceholder')}
 					type="url"
 				/>
 
 				<Input
-					label="Fecha límite de registro"
-					value={maxRegisterDate}
+					label={t('surveys.lcfc.notifications.dateLabel')}
+					value={form.maxRegisterDate}
 					onChange={(e) => setMaxRegisterDate(e.target.value)}
 					type="date"
 				/>
 			</div>
 
-			<Button onClick={handleSend} disabled={!canSend}>
+			<Button onClick={handleSend} disabled={!isValid || sending}>
 				<PaperAirplaneIcon className="h-4 w-4 mr-2" />
-				{sending ? 'Enviando...' : 'Enviar Notificaciones'}
+				{sending
+					? t('surveys.lcfc.notifications.sending')
+					: t('surveys.lcfc.notifications.send')}
 			</Button>
 
 			<Toast
