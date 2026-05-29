@@ -35,9 +35,9 @@ export const projectsService = {
 	): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
 		const qs = new URLSearchParams();
 		if (params?.academicPeriodId != null)
-			qs.set('academicPeriodId', String(params.academicPeriodId));
-		if (params?.schoolId != null) qs.set('schoolId', String(params.schoolId));
-		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
+			qs.set('academic_period_id', String(params.academicPeriodId));
+		if (params?.schoolId != null) qs.set('school_id', String(params.schoolId));
+		if (params?.gradeTypeCode != null) qs.set('grade_type_code', params.gradeTypeCode);
 		const query = qs.toString();
 		return apiGet(`/projects/professor/${professorId}${query ? `?${query}` : ''}`);
 	},

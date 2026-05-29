@@ -30,11 +30,11 @@ import {
 	useCreatePerformanceLevel,
 	useUpdatePerformanceLevel,
 	useDeletePerformanceLevel,
+	usePerformanceLevelForm,
 } from '@/modules/academic/hooks';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
-import { usePerformanceLevelForm } from '../hooks';
-import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performanceLevels';
-import type { PerformanceLevelFormState } from '../schemas/performanceLevelSchema';
+import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '@/modules/academic/constants';
+import type { PerformanceLevelFormState } from '@/modules/academic/schemas';
 import { PerformanceLevelResponse } from '@/modules/academic';
 
 type OptionItem = { label: string; value: number };

@@ -21,7 +21,7 @@ import { TYPE_CODES, TYPE_GROUP_CODES } from '@/modules/core';
 import { ProfessorSearchResponse } from '@/modules/academic';
 
 const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
-const LIMITED_CODES: readonly string[] = Object.values(TYPE_CODES.EVALUATOR_LIMITED_CODES);
+const LIMITED_CODES: readonly string[] = Object.values(TYPE_CODES.EVALUATOR_LIMITED_TYPE);
 
 interface WizardSelectEvaluatorModalProps {
 	open: boolean;
