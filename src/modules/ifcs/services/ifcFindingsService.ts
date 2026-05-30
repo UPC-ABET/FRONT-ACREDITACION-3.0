@@ -9,16 +9,16 @@ interface Envelope<T> {
 
 export async function listFindings(chartIds: number[], periodId: number): Promise<FindingRow[]> {
 	const envelope = await apiPost<Envelope<FindingRow[]>>('/ifc-findings/list', {
-		chart_ids: chartIds.map(Number),
-		period_id: Number(periodId),
+		chartIds: chartIds.map(Number),
+		periodId: Number(periodId),
 	});
 	if (!envelope?.data) throw new ApiError('ifcFindings.error.listFailed');
 
 	return envelope.data.map((r) => ({
 		...r,
 		id: Number(r.id),
-		ifc_id: Number(r.ifc_id),
-		course_id: Number(r.course_id),
+		ifcId: Number(r.ifcId),
+		courseId: Number(r.courseId),
 	}));
 }
 

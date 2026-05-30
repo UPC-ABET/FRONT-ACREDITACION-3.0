@@ -44,9 +44,9 @@ export function RubricCreateWizard() {
 		if (!step1Data || !step2Data) return;
 		try {
 			const body: CreateRubricFullDto = {
-				rubric_type_id: step2Data.rubricTypeId,
-				grade_type_id: step2Data.gradeTypeId,
-				study_plan_course_id: step1Data.studyPlanCourseId,
+				rubricTypeId: step2Data.rubricTypeId,
+				gradeTypeId: step2Data.gradeTypeId,
+				studyPlanCourseId: step1Data.studyPlanCourseId,
 				questions: questions as CreateRubricFullDto['questions'],
 			};
 			const rubric = await createRubricFull.mutateAsync(body);

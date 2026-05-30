@@ -17,7 +17,7 @@ function newTempId(): string {
 function seedPreviousActions(rows: PreviousAction[]): Record<number, I18nText | null> {
 	const out: Record<number, I18nText | null> = {};
 	for (const p of rows ?? []) {
-		out[p.finding_action_id] = p.evidences;
+		out[p.findingActionId] = p.evidences;
 	}
 	return out;
 }
@@ -31,9 +31,9 @@ export function initFormState(
 			information: {},
 			findings: [],
 			actions: [],
-			deleted_finding_ids: [],
-			deleted_action_ids: [],
-			previous_actions: seedPreviousActions(prefillPreviousActions),
+			deletedFindingIds: [],
+			deletedActionIds: [],
+			previousActions: seedPreviousActions(prefillPreviousActions),
 		};
 	}
 
@@ -41,7 +41,7 @@ export function initFormState(
 		tempId: newTempId(),
 		id: Number(f.id),
 		description: f.description,
-		criticality_code: f.criticality.code,
+		criticalityCode: f.criticality.code,
 	}));
 
 	const tempIdByDbId = new Map<number, string>(findings.map((f) => [f.id!, f.tempId]));
@@ -51,7 +51,7 @@ export function initFormState(
 			tempId: newTempId(),
 			id: Number(a.id),
 			description: a.description,
-			finding_temp_id: tempIdByDbId.get(Number(f.id))!,
+			findingTempId: tempIdByDbId.get(Number(f.id))!,
 		})),
 	);
 
@@ -71,9 +71,9 @@ export function initFormState(
 		information,
 		findings,
 		actions,
-		deleted_finding_ids: [],
-		deleted_action_ids: [],
-		previous_actions: seedPreviousActions(existing.previous_actions ?? []),
+		deletedFindingIds: [],
+		deletedActionIds: [],
+		previousActions: seedPreviousActions(existing.previousActions ?? []),
 	};
 }
 
@@ -83,7 +83,7 @@ export const applyFinding = {
 			tempId: newTempId(),
 			id: null,
 			description: {},
-			criticality_code: '',
+			criticalityCode: '',
 		};
 		return { ...state, findings: [...state.findings, finding] };
 	},
@@ -97,7 +97,7 @@ export const applyFinding = {
 		const target = state.findings.find((f) => f.tempId === tempId);
 		if (!target) return state;
 
-		const droppedActions = state.actions.filter((a) => a.finding_temp_id === tempId);
+		const droppedActions = state.actions.filter((a) => a.findingTempId === tempId);
 		const droppedActionDbIds = droppedActions
 			.map((a) => a.id)
 			.filter((id): id is number => id !== null);
@@ -105,10 +105,10 @@ export const applyFinding = {
 		return {
 			...state,
 			findings: state.findings.filter((f) => f.tempId !== tempId),
-			actions: state.actions.filter((a) => a.finding_temp_id !== tempId),
-			deleted_finding_ids:
-				target.id !== null ? [...state.deleted_finding_ids, target.id] : state.deleted_finding_ids,
-			deleted_action_ids: [...state.deleted_action_ids, ...droppedActionDbIds],
+			actions: state.actions.filter((a) => a.findingTempId !== tempId),
+			deletedFindingIds:
+				target.id !== null ? [...state.deletedFindingIds, target.id] : state.deletedFindingIds,
+			deletedActionIds: [...state.deletedActionIds, ...droppedActionDbIds],
 		};
 	},
 };
@@ -121,7 +121,7 @@ export const applyPreviousAction = {
 	): IFCFormState {
 		return {
 			...state,
-			previous_actions: { ...state.previous_actions, [findingActionId]: evidences },
+			previousActions: { ...state.previousActions, [findingActionId]: evidences },
 		};
 	},
 };
@@ -132,7 +132,7 @@ export const applyAction = {
 			tempId: newTempId(),
 			id: null,
 			description: {},
-			finding_temp_id: state.findings[0]?.tempId ?? '',
+			findingTempId: state.findings[0]?.tempId ?? '',
 		};
 		return { ...state, actions: [...state.actions, action] };
 	},
@@ -149,8 +149,8 @@ export const applyAction = {
 		return {
 			...state,
 			actions: state.actions.filter((a) => a.tempId !== tempId),
-			deleted_action_ids:
-				target.id !== null ? [...state.deleted_action_ids, target.id] : state.deleted_action_ids,
+			deletedActionIds:
+				target.id !== null ? [...state.deletedActionIds, target.id] : state.deletedActionIds,
 		};
 	},
 };

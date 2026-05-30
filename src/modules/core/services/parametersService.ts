@@ -13,7 +13,7 @@ interface ParameterRow<T> {
 	value: T;
 	name: Record<string, string>;
 	description: Record<string, string>;
-	is_active: boolean;
+	isActive: boolean;
 }
 
 export async function getParameterByCode<T>(code: string): Promise<T> {

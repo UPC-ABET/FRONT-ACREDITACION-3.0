@@ -35,9 +35,9 @@ export const projectsService = {
 	): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
 		const qs = new URLSearchParams();
 		if (params?.academicPeriodId != null)
-			qs.set('academic_period_id', String(params.academicPeriodId));
-		if (params?.schoolId != null) qs.set('school_id', String(params.schoolId));
-		if (params?.gradeTypeCode != null) qs.set('grade_type_code', params.gradeTypeCode);
+			qs.set('academicPeriodId', String(params.academicPeriodId));
+		if (params?.schoolId != null) qs.set('schoolId', String(params.schoolId));
+		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
 		const query = qs.toString();
 		return apiGet(`/projects/professor/${professorId}${query ? `?${query}` : ''}`);
 	},
@@ -55,9 +55,9 @@ export const projectsService = {
 		},
 	): Promise<ApiResponse<ProjectDetailsResponse>> {
 		const qs = new URLSearchParams();
-		if (params?.isEvaluationMode) qs.set('is_evaluation_mode', String(params.isEvaluationMode));
-		if (params?.gradeTypeCode != null) qs.set('grade_type_code', params.gradeTypeCode);
-		if (params?.rubricTypeCode != null) qs.set('rubric_type_code', params.rubricTypeCode);
+		if (params?.isEvaluationMode) qs.set('isEvaluationMode', String(params.isEvaluationMode));
+		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
+		if (params?.rubricTypeCode != null) qs.set('rubricTypeCode', params.rubricTypeCode);
 		return apiGet(`/projects/project/${projectId}?${qs.toString()}`);
 	},
 
@@ -82,14 +82,14 @@ export const projectsService = {
 		studentSectionEnrollmentIds: number[],
 	): Promise<ApiResponse<ProjectResponse>> {
 		return apiPost(`/projects/project/${projectId}/students`, {
-			student_section_enrollment_ids: studentSectionEnrollmentIds,
+			studentSectionEnrollmentIds: studentSectionEnrollmentIds,
 		});
 	},
 
 	createStudent(body: {
-		project_id: number;
-		student_section_enrollment_id: number;
-		is_active: true;
+		projectId: number;
+		studentSectionEnrollmentId: number;
+		isActive: true;
 	}): Promise<ApiResponse<ProjectStudentResponse>> {
 		return apiPost('/project-students/create', body);
 	},
@@ -103,7 +103,7 @@ export const projectsService = {
 		professorIds: number[],
 	): Promise<ApiResponse<ProjectResponse>> {
 		return apiPost(`/projects/project/${projectId}/evaluators`, {
-			evaluator_professor_ids: professorIds,
+			evaluatorProfessorIds: professorIds,
 		});
 	},
 
@@ -112,10 +112,10 @@ export const projectsService = {
 	},
 
 	createEvaluator(body: {
-		project_id: number;
-		professor_id: number;
-		evaluator_type_id: number;
-		is_active: true;
+		projectId: number;
+		professorId: number;
+		evaluatorTypeId: number;
+		isActive: true;
 	}): Promise<ApiResponse<ProjectEvaluatorResponse>> {
 		return apiPost('/project-evaluators/create', body);
 	},

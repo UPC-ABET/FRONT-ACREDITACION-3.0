@@ -3,10 +3,10 @@ import { apiPost, apiPut } from '@/shared/lib';
 import { StudyPlanCourseResponse } from '../types';
 
 export type StudyPlanCourseFilters = {
-	academic_period_id?: number;
-	school_id?: number;
-	course_id?: number;
-	is_active?: boolean;
+	academicPeriodId?: number;
+	schoolId?: number;
+	courseId?: number;
+	isActive?: boolean;
 	extra?: Record<string, unknown>;
 };
 

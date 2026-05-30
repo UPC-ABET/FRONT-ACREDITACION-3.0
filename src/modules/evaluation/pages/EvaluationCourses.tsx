@@ -40,7 +40,7 @@ export function EvaluationCoursesPage() {
 
 	const schoolId = getSchoolCookie()?.id as number | undefined;
 
-	const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods({ is_active: true });
+	const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods({ isActive: true });
 	const periodOptions: AnyOption[] = periods.map((p) => ({ label: p.code, value: p.id }));
 
 	const {
@@ -51,10 +51,10 @@ export function EvaluationCoursesPage() {
 		refetch,
 	} = useStudyPlanCourses(
 		{
-			academic_period_id: Number(selectedPeriod?.value ?? 0),
-			school_id: schoolId,
-			extra: { is_evaluate_rubric: true },
-			is_active: true,
+			academicPeriodId: Number(selectedPeriod?.value ?? 0),
+			schoolId: schoolId,
+			extra: { isEvaluateRubric: true },
+			isActive: true,
 		},
 		{ enabled: !!selectedPeriod && !!schoolId },
 	);
@@ -62,7 +62,7 @@ export function EvaluationCoursesPage() {
 	const updateSpc = useUpdateStudyPlanCourse();
 
 	const handleRemove = (spc: StudyPlanCourseResponse) => {
-		const { is_evaluate_rubric: _, ...rest } = (spc.extra ?? {}) as Record<string, unknown>;
+		const { isEvaluateRubric: _, ...rest } = (spc.extra ?? {}) as Record<string, unknown>;
 		updateSpc.mutate(
 			{ id: spc.id, body: { extra: rest } },
 			{ onSuccess: () => setConfirmTarget(null), onError: () => setConfirmTarget(null) },
@@ -72,7 +72,7 @@ export function EvaluationCoursesPage() {
 	const courseName = (spc: StudyPlanCourseResponse) =>
 		typeof spc.course?.name === 'string'
 			? spc.course.name
-			: (spc.course?.name?.[locale] ?? String(spc.course_id));
+			: (spc.course?.name?.[locale] ?? String(spc.courseId));
 
 	return (
 		<div className="space-y-8">

@@ -126,10 +126,10 @@ export function useGRAStudents() {
 
 	const load = useCallback(
 		async (params: {
-			program_id?: number;
-			academic_period_id?: number;
-			campus_id?: number;
-			student_code?: string;
+			programId?: number;
+			academicPeriodId?: number;
+			campusId?: number;
+			studentCode?: string;
 		}) => {
 			setLoading(true);
 			setError(null);
@@ -178,11 +178,11 @@ export function useGRAStudentSearch() {
 	const add = useCallback(
 		async (
 			params: {
-				student_id: number;
-				program_id: number;
-				academic_period_id: number;
-				campus_id?: number;
-				max_register_date?: string;
+				studentId: number;
+				programId: number;
+				academicPeriodId: number;
+				campusId?: number;
+				maxRegisterDate?: string;
 			},
 			onSuccess?: () => void,
 		) => {

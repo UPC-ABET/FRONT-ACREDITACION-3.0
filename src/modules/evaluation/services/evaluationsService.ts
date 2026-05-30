@@ -4,26 +4,26 @@ import type { FinalizeEvaluationDto, SubmitEvaluationPayload } from '../types';
 import type { EvaluationResponse } from '../types';
 
 interface CreateEvaluationPayload {
-	project_student_id: number;
-	project_evaluator_id: number;
-	rubric_id?: number;
+	projectStudentId: number;
+	projectEvaluatorId: number;
+	rubricId?: number;
 	observation?: { es: string; en: string };
-	scores?: Array<{ rubric_question_criteria_id: number; score: number }>;
-	qualification_status_type_id?: number | null;
+	scores?: Array<{ rubricQuestionCriteriaId: number; score: number }>;
+	qualificationStatusTypeId?: number | null;
 }
 
 interface UpdateEvaluationPayload {
 	observation?: { es: string; en: string };
-	scores?: Array<{ rubric_question_criteria_id: number; score: number }>;
-	qualification_status_type_id?: number | null;
+	scores?: Array<{ rubricQuestionCriteriaId: number; score: number }>;
+	qualificationStatusTypeId?: number | null;
 }
 
 interface EvaluationFilters {
-	project_student_id?: number;
-	project_evaluator_id?: number;
-	rubric_id?: number;
-	qualification_status_type_id?: number;
-	is_active?: boolean;
+	projectStudentId?: number;
+	projectEvaluatorId?: number;
+	rubricId?: number;
+	qualificationStatusTypeId?: number;
+	isActive?: boolean;
 }
 
 export const evaluationsService = {
@@ -32,7 +32,7 @@ export const evaluationsService = {
 	},
 
 	saveObservation(body: {
-		evaluation_id: number;
+		evaluationId: number;
 		observation: { es: string; en: string };
 	}): Promise<ApiResponse<EvaluationResponse>> {
 		return apiPut('/evaluations/observation', body);

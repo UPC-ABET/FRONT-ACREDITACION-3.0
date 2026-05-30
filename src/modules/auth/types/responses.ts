@@ -3,8 +3,8 @@ export type LoginResponse = {
 	message: string;
 	data: {
 		user: unknown;
-		access_token: string;
-		expires_in: number;
+		accessToken: string;
+		expiresIn: number;
 	};
 };
 

@@ -14,10 +14,10 @@ export function FindingActionsTable({ actions }: Props) {
 
 	const columns = useMemo<ColumnDef<FindingActionRow>[]>(
 		() => [
-			{ accessorKey: 'action_code', header: L.col_action_code[lang] },
+			{ accessorKey: 'actionCode', header: L.colActionCode[lang] },
 			{
 				id: 'description',
-				header: L.col_action_desc[lang],
+				header: L.colActionDesc[lang],
 				accessorFn: (row) => row.description?.[lang] ?? row.description?.es ?? '',
 				cell: ({ row }) => (
 					<span className="whitespace-pre-line">
@@ -28,7 +28,7 @@ export function FindingActionsTable({ actions }: Props) {
 			{
 				id: 'completeness',
 				accessorFn: (row) => row.completeness.code,
-				header: L.col_action_status[lang],
+				header: L.colActionStatus[lang],
 				cell: ({ row }) => (
 					<Badge color={row.original.completeness.color}>
 						{row.original.completeness.name?.[lang] ?? row.original.completeness.name?.es ?? ''}
@@ -40,7 +40,7 @@ export function FindingActionsTable({ actions }: Props) {
 	);
 
 	if (actions.length === 0) {
-		return <TableEmptyState message={L.actions_empty[lang]} />;
+		return <TableEmptyState message={L.actionsEmpty[lang]} />;
 	}
 
 	return (

@@ -31,9 +31,9 @@ export interface Program {
 export interface CompetenceConfig {
 	id: number;
 	outcomeId?: number;
-	competenciaGeneral: string; // maps to extra.name_es
-	competenciaEspecifica: string; // maps to extra.name_en
-	descripcion: string; // maps to extra.description_es
+	competenciaGeneral: string; // maps to extra.nameEs
+	competenciaEspecifica: string; // maps to extra.nameEn
+	descripcion: string; // maps to extra.descriptionEs
 	nivelAceptacion: number; // maps to extra.order
 	estado?: string;
 	isActive?: boolean;
@@ -43,7 +43,7 @@ export interface CompetenceConfig {
 
 export interface CompetenceFormData {
 	id: number;
-	outcome_id?: number; // required by new backend on create
+	outcomeId?: number; // required by new backend on create
 	competenciaGeneral: string;
 	competenciaEspecifica: string;
 	descripcion: string;
@@ -58,7 +58,7 @@ export interface AcceptanceLevel {
 	id?: number;
 	nivel: number; // maps to backend "order"
 	descripcion: string; // maps to backend "name.es"
-	rango: string; // derived from min_score – max_score
+	rango: string; // derived from minScore – maxScore
 	minScore?: number;
 	maxScore?: number;
 	color?: string;
@@ -73,9 +73,9 @@ export interface FileResource {
 
 // ─── PPP ───────────────────────────────────────────────────────────────────
 export interface PPPCloneRequest {
-	source_academic_period_id: number;
-	target_academic_period_id: number;
-	program_id: number;
+	sourceAcademicPeriodId: number;
+	targetAcademicPeriodId: number;
+	programId: number;
 }
 
 // ─── GRA Student Notification ─────────────────────────────────────────────
@@ -128,9 +128,9 @@ export interface SendEmailResponse {
 
 // ─── GRA Email Send (new backend) ─────────────────────────────────────────
 export interface GRAEmailSendRequest {
-	academic_period_id: number;
-	program_id: number;
-	survey_base_url: string;
+	academicPeriodId: number;
+	programId: number;
+	surveyBaseUrl: string;
 }
 
 // ─── LCFC ──────────────────────────────────────────────────────────────────
@@ -172,12 +172,12 @@ export interface LCFCSendRequest {
 
 // New backend LCFC notification send request
 export interface LCFCNotificationSendRequest {
-	academic_period_id: number;
-	program_id: number;
-	campus_id?: number;
-	course_section_id?: number;
-	max_register_date: string;
-	survey_base_url: string;
+	academicPeriodId: number;
+	programId: number;
+	campusId?: number;
+	courseSectionId?: number;
+	maxRegisterDate: string;
+	surveyBaseUrl: string;
 }
 
 export interface LCFCConfigItem {
@@ -271,29 +271,29 @@ export interface ReportFilter {
 }
 
 export interface DashboardOutcome {
-	outcome_id: number;
-	outcome_code?: string;
-	outcome_name: string;
-	average_score: number;
+	outcomeId: number;
+	outcomeCode?: string;
+	outcomeName: string;
+	averageScore: number;
 	color: 'ROJO' | 'AMARILLO' | 'VERDE';
-	total_responses: number;
+	totalResponses: number;
 }
 
 export interface DashboardSummary {
-	total_surveys: number;
+	totalSurveys: number;
 	rojo?: number;
 	amarillo?: number;
 	verde?: number;
 	completed?: number;
 	pending?: number;
-	completion_rate_pct?: number;
+	completionRatePct?: number;
 }
 
 export interface DashboardResponse {
 	summary: DashboardSummary;
 	outcomes?: DashboardOutcome[];
-	by_program?: unknown[];
-	by_course?: unknown[];
+	byProgram?: unknown[];
+	byCourse?: unknown[];
 	filters?: unknown;
 }
 

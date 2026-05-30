@@ -46,8 +46,8 @@ export function useRubricNonCapstoneSave({
 							return {
 								...(cId !== undefined && { id: cId }),
 								criteria: { es: c.criteriaText.es, en: c.criteriaText.en },
-								min_value: c.minValue as number,
-								max_value: c.maxValue as number,
+								minValue: c.minValue as number,
+								maxValue: c.maxValue as number,
 							};
 						}),
 					};

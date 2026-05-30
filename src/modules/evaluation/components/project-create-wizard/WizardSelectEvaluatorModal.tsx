@@ -69,7 +69,7 @@ export function WizardSelectEvaluatorModal({
 		if (!open) return;
 		setLoadingProfs(true);
 		professorsService
-			.getByFilters({ search: debouncedSearch.trim() || undefined, is_active: true })
+			.getByFilters({ search: debouncedSearch.trim() || undefined, isActive: true })
 			.then((r) => setProfessors(r.data ?? []))
 			.catch(() => setProfessors([]))
 			.finally(() => setLoadingProfs(false));
@@ -82,7 +82,7 @@ export function WizardSelectEvaluatorModal({
 	const typeGroupId = typeGroups[0]?.id ?? null;
 
 	const { data: allTypes = [], isLoading: loadingTypes } = useTypes(
-		{ type_group_id: typeGroupId ?? undefined },
+		{ typeGroupId: typeGroupId ?? undefined },
 		{ enabled: typeGroupId != null },
 	);
 
@@ -111,9 +111,9 @@ export function WizardSelectEvaluatorModal({
 
 	const profDisplayName = (p: ProfessorSearchResponse) => {
 		const user = p.staff?.user;
-		if (user?.first_name || user?.last_name)
-			return `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim();
-		return p.staff?.staff_email ?? `ID ${p.id}`;
+		if (user?.firstName || user?.lastName)
+			return `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
+		return p.staff?.staffEmail ?? `ID ${p.id}`;
 	};
 
 	const handleConfirm = () => {
@@ -128,7 +128,7 @@ export function WizardSelectEvaluatorModal({
 		onConfirm({
 			professorId: selectedProf.id,
 			professorName: profDisplayName(selectedProf),
-			professorEmail: selectedProf.staff?.staff_email ?? '',
+			professorEmail: selectedProf.staff?.staffEmail ?? '',
 			typeId: type.id,
 			typeName: type.name,
 			typeCode: type.code,
@@ -176,10 +176,10 @@ export function WizardSelectEvaluatorModal({
 													}`}>
 													<div className="flex flex-col gap-0.5 min-w-0">
 														<span className="font-medium truncate">{profDisplayName(p)}</span>
-														{p.staff?.staff_email && (
+														{p.staff?.staffEmail && (
 															<span
 																className={`text-xs truncate ${isSelected ? 'text-zinc-300' : 'text-zinc-400'}`}>
-																{p.staff.staff_email}
+																{p.staff.staffEmail}
 															</span>
 														)}
 													</div>

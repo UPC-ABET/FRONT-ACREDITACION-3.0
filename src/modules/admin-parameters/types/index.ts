@@ -6,10 +6,10 @@ export interface ParameterRow<T = unknown> {
 	value: T;
 	name: I18nText;
 	description: I18nText;
-	is_active: boolean;
+	isActive: boolean;
 	extra?: Record<string, unknown>;
-	created_at?: string;
-	updated_at?: string | null;
+	createdAt?: string;
+	updatedAt?: string | null;
 }
 
 export interface UpdateParameterBody<T = unknown> {
@@ -17,7 +17,7 @@ export interface UpdateParameterBody<T = unknown> {
 	name?: I18nText;
 	description?: I18nText;
 	code?: string;
-	is_active?: boolean;
+	isActive?: boolean;
 	extra?: Record<string, unknown>;
 }
 

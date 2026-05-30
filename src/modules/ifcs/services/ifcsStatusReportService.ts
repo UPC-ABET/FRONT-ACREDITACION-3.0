@@ -8,7 +8,7 @@ export async function downloadStatusReport(
 ): Promise<{ blob: Blob; filename: string }> {
 	const { blob, response } = await apiPostBlobResponse(
 		'/ifcs/status-report',
-		{ chart_ids: chartIds.map(Number), period_id: Number(periodId), lang },
+		{ chartIds: chartIds.map(Number), periodId: Number(periodId), lang },
 		{ accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
 	);
 	const filename = parseFilename(

@@ -48,22 +48,22 @@ export function ProjectsListPage() {
 	}, []);
 
 	const { data: academicPeriods = [] } = useQuery({
-		queryKey: ['academic-periods', 'filtered', { is_active: true }],
-		queryFn: () => academicPeriodsService.getByFilters({ is_active: true }).then((r) => r.data),
+		queryKey: ['academic-periods', 'filtered', { isActive: true }],
+		queryFn: () => academicPeriodsService.getByFilters({ isActive: true }).then((r) => r.data),
 	});
 
 	const { data: programs = [] } = useQuery({
 		queryKey: [
 			'programs',
 			'filtered',
-			{ school_id: schoolId, academic_period_id: selectedPeriod?.value, is_active: true },
+			{ schoolId: schoolId, academicPeriodId: selectedPeriod?.value, isActive: true },
 		],
 		queryFn: () =>
 			programsService
 				.getByFilters({
-					school_id: schoolId!,
-					academic_period_id: selectedPeriod!.value,
-					is_active: true,
+					schoolId: schoolId!,
+					academicPeriodId: selectedPeriod!.value,
+					isActive: true,
 				})
 				.then((r) => r.data),
 		enabled: !!selectedPeriod && !!schoolId,
@@ -74,19 +74,19 @@ export function ProjectsListPage() {
 			'courses',
 			'filtered',
 			{
-				school_id: schoolId,
-				academic_period_id: selectedPeriod?.value,
-				program_id: selectedProgram?.value,
-				is_active: true,
+				schoolId: schoolId,
+				academicPeriodId: selectedPeriod?.value,
+				programId: selectedProgram?.value,
+				isActive: true,
 			},
 		],
 		queryFn: () =>
 			coursesService
 				.getByFilters({
-					school_id: schoolId!,
-					academic_period_id: selectedPeriod!.value,
-					program_id: selectedProgram!.value,
-					is_active: true,
+					schoolId: schoolId!,
+					academicPeriodId: selectedPeriod!.value,
+					programId: selectedProgram!.value,
+					isActive: true,
 				})
 				.then((r) => r.data),
 		enabled: !!selectedPeriod && !!selectedProgram && !!schoolId,
@@ -102,19 +102,19 @@ export function ProjectsListPage() {
 			'projects',
 			'filtered',
 			{
-				school_id: schoolId,
-				academic_period_id: selectedPeriod?.value,
-				program_id: selectedProgram?.value,
-				course_id: selectedCourse?.value,
+				schoolId: schoolId,
+				academicPeriodId: selectedPeriod?.value,
+				programId: selectedProgram?.value,
+				courseId: selectedCourse?.value,
 			},
 		],
 		queryFn: () =>
 			projectsService
 				.getByFilters({
-					school_id: schoolId!,
-					...(selectedPeriod ? { academic_period_id: selectedPeriod.value } : {}),
-					...(selectedProgram ? { program_id: selectedProgram.value } : {}),
-					...(selectedCourse ? { course_id: selectedCourse.value } : {}),
+					schoolId: schoolId!,
+					...(selectedPeriod ? { academicPeriodId: selectedPeriod.value } : {}),
+					...(selectedProgram ? { programId: selectedProgram.value } : {}),
+					...(selectedCourse ? { courseId: selectedCourse.value } : {}),
 				})
 				.then((r) => r.data),
 		enabled: !!schoolId,
@@ -254,9 +254,9 @@ export function ProjectsListPage() {
 												<div key={ev.id} className="flex items-center gap-2">
 													<span className="h-1.5 w-1.5 rounded-full bg-zinc-200" />
 													<span>
-														{ev.evaluator_info
-															? `${ev.evaluator_info.first_name} ${ev.evaluator_info.last_name}`
-															: `#${ev.professor_id}`}
+														{ev.evaluatorInfo
+															? `${ev.evaluatorInfo.firstName} ${ev.evaluatorInfo.lastName}`
+															: `#${ev.professorId}`}
 													</span>
 												</div>
 											))
@@ -273,9 +273,9 @@ export function ProjectsListPage() {
 													<div key={st.id} className="flex items-center gap-2">
 														<span className="h-1.5 w-1.5 rounded-full bg-zinc-200" />
 														<span>
-															{st.student_info
-																? `${st.student_info.first_name} ${st.student_info.last_name}`
-																: `#${st.student_section_enrollment_id}`}
+															{st.studentInfo
+																? `${st.studentInfo.firstName} ${st.studentInfo.lastName}`
+																: `#${st.studentSectionEnrollmentId}`}
 														</span>
 													</div>
 												))

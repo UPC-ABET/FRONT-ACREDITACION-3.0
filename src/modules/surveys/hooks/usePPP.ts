@@ -169,12 +169,12 @@ export function usePPPUpload() {
 	const [success, setSuccess] = useState(false);
 
 	const upload = useCallback(
-		async (file: File, academic_period_id: number, program_id = 0, campus_id = 0) => {
+		async (file: File, academicPeriodId: number, programId = 0, campusId = 0) => {
 			setLoading(true);
 			setError(null);
 			setSuccess(false);
 			try {
-				await uploadPPPMassive(file, academic_period_id, program_id, campus_id);
+				await uploadPPPMassive(file, academicPeriodId, programId, campusId);
 				setSuccess(true);
 			} catch (e) {
 				setError((e as Error).message);

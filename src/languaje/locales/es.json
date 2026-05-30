@@ -116,10 +116,10 @@
 				"error": "Falló el envío de {{count}} notificación(es)"
 			},
 			"reason": {
-				"no_course_chart": "No se encontró el organigrama del curso",
-				"no_config": "No hay configuración de notificación para este escenario",
-				"no_recipients": "No hay destinatarios configurados",
-				"send_failed": "El proveedor de correo rechazó el envío",
+				"noCourseChart": "No se encontró el organigrama del curso",
+				"noConfig": "No hay configuración de notificación para este escenario",
+				"noRecipients": "No hay destinatarios configurados",
+				"sendFailed": "El proveedor de correo rechazó el envío",
 				"unknown": "No se pudo enviar la notificación"
 			},
 			"error": {
@@ -568,9 +568,6 @@
 		"createLabel": "Crear: \"{value}\""
 	},
 	"school": {
-		"sch_soft": "ESCUELA DE INGENIERIA DE SOFTWARE",
-		"sch_sist": "ESCUELA DE INGENIERIA DE SISTEMAS",
-		"sch_admin": "ESCUELA DE ADMINISTRACION",
 		"eiscb": "ESCUELA DE INGENIERIA DE SOFTWARE",
 		"eiscc": "ESCUELA DE INGENIERIA DE CIENCIAS DE LA COMPUTACION",
 		"inggmi": "INGENIERIA GMI",

@@ -37,9 +37,9 @@ export function AddStudentPanel({
 		setAdding(true);
 		await add(
 			{
-				student_id: result.idEstudiante,
-				program_id: programId,
-				academic_period_id: academicPeriodId,
+				studentId: result.idEstudiante,
+				programId: programId,
+				academicPeriodId: academicPeriodId,
 			},
 			() => {
 				setToast({ open: true, type: 'success', msg: `${result.nombre} agregado exitosamente.` });

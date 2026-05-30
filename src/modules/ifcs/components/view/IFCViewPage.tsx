@@ -78,7 +78,7 @@ export default function IFCViewPage() {
 			const res = await submitIFC(id);
 			if (res.notification.sent) {
 				setSuccessMsg(t('ifcs.submit.toast.successWithNotify'));
-			} else if (res.notification.reason === 'no_config') {
+			} else if (res.notification.reason === 'noConfig') {
 				setSuccessMsg(t('ifcs.submit.toast.successNoConfig'));
 			} else {
 				setSuccessMsg(t('ifcs.submit.toast.successNoNotify'));
@@ -126,13 +126,13 @@ export default function IFCViewPage() {
 			/>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-				<IFCOutcomeResults outcomeResult={data.outcome_course_result} />
-				<IFCLearningOutcomeReached learningOutcome={ifc.course_learning_outcome} />
+				<IFCOutcomeResults outcomeResult={data.outcomeCourseResult} />
+				<IFCLearningOutcomeReached learningOutcome={ifc.courseLearningOutcome} />
 			</div>
 
 			<IFCInformationBlock information={ifc.information} />
 
-			<PreviousActionsTable previousActions={data.previous_actions} mode="view" />
+			<PreviousActionsTable previousActions={data.previousActions} mode="view" />
 
 			<IFCFindingsTable findings={data.findings} />
 			<IFCActionsTable findings={data.findings} />

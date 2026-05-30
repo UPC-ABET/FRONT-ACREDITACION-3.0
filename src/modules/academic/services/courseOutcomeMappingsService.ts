@@ -3,8 +3,8 @@ import { apiPost } from '@/shared/lib';
 import { CourseOutcomeMappingResponse } from '../types';
 
 export type CourseOutcomeMappingFilters = {
-	study_plan_course_id?: number;
-	is_active?: boolean;
+	studyPlanCourseId?: number;
+	isActive?: boolean;
 };
 
 export const courseOutcomeMappingsService = {

@@ -3,20 +3,20 @@ import { PerformanceLevelResponse } from '../types';
 import { apiPost, apiPut, apiDelete } from '@/shared/lib';
 
 export type FilterPerformanceLevelDto = Partial<{
-	is_active: boolean;
-	academic_period_id: number;
-	instrument_type_id: number;
+	isActive: boolean;
+	academicPeriodId: number;
+	instrumentTypeId: number;
 }>;
 
 export type CreatePerformanceLevelDto = {
-	instrument_type_id: number;
-	academic_period_id: number;
+	instrumentTypeId: number;
+	academicPeriodId: number;
 	name: { es: string; en: string };
 	code: string;
-	unique_value: number;
-	min_score: number;
-	max_score: number;
-	max_value: number;
+	uniqueValue: number;
+	minScore: number;
+	maxScore: number;
+	maxValue: number;
 	extra?: { color?: string };
 };
 

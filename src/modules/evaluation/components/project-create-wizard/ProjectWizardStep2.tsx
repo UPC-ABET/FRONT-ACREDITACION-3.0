@@ -14,7 +14,7 @@ export interface ProjectFormData {
 	name: string;
 	description: string;
 	studentEnrollmentIds: number[];
-	evaluators: { professor_id: number; evaluator_type_id: number }[];
+	evaluators: { professorId: number; evaluatorTypeId: number }[];
 }
 
 export interface LocalEvaluator {
@@ -52,12 +52,12 @@ export function ProjectWizardStep2({
 	const [studentModalOpen, setStudentModalOpen] = useState(false);
 
 	const selectedStudentIds = useMemo(
-		() => new Set(selectedStudents.map((s) => s.student_section_enrollment_id)),
+		() => new Set(selectedStudents.map((s) => s.studentSectionEnrollmentId)),
 		[selectedStudents],
 	);
 
 	const removeStudent = (id: number) =>
-		setSelectedStudents((prev) => prev.filter((s) => s.student_section_enrollment_id !== id));
+		setSelectedStudents((prev) => prev.filter((s) => s.studentSectionEnrollmentId !== id));
 
 	// ── Evaluators ─────────────────────────────────────────────────────────────
 	const [evaluators, setEvaluators] = useState<LocalEvaluator[]>([]);
@@ -75,10 +75,10 @@ export function ProjectWizardStep2({
 			code: code.trim(),
 			name: name.trim(),
 			description: description.trim(),
-			studentEnrollmentIds: selectedStudents.map((s) => s.student_section_enrollment_id),
+			studentEnrollmentIds: selectedStudents.map((s) => s.studentSectionEnrollmentId),
 			evaluators: evaluators.map((e) => ({
-				professor_id: e.professorId,
-				evaluator_type_id: e.typeId,
+				professorId: e.professorId,
+				evaluatorTypeId: e.typeId,
 			})),
 		});
 	};
@@ -146,17 +146,17 @@ export function ProjectWizardStep2({
 					) : (
 						selectedStudents.map((s) => (
 							<div
-								key={s.student_section_enrollment_id}
+								key={s.studentSectionEnrollmentId}
 								className="flex items-center justify-between gap-4 px-6 py-4">
 								<div className="flex flex-col gap-0.5">
 									<span className="font-medium text-zinc-900 text-sm">
-										{s.first_name} {s.last_name}
+										{s.firstName} {s.lastName}
 									</span>
-									<span className="text-xs font-mono text-zinc-400">{s.student_code}</span>
+									<span className="text-xs font-mono text-zinc-400">{s.studentCode}</span>
 								</div>
 								<button
 									type="button"
-									onClick={() => removeStudent(s.student_section_enrollment_id)}
+									onClick={() => removeStudent(s.studentSectionEnrollmentId)}
 									className="rounded-lg p-1.5 text-zinc-400 hover:bg-red-50 hover:text-red-600 transition-colors">
 									<XMarkIcon className="h-4 w-4" />
 								</button>

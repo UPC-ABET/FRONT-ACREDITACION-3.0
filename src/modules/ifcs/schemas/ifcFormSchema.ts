@@ -18,17 +18,17 @@ export function validateIFCForm(
 	if (state.findings.length === 0) return 'error.ifc.findingsRequired';
 
 	const findingInvalid = state.findings.some(
-		(f) => !hasAnyLang(f.description, languages) || !f.criticality_code,
+		(f) => !hasAnyLang(f.description, languages) || !f.criticalityCode,
 	);
 	if (findingInvalid) return 'ifcs.form.err.findingIncomplete';
 
 	const actionInvalid = state.actions.some(
-		(a) => !hasAnyLang(a.description, languages) || !a.finding_temp_id,
+		(a) => !hasAnyLang(a.description, languages) || !a.findingTempId,
 	);
 	if (actionInvalid) return 'ifcs.form.err.actionIncomplete';
 
 	const findingWithoutActions = state.findings.some(
-		(f) => !state.actions.some((a) => a.finding_temp_id === f.tempId),
+		(f) => !state.actions.some((a) => a.findingTempId === f.tempId),
 	);
 	if (findingWithoutActions) return 'error.ifc.actionsRequiredPerFinding';
 

@@ -64,15 +64,15 @@ export function useRubricCapstoneSave({
 					const qId = q && !q.id.startsWith('temp-') ? Number(q.id) : undefined;
 					return {
 						...(qId !== undefined && { id: qId }),
-						outcome_id: Number(outcome.id),
+						outcomeId: Number(outcome.id),
 						question: { es: outcome.outcomeDescription.es, en: outcome.outcomeDescription.en },
 						criterias: (q?.criteria ?? []).map((c) => {
 							const cId = !c.id.startsWith('temp-') ? Number(c.id) : undefined;
 							return {
 								...(cId !== undefined && { id: cId }),
 								criteria: { es: c.description.es, en: c.description.en },
-								min_value: 0,
-								max_value: 0,
+								minValue: 0,
+								maxValue: 0,
 							};
 						}),
 					};

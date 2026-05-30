@@ -266,10 +266,10 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 							<div key={student.id} className="flex items-center justify-between gap-4 px-6 py-4">
 								<div className="flex flex-col gap-0.5">
 									<span className="font-medium text-zinc-900">
-										{student.first_name} {student.last_name}
+										{student.firstName} {student.lastName}
 									</span>
 									<div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-zinc-500">
-										<span className="font-mono">{student.student_code}</span>
+										<span className="font-mono">{student.studentCode}</span>
 										<span className="text-zinc-300">·</span>
 										<span>{student.email}</span>
 									</div>
@@ -327,14 +327,14 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 								<div className="flex flex-col gap-1">
 									<div className="flex flex-wrap items-center gap-2">
 										<span className="font-medium text-zinc-900">
-											{evaluator.professor_first_name} {evaluator.professor_last_name}
+											{evaluator.professorFirstName} {evaluator.professorLastName}
 										</span>
 										<span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
-											{evaluator.evaluator_type_name[locale as 'es' | 'en'] ??
-												evaluator.evaluator_type_name.es}
+											{evaluator.evaluatorTypeName[locale as 'es' | 'en'] ??
+												evaluator.evaluatorTypeName.es}
 										</span>
 									</div>
-									<span className="text-xs text-zinc-500">{evaluator.professor_email}</span>
+									<span className="text-xs text-zinc-500">{evaluator.professorEmail}</span>
 								</div>
 
 								<button
@@ -371,7 +371,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				projectId={projectId}
 				projectNumericId={project.id}
 				courseId={rubric.course.id}
-				academicPeriodId={data.academic_period?.id ?? null}
+				academicPeriodId={data.academicPeriod?.id ?? null}
 				onSuccess={() => showToast('success', t('projects.edit.students.modal.successMessage'))}
 			/>
 

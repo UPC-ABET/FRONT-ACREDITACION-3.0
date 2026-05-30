@@ -8,7 +8,7 @@ export function useQualificationStatusTypes() {
 	const typeGroupId = typeGroups[0]?.id ?? null;
 
 	const { data: statusTypes = [], isLoading: isLoadingTypes } = useTypes(
-		{ type_group_id: typeGroupId ?? undefined },
+		{ typeGroupId: typeGroupId ?? undefined },
 		{ enabled: typeGroupId != null },
 	);
 

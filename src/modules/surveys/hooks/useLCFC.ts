@@ -74,13 +74,13 @@ export function useLCFCConfiguration() {
 	const generate = useCallback(
 		async (
 			escuela: string,
-			academic_period_id: number,
-			program_id?: number,
-			campus_id?: number,
+			academicPeriodId: number,
+			programId?: number,
+			campusId?: number,
 			onSuccess?: () => void,
 		) => {
 			try {
-				await generateLCFCConfiguration(escuela, academic_period_id, program_id, campus_id);
+				await generateLCFCConfiguration(escuela, academicPeriodId, programId, campusId);
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);

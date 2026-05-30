@@ -58,24 +58,24 @@ export function FindingGeneralInfo({
 	const descriptionText = finding.description?.[lang] ?? finding.description?.es ?? '';
 
 	return (
-		<Card title={L.section_general[lang]}>
+		<Card title={L.sectionGeneral[lang]}>
 			<div className="space-y-6">
 				<dl className="grid grid-cols-1 gap-5 rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:grid-cols-3">
 					<div>
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-							{L.col_code[lang]}
+							{L.colCode[lang]}
 						</dt>
-						<dd className="mt-1.5 text-base text-zinc-900">{finding.finding_code}</dd>
+						<dd className="mt-1.5 text-base text-zinc-900">{finding.findingCode}</dd>
 					</div>
 					<div>
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-							{L.col_period[lang]}
+							{L.colPeriod[lang]}
 						</dt>
-						<dd className="mt-1.5 text-base text-zinc-900">{finding.academic_period_code}</dd>
+						<dd className="mt-1.5 text-base text-zinc-900">{finding.academicPeriodCode}</dd>
 					</div>
 					<div>
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-							{L.col_criticality[lang]}
+							{L.colCriticality[lang]}
 						</dt>
 						<dd className="mt-1.5">
 							<Badge color={finding.criticality.color}>{criticalityLabel}</Badge>
@@ -85,7 +85,7 @@ export function FindingGeneralInfo({
 
 				<div>
 					<p className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-						{L.col_description[lang]}
+						{L.colDescription[lang]}
 					</p>
 					{editing ? (
 						<I18nTextField value={draft} onChange={setDraft} disabled={saving} />
@@ -101,21 +101,21 @@ export function FindingGeneralInfo({
 						<>
 							<Button variant="ghost" size="lg" onClick={onDelete}>
 								<TrashIcon className="h-5 w-5" />
-								{L.btn_delete[lang]}
+								{L.btnDelete[lang]}
 							</Button>
 							<Button variant="secondary" size="lg" onClick={startEdit}>
 								<PencilSquareIcon className="h-5 w-5" />
-								{L.btn_edit[lang]}
+								{L.btnEdit[lang]}
 							</Button>
 						</>
 					)}
 					{editing && (
 						<>
 							<Button variant="ghost" size="lg" disabled={saving} onClick={cancelEdit}>
-								{L.btn_cancel[lang]}
+								{L.btnCancel[lang]}
 							</Button>
 							<Button variant="primary" size="lg" disabled={saving} onClick={handleSave}>
-								{L.btn_save[lang]}
+								{L.btnSave[lang]}
 							</Button>
 						</>
 					)}

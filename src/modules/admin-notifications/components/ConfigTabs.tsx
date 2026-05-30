@@ -51,7 +51,7 @@ export function ConfigTabs({ triggers, statuses, configs }: Props) {
 
 	const existing =
 		configs.find(
-			(c) => Number(c.trigger_type_id) === triggerId && Number(c.ifc_status_type_id) === statusId,
+			(c) => Number(c.triggerTypeId) === triggerId && Number(c.ifcStatusTypeId) === statusId,
 		) ?? null;
 
 	return (

@@ -44,16 +44,16 @@ export function useIFCFormBootstrap(mode: IFCFormMode) {
 			const prefill: IFCPrefill =
 				prefillCreate ??
 				({
-					course_name: existing!.ifc.course_name,
-					course_learning_outcome: existing!.ifc.course_learning_outcome,
-					area_label: existing!.ifc.area_label,
-					subarea_label: existing!.ifc.subarea_label,
-					academic_period_code: existing!.ifc.academic_period_code,
-					coordinator_code: existing!.ifc.coordinator.code,
-					coordinator_name: existing!.ifc.coordinator.name,
-					coordinator_user_id: existing!.ifc.coordinator.user_id,
-					outcome_course_result: existing!.outcome_course_result,
-					previous_actions: existing!.previous_actions ?? [],
+					courseName: existing!.ifc.courseName,
+					courseLearningOutcome: existing!.ifc.courseLearningOutcome,
+					areaLabel: existing!.ifc.areaLabel,
+					subareaLabel: existing!.ifc.subareaLabel,
+					academicPeriodCode: existing!.ifc.academicPeriodCode,
+					coordinatorCode: existing!.ifc.coordinator.code,
+					coordinatorName: existing!.ifc.coordinator.name,
+					coordinatorUserId: existing!.ifc.coordinator.userId,
+					outcomeCourseResult: existing!.outcomeCourseResult,
+					previousActions: existing!.previousActions ?? [],
 				} as IFCPrefill);
 
 			return { languages, ifcFields, criticalities, prefill, existing };

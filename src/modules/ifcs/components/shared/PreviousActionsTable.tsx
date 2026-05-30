@@ -39,10 +39,10 @@ export function PreviousActionsTable({
 
 	const columns = useMemo<ColumnDef<PreviousAction>[]>(
 		() => [
-			{ accessorKey: 'code', header: L.col_code[lang] },
+			{ accessorKey: 'code', header: L.colCode[lang] },
 			{
 				id: 'description',
-				header: L.col_description[lang],
+				header: L.colDescription[lang],
 				accessorFn: (row) => row.description?.[lang] ?? row.description?.es ?? '',
 				cell: ({ row }) => (
 					<span className="whitespace-pre-line text-base leading-relaxed">
@@ -53,7 +53,7 @@ export function PreviousActionsTable({
 			{
 				id: 'finding',
 				accessorFn: (row) => row.finding.code,
-				header: L.col_finding[lang],
+				header: L.colFinding[lang],
 				cell: ({ row }) => (
 					<span className="tabular-nums text-zinc-700">{row.original.finding.code}</span>
 				),
@@ -61,7 +61,7 @@ export function PreviousActionsTable({
 			{
 				id: 'completeness',
 				accessorFn: (row) => row.completeness.code,
-				header: L.col_completeness[lang],
+				header: L.colCompleteness[lang],
 				cell: ({ row }) => (
 					<Badge color={row.original.completeness.color}>
 						{row.original.completeness.name?.[lang] ?? row.original.completeness.name?.es ?? ''}
@@ -70,12 +70,12 @@ export function PreviousActionsTable({
 			},
 			{
 				id: 'evidence',
-				header: L.col_evidence[lang],
+				header: L.colEvidence[lang],
 				cell: ({ row }) => (
 					<EvidenceCell
 						action={row.original}
 						mode={mode}
-						liveEvidences={evidencesByActionId?.[row.original.finding_action_id]}
+						liveEvidences={evidencesByActionId?.[row.original.findingActionId]}
 						onChange={onEvidenceChange}
 					/>
 				),
@@ -87,7 +87,7 @@ export function PreviousActionsTable({
 	if (rows.length === 0) return null;
 
 	return (
-		<Card title={L.section_previous_actions[lang]}>
+		<Card title={L.sectionPreviousActions[lang]}>
 			<div className="overflow-x-auto">
 				<DataTable<PreviousAction, unknown>
 					columns={columns}
@@ -126,7 +126,7 @@ function EvidenceCell({ action, mode, liveEvidences, onChange }: CellProps) {
 					onClick={() => setModalOpen(true)}
 					className="inline-flex items-center gap-1.5">
 					{hasContent ? <PencilSquareIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
-					{hasContent ? L.evidence_edit[lang] : L.evidence_add[lang]}
+					{hasContent ? L.evidenceEdit[lang] : L.evidenceAdd[lang]}
 				</Button>
 				{modalOpen && (
 					<EvidenceEditDialog
@@ -134,7 +134,7 @@ function EvidenceCell({ action, mode, liveEvidences, onChange }: CellProps) {
 						action={action}
 						value={evidences ?? {}}
 						onSave={(next) => {
-							onChange?.(action.finding_action_id, hasEvidenceText(next) ? next : null);
+							onChange?.(action.findingActionId, hasEvidenceText(next) ? next : null);
 							setModalOpen(false);
 						}}
 					/>
@@ -153,12 +153,12 @@ function EvidenceCell({ action, mode, liveEvidences, onChange }: CellProps) {
 					size="sm"
 					className="inline-flex items-center gap-1.5 text-zinc-600">
 					{lockedByServer && mode === 'edit' && <LockClosedIcon className="h-4 w-4" />}
-					{L.evidence_view[lang]}
+					{L.evidenceView[lang]}
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent align="end">
 				<p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
-					{L.col_evidence[lang]}
+					{L.colEvidence[lang]}
 				</p>
 				<p className="whitespace-pre-line text-sm text-zinc-700">
 					{evidences?.[lang] ?? evidences?.es ?? evidences?.en ?? ''}
@@ -184,7 +184,7 @@ function EvidenceEditDialog({ onClose, action, value, onSave }: DialogProps) {
 			isOpen
 			onClose={onClose}
 			onSubmit={() => onSave(draft)}
-			title={`${L.evidence_modal_title[lang]}${action.code}`}>
+			title={`${L.evidenceModalTitle[lang]}${action.code}`}>
 			<I18nTextField value={draft} onChange={setDraft} rows={5} />
 		</FormDialog>
 	);

@@ -39,15 +39,14 @@ function unwrapApiData<T>(response: unknown): T | null {
 interface ApiRubricCriteria {
 	id: number;
 	text: string | { en: string; es: string };
-	min_value?: number | null;
-	max_value?: number | null;
+	minValue?: number | null;
+	maxValue?: number | null;
 }
 
 interface ApiRubricQuestion {
 	id: number;
 	text: string | { en: string; es: string };
 	outcomeId?: number;
-	outcome_id?: number;
 	criterias?: ApiRubricCriteria[];
 }
 
@@ -62,16 +61,15 @@ interface ApiRubricCommission {
 	code: string;
 	name: { en: string; es: string } | string;
 	outcomeIds?: number[];
-	outcome_ids?: number[];
 }
 
 interface ApiRubricDetailData {
 	rubric: {
 		id: number;
-		rubric_type_id: number;
-		rubric_type?: { code?: string };
-		grade_type?: { name: { en: string; es: string } | string; code?: string };
-		study_plan_course_id?: number;
+		rubricTypeId: number;
+		rubricType?: { code?: string };
+		gradeType?: { name: { en: string; es: string } | string; code?: string };
+		studyPlanCourseId?: number;
 	};
 	course?: { id?: number; name?: { en: string; es: string } | string };
 	academicPeriod?: { id?: number; code?: string };
@@ -137,17 +135,17 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 			const academicPeriodId: number | undefined =
 				data.academicPeriod?.id != null ? Number(data.academicPeriod.id) : undefined;
 			const levelsRes = await performanceLevelsService.getByFilters({
-				is_active: true,
-				...(academicPeriodId != null ? { academic_period_id: academicPeriodId } : {}),
+				isActive: true,
+				...(academicPeriodId != null ? { academicPeriodId: academicPeriodId } : {}),
 			});
 			logger.debug('[useRubricEditor] performance levels response', levelsRes);
 			const performanceLevels = (levelsRes?.data ?? []).map((level: PerformanceLevelResponse) => ({
 				id: String(level.id),
 				name: level.name ?? { en: '', es: '' },
 				code: level.code ?? '',
-				uniqueValue: level.unique_value != null ? Number(level.unique_value) : null,
-				minValue: level.min_score != null ? Number(level.min_score) : 0,
-				maxValue: level.max_score != null ? Number(level.max_score) : 0,
+				uniqueValue: level.uniqueValue != null ? Number(level.uniqueValue) : null,
+				minValue: level.minScore != null ? Number(level.minScore) : 0,
+				maxValue: level.maxScore != null ? Number(level.maxScore) : 0,
 				color: (level.extra as { color?: string } | undefined)?.color ?? null,
 			}));
 
@@ -160,7 +158,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 			const allApiQuestions: ApiRubricQuestion[] = data.questions ?? [];
 
 			const commissions: CommissionTab[] = (data.commissions ?? []).map((commission) => {
-				const outcomeIdsList: number[] = commission.outcomeIds ?? commission.outcome_ids ?? [];
+				const outcomeIdsList: number[] = commission.outcomeIds ?? commission.outcomeIds ?? [];
 				const outcomes = outcomeIdsList
 					.map((outcomeId: number): OutcomeWithCriteria | null => {
 						const outcome = outcomesById.get(outcomeId);
@@ -172,7 +170,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 						// Each outcome maps to exactly ONE question whose text = outcome description.
 						// The user-managed items are the criterias of that question.
 						const outcomeApiQuestions = allApiQuestions.filter((q) => {
-							const qOutcomeId = q.outcomeId ?? q.outcome_id;
+							const qOutcomeId = q.outcomeId ?? q.outcomeId;
 							return Number(qOutcomeId) === Number(outcomeId);
 						});
 						const firstApiQuestion = outcomeApiQuestions[0];
@@ -224,14 +222,14 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 					(c): QuestionCriteria => ({
 						id: String(c.id),
 						criteriaText: toI18nText(c.text),
-						minValue: c.min_value != null ? Number(c.min_value) : '',
-						maxValue: c.max_value != null ? Number(c.max_value) : '',
+						minValue: c.minValue != null ? Number(c.minValue) : '',
+						maxValue: c.maxValue != null ? Number(c.maxValue) : '',
 					}),
 				),
 			}));
 
 			// ── Grade type name ──────────────────────────────────────────────────────
-			const gradeType = toI18nText(rubric.grade_type?.name);
+			const gradeType = toI18nText(rubric.gradeType?.name);
 
 			// ── Program (top-level in new API) ───────────────────────────────────────
 			const prog = data.program;
@@ -243,16 +241,16 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 			// ── Map to RubricDetail view model ───────────────────────────────────────
 			const rubricDetail: RubricDetail = {
 				id: String(rubric.id),
-				gradeTypeCode: rubric.grade_type?.code ?? '',
+				gradeTypeCode: rubric.gradeType?.code ?? '',
 				gradeType,
-				isCapstone: rubric.rubric_type?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE,
+				isCapstone: rubric.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE,
 				program: {
 					id: String(prog?.id ?? ''),
 					code: prog?.code ?? '',
 					name: programName,
 				},
 				course: {
-					id: String(data.course?.id ?? rubric.study_plan_course_id ?? ''),
+					id: String(data.course?.id ?? rubric.studyPlanCourseId ?? ''),
 					code: '',
 					name: courseName,
 				},

@@ -5,10 +5,10 @@ import { apiGet } from '@/shared/lib';
 
 export type AuthUser = {
 	id: number;
-	first_name: string;
-	last_name: string;
+	firstName: string;
+	lastName: string;
 	email: string;
-	is_admin: boolean;
+	isAdmin: boolean;
 };
 
 export type AuthRole = {
@@ -36,7 +36,7 @@ interface MePayload {
 	activeRole: AuthRole;
 	allowedRoles: AuthRole[];
 	permissions: string[];
-	school_id: number;
+	schoolId: number;
 }
 
 interface Envelope<T> {
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			setUser(payload.user);
 			setActiveRole(payload.activeRole ?? null);
 			setPermissions(payload.permissions ?? []);
-			setSchoolId(payload.school_id ?? null);
+			setSchoolId(payload.schoolId ?? null);
 			return payload.user;
 		} catch {
 			setUser(null);
@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			schoolId,
 			isAuthenticated: user !== null,
 			isLoading,
-			isAdmin: user?.is_admin === true,
+			isAdmin: user?.isAdmin === true,
 			refreshUser,
 			clearUser,
 		}),

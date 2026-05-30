@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { typesService } from '../services/typesService';
 import { coreQueryKeys } from './queryKeys';
 
-export function useTypes(filters: { type_group_id?: number }, options?: { enabled?: boolean }) {
+export function useTypes(filters: { typeGroupId?: number }, options?: { enabled?: boolean }) {
 	return useQuery({
 		queryKey: coreQueryKeys.typesByFilter(filters),
 		queryFn: () => typesService.getByFilters(filters).then((r) => r.data),

@@ -63,10 +63,10 @@ export function ProjectRubricCapstoneTable({
 	// ── Fetch performance levels ──────────────────────────────────────────────
 
 	const { data: rawLevels = [], isLoading: isLoadingLevels } = useQuery({
-		queryKey: ['performance-levels', { academic_period_id: academicPeriodId, is_active: true }],
+		queryKey: ['performance-levels', { academicPeriodId: academicPeriodId, isActive: true }],
 		queryFn: () =>
 			performanceLevelsService
-				.getByFilters({ academic_period_id: academicPeriodId!, is_active: true })
+				.getByFilters({ academicPeriodId: academicPeriodId!, isActive: true })
 				.then((r) => r.data),
 		enabled: academicPeriodId != null,
 	});
@@ -74,8 +74,8 @@ export function ProjectRubricCapstoneTable({
 	const performanceLevels = useMemo<PerformanceLevel[]>(
 		() =>
 			rawLevels
-				.filter((l) => l.unique_value != null)
-				.map((l) => ({ id: l.id, name: l.name, uniqueValue: Number(l.unique_value) }))
+				.filter((l) => l.uniqueValue != null)
+				.map((l) => ({ id: l.id, name: l.name, uniqueValue: Number(l.uniqueValue) }))
 				.sort((a, b) => a.uniqueValue - b.uniqueValue),
 		[rawLevels],
 	);
@@ -111,7 +111,7 @@ export function ProjectRubricCapstoneTable({
 				result[c.id] = {};
 				for (const st of students) {
 					const entry = c.scores.find(
-						(s) => s.student_id === st.id && s.evaluator_id === evaluatorId,
+						(s) => s.studentId === st.id && s.evaluatorId === evaluatorId,
 					);
 					result[c.id][st.id] = entry != null ? entry.score : null;
 				}
@@ -184,7 +184,7 @@ export function ProjectRubricCapstoneTable({
 	const handleSave = () => {
 		const studentScores = new Map<
 			number,
-			{ rubric_question_criteria_id: number; score: number; commentaries: Record<string, string> }[]
+			{ rubricQuestionCriteriaId: number; score: number; commentaries: Record<string, string> }[]
 		>();
 
 		for (const st of students) {
@@ -202,7 +202,7 @@ export function ProjectRubricCapstoneTable({
 					}
 					if (score == null) continue;
 					const existing = studentScores.get(st.id) ?? [];
-					existing.push({ rubric_question_criteria_id: c.id, score, commentaries: {} });
+					existing.push({ rubricQuestionCriteriaId: c.id, score, commentaries: {} });
 					studentScores.set(st.id, existing);
 				}
 			}
@@ -210,12 +210,12 @@ export function ProjectRubricCapstoneTable({
 
 		for (const [projectStudentId, scores] of studentScores.entries()) {
 			submitEvaluation({
-				project_student_id: projectStudentId,
-				project_evaluator_id: evaluatorId,
-				rubric_id: rubricId,
+				projectStudentId: projectStudentId,
+				projectEvaluatorId: evaluatorId,
+				rubricId: rubricId,
 				observation: { es: '', en: '' },
 				scores,
-				qualification_status_type_id: qualifStatuses[projectStudentId],
+				qualificationStatusTypeId: qualifStatuses[projectStudentId],
 			});
 		}
 	};
@@ -322,7 +322,7 @@ export function ProjectRubricCapstoneTable({
 															return (
 																<div key={st.id} className="flex flex-wrap items-center gap-2">
 																	<span className="w-28 shrink-0 truncate text-xs font-medium text-zinc-700">
-																		{st.first_name} {st.last_name}
+																		{st.firstName} {st.lastName}
 																	</span>
 																	<PLSelector
 																		levels={performanceLevels}

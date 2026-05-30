@@ -18,7 +18,7 @@ export async function downloadIfcPdfBulk(
 ): Promise<{ blob: Blob; filename: string }> {
 	const { blob, response } = await apiPostBlobResponse(
 		'/ifcs/pdf/bulk',
-		{ ifc_ids: ifcIds.map(Number), lang },
+		{ ifcIds: ifcIds.map(Number), lang },
 		{ accept: 'application/zip' },
 	);
 	const filename = parseFilename(

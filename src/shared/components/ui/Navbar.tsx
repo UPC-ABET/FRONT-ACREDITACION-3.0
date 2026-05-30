@@ -170,16 +170,16 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 
 	const resolvedUserName =
 		userName ??
-		((user ? `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim() : '') ||
+		((user ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() : '') ||
 			t('navbar.user.name'));
 
 	const resolvedUserRole =
 		userRole ??
-		((user ? (user.is_admin ? t('navbar.user.role') : '') : '') || t('navbar.user.role'));
+		((user ? (user.isAdmin ? t('navbar.user.role') : '') : '') || t('navbar.user.role'));
 
 	const resolvedUserInitials =
 		userInitials ??
-		(`${user?.first_name?.trim().charAt(0) ?? ''}${user?.last_name?.trim().charAt(0) ?? ''}`.toUpperCase() ||
+		(`${user?.firstName?.trim().charAt(0) ?? ''}${user?.lastName?.trim().charAt(0) ?? ''}`.toUpperCase() ||
 			DEFAULT_USER_INITIALS);
 
 	const menuBtn = isSidebarMobile ? (
