@@ -154,7 +154,7 @@ export function useGRAStudents() {
 		}
 	}, []);
 
-	return { students, loading, error, load, remove };
+	return { students, error, load, remove };
 }
 
 export function useGRAStudentSearch() {

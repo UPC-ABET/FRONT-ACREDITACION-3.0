@@ -7,7 +7,7 @@ import {
 	deleteGRACompetence,
 	cloneGRAConfiguration,
 	listGRAStudents,
-	listGRAAcceptanceLevels,
+	listGRAPerformanceLevels,
 	generateGRADashboard,
 	listLCFCCourses,
 	generateLCFCConfiguration,
@@ -17,11 +17,11 @@ import {
 	savePPPCompetence,
 	deletePPPCompetence,
 	clonePPPConfiguration,
-	listAcceptanceLevels,
-	updateAcceptanceLevels,
+	listPPPPerformanceLevels,
+	updatePPPPerformanceLevels,
 	generatePPPDashboard,
 } from '../services';
-import type { CompetenceFormData, AcceptanceLevel } from '../types';
+import type { CompetenceFormData, PerformanceLevel } from '../types';
 
 // ─── Query Keys ──────────────────────────────────────────────────────────────
 
@@ -41,8 +41,8 @@ export const surveyQueryKeys = {
 		campus_id?: number;
 		student_code?: string;
 	}) => ['surveys', 'gra', 'students', params] as const,
-	graAcceptanceLevels: (periodId: number) =>
-		['surveys', 'gra', 'acceptance-levels', periodId] as const,
+	graPerformanceLevels: (periodId: number) =>
+		['surveys', 'gra', 'performance-levels', periodId] as const,
 	graDashboard: (params: {
 		academic_period_id?: number;
 		program_id?: number;
@@ -61,8 +61,8 @@ export const surveyQueryKeys = {
 	// PPP
 	pppCompetences: (periodId: number, programId?: number) =>
 		['surveys', 'ppp', 'competences', { periodId, programId }] as const,
-	pppAcceptanceLevels: (periodId: number) =>
-		['surveys', 'ppp', 'acceptance-levels', periodId] as const,
+	pppPerformanceLevels: (periodId: number) =>
+		['surveys', 'ppp', 'performance-levels', periodId] as const,
 	pppDashboard: (params: {
 		academic_period_id?: number;
 		program_id?: number;
@@ -154,10 +154,10 @@ export function useGRAStudentsQuery(
 	});
 }
 
-export function useGRAAcceptanceLevelsQuery(periodId: number, options?: { enabled?: boolean }) {
+export function useGRAPerformanceLevelsQuery(periodId: number, options?: { enabled?: boolean }) {
 	return useQuery({
-		queryKey: surveyQueryKeys.graAcceptanceLevels(periodId),
-		queryFn: () => listGRAAcceptanceLevels(periodId),
+		queryKey: surveyQueryKeys.graPerformanceLevels(periodId),
+		queryFn: () => listGRAPerformanceLevels(periodId),
 		enabled: (options?.enabled ?? true) && periodId > 0,
 	});
 }
@@ -280,21 +280,21 @@ export function useClonePPPConfiguration() {
 	});
 }
 
-export function usePPPAcceptanceLevelsQuery(periodId: number, options?: { enabled?: boolean }) {
+export function usePPPPerformanceLevelsQuery(periodId: number, options?: { enabled?: boolean }) {
 	return useQuery({
-		queryKey: surveyQueryKeys.pppAcceptanceLevels(periodId),
-		queryFn: () => listAcceptanceLevels(periodId),
+		queryKey: surveyQueryKeys.pppPerformanceLevels(periodId),
+		queryFn: () => listPPPPerformanceLevels(periodId),
 		enabled: (options?.enabled ?? true) && periodId > 0,
 	});
 }
 
-export function useUpdatePPPAcceptanceLevels() {
+export function useUpdatePPPPerformanceLevels() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (params: { academic_period_id: number; niveles: AcceptanceLevel[] }) =>
-			updateAcceptanceLevels(params.academic_period_id, params.niveles),
+		mutationFn: (params: { academic_period_id: number; niveles: PerformanceLevel[] }) =>
+			updatePPPPerformanceLevels(params.academic_period_id, params.niveles),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['surveys', 'ppp', 'acceptance-levels'] });
+			queryClient.invalidateQueries({ queryKey: ['surveys', 'ppp', 'performance-levels'] });
 		},
 	});
 }

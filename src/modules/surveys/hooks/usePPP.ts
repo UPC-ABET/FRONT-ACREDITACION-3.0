@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
-	AcceptanceLevel,
+	PerformanceLevel,
 	CompetenceFormData,
 	DashboardResponse,
 } from '../types';
@@ -14,8 +14,8 @@ import {
 	savePPPCompetence,
 	deletePPPCompetence,
 	clonePPPConfiguration,
-	listAcceptanceLevels,
-	updateAcceptanceLevels,
+	listPPPPerformanceLevels,
+	updatePPPPerformanceLevels,
 	downloadPPPTemplate,
 	uploadPPPMassive,
 	generatePPPPerceptionReport,
@@ -111,8 +111,8 @@ export function usePPPCompetences() {
 	return { competences, loading, error, load, save, remove, clone, setError };
 }
 
-export function usePPPAcceptanceLevels() {
-	const [levels, setLevels] = useState<AcceptanceLevel[]>([]);
+export function usePPPPerformanceLevels() {
+	const [levels, setLevels] = useState<PerformanceLevel[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -120,7 +120,7 @@ export function usePPPAcceptanceLevels() {
 		setLoading(true);
 		setError(null);
 		try {
-			setLevels(await listAcceptanceLevels(periodId));
+			setLevels(await listPPPPerformanceLevels(periodId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -129,9 +129,9 @@ export function usePPPAcceptanceLevels() {
 	}, []);
 
 	const save = useCallback(
-		async (periodId: number, levels: AcceptanceLevel[], onSuccess?: () => void) => {
+		async (periodId: number, levels: PerformanceLevel[], onSuccess?: () => void) => {
 			try {
-				await updateAcceptanceLevels(periodId, levels);
+				await updatePPPPerformanceLevels(periodId, levels);
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);
