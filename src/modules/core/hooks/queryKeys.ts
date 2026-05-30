@@ -2,7 +2,7 @@ export const coreQueryKeys = {
 	all: ['core'] as const,
 
 	types: () => [...coreQueryKeys.all, 'types'] as const,
-	typesByFilter: (filters: { type_group_id?: number }) =>
+	typesByFilter: (filters: { typeGroupId?: number }) =>
 		[...coreQueryKeys.types(), filters] as const,
 	typesByGroupCode: (groupCode: string) =>
 		[...coreQueryKeys.types(), 'by-group-code', groupCode] as const,

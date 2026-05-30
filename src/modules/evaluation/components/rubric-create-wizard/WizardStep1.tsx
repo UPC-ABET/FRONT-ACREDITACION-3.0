@@ -35,14 +35,14 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 	const [selectedPeriod, setSelectedPeriod] = useState<AnyOption | null>(null);
 	const [selectedSpcId, setSelectedSpcId] = useState<AnyOption | null>(null);
 
-	const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods({ is_active: true });
+	const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods({ isActive: true });
 
 	const spcFilters = useMemo(
 		() => ({
-			academic_period_id: Number(selectedPeriod?.value ?? 0),
-			school_id: schoolId,
-			extra: { is_evaluate_rubric: true },
-			is_active: true,
+			academicPeriodId: Number(selectedPeriod?.value ?? 0),
+			schoolId: schoolId,
+			extra: { isEvaluateRubric: true },
+			isActive: true,
 		}),
 		[selectedPeriod?.value, schoolId],
 	);
@@ -64,9 +64,9 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 		if (!spc || !period) return;
 		onNext({
 			periodId: period.id,
-			courseId: spc.course?.id ?? spc.course_id,
+			courseId: spc.course?.id ?? spc.courseId,
 			studyPlanCourseId: spc.id,
-			studyPlanAcademicPeriodId: spc.study_plan_academic_period_id,
+			studyPlanAcademicPeriodId: spc.studyPlanAcademicPeriodId,
 			courseName: getSpcCourseName(spc),
 			periodCode: period.code,
 		});
@@ -74,7 +74,7 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 
 	const periodOptions: AnyOption[] = periods.map((p) => ({ label: p.code, value: p.id }));
 	const courseOptions: AnyOption[] = spcList.map((s) => ({
-		label: getSpcCourseName(s)[locale] || String(s.course?.id ?? s.course_id),
+		label: getSpcCourseName(s)[locale] || String(s.course?.id ?? s.courseId),
 		value: s.id,
 	}));
 

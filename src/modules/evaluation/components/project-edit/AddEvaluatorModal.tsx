@@ -73,7 +73,7 @@ export function AddEvaluatorModal({
 		if (!open) return;
 		setLoadingProfessors(true);
 		professorsService
-			.getByFilters({ search: debouncedSearch.trim() || undefined, is_active: true })
+			.getByFilters({ search: debouncedSearch.trim() || undefined, isActive: true })
 			.then((r) => setProfessors(r.data ?? []))
 			.catch(() => setProfessors([]))
 			.finally(() => setLoadingProfessors(false));
@@ -86,7 +86,7 @@ export function AddEvaluatorModal({
 	const evaluatorTypeGroupId = typeGroups[0]?.id ?? null;
 
 	const { data: evaluatorTypes = [], isLoading: loadingRoles } = useTypes(
-		{ type_group_id: evaluatorTypeGroupId ?? undefined },
+		{ typeGroupId: evaluatorTypeGroupId ?? undefined },
 		{ enabled: evaluatorTypeGroupId != null },
 	);
 
@@ -102,10 +102,10 @@ export function AddEvaluatorModal({
 	const createMutation = useMutation({
 		mutationFn: () =>
 			projectsService.createEvaluator({
-				project_id: projectNumericId,
-				professor_id: selectedProfessor!.id,
-				evaluator_type_id: selectedRoleId!,
-				is_active: true,
+				projectId: projectNumericId,
+				professorId: selectedProfessor!.id,
+				evaluatorTypeId: selectedRoleId!,
+				isActive: true,
 			}),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
@@ -125,10 +125,10 @@ export function AddEvaluatorModal({
 
 	const professorDisplayName = (p: ProfessorSearchResponse) => {
 		const user = p.staff?.user;
-		if (user?.first_name || user?.last_name) {
-			return `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim();
+		if (user?.firstName || user?.lastName) {
+			return `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
 		}
-		return p.staff?.staff_email ?? `ID ${p.id}`;
+		return p.staff?.staffEmail ?? `ID ${p.id}`;
 	};
 
 	const canSubmit =
@@ -167,7 +167,7 @@ export function AddEvaluatorModal({
 									{professors.map((professor) => {
 										const isSelected = selectedProfessor?.id === professor.id;
 										const displayName = professorDisplayName(professor);
-										const email = professor.staff?.staff_email;
+										const email = professor.staff?.staffEmail;
 
 										return (
 											<li key={professor.id}>

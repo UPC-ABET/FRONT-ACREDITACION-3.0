@@ -12,7 +12,7 @@ export function IFCLearningOutcomeReached({ learningOutcome }: Props) {
 	const text = learningOutcome?.[lang] ?? learningOutcome?.es ?? '';
 
 	return (
-		<Card title={IFC_SHARED_LABELS.resultado_alcanzado[lang]} className="h-full">
+		<Card title={IFC_SHARED_LABELS.resultadoAlcanzado[lang]} className="h-full">
 			<p className="whitespace-pre-line text-base leading-relaxed text-zinc-800">{text || '—'}</p>
 		</Card>
 	);

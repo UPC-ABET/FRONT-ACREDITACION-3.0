@@ -44,7 +44,7 @@ export function IFCForm(props: Props) {
 		deleteAction,
 		setInformation,
 		updatePreviousActionEvidence,
-	} = useIFCFormState(props.existing, props.prefill.previous_actions);
+	} = useIFCFormState(props.existing, props.prefill.previousActions);
 
 	const [submitting, setSubmitting] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
@@ -65,17 +65,17 @@ export function IFCForm(props: Props) {
 			tempId: f.tempId,
 			id: f.id,
 			description: f.description,
-			criticality_code: f.criticality_code,
+			criticalityCode: f.criticalityCode,
 		}));
 		const actionsPayload = state.actions.map((a) => ({
 			tempId: a.tempId,
 			id: a.id,
 			description: a.description,
-			finding_temp_id: a.finding_temp_id,
+			findingTempId: a.findingTempId,
 		}));
-		const previousActionsPayload = Object.entries(state.previous_actions).map(
+		const previousActionsPayload = Object.entries(state.previousActions).map(
 			([findingActionId, evidences]) => ({
-				finding_action_id: Number(findingActionId),
+				findingActionId: Number(findingActionId),
 				evidences,
 			}),
 		);
@@ -84,29 +84,29 @@ export function IFCForm(props: Props) {
 			const result =
 				props.mode === 'create'
 					? await createIFC({
-							chart_id: props.chartId!,
-							period_id: props.periodId!,
+							chartId: props.chartId!,
+							periodId: props.periodId!,
 							submit,
 							information: state.information,
 							findings: findingsPayload,
 							actions: actionsPayload,
-							previous_actions: previousActionsPayload,
+							previousActions: previousActionsPayload,
 						})
 					: await patchIFC(props.existing!.ifc.id, {
 							submit,
 							information: state.information,
 							findings: findingsPayload,
 							actions: actionsPayload,
-							deleted_finding_ids: state.deleted_finding_ids,
-							deleted_action_ids: state.deleted_action_ids,
-							previous_actions: previousActionsPayload,
+							deletedFindingIds: state.deletedFindingIds,
+							deletedActionIds: state.deletedActionIds,
+							previousActions: previousActionsPayload,
 						});
 
 			if (submit) {
 				const n = result.notification;
 				if (n.sent) {
 					setSuccessMsg(t('ifcs.submit.toast.successWithNotify'));
-				} else if (n.reason === 'no_config') {
+				} else if (n.reason === 'noConfig') {
 					setSuccessMsg(t('ifcs.submit.toast.successNoConfig'));
 				} else {
 					setSuccessMsg(t('ifcs.submit.toast.successNoNotify'));
@@ -127,26 +127,26 @@ export function IFCForm(props: Props) {
 			<Card>
 				<div className="space-y-4">
 					<IFCPageTitle
-						area={props.prefill.area_label}
-						subarea={props.prefill.subarea_label}
-						course={props.prefill.course_name}
-						period={props.prefill.academic_period_code}
+						area={props.prefill.areaLabel}
+						subarea={props.prefill.subareaLabel}
+						course={props.prefill.courseName}
+						period={props.prefill.academicPeriodCode}
 					/>
 					<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-4">
 						<p className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
 							{FORM_LABELS.coordinator[lang]}
 						</p>
 						<p className="mt-1.5 text-base text-zinc-900">
-							{props.prefill.coordinator_name ?? '—'}
-							{props.prefill.coordinator_code && <> ({props.prefill.coordinator_code})</>}
+							{props.prefill.coordinatorName ?? '—'}
+							{props.prefill.coordinatorCode && <> ({props.prefill.coordinatorCode})</>}
 						</p>
 					</div>
 				</div>
 			</Card>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-				<IFCOutcomeResults outcomeResult={props.prefill.outcome_course_result} />
-				<IFCLearningOutcomeReached learningOutcome={props.prefill.course_learning_outcome} />
+				<IFCOutcomeResults outcomeResult={props.prefill.outcomeCourseResult} />
+				<IFCLearningOutcomeReached learningOutcome={props.prefill.courseLearningOutcome} />
 			</div>
 
 			{props.ifcFields.length > 0 && (
@@ -160,9 +160,9 @@ export function IFCForm(props: Props) {
 			)}
 
 			<PreviousActionsTable
-				previousActions={props.prefill.previous_actions}
+				previousActions={props.prefill.previousActions}
 				mode="edit"
-				evidencesByActionId={state.previous_actions}
+				evidencesByActionId={state.previousActions}
 				onEvidenceChange={updatePreviousActionEvidence}
 			/>
 
@@ -184,13 +184,13 @@ export function IFCForm(props: Props) {
 
 			<div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap justify-end gap-3 border-t border-zinc-200 bg-white/95 px-4 py-4 backdrop-blur sm:relative sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
 				<Button variant="ghost" size="lg" onClick={() => router.back()}>
-					{FORM_LABELS.btn_cancel[lang]}
+					{FORM_LABELS.btnCancel[lang]}
 				</Button>
 				<Button variant="secondary" size="lg" onClick={() => void onSave(false)}>
-					{FORM_LABELS.btn_save[lang]}
+					{FORM_LABELS.btnSave[lang]}
 				</Button>
 				<Button variant="primary" size="lg" onClick={() => setModalOpen(true)}>
-					{FORM_LABELS.btn_submit[lang]}
+					{FORM_LABELS.btnSubmit[lang]}
 				</Button>
 			</div>
 

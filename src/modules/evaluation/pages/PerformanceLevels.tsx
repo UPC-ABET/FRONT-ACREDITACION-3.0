@@ -30,11 +30,11 @@ import {
 	useCreatePerformanceLevel,
 	useUpdatePerformanceLevel,
 	useDeletePerformanceLevel,
+	usePerformanceLevelForm,
 } from '@/modules/academic/hooks';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
-import { usePerformanceLevelForm } from '../hooks';
-import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performanceLevels';
-import type { PerformanceLevelFormState } from '../schemas/performanceLevelSchema';
+import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '@/modules/academic/constants';
+import type { PerformanceLevelFormState } from '@/modules/academic/schemas';
 import { PerformanceLevelResponse } from '@/modules/academic';
 
 type OptionItem = { label: string; value: number };
@@ -57,9 +57,9 @@ function PerformanceLevelForm({
 		});
 
 	const selectedInstrument =
-		instrumentTypeOptions.find((o) => o.value === form.instrument_type_id) ?? null;
+		instrumentTypeOptions.find((o) => o.value === form.instrumentTypeId) ?? null;
 	const selectedPeriod =
-		academicPeriodOptions.find((o) => o.value === form.academic_period_id) ?? null;
+		academicPeriodOptions.find((o) => o.value === form.academicPeriodId) ?? null;
 
 	return (
 		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -70,7 +70,7 @@ function PerformanceLevelForm({
 				placeholder="Seleccionar instrumento"
 				onChange={(_name, val) => {
 					const opt = val as OptionItem | null;
-					onChange({ ...form, instrument_type_id: opt?.value ?? 0 });
+					onChange({ ...form, instrumentTypeId: opt?.value ?? 0 });
 				}}
 			/>
 			<Select
@@ -80,43 +80,43 @@ function PerformanceLevelForm({
 				placeholder="Seleccionar período"
 				onChange={(_name, val) => {
 					const opt = val as OptionItem | null;
-					onChange({ ...form, academic_period_id: opt?.value ?? 0 });
+					onChange({ ...form, academicPeriodId: opt?.value ?? 0 });
 				}}
 			/>
 
-			<Input label="Nombre (ES)" value={form.name_es} onChange={set('name_es')} required />
-			<Input label="Nombre (EN)" value={form.name_en} onChange={set('name_en')} required />
+			<Input label="Nombre (ES)" value={form.nameEs} onChange={set('nameEs')} required />
+			<Input label="Nombre (EN)" value={form.nameEn} onChange={set('nameEn')} required />
 			<Input label="Código" value={form.code} onChange={set('code')} required />
 			<Input
 				label="Valor único"
 				type="number"
 				step="0.01"
-				value={form.unique_value}
-				onChange={set('unique_value')}
+				value={form.uniqueValue}
+				onChange={set('uniqueValue')}
 				required
 			/>
 			<Input
 				label="Puntaje mínimo"
 				type="number"
 				step="0.01"
-				value={form.min_score}
-				onChange={set('min_score')}
+				value={form.minScore}
+				onChange={set('minScore')}
 				required
 			/>
 			<Input
 				label="Puntaje máximo"
 				type="number"
 				step="0.01"
-				value={form.max_score}
-				onChange={set('max_score')}
+				value={form.maxScore}
+				onChange={set('maxScore')}
 				required
 			/>
 			<Input
 				label="Valor máximo"
 				type="number"
 				step="0.01"
-				value={form.max_value}
-				onChange={set('max_value')}
+				value={form.maxValue}
+				onChange={set('maxValue')}
 				required
 			/>
 			<div className="flex flex-col">
@@ -153,15 +153,15 @@ export function PerformanceLevelsPage() {
 	const typeGroupId = typeGroups?.[0]?.id ?? null;
 
 	const { data: instrumentTypes = [] } = useTypes(
-		{ type_group_id: typeGroupId ?? undefined },
+		{ typeGroupId: typeGroupId ?? undefined },
 		{ enabled: typeGroupId != null },
 	);
 
 	// Performance levels
 	const filters = useMemo(
 		() => ({
-			...(selectedPeriod?.value ? { academic_period_id: selectedPeriod.value } : {}),
-			...(selectedInstrument?.value ? { instrument_type_id: selectedInstrument.value } : {}),
+			...(selectedPeriod?.value ? { academicPeriodId: selectedPeriod.value } : {}),
+			...(selectedInstrument?.value ? { instrumentTypeId: selectedInstrument.value } : {}),
 		}),
 		[selectedPeriod, selectedInstrument],
 	);
@@ -176,7 +176,7 @@ export function PerformanceLevelsPage() {
 	} = usePerformanceLevels(filters, { enabled: hasFilters });
 
 	const sortedLevels = useMemo(
-		() => [...performanceLevels].sort((a, b) => Number(a.unique_value) - Number(b.unique_value)),
+		() => [...performanceLevels].sort((a, b) => Number(a.uniqueValue) - Number(b.uniqueValue)),
 		[performanceLevels],
 	);
 
@@ -244,7 +244,7 @@ export function PerformanceLevelsPage() {
 	);
 
 	const academicPeriodOptions = useMemo<OptionItem[]>(
-		() => academicPeriods.filter((p) => p.is_active).map((p) => ({ label: p.code, value: p.id })),
+		() => academicPeriods.filter((p) => p.isActive).map((p) => ({ label: p.code, value: p.id })),
 		[academicPeriods],
 	);
 
@@ -337,8 +337,8 @@ export function PerformanceLevelsPage() {
 							{sortedLevels.map((level) => {
 								const color =
 									(level.extra as { color?: string })?.color ?? DEFAULT_PERFORMANCE_LEVEL_COLOR;
-								const instrType = instrumentTypeMap.get(level.instrument_type_id);
-								const acadPeriod = academicPeriodMap.get(level.academic_period_id);
+								const instrType = instrumentTypeMap.get(level.instrumentTypeId);
+								const acadPeriod = academicPeriodMap.get(level.academicPeriodId);
 								return (
 									<TableRow key={level.id}>
 										<TableCell>
@@ -358,12 +358,12 @@ export function PerformanceLevelsPage() {
 											<span className="text-zinc-700">{acadPeriod?.code ?? '-'}</span>
 										</TableCell>
 										<TableCell>
-											<span className="text-zinc-700">{Number(level.unique_value).toFixed(2)}</span>
+											<span className="text-zinc-700">{Number(level.uniqueValue).toFixed(2)}</span>
 										</TableCell>
 										<TableCell>
 											<span className="text-zinc-700">
-												{Number(level.min_score).toFixed(2)} - {Number(level.max_score).toFixed(2)}{' '}
-												/ {Number(level.max_value).toFixed(2)}
+												{Number(level.minScore).toFixed(2)} - {Number(level.maxScore).toFixed(2)}{' '}
+												/ {Number(level.maxValue).toFixed(2)}
 											</span>
 										</TableCell>
 										<TableCell>

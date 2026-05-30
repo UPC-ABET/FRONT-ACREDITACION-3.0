@@ -9,7 +9,7 @@ interface Envelope<T> {
 
 export async function getOrgScope(periodId: number): Promise<ScopeTree> {
 	const envelope = await apiPost<Envelope<ScopeTree>>('/org-scope/get-scope', {
-		period_id: periodId,
+		periodId: periodId,
 	});
 	if (!envelope?.data) throw new ApiError('orgScope.error.generic');
 
@@ -17,7 +17,7 @@ export async function getOrgScope(periodId: number): Promise<ScopeTree> {
 	envelope.data.levels.forEach((lvl) => {
 		lvl.options.forEach((opt) => {
 			opt.id = Number(opt.id);
-			opt.parent_id = opt.parent_id == null ? null : Number(opt.parent_id);
+			opt.parentId = opt.parentId == null ? null : Number(opt.parentId);
 		});
 	});
 

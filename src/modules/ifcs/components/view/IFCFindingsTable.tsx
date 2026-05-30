@@ -14,10 +14,10 @@ export function IFCFindingsTable({ findings }: Props) {
 
 	const columns = useMemo<ColumnDef<Finding>[]>(
 		() => [
-			{ accessorKey: 'code', header: VIEW_LABELS.col_code[lang] },
+			{ accessorKey: 'code', header: VIEW_LABELS.colCode[lang] },
 			{
 				id: 'description',
-				header: VIEW_LABELS.col_description[lang],
+				header: VIEW_LABELS.colDescription[lang],
 				accessorFn: (row) => row.description?.[lang] ?? row.description?.es ?? '',
 				cell: ({ row }) => (
 					<span className="whitespace-pre-line text-base leading-relaxed">
@@ -27,7 +27,7 @@ export function IFCFindingsTable({ findings }: Props) {
 			},
 			{
 				id: 'criticality',
-				header: VIEW_LABELS.col_criticality[lang],
+				header: VIEW_LABELS.colCriticality[lang],
 				cell: ({ row }) => {
 					const c = row.original.criticality;
 					const label = c?.name?.[lang] ?? c?.name?.es ?? '';
@@ -40,7 +40,7 @@ export function IFCFindingsTable({ findings }: Props) {
 	);
 
 	return (
-		<Card title={VIEW_LABELS.section_findings[lang]}>
+		<Card title={VIEW_LABELS.sectionFindings[lang]}>
 			<div className="overflow-x-auto">
 				<DataTable<Finding, unknown>
 					columns={columns}

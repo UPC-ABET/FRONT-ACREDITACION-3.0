@@ -69,7 +69,7 @@ export function IFCDashboard() {
 	const chartIncomplete =
 		scope !== null &&
 		!scope.levels.some(
-			(l) => l.type_code === TYPE_CODES.CHART_LEVEL_TYPE.COURSE_COORDINATOR && l.options.length > 0,
+			(l) => l.typeCode === TYPE_CODES.CHART_LEVEL_TYPE.COURSE_COORDINATOR && l.options.length > 0,
 		);
 
 	function runAutoSelect(
@@ -78,11 +78,11 @@ export function IFCDashboard() {
 		fromLevel: number,
 	): Record<number, SelectionValue> {
 		const next = { ...sels };
-		const levels = tree.levels.filter((l) => l.level_num >= fromLevel);
+		const levels = tree.levels.filter((l) => l.levelNum >= fromLevel);
 		for (const lvl of levels) {
-			const opts = optionsForLevel(tree, lvl.level_num, next);
+			const opts = optionsForLevel(tree, lvl.levelNum, next);
 			if (opts.length === 1) {
-				next[lvl.level_num] = opts[0].id;
+				next[lvl.levelNum] = opts[0].id;
 			} else {
 				break;
 			}
@@ -99,21 +99,21 @@ export function IFCDashboard() {
 		setScopeErrorDismissed(false);
 		const tree = await loadScope(p);
 		if (tree && tree.levels.length > 0) {
-			const first = tree.levels[0].level_num;
+			const first = tree.levels[0].levelNum;
 			setSelections(runAutoSelect(tree, {}, first));
 		}
 	}
 
-	function handleSelect(level_num: number, value: SelectionValue) {
+	function handleSelect(levelNum: number, value: SelectionValue) {
 		if (!scope) return;
-		const next: Record<number, SelectionValue> = { ...selections, [level_num]: value };
+		const next: Record<number, SelectionValue> = { ...selections, [levelNum]: value };
 		scope.levels.forEach((l) => {
-			if (l.level_num > level_num) next[l.level_num] = null;
+			if (l.levelNum > levelNum) next[l.levelNum] = null;
 		});
-		setSelections(runAutoSelect(scope, next, level_num + 1));
+		setSelections(runAutoSelect(scope, next, levelNum + 1));
 	}
 
-	const lastLevel = scope?.levels.at(-1)?.level_num ?? null;
+	const lastLevel = scope?.levels.at(-1)?.levelNum ?? null;
 	const lastSel = lastLevel !== null ? (selections[lastLevel] ?? null) : null;
 	const canSearch = periodId !== null && scope !== null && !chartIncomplete && lastSel !== null;
 
@@ -176,7 +176,7 @@ export function IFCDashboard() {
 	const approvedIds = useMemo<number[]>(
 		() =>
 			visibleRows
-				.filter((r) => r.ifc && r.ifc.status_code === TYPE_CODES.IFC_STATUS.APPROVED)
+				.filter((r) => r.ifc && r.ifc.statusCode === TYPE_CODES.IFC_STATUS.APPROVED)
 				.map((r) => Number(r.ifc!.id)),
 		[visibleRows],
 	);
@@ -185,7 +185,7 @@ export function IFCDashboard() {
 		return visibleRows
 			.filter((r) => {
 				const status = effectiveStatus(r);
-				const coordinatorId = r.coordinator_user_id;
+				const coordinatorId = r.coordinatorUserId;
 				const isOwn =
 					currentUserId != null &&
 					coordinatorId != null &&
@@ -196,7 +196,7 @@ export function IFCDashboard() {
 					status !== TYPE_CODES.IFC_STATUS.SUBMITTED
 				);
 			})
-			.map((r) => Number(r.chart_id));
+			.map((r) => Number(r.chartId));
 	}, [visibleRows, currentUserId]);
 
 	async function handleNotifyOne(chartId: number) {
@@ -318,7 +318,7 @@ export function IFCDashboard() {
 				{chartIncomplete && (
 					<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
 						<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
-						<p>{ORG_LABELS.chart_incomplete[lang]}</p>
+						<p>{ORG_LABELS.chartIncomplete[lang]}</p>
 					</div>
 				)}
 

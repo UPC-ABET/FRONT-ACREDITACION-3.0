@@ -36,26 +36,26 @@ export const surveyQueryKeys = {
 	graCompetences: (periodId: number, programId?: number) =>
 		['surveys', 'gra', 'competences', { periodId, programId }] as const,
 	graStudents: (params: {
-		program_id?: number;
-		academic_period_id?: number;
-		campus_id?: number;
-		student_code?: string;
+		programId?: number;
+		academicPeriodId?: number;
+		campusId?: number;
+		studentCode?: string;
 	}) => ['surveys', 'gra', 'students', params] as const,
 	graPerformanceLevels: (periodId: number) =>
 		['surveys', 'gra', 'performance-levels', periodId] as const,
 	graDashboard: (params: {
-		academic_period_id?: number;
-		program_id?: number;
-		campus_id?: number;
+		academicPeriodId?: number;
+		programId?: number;
+		campusId?: number;
 	}) => ['surveys', 'gra', 'dashboard', params] as const,
 
 	// LCFC
 	lcfcCourses: (escuela: string, periodId: number, programId?: number) =>
 		['surveys', 'lcfc', 'courses', { escuela, periodId, programId }] as const,
 	lcfcDashboard: (params: {
-		academic_period_id?: number;
-		program_id?: number;
-		campus_id?: number;
+		academicPeriodId?: number;
+		programId?: number;
+		campusId?: number;
 	}) => ['surveys', 'lcfc', 'dashboard', params] as const,
 
 	// PPP
@@ -64,10 +64,10 @@ export const surveyQueryKeys = {
 	pppPerformanceLevels: (periodId: number) =>
 		['surveys', 'ppp', 'performance-levels', periodId] as const,
 	pppDashboard: (params: {
-		academic_period_id?: number;
-		program_id?: number;
-		campus_id?: number;
-		practice_number?: number;
+		academicPeriodId?: number;
+		programId?: number;
+		campusId?: number;
+		practiceNumber?: number;
 	}) => ['surveys', 'ppp', 'dashboard', params] as const,
 };
 
@@ -140,10 +140,10 @@ export function useCloneGRAConfiguration() {
 
 export function useGRAStudentsQuery(
 	params: {
-		program_id?: number;
-		academic_period_id?: number;
-		campus_id?: number;
-		student_code?: string;
+		programId?: number;
+		academicPeriodId?: number;
+		campusId?: number;
+		studentCode?: string;
 	},
 	options?: { enabled?: boolean },
 ) {
@@ -163,7 +163,7 @@ export function useGRAPerformanceLevelsQuery(periodId: number, options?: { enabl
 }
 
 export function useGRADashboardQuery(
-	params: { academic_period_id?: number; program_id?: number; campus_id?: number },
+	params: { academicPeriodId?: number; programId?: number; campusId?: number },
 	options?: { enabled?: boolean },
 ) {
 	return useQuery({
@@ -193,15 +193,15 @@ export function useGenerateLCFCConfiguration() {
 	return useMutation({
 		mutationFn: (params: {
 			escuela: string;
-			academic_period_id: number;
-			program_id?: number;
-			campus_id?: number;
+			academicPeriodId: number;
+			programId?: number;
+			campusId?: number;
 		}) =>
 			generateLCFCConfiguration(
 				params.escuela,
-				params.academic_period_id,
-				params.program_id,
-				params.campus_id,
+				params.academicPeriodId,
+				params.programId,
+				params.campusId,
 			),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['surveys', 'lcfc', 'courses'] });
@@ -212,8 +212,8 @@ export function useGenerateLCFCConfiguration() {
 export function useChangeLCFCConfigStatus() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (params: { config_id: number; nuevoEstado: 'ACTIVO' | 'INACTIVO' }) =>
-			changeLCFCConfigStatus(params.config_id, params.nuevoEstado),
+		mutationFn: (params: { configId: number; nuevoEstado: 'ACTIVO' | 'INACTIVO' }) =>
+			changeLCFCConfigStatus(params.configId, params.nuevoEstado),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['surveys', 'lcfc', 'courses'] });
 		},
@@ -221,7 +221,7 @@ export function useChangeLCFCConfigStatus() {
 }
 
 export function useLCFCDashboardQuery(
-	params: { academic_period_id?: number; program_id?: number; campus_id?: number },
+	params: { academicPeriodId?: number; programId?: number; campusId?: number },
 	options?: { enabled?: boolean },
 ) {
 	return useQuery({
@@ -291,8 +291,8 @@ export function usePPPPerformanceLevelsQuery(periodId: number, options?: { enabl
 export function useUpdatePPPPerformanceLevels() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (params: { academic_period_id: number; niveles: PerformanceLevel[] }) =>
-			updatePPPPerformanceLevels(params.academic_period_id, params.niveles),
+		mutationFn: (params: { academicPeriodId: number; niveles: AcceptanceLevel[] }) =>
+			updateAcceptanceLevels(params.academicPeriodId, params.niveles),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['surveys', 'ppp', 'performance-levels'] });
 		},
@@ -301,10 +301,10 @@ export function useUpdatePPPPerformanceLevels() {
 
 export function usePPPDashboardQuery(
 	params: {
-		academic_period_id?: number;
-		program_id?: number;
-		campus_id?: number;
-		practice_number?: number;
+		academicPeriodId?: number;
+		programId?: number;
+		campusId?: number;
+		practiceNumber?: number;
 	},
 	options?: { enabled?: boolean },
 ) {

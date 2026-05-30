@@ -12,37 +12,37 @@ export function IFCOutcomeResults({ outcomeResult }: Props) {
 	if (!outcomeResult || outcomeResult.length === 0) return null;
 
 	return (
-		<Card title={IFC_SHARED_LABELS.section_outcome[lang]} className="h-full">
+		<Card title={IFC_SHARED_LABELS.sectionOutcome[lang]} className="h-full">
 			<div className="space-y-6">
 				{outcomeResult.map((program) => (
-					<div key={program.program_code} className="space-y-3">
+					<div key={program.programCode} className="space-y-3">
 						<h3 className="text-sm font-bold uppercase tracking-wider text-red-700">
-							{program.program_name?.[lang] ?? program.program_name?.es ?? ''}
+							{program.programName?.[lang] ?? program.programName?.es ?? ''}
 						</h3>
 
 						<div className="space-y-4 border-l-2 border-zinc-200 pl-4">
 							{program.commissions.map((commission) => (
 								<div
-									key={`${program.program_code}-${commission.commission_code}`}
+									key={`${program.programCode}-${commission.commissionCode}`}
 									className="space-y-3">
 									{commission.outcomes.map((outcome) => {
 										const ref = [
-											commission.commission_name?.[lang] ?? commission.commission_name?.es ?? '',
-											outcome.outcome_code,
+											commission.commissionName?.[lang] ?? commission.commissionName?.es ?? '',
+											outcome.outcomeCode,
 										]
 											.filter(Boolean)
 											.join(' · ');
 										return (
 											<div
-												key={`${commission.commission_code}-${outcome.outcome_code}`}
+												key={`${commission.commissionCode}-${outcome.outcomeCode}`}
 												className="space-y-1">
 												<p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-													{IFC_SHARED_LABELS.student_outcome[lang]} ({ref})
+													{IFC_SHARED_LABELS.studentOutcome[lang]} ({ref})
 												</p>
 												<p className="text-base italic leading-relaxed text-zinc-800">
 													&ldquo;
-													{outcome.outcome_description?.[lang] ??
-														outcome.outcome_description?.es ??
+													{outcome.outcomeDescription?.[lang] ??
+														outcome.outcomeDescription?.es ??
 														''}
 													&rdquo;
 												</p>

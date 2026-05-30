@@ -116,10 +116,10 @@
 				"error": "{{count}} notification(s) failed to send"
 			},
 			"reason": {
-				"no_course_chart": "Course chart not found",
-				"no_config": "No notification configuration for this scenario",
-				"no_recipients": "No recipients configured",
-				"send_failed": "The email provider rejected the message",
+				"noCourseChart": "Course chart not found",
+				"noConfig": "No notification configuration for this scenario",
+				"noRecipients": "No recipients configured",
+				"sendFailed": "The email provider rejected the message",
 				"unknown": "Could not send the notification"
 			},
 			"error": {
@@ -568,9 +568,6 @@
 		"createLabel": "Create: \"{value}\""
 	},
 	"school": {
-		"sch_soft": "SCHOOL OF SOFTWARE ENGINEERING",
-		"sch_sist": "SCHOOL OF SYSTEMS ENGINEERING",
-		"sch_admin": "SCHOOL OF BUSINESS ADMINISTRATION",
 		"eiscb": "SCHOOL OF SOFTWARE ENGINEERING",
 		"eiscc": "SCHOOL OF COMPUTER SCIENCE ENGINEERING",
 		"inggmi": "GMI ENGINEERING",

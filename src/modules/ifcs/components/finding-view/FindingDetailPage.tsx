@@ -99,15 +99,15 @@ export default function FindingDetailPage() {
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<div className="space-y-1.5">
 					<p className="text-sm font-semibold uppercase tracking-wider text-red-700">
-						{L.page_title[lang]}
+						{L.pageTitle[lang]}
 					</p>
 					<h1 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
-						{data.finding.finding_code}
+						{data.finding.findingCode}
 					</h1>
 				</div>
 				<Button variant="ghost" size="lg" onClick={() => router.push('/ifc-findings')}>
 					<ArrowLeftIcon className="h-5 w-5" />
-					{L.btn_back[lang]}
+					{L.btnBack[lang]}
 				</Button>
 			</div>
 
@@ -120,7 +120,7 @@ export default function FindingDetailPage() {
 				onValidationError={setActionError}
 			/>
 
-			<Card title={L.section_actions[lang]}>
+			<Card title={L.sectionActions[lang]}>
 				<FindingActionsTable actions={data.actions} />
 			</Card>
 

@@ -1,5 +1,5 @@
 export type LoginPayload = {
-	school_code: string;
+	schoolCode: string;
 	email: string;
 	password: string;
 };

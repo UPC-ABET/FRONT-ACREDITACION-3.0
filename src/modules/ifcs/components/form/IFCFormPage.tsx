@@ -20,8 +20,8 @@ export function IFCFormPage({ mode }: Props) {
 		mode === 'create'
 			? {
 					kind: 'create',
-					chartId: Number(searchParams.get('chart_id')),
-					periodId: Number(searchParams.get('period_id')),
+					chartId: Number(searchParams.get('chartId')),
+					periodId: Number(searchParams.get('periodId')),
 				}
 			: { kind: 'edit', ifcId: Number(params?.id) };
 

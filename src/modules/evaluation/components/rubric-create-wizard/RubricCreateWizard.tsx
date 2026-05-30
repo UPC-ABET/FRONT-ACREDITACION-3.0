@@ -11,9 +11,7 @@ import { WizardStep1, type Step1Data } from './WizardStep1';
 import { WizardStep2, type Step2Data } from './WizardStep2';
 import { WizardStep3NonCapstone, type NonCapstonePayloadQuestion } from './WizardStep3NonCapstone';
 import { WizardStep3Capstone, type CapstonePayloadQuestion } from './WizardStep3Capstone';
-import { GRADE_IDS } from '../../constants/typeCodes';
-
-const FINAL_EVAL_CODE = GRADE_IDS.FINAL;
+import { TYPE_CODES } from '@/modules/core';
 
 export function RubricCreateWizard() {
 	const router = useRouter();
@@ -46,9 +44,9 @@ export function RubricCreateWizard() {
 		if (!step1Data || !step2Data) return;
 		try {
 			const body: CreateRubricFullDto = {
-				rubric_type_id: step2Data.rubricTypeId,
-				grade_type_id: step2Data.gradeTypeId,
-				study_plan_course_id: step1Data.studyPlanCourseId,
+				rubricTypeId: step2Data.rubricTypeId,
+				gradeTypeId: step2Data.gradeTypeId,
+				studyPlanCourseId: step1Data.studyPlanCourseId,
 				questions: questions as CreateRubricFullDto['questions'],
 			};
 			const rubric = await createRubricFull.mutateAsync(body);
@@ -74,7 +72,7 @@ export function RubricCreateWizard() {
 		},
 	];
 
-	const useCapstoneEditor = step2Data?.isCapstone && step2Data?.gradeTypeId === FINAL_EVAL_CODE;
+	const useCapstoneEditor = step2Data?.isCapstone && step2Data?.gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
 
 	return (
 		<div className="space-y-8">

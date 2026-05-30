@@ -6,7 +6,7 @@ const nullableId = z.coerce.number().nullable();
 const previousActionSchema = z
 	.object({
 		id,
-		finding_action_id: id,
+		findingActionId: id,
 		finding: z.object({ id, code: z.string() }),
 	})
 	.passthrough();
@@ -23,7 +23,7 @@ const findingSchema = z
 const ifcHeaderSchema = z
 	.object({
 		id,
-		coordinator: z.object({ user_id: nullableId }).passthrough(),
+		coordinator: z.object({ userId: nullableId }).passthrough(),
 	})
 	.passthrough();
 
@@ -31,7 +31,7 @@ export const ifcViewPayloadSchema = z
 	.object({
 		ifc: ifcHeaderSchema,
 		findings: z.array(findingSchema),
-		previous_actions: z.array(previousActionSchema).default([]),
+		previousActions: z.array(previousActionSchema).default([]),
 	})
 	.passthrough();
 
@@ -39,8 +39,8 @@ export const previousActionsSchema = z.array(previousActionSchema).default([]);
 
 const notifyResultSchema = z.object({
 	sent: z.coerce.boolean(),
-	recipients_count: z.coerce.number().default(0),
-	cc_count: z.coerce.number().default(0),
+	recipientsCount: z.coerce.number().default(0),
+	ccCount: z.coerce.number().default(0),
 	reason: z.union([z.string(), z.null()]).default(null),
 });
 
@@ -48,8 +48,8 @@ export const submitResultSchema = z.object({
 	id,
 	notification: notifyResultSchema.optional().default({
 		sent: false,
-		recipients_count: 0,
-		cc_count: 0,
+		recipientsCount: 0,
+		ccCount: 0,
 		reason: null,
 	}),
 });

@@ -10,10 +10,10 @@ export const LEVEL_LABELS: Record<string, { en: string; es: string }> = {
 };
 
 export const ORG_LABELS = {
-	chart_incomplete: {
+	chartIncomplete: {
 		en: 'The organization chart is incomplete or has not been uploaded yet. Please contact the administrator.',
 		es: 'El organigrama está incompleto o aún no ha sido cargado. Por favor, contacte al administrador.',
 	},
-	period_label: { en: 'Period', es: 'Período' },
-	status_label: { en: 'Status', es: 'Estado' },
+	periodLabel: { en: 'Period', es: 'Período' },
+	statusLabel: { en: 'Status', es: 'Estado' },
 } as const;

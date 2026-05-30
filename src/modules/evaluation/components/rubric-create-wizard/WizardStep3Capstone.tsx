@@ -13,9 +13,9 @@ import type { Step1Data } from './WizardStep1';
 import type { Step2Data } from './WizardStep2';
 
 export interface CapstonePayloadQuestion {
-	outcome_id: number;
+	outcomeId: number;
 	question: { es: string; en: string };
-	criterias: { criteria: { es: string; en: string }; min_value: number; max_value: number }[];
+	criterias: { criteria: { es: string; en: string }; minValue: number; maxValue: number }[];
 }
 
 interface LocalCriteria {
@@ -65,14 +65,14 @@ export function WizardStep3Capstone({
 		if (outcomesInitialized || !fetchedOutcomes.length) return;
 
 		const loaded: LocalOutcome[] = fetchedOutcomes.map((o) => {
-			const commission = o.program_commission?.commission;
+			const commission = o.programCommission?.commission;
 			const commissionId = String(
-				commission?.id ?? o.program_commission?.id ?? o.program_commission_id ?? 'sin-comision',
+				commission?.id ?? o.programCommission?.id ?? o.programCommissionId ?? 'sin-comision',
 			);
 			return {
 				outcomeId: o.id,
-				outcomeCode: o.outcome_code,
-				outcomeName: o.outcome_name,
+				outcomeCode: o.outcomeCode,
+				outcomeName: o.outcomeName,
 				commissionId,
 				_commissionMeta: commission ? { code: commission.code, name: commission.name } : undefined,
 				criteria: [newLocalCriteria()],
@@ -163,12 +163,12 @@ export function WizardStep3Capstone({
 		if (!allFilled) return;
 		await onSubmit(
 			outcomes.map((o) => ({
-				outcome_id: o.outcomeId,
+				outcomeId: o.outcomeId,
 				question: { es: o.outcomeName.es, en: o.outcomeName.en },
 				criterias: o.criteria.map((c) => ({
 					criteria: { es: c.text.es, en: c.text.en },
-					min_value: 0,
-					max_value: 0,
+					minValue: 0,
+					maxValue: 0,
 				})),
 			})),
 		);

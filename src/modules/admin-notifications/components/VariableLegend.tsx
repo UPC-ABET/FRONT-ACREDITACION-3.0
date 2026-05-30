@@ -16,7 +16,7 @@ export function VariableLegend({ notifyVars, currentStatusCode }: Props) {
 	const visibleVars = useMemo(() => {
 		if (!currentStatusCode) return notifyVars;
 		return notifyVars.filter(
-			(v) => v.valid_status_codes === null || v.valid_status_codes.includes(currentStatusCode),
+			(v) => v.validStatusCodes === null || v.validStatusCodes.includes(currentStatusCode),
 		);
 	}, [notifyVars, currentStatusCode]);
 

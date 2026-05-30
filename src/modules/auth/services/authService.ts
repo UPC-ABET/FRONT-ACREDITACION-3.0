@@ -9,7 +9,7 @@ export const loginByCredentials = async (payload: LoginPayload): Promise<void> =
 		{
 			method: 'POST',
 			body: {
-				school_code: payload.school_code,
+				schoolCode: payload.schoolCode,
 				email: payload.email,
 				password: payload.password,
 			},
@@ -32,12 +32,12 @@ export const logoutUser = async (): Promise<void> => {
 	});
 };
 
-export const getMicrosoftLoginUrl = (school_code: string): string => {
-	if (!school_code) {
+export const getMicrosoftLoginUrl = (schoolCode: string): string => {
+	if (!schoolCode) {
 		throw new ApiError('login.error.schoolRequired');
 	}
 
-	return `${getApiBaseUrl()}/auth/microsoft?school_code=${encodeURIComponent(school_code)}`;
+	return `${getApiBaseUrl()}/auth/microsoft?schoolCode=${encodeURIComponent(schoolCode)}`;
 };
 
 export const requestForgotPassword = async (email: string): Promise<string> => {

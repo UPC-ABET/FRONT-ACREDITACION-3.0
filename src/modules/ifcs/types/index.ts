@@ -4,17 +4,17 @@ export type { I18nText };
 export interface ScopeOption {
 	id: number;
 	label: I18nText;
-	parent_id: number | null;
+	parentId: number | null;
 }
 
 export interface ScopeLevel {
-	level_num: number;
-	type_code: string;
+	levelNum: number;
+	typeCode: string;
 	options: ScopeOption[];
 }
 
 export interface ScopeTree {
-	highest_level: number | null;
+	highestLevel: number | null;
 	levels: ScopeLevel[];
 }
 
@@ -22,20 +22,20 @@ export interface IFCRecord {
 	id: number;
 	information: Record<string, unknown>;
 	extra: Record<string, unknown>;
-	created_at: string;
-	updated_at: string;
-	status_code: string;
-	status_label: I18nText;
-	status_color?: string;
+	createdAt: string;
+	updatedAt: string;
+	statusCode: string;
+	statusLabel: I18nText;
+	statusColor?: string;
 }
 
 export interface IFCRow {
-	chart_id: number;
-	course_code: string;
-	course_name: I18nText;
-	program_label: I18nText;
-	coordinator_user_id: number | null;
-	coordinator_name: string | null;
+	chartId: number;
+	courseCode: string;
+	courseName: I18nText;
+	programLabel: I18nText;
+	coordinatorUserId: number | null;
+	coordinatorName: string | null;
 	ifc: IFCRecord | null;
 }
 
@@ -45,14 +45,14 @@ export type IFCStatusFilter = 'ALL' | string;
 
 export interface FindingRow {
 	id: number;
-	ifc_id: number;
-	course_id: number;
-	criticality_code: string;
-	criticality_name: I18nText;
-	criticality_color?: string;
-	criticality_order: number;
-	finding_code: string;
-	academic_period_code: string;
+	ifcId: number;
+	courseId: number;
+	criticalityCode: string;
+	criticalityName: I18nText;
+	criticalityColor?: string;
+	criticalityOrder: number;
+	findingCode: string;
+	academicPeriodCode: string;
 	description: I18nText;
 }
 
@@ -62,16 +62,16 @@ export interface IFCHeader {
 	id: number;
 	information: Record<string, unknown>;
 	extra: Record<string, unknown>;
-	created_at: string;
-	academic_period_code: string;
-	area_label: I18nText;
-	subarea_label: I18nText;
-	program_label: I18nText;
-	course_code: string;
-	course_name: I18nText;
-	course_learning_outcome: I18nText;
+	createdAt: string;
+	academicPeriodCode: string;
+	areaLabel: I18nText;
+	subareaLabel: I18nText;
+	programLabel: I18nText;
+	courseCode: string;
+	courseName: I18nText;
+	courseLearningOutcome: I18nText;
 	coordinator: {
-		user_id: number | null;
+		userId: number | null;
 		code: string | null;
 		name: string | null;
 	};
@@ -83,24 +83,24 @@ export interface IFCHeader {
 		comment: I18nText | null;
 		by: string | null;
 	} | null;
-	requester_in_chain: boolean;
+	requesterInChain: boolean;
 }
 
 export interface OutcomeItem {
-	outcome_code: string;
-	outcome_name: I18nText;
-	outcome_description: I18nText;
+	outcomeCode: string;
+	outcomeName: I18nText;
+	outcomeDescription: I18nText;
 }
 
 export interface CommissionGroup {
-	commission_code: string;
-	commission_name: I18nText;
+	commissionCode: string;
+	commissionName: I18nText;
 	outcomes: OutcomeItem[];
 }
 
 export interface ProgramGroup {
-	program_code: string;
-	program_name: I18nText;
+	programCode: string;
+	programName: I18nText;
 	commissions: CommissionGroup[];
 }
 
@@ -121,7 +121,7 @@ export interface Finding {
 	code: string;
 	description: I18nText;
 	correlative: number;
-	is_automatic: boolean;
+	isAutomatic: boolean;
 	criticality: { code: string; name: I18nText; color?: string };
 	outcomes: FindingOutcome[];
 	actions: FindingAction[];
@@ -129,7 +129,7 @@ export interface Finding {
 
 export interface PreviousAction {
 	id: number;
-	finding_action_id: number;
+	findingActionId: number;
 	finding: { id: number; code: string };
 	code: string;
 	correlative: number;
@@ -141,9 +141,9 @@ export interface PreviousAction {
 
 export interface IFCViewPayload {
 	ifc: IFCHeader;
-	outcome_course_result: ProgramGroup[];
+	outcomeCourseResult: ProgramGroup[];
 	findings: Finding[];
-	previous_actions: PreviousAction[];
+	previousActions: PreviousAction[];
 }
 
 export interface IFCInformationEntry {
@@ -175,16 +175,16 @@ export interface CriticalityOption {
 // ---- Prefill ---------------------------------------------------------------
 
 export interface IFCPrefill {
-	course_name: I18nText;
-	course_learning_outcome: I18nText;
-	area_label: I18nText;
-	subarea_label: I18nText;
-	academic_period_code: string;
-	coordinator_code: string | null;
-	coordinator_name: string | null;
-	coordinator_user_id: number | null;
-	outcome_course_result: ProgramGroup[];
-	previous_actions: PreviousAction[];
+	courseName: I18nText;
+	courseLearningOutcome: I18nText;
+	areaLabel: I18nText;
+	subareaLabel: I18nText;
+	academicPeriodCode: string;
+	coordinatorCode: string | null;
+	coordinatorName: string | null;
+	coordinatorUserId: number | null;
+	outcomeCourseResult: ProgramGroup[];
+	previousActions: PreviousAction[];
 }
 
 // ---- Form state ------------------------------------------------------------
@@ -193,23 +193,23 @@ export interface FormFinding {
 	tempId: string;
 	id: number | null;
 	description: I18nText;
-	criticality_code: string;
+	criticalityCode: string;
 }
 
 export interface FormAction {
 	tempId: string;
 	id: number | null;
 	description: I18nText;
-	finding_temp_id: string;
+	findingTempId: string;
 }
 
 export interface IFCFormState {
 	information: Record<string, I18nText>;
 	findings: FormFinding[];
 	actions: FormAction[];
-	deleted_finding_ids: number[];
-	deleted_action_ids: number[];
-	previous_actions: Record<number, I18nText | null>;
+	deletedFindingIds: number[];
+	deletedActionIds: number[];
+	previousActions: Record<number, I18nText | null>;
 }
 
 // ---- Outbound payloads -----------------------------------------------------
@@ -218,48 +218,48 @@ export interface PayloadFinding {
 	tempId: string;
 	id: number | null;
 	description: I18nText;
-	criticality_code: string;
+	criticalityCode: string;
 }
 
 export interface PayloadAction {
 	tempId: string;
 	id: number | null;
 	description: I18nText;
-	finding_temp_id: string;
+	findingTempId: string;
 }
 
 export interface PayloadPreviousActionEvidence {
-	finding_action_id: number;
+	findingActionId: number;
 	evidences: I18nText | null;
 }
 
 export interface CreateIFCBody {
-	chart_id: number;
-	period_id: number;
+	chartId: number;
+	periodId: number;
 	submit: boolean;
 	information?: Record<string, I18nText>;
 	findings: PayloadFinding[];
 	actions: PayloadAction[];
-	deleted_finding_ids?: number[];
-	deleted_action_ids?: number[];
-	previous_actions?: PayloadPreviousActionEvidence[];
+	deletedFindingIds?: number[];
+	deletedActionIds?: number[];
+	previousActions?: PayloadPreviousActionEvidence[];
 }
 
-export type PatchIFCBody = Omit<CreateIFCBody, 'chart_id' | 'period_id'>;
+export type PatchIFCBody = Omit<CreateIFCBody, 'chartId' | 'periodId'>;
 
 // ---- Finding detail view ---------------------------------------------------
 
 export interface FindingDetail {
 	id: number;
-	finding_code: string;
-	academic_period_code: string;
+	findingCode: string;
+	academicPeriodCode: string;
 	description: I18nText;
 	criticality: { code: string; name: I18nText; color?: string };
 }
 
 export interface FindingActionRow {
 	id: number;
-	action_code: string;
+	actionCode: string;
 	description: I18nText;
 	completeness: { code: string; name: I18nText; color?: string };
 }
@@ -275,19 +275,19 @@ export interface PatchFindingBody {
 
 // ---- Notify ----------------------------------------------------------------
 
-export type NotifyReason = 'no_course_chart' | 'no_config' | 'no_recipients' | 'send_failed';
+export type NotifyReason = 'noCourseChart' | 'noConfig' | 'noRecipients' | 'sendFailed';
 
 export interface NotifyResult {
 	sent: boolean;
-	recipients_count: number;
-	cc_count: number;
+	recipientsCount: number;
+	ccCount: number;
 	reason: NotifyReason | null;
 }
 
 export interface NotifyAllResult {
 	sent: number[];
 	skipped: number[];
-	errors: Array<{ chart_id: number; message: string }>;
+	errors: Array<{ chartId: number; message: string }>;
 }
 
 export interface SubmitResult {

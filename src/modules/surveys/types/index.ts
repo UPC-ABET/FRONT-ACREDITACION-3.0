@@ -73,9 +73,9 @@ export interface FileResource {
 
 // ─── PPP ───────────────────────────────────────────────────────────────────
 export interface PPPCloneRequest {
-	source_academic_period_id: number;
-	target_academic_period_id: number;
-	program_id: number;
+	sourceAcademicPeriodId: number;
+	targetAcademicPeriodId: number;
+	programId: number;
 }
 
 // ─── GRA Student Notification ─────────────────────────────────────────────
@@ -128,9 +128,9 @@ export interface SendEmailResponse {
 
 // ─── GRA Email Send (new backend) ─────────────────────────────────────────
 export interface GRAEmailSendRequest {
-	academic_period_id: number;
-	program_id: number;
-	survey_base_url: string;
+	academicPeriodId: number;
+	programId: number;
+	surveyBaseUrl: string;
 }
 
 // ─── LCFC ──────────────────────────────────────────────────────────────────
@@ -172,12 +172,12 @@ export interface LCFCSendRequest {
 
 // New backend LCFC notification send request
 export interface LCFCNotificationSendRequest {
-	academic_period_id: number;
-	program_id: number;
-	campus_id?: number;
-	course_section_id?: number;
-	max_register_date: string;
-	survey_base_url: string;
+	academicPeriodId: number;
+	programId: number;
+	campusId?: number;
+	courseSectionId?: number;
+	maxRegisterDate: string;
+	surveyBaseUrl: string;
 }
 
 export interface LCFCConfigItem {
@@ -271,29 +271,29 @@ export interface ReportFilter {
 }
 
 export interface DashboardOutcome {
-	outcome_id: number;
-	outcome_code?: string;
-	outcome_name: string;
-	average_score: number;
+	outcomeId: number;
+	outcomeCode?: string;
+	outcomeName: string;
+	averageScore: number;
 	color: 'ROJO' | 'AMARILLO' | 'VERDE';
-	total_responses: number;
+	totalResponses: number;
 }
 
 export interface DashboardSummary {
-	total_surveys: number;
+	totalSurveys: number;
 	rojo?: number;
 	amarillo?: number;
 	verde?: number;
 	completed?: number;
 	pending?: number;
-	completion_rate_pct?: number;
+	completionRatePct?: number;
 }
 
 export interface DashboardResponse {
 	summary: DashboardSummary;
 	outcomes?: DashboardOutcome[];
-	by_program?: unknown[];
-	by_course?: unknown[];
+	byProgram?: unknown[];
+	byCourse?: unknown[];
 	filters?: unknown;
 }
 

@@ -24,7 +24,7 @@ export async function getTypesByGroupCode(groupCode: string): Promise<TypeOption
 }
 
 export const typesService = {
-	getByFilters(filters: { type_group_id?: number }): Promise<ApiResponse<TypeOption[]>> {
+	getByFilters(filters: { typeGroupId?: number }): Promise<ApiResponse<TypeOption[]>> {
 		return apiPost('/types/get-by-filters', filters);
 	},
 

@@ -22,8 +22,8 @@ interface Envelope<T> {
 
 export async function listIFCs(chartIds: number[], periodId: number): Promise<IFCRow[]> {
 	const envelope = await apiPost<Envelope<IFCRow[]>>('/ifcs/list', {
-		chart_ids: chartIds.map(Number),
-		period_id: Number(periodId),
+		chartIds: chartIds.map(Number),
+		periodId: Number(periodId),
 	});
 	if (!envelope?.data) throw new ApiError('ifcs.error.generic');
 	return envelope.data;
@@ -51,12 +51,12 @@ export async function rejectIFC(id: number, comment: RejectIFCBody['comment']): 
 
 export async function getIFCPrefill(chartId: number, periodId: number): Promise<IFCPrefill> {
 	const envelope = await apiGet<Envelope<IFCPrefill>>(
-		`/ifcs/prefill?chart_id=${chartId}&period_id=${periodId}`,
+		`/ifcs/prefill?chartId=${chartId}&periodId=${periodId}`,
 	);
 	if (!envelope?.data) throw new ApiError('ifcs.error.prefillFailed');
-	envelope.data.previous_actions = previousActionsSchema.parse(
-		envelope.data.previous_actions,
-	) as unknown as IFCPrefill['previous_actions'];
+	envelope.data.previousActions = previousActionsSchema.parse(
+		envelope.data.previousActions,
+	) as unknown as IFCPrefill['previousActions'];
 	return envelope.data;
 }
 

@@ -25,32 +25,32 @@ import type {
 
 interface BackendGraConfig {
 	id: number;
-	outcome_id: number;
-	is_active: boolean;
+	outcomeId: number;
+	isActive: boolean;
 	extra?: {
-		survey_type?: string;
-		name_es?: string;
-		name_en?: string;
-		description_es?: string;
+		surveyType?: string;
+		nameEs?: string;
+		nameEn?: string;
+		descriptionEs?: string;
 		order?: number;
-		program_id?: number;
-		academic_period_id?: number;
-		commission_id?: number;
+		programId?: number;
+		academicPeriodId?: number;
+		commissionId?: number;
 	};
-	user_outcome_name?: string;
+	userOutcomeName?: string;
 }
 
 interface BackendGraStudent {
-	notification_id: number;
-	student_id: number;
-	student_code: string;
-	student_name: string;
-	student_email?: string;
-	program_id?: number;
-	campus_id?: number;
+	notificationId: number;
+	studentId: number;
+	studentCode: string;
+	studentName: string;
+	studentEmail?: string;
+	programId?: number;
+	campusId?: number;
 	status: string;
-	max_register_date?: string;
-	survey_id?: number;
+	maxRegisterDate?: string;
+	surveyId?: number;
 }
 
 // ─── Adapters ──────────────────────────────────────────────────────────────
@@ -59,27 +59,27 @@ function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
 	const extra = raw.extra ?? {};
 	return {
 		id: raw.id,
-		outcomeId: raw.outcome_id,
-		generalCompetence: extra.name_es ?? raw.user_outcome_name ?? '',
-		specificCompetence: extra.name_en ?? extra.name_es ?? '',
-		description: extra.description_es ?? '',
-		performanceLevel: extra.order ?? 3,
-		isActive: raw.is_active,
-		estado: raw.is_active ? 'ACTIVO' : 'INACTIVO',
-		programId: extra.program_id,
-		periodId: extra.academic_period_id,
+		outcomeId: raw.outcomeId,
+		competenciaGeneral: extra.nameEs ?? raw.userOutcomeName ?? '',
+		competenciaEspecifica: extra.nameEn ?? extra.nameEs ?? '',
+		descripcion: extra.descriptionEs ?? '',
+		nivelAceptacion: extra.order ?? 3,
+		isActive: raw.isActive,
+		estado: raw.isActive ? 'ACTIVO' : 'INACTIVO',
+		idCarrera: extra.programId,
+		idPeriodo: extra.academicPeriodId,
 	};
 }
 
 function adaptGraStudent(raw: BackendGraStudent): GRAStudent {
 	return {
-		notificationId: raw.notification_id,
-		studentId: raw.student_id,
-		studentCode: raw.student_code,
-		studentName: raw.student_name,
-		studentEmail: raw.student_email ?? '',
-		sendStatus: raw.status,
-		sendDate: undefined,
+		idNotificacion: raw.notificationId,
+		idEstudiante: raw.studentId,
+		codigoEstudiante: raw.studentCode,
+		nombreEstudiante: raw.studentName,
+		emailEstudiante: raw.studentEmail ?? '',
+		estadoEnvio: raw.status,
+		fechaEnvio: undefined,
 	};
 }
 
@@ -101,12 +101,12 @@ function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): Pe
 // ─── Competences ───────────────────────────────────────────────────────────
 
 export async function listGRACompetences(
-	academic_period_id: number,
-	program_id = 0,
+	academicPeriodId: number,
+	programId = 0,
 ): Promise<CompetenceConfig[]> {
 	const res = await apiPost<BackendGraConfig[] | { data?: BackendGraConfig[] }>(
 		'gra/config/get-by-filters',
-		{ program_id: program_id || undefined, academic_period_id, is_active: true },
+		{ programId: programId || undefined, academicPeriodId, isActive: true },
 	);
 	const obj = res as { data?: BackendGraConfig[] };
 	const list = Array.isArray(res) ? res : (obj.data ?? []);
@@ -118,25 +118,25 @@ export async function saveGRACompetence(data: CompetenceFormData) {
 
 	if (isNew) {
 		return apiPost('gra/config/create', {
-			outcome_id: data.outcome_id ?? 1,
-			name_es: data.generalCompetence,
-			name_en: data.specificCompetence || data.generalCompetence,
-			description_es: data.description,
-			description_en: data.description,
-			order: data.performanceLevel,
-			program_id: data.programId ?? 0,
-			academic_period_id: data.academicPeriodId,
-			is_visible: true,
+			outcomeId: data.outcomeId ?? 1,
+			nameEs: data.competenciaGeneral,
+			nameEn: data.competenciaEspecifica || data.competenciaGeneral,
+			descriptionEs: data.descripcion,
+			descriptionEn: data.descripcion,
+			order: data.nivelAceptacion,
+			programId: data.idCarrera ?? 0,
+			academicPeriodId: data.idPeriodoAcademico,
+			isVisible: true,
 		});
 	}
 
 	return apiPost(`gra/config/update/${data.id}`, {
-		name_es: data.generalCompetence,
-		name_en: data.specificCompetence || data.generalCompetence,
-		description_es: data.description,
-		description_en: data.description,
-		order: data.performanceLevel,
-		is_visible: true,
+		nameEs: data.competenciaGeneral,
+		nameEn: data.competenciaEspecifica || data.competenciaGeneral,
+		descriptionEs: data.descripcion,
+		descriptionEn: data.descripcion,
+		order: data.nivelAceptacion,
+		isVisible: true,
 	});
 }
 
@@ -151,37 +151,54 @@ export async function cloneGRAConfiguration(params: {
 	idPeriodoDestino: number;
 }) {
 	return apiPost('gra/config/replicate', {
-		source_academic_period_id: params.idPeriodoOrigen,
-		target_academic_period_id: params.idPeriodoDestino,
-		program_id: params.idCarreraDestino,
+		sourceAcademicPeriodId: params.idPeriodoOrigen,
+		targetAcademicPeriodId: params.idPeriodoDestino,
+		programId: params.idCarreraDestino,
 	});
 }
 
 // ─── GRA Outcomes (for dropdown selection) ─────────────────────────────────
 
-export async function listGRAOutcomes(params: { program_id: number; academic_period_id: number }) {
+export async function listGRAOutcomes(params: { programId: number; academicPeriodId: number }) {
 	return apiPost<
 		Array<{
-			commission_id: number;
-			commission_name: string;
-			outcomes: Array<{ outcome_id: number; outcome_code: string; outcome_name: string }>;
+			commissionId: number;
+			commissionName: string;
+			outcomes: Array<{ outcomeId: number; outcomeCode: string; outcomeName: string }>;
 		}>
 	>('gra/outcomes/list', params);
 }
 
 // ─── Performance levels ────────────────────────────────────────────────────
 
-export async function listGRAPerformanceLevels(
-	academic_period_id: number,
-): Promise<PerformanceLevel[]> {
-	const instrument_type_id = await getSurveyTypeId('GRA');
-	const res = await performanceLevelsService.getByFilters({
-		...(instrument_type_id > 0 && { instrument_type_id }),
-		academic_period_id,
-		is_active: true,
+export async function listGRAAcceptanceLevels(
+	academicPeriodId: number,
+): Promise<AcceptanceLevel[]> {
+	const surveyTypeId = await getSurveyTypeId('GRA');
+	const res = await apiPost<
+		Array<{
+			id: number;
+			minScore: number;
+			maxScore: number;
+			name: { es?: string };
+			color?: string;
+			order?: number;
+		}>
+	>('acceptance-levels/list', {
+		surveyTypeCode: 'GRA',
+		...(surveyTypeId > 0 && { surveyTypeId }),
+		academicPeriodId,
 	});
-	const list = res?.data ?? [];
-	return list.map((l, i) => adaptPerformanceLevel(l, i));
+	const list = Array.isArray(res) ? res : [];
+	return list.map((l, i) => ({
+		id: l.id,
+		nivel: l.order ?? i + 1,
+		descripcion: l.name?.es ?? `Nivel ${i + 1}`,
+		rango: `${l.minScore} – ${l.maxScore}`,
+		minScore: l.minScore,
+		maxScore: l.maxScore,
+		color: l.color,
+	}));
 }
 
 // ─── Students / Notifications ──────────────────────────────────────────────
@@ -213,19 +230,19 @@ export async function searchStudentByCode(
 }
 
 export async function addStudentToNotification(params: {
-	student_id: number;
-	program_id: number;
-	academic_period_id: number;
-	campus_id?: number;
-	max_register_date?: string;
+	studentId: number;
+	programId: number;
+	academicPeriodId: number;
+	campusId?: number;
+	maxRegisterDate?: string;
 }) {
 	return apiPost('gra/notification/save', {
-		student_id: params.student_id,
-		program_id: params.program_id,
-		academic_period_id: params.academic_period_id,
-		campus_id: params.campus_id ?? 0,
-		max_register_date:
-			params.max_register_date ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+		studentId: params.studentId,
+		programId: params.programId,
+		academicPeriodId: params.academicPeriodId,
+		campusId: params.campusId ?? 0,
+		maxRegisterDate:
+			params.maxRegisterDate ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
 	});
 }
 
@@ -234,10 +251,10 @@ export async function deleteStudentNotification(notificationId: number) {
 }
 
 export async function listGRAStudents(params: {
-	program_id?: number;
-	academic_period_id?: number;
-	campus_id?: number;
-	student_code?: string;
+	programId?: number;
+	academicPeriodId?: number;
+	campusId?: number;
+	studentCode?: string;
 }): Promise<{ students: GRAStudent[] }> {
 	const res = await apiPost<BackendGraStudent[] | { data?: BackendGraStudent[] }>(
 		'gra/notification/list-students',
@@ -298,9 +315,9 @@ export async function uploadGRAMassive(file: File, _school?: unknown): Promise<v
 // ─── Dashboard ─────────────────────────────────────────────────────────────
 
 export async function generateGRADashboard(params: {
-	academic_period_id?: number;
-	program_id?: number;
-	campus_id?: number;
+	academicPeriodId?: number;
+	programId?: number;
+	campusId?: number;
 }): Promise<DashboardResponse> {
 	return apiPost<DashboardResponse>('gra/dashboard', params);
 }
@@ -311,8 +328,8 @@ export async function generateGRAPerceptionReport(params: {
 	idComision?: number;
 }) {
 	return generateGRADashboard({
-		academic_period_id: params.idPeriodoAcademico,
-		program_id: params.idCarrera,
+		academicPeriodId: params.idPeriodoAcademico,
+		programId: params.idCarrera,
 	});
 }
 

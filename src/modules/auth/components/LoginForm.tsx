@@ -40,7 +40,7 @@ export default function LoginForm() {
 			return;
 		}
 
-		const payload: LoginPayload = { school_code: schoolCode, email, password };
+		const payload: LoginPayload = { schoolCode: schoolCode, email, password };
 		setLoading(true);
 		try {
 			await loginByCredentials(payload);

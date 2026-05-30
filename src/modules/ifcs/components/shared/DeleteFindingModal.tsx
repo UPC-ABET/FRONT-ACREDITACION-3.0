@@ -18,11 +18,11 @@ export function DeleteFindingModal({ target, onConfirm, onClose, submitting }: P
 		<ConfirmDialog
 			isOpen={target !== null}
 			onClose={onClose}
-			title={CONSULT_LABELS.delete_modal_title[lang]}
-			message={CONSULT_LABELS.delete_modal_body[lang]}
+			title={CONSULT_LABELS.deleteModalTitle[lang]}
+			message={CONSULT_LABELS.deleteModalBody[lang]}
 			onConfirm={onConfirm}
-			confirmLabel={CONSULT_LABELS.delete_modal_confirm[lang]}
-			declineLabel={CONSULT_LABELS.delete_modal_cancel[lang]}
+			confirmLabel={CONSULT_LABELS.deleteModalConfirm[lang]}
+			declineLabel={CONSULT_LABELS.deleteModalCancel[lang]}
 			onDecline={onClose}
 			isLoading={submitting}
 		/>

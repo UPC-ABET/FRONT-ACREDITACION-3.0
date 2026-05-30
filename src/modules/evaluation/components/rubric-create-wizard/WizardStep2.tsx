@@ -61,7 +61,7 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 	);
 
 	const mappingFilters = useMemo(
-		() => ({ study_plan_course_id: step1.studyPlanCourseId, is_active: true }),
+		() => ({ studyPlanCourseId: step1.studyPlanCourseId, isActive: true }),
 		[step1.studyPlanCourseId],
 	);
 
@@ -91,13 +91,13 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 		const relevantIds = new Set([verificationTypeId, controlTypeId].filter(Boolean) as number[]);
 
 		const hasVerification =
-			verificationTypeId != null && mappings.some((m) => m.outcome_type_id === verificationTypeId);
+			verificationTypeId != null && mappings.some((m) => m.outcomeTypeId === verificationTypeId);
 
 		if (hasVerification) {
-			const relevant = mappings.filter((m) => relevantIds.has(m.outcome_type_id));
+			const relevant = mappings.filter((m) => relevantIds.has(m.outcomeTypeId));
 			return {
 				determinedRubricType: rubricTypes.find((rt) => rt.code === CAPSTONE_RUBRIC_CODE) ?? null,
-				capstoneOutcomeIds: relevant.map((m) => m.outcome_id),
+				capstoneOutcomeIds: relevant.map((m) => m.outcomeId),
 			};
 		}
 

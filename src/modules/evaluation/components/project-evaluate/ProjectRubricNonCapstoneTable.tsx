@@ -36,7 +36,7 @@ type Scores = Record<number, Record<number, string>>;
 type DupScores = Record<number, string>;
 
 type CriteriaScoreEntry = {
-	rubric_question_criteria_id: number;
+	rubricQuestionCriteriaId: number;
 	score: number;
 	commentaries: Record<string, string>;
 };
@@ -82,7 +82,7 @@ export function ProjectRubricNonCapstoneTable({
 				let found = '';
 				for (const c of q.criterias) {
 					const entry = c.scores?.find(
-						(s) => s.student_id === st.id && s.evaluator_id === evaluatorId,
+						(s) => s.studentId === st.id && s.evaluatorId === evaluatorId,
 					);
 					if (entry != null) {
 						found = String(entry.score);
@@ -114,8 +114,8 @@ export function ProjectRubricNonCapstoneTable({
 	const ranges = useMemo(() => {
 		const result: Record<number, { min: number; max: number }> = {};
 		for (const q of questions) {
-			const mins = q.criterias.map((c) => parseFloat(c.min_value));
-			const maxs = q.criterias.map((c) => parseFloat(c.max_value));
+			const mins = q.criterias.map((c) => parseFloat(c.minValue));
+			const maxs = q.criterias.map((c) => parseFloat(c.maxValue));
 			result[q.id] = { min: Math.min(...mins), max: Math.max(...maxs) };
 		}
 		return result;
@@ -173,8 +173,8 @@ export function ProjectRubricNonCapstoneTable({
 	// Returns the criteria whose [min, max] range contains the given score (inclusive).
 	const findMatchingCriteria = (q: RubricQuestionDetailsResponse, score: number) =>
 		q.criterias.find((c) => {
-			const min = parseFloat(c.min_value);
-			const max = parseFloat(c.max_value);
+			const min = parseFloat(c.minValue);
+			const max = parseFloat(c.maxValue);
 			return score >= min && score <= max;
 		});
 
@@ -184,7 +184,7 @@ export function ProjectRubricNonCapstoneTable({
 		for (const q of questions) {
 			// Lowest-range criteria used for NR/NA students (score 0)
 			const lowestCriteria = q.criterias.reduce((a, b) =>
-				parseFloat(a.min_value) <= parseFloat(b.min_value) ? a : b,
+				parseFloat(a.minValue) <= parseFloat(b.minValue) ? a : b,
 			);
 
 			if (duplicateMode) {
@@ -197,14 +197,14 @@ export function ProjectRubricNonCapstoneTable({
 					const existing: CriteriaScoreEntry[] = studentPayloads.get(st.id) ?? [];
 					if (isNrNa) {
 						existing.push({
-							rubric_question_criteria_id: lowestCriteria.id,
+							rubricQuestionCriteriaId: lowestCriteria.id,
 							score: 0,
 							commentaries: {},
 						});
 					} else {
 						if (!matchedCriteria || isNaN(dupScore)) continue;
 						existing.push({
-							rubric_question_criteria_id: matchedCriteria.id,
+							rubricQuestionCriteriaId: matchedCriteria.id,
 							score: dupScore,
 							commentaries: {},
 						});
@@ -217,7 +217,7 @@ export function ProjectRubricNonCapstoneTable({
 					const existing: CriteriaScoreEntry[] = studentPayloads.get(st.id) ?? [];
 					if (isNrNa) {
 						existing.push({
-							rubric_question_criteria_id: lowestCriteria.id,
+							rubricQuestionCriteriaId: lowestCriteria.id,
 							score: 0,
 							commentaries: {},
 						});
@@ -229,7 +229,7 @@ export function ProjectRubricNonCapstoneTable({
 						const matchedCriteria = findMatchingCriteria(q, score);
 						if (!matchedCriteria) return;
 						existing.push({
-							rubric_question_criteria_id: matchedCriteria.id,
+							rubricQuestionCriteriaId: matchedCriteria.id,
 							score,
 							commentaries: {},
 						});
@@ -240,16 +240,16 @@ export function ProjectRubricNonCapstoneTable({
 		}
 
 		// Submit one request per student; skip students with no scored criteria
-		for (const [project_student_id, criteriaScores] of studentPayloads.entries()) {
+		for (const [projectStudentId, criteriaScores] of studentPayloads.entries()) {
 			if (!criteriaScores.length) continue;
 
 			submitEvaluation({
-				project_student_id,
-				project_evaluator_id: evaluatorId,
-				rubric_id: rubricId,
+				projectStudentId,
+				projectEvaluatorId: evaluatorId,
+				rubricId: rubricId,
 				observation: { es: '', en: '' },
 				scores: criteriaScores,
-				qualification_status_type_id: qualifStatuses[project_student_id],
+				qualificationStatusTypeId: qualifStatuses[projectStudentId],
 			});
 		}
 	};
@@ -305,8 +305,8 @@ export function ProjectRubricNonCapstoneTable({
 									<td className="px-4 py-4">
 										<div className="flex gap-2">
 											{q.criterias.map((c) => {
-												const minF = fmtNum(c.min_value);
-												const maxF = fmtNum(c.max_value);
+												const minF = fmtNum(c.minValue);
+												const maxF = fmtNum(c.maxValue);
 												const desc = c.text[locale as 'es' | 'en'] ?? c.text.es;
 												return (
 													<div
@@ -344,7 +344,7 @@ export function ProjectRubricNonCapstoneTable({
 														return (
 															<div key={stIdx} className="flex items-center gap-2">
 																<span className="min-w-0 truncate text-xs font-medium text-zinc-700">
-																	{st.first_name} {st.last_name}
+																	{st.firstName} {st.lastName}
 																</span>
 																<ScoreInput
 																	value={val}

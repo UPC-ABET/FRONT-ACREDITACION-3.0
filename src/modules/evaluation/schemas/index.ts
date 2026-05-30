@@ -7,4 +7,3 @@ export * from './evaluationScoreSchema';
 export * from './finalizeEvaluationSchema';
 export * from './question.schema';
 export * from './submitEvaluationSchema';
-export * from './performanceLevelSchema';

@@ -10,26 +10,26 @@ export * from './rubricQuestion';
 
 // ── Request DTOs ─────────────────────────────────────────────────────────────
 export type EvaluationScorePayload = {
-	rubric_question_criteria_id: number;
+	rubricQuestionCriteriaId: number;
 	score: number;
 	commentaries: Record<string, string>;
 };
 
 export type SubmitEvaluationPayload = {
-	project_student_id: number;
-	project_evaluator_id: number;
-	rubric_id: number;
+	projectStudentId: number;
+	projectEvaluatorId: number;
+	rubricId: number;
 	observation: { es: string; en: string };
 	scores: EvaluationScorePayload[];
-	qualification_status_type_id?: number | null;
+	qualificationStatusTypeId?: number | null;
 };
 
 export type CreateProjectFullDto = {
 	code: string;
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
-	student_section_enrollment_ids?: number[];
-	evaluator_professor_ids?: number[];
+	studentSectionEnrollmentIds?: number[];
+	evaluatorProfessorIds?: number[];
 };
 
 export type CreateProjectDto = {
@@ -39,63 +39,63 @@ export type CreateProjectDto = {
 };
 
 export type CreateRubricFullDto = {
-	rubric_type_id: number;
-	grade_type_id: number;
-	study_plan_course_id: number;
-	is_active?: boolean;
+	rubricTypeId: number;
+	gradeTypeId: number;
+	studyPlanCourseId: number;
+	isActive?: boolean;
 	extra?: Record<string, unknown>;
 	questions: Array<{
-		outcome_id?: number;
+		outcomeId?: number;
 		question: { es: string; en: string } | string;
 		criterias: Array<{
 			criteria: { es: string; en: string } | string;
-			min_value: number;
-			max_value: number;
+			minValue: number;
+			maxValue: number;
 		}>;
 	}>;
 };
 
 export type CreateRubricDto = {
-	rubric_type_id: number;
-	grade_type_id: number;
-	study_plan_course_id: number;
+	rubricTypeId: number;
+	gradeTypeId: number;
+	studyPlanCourseId: number;
 };
 
 export type EvaluationScoreDto = {
-	rubric_question_criteria_id: number;
+	rubricQuestionCriteriaId: number;
 	score: number;
 	commentaries?: string;
 };
 
 export type FilterProjectDto = Partial<{
 	code: string;
-	is_active: boolean;
+	isActive: boolean;
 	name: { es?: string; en?: string };
 	description: { es?: string; en?: string };
 	extra: Record<string, unknown>;
-	academic_period_id: number;
-	program_id: number;
-	school_id: number;
-	course_id: number;
-	student_id: number;
-	professor_id: number;
+	academicPeriodId: number;
+	programId: number;
+	schoolId: number;
+	courseId: number;
+	studentId: number;
+	professorId: number;
 }>;
 
 export type FilterRubricDto = Partial<{
-	study_plan_course_id: number;
-	grade_type_id: number;
-	is_active: boolean;
+	studyPlanCourseId: number;
+	gradeTypeId: number;
+	isActive: boolean;
 }>;
 
 export type FinalizeEvaluationDto = {
-	project_id: number;
-	evaluator_id: number;
-	is_pa?: boolean;
+	projectId: number;
+	evaluatorId: number;
+	isPa?: boolean;
 };
 
 export type SubmitEvaluationDto = {
-	project_student_id: number;
-	project_evaluator_id: number;
+	projectStudentId: number;
+	projectEvaluatorId: number;
 	observation?: string;
 	scores: EvaluationScoreDto[];
 };
@@ -111,22 +111,22 @@ type I18nText = { es: string; en: string };
 export type UpdateRubricCriteriaDto = {
 	id?: number;
 	criteria: I18nText;
-	min_value: number;
-	max_value: number;
+	minValue: number;
+	maxValue: number;
 };
 
 export type UpdateRubricQuestionDto = {
 	id?: number;
-	outcome_id?: number;
+	outcomeId?: number;
 	question: I18nText;
 	criterias: UpdateRubricCriteriaDto[];
 };
 
 export type UpdateRubricDto = {
-	rubric_type_id?: number;
-	grade_type_id?: number;
-	study_plan_course_id?: number;
-	is_active?: boolean;
+	rubricTypeId?: number;
+	gradeTypeId?: number;
+	studyPlanCourseId?: number;
+	isActive?: boolean;
 	extra?: Record<string, unknown>;
 	questions?: UpdateRubricQuestionDto[];
 };
@@ -147,11 +147,11 @@ import { TypeResponse } from '@/modules/core';
 export type RubricScoreResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
-	is_active: boolean;
-	created_at: string;
-	updated_at: string | null;
-	evaluation_id: number;
-	rubric_question_criteria_id: number;
+	isActive: boolean;
+	createdAt: string;
+	updatedAt: string | null;
+	evaluationId: number;
+	rubricQuestionCriteriaId: number;
 	score: number;
 	commentaries?: { en: string; es: string };
 };
@@ -159,89 +159,89 @@ export type RubricScoreResponse = {
 export type ProjectStudentResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
-	is_active: boolean;
-	created_at: string;
-	updated_at: string | null;
-	project_id: number;
-	student_section_enrollment_id: number;
-	student_info?: {
-		first_name: string;
-		last_name: string;
-		student_id: number;
-		section_code: string;
-		section_id: number;
+	isActive: boolean;
+	createdAt: string;
+	updatedAt: string | null;
+	projectId: number;
+	studentSectionEnrollmentId: number;
+	studentInfo?: {
+		firstName: string;
+		lastName: string;
+		studentId: number;
+		sectionCode: string;
+		sectionId: number;
 	};
 };
 
 export type EvaluationResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
-	is_active: boolean;
-	created_at: string;
-	updated_at: string | null;
-	project_student_id: number;
-	project_evaluator_id: number;
-	qualification_status_type_id?: number;
+	isActive: boolean;
+	createdAt: string;
+	updatedAt: string | null;
+	projectStudentId: number;
+	projectEvaluatorId: number;
+	qualificationStatusTypeId?: number;
 	observation?: { en: string; es: string };
-	register_at?: string;
-	project_student?: ProjectStudentResponse;
+	registerAt?: string;
+	projectStudent?: ProjectStudentResponse;
 	scores?: RubricScoreResponse[];
 };
 
 export { type OutcomeResponse };
 
 export type ProjectByProfessorResponse = {
-	project_id: number;
-	project_code: string;
-	project_name: { en: string; es: string };
-	evaluation_date: string;
-	course_name: string;
+	projectId: number;
+	projectCode: string;
+	projectName: { en: string; es: string };
+	evaluationDate: string;
+	courseName: string;
 	evaluators: {
 		id: number;
-		professor_id: number;
-		first_name: string;
-		last_name: string;
+		professorId: number;
+		firstName: string;
+		lastName: string;
 		email: string;
-		evaluator_type: { en: string; es: string };
+		evaluatorType: { en: string; es: string };
 	}[];
 	students: {
 		id: number;
-		first_name: string;
-		last_name: string;
+		firstName: string;
+		lastName: string;
 		email: string;
-		student_code: string;
+		studentCode: string;
 	}[];
 };
 
 export type StudentEvaluationResponse = {
-	evaluator_id: number;
-	qualification_status_type_id: number;
+	evaluatorId: number;
+	qualificationStatusTypeId: number;
 };
 
 export type ProjectDetailsStudentResponse = {
 	id: number;
-	student_id: number;
-	first_name: string;
-	last_name: string;
+	studentId: number;
+	firstName: string;
+	lastName: string;
 	email: string;
-	student_code: string;
-	total_grade: number | null;
+	studentCode: string;
+	totalGrade: number | null;
 	evaluations: StudentEvaluationResponse[] | undefined;
 };
 
 export type ProjectDetailsEvaluatorResponse = {
 	id: number;
-	professor_id: number;
-	professor_first_name: string;
-	professor_last_name: string;
-	professor_email: string;
-	evaluator_type_id: number;
-	evaluator_type_name: { en: string; es: string };
+	professorId: number;
+	professorFirstName: string;
+	professorLastName: string;
+	professorEmail: string;
+	evaluatorTypeId: number;
+	evaluatorTypeName: { en: string; es: string };
 };
 
 export type CriteriaScoreResponse = {
-	student_id: number;
-	evaluator_id: number;
+	studentId: number;
+	evaluatorId: number;
 	score: number;
 	commentaries: { en: string; es: string };
 };
@@ -249,8 +249,8 @@ export type CriteriaScoreResponse = {
 export type RubricCriteriaDetailsResponse = {
 	id: number;
 	text: { en: string; es: string };
-	min_value: string;
-	max_value: string;
+	minValue: string;
+	maxValue: string;
 	scores: CriteriaScoreResponse[];
 };
 
@@ -268,9 +268,9 @@ export type ProjectDetailsResponse = {
 		name: { en: string; es: string };
 		description: { en: string; es: string };
 	};
-	academic_period: {
+	academicPeriod: {
 		id: number;
-		modality_type_id: number;
+		modalityTypeId: number;
 		code: string;
 	} | null;
 	students: ProjectDetailsStudentResponse[];
@@ -278,8 +278,8 @@ export type ProjectDetailsResponse = {
 	rubric: {
 		rubric: {
 			id: number;
-			rubric_type: { id: number; code: string; name: { en: string; es: string } };
-			grade_type: { id: number; code: string; name: { en: string; es: string } };
+			rubricType: { id: number; code: string; name: { en: string; es: string } };
+			gradeType: { id: number; code: string; name: { en: string; es: string } };
 		};
 		course: {
 			id: number;
@@ -298,26 +298,26 @@ export type ProjectDetailsResponse = {
 };
 
 export type ProjectEvaluatorInfoResponse = {
-	first_name: string;
-	last_name: string;
-	evaluator_type_name: { en: string; es: string };
-	evaluator_type_code: string;
+	firstName: string;
+	lastName: string;
+	evaluatorTypeName: { en: string; es: string };
+	evaluatorTypeCode: string;
 };
 
 export type ProjectEvaluatorResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
-	is_active: boolean;
-	created_at: string;
-	updated_at: string | null;
-	project_id: number;
-	professor_id: number;
-	evaluator_type_id: number;
-	evaluator_info?: {
-		first_name: string;
-		last_name: string;
-		evaluator_type_name: { en: string; es: string };
-		evaluator_type_code: string;
+	isActive: boolean;
+	createdAt: string;
+	updatedAt: string | null;
+	projectId: number;
+	professorId: number;
+	evaluatorTypeId: number;
+	evaluatorInfo?: {
+		firstName: string;
+		lastName: string;
+		evaluatorTypeName: { en: string; es: string };
+		evaluatorTypeCode: string;
 	};
 };
 
@@ -332,8 +332,8 @@ export type ProjectResponse = BaseEntity & {
 export type RubricQuestionCriteriaResponse = {
 	id: number;
 	text: string;
-	min_value: number;
-	max_value: number;
+	minValue: number;
+	maxValue: number;
 };
 
 export type RubricQuestionResponse = {
@@ -347,15 +347,15 @@ export type RubricQuestionResponse = {
 export type RubricResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
-	is_active: boolean;
-	created_at: string;
-	updated_at: string | null;
-	rubric_type_id: number;
-	grade_type_id: number;
-	study_plan_course_id: number;
-	study_plan_course: StudyPlanCourseResponse;
-	grade_type: TypeResponse;
-	rubric_type: TypeResponse;
+	isActive: boolean;
+	createdAt: string;
+	updatedAt: string | null;
+	rubricTypeId: number;
+	gradeTypeId: number;
+	studyPlanCourseId: number;
+	studyPlanCourse: StudyPlanCourseResponse;
+	gradeType: TypeResponse;
+	rubricType: TypeResponse;
 	isUsed: boolean;
 };
 
@@ -363,13 +363,13 @@ export type RubricResponse = {
 export type GetRubricByIdResponse = {
 	rubric: {
 		id: number;
-		rubric_type_id: number;
-		grade_type_id: number;
-		study_plan_course_id: number;
-		is_active: boolean;
-		created_at: string;
-		rubric_type: TypeResponse;
-		grade_type: TypeResponse;
+		rubricTypeId: number;
+		gradeTypeId: number;
+		studyPlanCourseId: number;
+		isActive: boolean;
+		createdAt: string;
+		rubricType: TypeResponse;
+		gradeType: TypeResponse;
 	};
 	course: CourseResponse;
 	academicPeriod: AcademicPeriodResponse;

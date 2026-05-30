@@ -37,8 +37,8 @@ export function ProjectCreateWizard() {
 				code: formData.code,
 				name: { es: formData.name, en: formData.name },
 				description: { es: formData.description, en: formData.description },
-				study_plan_course_id: step1Data.studyPlanCourseId,
-				student_section_enrollment_ids: formData.studentEnrollmentIds,
+				studyPlanCourseId: step1Data.studyPlanCourseId,
+				studentSectionEnrollmentIds: formData.studentEnrollmentIds,
 				evaluators: formData.evaluators,
 			};
 			const res = await projectsService.createFull(body);

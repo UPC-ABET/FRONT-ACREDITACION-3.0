@@ -10,7 +10,7 @@ interface BackendEntity {
 	codigo?: string;
 	name?: string | { es?: string; en?: string };
 	nombre?: string;
-	is_active?: boolean;
+	isActive?: boolean;
 }
 
 type Envelope<T> = T[] | { data?: T[] };
@@ -60,7 +60,7 @@ export async function getPrograms(): Promise<Program[]> {
 }
 
 // ─── Survey Type IDs (cached from /types/by-group-code/TG601) ────────────────
-// The acceptance-levels endpoint requires survey_type_id (numeric FK to types table).
+// The acceptance-levels endpoint requires surveyTypeId (numeric FK to types table).
 
 let _surveyTypeIds: Map<string, number> | null = null;
 
@@ -90,9 +90,9 @@ export async function getSurveyTypeId(code: string): Promise<number> {
 				if (item && typeof item === 'object') {
 					const t = item as Record<string, unknown>;
 					const id = typeof t.id === 'number' ? t.id : Number(t.id);
-					// accept any field that looks like a code: code, type_code, survey_type_code, codigo
+					// accept any field that looks like a code: code, typeCode, surveyTypeCode, codigo
 					const rawCode = String(
-						t.code ?? t.type_code ?? t.survey_type_code ?? t.codigo ?? '',
+						t.code ?? t.typeCode ?? t.surveyTypeCode ?? t.codigo ?? '',
 					).toUpperCase();
 					if (id > 0 && rawCode) map.set(rawCode, id);
 				}

@@ -9,8 +9,8 @@ export const professorsService = {
 
 	getByFilters(filters: {
 		search?: string;
-		is_active?: boolean;
+		isActive?: boolean;
 	}): Promise<ApiResponse<ProfessorSearchResponse[]>> {
-		return apiPost('/professors/get-by-filters', { is_active: true, ...filters });
+		return apiPost('/professors/get-by-filters', { isActive: true, ...filters });
 	},
 };

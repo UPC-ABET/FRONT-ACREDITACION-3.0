@@ -9,21 +9,18 @@ import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable';
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable';
 import { TYPE_CODES } from '@/modules/core';
-import { GRADE_IDS, RUBRIC_IDS } from '../constants/typeCodes';
-
-const CAPSTONE_RUBRIC_TYPE_ID = RUBRIC_IDS.CAPSTONE;
 
 interface ProjectEvaluatePageProps {
 	projectId: string;
-	gradeTypeId: number;
+	gradeTypeCode: string;
 }
 
-export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluatePageProps) {
+export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluatePageProps) {
 	const { t, locale } = useI18n();
 	const { user: authUser } = useAuth();
 
 	const { data, isLoading, isError, error } = useProjectDetails(projectId, {
-		gradeTypeId,
+		gradeTypeCode,
 		isEvaluationMode: true,
 	});
 	const { statusTypes, isLoading: isLoadingStatuses } = useQualificationStatusTypes();
@@ -39,15 +36,15 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 	const evaluatorId = useMemo(() => {
 		if (!data?.evaluators?.length) return 0;
 		const myProfessorId = authUser?.id ?? 0;
-		const match = data.evaluators.find((e) => e.professor_id === myProfessorId);
+		const match = data.evaluators.find((e) => e.professorId === myProfessorId);
 		return match?.id ?? data.evaluators[0]?.id ?? 0;
 	}, [data?.evaluators, authUser?.id]);
 
 	const initialQualifStatuses = useMemo<Record<number, number | null>>(() => {
 		const result: Record<number, number | null> = {};
 		for (const st of data?.students ?? []) {
-			const entry = (st.evaluations ?? []).find((e) => e.evaluator_id === evaluatorId);
-			result[st.id] = entry?.qualification_status_type_id ?? null;
+			const entry = (st.evaluations ?? []).find((e) => e.evaluatorId === evaluatorId);
+			result[st.id] = entry?.qualificationStatusTypeId ?? null;
 		}
 		return result;
 	}, [data?.students, evaluatorId]);
@@ -89,16 +86,16 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 	const projectName = project.name[locale as 'es' | 'en'] ?? project.name.es;
 	const courseName = rubric.course.name[locale as 'es' | 'en'] ?? rubric.course.name.es;
 	const rubricTypeName =
-		rubric.rubric.rubric_type?.name[locale as 'es' | 'en'] ??
-		rubric.rubric.rubric_type?.name.es ??
+		rubric.rubric.rubricType?.name[locale as 'es' | 'en'] ??
+		rubric.rubric.rubricType?.name.es ??
 		'—';
 	const gradeTypeName =
-		rubric.rubric.grade_type?.name[locale as 'es' | 'en'] ??
-		rubric.rubric.grade_type?.name.es ??
+		rubric.rubric.gradeType?.name[locale as 'es' | 'en'] ??
+		rubric.rubric.gradeType?.name.es ??
 		'—';
 
-	const isCapstone = rubric.rubric.rubric_type?.id === CAPSTONE_RUBRIC_TYPE_ID;
-	const isFinal = gradeTypeId === GRADE_IDS.FINAL;
+	const isCapstone = rubric.rubric.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
+	const isFinal = gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
 	const isCapstoneFinal = isCapstone && isFinal;
 
 	return (
@@ -167,10 +164,10 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 								{/* Student info */}
 								<div className="flex flex-col gap-0.5">
 									<span className="font-medium text-zinc-900">
-										{student.first_name} {student.last_name}
+										{student.firstName} {student.lastName}
 									</span>
 									<div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-zinc-500">
-										<span className="font-mono">{student.student_code}</span>
+										<span className="font-mono">{student.studentCode}</span>
 										<span className="text-zinc-300">·</span>
 										<span>{student.email}</span>
 									</div>
@@ -200,9 +197,9 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 									<span className="text-xs font-medium text-zinc-400">
 										{t('projects.evaluate.students.grade')}
 									</span>
-									{student.total_grade != null ? (
+									{student.totalGrade != null ? (
 										<span className="text-2xl font-bold tabular-nums text-zinc-900">
-											{student.total_grade}
+											{student.totalGrade}
 											<span className="ml-0.5 text-sm font-normal text-zinc-400">/20</span>
 										</span>
 									) : (
@@ -223,7 +220,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeId }: ProjectEvaluateP
 					outcomes={rubric.outcomes}
 					questions={rubric.questions}
 					students={students}
-					academicPeriodId={data.academic_period?.id ?? null}
+					academicPeriodId={data.academicPeriod?.id ?? null}
 					evaluatorId={evaluatorId}
 					rubricId={rubric.rubric.id}
 					projectId={projectId}

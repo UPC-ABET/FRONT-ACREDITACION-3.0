@@ -36,22 +36,22 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 
 	const columns = useMemo<ColumnDef<IFCRow>[]>(
 		() => [
-			{ accessorKey: 'course_code', header: t('ifcs.table.code') },
+			{ accessorKey: 'courseCode', header: t('ifcs.table.code') },
 			{
-				accessorKey: 'program_label',
+				accessorKey: 'programLabel',
 				header: t('ifcs.table.program'),
 				cell: ({ row }) =>
-					row.original.program_label?.[lang] ?? row.original.program_label?.es ?? '',
+					row.original.programLabel?.[lang] ?? row.original.programLabel?.es ?? '',
 			},
 			{
-				accessorKey: 'course_name',
+				accessorKey: 'courseName',
 				header: t('ifcs.table.course'),
-				cell: ({ row }) => row.original.course_name?.[lang] ?? row.original.course_name?.es ?? '',
+				cell: ({ row }) => row.original.courseName?.[lang] ?? row.original.courseName?.es ?? '',
 			},
 			{
-				accessorKey: 'coordinator_name',
+				accessorKey: 'coordinatorName',
 				header: t('ifcs.table.coordinator'),
-				cell: ({ row }) => row.original.coordinator_name ?? '—',
+				cell: ({ row }) => row.original.coordinatorName ?? '—',
 			},
 			{
 				id: 'status',
@@ -59,9 +59,9 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 				cell: ({ row }) => {
 					const code = effectiveStatus(row.original);
 					const label = row.original.ifc
-						? (row.original.ifc.status_label[lang] ?? row.original.ifc.status_label.es ?? code)
+						? (row.original.ifc.statusLabel[lang] ?? row.original.ifc.statusLabel.es ?? code)
 						: (UNREG_LABEL[lang] ?? UNREG_LABEL.es);
-					return <Badge color={row.original.ifc?.status_color}>{label}</Badge>;
+					return <Badge color={row.original.ifc?.statusColor}>{label}</Badge>;
 				},
 			},
 			{
@@ -70,7 +70,7 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 				cell: ({ row }) => {
 					const r = row.original;
 					const status = effectiveStatus(r);
-					const coordinatorId = r.coordinator_user_id;
+					const coordinatorId = r.coordinatorUserId;
 					const isOwn =
 						currentUserId != null &&
 						coordinatorId != null &&
@@ -82,7 +82,7 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 
 					if (r.ifc) {
 						const ifcId = Number(r.ifc.id);
-						const isApproved = r.ifc.status_code === TYPE_CODES.IFC_STATUS.APPROVED;
+						const isApproved = r.ifc.statusCode === TYPE_CODES.IFC_STATUS.APPROVED;
 						return (
 							<div className="flex items-center gap-1">
 								<Link
@@ -106,8 +106,8 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 								{canNotify && periodId !== null && (
 									<button
 										type="button"
-										disabled={notifyingChartId === Number(r.chart_id)}
-										onClick={() => onNotify(Number(r.chart_id))}
+										disabled={notifyingChartId === Number(r.chartId)}
+										onClick={() => onNotify(Number(r.chartId))}
 										aria-label={t('ifcs.notify.btn.tooltip')}
 										title={t('ifcs.notify.btn.tooltip')}
 										className={ICON_BTN}>
@@ -121,7 +121,7 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 						return (
 							<div className="flex items-center gap-1">
 								<Link
-									href={`/ifcs/new?chart_id=${r.chart_id}&period_id=${periodId}`}
+									href={`/ifcs/new?chartId=${r.chartId}&periodId=${periodId}`}
 									className={ICON_BTN}
 									aria-label={t('ifcs.table.actionRegister')}
 									title={t('ifcs.table.actionRegister')}>
@@ -130,8 +130,8 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 								{canNotify && (
 									<button
 										type="button"
-										disabled={notifyingChartId === Number(r.chart_id)}
-										onClick={() => onNotify(Number(r.chart_id))}
+										disabled={notifyingChartId === Number(r.chartId)}
+										onClick={() => onNotify(Number(r.chartId))}
 										aria-label={t('ifcs.notify.btn.tooltip')}
 										title={t('ifcs.notify.btn.tooltip')}
 										className={ICON_BTN}>

@@ -22,7 +22,7 @@ export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete 
 		label:
 			f.description[lang]?.trim() ||
 			f.description.es?.trim() ||
-			`${FORM_LABELS.finding_placeholder[lang]} ${idx + 1}`,
+			`${FORM_LABELS.findingPlaceholder[lang]} ${idx + 1}`,
 	}));
 
 	const noFindings = findings.length === 0;
@@ -31,23 +31,23 @@ export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete 
 		<section className="space-y-5">
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<h2 className="text-lg font-bold uppercase tracking-wide text-zinc-900">
-					{FORM_LABELS.section_actions[lang]}
+					{FORM_LABELS.sectionActions[lang]}
 				</h2>
 				<Button variant="secondary" size="lg" disabled={noFindings} onClick={onAdd}>
 					<PlusIcon className="h-5 w-5" />
-					{FORM_LABELS.btn_add_action[lang]}
+					{FORM_LABELS.btnAddAction[lang]}
 				</Button>
 			</div>
 
 			{actions.length === 0 && (
 				<div className="rounded-lg border border-dashed border-zinc-200 bg-white py-10 text-center text-base italic text-zinc-500">
-					{FORM_LABELS.section_actions[lang]} — {FORM_LABELS.btn_add_action[lang].toLowerCase()}
+					{FORM_LABELS.sectionActions[lang]} — {FORM_LABELS.btnAddAction[lang].toLowerCase()}
 				</div>
 			)}
 
 			<div className="space-y-4">
 				{actions.map((a, idx) => {
-					const selectedFinding = findingOptions.find((o) => o.value === a.finding_temp_id);
+					const selectedFinding = findingOptions.find((o) => o.value === a.findingTempId);
 					return (
 						<div
 							key={a.tempId}
@@ -57,14 +57,14 @@ export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete 
 									<span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700">
 										{idx + 1}
 									</span>
-									{FORM_LABELS.action_placeholder[lang]}
+									{FORM_LABELS.actionPlaceholder[lang]}
 								</span>
 								<Button
 									variant="ghost"
 									size="md"
 									onClick={() => onDelete(a.tempId)}
-									aria-label={FORM_LABELS.btn_delete[lang]}
-									title={FORM_LABELS.btn_delete[lang]}
+									aria-label={FORM_LABELS.btnDelete[lang]}
+									title={FORM_LABELS.btnDelete[lang]}
 									className="text-zinc-500 hover:text-red-600">
 									<TrashIcon className="h-5 w-5" />
 								</Button>
@@ -72,17 +72,17 @@ export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete 
 
 							<div className="space-y-5 p-5">
 								<Select
-									label={FORM_LABELS.col_finding[lang]}
+									label={FORM_LABELS.colFinding[lang]}
 									value={selectedFinding ?? null}
 									options={findingOptions}
 									onChange={(_, opt) => {
 										const v = (opt as { value?: string } | null)?.value ?? '';
-										onUpdate(a.tempId, { finding_temp_id: v });
+										onUpdate(a.tempId, { findingTempId: v });
 									}}
 								/>
 
 								<I18nTextField
-									label={FORM_LABELS.col_description[lang]}
+									label={FORM_LABELS.colDescription[lang]}
 									required
 									value={a.description}
 									onChange={(next) => onUpdate(a.tempId, { description: next })}

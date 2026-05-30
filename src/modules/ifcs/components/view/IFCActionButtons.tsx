@@ -24,9 +24,9 @@ export function computeActionFlags(ifc: IFCHeader, currentUserId: number | null)
 	const status = ifc.status?.code ?? S.UNREGISTERED;
 	const isOwn =
 		currentUserId != null &&
-		ifc.coordinator.user_id != null &&
-		Number(ifc.coordinator.user_id) === Number(currentUserId);
-	const inChain = ifc.requester_in_chain;
+		ifc.coordinator.userId != null &&
+		Number(ifc.coordinator.userId) === Number(currentUserId);
+	const inChain = ifc.requesterInChain;
 
 	return {
 		status,
@@ -66,27 +66,27 @@ export function IFCActionButtons({
 		<div className="flex flex-wrap items-center justify-end gap-3 pt-2">
 			{flags.showBack && (
 				<Button variant="secondary" size="lg" onClick={onBack} disabled={disabled}>
-					{VIEW_LABELS.btn_back[lang]}
+					{VIEW_LABELS.btnBack[lang]}
 				</Button>
 			)}
 			{flags.showEdit && (
 				<Button variant="surface" size="lg" onClick={onEdit} disabled={disabled}>
-					{VIEW_LABELS.btn_edit[lang]}
+					{VIEW_LABELS.btnEdit[lang]}
 				</Button>
 			)}
 			{flags.showReject && (
 				<Button variant="warning" size="lg" onClick={onReject} disabled={disabled}>
-					{VIEW_LABELS.btn_reject[lang]}
+					{VIEW_LABELS.btnReject[lang]}
 				</Button>
 			)}
 			{flags.showApprove && (
 				<Button variant="primary" size="lg" onClick={onApprove} disabled={disabled}>
-					{VIEW_LABELS.btn_approve[lang]}
+					{VIEW_LABELS.btnApprove[lang]}
 				</Button>
 			)}
 			{flags.showSubmit && (
 				<Button variant="primary" size="lg" onClick={onSubmit} disabled={disabled}>
-					{VIEW_LABELS.btn_submit[lang]}
+					{VIEW_LABELS.btnSubmit[lang]}
 				</Button>
 			)}
 		</div>

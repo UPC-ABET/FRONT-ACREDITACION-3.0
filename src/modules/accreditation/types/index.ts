@@ -1,10 +1,10 @@
 export type CommissionResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
-	is_active: boolean;
-	created_at: string;
-	updated_at: string | null;
-	accreditor_id: number;
+	isActive: boolean;
+	createdAt: string;
+	updatedAt: string | null;
+	accreditorId: number;
 	code: string;
 	name: { en: string; es: string };
 };
@@ -12,15 +12,15 @@ export type CommissionResponse = {
 export type OutcomeResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
-	is_active: boolean;
-	created_at: string;
-	updated_at: string | null;
-	program_commission_id: number;
-	program_commission?: {
+	isActive: boolean;
+	createdAt: string;
+	updatedAt: string | null;
+	programCommissionId: number;
+	programCommission?: {
 		id: number;
 		commission: CommissionResponse;
 	};
-	outcome_code: string;
-	outcome_name: { en: string; es: string };
-	outcome_description: { en: string; es: string };
+	outcomeCode: string;
+	outcomeName: { en: string; es: string };
+	outcomeDescription: { en: string; es: string };
 };

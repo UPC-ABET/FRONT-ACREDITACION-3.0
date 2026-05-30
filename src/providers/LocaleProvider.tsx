@@ -12,7 +12,7 @@ type I18nContextType = {
 	t: (key: string) => string;
 };
 
-const STORAGE_KEY = 'app_locale';
+const STORAGE_KEY = 'appLocale';
 const DEFAULT_LOCALE: Locale = 'es';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 

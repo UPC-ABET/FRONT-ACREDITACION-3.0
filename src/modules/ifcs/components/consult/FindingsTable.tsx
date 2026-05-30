@@ -22,21 +22,21 @@ export function FindingsTable({ rows, onView, onDelete }: Props) {
 	const columns = useMemo<ColumnDef<FindingRow>[]>(
 		() => [
 			{
-				accessorKey: 'criticality_code',
+				accessorKey: 'criticalityCode',
 				header: t('ifcFindings.col.criticality'),
 				cell: ({ row }) => {
-					const code = row.original.criticality_code;
+					const code = row.original.criticalityCode;
 					const label =
-						row.original.criticality_name?.[lang] ?? row.original.criticality_name?.es ?? code;
-					return <Badge color={row.original.criticality_color}>{label}</Badge>;
+						row.original.criticalityName?.[lang] ?? row.original.criticalityName?.es ?? code;
+					return <Badge color={row.original.criticalityColor}>{label}</Badge>;
 				},
 			},
 			{
-				accessorKey: 'finding_code',
+				accessorKey: 'findingCode',
 				header: t('ifcFindings.col.code'),
 			},
 			{
-				accessorKey: 'academic_period_code',
+				accessorKey: 'academicPeriodCode',
 				header: t('ifcFindings.col.period'),
 			},
 			{

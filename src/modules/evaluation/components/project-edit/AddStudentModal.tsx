@@ -65,8 +65,8 @@ export function AddStudentModal({
 		setIsLoading(true);
 		coursesService
 			.getEnrolledStudents(courseId, {
-				is_active: true,
-				...(academicPeriodId != null ? { academic_period_id: academicPeriodId } : {}),
+				isActive: true,
+				...(academicPeriodId != null ? { academicPeriodId: academicPeriodId } : {}),
 			})
 			.then((r) => setStudents(r.data ?? []))
 			.catch(() => setStudents([]))
@@ -79,15 +79,15 @@ export function AddStudentModal({
 		if (!term) return students;
 		return students.filter(
 			(s) =>
-				s.first_name.toLowerCase().includes(term) ||
-				s.last_name.toLowerCase().includes(term) ||
-				s.student_code.toLowerCase().includes(term) ||
+				s.firstName.toLowerCase().includes(term) ||
+				s.lastName.toLowerCase().includes(term) ||
+				s.studentCode.toLowerCase().includes(term) ||
 				(s.email ?? '').toLowerCase().includes(term),
 		);
 	}, [students, search]);
 
 	const toggleStudent = (student: EnrolledStudentResponse) => {
-		const key = student.student_section_enrollment_id;
+		const key = student.studentSectionEnrollmentId;
 		setSelectedStudents((prev) => {
 			const next = new Map(prev);
 			if (next.has(key)) {
@@ -104,9 +104,9 @@ export function AddStudentModal({
 			Promise.all(
 				Array.from(selectedStudents.values()).map((student) =>
 					projectsService.createStudent({
-						project_id: projectNumericId,
-						student_section_enrollment_id: student.student_section_enrollment_id,
-						is_active: true,
+						projectId: projectNumericId,
+						studentSectionEnrollmentId: student.studentSectionEnrollmentId,
+						isActive: true,
 					}),
 				),
 			),
@@ -165,9 +165,9 @@ export function AddStudentModal({
 						) : (
 							<ul className="divide-y divide-zinc-100">
 								{filtered.map((student) => {
-									const isSelected = selectedStudents.has(student.student_section_enrollment_id);
+									const isSelected = selectedStudents.has(student.studentSectionEnrollmentId);
 									return (
-										<li key={student.student_section_enrollment_id}>
+										<li key={student.studentSectionEnrollmentId}>
 											<button
 												type="button"
 												onClick={() => toggleStudent(student)}
@@ -176,18 +176,18 @@ export function AddStudentModal({
 												}`}>
 												<div className="flex flex-col gap-0.5 min-w-0">
 													<span className="font-medium truncate">
-														{student.first_name} {student.last_name}
+														{student.firstName} {student.lastName}
 													</span>
 													<div
 														className={`flex flex-wrap items-center gap-x-2 text-xs truncate ${
 															isSelected ? 'text-zinc-300' : 'text-zinc-400'
 														}`}>
-														<span className="font-mono">{student.student_code}</span>
-														{student.section_code && (
+														<span className="font-mono">{student.studentCode}</span>
+														{student.sectionCode && (
 															<>
 																<span>·</span>
 																<span>
-																	{t('projects.edit.students.modal.section')} {student.section_code}
+																	{t('projects.edit.students.modal.section')} {student.sectionCode}
 																</span>
 															</>
 														)}

@@ -21,10 +21,10 @@ export function IFCActionsTable({ findings }: Props) {
 
 	const columns = useMemo<ColumnDef<ActionRow>[]>(
 		() => [
-			{ accessorKey: 'code', header: VIEW_LABELS.col_code[lang] },
+			{ accessorKey: 'code', header: VIEW_LABELS.colCode[lang] },
 			{
 				id: 'description',
-				header: VIEW_LABELS.col_description[lang],
+				header: VIEW_LABELS.colDescription[lang],
 				accessorFn: (row) => row.description?.[lang] ?? row.description?.es ?? '',
 				cell: ({ row }) => (
 					<span className="whitespace-pre-line text-base leading-relaxed">
@@ -35,7 +35,7 @@ export function IFCActionsTable({ findings }: Props) {
 			{
 				id: 'completeness',
 				accessorFn: (row) => row.completeness.code,
-				header: VIEW_LABELS.col_completeness[lang],
+				header: VIEW_LABELS.colCompleteness[lang],
 				cell: ({ row }) => (
 					<Badge color={row.original.completeness.color}>
 						{row.original.completeness.name?.[lang] ?? row.original.completeness.name?.es ?? ''}
@@ -44,14 +44,14 @@ export function IFCActionsTable({ findings }: Props) {
 			},
 			{
 				accessorKey: 'parentFindingCode',
-				header: VIEW_LABELS.col_finding[lang],
+				header: VIEW_LABELS.colFinding[lang],
 			},
 		],
 		[lang],
 	);
 
 	return (
-		<Card title={VIEW_LABELS.section_actions[lang]}>
+		<Card title={VIEW_LABELS.sectionActions[lang]}>
 			<div className="overflow-x-auto">
 				<DataTable<ActionRow, unknown>
 					columns={columns}

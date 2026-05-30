@@ -11,18 +11,18 @@ function normalizeConfig(c: NotificationConfig): NotificationConfig {
 	return {
 		...c,
 		id: Number(c.id),
-		school_id: Number(c.school_id),
-		academic_period_id: Number(c.academic_period_id),
-		trigger_type_id: Number(c.trigger_type_id),
-		ifc_status_type_id: Number(c.ifc_status_type_id),
-		to_chart_level_type_ids: (c.to_chart_level_type_ids ?? []).map(Number),
-		cc_chart_level_type_ids: (c.cc_chart_level_type_ids ?? []).map(Number),
+		schoolId: Number(c.schoolId),
+		academicPeriodId: Number(c.academicPeriodId),
+		triggerTypeId: Number(c.triggerTypeId),
+		ifcStatusTypeId: Number(c.ifcStatusTypeId),
+		toChartLevelTypeIds: (c.toChartLevelTypeIds ?? []).map(Number),
+		ccChartLevelTypeIds: (c.ccChartLevelTypeIds ?? []).map(Number),
 	};
 }
 
 export async function listNotificationConfigs(periodId: number): Promise<NotificationConfig[]> {
 	const body = await apiGet<Envelope<NotificationConfig[]>>(
-		`/ifc-notification-configs/by-period?period_id=${Number(periodId)}`,
+		`/ifc-notification-configs/by-period?periodId=${Number(periodId)}`,
 	);
 
 	if (!body?.data) throw new ApiError(body?.message ?? 'admin.notify.error.listFailed');

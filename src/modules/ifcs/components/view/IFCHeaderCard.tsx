@@ -38,10 +38,10 @@ export function IFCHeaderCard({
 			<div className="space-y-6">
 				<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 					<IFCPageTitle
-						area={ifc.area_label}
-						subarea={ifc.subarea_label}
-						course={ifc.course_name}
-						period={ifc.academic_period_code}
+						area={ifc.areaLabel}
+						subarea={ifc.subareaLabel}
+						course={ifc.courseName}
+						period={ifc.academicPeriodCode}
 					/>
 					<Button
 						variant="secondary"
@@ -64,7 +64,7 @@ export function IFCHeaderCard({
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
 							{VIEW_LABELS.created[lang]}
 						</dt>
-						<dd className="mt-1.5 text-base text-zinc-900">{formatDateTime(ifc.created_at)}</dd>
+						<dd className="mt-1.5 text-base text-zinc-900">{formatDateTime(ifc.createdAt)}</dd>
 					</div>
 					<div>
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
@@ -84,7 +84,7 @@ export function IFCHeaderCard({
 				{isObserved && ifc.status?.comment && (
 					<div className="rounded-lg border border-amber-200 bg-amber-50 p-5">
 						<p className="text-sm font-semibold uppercase tracking-wide text-amber-700">
-							{VIEW_LABELS.rejection_reason[lang]}
+							{VIEW_LABELS.rejectionReason[lang]}
 						</p>
 						<p className="mt-2 whitespace-pre-line text-base leading-relaxed text-amber-900">
 							{ifc.status.comment[lang] ?? ifc.status.comment.es ?? ''}

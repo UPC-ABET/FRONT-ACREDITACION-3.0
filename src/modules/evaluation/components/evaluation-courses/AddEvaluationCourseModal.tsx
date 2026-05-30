@@ -50,7 +50,7 @@ export function AddEvaluationCourseModal({
 	}, [open]);
 
 	const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods(
-		{ is_active: true },
+		{ isActive: true },
 		{ enabled: open },
 	);
 
@@ -58,9 +58,9 @@ export function AddEvaluationCourseModal({
 
 	const spcFilters = useMemo(
 		() => ({
-			academic_period_id: Number(selectedPeriod?.value ?? 0),
-			school_id: schoolId,
-			is_active: true,
+			academicPeriodId: Number(selectedPeriod?.value ?? 0),
+			schoolId: schoolId,
+			isActive: true,
 		}),
 		[selectedPeriod?.value, schoolId],
 	);
@@ -70,7 +70,7 @@ export function AddEvaluationCourseModal({
 	});
 
 	const markedIds = useMemo(
-		() => new Set(spcList.filter((s) => s.extra?.is_evaluate_rubric === true).map((s) => s.id)),
+		() => new Set(spcList.filter((s) => s.extra?.isEvaluateRubric === true).map((s) => s.id)),
 		[spcList],
 	);
 
@@ -91,7 +91,7 @@ export function AddEvaluationCourseModal({
 
 		Promise.all(
 			toAdd.map((spc) => {
-				const mergedExtra = { ...(spc.extra ?? {}), is_evaluate_rubric: true };
+				const mergedExtra = { ...(spc.extra ?? {}), isEvaluateRubric: true };
 				return updateSpc.mutateAsync({ id: spc.id, body: { extra: mergedExtra } });
 			}),
 		)
@@ -106,7 +106,7 @@ export function AddEvaluationCourseModal({
 	const courseName = (spc: StudyPlanCourseResponse) =>
 		typeof spc.course?.name === 'string'
 			? spc.course.name
-			: (spc.course?.name?.[locale] ?? String(spc.course_id));
+			: (spc.course?.name?.[locale] ?? String(spc.courseId));
 
 	const canConfirm = pendingIds.size > 0 && !updateSpc.isPending;
 

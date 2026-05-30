@@ -3,19 +3,19 @@
 import { useState } from 'react';
 import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '../constants/performanceLevels';
 import type { PerformanceLevelFormState } from '../schemas/performanceLevelSchema';
-import type { CreatePerformanceLevelDto } from '@/modules/academic/services/performanceLevelsService';
-import { PerformanceLevelResponse } from '@/modules/academic';
+import type { CreatePerformanceLevelDto } from '../services/performanceLevelsService';
+import type { PerformanceLevelResponse } from '../types';
 
 const EMPTY_FORM: PerformanceLevelFormState = {
-	instrument_type_id: 0,
-	academic_period_id: 0,
-	name_es: '',
-	name_en: '',
+	instrumentTypeId: 0,
+	academicPeriodId: 0,
+	nameEs: '',
+	nameEn: '',
 	code: '',
-	unique_value: 0,
-	min_score: 0,
-	max_score: 0,
-	max_value: 0,
+	uniqueValue: 0,
+	minScore: 0,
+	maxScore: 0,
+	maxValue: 0,
 	color: DEFAULT_PERFORMANCE_LEVEL_COLOR,
 };
 
@@ -25,15 +25,15 @@ function round2(n: number): number {
 
 function levelToForm(level: PerformanceLevelResponse): PerformanceLevelFormState {
 	return {
-		instrument_type_id: level.instrument_type_id,
-		academic_period_id: level.academic_period_id,
-		name_es: level.name?.es ?? '',
-		name_en: level.name?.en ?? '',
+		instrumentTypeId: level.instrumentTypeId,
+		academicPeriodId: level.academicPeriodId,
+		nameEs: level.name?.es ?? '',
+		nameEn: level.name?.en ?? '',
 		code: level.code,
-		unique_value: Number(level.unique_value),
-		min_score: Number(level.min_score),
-		max_score: Number(level.max_score),
-		max_value: Number(level.max_value),
+		uniqueValue: Number(level.uniqueValue),
+		minScore: Number(level.minScore),
+		maxScore: Number(level.maxScore),
+		maxValue: Number(level.maxValue),
 		color: (level.extra as { color?: string })?.color ?? DEFAULT_PERFORMANCE_LEVEL_COLOR,
 	};
 }
@@ -51,14 +51,14 @@ export function usePerformanceLevelForm() {
 
 	function toDto(): CreatePerformanceLevelDto {
 		return {
-			instrument_type_id: form.instrument_type_id,
-			academic_period_id: form.academic_period_id,
-			name: { es: form.name_es, en: form.name_en },
+			instrumentTypeId: form.instrumentTypeId,
+			academicPeriodId: form.academicPeriodId,
+			name: { es: form.nameEs, en: form.nameEn },
 			code: form.code,
-			unique_value: round2(form.unique_value),
-			min_score: round2(form.min_score),
-			max_score: round2(form.max_score),
-			max_value: round2(form.max_value),
+			uniqueValue: round2(form.uniqueValue),
+			minScore: round2(form.minScore),
+			maxScore: round2(form.maxScore),
+			maxValue: round2(form.maxValue),
 			extra: { color: form.color },
 		};
 	}

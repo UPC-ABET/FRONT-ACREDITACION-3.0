@@ -62,12 +62,12 @@ export function LCFCReports() {
 					<div className="grid grid-cols-2 gap-3 text-sm">
 						<div>
 							<span className="text-xs text-zinc-500 block">Total encuestas</span>
-							<span className="font-semibold">{reportData.summary?.total_surveys ?? '—'}</span>
+							<span className="font-semibold">{reportData.summary?.totalSurveys ?? '—'}</span>
 						</div>
-						{reportData.summary?.completion_rate_pct !== undefined && (
+						{reportData.summary?.completionRatePct !== undefined && (
 							<div>
 								<span className="text-xs text-zinc-500 block">Tasa de completitud</span>
-								<span className="font-semibold">{reportData.summary.completion_rate_pct}%</span>
+								<span className="font-semibold">{reportData.summary.completionRatePct}%</span>
 							</div>
 						)}
 						{reportData.summary?.verde !== undefined && (
@@ -85,9 +85,9 @@ export function LCFCReports() {
 							<p className="text-xs font-bold text-zinc-600 mb-2">Outcomes</p>
 							<ul className="space-y-1">
 								{reportData.outcomes.map((o) => (
-									<li key={o.outcome_id} className="flex items-center justify-between text-xs">
-										<span className="text-zinc-700 truncate max-w-xs">{o.outcome_name}</span>
-										<span className="font-semibold ml-2">{o.average_score.toFixed(2)}</span>
+									<li key={o.outcomeId} className="flex items-center justify-between text-xs">
+										<span className="text-zinc-700 truncate max-w-xs">{o.outcomeName}</span>
+										<span className="font-semibold ml-2">{o.averageScore.toFixed(2)}</span>
 									</li>
 								))}
 							</ul>

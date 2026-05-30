@@ -10,7 +10,7 @@ import type { ScopeTree, SelectionValue } from '../types';
 type Props = {
 	scope: ScopeTree;
 	selections: Record<number, SelectionValue>;
-	onSelect: (level_num: number, value: SelectionValue) => void;
+	onSelect: (levelNum: number, value: SelectionValue) => void;
 };
 
 type DropdownOption = { value: number | 'ALL'; label: string };
@@ -18,14 +18,14 @@ type DropdownOption = { value: number | 'ALL'; label: string };
 export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 	const { locale: lang } = useI18n();
 
-	const firstLevelNum = scope.levels[0]?.level_num ?? 0;
+	const firstLevelNum = scope.levels[0]?.levelNum ?? 0;
 	const allLabel = lang === 'en' ? 'All' : 'Todos';
 
 	const renderedLevels = useMemo(() => {
 		return scope.levels.map((level) => {
-			const opts = optionsForLevel(scope, level.level_num, selections);
+			const opts = optionsForLevel(scope, level.levelNum, selections);
 			const parentMissing =
-				level.level_num > firstLevelNum && (selections[level.level_num - 1] ?? null) === null;
+				level.levelNum > firstLevelNum && (selections[level.levelNum - 1] ?? null) === null;
 
 			const dropdownOptions: DropdownOption[] = [
 				{ value: 'ALL', label: allLabel },
@@ -35,7 +35,7 @@ export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 				})),
 			];
 
-			const current = selections[level.level_num] ?? null;
+			const current = selections[level.levelNum] ?? null;
 			const selectedOpt =
 				current === null ? null : (dropdownOptions.find((o) => o.value === current) ?? null);
 
@@ -54,14 +54,14 @@ export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 			{renderedLevels.map(({ level, dropdownOptions, selectedOpt, disabled, empty }) => {
 				if (empty) return null;
 				return (
-					<Fragment key={level.level_num}>
+					<Fragment key={level.levelNum}>
 						<Select
-							label={LEVEL_LABELS[level.type_code]?.[lang] ?? level.type_code}
+							label={LEVEL_LABELS[level.typeCode]?.[lang] ?? level.typeCode}
 							isDisabled={disabled}
 							value={selectedOpt}
 							onChange={(_, opt) => {
 								const next = (opt as { value?: number | 'ALL' } | null)?.value ?? null;
-								onSelect(level.level_num, next);
+								onSelect(level.levelNum, next);
 							}}
 							options={dropdownOptions}
 						/>

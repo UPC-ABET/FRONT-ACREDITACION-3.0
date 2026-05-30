@@ -13,7 +13,7 @@ import { MAX_COLS, MAX_QUESTIONS, TARGET_SUM } from '../../constants';
 
 export interface NonCapstonePayloadQuestion {
 	question: { es: string; en: string };
-	criterias: { criteria: { es: string; en: string }; min_value: number; max_value: number }[];
+	criterias: { criteria: { es: string; en: string }; minValue: number; maxValue: number }[];
 }
 
 interface WizardStep3NonCapstoneProps {
@@ -239,8 +239,8 @@ export function WizardStep3NonCapstone({
 				question: { es: q.questionText.es, en: q.questionText.en },
 				criterias: q.criteria.map((c) => ({
 					criteria: { es: c.criteriaText.es, en: c.criteriaText.en },
-					min_value: c.minValue as number,
-					max_value: c.maxValue as number,
+					minValue: c.minValue as number,
+					maxValue: c.maxValue as number,
 				})),
 			})),
 		);

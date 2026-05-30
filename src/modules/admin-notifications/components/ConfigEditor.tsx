@@ -102,9 +102,9 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 	const [body, setBody] = useState<I18nText>(() =>
 		existingConfig ? asI18n(existingConfig.body) : emptyI18n(),
 	);
-	const [toIds, setToIds] = useState<number[]>(() => existingConfig?.to_chart_level_type_ids ?? []);
-	const [ccIds, setCcIds] = useState<number[]>(() => existingConfig?.cc_chart_level_type_ids ?? []);
-	const [isActive, setIsActive] = useState<boolean>(() => existingConfig?.is_active ?? true);
+	const [toIds, setToIds] = useState<number[]>(() => existingConfig?.toChartLevelTypeIds ?? []);
+	const [ccIds, setCcIds] = useState<number[]>(() => existingConfig?.ccChartLevelTypeIds ?? []);
+	const [isActive, setIsActive] = useState<boolean>(() => existingConfig?.isActive ?? true);
 	const [saving, setSaving] = useState(false);
 	const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -125,14 +125,14 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 		setSaving(true);
 		try {
 			const payload: UpsertConfigBody = {
-				academic_period_id: periodId,
-				trigger_type_id: triggerTypeId,
-				ifc_status_type_id: statusTypeId,
+				academicPeriodId: periodId,
+				triggerTypeId: triggerTypeId,
+				ifcStatusTypeId: statusTypeId,
 				title,
 				body,
-				to_chart_level_type_ids: toIds,
-				cc_chart_level_type_ids: ccIds,
-				is_active: isActive,
+				toChartLevelTypeIds: toIds,
+				ccChartLevelTypeIds: ccIds,
+				isActive: isActive,
 			};
 			await upsertNotificationConfig(payload);
 			onSuccess(t('admin.notify.toast.saved'));

@@ -11,25 +11,25 @@ import type {
 
 interface BackendLcfcConfig {
 	id: number;
-	is_active: boolean;
+	isActive: boolean;
 	extra?: {
-		course_section_id?: number;
-		program_id?: number;
-		academic_period_id?: number;
+		courseSectionId?: number;
+		programId?: number;
+		academicPeriodId?: number;
 	};
-	course_name?: string;
-	course_code?: string;
-	course_section_id?: number;
+	courseName?: string;
+	courseCode?: string;
+	courseSectionId?: number;
 }
 
 // ─── Adapter ───────────────────────────────────────────────────────────────
 
 function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 	return {
-		idCurso: raw.course_section_id ?? raw.extra?.course_section_id ?? raw.id,
-		nombreCurso: raw.course_name ?? `Curso ${raw.id}`,
-		codigo: raw.course_code ?? '',
-		isActive: raw.is_active,
+		idCurso: raw.courseSectionId ?? raw.extra?.courseSectionId ?? raw.id,
+		nombreCurso: raw.courseName ?? `Curso ${raw.id}`,
+		codigo: raw.courseCode ?? '',
+		isActive: raw.isActive,
 		comisiones: [],
 	};
 }
@@ -38,17 +38,17 @@ function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 
 export async function listLCFCCourses(
 	_idEscuela: string,
-	academic_period_id: number,
-	program_id?: number,
+	academicPeriodId: number,
+	programId?: number,
 	page = 0,
 	pageSize = -1,
 ): Promise<{ cursos: LCFCCourse[]; pageInfo?: PageInfo }> {
 	const res = await apiPost<BackendLcfcConfig[] | SurveyApiResponse<BackendLcfcConfig[]>>(
 		'lcfc/config/get-by-filters',
 		{
-			academic_period_id,
-			program_id: program_id || undefined,
-			is_active: undefined,
+			academicPeriodId,
+			programId: programId || undefined,
+			isActive: undefined,
 			pageNumber: page,
 			pageSize,
 		},
@@ -66,14 +66,14 @@ export async function listLCFCCourses(
 
 export async function generateLCFCConfiguration(
 	_escuela: string,
-	academic_period_id: number,
-	program_id?: number,
-	campus_id?: number,
+	academicPeriodId: number,
+	programId?: number,
+	campusId?: number,
 ) {
 	return apiPost('lcfc/config/generate', {
-		academic_period_id,
-		program_id: program_id ?? 0,
-		campus_id: campus_id ?? 0,
+		academicPeriodId,
+		programId: programId ?? 0,
+		campusId: campusId ?? 0,
 	});
 }
 
@@ -87,11 +87,11 @@ export async function cloneLCFCConfiguration(
 }
 
 export async function changeLCFCConfigStatus(
-	config_id: number,
+	configId: number,
 	nuevoEstado: 'ACTIVO' | 'INACTIVO',
 ) {
 	return apiPost('lcfc/config/update-status', {
-		updates: [{ config_id, is_active: nuevoEstado === 'ACTIVO' }],
+		updates: [{ configId, isActive: nuevoEstado === 'ACTIVO' }],
 	});
 }
 
@@ -135,9 +135,9 @@ export async function uploadLCFCMassive(_file: File, _escuelaActual?: unknown): 
 // ─── Dashboard ─────────────────────────────────────────────────────────────
 
 export async function generateLCFCDashboard(params: {
-	academic_period_id?: number;
-	program_id?: number;
-	campus_id?: number;
+	academicPeriodId?: number;
+	programId?: number;
+	campusId?: number;
 }): Promise<DashboardResponse> {
 	return apiPost<DashboardResponse>('lcfc/dashboard', params);
 }
@@ -149,8 +149,8 @@ export async function generateLCFCPerceptionReport(params: {
 	idCarrera?: number;
 }) {
 	return generateLCFCDashboard({
-		academic_period_id: params.idPeriodoAcademico ?? params.idPeriodo,
-		program_id: params.idCarrera,
+		academicPeriodId: params.idPeriodoAcademico ?? params.idPeriodo,
+		programId: params.idCarrera,
 	});
 }
 

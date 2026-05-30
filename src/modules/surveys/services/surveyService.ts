@@ -12,20 +12,20 @@ const LANG = 'es-PE';
 // ─── Internal backend shapes ───────────────────────────────────────────────
 
 interface BackendTokenValidation {
-	survey_id?: number;
-	survey_status?: string;
-	student_id?: number;
-	student_code?: string;
-	student_name?: string;
-	student_email?: string;
-	program_id?: number;
-	program_name?: string;
-	campus_id?: number;
-	course_section_id?: number;
-	course_name?: string;
-	max_register_date?: string;
-	academic_period?: string;
-	is_completed?: boolean;
+	surveyId?: number;
+	surveyStatus?: string;
+	studentId?: number;
+	studentCode?: string;
+	studentName?: string;
+	studentEmail?: string;
+	programId?: number;
+	programName?: string;
+	campusId?: number;
+	courseSectionId?: number;
+	courseName?: string;
+	maxRegisterDate?: string;
+	academicPeriod?: string;
+	isCompleted?: boolean;
 	// LCFC legacy fields that may still come from old endpoint
 	estado?: boolean;
 	nombreCarrera?: string;
@@ -39,12 +39,12 @@ interface BackendTokenValidation {
 }
 
 interface BackendOutcome {
-	outcome_config_id?: number;
-	outcome_id: number;
+	outcomeConfigId?: number;
+	outcomeId: number;
 	name?: string;
 	description?: string;
-	commission_id?: number;
-	commission_name?: string;
+	commissionId?: number;
+	commissionName?: string;
 	order?: number;
 	// legacy fields
 	comisionId?: number;
@@ -64,16 +64,16 @@ function adaptTokenVerification(
 	return {
 		token,
 		escuela: raw.escuela ?? 'UPC',
-		nombreCarrera: raw.program_name ?? raw.nombreCarrera ?? '',
-		ciclo: raw.academic_period ?? raw.ciclo ?? '',
-		codigoEstudiante: raw.student_code ?? raw.codigoEstudiante ?? raw.codigo,
-		codigo: raw.student_code ?? raw.codigo,
-		nombreEstudiante: raw.student_name,
-		nombreCurso: raw.course_name ?? raw.nombreCurso,
-		estado: raw.is_completed ?? raw.estado ?? false,
-		alumnoId: raw.student_id ?? raw.idAlumno ?? 0,
-		encuestaId: raw.survey_id ?? raw.encuestaId ?? 0,
-		surveyId: raw.survey_id,
+		nombreCarrera: raw.programName ?? raw.nombreCarrera ?? '',
+		ciclo: raw.academicPeriod ?? raw.ciclo ?? '',
+		codigoEstudiante: raw.studentCode ?? raw.codigoEstudiante ?? raw.codigo,
+		codigo: raw.studentCode ?? raw.codigo,
+		nombreEstudiante: raw.studentName,
+		nombreCurso: raw.courseName ?? raw.nombreCurso,
+		estado: raw.isCompleted ?? raw.estado ?? false,
+		alumnoId: raw.studentId ?? raw.idAlumno ?? 0,
+		encuestaId: raw.surveyId ?? raw.encuestaId ?? 0,
+		surveyId: raw.surveyId,
 	};
 }
 
@@ -85,8 +85,8 @@ function adaptOutcomes(
 	const groups: Record<string, SurveyCommissionGroup> = {};
 
 	for (const o of raw) {
-		const commId = o.commission_id ?? o.comisionId ?? 0;
-		const commName = o.commission_name ?? o.comisionNombre ?? 'General';
+		const commId = o.commissionId ?? o.comisionId ?? 0;
+		const commName = o.commissionName ?? o.comisionNombre ?? 'General';
 		const key = String(commId);
 
 		if (!groups[key]) {
@@ -94,9 +94,9 @@ function adaptOutcomes(
 		}
 
 		groups[key].outcomes.push({
-			outcomeId: o.outcome_id,
+			outcomeId: o.outcomeId,
 			comisionId: commId,
-			competenciaEspecifica: o.name ?? o.competenciaEspecifica ?? `Outcome ${o.outcome_id}`,
+			competenciaEspecifica: o.name ?? o.competenciaEspecifica ?? `Outcome ${o.outcomeId}`,
 			competenciaGeneral: o.competenciaGeneral,
 			descripcion: o.description ?? o.descripcion ?? '',
 			desempeno: null,
@@ -180,7 +180,7 @@ export async function submitLCFCSurvey(
 	if (request.token) {
 		// New backend
 		const scores = request.lista.map((item) => ({
-			outcome_id: item.outcomeId,
+			outcomeId: item.outcomeId,
 			score: item.puntaje,
 			commentaries: item.descripcion || undefined,
 		}));
@@ -242,7 +242,7 @@ export async function submitGRASurvey(
 		token,
 		commentaries: comentario,
 		scores: scores.map((s) => ({
-			outcome_config_id: s.outcomeConfigId,
+			outcomeConfigId: s.outcomeConfigId,
 			score: s.score,
 			commentaries: s.commentaries,
 		})),

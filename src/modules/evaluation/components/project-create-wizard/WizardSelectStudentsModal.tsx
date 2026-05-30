@@ -58,9 +58,9 @@ export function WizardSelectStudentsModal({
 		setIsLoading(true);
 		coursesService
 			.getEnrolledStudents(courseId, {
-				is_active: true,
-				...(academicPeriodId != null ? { academic_period_id: academicPeriodId } : {}),
-				study_plan_academic_period_id: studyPlanAcademicPeriodId,
+				isActive: true,
+				...(academicPeriodId != null ? { academicPeriodId: academicPeriodId } : {}),
+				studyPlanAcademicPeriodId: studyPlanAcademicPeriodId,
 			})
 			.then((r) => {
 				const data = r.data ?? [];
@@ -69,8 +69,8 @@ export function WizardSelectStudentsModal({
 				setDraft(
 					new Map(
 						data
-							.filter((s) => selectedIds.has(s.student_section_enrollment_id))
-							.map((s) => [s.student_section_enrollment_id, s]),
+							.filter((s) => selectedIds.has(s.studentSectionEnrollmentId))
+							.map((s) => [s.studentSectionEnrollmentId, s]),
 					),
 				);
 			})
@@ -85,15 +85,15 @@ export function WizardSelectStudentsModal({
 		if (!term) return students;
 		return students.filter(
 			(s) =>
-				s.first_name.toLowerCase().includes(term) ||
-				s.last_name.toLowerCase().includes(term) ||
-				s.student_code.toLowerCase().includes(term) ||
+				s.firstName.toLowerCase().includes(term) ||
+				s.lastName.toLowerCase().includes(term) ||
+				s.studentCode.toLowerCase().includes(term) ||
 				(s.email ?? '').toLowerCase().includes(term),
 		);
 	}, [students, search]);
 
 	const toggleStudent = (student: EnrolledStudentResponse) => {
-		const key = student.student_section_enrollment_id;
+		const key = student.studentSectionEnrollmentId;
 		setDraft((prev) => {
 			const next = new Map(prev);
 			if (next.has(key)) next.delete(key);
@@ -144,9 +144,9 @@ export function WizardSelectStudentsModal({
 						) : (
 							<ul className="divide-y divide-zinc-100">
 								{filtered.map((student) => {
-									const isSelected = draft.has(student.student_section_enrollment_id);
+									const isSelected = draft.has(student.studentSectionEnrollmentId);
 									return (
-										<li key={student.student_section_enrollment_id}>
+										<li key={student.studentSectionEnrollmentId}>
 											<button
 												type="button"
 												onClick={() => toggleStudent(student)}
@@ -155,16 +155,16 @@ export function WizardSelectStudentsModal({
 												}`}>
 												<div className="flex flex-col gap-0.5 min-w-0">
 													<span className="font-medium truncate">
-														{student.first_name} {student.last_name}
+														{student.firstName} {student.lastName}
 													</span>
 													<div
 														className={`flex items-center gap-2 text-xs ${isSelected ? 'text-zinc-300' : 'text-zinc-400'}`}>
-														<span className="font-mono">{student.student_code}</span>
-														{student.section_code && (
+														<span className="font-mono">{student.studentCode}</span>
+														{student.sectionCode && (
 															<>
 																<span>·</span>
 																<span>
-																	{t('projects.edit.students.modal.section')} {student.section_code}
+																	{t('projects.edit.students.modal.section')} {student.sectionCode}
 																</span>
 															</>
 														)}

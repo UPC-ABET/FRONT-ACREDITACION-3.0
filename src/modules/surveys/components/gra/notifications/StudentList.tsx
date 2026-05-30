@@ -42,26 +42,22 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 	});
 
 	useEffect(() => {
-		load({ program_id: programId, academic_period_id: academicPeriodId });
+		load({ programId: programId, academicPeriodId: academicPeriodId });
 	}, [programId, academicPeriodId, load]);
 
 	function handleDelete(id: number) {
 		remove(id, () => {
 			setDeleteId(null);
-			setToast({
-				open: true,
-				type: 'success',
-				msg: t('surveys.gra.notifications.toast.studentDeleted'),
-			});
-			load({ program_id: programId, academic_period_id: academicPeriodId });
+			setToast({ open: true, type: 'success', msg: 'Estudiante eliminado de la notificación.' });
+			load({ programId: programId, academicPeriodId: academicPeriodId });
 		});
 	}
 
 	function handleSendAll() {
 		const req: GRAEmailSendRequest = {
-			academic_period_id: academicPeriodId,
-			program_id: programId,
-			survey_base_url: surveyBaseUrl.trim(),
+			academicPeriodId: academicPeriodId,
+			programId: programId,
+			surveyBaseUrl: surveyBaseUrl.trim(),
 		};
 		send(req, () => {
 			setSendDialogOpen(false);

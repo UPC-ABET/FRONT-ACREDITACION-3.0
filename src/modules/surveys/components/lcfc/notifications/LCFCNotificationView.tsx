@@ -40,10 +40,10 @@ export function LCFCNotificationView() {
 		}
 		send(
 			{
-				academic_period_id: form.selectedCycle!.value,
-				program_id: 0,
-				max_register_date: new Date(form.maxRegisterDate).toISOString(),
-				survey_base_url: form.surveyBaseUrl.trim(),
+				academicPeriodId: selectedCycle.value,
+				programId: 0,
+				maxRegisterDate: new Date(maxRegisterDate).toISOString(),
+				surveyBaseUrl: surveyBaseUrl.trim(),
 			},
 			() =>
 				setToast({
