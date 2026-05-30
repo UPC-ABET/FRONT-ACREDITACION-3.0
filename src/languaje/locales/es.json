@@ -32,7 +32,24 @@
 			"ifcCodes": "Códigos IFC",
 			"ifcFields": "Campos del formulario IFC"
 		},
-		"logout": "Cerrar sesión"
+		"logout": "Cerrar sesión",
+		"loads": {
+			"label": "Cargas",
+			"sections": "Secciones",
+			"enrolledStudents": "Matriculados",
+			"professors": "Docentes",
+			"gradesRc": "Notas RC",
+			"studentSections": "Alumno × Sección",
+			"ppp": "PPP",
+			"scrapingBanner": "Scraping Banner",
+			"gradesBanner": "Notas Banner",
+			"studyPlans": "Malla Curricular",
+			"charts": "Organigrama",
+			"outcomes": "Outcomes",
+			"delegates": "Delegados",
+			"history": "Historial",
+			"setup": "Apertura de Ciclo"
+		}
 	},
 	"ifcs": {
 		"page": {
@@ -1329,6 +1346,518 @@
 			"confirm": "Aceptar",
 			"adding": "Guardando...",
 			"errorAdd": "No se pudo habilitar el curso. Intenta de nuevo."
+		}
+	},
+	"uploads": {
+		"sections": {
+			"pageTitle": "Carga masiva de secciones",
+			"pageSubtitle": "Sube el Excel de secciones para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de secciones",
+			"description": "Formato .xlsx: CodigoCurso, Seccion, Docente, Local, TipoEstudio",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"courseNotFound": "El curso no se encuentra registrado en el sistema",
+				"courseNotInStudyPlan": "El curso no está registrado para este período académico",
+				"professorNotFound": "El docente no se encuentra registrado en el sistema",
+				"campusNotFound": "La sede no existe en el sistema",
+				"sectionCodeEmpty": "El código de sección no puede estar vacío",
+				"sectionAlreadyExists": "La sección ya se encuentra registrada",
+				"studyTypeEmpty": "El TipoEstudio no puede estar vacío",
+				"studyTypeInvalid": "Valor de TipoEstudio inválido (usar P, V o S)"
+			}
+		},
+		"enrolledStudents": {
+			"pageTitle": "Carga masiva de alumnos matriculados",
+			"pageSubtitle": "Sube el Excel de alumnos matriculados para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de alumnos matriculados",
+			"description": "Formato .xlsx: CodigoAlumno, NombreCompleto, Carrera, EstadoMatricula, Sede",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"studentCodeEmpty": "El código de alumno no puede estar vacío",
+				"programNotFound": "La carrera no se encuentra registrada en el sistema",
+				"campusNotFound": "La sede no existe en el sistema",
+				"enrollmentStatusInvalid": "El estado de matrícula no es válido",
+				"studentAlreadyEnrolled": "El alumno ya está matriculado en este período"
+			}
+		},
+		"professors": {
+			"pageTitle": "Carga masiva de docentes",
+			"pageSubtitle": "Sube el Excel de docentes para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de docentes",
+			"description": "Formato .xlsx: UserName, Name",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"userNameEmpty": "El UserName (correo) no puede estar vacío",
+				"nameEmpty": "El nombre no puede estar vacío",
+				"professorAlreadyExists": "El docente ya se encuentra registrado"
+			}
+		},
+		"gradesRc": {
+			"pageTitle": "Carga masiva de notas RC",
+			"pageSubtitle": "Sube el Excel de notas RC para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de notas RC",
+			"description": "Formato .xlsx: CodigoCurso, CodigoSeccion, CodigoAlumno, NotaParcial, NotaFinal, NotaFDM, NotaReal",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"courseCodeEmpty": "El código de curso no puede estar vacío",
+				"sectionCodeEmpty": "El código de sección no puede estar vacío",
+				"studentCodeEmpty": "El código de alumno no puede estar vacío",
+				"enrollmentNotFound": "El alumno no está inscrito en la sección indicada",
+				"gradeAlreadyExists": "Ya existen notas cargadas para este alumno en esta sección",
+				"gradeTypeCatalogMissing": "El catálogo de tipos de nota no está configurado"
+			}
+		},
+		"studentSections": {
+			"pageTitle": "Carga masiva de alumnos por sección",
+			"pageSubtitle": "Sube el Excel de alumnos por sección para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de alumnos por sección",
+			"description": "Formato .xlsx: CodigoCurso, CodigoSeccion, CodigoAlumno",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"courseCodeEmpty": "El código de curso no puede estar vacío",
+				"sectionNotFound": "La sección no se encuentra registrada en el sistema",
+				"studentNotFound": "El alumno no se encuentra registrado en el sistema",
+				"enrolledStudentNotFound": "El alumno no está matriculado en este período",
+				"duplicateEntry": "El alumno ya está inscrito en esta sección"
+			}
+		},
+		"ppp": {
+			"pageTitle": "Carga masiva de encuestas PPP",
+			"pageSubtitle": "Sube el Excel de encuestas PPP para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de encuestas PPP",
+			"description": "Formato .xlsx: TipoEncuesta, Estado, CodigoAlumno, PeriodoAcademico, Sede, Carrera, NroEncuesta, RazonSocial, NombreJefe, CargoJefe, TelefonoJefe, CorreoJefe, RUC, TotalHoras, NumeroInforme, FechaInicio, FechaFin, Comentario, CodigoOutcome, Puntaje",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"surveyTypeInvalid": "El tipo de encuesta no es válido",
+				"studentNotFound": "El alumno no se encuentra registrado en el sistema",
+				"programNotFound": "La carrera no se encuentra registrada en el sistema",
+				"campusNotFound": "La sede no existe en el sistema",
+				"outcomeNotFound": "El outcome no se encuentra registrado para este programa",
+				"scoreInvalid": "El puntaje tiene un formato inválido"
+			}
+		},
+		"scrapingBanner": {
+			"pageTitle": "Carga scraping Banner (alumnos)",
+			"pageSubtitle": "Sube el Excel exportado del Banner API para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga scraping Banner",
+			"description": "Formato .xlsx: CodigoAlumno, Nombres, Apellidos, CorreoInstitucional, CorreoPersonal, TelefonoMovil, CodigoCarrera, Nivel, Periodo, Sede, MetodoEducativo, NRC, CodigoCurso, CodigoDocente",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"studentCodeEmpty": "El código de alumno no puede estar vacío",
+				"programNotFound": "La carrera no se encuentra registrada en el sistema",
+				"campusNotFound": "La sede no existe en el sistema",
+				"courseNotFound": "El curso no se encuentra registrado en el sistema",
+				"professorNotFound": "El docente no se encuentra registrado en el sistema"
+			}
+		},
+		"gradesBanner": {
+			"pageTitle": "Carga notas Banner (scraping)",
+			"pageSubtitle": "Sube el Excel de notas Banner para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga notas Banner",
+			"description": "Formato .xlsx: CodigoAlumno, CodigoCurso, NRC, TipoNota, Nota, Peso",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"studentCodeEmpty": "El código de alumno no puede estar vacío",
+				"enrollmentNotFound": "El alumno no está inscrito en la sección indicada",
+				"gradeTypeInvalid": "El tipo de nota no es válido",
+				"gradeAlreadyExists": "Ya existe una nota de este tipo para el alumno en esta sección"
+			}
+		},
+		"studyPlans": {
+			"pageTitle": "Carga masiva de malla curricular",
+			"pageSubtitle": "Sube el Excel de malla curricular para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de malla curricular",
+			"description": "Formato .xlsx: CodigoMalla, NombreMalla, CodigoCarrera, CodigoCurso, NombreCurso, EsElectivo, NivelCurso, Requisitos",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"studyPlanCodeEmpty": "El código de malla no puede estar vacío",
+				"programNotFound": "La carrera no se encuentra registrada en el sistema",
+				"courseCodeEmpty": "El código de curso no puede estar vacío",
+				"courseNameEmpty": "El nombre de curso no puede estar vacío",
+				"levelTypeInvalid": "El tipo de nivel del curso no es válido",
+				"prerequisiteNotFound": "Un prerrequisito no existe en el sistema ni en este lote",
+				"courseAlreadyInStudyPlan": "El curso ya está registrado en esta malla"
+			}
+		},
+		"charts": {
+			"pageTitle": "Carga masiva de organigrama",
+			"pageSubtitle": "Sube el Excel de organigrama para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de organigrama",
+			"description": "Formato .xlsx: CodigoEntidad, Nombre, Nivel, TipoEntidad, ResponsableUserName, Sede, CodigoEntidadPadre",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"entityCodeEmpty": "El código de entidad no puede estar vacío",
+				"levelInvalid": "El nivel del organigrama debe ser un número entre 1 y 6",
+				"entityTypeInvalid": "El tipo de entidad no es válido",
+				"responsibleNotFound": "El responsable no se encuentra registrado en el sistema",
+				"campusNotFound": "La sede no existe en el sistema",
+				"parentNotFound": "La entidad padre no se encuentra registrada"
+			}
+		},
+		"outcomes": {
+			"pageTitle": "Carga masiva de outcomes (Malla COCOs)",
+			"pageSubtitle": "Sube el Excel de outcomes para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de outcomes",
+			"description": "Formato .xlsx: CodigoAcreditadora, CodigoComision, CodigoCarrera, CodigoMalla, CodigoCurso, CodigoOutcome, NombreOutcomeEn, DescripcionOutcome, TipoOutcome",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"outcomeCodeEmpty": "El código de outcome no puede estar vacío",
+				"commissionNotFound": "La comisión no se encuentra registrada en el sistema",
+				"programNotFound": "La carrera no se encuentra registrada en el sistema",
+				"courseNotFound": "El curso no se encuentra registrado en el sistema",
+				"outcomeTypeInvalid": "El tipo de outcome debe ser CONTROL o VERIFICACION"
+			}
+		},
+		"delegates": {
+			"pageTitle": "Carga masiva de delegados",
+			"pageSubtitle": "Sube el Excel de delegados para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de delegados",
+			"description": "Formato .xlsx: CodigoCurso, CodigoSeccion, CodigoAlumno",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"courseCodeEmpty": "El código de curso no puede estar vacío",
+				"sectionNotFound": "La sección no se encuentra registrada en el sistema",
+				"enrollmentNotFound": "El alumno no está inscrito en la sección indicada"
+			}
+		}
+	},
+	"configuration": {
+		"canvas": {
+			"title": "Configuración Inicial — The Bridge Canvas",
+			"subtitle": "Apertura de ciclo, asociación de mallas y asignación de comisiones acreditadoras."
+		},
+		"period": {
+			"selectorLabel": "Ciclo lectivo",
+			"selectPlaceholder": "Selecciona un ciclo",
+			"loading": "Cargando ciclos...",
+			"newButton": "Nuevo ciclo",
+			"dialogTitle": "Abrir nuevo ciclo académico",
+			"codeLabel": "Código del ciclo",
+			"codeHint": "Formato: AAAA-01, AAAA-02 o AAAA-00 (intensivo)",
+			"startLabel": "Fecha de inicio",
+			"endLabel": "Fecha de fin",
+			"modalityLabel": "Modalidad de estudios",
+			"modality": {
+				"regular": "Pregrado Regular",
+				"epe": "EPE (Estudios para Profesionales con Experiencia)"
+			},
+			"cancel": "Cancelar",
+			"create": "Crear ciclo",
+			"creating": "Creando...",
+			"error": {
+				"codeFormat": "El código debe tener formato AAAA-01, AAAA-02 o AAAA-00.",
+				"datesRequired": "Fechas de inicio y fin son obligatorias.",
+				"endBeforeStart": "La fecha de fin no puede ser anterior a la fecha de inicio.",
+				"generic": "No se pudo crear el ciclo. Inténtalo de nuevo."
+			}
+		},
+		"studyPlan": {
+			"title": "Asociación Malla × Ciclo",
+			"description": "Arrastra una malla del panel izquierdo al dropzone para asociarla al ciclo seleccionado. Se instancian automáticamente los cursos del período.",
+			"unassociatedTitle": "Mallas no asociadas",
+			"associatedTitle": "Mallas asociadas",
+			"noUnassociated": "Todas las mallas ya están asociadas.",
+			"dropHint": "Arrastra una malla aquí para asociarla al ciclo.",
+			"loading": "Cargando asociaciones...",
+			"coursesSuffix": "cursos",
+			"rollback": "Rollback",
+			"pickPeriodFirst": "Selecciona un ciclo para gestionar sus mallas.",
+			"errorTitle": "Error en la asociación de malla",
+			"error": {
+				"associate": "No se pudo asociar la malla.",
+				"unassociate": "No se pudo revertir la asociación (puede haber secciones cargadas)."
+			}
+		},
+		"programCommission": {
+			"title": "Asociación Carrera × Comisión",
+			"description": "Selecciona las comisiones de acreditación que fiscalizan cada carrera. Se guarda en segundo plano.",
+			"pickPeriodFirst": "Selecciona un ciclo para gestionar las comisiones de sus carreras.",
+			"errorTitle": "Error en la asociación carrera-comisión",
+			"error": {
+				"associate": "No se pudo asociar la comisión.",
+				"unassociate": "No se pudo revertir la asociación (puede haber outcomes cargados)."
+			}
+		}
+	},
+	"cargasCanvas": {
+		"title": "Panel de Carga Masiva Inteligente",
+		"subtitle": "Selecciona el hito del ciclo y el tipo de carga. Las cabeceras del Excel se validan antes de enviar.",
+		"stage": {
+			"preEnroll": "Antes de matrícula",
+			"startTerm": "Inicio de ciclo",
+			"endTerm": "Cierre de ciclo"
+		},
+		"flow": {
+			"professors": "Docentes",
+			"outcomes": "Outcomes",
+			"studyPlans": "Malla curricular",
+			"charts": "Organigrama",
+			"sections": "Secciones",
+			"enrolledStudents": "Alumnos matriculados",
+			"studentSections": "Alumnos por sección",
+			"delegates": "Delegados",
+			"gradesRc": "Notas RC",
+			"gradesBanner": "Notas Banner",
+			"ppp": "Encuesta PPP",
+			"scrapingBanner": "Scraping Banner"
+		},
+		"upload": {
+			"title": "Carga",
+			"pickFlow": "Selecciona un tipo de carga",
+			"noFlowSelected": "Elige un tipo de carga arriba para comenzar.",
+			"dropzone": "Arrastra el Excel aquí o haz click para seleccionar",
+			"dragHintWith": "Arrastra el archivo Excel de {{flow}} aquí",
+			"invalidHeaders": "El archivo no tiene las columnas esperadas",
+			"missingColumns": "Faltan",
+			"headersValid": "Cabecera válida — listo para enviar",
+			"submit": "Procesar carga",
+			"submitting": "Procesando..."
+		},
+		"banner": {
+			"pullFromBanner": "Jalar de Banner/UPlanner",
+			"title": "Extraer datos de Banner",
+			"description": "Conectaremos con la API de Banner para extraer los datos de",
+			"username": "Usuario Banner",
+			"password": "Contraseña",
+			"start": "Iniciar extracción",
+			"starting": "Iniciando...",
+			"cancel": "Cancelar",
+			"running": "Extracción en curso",
+			"log": {
+				"connecting": "Conectando con Banner...",
+				"authenticated": "Autenticado correctamente",
+				"done": "Extracción completada"
+			}
+		}
+	},
+	"uploadHistory": {
+		"title": "Historial de cargas",
+		"subtitle": "Auditoría de las cargas masivas registradas en audit.upload_logs.",
+		"table": {
+			"title": "Cargas registradas",
+			"description": "Cada fila representa una transacción de carga. Puedes revertirla o inspeccionar errores.",
+			"loading": "Cargando historial...",
+			"empty": "No hay cargas registradas todavía.",
+			"viewErrors": "Ver errores",
+			"rollback": "Rollback",
+			"col": {
+				"id": "ID",
+				"type": "Tipo",
+				"status": "Estado",
+				"file": "Archivo",
+				"rows": "Filas (cargadas/total)",
+				"date": "Fecha",
+				"actions": "Acciones"
+			}
+		},
+		"drawer": {
+			"title": "Errores por fila",
+			"rowsWithErrors": "filas con error",
+			"empty": "No se detectaron errores en este archivo.",
+			"row": "Fila",
+			"editInline": "Editar en caliente",
+			"cancel": "Cancelar",
+			"resubmit": "Re-enviar",
+			"resubmitting": "Enviando..."
+		},
+		"rollback": {
+			"title": "Confirmar rollback",
+			"warning": "Esta acción eliminará de forma irreversible todos los registros de {{type}} enlazados al Log ID #{{id}}.",
+			"confirmation": "¿Deseas proceder?",
+			"cancel": "Cancelar",
+			"confirm": "Sí, revertir",
+			"running": "Revirtiendo..."
+		}
+	},
+	"capstone": {
+		"title": "Consola de Evaluación Capstone (Notas RB)",
+		"subtitle": "Evaluación directa en plataforma para Sistemas, Software y Ciencias.",
+		"projects": {
+			"title": "Proyectos asignados",
+			"description": "Proyectos de fin de carrera en los que tú eres evaluador.",
+			"loading": "Cargando proyectos...",
+			"empty": "No tienes proyectos Capstone asignados este ciclo."
+		},
+		"students": {
+			"title": "Alumnos del proyecto",
+			"description": "Selecciona un alumno para abrir su matriz de evaluación."
+		},
+		"rubric": {
+			"loading": "Cargando rúbrica..."
+		},
+		"card": {
+			"gradedOf": "de",
+			"students": "alumnos calificados"
+		},
+		"slider": {
+			"outcome": "Outcome"
+		},
+		"matrix": {
+			"title": "Evaluación de {{name}} ({{code}})",
+			"description": "Desliza el puntaje de cada criterio. La suma debe equivaler a 20.",
+			"invalidRubric": "Esta rúbrica tiene una suma máxima de {{actual}} en lugar de {{expected}} — revisa su configuración.",
+			"sumLabel": "Suma total",
+			"observationLabel": "Observación",
+			"observationPlaceholder": "Feedback cualitativo del evaluador (mínimo 50 caracteres).",
+			"observationHint": "Requiere al menos {{min}} caracteres para guardar.",
+			"save": "Guardar evaluación",
+			"saving": "Guardando..."
 		}
 	}
 }

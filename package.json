@@ -18,6 +18,7 @@
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
+    "exceljs": "^4.4.0",
     "js-cookie": "^3.0.5",
     "jszip": "^3.10.1",
     "lucide-react": "^1.7.0",
