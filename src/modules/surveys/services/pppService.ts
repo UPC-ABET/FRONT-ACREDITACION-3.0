@@ -6,7 +6,7 @@ import type { PerformanceLevelResponse } from '@/modules/academic/types';
 import type {
 	CompetenceConfig,
 	CompetenceFormData,
-	AcceptanceLevel,
+	PerformanceLevel,
 	DashboardResponse,
 } from '../types';
 
@@ -42,7 +42,7 @@ function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 		generalCompetence: extra.name_es ?? raw.user_outcome_name ?? '',
 		specificCompetence: extra.name_en ?? extra.name_es ?? '',
 		description: extra.description_es ?? '',
-		acceptanceLevel: extra.order ?? 3,
+		performanceLevel: extra.order ?? 3,
 		isActive: raw.is_active,
 		estado: raw.is_active ? 'ACTIVO' : 'INACTIVO',
 		programId: extra.program_id,
@@ -50,7 +50,7 @@ function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 	};
 }
 
-function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): AcceptanceLevel {
+function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): PerformanceLevel {
 	const nameEs = raw.name?.es ?? `Level ${index + 1}`;
 	const color =
 		raw.extra && typeof raw.extra.color === 'string' ? raw.extra.color : undefined;
@@ -67,7 +67,7 @@ function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): Ac
 
 const RANGE_RE = /([\d.]+)\s*[–-]\s*([\d.]+)/;
 
-function buildPerformanceLevelUpdate(level: AcceptanceLevel) {
+function buildPerformanceLevelUpdate(level: PerformanceLevel) {
 	const rangeMatch = RANGE_RE.exec(level.range ?? '');
 	const minScore =
 		level.minScore ?? (rangeMatch ? Number.parseFloat(rangeMatch[1]) : level.level - 1);
@@ -105,7 +105,7 @@ export async function savePPPCompetence(data: CompetenceFormData) {
 			name_en: data.specificCompetence || data.generalCompetence,
 			description_es: data.description,
 			description_en: data.description,
-			order: data.acceptanceLevel,
+			order: data.performanceLevel,
 			program_id: data.programId ?? 0,
 			academic_period_id: data.academicPeriodId,
 			is_visible: true,
@@ -117,7 +117,7 @@ export async function savePPPCompetence(data: CompetenceFormData) {
 		name_en: data.specificCompetence || data.generalCompetence,
 		description_es: data.description,
 		description_en: data.description,
-		order: data.acceptanceLevel,
+		order: data.performanceLevel,
 		is_visible: true,
 	});
 }
@@ -139,10 +139,9 @@ export async function clonePPPConfiguration(params: {
 	});
 }
 
-// ─── Performance levels (replaces acceptance_levels) ──────────────────────
-// order and color are stored in extra; unique_value holds the level order.
+// ─── Performance levels ────────────────────────────────────────────────────
 
-export async function listAcceptanceLevels(academic_period_id: number): Promise<AcceptanceLevel[]> {
+export async function listPPPPerformanceLevels(academic_period_id: number): Promise<PerformanceLevel[]> {
 	const instrument_type_id = await getSurveyTypeId('PPP');
 	const res = await performanceLevelsService.getByFilters({
 		...(instrument_type_id > 0 && { instrument_type_id }),
@@ -153,9 +152,9 @@ export async function listAcceptanceLevels(academic_period_id: number): Promise<
 	return list.map((l, i) => adaptPerformanceLevel(l, i));
 }
 
-export async function updateAcceptanceLevels(
+export async function updatePPPPerformanceLevels(
 	_academic_period_id: number,
-	levels: AcceptanceLevel[],
+	levels: PerformanceLevel[],
 ): Promise<void> {
 	await Promise.all(
 		levels
@@ -166,7 +165,7 @@ export async function updateAcceptanceLevels(
 
 // ─── Excel template & upload ───────────────────────────────────────────────
 
-export async function downloadPPPTemplate(_idPeriodoAcademico: number): Promise<void> {
+export async function downloadPPPTemplate(_periodId: number): Promise<void> {
 	throw new ApiError(
 		'PPP template download is not available in this backend version.',
 	);
@@ -188,7 +187,7 @@ export async function uploadPPPMassive(
 	}
 }
 
-export async function uploadPPPMassiveLegacy(_file: File, _escuelaActual?: unknown): Promise<void> {
+export async function uploadPPPMassiveLegacy(_file: File, _school?: unknown): Promise<void> {
 	throw new ApiError(
 		'PPP legacy bulk upload is not available in this backend version.',
 	);

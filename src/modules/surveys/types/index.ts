@@ -34,7 +34,7 @@ export interface CompetenceConfig {
 	generalCompetence: string;  // maps to extra.name_es
 	specificCompetence: string; // maps to extra.name_en
 	description: string;        // maps to extra.description_es
-	acceptanceLevel: number;    // maps to extra.order
+	performanceLevel: number;   // maps to extra.order
 	estado?: string;
 	isActive?: boolean;
 	programId?: number;
@@ -47,14 +47,14 @@ export interface CompetenceFormData {
 	generalCompetence: string;
 	specificCompetence: string;
 	description: string;
-	acceptanceLevel: number;
+	performanceLevel: number;
 	academicPeriodId: number;
 	programId?: number;
 	school: string;
 }
 
-// ─── Acceptance / Performance levels ──────────────────────────────────────
-export interface AcceptanceLevel {
+// ─── Performance levels ────────────────────────────────────────────────────
+export interface PerformanceLevel {
 	id?: number;
 	level: number;       // maps to performance_level unique_value
 	description: string; // maps to performance_level name.es
