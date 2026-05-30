@@ -17,8 +17,8 @@ import {
 import { PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import type { CompetenceConfig, CompetenceFormData } from '../../types';
-import { competenceSchema } from '../../schemas/competence.schema';
-import { MIN_ACCEPTANCE_LEVEL, MAX_ACCEPTANCE_LEVEL } from '../../constants/competence';
+import { competenceSchema } from '../../schemas/competenceSchema';
+import { MIN_PERFORMANCE_LEVEL, MAX_PERFORMANCE_LEVEL } from '../../constants/competence';
 
 interface CompetenceCRUDProps {
 	cycleId: number;
@@ -45,7 +45,7 @@ const EMPTY_FORM: Omit<CompetenceFormData, 'academicPeriodId' | 'school'> = {
 	generalCompetence: '',
 	specificCompetence: '',
 	description: '',
-	acceptanceLevel: 3,
+	performanceLevel: 3,
 };
 
 export function CompetenceCRUD({
@@ -83,7 +83,7 @@ export function CompetenceCRUD({
 			generalCompetence: row.generalCompetence,
 			specificCompetence: row.specificCompetence,
 			description: row.description,
-			acceptanceLevel: row.acceptanceLevel,
+			performanceLevel: row.performanceLevel,
 		});
 		setModalOpen(true);
 	}
@@ -129,7 +129,7 @@ export function CompetenceCRUD({
 			),
 		},
 		{
-			accessorKey: 'acceptanceLevel',
+			accessorKey: 'performanceLevel',
 			header: t('surveys.competence.table.level'),
 			cell: ({ getValue }) => (
 				<span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-red-100 text-red-700 text-xs font-bold">
@@ -146,14 +146,14 @@ export function CompetenceCRUD({
 						size="sm"
 						variant="surface"
 						onClick={() => openEdit(row.original)}
-						aria-label={t('surveys.competence.modal.editTitle')}>
+						aria-label={t('surveys.competence.actions.edit')}>
 						<PencilSquareIcon className="h-4 w-4" />
 					</Button>
 					<Button
 						size="sm"
 						variant="warning"
 						onClick={() => setDeleteId(row.original.id)}
-						aria-label={t('surveys.competence.modal.delete')}>
+						aria-label={t('surveys.competence.actions.delete')}>
 						<TrashIcon className="h-4 w-4" />
 					</Button>
 				</div>
@@ -212,21 +212,21 @@ export function CompetenceCRUD({
 						<div>
 							<label className="font-medium text-xs mb-2 text-zinc-700 block">
 								{t('surveys.competence.modal.levelLabel', {
-									min: MIN_ACCEPTANCE_LEVEL,
-									max: MAX_ACCEPTANCE_LEVEL,
+									min: MIN_PERFORMANCE_LEVEL,
+									max: MAX_PERFORMANCE_LEVEL,
 								})}
 							</label>
 							<input
 								type="number"
-								min={MIN_ACCEPTANCE_LEVEL}
-								max={MAX_ACCEPTANCE_LEVEL}
-								value={form.acceptanceLevel}
+								min={MIN_PERFORMANCE_LEVEL}
+								max={MAX_PERFORMANCE_LEVEL}
+								value={form.performanceLevel}
 								onChange={(e) =>
 									setForm({
 										...form,
-										acceptanceLevel: Math.min(
-											MAX_ACCEPTANCE_LEVEL,
-											Math.max(MIN_ACCEPTANCE_LEVEL, Number(e.target.value)),
+										performanceLevel: Math.min(
+											MAX_PERFORMANCE_LEVEL,
+											Math.max(MIN_PERFORMANCE_LEVEL, Number(e.target.value)),
 										),
 									})
 								}
