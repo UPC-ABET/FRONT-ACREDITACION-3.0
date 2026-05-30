@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { Select, Button, Tabs, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
-import { usePPPCompetences, usePPPCycles, usePPPAcceptanceLevels } from '../../../hooks';
+import { usePPPCompetences, usePPPCycles, usePPPPerformanceLevels } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
-import { AcceptanceLevels } from './AcceptanceLevels';
+import { PerformanceLevels } from './PerformanceLevels';
 
 export function PPPConfiguration() {
 	const { t } = useI18n();
@@ -20,12 +20,12 @@ export function PPPConfiguration() {
 		remove: removeComp,
 		clone: cloneComp,
 	} = usePPPCompetences();
-	const levelsHook = usePPPAcceptanceLevels();
+	const levelsHook = usePPPPerformanceLevels();
 
 	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
 	const [activeTab, setActiveTab] = useState('competences');
 	const [showClone, setShowClone] = useState(false);
-	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
+	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error' | 'info'; msg: string }>({
 		open: false,
 		type: 'success',
 		msg: '',
@@ -85,8 +85,8 @@ export function PPPConfiguration() {
 						onClick={() => {
 							setToast({
 								open: true,
-								type: 'info' as 'success',
-								msg: t('surveys.shared.cloneConfiguration'),
+								type: 'info',
+								msg: t('surveys.shared.cloneToastHint'),
 							});
 						}}>
 						{t('surveys.shared.cloneConfiguration')}
@@ -114,7 +114,7 @@ export function PPPConfiguration() {
 						)}
 
 						{activeTab === 'levels' && (
-							<AcceptanceLevels
+							<PerformanceLevels
 								cycleId={selectedCycle.value}
 								levels={levelsHook.levels}
 								setLevels={levelsHook.setLevels}

@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { Select, Tabs, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
-import { useGRACompetences, useGRACycles, usePPPAcceptanceLevels } from '../../../hooks';
+import { useGRACompetences, useGRACycles, usePPPPerformanceLevels } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
-import { AcceptanceLevels } from '../../ppp/configuration/AcceptanceLevels';
+import { PerformanceLevels } from '../../ppp/configuration/PerformanceLevels';
 
 export function GRAConfiguration() {
 	const { t } = useI18n();
@@ -20,7 +20,7 @@ export function GRAConfiguration() {
 		remove: removeComp,
 		clone: cloneComp,
 	} = useGRACompetences();
-	const levelsHook = usePPPAcceptanceLevels();
+	const levelsHook = usePPPPerformanceLevels();
 
 	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
 	const [activeTab, setActiveTab] = useState('competences');
@@ -79,7 +79,7 @@ export function GRAConfiguration() {
 						)}
 
 						{activeTab === 'levels' && (
-							<AcceptanceLevels
+							<PerformanceLevels
 								cycleId={selectedCycle.value}
 								levels={levelsHook.levels}
 								setLevels={levelsHook.setLevels}
