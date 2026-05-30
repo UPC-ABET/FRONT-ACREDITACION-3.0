@@ -1064,7 +1064,8 @@
 			"selectCycle": "Selecciona un ciclo",
 			"noConfiguration": "Sin configuración para este ciclo",
 			"noConfigurationHint": "No existe configuración para el ciclo seleccionado. Puedes crear una nueva o clonar desde otro ciclo.",
-			"cloneConfiguration": "Clonar configuración"
+			"cloneConfiguration": "Clonar configuración",
+			"cloneToastHint": "Función de clonado: selecciona un ciclo de origen en el modal."
 		},
 		"competence": {
 			"table": {
@@ -1084,7 +1085,7 @@
 				"specificPlaceholder": "Ej: Análisis de Problemas",
 				"descriptionLabel": "Descripción",
 				"descriptionPlaceholder": "Describe la competencia...",
-				"levelLabel": "Nivel de Aceptación ({{min}}–{{max}})",
+				"levelLabel": "Nivel de Desempeño ({{min}}–{{max}})",
 				"save": "Guardar",
 				"saving": "Guardando...",
 				"delete": "Eliminar",
@@ -1096,10 +1097,14 @@
 				"saved": "Competencia guardada exitosamente.",
 				"deleted": "Competencia eliminada."
 			},
-			"add": "Agregar Competencia"
+			"add": "Agregar Competencia",
+			"actions": {
+				"edit": "Editar competencia",
+				"delete": "Eliminar competencia"
+			}
 		},
-		"acceptanceLevels": {
-			"title": "Niveles de Aceptación",
+		"performanceLevels": {
+			"title": "Niveles de Desempeño",
 			"description": "Configura las descripciones y rangos para cada nivel de evaluación ({{min}}–{{max}}).",
 			"loading": "Cargando niveles...",
 			"save": "Guardar Niveles",
@@ -1107,12 +1112,12 @@
 			"descriptionPlaceholder": "Descripción",
 			"rangePlaceholder": "Rango (ej: 0-40%)",
 			"toast": {
-				"saved": "Niveles de aceptación guardados."
+				"saved": "Niveles de desempeño guardados."
 			}
 		},
 		"tabs": {
 			"competences": "Competencias",
-			"levels": "Niveles de Aceptación"
+			"levels": "Niveles de Desempeño"
 		},
 		"gra": {
 			"notifications": {
@@ -1131,7 +1136,9 @@
 				"delete": "Eliminar",
 				"sendDialog": {
 					"title": "Enviar encuesta GRA",
-					"body": "Se enviará la encuesta a <strong>todos</strong> los estudiantes registrados para el período y programa actuales.",
+					"bodyBefore": "Se enviará la encuesta a ",
+					"bodyEmphasis": "todos",
+					"bodyAfter": " los estudiantes registrados para el período y programa actuales.",
 					"urlLabel": "URL base de la encuesta",
 					"urlPlaceholder": "https://tu-dominio.com/encuesta/gra",
 					"confirm": "Confirmar envío",

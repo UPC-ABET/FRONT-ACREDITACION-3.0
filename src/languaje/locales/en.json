@@ -1064,7 +1064,8 @@
 			"selectCycle": "Select a cycle",
 			"noConfiguration": "No configuration for this cycle",
 			"noConfigurationHint": "There is no configuration for the selected cycle. You can create a new one or clone from another cycle.",
-			"cloneConfiguration": "Clone configuration"
+			"cloneConfiguration": "Clone configuration",
+			"cloneToastHint": "Clone function: select a source cycle in the modal."
 		},
 		"competence": {
 			"table": {
@@ -1084,7 +1085,7 @@
 				"specificPlaceholder": "e.g. Problem Analysis",
 				"descriptionLabel": "Description",
 				"descriptionPlaceholder": "Describe the competence...",
-				"levelLabel": "Acceptance Level ({{min}}–{{max}})",
+				"levelLabel": "Performance Level ({{min}}–{{max}})",
 				"save": "Save",
 				"saving": "Saving...",
 				"delete": "Delete",
@@ -1096,10 +1097,14 @@
 				"saved": "Competence saved successfully.",
 				"deleted": "Competence deleted."
 			},
-			"add": "Add Competence"
+			"add": "Add Competence",
+			"actions": {
+				"edit": "Edit competence",
+				"delete": "Delete competence"
+			}
 		},
-		"acceptanceLevels": {
-			"title": "Acceptance Levels",
+		"performanceLevels": {
+			"title": "Performance Levels",
 			"description": "Configure descriptions and ranges for each evaluation level ({{min}}–{{max}}).",
 			"loading": "Loading levels...",
 			"save": "Save Levels",
@@ -1107,12 +1112,12 @@
 			"descriptionPlaceholder": "Description",
 			"rangePlaceholder": "Range (e.g. 0-40%)",
 			"toast": {
-				"saved": "Acceptance levels saved."
+				"saved": "Performance levels saved."
 			}
 		},
 		"tabs": {
 			"competences": "Competences",
-			"levels": "Acceptance Levels"
+			"levels": "Performance Levels"
 		},
 		"gra": {
 			"notifications": {
@@ -1131,7 +1136,9 @@
 				"delete": "Remove",
 				"sendDialog": {
 					"title": "Send GRA survey",
-					"body": "The survey will be sent to <strong>all</strong> registered students for the current period and program.",
+					"bodyBefore": "The survey will be sent to ",
+					"bodyEmphasis": "all",
+					"bodyAfter": " registered students for the current period and program.",
 					"urlLabel": "Survey base URL",
 					"urlPlaceholder": "https://your-domain.com/survey/gra",
 					"confirm": "Confirm send",
