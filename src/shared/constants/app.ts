@@ -7,5 +7,5 @@ export const DEFAULT_CYCLE_LABEL = '2026-01';
 export const DEFAULT_USER_INITIALS = 'UA';
 
 export const STORAGE_KEYS = {
-	locale: 'app_locale',
+	locale: 'appLocale',
 } as const;
