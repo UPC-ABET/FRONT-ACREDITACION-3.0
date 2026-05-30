@@ -18,7 +18,7 @@ import type {
 	SendEmailResponse,
 	SurveyApiResponse,
 	DashboardResponse,
-	AcceptanceLevel,
+	PerformanceLevel,
 } from '../types';
 
 // ─── Internal backend shapes ───────────────────────────────────────────────
@@ -63,7 +63,7 @@ function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
 		generalCompetence: extra.name_es ?? raw.user_outcome_name ?? '',
 		specificCompetence: extra.name_en ?? extra.name_es ?? '',
 		description: extra.description_es ?? '',
-		acceptanceLevel: extra.order ?? 3,
+		performanceLevel: extra.order ?? 3,
 		isActive: raw.is_active,
 		estado: raw.is_active ? 'ACTIVO' : 'INACTIVO',
 		programId: extra.program_id,
@@ -83,7 +83,7 @@ function adaptGraStudent(raw: BackendGraStudent): GRAStudent {
 	};
 }
 
-function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): AcceptanceLevel {
+function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): PerformanceLevel {
 	const nameEs = raw.name?.es ?? `Level ${index + 1}`;
 	const color =
 		raw.extra && typeof raw.extra.color === 'string' ? raw.extra.color : undefined;
@@ -123,7 +123,7 @@ export async function saveGRACompetence(data: CompetenceFormData) {
 			name_en: data.specificCompetence || data.generalCompetence,
 			description_es: data.description,
 			description_en: data.description,
-			order: data.acceptanceLevel,
+			order: data.performanceLevel,
 			program_id: data.programId ?? 0,
 			academic_period_id: data.academicPeriodId,
 			is_visible: true,
@@ -135,7 +135,7 @@ export async function saveGRACompetence(data: CompetenceFormData) {
 		name_en: data.specificCompetence || data.generalCompetence,
 		description_es: data.description,
 		description_en: data.description,
-		order: data.acceptanceLevel,
+		order: data.performanceLevel,
 		is_visible: true,
 	});
 }
@@ -169,12 +169,11 @@ export async function listGRAOutcomes(params: { program_id: number; academic_per
 	>('gra/outcomes/list', params);
 }
 
-// ─── Performance levels (replaces acceptance_levels) ──────────────────────
-// instrument_type_id = GRA survey type from TG601; order and color in extra.
+// ─── Performance levels ────────────────────────────────────────────────────
 
-export async function listGRAAcceptanceLevels(
+export async function listGRAPerformanceLevels(
 	academic_period_id: number,
-): Promise<AcceptanceLevel[]> {
+): Promise<PerformanceLevel[]> {
 	const instrument_type_id = await getSurveyTypeId('GRA');
 	const res = await performanceLevelsService.getByFilters({
 		...(instrument_type_id > 0 && { instrument_type_id }),
@@ -188,8 +187,8 @@ export async function listGRAAcceptanceLevels(
 // ─── Students / Notifications ──────────────────────────────────────────────
 
 export async function searchStudentByCode(
-	codigoEstudiante: string,
-	idCarrera: number,
+	studentCode: string,
+	programId: number,
 ): Promise<StudentSearchResult> {
 	const res = await apiPost<SurveyApiResponse<{
 		idEstudiante: number;
@@ -200,7 +199,7 @@ export async function searchStudentByCode(
 		ciclo?: string;
 	}>>(
 		'email/findStudentCode-career-GRA',
-		{ codigoEstudiante, idCarrera },
+		{ codigoEstudiante: studentCode, idCarrera: programId },
 	);
 	const raw = res.data?.resource;
 	return {
@@ -281,13 +280,13 @@ export async function saveGRAEmailTemplate(template: {
 
 // ─── Excel template & upload ───────────────────────────────────────────────
 
-export async function downloadGRATemplate(_idPeriodoAcademico: number): Promise<void> {
+export async function downloadGRATemplate(_periodId: number): Promise<void> {
 	throw new ApiError(
 		'GRA template download is not available in this backend version.',
 	);
 }
 
-export async function uploadGRAMassive(file: File, _escuelaActual?: unknown): Promise<void> {
+export async function uploadGRAMassive(file: File, _school?: unknown): Promise<void> {
 	const archivoBase64 = await fileToBase64(file);
 	const blob = await apiPostBlob('excel/uploadNotificationEncuesta-GRA', {
 		archivoBase64,
@@ -319,6 +318,7 @@ export async function generateGRAPerceptionReport(params: {
 
 // ─── GRA token & survey (admin read) ──────────────────────────────────────
 
+// Backend requires POST for token validation (GET is not exposed on this route).
 export async function validateGRAToken(token: string) {
 	return apiPost(`gra/token/validate/${encodeURIComponent(token)}`, {});
 }

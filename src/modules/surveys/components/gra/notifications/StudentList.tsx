@@ -132,7 +132,6 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 				</Button>
 			),
 		},
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	], [t]);
 
 	return (
@@ -178,12 +177,11 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 						<DialogTitle>{t('surveys.gra.notifications.sendDialog.title')}</DialogTitle>
 					</DialogHeader>
 					<div className="space-y-4 py-2">
-						<p
-							className="text-sm text-zinc-600"
-							dangerouslySetInnerHTML={{
-								__html: t('surveys.gra.notifications.sendDialog.body'),
-							}}
-						/>
+						<p className="text-sm text-zinc-600">
+							{t('surveys.gra.notifications.sendDialog.bodyBefore')}
+							<strong>{t('surveys.gra.notifications.sendDialog.bodyEmphasis')}</strong>
+							{t('surveys.gra.notifications.sendDialog.bodyAfter')}
+						</p>
 						<Input
 							label={t('surveys.gra.notifications.sendDialog.urlLabel')}
 							value={surveyBaseUrl}
