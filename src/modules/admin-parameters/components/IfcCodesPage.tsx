@@ -5,7 +5,7 @@ import { Card, LoadingDialog, SuccessDialog, TableErrorState, Toast } from '@/sh
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useParameter } from '../hooks/useParameter';
-import { PARAMETER_CODES } from '@/modules/core';
+import { PARAMETER_CODES } from '@/shared/constants';
 import type { ParameterRow } from '../types';
 import { PrefixParameterCard } from './PrefixParameterCard';
 

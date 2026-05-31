@@ -1,4 +1,4 @@
-import { TYPE_CODES } from '@/modules/core';
+import { TYPE_CODES } from '@/shared/constants';
 import dynamic from 'next/dynamic';
 
 const ProjectEvaluatePage = dynamic(() =>

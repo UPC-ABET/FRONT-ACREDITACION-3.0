@@ -7,8 +7,8 @@ import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
 import { getSchoolCookie } from '@/shared/lib';
 import { useABET, useAuth, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
-import { DEFAULT_USER_INITIALS } from '@/shared/constants';
-import { getTypesByGroupCode, TYPE_GROUP_CODES } from '@/modules/core';
+import { DEFAULT_USER_INITIALS, TYPE_GROUP_CODES } from '@/shared/constants';
+import { getTypesByGroupCode } from '@/modules/core';
 import type { NavbarProps } from '@/shared/types';
 
 function readCookieSchool(): string {

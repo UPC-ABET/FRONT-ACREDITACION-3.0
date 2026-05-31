@@ -21,7 +21,7 @@ import { useAuth } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib/authCookies';
 import { useAcademicPeriods, useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
-import { TYPE_CODES } from '@/modules/core';
+import { TYPE_CODES } from '@/shared/constants';
 
 type RubricTab = 'partial' | 'final';
 

@@ -6,7 +6,7 @@ import { useI18n } from '@/providers';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { useCourseOutcomeMappings } from '@/modules/academic/hooks';
 import type { Step1Data } from './WizardStep1';
-import { TYPE_GROUP_CODES, TYPE_CODES } from '@/modules/core';
+import { TYPE_GROUP_CODES, TYPE_CODES } from '@/shared/constants';
 
 const GRADE_TYPE_GROUP = TYPE_GROUP_CODES.GRADE_TYPE;
 const RUBRIC_TYPE_GROUP = TYPE_GROUP_CODES.RUBRIC_TYPE;

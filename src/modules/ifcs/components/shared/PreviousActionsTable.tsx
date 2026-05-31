@@ -15,7 +15,7 @@ import {
 	PopoverTrigger,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { TYPE_CODES } from '@/modules/core';
+import { TYPE_CODES } from '@/shared/constants';
 import type { I18nText, PreviousAction } from '../../types';
 import { IFC_SHARED_LABELS as L } from './ifc.labels';
 

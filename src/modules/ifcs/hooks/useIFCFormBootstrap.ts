@@ -4,9 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	getParameterByCode,
 	getTypesByGroupCode,
-	PARAMETER_CODES,
-	TYPE_GROUP_CODES,
 } from '@/modules/core';
+import { PARAMETER_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import { getIFCPrefill, getIFCView } from '../services/ifcsService';
 import type { CriticalityOption, IFCField, IFCPrefill, IFCViewPayload } from '../types';
 

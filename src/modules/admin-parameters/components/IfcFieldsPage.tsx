@@ -17,7 +17,7 @@ import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useParameter } from '../hooks/useParameter';
 import { updateParameter } from '../services/parametersAdminService';
-import { PARAMETER_CODES } from '@/modules/core';
+import { PARAMETER_CODES } from '@/shared/constants';
 import { validateIFCFields, hasValidationErrors } from '../schemas';
 import type { IFCFieldDescriptor } from '../types';
 import { IfcFieldEditor } from './IfcFieldEditor';

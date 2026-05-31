@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { apiPost } from '@/shared/lib';
-import { PARAMETER_CODES } from '@/modules/core';
+import { PARAMETER_CODES } from '@/shared/constants';
 const FALLBACK: string[] = ['es', 'en'];
 
 type ParameterRow = { value?: unknown };

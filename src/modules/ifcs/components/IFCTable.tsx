@@ -12,7 +12,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, DataTable, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
-import { TYPE_CODES } from '@/modules/core';
+import { TYPE_CODES } from '@/shared/constants';
 import { usePdfDownload } from '../hooks/usePdfDownload';
 import { effectiveStatus } from '../services/scope';
 import type { IFCRow } from '../types';

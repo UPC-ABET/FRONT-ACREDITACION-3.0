@@ -20,7 +20,7 @@ import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
 import type { ProfessorSearchResponse } from '@/modules/academic';
-import { TYPE_GROUP_CODES } from '@/modules/core';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
 
 const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
 

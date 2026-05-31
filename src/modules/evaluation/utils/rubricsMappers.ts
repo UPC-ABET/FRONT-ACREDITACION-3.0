@@ -1,6 +1,6 @@
 import { RubricResponse } from '../types';
 import { RubricListRow } from '../types/rubricListRow';
-import { TYPE_CODES } from '@/modules/core';
+import { TYPE_CODES } from '@/shared/constants';
 
 export function mapRubricToRow(rubric: RubricResponse): RubricListRow {
 	const course = rubric.studyPlanCourse?.course;

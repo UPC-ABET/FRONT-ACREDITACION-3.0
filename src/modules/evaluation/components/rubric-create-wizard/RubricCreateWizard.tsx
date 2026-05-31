@@ -11,7 +11,7 @@ import { WizardStep1, type Step1Data } from './WizardStep1';
 import { WizardStep2, type Step2Data } from './WizardStep2';
 import { WizardStep3NonCapstone, type NonCapstonePayloadQuestion } from './WizardStep3NonCapstone';
 import { WizardStep3Capstone, type CapstonePayloadQuestion } from './WizardStep3Capstone';
-import { TYPE_CODES } from '@/modules/core';
+import { TYPE_CODES } from '@/shared/constants';
 
 export function RubricCreateWizard() {
 	const router = useRouter();

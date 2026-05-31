@@ -17,7 +17,7 @@ import { useI18n } from '@/providers';
 import { professorsService } from '@/modules/academic/services';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import type { LocalEvaluator } from './ProjectWizardStep2';
-import { TYPE_CODES, TYPE_GROUP_CODES } from '@/modules/core';
+import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import { ProfessorSearchResponse } from '@/modules/academic';
 
 const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;

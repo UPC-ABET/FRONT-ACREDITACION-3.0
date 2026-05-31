@@ -12,7 +12,7 @@ import {
 import { performanceLevelsService } from '@/modules/academic/services';
 import { evaluationQueryKeys } from './queryKeys';
 import { PerformanceLevelResponse } from '@/modules/academic';
-import { TYPE_CODES } from '@/modules/core';
+import { TYPE_CODES } from '@/shared/constants';
 
 function unwrapApiData<T>(response: unknown): T | null {
 	if (!response || typeof response !== 'object') return null;

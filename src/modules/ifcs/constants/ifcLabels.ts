@@ -1,4 +1,4 @@
-import { TYPE_CODES } from '@/modules/core';
+import { TYPE_CODES } from '@/shared/constants';
 
 export const LEVEL_LABELS: Record<string, { en: string; es: string }> = {
 	[TYPE_CODES.CHART_LEVEL_TYPE.DEAN]: { en: "Dean's Office", es: 'Decanato' },

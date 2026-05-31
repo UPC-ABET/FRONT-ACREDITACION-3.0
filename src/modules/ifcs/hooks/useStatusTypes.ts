@@ -1,7 +1,8 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getTypesByGroupCode, TYPE_GROUP_CODES } from '@/modules/core';
+import { getTypesByGroupCode } from '@/modules/core';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
 import type { CriticalityOption } from '../types';
 
 export type StatusType = CriticalityOption;

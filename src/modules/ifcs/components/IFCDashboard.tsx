@@ -20,7 +20,7 @@ import {
 import { useAuth, useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
-import { TYPE_CODES } from '@/modules/core';
+import { TYPE_CODES } from '@/shared/constants';
 import { ORG_LABELS } from '../constants';
 import {
 	useIFCList,
