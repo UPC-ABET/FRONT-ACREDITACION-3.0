@@ -41,9 +41,7 @@ export function PPPMassiveUpload() {
 		<div className="max-w-lg space-y-5">
 			<div>
 				<h3 className="text-base font-bold text-zinc-800">{t('surveys.ppp.upload.title')}</h3>
-				<p className="text-sm text-zinc-500 mt-1">
-					{t('surveys.ppp.upload.description')}
-				</p>
+				<p className="text-sm text-zinc-500 mt-1">{t('surveys.ppp.upload.description')}</p>
 			</div>
 
 			<Select

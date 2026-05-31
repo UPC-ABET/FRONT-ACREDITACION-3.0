@@ -32,7 +32,24 @@
 			"ifcCodes": "IFC Codes",
 			"ifcFields": "IFC Form Fields"
 		},
-		"logout": "Logout"
+		"logout": "Logout",
+		"loads": {
+			"label": "Loads",
+			"sections": "Sections",
+			"enrolledStudents": "Enrolled Students",
+			"professors": "Professors",
+			"gradesRc": "RC Grades",
+			"studentSections": "Student × Section",
+			"ppp": "PPP",
+			"scrapingBanner": "Banner Scraping",
+			"gradesBanner": "Banner Grades",
+			"studyPlans": "Study Plan",
+			"charts": "Org Chart",
+			"articulation": "Articulation",
+			"delegates": "Delegates",
+			"history": "History",
+			"setup": "Cycle Setup"
+		}
 	},
 	"ifcs": {
 		"page": {
@@ -1329,6 +1346,521 @@
 			"confirm": "Accept",
 			"adding": "Saving...",
 			"errorAdd": "Could not enable the course. Please try again."
+		}
+	},
+	"uploads": {
+		"canvas": {
+			"title": "Smart Bulk Upload Panel",
+			"subtitle": "Pick the term stage and the upload type. Excel headers are validated before submit.",
+			"stage": {
+				"ariaLabel": "Bulk upload stages",
+				"preEnroll": "Pre-enrollment",
+				"startTerm": "Term start",
+				"endTerm": "Term close"
+			},
+			"flow": {
+				"professors": "Professors",
+				"articulation": "Articulation",
+				"studyPlans": "Curriculum",
+				"charts": "Org chart",
+				"sections": "Sections",
+				"enrolledStudents": "Enrolled students",
+				"studentSections": "Students per section",
+				"delegates": "Delegates",
+				"gradesRc": "RC grades",
+				"gradesBanner": "Banner grades",
+				"ppp": "PPP survey",
+				"scrapingBanner": "Banner scraping"
+			},
+			"upload": {
+				"title": "Upload",
+				"pickFlow": "Pick an upload type",
+				"noFlowSelected": "Pick an upload type above to begin.",
+				"dropzone": "Drag the Excel here or click to pick",
+				"dragHintWith": "Drag the {{flow}} Excel file here",
+				"invalidHeaders": "The file does not have the expected columns",
+				"missingColumns": "Missing",
+				"headersValid": "Header is valid — ready to submit",
+				"submit": "Process upload",
+				"submitting": "Processing..."
+			},
+			"banner": {
+				"pullFromBanner": "Pull from Banner/UPlanner",
+				"title": "Extract data from Banner",
+				"description": "We will connect to the Banner API to extract data for",
+				"username": "Banner user",
+				"password": "Password",
+				"start": "Start extraction",
+				"starting": "Starting...",
+				"cancel": "Cancel",
+				"running": "Extraction in progress",
+				"log": {
+					"connecting": "Connecting to Banner...",
+					"authenticated": "Authenticated successfully",
+					"done": "Extraction complete",
+					"unknownError": "Unknown error"
+				}
+			}
+		},
+		"sections": {
+			"pageTitle": "Bulk upload of sections",
+			"pageSubtitle": "Upload the sections Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "Sections upload",
+			"description": "Format .xlsx: CourseCode, Section, Professor, Campus, StudyType",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"courseNotFound": "The course is not registered in the system",
+				"courseNotInStudyPlan": "The course is not registered for this academic period",
+				"professorNotFound": "The professor is not registered in the system",
+				"campusNotFound": "The campus does not exist in the system",
+				"sectionCodeEmpty": "The section code cannot be empty",
+				"sectionAlreadyExists": "The section is already registered",
+				"studyTypeEmpty": "StudyType cannot be empty",
+				"studyTypeInvalid": "Invalid StudyType value (use P, V or S)"
+			}
+		},
+		"enrolledStudents": {
+			"pageTitle": "Bulk upload of enrolled students",
+			"pageSubtitle": "Upload the enrolled students Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "Enrolled students upload",
+			"description": "Format .xlsx: StudentCode, FullName, Program, EnrollmentStatus, Campus",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"studentCodeEmpty": "The student code cannot be empty",
+				"programNotFound": "The program is not registered in the system",
+				"campusNotFound": "The campus does not exist in the system",
+				"enrollmentStatusInvalid": "The enrollment status is not valid",
+				"studentAlreadyEnrolled": "The student is already enrolled in this period"
+			}
+		},
+		"professors": {
+			"pageTitle": "Bulk upload of professors",
+			"pageSubtitle": "Upload the professors Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "Professors upload",
+			"description": "Format .xlsx: UserName, Name",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"userNameEmpty": "UserName (email) cannot be empty",
+				"nameEmpty": "Name cannot be empty",
+				"professorAlreadyExists": "The professor is already registered"
+			}
+		},
+		"gradesRc": {
+			"pageTitle": "Bulk upload of RC grades",
+			"pageSubtitle": "Upload the RC grades Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "RC grades upload",
+			"description": "Format .xlsx: CourseCode, SectionCode, StudentCode, PartialGrade, FinalGrade, FDMGrade, RealGrade",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"courseCodeEmpty": "The course code cannot be empty",
+				"sectionCodeEmpty": "The section code cannot be empty",
+				"studentCodeEmpty": "The student code cannot be empty",
+				"enrollmentNotFound": "The student is not enrolled in the specified section",
+				"gradeAlreadyExists": "Grades are already loaded for this student in this section",
+				"gradeTypeCatalogMissing": "The grade type catalog is not configured"
+			}
+		},
+		"studentSections": {
+			"pageTitle": "Bulk upload of students per section",
+			"pageSubtitle": "Upload the students-per-section Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "Students per section upload",
+			"description": "Format .xlsx: CourseCode, SectionCode, StudentCode",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"courseCodeEmpty": "The course code cannot be empty",
+				"sectionNotFound": "The section is not registered in the system",
+				"studentNotFound": "The student is not registered in the system",
+				"enrolledStudentNotFound": "The student is not enrolled in this period",
+				"duplicateEntry": "The student is already registered in this section"
+			}
+		},
+		"ppp": {
+			"pageTitle": "Bulk upload of PPP surveys",
+			"pageSubtitle": "Upload the PPP survey Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "PPP surveys upload",
+			"description": "Format .xlsx: SurveyType, Status, StudentCode, AcademicPeriod, Campus, Program, SurveyNumber, CompanyName, ManagerName, ManagerTitle, ManagerPhone, ManagerEmail, RUC, TotalHours, ReportNumber, StartDate, EndDate, Comment, OutcomeCode, Score",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"surveyTypeInvalid": "The survey type is not valid",
+				"studentNotFound": "The student is not registered in the system",
+				"programNotFound": "The program is not registered in the system",
+				"campusNotFound": "The campus does not exist in the system",
+				"outcomeNotFound": "The outcome is not registered for this program",
+				"scoreInvalid": "The score has an invalid format"
+			}
+		},
+		"scrapingBanner": {
+			"pageTitle": "Banner scraping upload (students)",
+			"pageSubtitle": "Upload the Banner API exported Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "Banner scraping upload",
+			"description": "Format .xlsx: StudentCode, FirstName, LastName, InstitutionalEmail, PersonalEmail, MobilePhone, ProgramCode, Level, Period, Campus, EducationalMethod, NRC, CourseCode, ProfessorCode",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"studentCodeEmpty": "The student code cannot be empty",
+				"programNotFound": "The program is not registered in the system",
+				"campusNotFound": "The campus does not exist in the system",
+				"courseNotFound": "The course is not registered in the system",
+				"professorNotFound": "The professor is not registered in the system"
+			}
+		},
+		"gradesBanner": {
+			"pageTitle": "Banner grades upload (scraping)",
+			"pageSubtitle": "Upload the Banner grades Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "Banner grades upload",
+			"description": "Format .xlsx: StudentCode, CourseCode, NRC, GradeType, Grade, Weight",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"studentCodeEmpty": "The student code cannot be empty",
+				"enrollmentNotFound": "The student is not enrolled in the specified section",
+				"gradeTypeInvalid": "The grade type is not valid",
+				"gradeAlreadyExists": "A grade of this type already exists for the student in this section"
+			}
+		},
+		"studyPlans": {
+			"pageTitle": "Bulk upload of study plan",
+			"pageSubtitle": "Upload the study plan Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "Study plan upload",
+			"description": "Format .xlsx: StudyPlanCode, StudyPlanName, ProgramCode, CourseCode, CourseName, IsElective, LevelType, Prerequisites",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"studyPlanCodeEmpty": "The study plan code cannot be empty",
+				"programNotFound": "The program is not registered in the system",
+				"courseCodeEmpty": "The course code cannot be empty",
+				"courseNameEmpty": "The course name cannot be empty",
+				"levelTypeInvalid": "The course level type is not valid",
+				"prerequisiteNotFound": "A prerequisite does not exist in the system or in this batch",
+				"courseAlreadyInStudyPlan": "The course is already registered in this study plan"
+			}
+		},
+		"charts": {
+			"pageTitle": "Bulk upload of org chart",
+			"pageSubtitle": "Upload the org chart Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "Org chart upload",
+			"description": "Format .xlsx: EntityCode, Name, Level, EntityType, ResponsibleUserName, Campus, ParentEntityCode",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"entityCodeEmpty": "The entity code cannot be empty",
+				"levelInvalid": "The org chart level must be a number between 1 and 6",
+				"entityTypeInvalid": "The entity type is not valid",
+				"responsibleNotFound": "The responsible person is not registered in the system",
+				"campusNotFound": "The campus does not exist in the system",
+				"parentNotFound": "The parent entity is not registered"
+			}
+		},
+		"articulation": {
+			"pageTitle": "Bulk upload of articulation (Outcomes × Courses map)",
+			"pageSubtitle": "Upload the articulation Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "Articulation upload",
+			"description": "Format .xlsx: AccreditorCode, CommissionCode, ProgramCode, StudyPlanCode, CourseCode, OutcomeCode, OutcomeNameEn, OutcomeDescription, OutcomeType",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"outcomeCodeEmpty": "The outcome code cannot be empty",
+				"commissionNotFound": "The commission is not registered in the system",
+				"programNotFound": "The program is not registered in the system",
+				"courseNotFound": "The course is not registered in the system",
+				"outcomeTypeInvalid": "The outcome type must be CONTROL or VERIFICACION"
+			}
+		},
+		"delegates": {
+			"pageTitle": "Bulk upload of delegates",
+			"pageSubtitle": "Upload the delegates Excel for the selected period",
+			"selectPeriod": "Select an academic period",
+			"title": "Delegates upload",
+			"description": "Format .xlsx: CourseCode, SectionCode, StudentCode",
+			"dropzone": "Click or drag the Excel file here",
+			"upload": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"errorTitle": "Upload error",
+			"result": {
+				"uploadSuccess": "Upload completed successfully",
+				"uploadFailed": "Errors were found in the upload"
+			},
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"generic": "An error occurred during the upload",
+				"courseCodeEmpty": "The course code cannot be empty",
+				"sectionNotFound": "The section is not registered in the system",
+				"enrollmentNotFound": "The student is not enrolled in the specified section"
+			}
+		}
+	},
+	"loadsSetup": {
+		"canvas": {
+			"title": "Initial Configuration — The Bridge Canvas",
+			"subtitle": "Open the term, associate curricula, and assign accreditation commissions."
+		},
+		"period": {
+			"selectorLabel": "Academic term",
+			"selectPlaceholder": "Pick a term",
+			"loading": "Loading terms...",
+			"newButton": "New term",
+			"dialogTitle": "Open new academic term",
+			"codeLabel": "Term code",
+			"codeHint": "Format: YYYY-01, YYYY-02, or YYYY-00 (intensive)",
+			"startLabel": "Start date",
+			"endLabel": "End date",
+			"modalityLabel": "Study modality",
+			"modality": {
+				"regular": "Regular Undergraduate",
+				"epe": "EPE (Studies for Experienced Professionals)"
+			},
+			"cancel": "Cancel",
+			"create": "Create term",
+			"creating": "Creating...",
+			"error": {
+				"codeFormat": "Code must match YYYY-01, YYYY-02 or YYYY-00.",
+				"datesRequired": "Start and end dates are required.",
+				"endBeforeStart": "End date cannot be before start date.",
+				"generic": "Could not create the term. Try again."
+			}
+		},
+		"studyPlan": {
+			"title": "Curriculum × Term Association",
+			"description": "Drag a curriculum from the left panel onto the dropzone to associate it with the selected term. Term courses are auto-instantiated.",
+			"unassociatedTitle": "Unassociated curricula",
+			"associatedTitle": "Associated curricula",
+			"noUnassociated": "All curricula are already associated.",
+			"dropHint": "Drag a curriculum here to associate it with the term.",
+			"loading": "Loading associations...",
+			"coursesSuffix": "courses",
+			"rollback": "Rollback",
+			"pickPeriodFirst": "Pick a term to manage its curricula.",
+			"errorTitle": "Curriculum association error",
+			"error": {
+				"associate": "Could not associate the curriculum.",
+				"unassociate": "Could not roll back the association (sections may already exist)."
+			}
+		},
+		"programCommission": {
+			"title": "Program × Commission Association",
+			"description": "Select the accreditation commissions that oversee each program. Auto-saves in the background.",
+			"pickPeriodFirst": "Pick a term to manage its program commissions.",
+			"errorTitle": "Program-commission association error",
+			"error": {
+				"associate": "Could not associate the commission.",
+				"unassociate": "Could not roll back the association (outcomes may already exist)."
+			}
+		}
+	},
+	"uploadHistory": {
+		"title": "Upload history",
+		"subtitle": "Audit log of every bulk upload recorded in audit.upload_logs.",
+		"table": {
+			"title": "Recorded uploads",
+			"description": "Each row is an upload transaction. You can roll it back or inspect its errors.",
+			"loading": "Loading history...",
+			"empty": "No uploads recorded yet.",
+			"viewErrors": "View errors",
+			"rollback": "Rollback",
+			"col": {
+				"id": "ID",
+				"type": "Type",
+				"status": "Status",
+				"file": "File",
+				"rows": "Rows (loaded/total)",
+				"date": "Date",
+				"actions": "Actions"
+			}
+		},
+		"drawer": {
+			"title": "Per-row errors",
+			"rowsWithErrors": "rows with errors",
+			"empty": "No errors were detected in this file.",
+			"row": "Row",
+			"editInline": "Edit inline",
+			"cancel": "Cancel",
+			"resubmit": "Resubmit",
+			"resubmitting": "Submitting...",
+			"close": "Close drawer"
+		},
+		"rollback": {
+			"title": "Confirm rollback",
+			"warning": "This will irreversibly delete every {{type}} record linked to Log ID #{{id}}.",
+			"confirmation": "Do you want to proceed?",
+			"cancel": "Cancel",
+			"confirm": "Yes, roll back",
+			"running": "Rolling back..."
+		}
+	},
+	"capstone": {
+		"title": "Capstone Evaluation Console (RB grades)",
+		"subtitle": "Direct in-platform evaluation for Systems, Software, and Sciences.",
+		"projects": {
+			"title": "Assigned projects",
+			"description": "Capstone projects where you are an evaluator.",
+			"loading": "Loading projects...",
+			"empty": "You have no Capstone projects assigned this term."
+		},
+		"students": {
+			"title": "Project students",
+			"description": "Pick a student to open the evaluation matrix."
+		},
+		"rubric": {
+			"loading": "Loading rubric..."
+		},
+		"card": {
+			"gradedOf": "of",
+			"students": "students graded"
+		},
+		"slider": {
+			"outcome": "Outcome"
+		},
+		"matrix": {
+			"title": "Evaluation for {{name}} ({{code}})",
+			"description": "Slide each criterion's score. The total must equal 20.",
+			"invalidRubric": "This rubric's maximum sums to {{actual}} instead of {{expected}} — check its configuration.",
+			"sumLabel": "Running total",
+			"observationLabel": "Observation",
+			"observationPlaceholder": "Evaluator qualitative feedback (minimum 50 chars).",
+			"observationHint": "At least {{min}} characters are required to save.",
+			"save": "Save evaluation",
+			"saving": "Saving..."
 		}
 	}
 }

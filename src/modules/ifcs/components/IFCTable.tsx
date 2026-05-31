@@ -40,8 +40,7 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 			{
 				accessorKey: 'programLabel',
 				header: t('ifcs.table.program'),
-				cell: ({ row }) =>
-					row.original.programLabel?.[lang] ?? row.original.programLabel?.es ?? '',
+				cell: ({ row }) => row.original.programLabel?.[lang] ?? row.original.programLabel?.es ?? '',
 			},
 			{
 				accessorKey: 'courseName',

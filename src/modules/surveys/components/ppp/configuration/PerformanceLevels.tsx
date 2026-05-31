@@ -82,9 +82,7 @@ export function PerformanceLevels({
 	return (
 		<div className="space-y-4">
 			<div>
-				<h4 className="text-sm font-bold text-zinc-700">
-					{t('surveys.performanceLevels.title')}
-				</h4>
+				<h4 className="text-sm font-bold text-zinc-700">{t('surveys.performanceLevels.title')}</h4>
 				<p className="text-xs text-zinc-500 mt-1">
 					{t('surveys.performanceLevels.description')
 						.replace('{{min}}', String(MIN_PERFORMANCE_LEVEL))
@@ -119,9 +117,7 @@ export function PerformanceLevels({
 			</div>
 
 			<Button onClick={handleSave} disabled={saving}>
-				{saving
-					? t('surveys.performanceLevels.saving')
-					: t('surveys.performanceLevels.save')}
+				{saving ? t('surveys.performanceLevels.saving') : t('surveys.performanceLevels.save')}
 			</Button>
 
 			<Toast

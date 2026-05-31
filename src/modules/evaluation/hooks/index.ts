@@ -9,4 +9,5 @@ export * from './useRubricNonCapstoneSave';
 export * from './useRubricCapstoneState';
 export * from './useRubricCapstoneCriteria';
 export * from './useRubricCapstoneSave';
+export * from './useCapstone';
 export * from './queryKeys';

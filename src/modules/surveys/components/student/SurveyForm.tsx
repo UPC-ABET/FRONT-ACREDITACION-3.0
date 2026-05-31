@@ -79,7 +79,9 @@ export function SurveyForm({
 					</div>
 					<div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
 						<div>
-							<span className="text-red-300 text-xs block">{t('surveys.student.programLabel')}</span>
+							<span className="text-red-300 text-xs block">
+								{t('surveys.student.programLabel')}
+							</span>
 							<span className="font-medium">{verification.programName}</span>
 						</div>
 						<div>
@@ -88,13 +90,17 @@ export function SurveyForm({
 						</div>
 						{verification.courseName && (
 							<div>
-								<span className="text-red-300 text-xs block">{t('surveys.student.courseLabel')}</span>
+								<span className="text-red-300 text-xs block">
+									{t('surveys.student.courseLabel')}
+								</span>
 								<span className="font-medium">{verification.courseName}</span>
 							</div>
 						)}
 						{verification.studentCode && (
 							<div>
-								<span className="text-red-300 text-xs block">{t('surveys.student.studentLabel')}</span>
+								<span className="text-red-300 text-xs block">
+									{t('surveys.student.studentLabel')}
+								</span>
 								<span className="font-medium">{verification.studentCode}</span>
 							</div>
 						)}
@@ -108,7 +114,10 @@ export function SurveyForm({
 					<div className="flex items-center justify-between text-xs text-zinc-500 mb-1">
 						<span>{t('surveys.student.progressLabel')}</span>
 						<span>
-							{t('surveys.student.progressText').replace('{{answered}}', String(answeredOutcomes)).replace('{{total}}', String(totalOutcomes)).replace('{{pct}}', String(progress))}
+							{t('surveys.student.progressText')
+								.replace('{{answered}}', String(answeredOutcomes))
+								.replace('{{total}}', String(totalOutcomes))
+								.replace('{{pct}}', String(progress))}
 						</span>
 					</div>
 					<div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
@@ -149,9 +158,7 @@ export function SurveyForm({
 							{group.outcomes.map((outcome) => (
 								<div key={outcome.outcomeId} className="px-6 py-5">
 									<div className="mb-3">
-										<p className="text-sm font-bold text-zinc-800">
-											{outcome.specificCompetence}
-										</p>
+										<p className="text-sm font-bold text-zinc-800">{outcome.specificCompetence}</p>
 										{outcome.generalCompetence && (
 											<p className="text-xs text-zinc-500 mt-0.5">
 												{t('surveys.student.generalPrefix')} {outcome.generalCompetence}
@@ -246,9 +253,7 @@ export function SurveySuccess() {
 		<div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-6">
 			<div className="bg-white rounded-2xl shadow-sm border border-zinc-200 p-8 max-w-md w-full text-center space-y-4">
 				<CheckCircleIcon className="h-16 w-16 text-emerald-500 mx-auto" />
-				<h2 className="text-xl font-bold text-zinc-900">
-					{t('surveys.student.success.title')}
-				</h2>
+				<h2 className="text-xl font-bold text-zinc-900">{t('surveys.student.success.title')}</h2>
 				<p className="text-sm text-zinc-500">{t('surveys.student.success.message')}</p>
 				<p className="text-xs text-zinc-400 mt-2">{t('surveys.student.success.hint')}</p>
 			</div>

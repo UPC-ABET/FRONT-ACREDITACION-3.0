@@ -90,9 +90,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 		rubric.rubric.rubricType?.name.es ??
 		'—';
 	const gradeTypeName =
-		rubric.rubric.gradeType?.name[locale as 'es' | 'en'] ??
-		rubric.rubric.gradeType?.name.es ??
-		'—';
+		rubric.rubric.gradeType?.name[locale as 'es' | 'en'] ?? rubric.rubric.gradeType?.name.es ?? '—';
 
 	const isCapstone = rubric.rubric.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 	const isFinal = gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;

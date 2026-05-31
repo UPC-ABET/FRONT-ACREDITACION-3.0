@@ -83,15 +83,10 @@ export async function cloneLCFCConfiguration(
 	_sourcePeriodId: number,
 	_targetPeriodId: number,
 ): Promise<void> {
-	throw new ApiError(
-		'LCFC configuration cloning is not available in this backend version.',
-	);
+	throw new ApiError('LCFC configuration cloning is not available in this backend version.');
 }
 
-export async function changeLCFCConfigStatus(
-	configId: number,
-	newStatus: LCFCConfigStatus,
-) {
+export async function changeLCFCConfigStatus(configId: number, newStatus: LCFCConfigStatus) {
 	return apiPost('lcfc/config/update-status', {
 		updates: [{ configId, isActive: newStatus === 'ACTIVE' }],
 	});
@@ -112,9 +107,7 @@ export async function getLCFCEmailParams(): Promise<LCFCEmailParam[]> {
 // ─── Excel template & upload ───────────────────────────────────────────────
 
 export async function downloadLCFCTemplate(_periodId: number): Promise<void> {
-	throw new ApiError(
-		'LCFC template download is not available in this backend version.',
-	);
+	throw new ApiError('LCFC template download is not available in this backend version.');
 }
 
 export async function uploadLCFCMassive(_file: File, _school?: unknown): Promise<void> {

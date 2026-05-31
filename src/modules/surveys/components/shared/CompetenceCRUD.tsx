@@ -236,9 +236,7 @@ export function CompetenceCRUD({
 
 					<DialogFooter showCloseButton>
 						<Button onClick={handleSave} disabled={saving}>
-							{saving
-								? t('surveys.competence.modal.saving')
-								: t('surveys.competence.modal.save')}
+							{saving ? t('surveys.competence.modal.saving') : t('surveys.competence.modal.save')}
 						</Button>
 					</DialogFooter>
 				</DialogContent>
@@ -250,13 +248,9 @@ export function CompetenceCRUD({
 					<DialogHeader>
 						<DialogTitle>{t('surveys.competence.modal.deleteTitle')}</DialogTitle>
 					</DialogHeader>
-					<p className="text-sm text-zinc-600 py-2">
-						{t('surveys.competence.modal.deleteBody')}
-					</p>
+					<p className="text-sm text-zinc-600 py-2">{t('surveys.competence.modal.deleteBody')}</p>
 					<DialogFooter showCloseButton>
-						<Button
-							variant="warning"
-							onClick={() => deleteId !== null && handleDelete(deleteId)}>
+						<Button variant="warning" onClick={() => deleteId !== null && handleDelete(deleteId)}>
 							{t('surveys.competence.modal.delete')}
 						</Button>
 					</DialogFooter>

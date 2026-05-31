@@ -43,20 +43,14 @@ export const surveyQueryKeys = {
 	}) => ['surveys', 'gra', 'students', params] as const,
 	graPerformanceLevels: (periodId: number) =>
 		['surveys', 'gra', 'performance-levels', periodId] as const,
-	graDashboard: (params: {
-		academicPeriodId?: number;
-		programId?: number;
-		campusId?: number;
-	}) => ['surveys', 'gra', 'dashboard', params] as const,
+	graDashboard: (params: { academicPeriodId?: number; programId?: number; campusId?: number }) =>
+		['surveys', 'gra', 'dashboard', params] as const,
 
 	// LCFC
 	lcfcCourses: (school: string, periodId: number, programId?: number) =>
 		['surveys', 'lcfc', 'courses', { school, periodId, programId }] as const,
-	lcfcDashboard: (params: {
-		academicPeriodId?: number;
-		programId?: number;
-		campusId?: number;
-	}) => ['surveys', 'lcfc', 'dashboard', params] as const,
+	lcfcDashboard: (params: { academicPeriodId?: number; programId?: number; campusId?: number }) =>
+		['surveys', 'lcfc', 'dashboard', params] as const,
 
 	// PPP
 	pppCompetences: (periodId: number, programId?: number) =>

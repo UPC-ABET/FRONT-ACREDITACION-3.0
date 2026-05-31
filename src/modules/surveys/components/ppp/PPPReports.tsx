@@ -40,9 +40,7 @@ export function PPPReports() {
 		<div className="max-w-lg space-y-6">
 			<div>
 				<h3 className="text-base font-bold text-zinc-800">{t('surveys.ppp.reports.title')}</h3>
-				<p className="text-sm text-zinc-500 mt-1">
-					{t('surveys.ppp.reports.description')}
-				</p>
+				<p className="text-sm text-zinc-500 mt-1">{t('surveys.ppp.reports.description')}</p>
 			</div>
 
 			<div className="space-y-4">
@@ -65,18 +63,24 @@ export function PPPReports() {
 					<p className="text-sm font-bold text-zinc-700">{t('surveys.shared.summary')}</p>
 					<div className="grid grid-cols-2 gap-3 text-sm">
 						<div>
-							<span className="text-xs text-zinc-500 block">{t('surveys.shared.totalSurveys')}</span>
+							<span className="text-xs text-zinc-500 block">
+								{t('surveys.shared.totalSurveys')}
+							</span>
 							<span className="font-semibold">{reportData.summary?.totalSurveys ?? '—'}</span>
 						</div>
 						{reportData.summary?.completionRatePct !== undefined && (
 							<div>
-								<span className="text-xs text-zinc-500 block">{t('surveys.shared.completionRate')}</span>
+								<span className="text-xs text-zinc-500 block">
+									{t('surveys.shared.completionRate')}
+								</span>
 								<span className="font-semibold">{reportData.summary.completionRatePct}%</span>
 							</div>
 						)}
 						{reportData.summary?.green !== undefined && (
 							<div>
-								<span className="text-xs text-zinc-500 block">{t('surveys.shared.colorSummary')}</span>
+								<span className="text-xs text-zinc-500 block">
+									{t('surveys.shared.colorSummary')}
+								</span>
 								<span className="font-semibold">
 									{reportData.summary.green} / {reportData.summary.yellow} /{' '}
 									{reportData.summary.red}

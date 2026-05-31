@@ -72,7 +72,8 @@ export function RubricCreateWizard() {
 		},
 	];
 
-	const useCapstoneEditor = step2Data?.isCapstone && step2Data?.gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
+	const useCapstoneEditor =
+		step2Data?.isCapstone && step2Data?.gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
 
 	return (
 		<div className="space-y-8">

@@ -69,66 +69,69 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 		});
 	}
 
-	const columns = useMemo<ColumnDef<GRAStudent>[]>(() => [
-		{
-			accessorKey: 'studentCode',
-			header: t('surveys.gra.notifications.columns.code'),
-		},
-		{
-			accessorKey: 'studentName',
-			header: t('surveys.gra.notifications.columns.name'),
-		},
-		{
-			accessorKey: 'studentEmail',
-			header: t('surveys.gra.notifications.columns.email'),
-		},
-		{
-			accessorKey: 'sendStatus',
-			header: t('surveys.gra.notifications.columns.sendStatus'),
-			// NOSONAR — cell renderers are render functions, not React components
-			cell: ({ getValue }) => {
-				const status = (getValue() as string) ?? NOTIFICATION_STATUS.PENDING;
-				const labelKey =
-					NOTIFICATION_STATUS_LABEL_KEY[status as keyof typeof NOTIFICATION_STATUS_LABEL_KEY] ??
-					'surveys.gra.notifications.status.pending';
-				return (
-					<Badge variant={status === NOTIFICATION_STATUS.SENT ? 'default' : 'outline'}>
-						{t(labelKey)}
-					</Badge>
-				);
+	const columns = useMemo<ColumnDef<GRAStudent>[]>(
+		() => [
+			{
+				accessorKey: 'studentCode',
+				header: t('surveys.gra.notifications.columns.code'),
 			},
-		},
-		{
-			accessorKey: 'responseStatus',
-			header: t('surveys.gra.notifications.columns.responseStatus'),
-			// NOSONAR — cell renderers are render functions, not React components
-			cell: ({ getValue }) => {
-				const status = getValue() as string | undefined;
-				if (!status) return <span className="text-zinc-400 text-xs">—</span>;
-				const labelKey =
-					NOTIFICATION_STATUS_LABEL_KEY[status as keyof typeof NOTIFICATION_STATUS_LABEL_KEY];
-				return (
-					<Badge variant={status === NOTIFICATION_STATUS.RESPONDED ? 'success' : 'outline'}>
-						{labelKey ? t(labelKey) : status}
-					</Badge>
-				);
+			{
+				accessorKey: 'studentName',
+				header: t('surveys.gra.notifications.columns.name'),
 			},
-		},
-		{
-			id: 'actions',
-			header: t('surveys.gra.notifications.columns.actions'),
-			// NOSONAR — cell renderers are render functions, not React components
-			cell: ({ row }) => (
-				<Button
-					size="sm"
-					variant="warning"
-					onClick={() => setDeleteId(row.original.notificationId)}
-					aria-label={t('surveys.gra.notifications.delete')}>
-					<TrashIcon className="h-4 w-4" />
-				</Button>
-			),
-		},
-	], [t]);
+			{
+				accessorKey: 'studentEmail',
+				header: t('surveys.gra.notifications.columns.email'),
+			},
+			{
+				accessorKey: 'sendStatus',
+				header: t('surveys.gra.notifications.columns.sendStatus'),
+				// NOSONAR — cell renderers are render functions, not React components
+				cell: ({ getValue }) => {
+					const status = (getValue() as string) ?? NOTIFICATION_STATUS.PENDING;
+					const labelKey =
+						NOTIFICATION_STATUS_LABEL_KEY[status as keyof typeof NOTIFICATION_STATUS_LABEL_KEY] ??
+						'surveys.gra.notifications.status.pending';
+					return (
+						<Badge variant={status === NOTIFICATION_STATUS.SENT ? 'default' : 'outline'}>
+							{t(labelKey)}
+						</Badge>
+					);
+				},
+			},
+			{
+				accessorKey: 'responseStatus',
+				header: t('surveys.gra.notifications.columns.responseStatus'),
+				// NOSONAR — cell renderers are render functions, not React components
+				cell: ({ getValue }) => {
+					const status = getValue() as string | undefined;
+					if (!status) return <span className="text-zinc-400 text-xs">—</span>;
+					const labelKey =
+						NOTIFICATION_STATUS_LABEL_KEY[status as keyof typeof NOTIFICATION_STATUS_LABEL_KEY];
+					return (
+						<Badge variant={status === NOTIFICATION_STATUS.RESPONDED ? 'success' : 'outline'}>
+							{labelKey ? t(labelKey) : status}
+						</Badge>
+					);
+				},
+			},
+			{
+				id: 'actions',
+				header: t('surveys.gra.notifications.columns.actions'),
+				// NOSONAR — cell renderers are render functions, not React components
+				cell: ({ row }) => (
+					<Button
+						size="sm"
+						variant="warning"
+						onClick={() => setDeleteId(row.original.notificationId)}
+						aria-label={t('surveys.gra.notifications.delete')}>
+						<TrashIcon className="h-4 w-4" />
+					</Button>
+				),
+			},
+		],
+		[t],
+	);
 
 	return (
 		<div className="space-y-4">
@@ -153,13 +156,9 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 					<DialogHeader>
 						<DialogTitle>{t('surveys.gra.notifications.deleteTitle')}</DialogTitle>
 					</DialogHeader>
-					<p className="text-sm text-zinc-600 py-2">
-						{t('surveys.gra.notifications.deleteBody')}
-					</p>
+					<p className="text-sm text-zinc-600 py-2">{t('surveys.gra.notifications.deleteBody')}</p>
 					<DialogFooter showCloseButton>
-						<Button
-							variant="warning"
-							onClick={() => deleteId !== null && handleDelete(deleteId)}>
+						<Button variant="warning" onClick={() => deleteId !== null && handleDelete(deleteId)}>
 							{t('surveys.gra.notifications.delete')}
 						</Button>
 					</DialogFooter>

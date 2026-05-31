@@ -20,6 +20,7 @@ import {
 	DocumentChartBarIcon,
 	ShieldCheckIcon,
 	DocumentCheckIcon,
+	ArrowUpTrayIcon,
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { useIsAdmin, useLogout } from '@/modules/auth/hooks';
@@ -73,6 +74,26 @@ export function AppSidebar() {
 				{ name: t('nav.surveys.ppp'), href: '/surveys/ppp' },
 				{ name: t('nav.surveys.gra'), href: '/surveys/gra' },
 				{ name: t('nav.surveys.lcfc'), href: '/surveys/lcfc' },
+			],
+		},
+
+		{
+			name: t('nav.loads.label'),
+			icon: ArrowUpTrayIcon,
+			children: [
+				{ name: t('nav.loads.sections'), href: '/loads/sections' },
+				{ name: t('nav.loads.enrolledStudents'), href: '/loads/enrolled-students' },
+				{ name: t('nav.loads.professors'), href: '/loads/professors' },
+				{ name: t('nav.loads.gradesRc'), href: '/loads/grades-rc' },
+				{ name: t('nav.loads.studentSections'), href: '/loads/student-sections' },
+				{ name: t('nav.loads.ppp'), href: '/loads/ppp' },
+				{ name: t('nav.loads.scrapingBanner'), href: '/loads/scraping-banner' },
+				{ name: t('nav.loads.gradesBanner'), href: '/loads/grades-banner' },
+				{ name: t('nav.loads.studyPlans'), href: '/loads/study-plans' },
+				{ name: t('nav.loads.charts'), href: '/loads/charts' },
+				{ name: t('nav.loads.articulation'), href: '/loads/articulation' },
+				{ name: t('nav.loads.delegates'), href: '/loads/delegates' },
+				{ name: t('nav.loads.history'), href: '/loads/history' },
 			],
 		},
 

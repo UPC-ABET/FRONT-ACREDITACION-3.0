@@ -62,9 +62,7 @@ export function LCFCNotificationView() {
 				<h3 className="text-base font-bold text-zinc-800">
 					{t('surveys.lcfc.notifications.title')}
 				</h3>
-				<p className="text-sm text-zinc-500 mt-1">
-					{t('surveys.lcfc.notifications.description')}
-				</p>
+				<p className="text-sm text-zinc-500 mt-1">{t('surveys.lcfc.notifications.description')}</p>
 			</div>
 
 			<div className="space-y-4">
@@ -72,9 +70,7 @@ export function LCFCNotificationView() {
 					label={t('surveys.lcfc.notifications.cycleLabel')}
 					options={cycleOptions}
 					value={form.selectedCycle}
-					onChange={(_, val) =>
-						setSelectedCycle(val as { label: string; value: number } | null)
-					}
+					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
 					placeholder={t('surveys.lcfc.notifications.cyclePlaceholder')}
 					isSearchable
 				/>
@@ -97,9 +93,7 @@ export function LCFCNotificationView() {
 
 			<Button onClick={handleSend} disabled={!isValid || sending}>
 				<PaperAirplaneIcon className="h-4 w-4 mr-2" />
-				{sending
-					? t('surveys.lcfc.notifications.sending')
-					: t('surveys.lcfc.notifications.send')}
+				{sending ? t('surveys.lcfc.notifications.sending') : t('surveys.lcfc.notifications.send')}
 			</Button>
 
 			<Toast
