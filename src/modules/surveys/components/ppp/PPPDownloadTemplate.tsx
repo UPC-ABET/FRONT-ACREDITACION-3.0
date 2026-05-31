@@ -40,8 +40,7 @@ export function PPPDownloadTemplate() {
 			return;
 		}
 		await download(selectedCycle.value);
-		if (!error)
-			setToast({ open: true, type: 'success', msg: t('surveys.ppp.download.success') });
+		if (!error) setToast({ open: true, type: 'success', msg: t('surveys.ppp.download.success') });
 	}
 
 	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
@@ -50,9 +49,7 @@ export function PPPDownloadTemplate() {
 		<div className="max-w-md space-y-6">
 			<div>
 				<h3 className="text-base font-bold text-zinc-800">{t('surveys.ppp.download.title')}</h3>
-				<p className="text-sm text-zinc-500 mt-1">
-					{t('surveys.ppp.download.description')}
-				</p>
+				<p className="text-sm text-zinc-500 mt-1">{t('surveys.ppp.download.description')}</p>
 			</div>
 
 			<Select

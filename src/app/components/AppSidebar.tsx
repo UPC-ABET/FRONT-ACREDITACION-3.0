@@ -91,7 +91,7 @@ export function AppSidebar() {
 				{ name: t('nav.loads.gradesBanner'), href: '/loads/grades-banner' },
 				{ name: t('nav.loads.studyPlans'), href: '/loads/study-plans' },
 				{ name: t('nav.loads.charts'), href: '/loads/charts' },
-				{ name: t('nav.loads.outcomes'), href: '/loads/outcomes' },
+				{ name: t('nav.loads.articulation'), href: '/loads/articulation' },
 				{ name: t('nav.loads.delegates'), href: '/loads/delegates' },
 				{ name: t('nav.loads.history'), href: '/loads/history' },
 			],

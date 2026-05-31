@@ -45,7 +45,7 @@
 			"gradesBanner": "Notas Banner",
 			"studyPlans": "Malla Curricular",
 			"charts": "Organigrama",
-			"outcomes": "Outcomes",
+			"articulation": "Articulación",
 			"delegates": "Delegados",
 			"history": "Historial",
 			"setup": "Apertura de Ciclo"
@@ -1349,6 +1349,59 @@
 		}
 	},
 	"uploads": {
+		"canvas": {
+			"title": "Panel de Carga Masiva Inteligente",
+			"subtitle": "Selecciona el hito del ciclo y el tipo de carga. Las cabeceras del Excel se validan antes de enviar.",
+			"stage": {
+				"ariaLabel": "Hitos de carga masiva",
+				"preEnroll": "Antes de matrícula",
+				"startTerm": "Inicio de ciclo",
+				"endTerm": "Cierre de ciclo"
+			},
+			"flow": {
+				"professors": "Docentes",
+				"articulation": "Articulación",
+				"studyPlans": "Malla curricular",
+				"charts": "Organigrama",
+				"sections": "Secciones",
+				"enrolledStudents": "Alumnos matriculados",
+				"studentSections": "Alumnos por sección",
+				"delegates": "Delegados",
+				"gradesRc": "Notas RC",
+				"gradesBanner": "Notas Banner",
+				"ppp": "Encuesta PPP",
+				"scrapingBanner": "Scraping Banner"
+			},
+			"upload": {
+				"title": "Carga",
+				"pickFlow": "Selecciona un tipo de carga",
+				"noFlowSelected": "Elige un tipo de carga arriba para comenzar.",
+				"dropzone": "Arrastra el Excel aquí o haz click para seleccionar",
+				"dragHintWith": "Arrastra el archivo Excel de {{flow}} aquí",
+				"invalidHeaders": "El archivo no tiene las columnas esperadas",
+				"missingColumns": "Faltan",
+				"headersValid": "Cabecera válida — listo para enviar",
+				"submit": "Procesar carga",
+				"submitting": "Procesando..."
+			},
+			"banner": {
+				"pullFromBanner": "Jalar de Banner/UPlanner",
+				"title": "Extraer datos de Banner",
+				"description": "Conectaremos con la API de Banner para extraer los datos de",
+				"username": "Usuario Banner",
+				"password": "Contraseña",
+				"start": "Iniciar extracción",
+				"starting": "Iniciando...",
+				"cancel": "Cancelar",
+				"running": "Extracción en curso",
+				"log": {
+					"connecting": "Conectando con Banner...",
+					"authenticated": "Autenticado correctamente",
+					"done": "Extracción completada",
+					"unknownError": "Error desconocido"
+				}
+			}
+		},
 		"sections": {
 			"pageTitle": "Carga masiva de secciones",
 			"pageSubtitle": "Sube el Excel de secciones para el período seleccionado",
@@ -1624,11 +1677,11 @@
 				"parentNotFound": "La entidad padre no se encuentra registrada"
 			}
 		},
-		"outcomes": {
-			"pageTitle": "Carga masiva de outcomes (Malla COCOs)",
-			"pageSubtitle": "Sube el Excel de outcomes para el período seleccionado",
+		"articulation": {
+			"pageTitle": "Carga masiva de articulación (Malla COCOs)",
+			"pageSubtitle": "Sube el Excel de articulación para el período seleccionado",
 			"selectPeriod": "Selecciona un período académico",
-			"title": "Carga de outcomes",
+			"title": "Carga de articulación",
 			"description": "Formato .xlsx: CodigoAcreditadora, CodigoComision, CodigoCarrera, CodigoMalla, CodigoCurso, CodigoOutcome, NombreOutcomeEn, DescripcionOutcome, TipoOutcome",
 			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
 			"upload": "Cargar archivo",
@@ -1677,7 +1730,7 @@
 			}
 		}
 	},
-	"configuration": {
+	"loadsSetup": {
 		"canvas": {
 			"title": "Configuración Inicial — The Bridge Canvas",
 			"subtitle": "Apertura de ciclo, asociación de mallas y asignación de comisiones acreditadoras."
@@ -1735,57 +1788,6 @@
 			}
 		}
 	},
-	"cargasCanvas": {
-		"title": "Panel de Carga Masiva Inteligente",
-		"subtitle": "Selecciona el hito del ciclo y el tipo de carga. Las cabeceras del Excel se validan antes de enviar.",
-		"stage": {
-			"preEnroll": "Antes de matrícula",
-			"startTerm": "Inicio de ciclo",
-			"endTerm": "Cierre de ciclo"
-		},
-		"flow": {
-			"professors": "Docentes",
-			"outcomes": "Outcomes",
-			"studyPlans": "Malla curricular",
-			"charts": "Organigrama",
-			"sections": "Secciones",
-			"enrolledStudents": "Alumnos matriculados",
-			"studentSections": "Alumnos por sección",
-			"delegates": "Delegados",
-			"gradesRc": "Notas RC",
-			"gradesBanner": "Notas Banner",
-			"ppp": "Encuesta PPP",
-			"scrapingBanner": "Scraping Banner"
-		},
-		"upload": {
-			"title": "Carga",
-			"pickFlow": "Selecciona un tipo de carga",
-			"noFlowSelected": "Elige un tipo de carga arriba para comenzar.",
-			"dropzone": "Arrastra el Excel aquí o haz click para seleccionar",
-			"dragHintWith": "Arrastra el archivo Excel de {{flow}} aquí",
-			"invalidHeaders": "El archivo no tiene las columnas esperadas",
-			"missingColumns": "Faltan",
-			"headersValid": "Cabecera válida — listo para enviar",
-			"submit": "Procesar carga",
-			"submitting": "Procesando..."
-		},
-		"banner": {
-			"pullFromBanner": "Jalar de Banner/UPlanner",
-			"title": "Extraer datos de Banner",
-			"description": "Conectaremos con la API de Banner para extraer los datos de",
-			"username": "Usuario Banner",
-			"password": "Contraseña",
-			"start": "Iniciar extracción",
-			"starting": "Iniciando...",
-			"cancel": "Cancelar",
-			"running": "Extracción en curso",
-			"log": {
-				"connecting": "Conectando con Banner...",
-				"authenticated": "Autenticado correctamente",
-				"done": "Extracción completada"
-			}
-		}
-	},
 	"uploadHistory": {
 		"title": "Historial de cargas",
 		"subtitle": "Auditoría de las cargas masivas registradas en audit.upload_logs.",
@@ -1814,7 +1816,8 @@
 			"editInline": "Editar en caliente",
 			"cancel": "Cancelar",
 			"resubmit": "Re-enviar",
-			"resubmitting": "Enviando..."
+			"resubmitting": "Enviando...",
+			"close": "Cerrar panel"
 		},
 		"rollback": {
 			"title": "Confirmar rollback",

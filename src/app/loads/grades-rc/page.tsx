@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic';
 
-const GradesRcUploadPage = dynamic(() => import('@/modules/uploads').then((m) => m.GradesRcUploadPage));
+const UploadPage = dynamic(() => import('@/modules/loads').then((m) => m.UploadPage));
 
-export default GradesRcUploadPage;
+export default function Page() {
+	return <UploadPage flowCode="grades-rc" />;
+}

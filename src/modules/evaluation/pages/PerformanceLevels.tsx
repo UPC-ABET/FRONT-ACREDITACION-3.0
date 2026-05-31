@@ -362,8 +362,8 @@ export function PerformanceLevelsPage() {
 										</TableCell>
 										<TableCell>
 											<span className="text-zinc-700">
-												{Number(level.minScore).toFixed(2)} - {Number(level.maxScore).toFixed(2)}{' '}
-												/ {Number(level.maxValue).toFixed(2)}
+												{Number(level.minScore).toFixed(2)} - {Number(level.maxScore).toFixed(2)} /{' '}
+												{Number(level.maxValue).toFixed(2)}
 											</span>
 										</TableCell>
 										<TableCell>

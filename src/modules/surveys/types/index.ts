@@ -31,10 +31,10 @@ export interface Program {
 export interface CompetenceConfig {
 	id: number;
 	outcomeId?: number;
-	generalCompetence: string;  // maps to extra.name_es
+	generalCompetence: string; // maps to extra.name_es
 	specificCompetence: string; // maps to extra.name_en
-	description: string;        // maps to extra.description_es
-	performanceLevel: number;   // maps to extra.order
+	description: string; // maps to extra.description_es
+	performanceLevel: number; // maps to extra.order
 	isActive?: boolean;
 	programId?: number;
 	periodId?: number;
@@ -55,12 +55,12 @@ export interface CompetenceFormData {
 // ─── Performance levels ────────────────────────────────────────────────────
 export interface PerformanceLevel {
 	id?: number;
-	level: number;       // maps to performance_level unique_value
+	level: number; // maps to performance_level unique_value
 	description: string; // maps to performance_level name.es
-	range: string;       // derived from min_score – max_score
+	range: string; // derived from min_score – max_score
 	minScore?: number;
 	maxScore?: number;
-	color?: string;      // maps to performance_level extra.color
+	color?: string; // maps to performance_level extra.color
 }
 
 // ─── File download response ────────────────────────────────────────────────

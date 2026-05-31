@@ -25,7 +25,11 @@ export function PPPConfiguration() {
 	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
 	const [activeTab, setActiveTab] = useState('competences');
 	const [showClone, setShowClone] = useState(false);
-	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error' | 'info'; msg: string }>({
+	const [toast, setToast] = useState<{
+		open: boolean;
+		type: 'success' | 'error' | 'info';
+		msg: string;
+	}>({
 		open: false,
 		type: 'success',
 		msg: '',
@@ -75,9 +79,7 @@ export function PPPConfiguration() {
 						<p className="text-sm font-bold text-amber-800">
 							{t('surveys.shared.noConfiguration')}
 						</p>
-						<p className="text-xs text-amber-700 mt-1">
-							{t('surveys.shared.noConfigurationHint')}
-						</p>
+						<p className="text-xs text-amber-700 mt-1">{t('surveys.shared.noConfigurationHint')}</p>
 					</div>
 					<Button
 						size="sm"

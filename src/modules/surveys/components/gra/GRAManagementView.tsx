@@ -20,10 +20,10 @@ export function GRAManagementView() {
 	return (
 		<div className="space-y-6">
 			<div>
-				<h1 className="text-2xl font-bold text-zinc-900">GRA — {t('surveys.gra.management.title')}</h1>
-				<p className="text-sm text-zinc-500 mt-1">
-					{t('surveys.gra.management.subtitle')}
-				</p>
+				<h1 className="text-2xl font-bold text-zinc-900">
+					GRA — {t('surveys.gra.management.title')}
+				</h1>
+				<p className="text-sm text-zinc-500 mt-1">{t('surveys.gra.management.subtitle')}</p>
 			</div>
 
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />

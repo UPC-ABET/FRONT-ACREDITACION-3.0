@@ -45,7 +45,7 @@
 			"gradesBanner": "Banner Grades",
 			"studyPlans": "Study Plan",
 			"charts": "Org Chart",
-			"outcomes": "Outcomes",
+			"articulation": "Articulation",
 			"delegates": "Delegates",
 			"history": "History",
 			"setup": "Cycle Setup"
@@ -1349,6 +1349,59 @@
 		}
 	},
 	"uploads": {
+		"canvas": {
+			"title": "Smart Bulk Upload Panel",
+			"subtitle": "Pick the term stage and the upload type. Excel headers are validated before submit.",
+			"stage": {
+				"ariaLabel": "Bulk upload stages",
+				"preEnroll": "Pre-enrollment",
+				"startTerm": "Term start",
+				"endTerm": "Term close"
+			},
+			"flow": {
+				"professors": "Professors",
+				"articulation": "Articulation",
+				"studyPlans": "Curriculum",
+				"charts": "Org chart",
+				"sections": "Sections",
+				"enrolledStudents": "Enrolled students",
+				"studentSections": "Students per section",
+				"delegates": "Delegates",
+				"gradesRc": "RC grades",
+				"gradesBanner": "Banner grades",
+				"ppp": "PPP survey",
+				"scrapingBanner": "Banner scraping"
+			},
+			"upload": {
+				"title": "Upload",
+				"pickFlow": "Pick an upload type",
+				"noFlowSelected": "Pick an upload type above to begin.",
+				"dropzone": "Drag the Excel here or click to pick",
+				"dragHintWith": "Drag the {{flow}} Excel file here",
+				"invalidHeaders": "The file does not have the expected columns",
+				"missingColumns": "Missing",
+				"headersValid": "Header is valid — ready to submit",
+				"submit": "Process upload",
+				"submitting": "Processing..."
+			},
+			"banner": {
+				"pullFromBanner": "Pull from Banner/UPlanner",
+				"title": "Extract data from Banner",
+				"description": "We will connect to the Banner API to extract data for",
+				"username": "Banner user",
+				"password": "Password",
+				"start": "Start extraction",
+				"starting": "Starting...",
+				"cancel": "Cancel",
+				"running": "Extraction in progress",
+				"log": {
+					"connecting": "Connecting to Banner...",
+					"authenticated": "Authenticated successfully",
+					"done": "Extraction complete",
+					"unknownError": "Unknown error"
+				}
+			}
+		},
 		"sections": {
 			"pageTitle": "Bulk upload of sections",
 			"pageSubtitle": "Upload the sections Excel for the selected period",
@@ -1624,11 +1677,11 @@
 				"parentNotFound": "The parent entity is not registered"
 			}
 		},
-		"outcomes": {
-			"pageTitle": "Bulk upload of outcomes (COCO map)",
-			"pageSubtitle": "Upload the outcomes Excel for the selected period",
+		"articulation": {
+			"pageTitle": "Bulk upload of articulation (Outcomes × Courses map)",
+			"pageSubtitle": "Upload the articulation Excel for the selected period",
 			"selectPeriod": "Select an academic period",
-			"title": "Outcomes upload",
+			"title": "Articulation upload",
 			"description": "Format .xlsx: AccreditorCode, CommissionCode, ProgramCode, StudyPlanCode, CourseCode, OutcomeCode, OutcomeNameEn, OutcomeDescription, OutcomeType",
 			"dropzone": "Click or drag the Excel file here",
 			"upload": "Upload file",
@@ -1677,7 +1730,7 @@
 			}
 		}
 	},
-	"configuration": {
+	"loadsSetup": {
 		"canvas": {
 			"title": "Initial Configuration — The Bridge Canvas",
 			"subtitle": "Open the term, associate curricula, and assign accreditation commissions."
@@ -1735,57 +1788,6 @@
 			}
 		}
 	},
-	"cargasCanvas": {
-		"title": "Smart Bulk Upload Panel",
-		"subtitle": "Pick the term stage and the upload type. Excel headers are validated before submit.",
-		"stage": {
-			"preEnroll": "Pre-enrollment",
-			"startTerm": "Term start",
-			"endTerm": "Term close"
-		},
-		"flow": {
-			"professors": "Professors",
-			"outcomes": "Outcomes",
-			"studyPlans": "Curriculum",
-			"charts": "Org chart",
-			"sections": "Sections",
-			"enrolledStudents": "Enrolled students",
-			"studentSections": "Students per section",
-			"delegates": "Delegates",
-			"gradesRc": "RC grades",
-			"gradesBanner": "Banner grades",
-			"ppp": "PPP survey",
-			"scrapingBanner": "Banner scraping"
-		},
-		"upload": {
-			"title": "Upload",
-			"pickFlow": "Pick an upload type",
-			"noFlowSelected": "Pick an upload type above to begin.",
-			"dropzone": "Drag the Excel here or click to pick",
-			"dragHintWith": "Drag the {{flow}} Excel file here",
-			"invalidHeaders": "The file does not have the expected columns",
-			"missingColumns": "Missing",
-			"headersValid": "Header is valid — ready to submit",
-			"submit": "Process upload",
-			"submitting": "Processing..."
-		},
-		"banner": {
-			"pullFromBanner": "Pull from Banner/UPlanner",
-			"title": "Extract data from Banner",
-			"description": "We will connect to the Banner API to extract data for",
-			"username": "Banner user",
-			"password": "Password",
-			"start": "Start extraction",
-			"starting": "Starting...",
-			"cancel": "Cancel",
-			"running": "Extraction in progress",
-			"log": {
-				"connecting": "Connecting to Banner...",
-				"authenticated": "Authenticated successfully",
-				"done": "Extraction complete"
-			}
-		}
-	},
 	"uploadHistory": {
 		"title": "Upload history",
 		"subtitle": "Audit log of every bulk upload recorded in audit.upload_logs.",
@@ -1814,7 +1816,8 @@
 			"editInline": "Edit inline",
 			"cancel": "Cancel",
 			"resubmit": "Resubmit",
-			"resubmitting": "Submitting..."
+			"resubmitting": "Submitting...",
+			"close": "Close drawer"
 		},
 		"rollback": {
 			"title": "Confirm rollback",

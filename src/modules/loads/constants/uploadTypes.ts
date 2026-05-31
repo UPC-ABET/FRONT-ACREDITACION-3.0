@@ -1,0 +1,18 @@
+// String values are the backend's core.types group UPLOAD_TYPE codes (do not translate;
+// they're part of the contract). JS-side keys mirror each flow code in SCREAMING_SNAKE_CASE.
+export const UPLOAD_TYPE_CODES = {
+	SECTIONS: 'SECCION',
+	ENROLLED_STUDENTS: 'ALUMNOS_MATRICULADOS',
+	PROFESSORS: 'DOCENTE',
+	GRADES_RC: 'NOTASRC',
+	STUDENT_SECTIONS: 'ALUMNOS_POR_SECCION',
+	STUDY_PLANS: 'MALLA_CURRICULAR',
+	CHARTS: 'ORGANIGRAMA',
+	ARTICULATION: 'MALLA_COCOS',
+	DELEGATES: 'DELEGADOS',
+	PPP: 'PPP',
+	SCRAPING_BANNER: 'SCRAPING_BANNER',
+	GRADES_BANNER: 'SCRAPING_BANNER_NOTAS',
+} as const;
+
+export type UploadTypeCode = (typeof UPLOAD_TYPE_CODES)[keyof typeof UPLOAD_TYPE_CODES];

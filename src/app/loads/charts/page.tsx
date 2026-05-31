@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic';
 
-const ChartsUploadPage = dynamic(() => import('@/modules/uploads').then((m) => m.ChartsUploadPage));
+const UploadPage = dynamic(() => import('@/modules/loads').then((m) => m.UploadPage));
 
-export default ChartsUploadPage;
+export default function Page() {
+	return <UploadPage flowCode="charts" />;
+}

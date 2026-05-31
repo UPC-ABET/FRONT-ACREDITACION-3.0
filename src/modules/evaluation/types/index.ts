@@ -7,6 +7,7 @@ export * from './rubricDetail';
 export * from './rubricEditor';
 export * from './rubricListRow';
 export * from './rubricQuestion';
+export * from './capstone';
 
 // ── Request DTOs ─────────────────────────────────────────────────────────────
 export type EvaluationScorePayload = {

@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic';
 
-const ScrapingBannerUploadPage = dynamic(() => import('@/modules/uploads').then((m) => m.ScrapingBannerUploadPage));
+const UploadPage = dynamic(() => import('@/modules/loads').then((m) => m.UploadPage));
 
-export default ScrapingBannerUploadPage;
+export default function Page() {
+	return <UploadPage flowCode="scraping-banner" />;
+}

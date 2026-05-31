@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic';
 
-const GradesBannerUploadPage = dynamic(() => import('@/modules/uploads').then((m) => m.GradesBannerUploadPage));
+const UploadPage = dynamic(() => import('@/modules/loads').then((m) => m.UploadPage));
 
-export default GradesBannerUploadPage;
+export default function Page() {
+	return <UploadPage flowCode="grades-banner" />;
+}

@@ -1,0 +1,15 @@
+import { useMutation } from '@tanstack/react-query';
+import { rollbackUpload, uploadFile } from '../services';
+import type { RollbackPayload, UploadPayload, UploadResult } from '../types';
+
+export function useUpload(flowCode: string) {
+	return useMutation<UploadResult, Error, UploadPayload>({
+		mutationFn: (payload) => uploadFile(flowCode, payload),
+	});
+}
+
+export function useRollback(flowCode: string) {
+	return useMutation<{ success: boolean }, Error, RollbackPayload>({
+		mutationFn: (payload) => rollbackUpload(flowCode, payload),
+	});
+}

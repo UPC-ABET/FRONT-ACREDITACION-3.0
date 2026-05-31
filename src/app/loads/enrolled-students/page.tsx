@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic';
 
-const EnrolledStudentsUploadPage = dynamic(() => import('@/modules/uploads').then((m) => m.EnrolledStudentsUploadPage));
+const UploadPage = dynamic(() => import('@/modules/loads').then((m) => m.UploadPage));
 
-export default EnrolledStudentsUploadPage;
+export default function Page() {
+	return <UploadPage flowCode="enrolled-students" />;
+}

@@ -114,8 +114,7 @@ function adaptGraStudent(raw: BackendGraStudent): GRAStudent {
 
 function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): PerformanceLevel {
 	const nameEs = raw.name?.es ?? `Level ${index + 1}`;
-	const color =
-		raw.extra && typeof raw.extra.color === 'string' ? raw.extra.color : undefined;
+	const color = raw.extra && typeof raw.extra.color === 'string' ? raw.extra.color : undefined;
 	return {
 		id: raw.id,
 		level: Number(raw.uniqueValue) || index + 1,
@@ -219,7 +218,10 @@ export async function searchStudentByCode(
 	studentCode: string,
 	programId: number,
 ): Promise<StudentSearchResult> {
-	const payload: BackendStudentSearchRequest = { codigoEstudiante: studentCode, idCarrera: programId };
+	const payload: BackendStudentSearchRequest = {
+		codigoEstudiante: studentCode,
+		idCarrera: programId,
+	};
 	const res = await apiPost<SurveyApiResponse<BackendStudentSearchResponse>>(
 		'email/findStudentCode-career-GRA',
 		payload,
@@ -314,9 +316,7 @@ export async function saveGRAEmailTemplate(template: {
 // ─── Excel template & upload ───────────────────────────────────────────────
 
 export async function downloadGRATemplate(_periodId: number): Promise<void> {
-	throw new ApiError(
-		'GRA template download is not available in this backend version.',
-	);
+	throw new ApiError('GRA template download is not available in this backend version.');
 }
 
 export async function uploadGRAMassive(file: File, _school?: unknown): Promise<void> {

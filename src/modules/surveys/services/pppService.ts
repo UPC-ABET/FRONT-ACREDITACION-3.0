@@ -51,8 +51,7 @@ function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 
 function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): PerformanceLevel {
 	const nameEs = raw.name?.es ?? `Level ${index + 1}`;
-	const color =
-		raw.extra && typeof raw.extra.color === 'string' ? raw.extra.color : undefined;
+	const color = raw.extra && typeof raw.extra.color === 'string' ? raw.extra.color : undefined;
 	return {
 		id: raw.id,
 		level: Number(raw.uniqueValue) || index + 1,
@@ -169,9 +168,7 @@ export async function updatePPPPerformanceLevels(
 // ─── Excel template & upload ───────────────────────────────────────────────
 
 export async function downloadPPPTemplate(_periodId: number): Promise<void> {
-	throw new ApiError(
-		'PPP template download is not available in this backend version.',
-	);
+	throw new ApiError('PPP template download is not available in this backend version.');
 }
 
 export async function uploadPPPMassive(
@@ -191,9 +188,7 @@ export async function uploadPPPMassive(
 }
 
 export async function uploadPPPMassiveLegacy(_file: File, _school?: unknown): Promise<void> {
-	throw new ApiError(
-		'PPP legacy bulk upload is not available in this backend version.',
-	);
+	throw new ApiError('PPP legacy bulk upload is not available in this backend version.');
 }
 
 // ─── Dashboard / Reports ───────────────────────────────────────────────────

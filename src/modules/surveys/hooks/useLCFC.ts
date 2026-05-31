@@ -188,18 +188,16 @@ export function useLCFCReports() {
 	const [reportData, setReportData] = useState<DashboardResponse | null>(null);
 
 	const generate = useCallback(
-		async (params: {
-			academicPeriodId?: number;
-			school?: string;
-			programId?: number;
-		}) => {
+		async (params: { academicPeriodId?: number; school?: string; programId?: number }) => {
 			setLoading(true);
 			setError(null);
 			try {
-				setReportData(await generateLCFCPerceptionReport({
-					academicPeriodId: params.academicPeriodId,
-					programId: params.programId,
-				}));
+				setReportData(
+					await generateLCFCPerceptionReport({
+						academicPeriodId: params.academicPeriodId,
+						programId: params.programId,
+					}),
+				);
 			} catch (e) {
 				setError((e as Error).message);
 			} finally {

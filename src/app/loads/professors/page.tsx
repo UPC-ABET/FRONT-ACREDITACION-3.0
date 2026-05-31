@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic';
 
-const ProfessorsUploadPage = dynamic(() => import('@/modules/uploads').then((m) => m.ProfessorsUploadPage));
+const UploadPage = dynamic(() => import('@/modules/loads').then((m) => m.UploadPage));
 
-export default ProfessorsUploadPage;
+export default function Page() {
+	return <UploadPage flowCode="professors" />;
+}

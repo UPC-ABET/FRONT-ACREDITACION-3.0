@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic';
 
-const SectionsUploadPage = dynamic(() => import('@/modules/uploads').then((m) => m.SectionsUploadPage));
+const UploadPage = dynamic(() => import('@/modules/loads').then((m) => m.UploadPage));
 
-export default SectionsUploadPage;
+export default function Page() {
+	return <UploadPage flowCode="sections" />;
+}
