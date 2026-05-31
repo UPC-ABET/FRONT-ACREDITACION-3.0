@@ -101,7 +101,7 @@ export async function savePPPCompetence(data: CompetenceFormData) {
 
 	if (isNew) {
 		return apiPost('ppp/config/create', {
-			outcomeId: data.outcome_id ?? 1,
+			outcomeId: data.outcomeId ?? 1,
 			nameEs: data.generalCompetence,
 			nameEn: data.specificCompetence || data.generalCompetence,
 			descriptionEs: data.description,
@@ -156,7 +156,7 @@ export async function listPPPPerformanceLevels(
 }
 
 export async function updatePPPPerformanceLevels(
-	_academic_period_id: number,
+	_academicPeriodId: number,
 	levels: PerformanceLevel[],
 ): Promise<void> {
 	await Promise.all(

@@ -17,14 +17,14 @@ export interface PageInfo {
 // ─── Academic entities (from academic module) ──────────────────────────────
 export interface AcademicPeriod {
 	id: number;
-	nombre: string;
-	codigo?: string;
+	name: string;
+	code?: string;
 }
 
 export interface Program {
 	id: number;
-	nombre: string;
-	codigo?: string;
+	name: string;
+	code?: string;
 }
 
 // ─── Competences (PPP / GRA) ───────────────────────────────────────────────
@@ -42,7 +42,7 @@ export interface CompetenceConfig {
 
 export interface CompetenceFormData {
 	id: number;
-	outcome_id?: number;
+	outcomeId?: number;
 	generalCompetence: string;
 	specificCompetence: string;
 	description: string;
@@ -110,9 +110,9 @@ export interface EmailTemplate {
 export interface SendEmailResponse {
 	success: boolean;
 	data?: {
-		enviados: number;
-		fallidos: number;
-		detallesFallo?: Array<{ idEstudiante: number; razon: string }>;
+		sent: number;
+		failed: number;
+		failureDetails?: Array<{ studentId: number; reason: string }>;
 	};
 	message?: string;
 }
@@ -124,30 +124,34 @@ export interface GRAEmailSendRequest {
 	surveyBaseUrl: string;
 }
 
+// ─── LCFC config status / dashboard color ─────────────────────────────────
+export type LCFCConfigStatus = 'ACTIVE' | 'INACTIVE';
+export type DashboardColor = 'RED' | 'YELLOW' | 'GREEN';
+
 // ─── LCFC ──────────────────────────────────────────────────────────────────
 export interface LCFCCourse {
-	idCurso: number;
-	nombreCurso: string;
-	codigo: string;
+	courseId: number;
+	courseName: string;
+	code: string;
 	isActive?: boolean;
-	comisiones: Array<{
-		idComision: number;
-		nombreComision: string;
-		profesor?: string;
+	commissions: Array<{
+		commissionId: number;
+		commissionName: string;
+		professor?: string;
 	}>;
 }
 
 export interface LCFCStudent {
-	idAlumno: number;
-	codigo: string;
-	nombre: string;
+	studentId: number;
+	code: string;
+	name: string;
 	email: string;
-	encuestaEnviada: boolean;
-	encuestaCompletada: boolean;
+	surveySent: boolean;
+	surveyCompleted: boolean;
 }
 
 export interface LCFCEmailParam {
-	nombre: string;
+	name: string;
 	description: string;
 }
 
@@ -162,93 +166,91 @@ export interface LCFCNotificationSendRequest {
 }
 
 export interface LCFCConfigItem {
-	idConfiguracion?: number;
-	idCurso?: number;
-	nombreCurso?: string;
-	estado?: 'ACTIVO' | 'INACTIVO';
-	comisiones?: Array<{ idComision: number; nombreComision: string }>;
+	configId?: number;
+	courseId?: number;
+	courseName?: string;
+	status?: LCFCConfigStatus;
+	commissions?: Array<{ commissionId: number; commissionName: string }>;
 }
 
 // ─── Student Survey (token-based access) ──────────────────────────────────
 export interface SurveyOutcome {
 	outcomeId: number;
-	comisionId: number;
-	competenciaGeneral?: string;
-	competenciaEspecifica: string;
-	descripcion: string;
-	desempeno: number | null;
-	tipoRespuesta?: string;
-	pesaje?: number;
+	commissionId: number;
+	generalCompetence?: string;
+	specificCompetence: string;
+	description: string;
+	score: number | null;
+	responseType?: string;
+	weight?: number;
 }
 
 export interface SurveyCommissionGroup {
-	comisionNombre: string;
-	comisionId: number;
+	commissionName: string;
+	commissionId: number;
 	outcomes: SurveyOutcome[];
 }
 
 export interface SurveyTokenVerification {
 	token?: string;
-	escuela: string;
-	escuelaId?: number;
-	nombreEscuela?: string;
-	nombreCarrera: string;
-	ciclo: string;
-	codigoEstudiante?: string;
-	codigo?: string;
-	nombreEstudiante?: string;
-	nombreCurso?: string;
-	cursoCodigo?: string;
-	estado: boolean; // false = not answered yet, true = already answered
-	alumnoId: number;
-	encuestaId: number;
-	tokenValido?: boolean;
-	diasRestantes?: number;
-	surveyId?: number;
+	school: string;
+	schoolId?: number;
+	schoolName?: string;
+	programName: string;
+	period: string;
+	studentCode?: string;
+	studentName?: string;
+	courseName?: string;
+	courseCode?: string;
+	answered: boolean;
+	studentId: number;
+	surveyId: number;
+	tokenValid?: boolean;
+	daysRemaining?: number;
 }
 
 export interface SurveyOutcomesResponse {
-	escuela: string;
-	nombreEscuela?: string;
-	nombreCarrera: string;
-	ciclo: string;
-	nombreCurso?: string;
-	cursoCodigo?: string;
-	encuestaId: number;
-	lista: SurveyCommissionGroup[];
+	school: string;
+	schoolName?: string;
+	programName: string;
+	period: string;
+	courseName?: string;
+	courseCode?: string;
+	surveyId: number;
+	items: SurveyCommissionGroup[];
 }
 
 export interface SurveySubmitItem {
-	comisionId: number;
+	commissionId: number;
 	outcomeId: number;
-	puntaje: number;
-	descripcion?: string;
+	score: number;
+	description?: string;
 }
 
 export interface SurveySubmitRequest {
 	token?: string;
-	comentario: string;
-	encuestaId: number;
-	escuela: string;
-	lista: SurveySubmitItem[];
+	comment: string;
+	surveyId: number;
+	school: string;
+	items: SurveySubmitItem[];
 }
 
 export interface SurveySubmitResponse {
 	success: boolean;
 	data?: {
 		message: string;
-		encuestaId?: number;
-		fechaCompletacion?: string;
+		surveyId?: number;
+		completionDate?: string;
 	};
 }
 
 // ─── Reports / Dashboard ───────────────────────────────────────────────────
 export interface ReportFilter {
-	idPeriodoAcademico?: number;
-	idCarrera?: number;
-	idComision?: number;
-	escuela?: string;
-	idioma?: string;
+	academicPeriodId?: number;
+	programId?: number;
+	commissionId?: number;
+	school?: string;
+	language?: string;
 }
 
 export interface DashboardOutcome {
@@ -256,15 +258,15 @@ export interface DashboardOutcome {
 	outcomeCode?: string;
 	outcomeName: string;
 	averageScore: number;
-	color: 'ROJO' | 'AMARILLO' | 'VERDE';
+	color: DashboardColor;
 	totalResponses: number;
 }
 
 export interface DashboardSummary {
 	totalSurveys: number;
-	rojo?: number;
-	amarillo?: number;
-	verde?: number;
+	red?: number;
+	yellow?: number;
+	green?: number;
 	completed?: number;
 	pending?: number;
 	completionRatePct?: number;

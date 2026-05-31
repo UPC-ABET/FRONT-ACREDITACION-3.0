@@ -36,8 +36,8 @@ export async function getAcademicPeriods(): Promise<AcademicPeriod[]> {
 		const res = await apiGet<Envelope<BackendEntity>>('academic-periods/get-all');
 		return unwrapList(res).map((raw) => ({
 			id: raw.id,
-			nombre: adaptDisplayName(raw),
-			codigo: raw.code ?? raw.codigo,
+			name: adaptDisplayName(raw),
+			code: raw.code ?? raw.codigo,
 		}));
 	} catch {
 		return [];
@@ -51,8 +51,8 @@ export async function getPrograms(): Promise<Program[]> {
 		const res = await apiGet<Envelope<BackendEntity>>('programs/get-all');
 		return unwrapList(res).map((raw) => ({
 			id: raw.id,
-			nombre: adaptDisplayName(raw),
-			codigo: raw.code ?? raw.codigo,
+			name: adaptDisplayName(raw),
+			code: raw.code ?? raw.codigo,
 		}));
 	} catch {
 		return [];

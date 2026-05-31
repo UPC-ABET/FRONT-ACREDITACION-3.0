@@ -21,7 +21,7 @@ import {
 	updatePPPPerformanceLevels,
 	generatePPPDashboard,
 } from '../services';
-import type { CompetenceFormData, PerformanceLevel } from '../types';
+import type { CompetenceFormData, LCFCConfigStatus, PerformanceLevel } from '../types';
 
 // ─── Query Keys ──────────────────────────────────────────────────────────────
 
@@ -212,7 +212,7 @@ export function useGenerateLCFCConfiguration() {
 export function useChangeLCFCConfigStatus() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (params: { configId: number; newStatus: 'ACTIVO' | 'INACTIVO' }) =>
+		mutationFn: (params: { configId: number; newStatus: LCFCConfigStatus }) =>
 			changeLCFCConfigStatus(params.configId, params.newStatus),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['surveys', 'lcfc', 'courses'] });

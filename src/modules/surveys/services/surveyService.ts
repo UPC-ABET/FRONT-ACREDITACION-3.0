@@ -54,26 +54,39 @@ interface BackendOutcome {
 	descripcion?: string;
 }
 
+interface BackendLegacySurveyOutcomesResponse {
+	escuela?: string;
+	nombreCarrera?: string;
+	ciclo?: string;
+	nombreCurso?: string;
+	encuestaId?: number;
+	lista?: BackendOutcome[];
+}
+
+interface BackendLcfcSubmitPayload {
+	comentario: string;
+	encuestaId: number;
+	escuela: string;
+	lista: Array<{ comisionId: number; outcomeId: number; puntaje: number; descripcion?: string }>;
+}
+
 // ─── Adapters ──────────────────────────────────────────────────────────────
 
 function adaptTokenVerification(
 	raw: BackendTokenValidation,
 	token: string,
 ): SurveyTokenVerification {
-	// Support both new backend shape and legacy shape
 	return {
 		token,
-		escuela: raw.escuela ?? 'UPC',
-		nombreCarrera: raw.programName ?? raw.nombreCarrera ?? '',
-		ciclo: raw.academicPeriod ?? raw.ciclo ?? '',
-		codigoEstudiante: raw.studentCode ?? raw.codigoEstudiante ?? raw.codigo,
-		codigo: raw.studentCode ?? raw.codigo,
-		nombreEstudiante: raw.studentName,
-		nombreCurso: raw.courseName ?? raw.nombreCurso,
-		estado: raw.isCompleted ?? raw.estado ?? false,
-		alumnoId: raw.studentId ?? raw.idAlumno ?? 0,
-		encuestaId: raw.surveyId ?? raw.encuestaId ?? 0,
-		surveyId: raw.surveyId,
+		school: raw.escuela ?? 'UPC',
+		programName: raw.programName ?? raw.nombreCarrera ?? '',
+		period: raw.academicPeriod ?? raw.ciclo ?? '',
+		studentCode: raw.studentCode ?? raw.codigoEstudiante ?? raw.codigo,
+		studentName: raw.studentName,
+		courseName: raw.courseName ?? raw.nombreCurso,
+		answered: raw.isCompleted ?? raw.estado ?? false,
+		studentId: raw.studentId ?? raw.idAlumno ?? 0,
+		surveyId: raw.surveyId ?? raw.encuestaId ?? 0,
 	};
 }
 
@@ -81,7 +94,6 @@ function adaptOutcomes(
 	raw: BackendOutcome[],
 	verification: SurveyTokenVerification,
 ): SurveyOutcomesResponse {
-	// Group outcomes by commission
 	const groups: Record<string, SurveyCommissionGroup> = {};
 
 	for (const o of raw) {
@@ -90,36 +102,50 @@ function adaptOutcomes(
 		const key = String(commId);
 
 		if (!groups[key]) {
-			groups[key] = { comisionId: commId, comisionNombre: commName, outcomes: [] };
+			groups[key] = { commissionId: commId, commissionName: commName, outcomes: [] };
 		}
 
 		groups[key].outcomes.push({
 			outcomeId: o.outcomeId,
-			comisionId: commId,
-			competenciaEspecifica: o.name ?? o.competenciaEspecifica ?? `Outcome ${o.outcomeId}`,
-			competenciaGeneral: o.competenciaGeneral,
-			descripcion: o.description ?? o.descripcion ?? '',
-			desempeno: null,
+			commissionId: commId,
+			specificCompetence: o.name ?? o.competenciaEspecifica ?? `Outcome ${o.outcomeId}`,
+			generalCompetence: o.competenciaGeneral,
+			description: o.description ?? o.descripcion ?? '',
+			score: null,
 		});
 	}
 
 	return {
-		escuela: verification.escuela,
-		nombreCarrera: verification.nombreCarrera,
-		ciclo: verification.ciclo,
-		nombreCurso: verification.nombreCurso,
-		encuestaId: verification.encuestaId,
-		lista: Object.values(groups).sort((a, b) => a.comisionId - b.comisionId),
+		school: verification.school,
+		programName: verification.programName,
+		period: verification.period,
+		courseName: verification.courseName,
+		surveyId: verification.surveyId,
+		items: Object.values(groups).sort((a, b) => a.commissionId - b.commissionId),
 	};
+}
+
+function adaptLegacySurveyOutcomesResponse(
+	raw: BackendLegacySurveyOutcomesResponse,
+): SurveyOutcomesResponse {
+	const dummyVerif: SurveyTokenVerification = {
+		school: raw.escuela ?? 'UPC',
+		programName: raw.nombreCarrera ?? '',
+		period: raw.ciclo ?? '',
+		courseName: raw.nombreCurso,
+		answered: false,
+		studentId: 0,
+		surveyId: raw.encuestaId ?? 0,
+	};
+	return adaptOutcomes(raw.lista ?? [], dummyVerif);
 }
 
 // ─── LCFC Student Survey ───────────────────────────────────────────────────
 
 export async function verifyLCFCSurveyToken(
-	_escuela: string,
+	_school: string,
 	token: string,
 ): Promise<SurveyTokenVerification> {
-	// Try new endpoint first; fall back to legacy if needed
 	try {
 		const res = await apiGet<BackendTokenValidation>(
 			`lcfc/token/validate/${encodeURIComponent(token)}`,
@@ -128,21 +154,20 @@ export async function verifyLCFCSurveyToken(
 	} catch {
 		// Legacy endpoint
 		const res = await apiGet<{ success: boolean; resource?: BackendTokenValidation }>(
-			`lcfc/notificacion/escuela/${encodeURIComponent(_escuela)}/token/${encodeURIComponent(token)}`,
+			`lcfc/notificacion/escuela/${encodeURIComponent(_school)}/token/${encodeURIComponent(token)}`,
 		);
-		if (!res.resource) throw new ApiError('Token inválido o expirado');
+		if (!res.resource) throw new ApiError('Invalid or expired token');
 		return adaptTokenVerification(res.resource, token);
 	}
 }
 
 export async function getLCFCSurveyOutcomes(
-	_escuela: string,
-	_alumnoId: number,
-	_encuestaId: number,
+	_school: string,
+	_studentId: number,
+	_surveyId: number,
 	token?: string,
 ): Promise<SurveyOutcomesResponse> {
 	if (token) {
-		// New endpoint: get outcomes by token
 		const raw = await apiPost<BackendOutcome[] | { data?: { resource?: BackendOutcome[] } }>(
 			'lcfc/survey/get-by-token',
 			{ token, language: LANG },
@@ -152,26 +177,26 @@ export async function getLCFCSurveyOutcomes(
 
 		const dummyVerif: SurveyTokenVerification = {
 			token,
-			escuela: 'UPC',
-			nombreCarrera: '',
-			ciclo: '',
-			estado: false,
-			alumnoId: _alumnoId,
-			encuestaId: _encuestaId,
+			school: 'UPC',
+			programName: '',
+			period: '',
+			answered: false,
+			studentId: _studentId,
+			surveyId: _surveyId,
 		};
 		return adaptOutcomes(list, dummyVerif);
 	}
 
 	// Legacy endpoint
 	const url =
-		`lcfc/encuesta/escuela/${encodeURIComponent(_escuela)}` +
-		`/idioma/${LANG}/alumno/${_alumnoId}/encuesta/${_encuestaId}`;
+		`lcfc/encuesta/escuela/${encodeURIComponent(_school)}` +
+		`/idioma/${LANG}/alumno/${_studentId}/encuesta/${_surveyId}`;
 	const res = await apiGet<{
 		success: boolean;
-		data?: { resource?: SurveyOutcomesResponse };
+		data?: { resource?: BackendLegacySurveyOutcomesResponse };
 	}>(url);
-	if (!res.data?.resource) throw new ApiError('No se pudieron obtener los outcomes');
-	return res.data.resource;
+	if (!res.data?.resource) throw new ApiError('Could not load survey outcomes');
+	return adaptLegacySurveyOutcomesResponse(res.data.resource);
 }
 
 export async function submitLCFCSurvey(
@@ -179,29 +204,35 @@ export async function submitLCFCSurvey(
 ): Promise<SurveySubmitResponse> {
 	if (request.token) {
 		// New backend
-		const scores = request.lista.map((item) => ({
+		const scores = request.items.map((item) => ({
 			outcomeId: item.outcomeId,
-			score: item.puntaje,
-			commentaries: item.descripcion || undefined,
+			score: item.score,
+			commentaries: item.description || undefined,
 		}));
 		const res = await apiPost<{ success: boolean; message?: string }>('lcfc/survey/complete', {
 			token: request.token,
-			commentaries: request.comentario,
+			commentaries: request.comment,
 			scores,
 		});
 		return {
 			success: res.success,
-			data: { message: res.message ?? 'Encuesta enviada exitosamente' },
+			data: { message: res.message ?? 'Survey submitted successfully' },
 		};
 	}
 
-	// Legacy endpoint
-	return apiPost<SurveySubmitResponse>('lcfc/encuesta/completar', {
-		comentario: request.comentario,
-		encuestaId: request.encuestaId,
-		escuela: request.escuela,
-		lista: request.lista,
-	});
+	// Legacy endpoint — map back to backend's expected Spanish keys
+	const payload: BackendLcfcSubmitPayload = {
+		comentario: request.comment,
+		encuestaId: request.surveyId,
+		escuela: request.school,
+		lista: request.items.map((item) => ({
+			comisionId: item.commissionId,
+			outcomeId: item.outcomeId,
+			puntaje: item.score,
+			descripcion: item.description,
+		})),
+	};
+	return apiPost<SurveySubmitResponse>('lcfc/encuesta/completar', payload);
 }
 
 // ─── GRA Student Survey ────────────────────────────────────────────────────
@@ -223,24 +254,24 @@ export async function getGRASurveyByToken(token: string): Promise<SurveyOutcomes
 
 	const dummyVerif: SurveyTokenVerification = {
 		token,
-		escuela: 'UPC',
-		nombreCarrera: '',
-		ciclo: '',
-		estado: false,
-		alumnoId: 0,
-		encuestaId: 0,
+		school: 'UPC',
+		programName: '',
+		period: '',
+		answered: false,
+		studentId: 0,
+		surveyId: 0,
 	};
 	return adaptOutcomes(list, dummyVerif);
 }
 
 export async function submitGRASurvey(
 	token: string,
-	comentario: string,
+	comment: string,
 	scores: Array<{ outcomeConfigId: number; score: number; commentaries?: string }>,
 ): Promise<SurveySubmitResponse> {
 	const res = await apiPost<{ success: boolean; message?: string }>('gra/survey/complete', {
 		token,
-		commentaries: comentario,
+		commentaries: comment,
 		scores: scores.map((s) => ({
 			outcomeConfigId: s.outcomeConfigId,
 			score: s.score,
@@ -249,6 +280,6 @@ export async function submitGRASurvey(
 	});
 	return {
 		success: res.success,
-		data: { message: res.message ?? 'Encuesta enviada exitosamente' },
+		data: { message: res.message ?? 'Survey submitted successfully' },
 	};
 }

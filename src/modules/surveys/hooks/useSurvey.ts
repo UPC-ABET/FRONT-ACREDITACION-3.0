@@ -26,21 +26,21 @@ export function useSurvey() {
 	const [alreadyAnswered, setAlreadyAnswered] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const verify = useCallback(async (escuela: string, token: string) => {
+	const verify = useCallback(async (school: string, token: string) => {
 		setLoading(true);
 		setError(null);
 		try {
-			const v = await verifyLCFCSurveyToken(escuela, token);
+			const v = await verifyLCFCSurveyToken(school, token);
 			setVerification(v);
 
-			if (v.estado === true) {
+			if (v.answered === true) {
 				setAlreadyAnswered(true);
 				return;
 			}
 
-			const data = await getLCFCSurveyOutcomes(escuela, v.alumnoId, v.encuestaId, v.token);
+			const data = await getLCFCSurveyOutcomes(school, v.studentId, v.surveyId, v.token);
 			setSurveyData(data);
-			setOutcomes(data.lista);
+			setOutcomes(data.items);
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -48,14 +48,14 @@ export function useSurvey() {
 		}
 	}, []);
 
-	const updateScore = useCallback((comisionId: number, outcomeId: number, puntaje: number) => {
+	const updateScore = useCallback((commissionId: number, outcomeId: number, score: number) => {
 		setOutcomes((prev) =>
 			prev.map((group) =>
-				group.comisionId === comisionId
+				group.commissionId === commissionId
 					? {
 							...group,
 							outcomes: group.outcomes.map((o) =>
-								o.outcomeId === outcomeId ? { ...o, desempeno: puntaje } : o,
+								o.outcomeId === outcomeId ? { ...o, score } : o,
 							),
 						}
 					: group,
@@ -64,33 +64,33 @@ export function useSurvey() {
 	}, []);
 
 	const submit = useCallback(
-		async (comentario: string, onSuccess?: () => void) => {
+		async (comment: string, onSuccess?: () => void) => {
 			if (!verification || !surveyData) return;
 
-			const allAnswered = outcomes.every((g) => g.outcomes.every((o) => o.desempeno !== null));
-			if (!allAnswered || !comentario.trim()) {
-				setError('Debes completar todos los campos de la encuesta antes de enviar.');
+			const allAnswered = outcomes.every((g) => g.outcomes.every((o) => o.score !== null));
+			if (!allAnswered || !comment.trim()) {
+				setError('Please complete all survey outcomes before submitting.');
 				return;
 			}
 
 			setSubmitting(true);
 			setError(null);
 
-			const lista = outcomes.flatMap((g) =>
+			const items = outcomes.flatMap((g) =>
 				g.outcomes.map((o) => ({
-					comisionId: o.comisionId,
+					commissionId: o.commissionId,
 					outcomeId: o.outcomeId,
-					puntaje: o.desempeno as number,
-					descripcion: '',
+					score: o.score as number,
+					description: '',
 				})),
 			);
 
 			const request: SurveySubmitRequest = {
 				token: verification.token,
-				comentario,
-				encuestaId: verification.encuestaId,
-				escuela: verification.escuela,
-				lista,
+				comment,
+				surveyId: verification.surveyId,
+				school: verification.school,
+				items,
 			};
 
 			try {
@@ -99,7 +99,7 @@ export function useSurvey() {
 					setSubmitted(true);
 					onSuccess?.();
 				} else {
-					setError('No se pudo enviar la encuesta. Inténtalo nuevamente.');
+					setError('Could not submit the survey. Please try again.');
 				}
 			} catch (e) {
 				setError((e as Error).message);
@@ -143,14 +143,14 @@ export function useGRASurvey() {
 			const v = await verifyGRASurveyToken(token);
 			setVerification(v);
 
-			if (v.estado === true) {
+			if (v.answered === true) {
 				setAlreadyAnswered(true);
 				return;
 			}
 
 			const data = await getGRASurveyByToken(token);
 			setSurveyData(data);
-			setOutcomes(data.lista);
+			setOutcomes(data.items);
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -158,14 +158,14 @@ export function useGRASurvey() {
 		}
 	}, []);
 
-	const updateScore = useCallback((comisionId: number, outcomeId: number, puntaje: number) => {
+	const updateScore = useCallback((commissionId: number, outcomeId: number, score: number) => {
 		setOutcomes((prev) =>
 			prev.map((group) =>
-				group.comisionId === comisionId
+				group.commissionId === commissionId
 					? {
 							...group,
 							outcomes: group.outcomes.map((o) =>
-								o.outcomeId === outcomeId ? { ...o, desempeno: puntaje } : o,
+								o.outcomeId === outcomeId ? { ...o, score } : o,
 							),
 						}
 					: group,
@@ -174,12 +174,12 @@ export function useGRASurvey() {
 	}, []);
 
 	const submit = useCallback(
-		async (comentario: string, onSuccess?: () => void) => {
+		async (comment: string, onSuccess?: () => void) => {
 			if (!verification || !surveyData) return;
 
-			const allAnswered = outcomes.every((g) => g.outcomes.every((o) => o.desempeno !== null));
-			if (!allAnswered || !comentario.trim()) {
-				setError('Debes completar todos los campos de la encuesta antes de enviar.');
+			const allAnswered = outcomes.every((g) => g.outcomes.every((o) => o.score !== null));
+			if (!allAnswered || !comment.trim()) {
+				setError('Please complete all survey outcomes before submitting.');
 				return;
 			}
 
@@ -189,17 +189,17 @@ export function useGRASurvey() {
 			const scores = outcomes.flatMap((g) =>
 				g.outcomes.map((o) => ({
 					outcomeConfigId: o.outcomeId,
-					score: o.desempeno as number,
+					score: o.score as number,
 				})),
 			);
 
 			try {
-				const res = await submitGRASurvey(verification.token ?? '', comentario, scores);
+				const res = await submitGRASurvey(verification.token ?? '', comment, scores);
 				if (res.success) {
 					setSubmitted(true);
 					onSuccess?.();
 				} else {
-					setError('No se pudo enviar la encuesta. Inténtalo nuevamente.');
+					setError('Could not submit the survey. Please try again.');
 				}
 			} catch (e) {
 				setError((e as Error).message);

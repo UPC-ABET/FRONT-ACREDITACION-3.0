@@ -6,6 +6,7 @@ import type {
 	AcademicPeriod,
 	DashboardResponse,
 	LCFCCourse,
+	LCFCConfigStatus,
 	LCFCEmailParam,
 	LCFCNotificationSendRequest,
 } from '../types';
@@ -62,8 +63,8 @@ export function useLCFCConfiguration() {
 		setLoading(true);
 		setError(null);
 		try {
-			const { cursos } = await listLCFCCourses(school, periodId, programId);
-			setCourses(cursos);
+			const { courses } = await listLCFCCourses(school, periodId, programId);
+			setCourses(courses);
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -102,7 +103,7 @@ export function useLCFCConfiguration() {
 	);
 
 	const changeStatus = useCallback(
-		async (configId: number, newStatus: 'ACTIVO' | 'INACTIVO', onSuccess?: () => void) => {
+		async (configId: number, newStatus: LCFCConfigStatus, onSuccess?: () => void) => {
 			try {
 				await changeLCFCConfigStatus(configId, newStatus);
 				onSuccess?.();

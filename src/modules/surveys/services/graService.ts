@@ -54,6 +54,11 @@ interface BackendGraStudent {
 	surveyId?: number;
 }
 
+interface BackendStudentSearchRequest {
+	codigoEstudiante: string;
+	idCarrera: number;
+}
+
 interface BackendStudentSearchResponse {
 	idEstudiante: number;
 	codigo: string;
@@ -64,6 +69,16 @@ interface BackendStudentSearchResponse {
 }
 
 interface BackendEmailTemplate {
+	asunto: string;
+	cuerpo: string;
+}
+
+interface BackendGetEmailTemplateRequest {
+	idEncuesta: number;
+}
+
+interface BackendSaveEmailTemplateRequest {
+	idEncuesta: number | undefined;
 	asunto: string;
 	cuerpo: string;
 }
@@ -132,7 +147,7 @@ export async function saveGRACompetence(data: CompetenceFormData) {
 
 	if (isNew) {
 		return apiPost('gra/config/create', {
-			outcomeId: data.outcome_id ?? 1,
+			outcomeId: data.outcomeId ?? 1,
 			nameEs: data.generalCompetence,
 			nameEn: data.specificCompetence || data.generalCompetence,
 			descriptionEs: data.description,
@@ -204,9 +219,10 @@ export async function searchStudentByCode(
 	studentCode: string,
 	programId: number,
 ): Promise<StudentSearchResult> {
+	const payload: BackendStudentSearchRequest = { codigoEstudiante: studentCode, idCarrera: programId };
 	const res = await apiPost<SurveyApiResponse<BackendStudentSearchResponse>>(
 		'email/findStudentCode-career-GRA',
-		{ codigoEstudiante: studentCode, idCarrera: programId },
+		payload,
 	);
 	const raw = res.data?.resource;
 	return {
@@ -257,22 +273,26 @@ export async function listGRAStudents(params: {
 
 // ─── Email sending ─────────────────────────────────────────────────────────
 
+interface BackendSendEmailResponse {
+	success: boolean;
+	enviados?: number;
+	fallidos?: number;
+}
+
 export async function sendGRAEmail(request: GRAEmailSendRequest): Promise<SendEmailResponse> {
-	const res = await apiPost<{ success: boolean; enviados?: number; fallidos?: number }>(
-		'gra/email/send',
-		request,
-	);
+	const res = await apiPost<BackendSendEmailResponse>('gra/email/send', request);
 	return {
 		success: res.success,
-		data: { enviados: res.enviados ?? 0, fallidos: res.fallidos ?? 0 },
+		data: { sent: res.enviados ?? 0, failed: res.fallidos ?? 0 },
 	};
 }
 
 // Legacy email functions (kept while backend migrates)
 export async function getGRAEmailTemplate(surveyId: number): Promise<EmailTemplate> {
+	const req: BackendGetEmailTemplateRequest = { idEncuesta: surveyId };
 	const res = await apiPost<SurveyApiResponse<BackendEmailTemplate>>(
 		'email/getConfigurationNotification-GRA',
-		{ idEncuesta: surveyId },
+		req,
 	);
 	const raw = res.data?.resource ?? { asunto: '', cuerpo: '' };
 	return { subject: raw.asunto, body: raw.cuerpo };
@@ -283,11 +303,12 @@ export async function saveGRAEmailTemplate(template: {
 	subject: string;
 	body: string;
 }) {
-	return apiPost('email/saveConfirmationNotif-GRA', {
+	const req: BackendSaveEmailTemplateRequest = {
 		idEncuesta: template.surveyId,
 		asunto: template.subject,
 		cuerpo: template.body,
-	});
+	};
+	return apiPost('email/saveConfirmationNotif-GRA', req);
 }
 
 // ─── Excel template & upload ───────────────────────────────────────────────
