@@ -40,10 +40,10 @@ export function LCFCNotificationView() {
 		}
 		send(
 			{
-				academicPeriodId: selectedCycle.value,
+				academicPeriodId: form.selectedCycle!.value,
 				programId: 0,
-				maxRegisterDate: new Date(maxRegisterDate).toISOString(),
-				surveyBaseUrl: surveyBaseUrl.trim(),
+				maxRegisterDate: new Date(form.maxRegisterDate).toISOString(),
+				surveyBaseUrl: form.surveyBaseUrl.trim(),
 			},
 			() =>
 				setToast({
@@ -54,7 +54,7 @@ export function LCFCNotificationView() {
 		);
 	}
 
-	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
 
 	return (
 		<div className="max-w-lg space-y-6">

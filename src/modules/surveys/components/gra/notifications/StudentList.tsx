@@ -137,7 +137,7 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 			<DataTable
 				columns={columns}
 				data={students}
-				title={t('surveys.gra.notifications.title', { count: students.length })}
+				title={t('surveys.gra.notifications.title').replace('{{count}}', String(students.length))}
 				actions={[
 					{
 						label: t('surveys.gra.notifications.sendSurvey'),
