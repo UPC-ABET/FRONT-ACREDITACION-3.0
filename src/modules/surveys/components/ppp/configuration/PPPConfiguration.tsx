@@ -54,7 +54,7 @@ export function PPPConfiguration() {
 		}
 	}, [competences, compLoading, selectedCycle]);
 
-	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
 
 	return (
 		<div className="space-y-6">
