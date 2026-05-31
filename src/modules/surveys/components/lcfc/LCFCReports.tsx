@@ -29,7 +29,7 @@ export function LCFCReports() {
 			setToast({ open: true, type: 'error', msg: 'Selecciona un ciclo académico.' });
 			return;
 		}
-		await generate({ idPeriodoAcademico: cycle.value, idEscuela: '1' });
+		await generate({ academicPeriodId: cycle.value, school: '1' });
 	}
 
 	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
