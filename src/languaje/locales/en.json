@@ -28,9 +28,8 @@
 		},
 		"admin": {
 			"label": "Administration",
-			"notifications": "IFC Notifications",
-			"ifcCodes": "IFC Codes",
-			"ifcFields": "IFC Form Fields"
+			"parameters": "Parameters",
+			"notifications": "Notifications"
 		},
 		"logout": "Logout",
 		"loads": {
@@ -200,6 +199,22 @@
 		}
 	},
 	"admin": {
+		"parameters": {
+			"tabs": {
+				"ifc": "IFC"
+			},
+			"ifc": {
+				"tabs": {
+					"codes": "Codes",
+					"fields": "Fields"
+				}
+			}
+		},
+		"notifications": {
+			"tabs": {
+				"ifc": "IFC"
+			}
+		},
 		"notify": {
 			"page": {
 				"title": "IFC Notification Configuration",
