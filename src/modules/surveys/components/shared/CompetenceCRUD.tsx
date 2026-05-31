@@ -211,10 +211,9 @@ export function CompetenceCRUD({
 						/>
 						<div>
 							<label className="font-medium text-xs mb-2 text-zinc-700 block">
-								{t('surveys.competence.modal.levelLabel', {
-									min: MIN_PERFORMANCE_LEVEL,
-									max: MAX_PERFORMANCE_LEVEL,
-								})}
+								{t('surveys.competence.modal.levelLabel')
+									.replace('{{min}}', String(MIN_PERFORMANCE_LEVEL))
+									.replace('{{max}}', String(MAX_PERFORMANCE_LEVEL))}
 							</label>
 							<input
 								type="number"

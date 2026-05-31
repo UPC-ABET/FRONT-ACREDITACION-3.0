@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { Input, TextArea, Button, Badge, Toast } from '@/shared/components';
+import { useI18n } from '@/providers';
 import { useGRAEmail } from '../../../hooks';
 
 const EMAIL_PARAMS = [
@@ -19,6 +20,7 @@ interface EditEmailTemplateProps {
 }
 
 export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
+	const { t } = useI18n();
 	const { template, setTemplate, loading, saving, error, load, save } = useGRAEmail(surveyId);
 	const [toast, setToast] = React.useState<{
 		open: boolean;
@@ -36,7 +38,7 @@ export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
 
 	function handleSave() {
 		save(template, () => {
-			setToast({ open: true, type: 'success', msg: 'Plantilla de correo guardada.' });
+			setToast({ open: true, type: 'success', msg: t('surveys.gra.emailTemplate.saved') });
 		});
 	}
 
@@ -47,7 +49,7 @@ export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center h-32">
-				<span className="text-sm text-zinc-400">Cargando plantilla...</span>
+				<span className="text-sm text-zinc-400">{t('surveys.gra.emailTemplate.loading')}</span>
 			</div>
 		);
 	}
@@ -55,25 +57,25 @@ export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
 	return (
 		<div className="space-y-5">
 			<div>
-				<h4 className="text-sm font-bold text-zinc-700">Plantilla de Correo Electrónico</h4>
+				<h4 className="text-sm font-bold text-zinc-700">{t('surveys.gra.emailTemplate.title')}</h4>
 				<p className="text-xs text-zinc-500 mt-1">
-					Personaliza el correo que se envía a los estudiantes con su encuesta.
+					{t('surveys.gra.emailTemplate.description')}
 				</p>
 			</div>
 
 			{error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
 
 			<Input
-				label="Asunto"
+				label={t('surveys.gra.emailTemplate.subjectLabel')}
 				value={template.subject}
 				onChange={(e) => setTemplate({ ...template, subject: e.target.value })}
-				placeholder="Ej: Encuesta de Graduandos UPC 2024"
+				placeholder={t('surveys.gra.emailTemplate.subjectPlaceholder')}
 			/>
 
 			<div className="space-y-2">
 				<div>
 					<label className="font-medium text-xs text-zinc-700 block mb-2">
-						Parámetros disponibles
+						{t('surveys.gra.emailTemplate.availableParams')}
 					</label>
 					<div className="flex flex-wrap gap-1">
 						{EMAIL_PARAMS.map((p) => (
@@ -88,16 +90,16 @@ export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
 				</div>
 
 				<TextArea
-					label="Cuerpo del correo"
+					label={t('surveys.gra.emailTemplate.bodyLabel')}
 					value={template.body}
 					onChange={(e) => setTemplate({ ...template, body: e.target.value })}
-					placeholder="Escribe el contenido del correo..."
+					placeholder={t('surveys.gra.emailTemplate.bodyPlaceholder')}
 					rows={8}
 				/>
 			</div>
 
 			<Button onClick={handleSave} disabled={saving}>
-				{saving ? 'Guardando...' : 'Guardar Plantilla'}
+				{saving ? t('surveys.shared.saving') : t('surveys.gra.emailTemplate.saveButton')}
 			</Button>
 
 			<Toast

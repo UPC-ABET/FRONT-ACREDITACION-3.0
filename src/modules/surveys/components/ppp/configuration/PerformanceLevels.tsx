@@ -86,10 +86,9 @@ export function PerformanceLevels({
 					{t('surveys.performanceLevels.title')}
 				</h4>
 				<p className="text-xs text-zinc-500 mt-1">
-					{t('surveys.performanceLevels.description', {
-						min: MIN_PERFORMANCE_LEVEL,
-						max: MAX_PERFORMANCE_LEVEL,
-					})}
+					{t('surveys.performanceLevels.description')
+						.replace('{{min}}', String(MIN_PERFORMANCE_LEVEL))
+						.replace('{{max}}', String(MAX_PERFORMANCE_LEVEL))}
 				</p>
 			</div>
 
