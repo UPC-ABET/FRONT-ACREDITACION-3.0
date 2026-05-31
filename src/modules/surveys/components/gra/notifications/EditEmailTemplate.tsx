@@ -15,11 +15,11 @@ const EMAIL_PARAMS = [
 ];
 
 interface EditEmailTemplateProps {
-	idEncuesta: number;
+	surveyId: number;
 }
 
-export function EditEmailTemplate({ idEncuesta }: EditEmailTemplateProps) {
-	const { template, setTemplate, loading, saving, error, load, save } = useGRAEmail(idEncuesta);
+export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
+	const { template, setTemplate, loading, saving, error, load, save } = useGRAEmail(surveyId);
 	const [toast, setToast] = React.useState<{
 		open: boolean;
 		type: 'success' | 'error';
@@ -41,7 +41,7 @@ export function EditEmailTemplate({ idEncuesta }: EditEmailTemplateProps) {
 	}
 
 	function insertParam(param: string) {
-		setTemplate((prev) => ({ ...prev, cuerpo: prev.cuerpo + param }));
+		setTemplate((prev) => ({ ...prev, body: prev.body + param }));
 	}
 
 	if (loading) {
@@ -65,8 +65,8 @@ export function EditEmailTemplate({ idEncuesta }: EditEmailTemplateProps) {
 
 			<Input
 				label="Asunto"
-				value={template.asunto}
-				onChange={(e) => setTemplate({ ...template, asunto: e.target.value })}
+				value={template.subject}
+				onChange={(e) => setTemplate({ ...template, subject: e.target.value })}
 				placeholder="Ej: Encuesta de Graduandos UPC 2024"
 			/>
 
@@ -89,8 +89,8 @@ export function EditEmailTemplate({ idEncuesta }: EditEmailTemplateProps) {
 
 				<TextArea
 					label="Cuerpo del correo"
-					value={template.cuerpo}
-					onChange={(e) => setTemplate({ ...template, cuerpo: e.target.value })}
+					value={template.body}
+					onChange={(e) => setTemplate({ ...template, body: e.target.value })}
 					placeholder="Escribe el contenido del correo..."
 					rows={8}
 				/>
