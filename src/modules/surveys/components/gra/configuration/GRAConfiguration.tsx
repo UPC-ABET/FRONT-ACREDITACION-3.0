@@ -45,7 +45,7 @@ export function GRAConfiguration() {
 		levelsHook.load(selectedCycle.value);
 	}, [selectedCycle]); // eslint-disable-line react-hooks/exhaustive-deps
 
-	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
 
 	return (
 		<div className="space-y-6">

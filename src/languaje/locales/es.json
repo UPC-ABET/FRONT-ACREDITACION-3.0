@@ -1056,14 +1056,6 @@
 		}
 	},
 	"surveys": {
-		"shared": {
-			"academicCycle": "Ciclo Académico",
-			"selectCycle": "Selecciona un ciclo",
-			"noConfiguration": "Sin configuración para este ciclo",
-			"noConfigurationHint": "No existe configuración para el ciclo seleccionado. Puedes crear una nueva o clonar desde otro ciclo.",
-			"cloneConfiguration": "Clonar configuración",
-			"cloneToastHint": "Función de clonado: selecciona un ciclo de origen en el modal."
-		},
 		"competence": {
 			"table": {
 				"title": "Competencias",
@@ -1116,10 +1108,50 @@
 			"competences": "Competencias",
 			"levels": "Niveles de Desempeño"
 		},
+		"lcfc": {
+			"notifications": {
+				"title": "Envío de Notificaciones LCFC",
+				"description": "Configura el período y la URL base de la encuesta. El sistema enviará el correo a todos los estudiantes del período seleccionado.",
+				"cycleLabel": "Ciclo / Período académico",
+				"cyclePlaceholder": "Selecciona un período",
+				"urlLabel": "URL base de la encuesta",
+				"urlPlaceholder": "https://tu-dominio.com/encuesta/lcfc",
+				"dateLabel": "Fecha límite de registro",
+				"send": "Enviar Notificaciones",
+				"sending": "Enviando...",
+				"toast": {
+					"required": "Completa todos los campos antes de enviar.",
+					"sent": "Notificaciones enviadas exitosamente."
+				}
+			},
+			"management": {
+				"title": "Logro de Fin de Ciclo",
+				"subtitle": "Gestión de encuestas de Logro de Fin de Ciclo por comisión y período",
+				"tabReports": "Reportes",
+				"tabNotifications": "Notificaciones",
+				"tabConfig": "Configuración"
+			},
+			"reports": {
+				"title": "Dashboard — LCFC",
+				"description": "Resumen de percepción para encuestas de Logro de Fin de Ciclo."
+			},
+			"config": {
+				"colCode": "Código",
+				"colCourse": "Curso",
+				"colCommissions": "Comisiones"
+			}
+		},
 		"gra": {
 			"notifications": {
 				"title": "Estudiantes Notificados ({{count}})",
 				"sendSurvey": "Enviar Encuesta",
+				"downloadLabel": "Descargar Plantilla GRA",
+				"tabs": {
+					"list": "Estudiantes Notificados",
+					"add": "Agregar Estudiante",
+					"upload": "Carga Masiva",
+					"email": "Plantilla de Correo"
+				},
 				"columns": {
 					"code": "Código",
 					"name": "Nombre",
@@ -1150,23 +1182,111 @@
 					"studentDeleted": "Estudiante eliminado de la notificación.",
 					"surveySent": "Encuestas enviadas exitosamente."
 				}
+			},
+			"management": {
+				"title": "Encuestas de Graduandos",
+				"subtitle": "Gestión de encuestas para estudiantes próximos a graduarse",
+				"tabReports": "Reportes",
+				"tabNotifications": "Notificaciones",
+				"tabConfig": "Configuración"
+			},
+			"reports": {
+				"title": "Dashboard — Graduandos",
+				"description": "Resumen de percepción por ciclo académico para encuestas de graduandos."
+			},
+			"emailTemplate": {
+				"title": "Plantilla de Correo Electrónico",
+				"description": "Personaliza el correo que se envía a los estudiantes con su encuesta.",
+				"loading": "Cargando plantilla...",
+				"subjectLabel": "Asunto",
+				"subjectPlaceholder": "Ej: Encuesta de Graduandos UPC 2024",
+				"availableParams": "Parámetros disponibles",
+				"bodyLabel": "Cuerpo del correo",
+				"bodyPlaceholder": "Escribe el contenido del correo...",
+				"saveButton": "Guardar Plantilla",
+				"saved": "Plantilla de correo guardada."
 			}
 		},
-		"lcfc": {
-			"notifications": {
-				"title": "Envío de Notificaciones LCFC",
-				"description": "Configura el período y la URL base de la encuesta. El sistema enviará el correo a todos los estudiantes del período seleccionado.",
-				"cycleLabel": "Ciclo / Período académico",
-				"cyclePlaceholder": "Selecciona un período",
-				"urlLabel": "URL base de la encuesta",
-				"urlPlaceholder": "https://tu-dominio.com/encuesta/lcfc",
-				"dateLabel": "Fecha límite de registro",
-				"send": "Enviar Notificaciones",
-				"sending": "Enviando...",
-				"toast": {
-					"required": "Completa todos los campos antes de enviar.",
-					"sent": "Notificaciones enviadas exitosamente."
-				}
+		"ppp": {
+			"management": {
+				"title": "Prácticas Pre-Profesionales",
+				"subtitle": "Gestión de encuestas de Prácticas Pre-Profesionales",
+				"tabDownload": "Descargar Plantilla",
+				"tabUpload": "Carga Masiva",
+				"tabReports": "Reportes",
+				"tabConfig": "Configuración"
+			},
+			"download": {
+				"title": "Descargar Plantilla PPP",
+				"description": "Selecciona el ciclo académico y descarga la plantilla Excel para carga masiva de datos PPP.",
+				"button": "Descargar Plantilla",
+				"downloading": "Descargando...",
+				"success": "Plantilla descargada exitosamente."
+			},
+			"upload": {
+				"title": "Carga Masiva PPP",
+				"description": "Descarga la plantilla, completa los datos y súbela para procesar masivamente.",
+				"fileTitle": "Archivo de datos",
+				"downloadLabel": "Descargar Plantilla PPP",
+				"downloadError": "Error al descargar la plantilla."
+			},
+			"reports": {
+				"title": "Dashboard PPP",
+				"description": "Genera el resumen de percepción promedio por ciclo académico."
+			}
+		},
+		"shared": {
+			"academicCycle": "Ciclo Académico",
+			"selectCycle": "Selecciona un ciclo",
+			"generating": "Generando...",
+			"generateDashboard": "Generar Dashboard",
+			"summary": "Resumen",
+			"totalSurveys": "Total encuestas",
+			"completionRate": "Tasa de completitud",
+			"colorSummary": "Verde / Amarillo / Rojo",
+			"saving": "Guardando...",
+			"noConfiguration": "Sin configuración para este ciclo",
+			"noConfigurationHint": "No existe configuración para el ciclo seleccionado. Puedes crear una nueva o clonar desde otro ciclo.",
+			"cloneConfiguration": "Clonar configuración",
+			"cloneToastHint": "Función de clonado: selecciona un ciclo de origen en el modal."
+		},
+		"student": {
+			"title": "Sistema ABET — Encuesta LCFC",
+			"subtitle": "Logro de Fin de Ciclo",
+			"programLabel": "Carrera",
+			"periodLabel": "Ciclo",
+			"courseLabel": "Curso",
+			"studentLabel": "Estudiante",
+			"progressLabel": "Progreso",
+			"progressText": "{{answered}} de {{total}} respondidos ({{pct}}%)",
+			"instructionsTitle": "Instrucciones:",
+			"instructionsBody": "Evalúa cada competencia seleccionando un puntaje del 1 al 5. Todos los campos son obligatorios. Una vez enviada, la encuesta no podrá modificarse.",
+			"generalPrefix": "General:",
+			"commentLabel": "Comentarios adicionales (obligatorio)",
+			"commentPlaceholder": "Escribe aquí tus comentarios sobre el curso, los contenidos, o cualquier observación relevante...",
+			"submitButton": "Enviar Encuesta",
+			"submittingButton": "Enviando...",
+			"score": {
+				"1": "Insuficiente",
+				"2": "Regular",
+				"3": "Bueno",
+				"4": "Muy Bueno",
+				"5": "Excelente"
+			},
+			"error": {
+				"incomplete": "Por favor, completa todos los outcomes antes de enviar.",
+				"commentRequired": "El comentario es obligatorio.",
+				"submitFailed": "No se pudo enviar la encuesta. Inténtalo nuevamente."
+			},
+			"alreadyAnswered": {
+				"title": "Encuesta ya respondida",
+				"message": "Ya has completado esta encuesta anteriormente. No es posible modificar tus respuestas una vez enviadas.",
+				"thanks": "Gracias por tu participación."
+			},
+			"success": {
+				"title": "¡Encuesta enviada exitosamente!",
+				"message": "Tus respuestas han sido registradas correctamente. Gracias por completar la encuesta de Logro de Fin de Ciclo.",
+				"hint": "Puedes cerrar esta ventana."
 			}
 		}
 	},

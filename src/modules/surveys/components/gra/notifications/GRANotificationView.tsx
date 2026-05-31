@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Select, Tabs } from '@/shared/components';
+import { useI18n } from '@/providers';
 import { AddStudentPanel } from './AddStudentPanel';
 import { StudentList } from './StudentList';
 import { EditEmailTemplate } from './EditEmailTemplate';
@@ -9,25 +10,26 @@ import { FileUploadPanel } from '../../shared/FileUploadPanel';
 import { useGRAUpload, useGRACycles } from '../../../hooks';
 import { useABET } from '@/providers';
 
-const NOTIFICATION_TABS = [
-	{ id: 'list', label: 'Estudiantes Notificados' },
-	{ id: 'add', label: 'Agregar Estudiante' },
-	{ id: 'upload', label: 'Carga Masiva' },
-	{ id: 'email', label: 'Plantilla de Correo' },
-];
-
 export function GRANotificationView() {
+	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const { cycles, load: loadCycles } = useGRACycles();
 	const [activeTab, setActiveTab] = useState('list');
 	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
 	const { loading, error, success, downloadTemplate, upload, reset } = useGRAUpload();
 
+	const NOTIFICATION_TABS = [
+		{ id: 'list', label: t('surveys.gra.notifications.tabs.list') },
+		{ id: 'add', label: t('surveys.gra.notifications.tabs.add') },
+		{ id: 'upload', label: t('surveys.gra.notifications.tabs.upload') },
+		{ id: 'email', label: t('surveys.gra.notifications.tabs.email') },
+	];
+
 	useEffect(() => {
 		loadCycles(modalityTypeId);
 	}, [modalityTypeId, loadCycles]);
 
-	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
 	const academicPeriodId = selectedCycle?.value ?? 0;
 	const programId = 0;
 
@@ -71,7 +73,7 @@ export function GRANotificationView() {
 									error={error}
 									onUpload={upload}
 									onDownloadTemplate={() => downloadTemplate(academicPeriodId)}
-									downloadLabel="Descargar Plantilla GRA"
+									downloadLabel={t('surveys.gra.notifications.downloadLabel')}
 								/>
 							</div>
 						)}

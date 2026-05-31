@@ -1056,14 +1056,6 @@
 		}
 	},
 	"surveys": {
-		"shared": {
-			"academicCycle": "Academic Cycle",
-			"selectCycle": "Select a cycle",
-			"noConfiguration": "No configuration for this cycle",
-			"noConfigurationHint": "There is no configuration for the selected cycle. You can create a new one or clone from another cycle.",
-			"cloneConfiguration": "Clone configuration",
-			"cloneToastHint": "Clone function: select a source cycle in the modal."
-		},
 		"competence": {
 			"table": {
 				"title": "Competences",
@@ -1116,10 +1108,50 @@
 			"competences": "Competences",
 			"levels": "Performance Levels"
 		},
+		"lcfc": {
+			"notifications": {
+				"title": "LCFC Notification Send",
+				"description": "Configure the period and survey base URL. The system will send the email to all students in the selected period.",
+				"cycleLabel": "Cycle / Academic Period",
+				"cyclePlaceholder": "Select a period",
+				"urlLabel": "Survey base URL",
+				"urlPlaceholder": "https://your-domain.com/survey/lcfc",
+				"dateLabel": "Registration deadline",
+				"send": "Send Notifications",
+				"sending": "Sending...",
+				"toast": {
+					"required": "Complete all fields before sending.",
+					"sent": "Notifications sent successfully."
+				}
+			},
+			"management": {
+				"title": "End of Cycle Achievement",
+				"subtitle": "Management of End of Cycle Achievement surveys by commission and period",
+				"tabReports": "Reports",
+				"tabNotifications": "Notifications",
+				"tabConfig": "Configuration"
+			},
+			"reports": {
+				"title": "Dashboard — LCFC",
+				"description": "Perception summary for End of Cycle Achievement surveys."
+			},
+			"config": {
+				"colCode": "Code",
+				"colCourse": "Course",
+				"colCommissions": "Commissions"
+			}
+		},
 		"gra": {
 			"notifications": {
 				"title": "Notified Students ({{count}})",
 				"sendSurvey": "Send Survey",
+				"downloadLabel": "Download GRA Template",
+				"tabs": {
+					"list": "Notified Students",
+					"add": "Add Student",
+					"upload": "Bulk Upload",
+					"email": "Email Template"
+				},
 				"columns": {
 					"code": "Code",
 					"name": "Name",
@@ -1150,23 +1182,111 @@
 					"studentDeleted": "Student removed from notification.",
 					"surveySent": "Surveys sent successfully."
 				}
+			},
+			"management": {
+				"title": "Graduating Students Surveys",
+				"subtitle": "Management of surveys for students about to graduate",
+				"tabReports": "Reports",
+				"tabNotifications": "Notifications",
+				"tabConfig": "Configuration"
+			},
+			"reports": {
+				"title": "Dashboard — Graduating Students",
+				"description": "Perception summary by academic cycle for graduating student surveys."
+			},
+			"emailTemplate": {
+				"title": "Email Template",
+				"description": "Customize the email sent to students with their survey link.",
+				"loading": "Loading template...",
+				"subjectLabel": "Subject",
+				"subjectPlaceholder": "e.g.: Graduating Students Survey UPC 2024",
+				"availableParams": "Available parameters",
+				"bodyLabel": "Email body",
+				"bodyPlaceholder": "Write the email content here...",
+				"saveButton": "Save Template",
+				"saved": "Email template saved."
 			}
 		},
-		"lcfc": {
-			"notifications": {
-				"title": "LCFC Notification Send",
-				"description": "Configure the period and survey base URL. The system will send the email to all students in the selected period.",
-				"cycleLabel": "Cycle / Academic Period",
-				"cyclePlaceholder": "Select a period",
-				"urlLabel": "Survey base URL",
-				"urlPlaceholder": "https://your-domain.com/survey/lcfc",
-				"dateLabel": "Registration deadline",
-				"send": "Send Notifications",
-				"sending": "Sending...",
-				"toast": {
-					"required": "Complete all fields before sending.",
-					"sent": "Notifications sent successfully."
-				}
+		"ppp": {
+			"management": {
+				"title": "Pre-Professional Internships",
+				"subtitle": "Management of Pre-Professional Internship surveys",
+				"tabDownload": "Download Template",
+				"tabUpload": "Bulk Upload",
+				"tabReports": "Reports",
+				"tabConfig": "Configuration"
+			},
+			"download": {
+				"title": "Download PPP Template",
+				"description": "Select the academic cycle and download the Excel template for bulk PPP data upload.",
+				"button": "Download Template",
+				"downloading": "Downloading...",
+				"success": "Template downloaded successfully."
+			},
+			"upload": {
+				"title": "Bulk Upload PPP",
+				"description": "Download the template, fill in the data and upload it to process in bulk.",
+				"fileTitle": "Data file",
+				"downloadLabel": "Download PPP Template",
+				"downloadError": "Error downloading the template."
+			},
+			"reports": {
+				"title": "Dashboard PPP",
+				"description": "Generate the average perception summary by academic cycle."
+			}
+		},
+		"shared": {
+			"academicCycle": "Academic Cycle",
+			"selectCycle": "Select a cycle",
+			"generating": "Generating...",
+			"generateDashboard": "Generate Dashboard",
+			"summary": "Summary",
+			"totalSurveys": "Total surveys",
+			"completionRate": "Completion rate",
+			"colorSummary": "Green / Yellow / Red",
+			"saving": "Saving...",
+			"noConfiguration": "No configuration for this cycle",
+			"noConfigurationHint": "There is no configuration for the selected cycle. You can create a new one or clone from another cycle.",
+			"cloneConfiguration": "Clone configuration",
+			"cloneToastHint": "Clone function: select a source cycle in the modal."
+		},
+		"student": {
+			"title": "ABET System — LCFC Survey",
+			"subtitle": "End of Cycle Achievement",
+			"programLabel": "Program",
+			"periodLabel": "Period",
+			"courseLabel": "Course",
+			"studentLabel": "Student",
+			"progressLabel": "Progress",
+			"progressText": "{{answered}} of {{total}} answered ({{pct}}%)",
+			"instructionsTitle": "Instructions:",
+			"instructionsBody": "Evaluate each competence by selecting a score from 1 to 5. All fields are required. Once submitted, the survey cannot be modified.",
+			"generalPrefix": "General:",
+			"commentLabel": "Additional comments (required)",
+			"commentPlaceholder": "Write here your comments about the course, content, or any relevant observation...",
+			"submitButton": "Submit Survey",
+			"submittingButton": "Submitting...",
+			"score": {
+				"1": "Insufficient",
+				"2": "Regular",
+				"3": "Good",
+				"4": "Very Good",
+				"5": "Excellent"
+			},
+			"error": {
+				"incomplete": "Please complete all survey outcomes before submitting.",
+				"commentRequired": "Comment is required.",
+				"submitFailed": "Could not submit the survey. Please try again."
+			},
+			"alreadyAnswered": {
+				"title": "Survey already submitted",
+				"message": "You have already completed this survey. Your responses cannot be modified.",
+				"thanks": "Thank you for your participation."
+			},
+			"success": {
+				"title": "Survey submitted successfully!",
+				"message": "Your responses have been recorded. Thank you for completing the End of Cycle Achievement survey.",
+				"hint": "You can close this window."
 			}
 		}
 	},
