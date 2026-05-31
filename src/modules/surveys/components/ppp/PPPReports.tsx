@@ -29,7 +29,7 @@ export function PPPReports() {
 			setToast({ open: true, type: 'error', msg: 'Selecciona un ciclo académico.' });
 			return;
 		}
-		await generate({ idPeriodoAcademico: cycle.value });
+		await generate({ academicPeriodId: cycle.value });
 	}
 
 	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
