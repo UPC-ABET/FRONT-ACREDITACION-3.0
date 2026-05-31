@@ -30,10 +30,10 @@ interface CompetenceCRUDProps {
 	onDelete: (id: number, onSuccess: () => void) => void;
 	onClone?: (
 		params: {
-			idCarreraOrigen: number;
-			idPeriodoOrigen: number;
-			idCarreraDestino: number;
-			idPeriodoDestino: number;
+			sourceProgramId: number;
+			sourcePeriodId: number;
+			targetProgramId: number;
+			targetPeriodId: number;
 		},
 		onSuccess: () => void,
 	) => void;
