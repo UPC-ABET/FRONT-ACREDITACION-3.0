@@ -50,8 +50,8 @@ export const surveyQueryKeys = {
 	}) => ['surveys', 'gra', 'dashboard', params] as const,
 
 	// LCFC
-	lcfcCourses: (escuela: string, periodId: number, programId?: number) =>
-		['surveys', 'lcfc', 'courses', { escuela, periodId, programId }] as const,
+	lcfcCourses: (school: string, periodId: number, programId?: number) =>
+		['surveys', 'lcfc', 'courses', { school, periodId, programId }] as const,
 	lcfcDashboard: (params: {
 		academicPeriodId?: number;
 		programId?: number;
@@ -127,10 +127,10 @@ export function useCloneGRAConfiguration() {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: (params: {
-			idCarreraOrigen: number;
-			idPeriodoOrigen: number;
-			idCarreraDestino: number;
-			idPeriodoDestino: number;
+			sourceProgramId: number;
+			sourcePeriodId: number;
+			targetProgramId: number;
+			targetPeriodId: number;
 		}) => cloneGRAConfiguration(params),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['surveys', 'gra', 'competences'] });
@@ -176,14 +176,14 @@ export function useGRADashboardQuery(
 // ─── LCFC ────────────────────────────────────────────────────────────────────
 
 export function useLCFCCoursesQuery(
-	escuela: string,
+	school: string,
 	periodId: number,
 	programId?: number,
 	options?: { enabled?: boolean },
 ) {
 	return useQuery({
-		queryKey: surveyQueryKeys.lcfcCourses(escuela, periodId, programId),
-		queryFn: () => listLCFCCourses(escuela, periodId, programId),
+		queryKey: surveyQueryKeys.lcfcCourses(school, periodId, programId),
+		queryFn: () => listLCFCCourses(school, periodId, programId),
 		enabled: (options?.enabled ?? true) && periodId > 0,
 	});
 }
@@ -192,13 +192,13 @@ export function useGenerateLCFCConfiguration() {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: (params: {
-			escuela: string;
+			school: string;
 			academicPeriodId: number;
 			programId?: number;
 			campusId?: number;
 		}) =>
 			generateLCFCConfiguration(
-				params.escuela,
+				params.school,
 				params.academicPeriodId,
 				params.programId,
 				params.campusId,
@@ -212,8 +212,8 @@ export function useGenerateLCFCConfiguration() {
 export function useChangeLCFCConfigStatus() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (params: { configId: number; nuevoEstado: 'ACTIVO' | 'INACTIVO' }) =>
-			changeLCFCConfigStatus(params.configId, params.nuevoEstado),
+		mutationFn: (params: { configId: number; newStatus: 'ACTIVO' | 'INACTIVO' }) =>
+			changeLCFCConfigStatus(params.configId, params.newStatus),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['surveys', 'lcfc', 'courses'] });
 		},
@@ -269,10 +269,10 @@ export function useClonePPPConfiguration() {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: (params: {
-			idCarreraOrigen: number;
-			idPeriodoOrigen: number;
-			idCarreraDestino: number;
-			idPeriodoDestino: number;
+			sourceProgramId: number;
+			sourcePeriodId: number;
+			targetProgramId: number;
+			targetPeriodId: number;
 		}) => clonePPPConfiguration(params),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['surveys', 'ppp', 'competences'] });
@@ -291,8 +291,8 @@ export function usePPPPerformanceLevelsQuery(periodId: number, options?: { enabl
 export function useUpdatePPPPerformanceLevels() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (params: { academicPeriodId: number; niveles: AcceptanceLevel[] }) =>
-			updateAcceptanceLevels(params.academicPeriodId, params.niveles),
+		mutationFn: (params: { academicPeriodId: number; levels: PerformanceLevel[] }) =>
+			updatePPPPerformanceLevels(params.academicPeriodId, params.levels),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['surveys', 'ppp', 'performance-levels'] });
 		},

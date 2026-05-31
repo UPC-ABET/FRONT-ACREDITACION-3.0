@@ -60,7 +60,7 @@ export async function getPrograms(): Promise<Program[]> {
 }
 
 // ─── Survey Type IDs (cached from /types/by-group-code/TG601) ────────────────
-// The acceptance-levels endpoint requires surveyTypeId (numeric FK to types table).
+// The performance-levels endpoint requires instrumentTypeId (numeric FK to types table).
 
 let _surveyTypeIds: Map<string, number> | null = null;
 

@@ -91,10 +91,10 @@ export function usePPPCompetences() {
 	const clone = useCallback(
 		async (
 			params: {
-				idCarreraOrigen: number;
-				idPeriodoOrigen: number;
-				idCarreraDestino: number;
-				idPeriodoDestino: number;
+				sourceProgramId: number;
+				sourcePeriodId: number;
+				targetProgramId: number;
+				targetPeriodId: number;
 			},
 			onSuccess?: () => void,
 		) => {
@@ -193,7 +193,7 @@ export function usePPPReports() {
 	const [reportData, setReportData] = useState<DashboardResponse | null>(null);
 
 	const generate = useCallback(
-		async (params: { idPeriodoAcademico?: number; idCarrera?: number; idComision?: number }) => {
+		async (params: { academicPeriodId?: number; programId?: number; commissionId?: number }) => {
 			setLoading(true);
 			setError(null);
 			try {

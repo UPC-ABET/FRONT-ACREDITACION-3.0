@@ -58,11 +58,11 @@ export function useLCFCConfiguration() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (idEscuela: string, idPeriodo: number, idCarrera?: number) => {
+	const load = useCallback(async (school: string, periodId: number, programId?: number) => {
 		setLoading(true);
 		setError(null);
 		try {
-			const { cursos } = await listLCFCCourses(idEscuela, idPeriodo, idCarrera);
+			const { cursos } = await listLCFCCourses(school, periodId, programId);
 			setCourses(cursos);
 		} catch (e) {
 			setError((e as Error).message);
@@ -73,14 +73,14 @@ export function useLCFCConfiguration() {
 
 	const generate = useCallback(
 		async (
-			escuela: string,
+			school: string,
 			academicPeriodId: number,
 			programId?: number,
 			campusId?: number,
 			onSuccess?: () => void,
 		) => {
 			try {
-				await generateLCFCConfiguration(escuela, academicPeriodId, programId, campusId);
+				await generateLCFCConfiguration(school, academicPeriodId, programId, campusId);
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);
@@ -90,9 +90,9 @@ export function useLCFCConfiguration() {
 	);
 
 	const clone = useCallback(
-		async (idPeriodoOrigen: number, idPeriodoDestino: number, onSuccess?: () => void) => {
+		async (sourcePeriodId: number, targetPeriodId: number, onSuccess?: () => void) => {
 			try {
-				await cloneLCFCConfiguration(idPeriodoOrigen, idPeriodoDestino);
+				await cloneLCFCConfiguration(sourcePeriodId, targetPeriodId);
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);
@@ -102,9 +102,9 @@ export function useLCFCConfiguration() {
 	);
 
 	const changeStatus = useCallback(
-		async (idConfiguracion: number, nuevoEstado: 'ACTIVO' | 'INACTIVO', onSuccess?: () => void) => {
+		async (configId: number, newStatus: 'ACTIVO' | 'INACTIVO', onSuccess?: () => void) => {
 			try {
-				await changeLCFCConfigStatus(idConfiguracion, nuevoEstado);
+				await changeLCFCConfigStatus(configId, newStatus);
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);
@@ -154,10 +154,10 @@ export function useLCFCUpload() {
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
 
-	const downloadTemplate = useCallback(async (idPeriodo: number) => {
+	const downloadTemplate = useCallback(async (periodId: number) => {
 		setError(null);
 		try {
-			await downloadLCFCTemplate(idPeriodo);
+			await downloadLCFCTemplate(periodId);
 		} catch (e) {
 			setError((e as Error).message);
 		}
@@ -168,8 +168,8 @@ export function useLCFCUpload() {
 		setError(null);
 		setSuccess(false);
 		try {
-			const escuelaActual = getSchoolCookie();
-			await uploadLCFCMassive(file, escuelaActual ?? undefined);
+			const school = getSchoolCookie();
+			await uploadLCFCMassive(file, school ?? undefined);
 			setSuccess(true);
 		} catch (e) {
 			setError((e as Error).message);
@@ -188,15 +188,17 @@ export function useLCFCReports() {
 
 	const generate = useCallback(
 		async (params: {
-			idPeriodoAcademico?: number;
-			idEscuela?: string;
-			idPeriodo?: number;
-			idCarrera?: number;
+			academicPeriodId?: number;
+			school?: string;
+			programId?: number;
 		}) => {
 			setLoading(true);
 			setError(null);
 			try {
-				setReportData(await generateLCFCPerceptionReport(params));
+				setReportData(await generateLCFCPerceptionReport({
+					academicPeriodId: params.academicPeriodId,
+					programId: params.programId,
+				}));
 			} catch (e) {
 				setError((e as Error).message);
 			} finally {

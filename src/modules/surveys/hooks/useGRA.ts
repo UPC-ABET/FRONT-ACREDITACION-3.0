@@ -99,10 +99,10 @@ export function useGRACompetences() {
 	const clone = useCallback(
 		async (
 			params: {
-				idCarreraOrigen: number;
-				idPeriodoOrigen: number;
-				idCarreraDestino: number;
-				idPeriodoDestino: number;
+				sourceProgramId: number;
+				sourcePeriodId: number;
+				targetProgramId: number;
+				targetPeriodId: number;
 			},
 			onSuccess?: () => void,
 		) => {
@@ -200,8 +200,8 @@ export function useGRAStudentSearch() {
 	return { result, loading, error, search, add, reset: () => setResult(null) };
 }
 
-export function useGRAEmail(idEncuesta: number) {
-	const [template, setTemplate] = useState<EmailTemplate>({ asunto: '', cuerpo: '' });
+export function useGRAEmail(surveyId: number) {
+	const [template, setTemplate] = useState<EmailTemplate>({ subject: '', body: '' });
 	const [loading, setLoading] = useState(false);
 	const [saving, setSaving] = useState(false);
 	const [sending, setSending] = useState(false);
@@ -211,19 +211,19 @@ export function useGRAEmail(idEncuesta: number) {
 		setLoading(true);
 		setError(null);
 		try {
-			setTemplate(await getGRAEmailTemplate(idEncuesta));
+			setTemplate(await getGRAEmailTemplate(surveyId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
 			setLoading(false);
 		}
-	}, [idEncuesta]);
+	}, [surveyId]);
 
 	const save = useCallback(
 		async (tmpl: EmailTemplate, onSuccess?: () => void) => {
 			setSaving(true);
 			try {
-				await saveGRAEmailTemplate({ ...tmpl, idEncuesta });
+				await saveGRAEmailTemplate({ ...tmpl, surveyId });
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);
@@ -231,7 +231,7 @@ export function useGRAEmail(idEncuesta: number) {
 				setSaving(false);
 			}
 		},
-		[idEncuesta],
+		[surveyId],
 	);
 
 	const send = useCallback(async (req: GRAEmailSendRequest, onSuccess?: () => void) => {
@@ -287,7 +287,7 @@ export function useGRAReports() {
 	const [reportData, setReportData] = useState<DashboardResponse | null>(null);
 
 	const generate = useCallback(
-		async (params: { idPeriodoAcademico?: number; idCarrera?: number; idComision?: number }) => {
+		async (params: { academicPeriodId?: number; programId?: number; commissionId?: number }) => {
 			setLoading(true);
 			setError(null);
 			try {

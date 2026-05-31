@@ -35,7 +35,6 @@ export interface CompetenceConfig {
 	specificCompetence: string; // maps to extra.name_en
 	description: string;        // maps to extra.description_es
 	performanceLevel: number;   // maps to extra.order
-	estado?: string;
 	isActive?: boolean;
 	programId?: number;
 	periodId?: number;
@@ -101,19 +100,11 @@ export interface StudentSearchResult {
 }
 
 export interface EmailTemplate {
-	idEncuesta?: number;
-	asunto: string;
-	cuerpo: string;
+	surveyId?: number;
+	subject: string;
+	body: string;
 	htmlContent?: string;
-	idiomaTemplate?: string;
-}
-
-export interface SendEmailRequest {
-	idEncuesta: number;
-	destinatarios: 'TODOS' | 'SELECCIONADOS';
-	idsSeleccionados?: number[];
-	asunto?: string;
-	cuerpoEmail?: string;
+	templateLanguage?: string;
 }
 
 export interface SendEmailResponse {
@@ -158,16 +149,6 @@ export interface LCFCStudent {
 export interface LCFCEmailParam {
 	nombre: string;
 	description: string;
-}
-
-// Legacy LCFC send request (kept for backward compat)
-export interface LCFCSendRequest {
-	idCiclo: number;
-	idPeriodo: number;
-	destinatarios: 'TODOS' | 'SELECCIONADOS';
-	selectedStudents?: number[];
-	asunto: string;
-	cuerpo: string;
 }
 
 // New backend LCFC notification send request
