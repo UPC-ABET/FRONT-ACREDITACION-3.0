@@ -8,14 +8,12 @@ import { useGRAStudentSearch } from '../../../hooks';
 interface AddStudentPanelProps {
 	readonly programId: number;
 	readonly academicPeriodId: number;
-	readonly idCarrera?: number;
 	readonly onStudentAdded?: () => void;
 }
 
 export function AddStudentPanel({
 	programId,
 	academicPeriodId,
-	idCarrera = 0,
 	onStudentAdded,
 }: AddStudentPanelProps) {
 	const { result, loading, error, search, add, reset } = useGRAStudentSearch();
@@ -29,7 +27,7 @@ export function AddStudentPanel({
 
 	async function handleSearch() {
 		if (!codigo.trim()) return;
-		await search(codigo.trim(), idCarrera || programId);
+		await search(codigo.trim(), programId);
 	}
 
 	async function handleAdd() {
@@ -37,12 +35,12 @@ export function AddStudentPanel({
 		setAdding(true);
 		await add(
 			{
-				studentId: result.idEstudiante,
+				studentId: result.studentId,
 				programId: programId,
 				academicPeriodId: academicPeriodId,
 			},
 			() => {
-				setToast({ open: true, type: 'success', msg: `${result.nombre} agregado exitosamente.` });
+				setToast({ open: true, type: 'success', msg: `${result.name} agregado exitosamente.` });
 				setCodigo('');
 				reset();
 				onStudentAdded?.();
@@ -78,11 +76,11 @@ export function AddStudentPanel({
 					<div className="grid grid-cols-2 gap-3 text-sm">
 						<div>
 							<span className="text-xs text-zinc-500 block">Nombre</span>
-							<span className="font-medium text-zinc-800">{result.nombre}</span>
+							<span className="font-medium text-zinc-800">{result.name}</span>
 						</div>
 						<div>
 							<span className="text-xs text-zinc-500 block">Código</span>
-							<span className="font-medium text-zinc-800">{result.codigo}</span>
+							<span className="font-medium text-zinc-800">{result.code}</span>
 						</div>
 						<div>
 							<span className="text-xs text-zinc-500 block">Email</span>
@@ -90,7 +88,7 @@ export function AddStudentPanel({
 						</div>
 						<div>
 							<span className="text-xs text-zinc-500 block">Carrera</span>
-							<span className="font-medium text-zinc-800">{result.carrera}</span>
+							<span className="font-medium text-zinc-800">{result.career}</span>
 						</div>
 					</div>
 

@@ -2,17 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { Select, Button, Tabs, Toast } from '@/shared/components';
-import { usePPPCompetences, usePPPCycles, usePPPAcceptanceLevels } from '../../../hooks';
-import { useABET } from '@/providers';
+import { useI18n, useABET } from '@/providers';
+import { usePPPCompetences, usePPPCycles, usePPPPerformanceLevels } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
-import { AcceptanceLevels } from './AcceptanceLevels';
-
-const TABS = [
-	{ id: 'competences', label: 'Competencias' },
-	{ id: 'levels', label: 'Niveles de Aceptación' },
-];
+import { PerformanceLevels } from './PerformanceLevels';
 
 export function PPPConfiguration() {
+	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const { cycles, load: loadCycles } = usePPPCycles();
 	const {
@@ -24,16 +20,21 @@ export function PPPConfiguration() {
 		remove: removeComp,
 		clone: cloneComp,
 	} = usePPPCompetences();
-	const levelsHook = usePPPAcceptanceLevels();
+	const levelsHook = usePPPPerformanceLevels();
 
 	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
 	const [activeTab, setActiveTab] = useState('competences');
 	const [showClone, setShowClone] = useState(false);
-	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
+	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error' | 'info'; msg: string }>({
 		open: false,
 		type: 'success',
 		msg: '',
 	});
+
+	const tabs = [
+		{ id: 'competences', label: t('surveys.tabs.competences') },
+		{ id: 'levels', label: t('surveys.tabs.levels') },
+	];
 
 	useEffect(() => {
 		loadCycles(modalityTypeId);
@@ -53,17 +54,17 @@ export function PPPConfiguration() {
 		}
 	}, [competences, compLoading, selectedCycle]);
 
-	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
 
 	return (
 		<div className="space-y-6">
 			<div className="max-w-sm">
 				<Select
-					label="Ciclo Académico"
+					label={t('surveys.shared.academicCycle')}
 					options={cycleOptions}
 					value={selectedCycle}
 					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-					placeholder="Selecciona un ciclo"
+					placeholder={t('surveys.shared.selectCycle')}
 					isSearchable
 				/>
 			</div>
@@ -71,10 +72,11 @@ export function PPPConfiguration() {
 			{selectedCycle && showClone && (
 				<div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
 					<div className="flex-1">
-						<p className="text-sm font-bold text-amber-800">Sin configuración para este ciclo</p>
+						<p className="text-sm font-bold text-amber-800">
+							{t('surveys.shared.noConfiguration')}
+						</p>
 						<p className="text-xs text-amber-700 mt-1">
-							No existe configuración para el ciclo seleccionado. Puedes crear una nueva o clonar
-							desde otro ciclo.
+							{t('surveys.shared.noConfigurationHint')}
 						</p>
 					</div>
 					<Button
@@ -83,18 +85,18 @@ export function PPPConfiguration() {
 						onClick={() => {
 							setToast({
 								open: true,
-								type: 'info' as 'success',
-								msg: 'Función de clonado: selecciona un ciclo de origen en el modal.',
+								type: 'info',
+								msg: t('surveys.shared.cloneToastHint'),
 							});
 						}}>
-						Clonar configuración
+						{t('surveys.shared.cloneConfiguration')}
 					</Button>
 				</div>
 			)}
 
 			{selectedCycle && (
 				<>
-					<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+					<Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
 					<div className="pt-2">
 						{activeTab === 'competences' && (
@@ -112,7 +114,7 @@ export function PPPConfiguration() {
 						)}
 
 						{activeTab === 'levels' && (
-							<AcceptanceLevels
+							<PerformanceLevels
 								cycleId={selectedCycle.value}
 								levels={levelsHook.levels}
 								setLevels={levelsHook.setLevels}

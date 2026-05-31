@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
 	DataTable,
@@ -15,8 +15,13 @@ import {
 	Toast,
 } from '@/shared/components';
 import { TrashIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { useI18n } from '@/providers';
 import { useGRAStudents, useGRAEmail } from '../../../hooks';
 import type { GRAStudent, GRAEmailSendRequest } from '../../../types';
+import {
+	NOTIFICATION_STATUS,
+	NOTIFICATION_STATUS_LABEL_KEY,
+} from '../../../constants/notificationStatus';
 
 interface StudentListProps {
 	readonly programId: number;
@@ -24,7 +29,8 @@ interface StudentListProps {
 }
 
 export function StudentList({ programId, academicPeriodId }: StudentListProps) {
-	const { students, loading, error, load, remove } = useGRAStudents();
+	const { t } = useI18n();
+	const { students, error, load, remove } = useGRAStudents();
 	const { sending, send } = useGRAEmail(0);
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [sendDialogOpen, setSendDialogOpen] = useState(false);
@@ -55,45 +61,74 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 		};
 		send(req, () => {
 			setSendDialogOpen(false);
-			setToast({ open: true, type: 'success', msg: 'Encuestas enviadas exitosamente.' });
+			setToast({
+				open: true,
+				type: 'success',
+				msg: t('surveys.gra.notifications.toast.surveySent'),
+			});
 		});
 	}
 
-	const columns: ColumnDef<GRAStudent>[] = [
-		{ accessorKey: 'codigoEstudiante', header: 'Código' },
-		{ accessorKey: 'nombreEstudiante', header: 'Nombre' },
-		{ accessorKey: 'emailEstudiante', header: 'Email' },
+	const columns = useMemo<ColumnDef<GRAStudent>[]>(() => [
 		{
-			accessorKey: 'estadoEnvio',
-			header: 'Envío',
+			accessorKey: 'studentCode',
+			header: t('surveys.gra.notifications.columns.code'),
+		},
+		{
+			accessorKey: 'studentName',
+			header: t('surveys.gra.notifications.columns.name'),
+		},
+		{
+			accessorKey: 'studentEmail',
+			header: t('surveys.gra.notifications.columns.email'),
+		},
+		{
+			accessorKey: 'sendStatus',
+			header: t('surveys.gra.notifications.columns.sendStatus'),
+			// NOSONAR — cell renderers are render functions, not React components
 			cell: ({ getValue }) => {
-				const v = getValue() as string;
-				return <Badge variant={v === 'ENVIADO' ? 'default' : 'outline'}>{v ?? 'PENDIENTE'}</Badge>;
+				const status = (getValue() as string) ?? NOTIFICATION_STATUS.PENDING;
+				const labelKey =
+					NOTIFICATION_STATUS_LABEL_KEY[status as keyof typeof NOTIFICATION_STATUS_LABEL_KEY] ??
+					'surveys.gra.notifications.status.pending';
+				return (
+					<Badge variant={status === NOTIFICATION_STATUS.SENT ? 'default' : 'outline'}>
+						{t(labelKey)}
+					</Badge>
+				);
 			},
 		},
 		{
-			accessorKey: 'estadoRespuesta',
-			header: 'Respuesta',
+			accessorKey: 'responseStatus',
+			header: t('surveys.gra.notifications.columns.responseStatus'),
+			// NOSONAR — cell renderers are render functions, not React components
 			cell: ({ getValue }) => {
-				const v = getValue() as string | undefined;
-				if (!v) return <span className="text-zinc-400 text-xs">—</span>;
-				return <Badge variant={v === 'RESPONDIDO' ? 'success' : 'outline'}>{v}</Badge>;
+				const status = getValue() as string | undefined;
+				if (!status) return <span className="text-zinc-400 text-xs">—</span>;
+				const labelKey =
+					NOTIFICATION_STATUS_LABEL_KEY[status as keyof typeof NOTIFICATION_STATUS_LABEL_KEY];
+				return (
+					<Badge variant={status === NOTIFICATION_STATUS.RESPONDED ? 'success' : 'outline'}>
+						{labelKey ? t(labelKey) : status}
+					</Badge>
+				);
 			},
 		},
 		{
-			id: 'acciones',
-			header: 'Acciones',
+			id: 'actions',
+			header: t('surveys.gra.notifications.columns.actions'),
+			// NOSONAR — cell renderers are render functions, not React components
 			cell: ({ row }) => (
 				<Button
 					size="sm"
 					variant="warning"
-					onClick={() => setDeleteId(row.original.idNotificacion)}
-					aria-label="Eliminar">
+					onClick={() => setDeleteId(row.original.notificationId)}
+					aria-label={t('surveys.gra.notifications.delete')}>
 					<TrashIcon className="h-4 w-4" />
 				</Button>
 			),
 		},
-	];
+	], [t]);
 
 	return (
 		<div className="space-y-4">
@@ -102,10 +137,10 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 			<DataTable
 				columns={columns}
 				data={students}
-				title={`Estudiantes Notificados (${students.length})`}
+				title={t('surveys.gra.notifications.title').replace('{{count}}', String(students.length))}
 				actions={[
 					{
-						label: 'Enviar Encuesta',
+						label: t('surveys.gra.notifications.sendSurvey'),
 						onClick: () => setSendDialogOpen(true),
 						icon: <PaperAirplaneIcon className="h-4 w-4" />,
 					},
@@ -116,14 +151,16 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 			<Dialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Eliminar estudiante</DialogTitle>
+						<DialogTitle>{t('surveys.gra.notifications.deleteTitle')}</DialogTitle>
 					</DialogHeader>
 					<p className="text-sm text-zinc-600 py-2">
-						¿Deseas eliminar este estudiante de la notificación?
+						{t('surveys.gra.notifications.deleteBody')}
 					</p>
 					<DialogFooter showCloseButton>
-						<Button variant="warning" onClick={() => deleteId !== null && handleDelete(deleteId)}>
-							Eliminar
+						<Button
+							variant="warning"
+							onClick={() => deleteId !== null && handleDelete(deleteId)}>
+							{t('surveys.gra.notifications.delete')}
 						</Button>
 					</DialogFooter>
 				</DialogContent>
@@ -133,24 +170,27 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 			<Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Enviar encuesta GRA</DialogTitle>
+						<DialogTitle>{t('surveys.gra.notifications.sendDialog.title')}</DialogTitle>
 					</DialogHeader>
 					<div className="space-y-4 py-2">
 						<p className="text-sm text-zinc-600">
-							Se enviará la encuesta a <strong>todos</strong> los estudiantes registrados para el
-							período y programa actuales.
+							{t('surveys.gra.notifications.sendDialog.bodyBefore')}
+							<strong>{t('surveys.gra.notifications.sendDialog.bodyEmphasis')}</strong>
+							{t('surveys.gra.notifications.sendDialog.bodyAfter')}
 						</p>
 						<Input
-							label="URL base de la encuesta"
+							label={t('surveys.gra.notifications.sendDialog.urlLabel')}
 							value={surveyBaseUrl}
 							onChange={(e) => setSurveyBaseUrl(e.target.value)}
-							placeholder="https://tu-dominio.com/encuesta/gra"
+							placeholder={t('surveys.gra.notifications.sendDialog.urlPlaceholder')}
 							type="url"
 						/>
 					</div>
 					<DialogFooter showCloseButton>
 						<Button onClick={handleSendAll} disabled={sending || !surveyBaseUrl.trim()}>
-							{sending ? 'Enviando...' : 'Confirmar envío'}
+							{sending
+								? t('surveys.gra.notifications.sendDialog.sending')
+								: t('surveys.gra.notifications.sendDialog.confirm')}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

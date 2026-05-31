@@ -1,7 +1,9 @@
 import { apiPost, apiGet, ApiError } from '@/shared/lib';
 import type {
 	LCFCCourse,
+	LCFCConfigStatus,
 	LCFCNotificationSendRequest,
+	LCFCEmailParam,
 	DashboardResponse,
 	SurveyApiResponse,
 	PageInfo,
@@ -26,23 +28,23 @@ interface BackendLcfcConfig {
 
 function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 	return {
-		idCurso: raw.courseSectionId ?? raw.extra?.courseSectionId ?? raw.id,
-		nombreCurso: raw.courseName ?? `Curso ${raw.id}`,
-		codigo: raw.courseCode ?? '',
+		courseId: raw.courseSectionId ?? raw.extra?.courseSectionId ?? raw.id,
+		courseName: raw.courseName ?? `Course ${raw.id}`,
+		code: raw.courseCode ?? '',
 		isActive: raw.isActive,
-		comisiones: [],
+		commissions: [],
 	};
 }
 
 // ─── Configuration ─────────────────────────────────────────────────────────
 
 export async function listLCFCCourses(
-	_idEscuela: string,
+	_school: string,
 	academicPeriodId: number,
 	programId?: number,
 	page = 0,
 	pageSize = -1,
-): Promise<{ cursos: LCFCCourse[]; pageInfo?: PageInfo }> {
+): Promise<{ courses: LCFCCourse[]; pageInfo?: PageInfo }> {
 	const res = await apiPost<BackendLcfcConfig[] | SurveyApiResponse<BackendLcfcConfig[]>>(
 		'lcfc/config/get-by-filters',
 		{
@@ -55,17 +57,17 @@ export async function listLCFCCourses(
 	);
 
 	if (Array.isArray(res)) {
-		return { cursos: res.map((c) => adaptLcfcConfig(c)) };
+		return { courses: res.map((c) => adaptLcfcConfig(c)) };
 	}
 	const list = res.data?.resource ?? [];
 	return {
-		cursos: list.map((c) => adaptLcfcConfig(c)),
+		courses: list.map((c) => adaptLcfcConfig(c)),
 		pageInfo: res.data?.pageInfo,
 	};
 }
 
 export async function generateLCFCConfiguration(
-	_escuela: string,
+	_school: string,
 	academicPeriodId: number,
 	programId?: number,
 	campusId?: number,
@@ -78,20 +80,20 @@ export async function generateLCFCConfiguration(
 }
 
 export async function cloneLCFCConfiguration(
-	_idPeriodoOrigen: number,
-	_idPeriodoDestino: number,
+	_sourcePeriodId: number,
+	_targetPeriodId: number,
 ): Promise<void> {
 	throw new ApiError(
-		'La clonación de configuración LCFC no está disponible en esta versión del backend.',
+		'LCFC configuration cloning is not available in this backend version.',
 	);
 }
 
 export async function changeLCFCConfigStatus(
 	configId: number,
-	nuevoEstado: 'ACTIVO' | 'INACTIVO',
+	newStatus: LCFCConfigStatus,
 ) {
 	return apiPost('lcfc/config/update-status', {
-		updates: [{ configId, isActive: nuevoEstado === 'ACTIVO' }],
+		updates: [{ configId, isActive: newStatus === 'ACTIVE' }],
 	});
 }
 
@@ -101,35 +103,22 @@ export async function sendLCFCNotification(request: LCFCNotificationSendRequest)
 	return apiPost('lcfc/notification/send', request);
 }
 
-// Legacy send used by older hook — kept for compatibility
-export async function sendLCFCEmail(request: {
-	idCiclo: number;
-	idPeriodo: number;
-	destinatarios: string;
-	asunto: string;
-	cuerpo: string;
-}) {
-	return apiPost('lcfc/notificacion/envio', request);
-}
-
 // ─── Email params (legacy) ─────────────────────────────────────────────────
 
-export async function getLCFCEmailParams(): Promise<
-	Array<{ nombre: string; description: string }>
-> {
+export async function getLCFCEmailParams(): Promise<LCFCEmailParam[]> {
 	return [];
 }
 
 // ─── Excel template & upload ───────────────────────────────────────────────
 
-export async function downloadLCFCTemplate(_idPeriodoAcademico: number): Promise<void> {
+export async function downloadLCFCTemplate(_periodId: number): Promise<void> {
 	throw new ApiError(
-		'La descarga de plantilla LCFC no está disponible en esta versión del backend.',
+		'LCFC template download is not available in this backend version.',
 	);
 }
 
-export async function uploadLCFCMassive(_file: File, _escuelaActual?: unknown): Promise<void> {
-	throw new ApiError('La carga masiva LCFC no está disponible en esta versión del backend.');
+export async function uploadLCFCMassive(_file: File, _school?: unknown): Promise<void> {
+	throw new ApiError('LCFC bulk upload is not available in this backend version.');
 }
 
 // ─── Dashboard ─────────────────────────────────────────────────────────────
@@ -143,14 +132,12 @@ export async function generateLCFCDashboard(params: {
 }
 
 export async function generateLCFCPerceptionReport(params: {
-	idPeriodoAcademico?: number;
-	idEscuela?: string;
-	idPeriodo?: number;
-	idCarrera?: number;
+	academicPeriodId?: number;
+	programId?: number;
 }) {
 	return generateLCFCDashboard({
-		academicPeriodId: params.idPeriodoAcademico ?? params.idPeriodo,
-		programId: params.idCarrera,
+		academicPeriodId: params.academicPeriodId,
+		programId: params.programId,
 	});
 }
 

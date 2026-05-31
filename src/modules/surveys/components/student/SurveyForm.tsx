@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Button, TextArea, Toast } from '@/shared/components';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { useI18n } from '@/providers';
 import type { SurveyCommissionGroup, SurveyTokenVerification } from '../../types';
 
 interface SurveyFormProps {
@@ -10,18 +11,11 @@ interface SurveyFormProps {
 	outcomes: SurveyCommissionGroup[];
 	submitting: boolean;
 	error: string | null;
-	onScoreChange: (comisionId: number, outcomeId: number, puntaje: number) => void;
-	onSubmit: (comentario: string) => void;
+	onScoreChange: (commissionId: number, outcomeId: number, score: number) => void;
+	onSubmit: (comment: string) => void;
 }
 
 const SCORE_OPTIONS = [1, 2, 3, 4, 5];
-const SCORE_LABELS: Record<number, string> = {
-	1: 'Insuficiente',
-	2: 'Regular',
-	3: 'Bueno',
-	4: 'Muy Bueno',
-	5: 'Excelente',
-};
 
 export function SurveyForm({
 	verification,
@@ -31,33 +25,42 @@ export function SurveyForm({
 	onScoreChange,
 	onSubmit,
 }: SurveyFormProps) {
-	const [comentario, setComentario] = useState('');
+	const { t } = useI18n();
+	const [comment, setComment] = useState('');
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
 		msg: '',
 	});
 
+	const scoreLabels: Record<number, string> = {
+		1: t('surveys.student.score.1'),
+		2: t('surveys.student.score.2'),
+		3: t('surveys.student.score.3'),
+		4: t('surveys.student.score.4'),
+		5: t('surveys.student.score.5'),
+	};
+
 	function handleSubmit() {
-		const allAnswered = outcomes.every((g) => g.outcomes.every((o) => o.desempeno !== null));
+		const allAnswered = outcomes.every((g) => g.outcomes.every((o) => o.score !== null));
 		if (!allAnswered) {
 			setToast({
 				open: true,
 				type: 'error',
-				msg: 'Por favor, completa todos los outcomes antes de enviar.',
+				msg: t('surveys.student.error.incomplete'),
 			});
 			return;
 		}
-		if (!comentario.trim()) {
-			setToast({ open: true, type: 'error', msg: 'El comentario es obligatorio.' });
+		if (!comment.trim()) {
+			setToast({ open: true, type: 'error', msg: t('surveys.student.error.commentRequired') });
 			return;
 		}
-		onSubmit(comentario);
+		onSubmit(comment);
 	}
 
 	const totalOutcomes = outcomes.reduce((acc, g) => acc + g.outcomes.length, 0);
 	const answeredOutcomes = outcomes.reduce(
-		(acc, g) => acc + g.outcomes.filter((o) => o.desempeno !== null).length,
+		(acc, g) => acc + g.outcomes.filter((o) => o.score !== null).length,
 		0,
 	);
 	const progress = totalOutcomes > 0 ? Math.round((answeredOutcomes / totalOutcomes) * 100) : 0;
@@ -70,31 +73,29 @@ export function SurveyForm({
 					<div className="flex items-center gap-3 mb-4">
 						<img src="/assets/ABETLogo.png" alt="ABET" className="h-10 w-auto" />
 						<div>
-							<h1 className="text-xl font-bold">Sistema ABET — Encuesta LCFC</h1>
-							<p className="text-red-200 text-sm">Logro de Fin de Ciclo</p>
+							<h1 className="text-xl font-bold">{t('surveys.student.title')}</h1>
+							<p className="text-red-200 text-sm">{t('surveys.student.subtitle')}</p>
 						</div>
 					</div>
 					<div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
 						<div>
-							<span className="text-red-300 text-xs block">Carrera</span>
-							<span className="font-medium">{verification.nombreCarrera}</span>
+							<span className="text-red-300 text-xs block">{t('surveys.student.programLabel')}</span>
+							<span className="font-medium">{verification.programName}</span>
 						</div>
 						<div>
-							<span className="text-red-300 text-xs block">Ciclo</span>
-							<span className="font-medium">{verification.ciclo}</span>
+							<span className="text-red-300 text-xs block">{t('surveys.student.periodLabel')}</span>
+							<span className="font-medium">{verification.period}</span>
 						</div>
-						{verification.nombreCurso && (
+						{verification.courseName && (
 							<div>
-								<span className="text-red-300 text-xs block">Curso</span>
-								<span className="font-medium">{verification.nombreCurso}</span>
+								<span className="text-red-300 text-xs block">{t('surveys.student.courseLabel')}</span>
+								<span className="font-medium">{verification.courseName}</span>
 							</div>
 						)}
-						{(verification.codigoEstudiante ?? verification.codigo) && (
+						{verification.studentCode && (
 							<div>
-								<span className="text-red-300 text-xs block">Estudiante</span>
-								<span className="font-medium">
-									{verification.codigoEstudiante ?? verification.codigo}
-								</span>
+								<span className="text-red-300 text-xs block">{t('surveys.student.studentLabel')}</span>
+								<span className="font-medium">{verification.studentCode}</span>
 							</div>
 						)}
 					</div>
@@ -105,9 +106,9 @@ export function SurveyForm({
 			<div className="bg-white border-b border-zinc-200 sticky top-0 z-10">
 				<div className="max-w-3xl mx-auto px-6 py-3">
 					<div className="flex items-center justify-between text-xs text-zinc-500 mb-1">
-						<span>Progreso</span>
+						<span>{t('surveys.student.progressLabel')}</span>
 						<span>
-							{answeredOutcomes} de {totalOutcomes} respondidos ({progress}%)
+							{t('surveys.student.progressText').replace('{{answered}}', String(answeredOutcomes)).replace('{{total}}', String(totalOutcomes)).replace('{{pct}}', String(progress))}
 						</span>
 					</div>
 					<div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
@@ -124,9 +125,8 @@ export function SurveyForm({
 				<div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
 					<ExclamationTriangleIcon className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
 					<div className="text-sm text-amber-800">
-						<strong>Instrucciones:</strong> Evalúa cada competencia seleccionando un puntaje del 1
-						al 5. Todos los campos son obligatorios. Una vez enviada, la encuesta no podrá
-						modificarse.
+						<strong>{t('surveys.student.instructionsTitle')}</strong>{' '}
+						{t('surveys.student.instructionsBody')}
 					</div>
 				</div>
 
@@ -139,10 +139,10 @@ export function SurveyForm({
 				{/* Outcomes by commission */}
 				{outcomes.map((group) => (
 					<div
-						key={group.comisionId}
+						key={group.commissionId}
 						className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden">
 						<div className="bg-red-600 px-6 py-3">
-							<h2 className="text-white font-bold text-sm">{group.comisionNombre}</h2>
+							<h2 className="text-white font-bold text-sm">{group.commissionName}</h2>
 						</div>
 
 						<div className="divide-y divide-zinc-100">
@@ -150,36 +150,36 @@ export function SurveyForm({
 								<div key={outcome.outcomeId} className="px-6 py-5">
 									<div className="mb-3">
 										<p className="text-sm font-bold text-zinc-800">
-											{outcome.competenciaEspecifica}
+											{outcome.specificCompetence}
 										</p>
-										{outcome.competenciaGeneral && (
+										{outcome.generalCompetence && (
 											<p className="text-xs text-zinc-500 mt-0.5">
-												General: {outcome.competenciaGeneral}
+												{t('surveys.student.generalPrefix')} {outcome.generalCompetence}
 											</p>
 										)}
-										{outcome.descripcion && (
+										{outcome.description && (
 											<p className="text-xs text-zinc-500 mt-1 leading-relaxed">
-												{outcome.descripcion}
+												{outcome.description}
 											</p>
 										)}
 									</div>
 
 									{/* Score selector */}
 									<div className="flex flex-wrap gap-2">
-										{SCORE_OPTIONS.map((score) => {
-											const selected = outcome.desempeno === score;
+										{SCORE_OPTIONS.map((s) => {
+											const selected = outcome.score === s;
 											return (
 												<button
-													key={score}
-													onClick={() => onScoreChange(group.comisionId, outcome.outcomeId, score)}
+													key={s}
+													onClick={() => onScoreChange(group.commissionId, outcome.outcomeId, s)}
 													className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl border-2 text-xs font-medium transition-all
                             ${
 															selected
 																? 'border-red-600 bg-red-600 text-white'
 																: 'border-zinc-200 bg-white text-zinc-600 hover:border-red-400 hover:text-red-600'
 														}`}>
-													<span className="text-base font-bold leading-none">{score}</span>
-													<span className="text-[10px] leading-none">{SCORE_LABELS[score]}</span>
+													<span className="text-base font-bold leading-none">{s}</span>
+													<span className="text-[10px] leading-none">{scoreLabels[s]}</span>
 												</button>
 											);
 										})}
@@ -193,10 +193,10 @@ export function SurveyForm({
 				{/* Comment */}
 				<div className="bg-white rounded-2xl shadow-sm border border-zinc-200 px-6 py-5">
 					<TextArea
-						label="Comentarios adicionales (obligatorio)"
-						value={comentario}
-						onChange={(e) => setComentario(e.target.value)}
-						placeholder="Escribe aquí tus comentarios sobre el curso, los contenidos, o cualquier observación relevante..."
+						label={t('surveys.student.commentLabel')}
+						value={comment}
+						onChange={(e) => setComment(e.target.value)}
+						placeholder={t('surveys.student.commentPlaceholder')}
 						rows={5}
 					/>
 				</div>
@@ -205,9 +205,9 @@ export function SurveyForm({
 				<div className="flex justify-end pb-8">
 					<Button
 						onClick={handleSubmit}
-						disabled={submitting || progress < 100 || !comentario.trim()}
+						disabled={submitting || progress < 100 || !comment.trim()}
 						size="lg">
-						{submitting ? 'Enviando...' : 'Enviar Encuesta'}
+						{submitting ? t('surveys.student.submittingButton') : t('surveys.student.submitButton')}
 					</Button>
 				</div>
 			</div>
@@ -224,16 +224,16 @@ export function SurveyForm({
 
 // ─── Already answered screen ────────────────────────────────────────────────
 export function SurveyAlreadyAnswered() {
+	const { t } = useI18n();
 	return (
 		<div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-6">
 			<div className="bg-white rounded-2xl shadow-sm border border-zinc-200 p-8 max-w-md w-full text-center space-y-4">
 				<CheckCircleIcon className="h-16 w-16 text-emerald-500 mx-auto" />
-				<h2 className="text-xl font-bold text-zinc-900">Encuesta ya respondida</h2>
-				<p className="text-sm text-zinc-500">
-					Ya has completado esta encuesta anteriormente. No es posible modificar tus respuestas una
-					vez enviadas.
-				</p>
-				<p className="text-xs text-zinc-400">Gracias por tu participación.</p>
+				<h2 className="text-xl font-bold text-zinc-900">
+					{t('surveys.student.alreadyAnswered.title')}
+				</h2>
+				<p className="text-sm text-zinc-500">{t('surveys.student.alreadyAnswered.message')}</p>
+				<p className="text-xs text-zinc-400">{t('surveys.student.alreadyAnswered.thanks')}</p>
 			</div>
 		</div>
 	);
@@ -241,16 +241,16 @@ export function SurveyAlreadyAnswered() {
 
 // ─── Success screen ─────────────────────────────────────────────────────────
 export function SurveySuccess() {
+	const { t } = useI18n();
 	return (
 		<div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-6">
 			<div className="bg-white rounded-2xl shadow-sm border border-zinc-200 p-8 max-w-md w-full text-center space-y-4">
 				<CheckCircleIcon className="h-16 w-16 text-emerald-500 mx-auto" />
-				<h2 className="text-xl font-bold text-zinc-900">¡Encuesta enviada exitosamente!</h2>
-				<p className="text-sm text-zinc-500">
-					Tus respuestas han sido registradas correctamente. Gracias por completar la encuesta de
-					Logro de Fin de Ciclo.
-				</p>
-				<p className="text-xs text-zinc-400 mt-2">Puedes cerrar esta ventana.</p>
+				<h2 className="text-xl font-bold text-zinc-900">
+					{t('surveys.student.success.title')}
+				</h2>
+				<p className="text-sm text-zinc-500">{t('surveys.student.success.message')}</p>
+				<p className="text-xs text-zinc-400 mt-2">{t('surveys.student.success.hint')}</p>
 			</div>
 		</div>
 	);

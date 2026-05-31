@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
-	AcceptanceLevel,
+	PerformanceLevel,
 	CompetenceFormData,
 	DashboardResponse,
 } from '../types';
@@ -14,15 +14,14 @@ import {
 	savePPPCompetence,
 	deletePPPCompetence,
 	clonePPPConfiguration,
-	listAcceptanceLevels,
-	updateAcceptanceLevels,
+	listPPPPerformanceLevels,
+	updatePPPPerformanceLevels,
 	downloadPPPTemplate,
 	uploadPPPMassive,
 	generatePPPPerceptionReport,
 } from '../services';
 
 // Backward-compat alias: components that import usePPPCycles still work.
-// load() ignores the optional modalityId arg; periods come from getAcademicPeriods().
 export function usePPPCycles() {
 	const { periods, loading, error, load: _load } = usePPPPeriods();
 	const load = useCallback(
@@ -59,11 +58,11 @@ export function usePPPCompetences() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (idPeriodo: number, idCarrera = 0) => {
+	const load = useCallback(async (periodId: number, programId = 0) => {
 		setLoading(true);
 		setError(null);
 		try {
-			setCompetences(await listPPPCompetences(idPeriodo, idCarrera));
+			setCompetences(await listPPPCompetences(periodId, programId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -92,10 +91,10 @@ export function usePPPCompetences() {
 	const clone = useCallback(
 		async (
 			params: {
-				idCarreraOrigen: number;
-				idPeriodoOrigen: number;
-				idCarreraDestino: number;
-				idPeriodoDestino: number;
+				sourceProgramId: number;
+				sourcePeriodId: number;
+				targetProgramId: number;
+				targetPeriodId: number;
 			},
 			onSuccess?: () => void,
 		) => {
@@ -112,16 +111,16 @@ export function usePPPCompetences() {
 	return { competences, loading, error, load, save, remove, clone, setError };
 }
 
-export function usePPPAcceptanceLevels() {
-	const [levels, setLevels] = useState<AcceptanceLevel[]>([]);
+export function usePPPPerformanceLevels() {
+	const [levels, setLevels] = useState<PerformanceLevel[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (idPeriodo: number) => {
+	const load = useCallback(async (periodId: number) => {
 		setLoading(true);
 		setError(null);
 		try {
-			setLevels(await listAcceptanceLevels(idPeriodo));
+			setLevels(await listPPPPerformanceLevels(periodId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -130,9 +129,9 @@ export function usePPPAcceptanceLevels() {
 	}, []);
 
 	const save = useCallback(
-		async (idPeriodo: number, niveles: AcceptanceLevel[], onSuccess?: () => void) => {
+		async (periodId: number, levels: PerformanceLevel[], onSuccess?: () => void) => {
 			try {
-				await updateAcceptanceLevels(idPeriodo, niveles);
+				await updatePPPPerformanceLevels(periodId, levels);
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);
@@ -148,11 +147,11 @@ export function usePPPDownload() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const download = useCallback(async (idPeriodo: number) => {
+	const download = useCallback(async (periodId: number) => {
 		setLoading(true);
 		setError(null);
 		try {
-			await downloadPPPTemplate(idPeriodo);
+			await downloadPPPTemplate(periodId);
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -194,7 +193,7 @@ export function usePPPReports() {
 	const [reportData, setReportData] = useState<DashboardResponse | null>(null);
 
 	const generate = useCallback(
-		async (params: { idPeriodoAcademico?: number; idCarrera?: number; idComision?: number }) => {
+		async (params: { academicPeriodId?: number; programId?: number; commissionId?: number }) => {
 			setLoading(true);
 			setError(null);
 			try {

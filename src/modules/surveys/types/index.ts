@@ -17,51 +17,50 @@ export interface PageInfo {
 // ─── Academic entities (from academic module) ──────────────────────────────
 export interface AcademicPeriod {
 	id: number;
-	nombre: string;
-	codigo?: string;
+	name: string;
+	code?: string;
 }
 
 export interface Program {
 	id: number;
-	nombre: string;
-	codigo?: string;
+	name: string;
+	code?: string;
 }
 
 // ─── Competences (PPP / GRA) ───────────────────────────────────────────────
 export interface CompetenceConfig {
 	id: number;
 	outcomeId?: number;
-	competenciaGeneral: string; // maps to extra.nameEs
-	competenciaEspecifica: string; // maps to extra.nameEn
-	descripcion: string; // maps to extra.descriptionEs
-	nivelAceptacion: number; // maps to extra.order
-	estado?: string;
+	generalCompetence: string;  // maps to extra.name_es
+	specificCompetence: string; // maps to extra.name_en
+	description: string;        // maps to extra.description_es
+	performanceLevel: number;   // maps to extra.order
 	isActive?: boolean;
-	idCarrera?: number;
-	idPeriodo?: number;
+	programId?: number;
+	periodId?: number;
 }
 
 export interface CompetenceFormData {
 	id: number;
-	outcomeId?: number; // required by new backend on create
-	competenciaGeneral: string;
-	competenciaEspecifica: string;
-	descripcion: string;
-	nivelAceptacion: number;
-	idPeriodoAcademico: number;
-	idCarrera?: number;
-	escuela: string;
+	outcomeId?: number;
+	generalCompetence: string;
+	specificCompetence: string;
+	description: string;
+	performanceLevel: number;
+	academicPeriodId: number;
+	programId?: number;
+	school: string;
 }
 
-// ─── Acceptance levels ─────────────────────────────────────────────────────
-export interface AcceptanceLevel {
+// ─── Performance levels ────────────────────────────────────────────────────
+export interface PerformanceLevel {
 	id?: number;
-	nivel: number; // maps to backend "order"
-	descripcion: string; // maps to backend "name.es"
-	rango: string; // derived from minScore – maxScore
+	level: number;       // maps to performance_level unique_value
+	description: string; // maps to performance_level name.es
+	range: string;       // derived from min_score – max_score
 	minScore?: number;
 	maxScore?: number;
-	color?: string;
+	color?: string;      // maps to performance_level extra.color
 }
 
 // ─── File download response ────────────────────────────────────────────────
@@ -80,48 +79,40 @@ export interface PPPCloneRequest {
 
 // ─── GRA Student Notification ─────────────────────────────────────────────
 export interface GRAStudent {
-	idNotificacion: number;
-	idEstudiante: number;
-	codigoEstudiante: string;
-	nombreEstudiante: string;
-	emailEstudiante: string;
-	estadoEnvio: string;
-	fechaEnvio?: string;
-	estadoRespuesta?: string;
-	fechaRespuesta?: string;
+	notificationId: number;
+	studentId: number;
+	studentCode: string;
+	studentName: string;
+	studentEmail: string;
+	sendStatus: string;
+	sendDate?: string;
+	responseStatus?: string;
+	responseDate?: string;
 }
 
 export interface StudentSearchResult {
-	idEstudiante: number;
-	codigo: string;
-	nombre: string;
+	studentId: number;
+	code: string;
+	name: string;
 	email: string;
-	carrera: string;
-	ciclo?: string;
+	career: string;
+	cycle?: string;
 }
 
 export interface EmailTemplate {
-	idEncuesta?: number;
-	asunto: string;
-	cuerpo: string;
+	surveyId?: number;
+	subject: string;
+	body: string;
 	htmlContent?: string;
-	idiomaTemplate?: string;
-}
-
-export interface SendEmailRequest {
-	idEncuesta: number;
-	destinatarios: 'TODOS' | 'SELECCIONADOS';
-	idsSeleccionados?: number[];
-	asunto?: string;
-	cuerpoEmail?: string;
+	templateLanguage?: string;
 }
 
 export interface SendEmailResponse {
 	success: boolean;
 	data?: {
-		enviados: number;
-		fallidos: number;
-		detallesFallo?: Array<{ idEstudiante: number; razon: string }>;
+		sent: number;
+		failed: number;
+		failureDetails?: Array<{ studentId: number; reason: string }>;
 	};
 	message?: string;
 }
@@ -133,41 +124,35 @@ export interface GRAEmailSendRequest {
 	surveyBaseUrl: string;
 }
 
+// ─── LCFC config status / dashboard color ─────────────────────────────────
+export type LCFCConfigStatus = 'ACTIVE' | 'INACTIVE';
+export type DashboardColor = 'RED' | 'YELLOW' | 'GREEN';
+
 // ─── LCFC ──────────────────────────────────────────────────────────────────
 export interface LCFCCourse {
-	idCurso: number;
-	nombreCurso: string;
-	codigo: string;
+	courseId: number;
+	courseName: string;
+	code: string;
 	isActive?: boolean;
-	comisiones: Array<{
-		idComision: number;
-		nombreComision: string;
-		profesor?: string;
+	commissions: Array<{
+		commissionId: number;
+		commissionName: string;
+		professor?: string;
 	}>;
 }
 
 export interface LCFCStudent {
-	idAlumno: number;
-	codigo: string;
-	nombre: string;
+	studentId: number;
+	code: string;
+	name: string;
 	email: string;
-	encuestaEnviada: boolean;
-	encuestaCompletada: boolean;
+	surveySent: boolean;
+	surveyCompleted: boolean;
 }
 
 export interface LCFCEmailParam {
-	nombre: string;
+	name: string;
 	description: string;
-}
-
-// Legacy LCFC send request (kept for backward compat)
-export interface LCFCSendRequest {
-	idCiclo: number;
-	idPeriodo: number;
-	destinatarios: 'TODOS' | 'SELECCIONADOS';
-	selectedStudents?: number[];
-	asunto: string;
-	cuerpo: string;
 }
 
 // New backend LCFC notification send request
@@ -181,93 +166,91 @@ export interface LCFCNotificationSendRequest {
 }
 
 export interface LCFCConfigItem {
-	idConfiguracion?: number;
-	idCurso?: number;
-	nombreCurso?: string;
-	estado?: 'ACTIVO' | 'INACTIVO';
-	comisiones?: Array<{ idComision: number; nombreComision: string }>;
+	configId?: number;
+	courseId?: number;
+	courseName?: string;
+	status?: LCFCConfigStatus;
+	commissions?: Array<{ commissionId: number; commissionName: string }>;
 }
 
 // ─── Student Survey (token-based access) ──────────────────────────────────
 export interface SurveyOutcome {
 	outcomeId: number;
-	comisionId: number;
-	competenciaGeneral?: string;
-	competenciaEspecifica: string;
-	descripcion: string;
-	desempeno: number | null;
-	tipoRespuesta?: string;
-	pesaje?: number;
+	commissionId: number;
+	generalCompetence?: string;
+	specificCompetence: string;
+	description: string;
+	score: number | null;
+	responseType?: string;
+	weight?: number;
 }
 
 export interface SurveyCommissionGroup {
-	comisionNombre: string;
-	comisionId: number;
+	commissionName: string;
+	commissionId: number;
 	outcomes: SurveyOutcome[];
 }
 
 export interface SurveyTokenVerification {
 	token?: string;
-	escuela: string;
-	escuelaId?: number;
-	nombreEscuela?: string;
-	nombreCarrera: string;
-	ciclo: string;
-	codigoEstudiante?: string;
-	codigo?: string;
-	nombreEstudiante?: string;
-	nombreCurso?: string;
-	cursoCodigo?: string;
-	estado: boolean; // false = not answered yet, true = already answered
-	alumnoId: number;
-	encuestaId: number;
-	tokenValido?: boolean;
-	diasRestantes?: number;
-	surveyId?: number;
+	school: string;
+	schoolId?: number;
+	schoolName?: string;
+	programName: string;
+	period: string;
+	studentCode?: string;
+	studentName?: string;
+	courseName?: string;
+	courseCode?: string;
+	answered: boolean;
+	studentId: number;
+	surveyId: number;
+	tokenValid?: boolean;
+	daysRemaining?: number;
 }
 
 export interface SurveyOutcomesResponse {
-	escuela: string;
-	nombreEscuela?: string;
-	nombreCarrera: string;
-	ciclo: string;
-	nombreCurso?: string;
-	cursoCodigo?: string;
-	encuestaId: number;
-	lista: SurveyCommissionGroup[];
+	school: string;
+	schoolName?: string;
+	programName: string;
+	period: string;
+	courseName?: string;
+	courseCode?: string;
+	surveyId: number;
+	items: SurveyCommissionGroup[];
 }
 
 export interface SurveySubmitItem {
-	comisionId: number;
+	commissionId: number;
 	outcomeId: number;
-	puntaje: number;
-	descripcion?: string;
+	score: number;
+	description?: string;
 }
 
 export interface SurveySubmitRequest {
-	token?: string; // new backend uses token
-	comentario: string;
-	encuestaId: number;
-	escuela: string;
-	lista: SurveySubmitItem[];
+	token?: string;
+	comment: string;
+	surveyId: number;
+	school: string;
+	items: SurveySubmitItem[];
 }
 
 export interface SurveySubmitResponse {
 	success: boolean;
 	data?: {
 		message: string;
-		encuestaId?: number;
-		fechaCompletacion?: string;
+		surveyId?: number;
+		completionDate?: string;
 	};
 }
 
 // ─── Reports / Dashboard ───────────────────────────────────────────────────
 export interface ReportFilter {
-	idPeriodoAcademico?: number;
-	idCarrera?: number;
-	idComision?: number;
-	escuela?: string;
-	idioma?: string;
+	academicPeriodId?: number;
+	programId?: number;
+	commissionId?: number;
+	school?: string;
+	language?: string;
 }
 
 export interface DashboardOutcome {
@@ -275,15 +258,15 @@ export interface DashboardOutcome {
 	outcomeCode?: string;
 	outcomeName: string;
 	averageScore: number;
-	color: 'ROJO' | 'AMARILLO' | 'VERDE';
+	color: DashboardColor;
 	totalResponses: number;
 }
 
 export interface DashboardSummary {
 	totalSurveys: number;
-	rojo?: number;
-	amarillo?: number;
-	verde?: number;
+	red?: number;
+	yellow?: number;
+	green?: number;
 	completed?: number;
 	pending?: number;
 	completionRatePct?: number;

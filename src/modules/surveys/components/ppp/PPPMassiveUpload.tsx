@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { Select, Toast } from '@/shared/components';
+import { useI18n } from '@/providers';
 import { FileUploadPanel } from '../shared/FileUploadPanel';
 import { usePPPUpload, usePPPCycles } from '../../hooks';
 import { useABET } from '@/providers';
 
 export function PPPMassiveUpload() {
+	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const { cycles, load: loadCycles } = usePPPCycles();
 	const { loading, error, success, upload } = usePPPUpload();
@@ -22,7 +24,7 @@ export function PPPMassiveUpload() {
 		loadCycles(modalityTypeId);
 	}, [modalityTypeId, loadCycles]);
 
-	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
 
 	async function handleDownloadTemplate() {
 		if (!selectedCycle) return;
@@ -30,7 +32,7 @@ export function PPPMassiveUpload() {
 			const { downloadPPPTemplate } = await import('../../services/pppService');
 			await downloadPPPTemplate(selectedCycle.value);
 		} catch (err) {
-			const msg = err instanceof Error ? err.message : 'Error al descargar la plantilla.';
+			const msg = err instanceof Error ? err.message : t('surveys.ppp.upload.downloadError');
 			setToast({ open: true, type: 'error', msg });
 		}
 	}
@@ -38,29 +40,29 @@ export function PPPMassiveUpload() {
 	return (
 		<div className="max-w-lg space-y-5">
 			<div>
-				<h3 className="text-base font-bold text-zinc-800">Carga Masiva PPP</h3>
+				<h3 className="text-base font-bold text-zinc-800">{t('surveys.ppp.upload.title')}</h3>
 				<p className="text-sm text-zinc-500 mt-1">
-					Descarga la plantilla, completa los datos y súbela para procesar masivamente.
+					{t('surveys.ppp.upload.description')}
 				</p>
 			</div>
 
 			<Select
-				label="Ciclo Académico"
+				label={t('surveys.shared.academicCycle')}
 				options={cycleOptions}
 				value={selectedCycle}
 				onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-				placeholder="Selecciona un ciclo"
+				placeholder={t('surveys.shared.selectCycle')}
 				isSearchable
 			/>
 
 			<FileUploadPanel
-				title="Archivo de datos"
+				title={t('surveys.ppp.upload.fileTitle')}
 				uploading={loading}
 				success={success}
 				error={error}
 				onUpload={(file) => (selectedCycle ? upload(file, selectedCycle.value) : Promise.resolve())}
 				onDownloadTemplate={selectedCycle ? handleDownloadTemplate : undefined}
-				downloadLabel="Descargar Plantilla PPP"
+				downloadLabel={t('surveys.ppp.upload.downloadLabel')}
 			/>
 
 			<Toast

@@ -1,10 +1,12 @@
-import { apiPost, apiGet, apiDelete, fileToBase64, ApiError } from '@/shared/lib';
+import { apiPost, apiDelete, fileToBase64, ApiError } from '@/shared/lib';
 import { logger } from '@/shared/lib/logger';
 import { getSurveyTypeId } from './academicService';
+import { performanceLevelsService } from '@/modules/academic/services/performanceLevelsService';
+import type { PerformanceLevelResponse } from '@/modules/academic/types';
 import type {
 	CompetenceConfig,
 	CompetenceFormData,
-	AcceptanceLevel,
+	PerformanceLevel,
 	DashboardResponse,
 } from '../types';
 
@@ -30,16 +32,6 @@ interface BackendPppConfig {
 	outcomeCode?: string;
 }
 
-interface BackendAcceptanceLevel {
-	id: number;
-	minScore: number;
-	maxScore: number;
-	name: { es?: string; en?: string } | string;
-	color?: string;
-	order?: number;
-	isFinal?: boolean;
-}
-
 // ─── Adapters ──────────────────────────────────────────────────────────────
 
 function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
@@ -47,44 +39,45 @@ function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 	return {
 		id: raw.id,
 		outcomeId: raw.outcomeId,
-		competenciaGeneral: extra.nameEs ?? raw.userOutcomeName ?? '',
-		competenciaEspecifica: extra.nameEn ?? extra.nameEs ?? '',
-		descripcion: extra.descriptionEs ?? '',
-		nivelAceptacion: extra.order ?? 3,
+		generalCompetence: extra.nameEs ?? raw.userOutcomeName ?? '',
+		specificCompetence: extra.nameEn ?? extra.nameEs ?? '',
+		description: extra.descriptionEs ?? '',
+		performanceLevel: extra.order ?? 3,
 		isActive: raw.isActive,
-		estado: raw.isActive ? 'ACTIVO' : 'INACTIVO',
-		idCarrera: extra.programId,
-		idPeriodo: extra.academicPeriodId,
+		programId: extra.programId,
+		periodId: extra.academicPeriodId,
 	};
 }
 
-function adaptAcceptanceLevel(raw: BackendAcceptanceLevel, index: number): AcceptanceLevel {
-	const nameEs = typeof raw.name === 'string' ? raw.name : (raw.name?.es ?? `Nivel ${index + 1}`);
+function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): PerformanceLevel {
+	const nameEs = raw.name?.es ?? `Level ${index + 1}`;
+	const color =
+		raw.extra && typeof raw.extra.color === 'string' ? raw.extra.color : undefined;
 	return {
 		id: raw.id,
-		nivel: raw.order ?? index + 1,
-		descripcion: nameEs,
-		rango: `${raw.minScore} – ${raw.maxScore}`,
-		minScore: raw.minScore,
-		maxScore: raw.maxScore,
-		color: raw.color,
+		level: Number(raw.uniqueValue) || index + 1,
+		description: nameEs,
+		range: `${raw.minScore} – ${raw.maxScore}`,
+		minScore: Number(raw.minScore),
+		maxScore: Number(raw.maxScore),
+		color,
 	};
 }
 
 const RANGE_RE = /([\d.]+)\s*[–-]\s*([\d.]+)/;
 
-function buildAcceptanceLevelItem(level: AcceptanceLevel) {
-	const rangeMatch = RANGE_RE.exec(level.rango ?? '');
+function buildPerformanceLevelUpdate(level: PerformanceLevel) {
+	const rangeMatch = RANGE_RE.exec(level.range ?? '');
 	const minScore =
-		level.minScore ?? (rangeMatch ? Number.parseFloat(rangeMatch[1]) : level.nivel - 1);
-	const maxScore = level.maxScore ?? (rangeMatch ? Number.parseFloat(rangeMatch[2]) : level.nivel);
+		level.minScore ?? (rangeMatch ? Number.parseFloat(rangeMatch[1]) : level.level - 1);
+	const maxScore = level.maxScore ?? (rangeMatch ? Number.parseFloat(rangeMatch[2]) : level.level);
 	return {
 		id: level.id,
 		minScore: minScore,
 		maxScore: maxScore,
-		name: { es: level.descripcion, en: level.descripcion },
+		name: { es: level.description, en: level.description },
 		color: level.color ?? '#888888',
-		order: level.nivel,
+		order: level.level,
 		isFinal: false,
 	};
 }
@@ -99,7 +92,7 @@ export async function listPPPCompetences(
 		'ppp/config/get-by-filters',
 		{ programId: programId || undefined, academicPeriodId, isActive: true },
 	);
-	const list = Array.isArray(res) ? res : ((res as { data?: BackendPppConfig[] }).data ?? []);
+	const list = Array.isArray(res) ? res : (res.data ?? []);
 	return list.map((c) => adaptPppConfig(c));
 }
 
@@ -109,23 +102,23 @@ export async function savePPPCompetence(data: CompetenceFormData) {
 	if (isNew) {
 		return apiPost('ppp/config/create', {
 			outcomeId: data.outcomeId ?? 1,
-			nameEs: data.competenciaGeneral,
-			nameEn: data.competenciaEspecifica || data.competenciaGeneral,
-			descriptionEs: data.descripcion,
-			descriptionEn: data.descripcion,
-			order: data.nivelAceptacion,
-			programId: data.idCarrera ?? 0,
-			academicPeriodId: data.idPeriodoAcademico,
+			nameEs: data.generalCompetence,
+			nameEn: data.specificCompetence || data.generalCompetence,
+			descriptionEs: data.description,
+			descriptionEn: data.description,
+			order: data.performanceLevel,
+			programId: data.programId ?? 0,
+			academicPeriodId: data.academicPeriodId,
 			isVisible: true,
 		});
 	}
 
 	return apiPost(`ppp/config/update/${data.id}`, {
-		nameEs: data.competenciaGeneral,
-		nameEn: data.competenciaEspecifica || data.competenciaGeneral,
-		descriptionEs: data.descripcion,
-		descriptionEn: data.descripcion,
-		order: data.nivelAceptacion,
+		nameEs: data.generalCompetence,
+		nameEn: data.specificCompetence || data.generalCompetence,
+		descriptionEs: data.description,
+		descriptionEn: data.description,
+		order: data.performanceLevel,
 		isVisible: true,
 	});
 }
@@ -135,49 +128,49 @@ export async function deletePPPCompetence(id: number) {
 }
 
 export async function clonePPPConfiguration(params: {
-	idCarreraOrigen: number;
-	idPeriodoOrigen: number;
-	idCarreraDestino: number;
-	idPeriodoDestino: number;
+	sourceProgramId: number;
+	sourcePeriodId: number;
+	targetProgramId: number;
+	targetPeriodId: number;
 }) {
 	return apiPost('ppp/config/replicate', {
-		sourceAcademicPeriodId: params.idPeriodoOrigen,
-		targetAcademicPeriodId: params.idPeriodoDestino,
-		programId: params.idCarreraDestino,
+		sourceAcademicPeriodId: params.sourcePeriodId,
+		targetAcademicPeriodId: params.targetPeriodId,
+		programId: params.targetProgramId,
 	});
 }
 
-// ─── Acceptance levels ─────────────────────────────────────────────────────
+// ─── Performance levels ────────────────────────────────────────────────────
 
-export async function listAcceptanceLevels(academicPeriodId: number): Promise<AcceptanceLevel[]> {
-	const surveyTypeId = await getSurveyTypeId('PPP');
-	const res = await apiPost<BackendAcceptanceLevel[] | { data?: BackendAcceptanceLevel[] }>(
-		'acceptance-levels/list',
-		{
-			surveyTypeCode: 'PPP',
-			...(surveyTypeId > 0 && { surveyTypeId }),
-			academicPeriodId,
-		},
+export async function listPPPPerformanceLevels(
+	academicPeriodId: number,
+): Promise<PerformanceLevel[]> {
+	const instrumentTypeId = await getSurveyTypeId('PPP');
+	const res = await performanceLevelsService.getByFilters({
+		...(instrumentTypeId > 0 && { instrumentTypeId }),
+		academicPeriodId,
+		isActive: true,
+	});
+	const list = res?.data ?? [];
+	return list.map((l, i) => adaptPerformanceLevel(l, i));
+}
+
+export async function updatePPPPerformanceLevels(
+	_academicPeriodId: number,
+	levels: PerformanceLevel[],
+): Promise<void> {
+	await Promise.all(
+		levels
+			.filter((l) => l.id != null)
+			.map((l) => performanceLevelsService.update(l.id!, buildPerformanceLevelUpdate(l))),
 	);
-	const obj = res as { data?: BackendAcceptanceLevel[] };
-	const list = Array.isArray(res) ? res : (obj.data ?? []);
-	return list.map((l, i) => adaptAcceptanceLevel(l, i));
-}
-
-export async function updateAcceptanceLevels(
-	_academic_period_id: number,
-	niveles: AcceptanceLevel[],
-) {
-	return apiPost('acceptance-levels/bulk-update', {
-		items: niveles.filter((n) => n.id).map(buildAcceptanceLevelItem),
-	});
 }
 
 // ─── Excel template & upload ───────────────────────────────────────────────
 
-export async function downloadPPPTemplate(_idPeriodoAcademico: number): Promise<void> {
+export async function downloadPPPTemplate(_periodId: number): Promise<void> {
 	throw new ApiError(
-		'La descarga de plantilla PPP no está disponible en esta versión del backend.',
+		'PPP template download is not available in this backend version.',
 	);
 }
 
@@ -193,13 +186,13 @@ export async function uploadPPPMassive(
 		{ fileBase64, academicPeriodId, programId, campusId },
 	);
 	if (res.failed && res.failed > 0) {
-		logger.warn(`PPP upload: ${res.failed} filas fallidas de ${res.total}`);
+		logger.warn(`PPP upload: ${res.failed} failed rows out of ${res.total}`);
 	}
 }
 
-export async function uploadPPPMassiveLegacy(_file: File, _escuelaActual?: unknown): Promise<void> {
+export async function uploadPPPMassiveLegacy(_file: File, _school?: unknown): Promise<void> {
 	throw new ApiError(
-		'La carga masiva PPP (legacy) no está disponible en esta versión del backend.',
+		'PPP legacy bulk upload is not available in this backend version.',
 	);
 }
 
@@ -224,35 +217,21 @@ export async function generatePPPFindings(params: {
 	return apiPost('ppp/survey/generate-findings', params);
 }
 
-// ─── Legacy perception report (kept for backward compat) ──────────────────
-
 export async function generatePPPPerceptionReport(params: {
-	idPeriodoAcademico?: number;
-	idCarrera?: number;
-	idComision?: number;
+	academicPeriodId?: number;
+	programId?: number;
+	commissionId?: number;
 }) {
 	return generatePPPDashboard({
-		academicPeriodId: params.idPeriodoAcademico,
-		programId: params.idCarrera,
-	});
-}
-
-// ─── Acceptance level defaults ────────────────────────────────────────────
-
-export async function generateAcceptanceLevelDefaults(
-	surveyTypeCode: 'PPP' | 'GRA',
-	academicPeriodId: number,
-) {
-	return apiPost('acceptance-levels/generate-defaults', {
-		surveyTypeCode,
-		academicPeriodId,
+		academicPeriodId: params.academicPeriodId,
+		programId: params.programId,
 	});
 }
 
 // ─── PPP Survey CRUD ──────────────────────────────────────────────────────
 
 export async function getPPPSurveyById(id: number) {
-	return apiGet(`ppp/survey/get-by-id/${id}`);
+	return apiPost(`ppp/survey/get-by-id/${id}`, {});
 }
 
 export async function getPPPSurveysByFilters(params: {

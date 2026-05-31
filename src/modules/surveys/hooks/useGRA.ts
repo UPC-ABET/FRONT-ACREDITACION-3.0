@@ -66,11 +66,11 @@ export function useGRACompetences() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (idPeriodo: number, idCarrera = 0) => {
+	const load = useCallback(async (periodId: number, programId = 0) => {
 		setLoading(true);
 		setError(null);
 		try {
-			setCompetences(await listGRACompetences(idPeriodo, idCarrera));
+			setCompetences(await listGRACompetences(periodId, programId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -99,10 +99,10 @@ export function useGRACompetences() {
 	const clone = useCallback(
 		async (
 			params: {
-				idCarreraOrigen: number;
-				idPeriodoOrigen: number;
-				idCarreraDestino: number;
-				idPeriodoDestino: number;
+				sourceProgramId: number;
+				sourcePeriodId: number;
+				targetProgramId: number;
+				targetPeriodId: number;
 			},
 			onSuccess?: () => void,
 		) => {
@@ -145,16 +145,16 @@ export function useGRAStudents() {
 		[],
 	);
 
-	const remove = useCallback(async (idNotificacion: number, onSuccess?: () => void) => {
+	const remove = useCallback(async (notificationId: number, onSuccess?: () => void) => {
 		try {
-			await deleteStudentNotification(idNotificacion);
+			await deleteStudentNotification(notificationId);
 			onSuccess?.();
 		} catch (e) {
 			setError((e as Error).message);
 		}
 	}, []);
 
-	return { students, loading, error, load, remove };
+	return { students, error, load, remove };
 }
 
 export function useGRAStudentSearch() {
@@ -162,12 +162,12 @@ export function useGRAStudentSearch() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const search = useCallback(async (codigo: string, idCarrera: number) => {
+	const search = useCallback(async (code: string, programId: number) => {
 		setLoading(true);
 		setError(null);
 		setResult(null);
 		try {
-			setResult(await searchStudentByCode(codigo, idCarrera));
+			setResult(await searchStudentByCode(code, programId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -200,8 +200,8 @@ export function useGRAStudentSearch() {
 	return { result, loading, error, search, add, reset: () => setResult(null) };
 }
 
-export function useGRAEmail(idEncuesta: number) {
-	const [template, setTemplate] = useState<EmailTemplate>({ asunto: '', cuerpo: '' });
+export function useGRAEmail(surveyId: number) {
+	const [template, setTemplate] = useState<EmailTemplate>({ subject: '', body: '' });
 	const [loading, setLoading] = useState(false);
 	const [saving, setSaving] = useState(false);
 	const [sending, setSending] = useState(false);
@@ -211,19 +211,19 @@ export function useGRAEmail(idEncuesta: number) {
 		setLoading(true);
 		setError(null);
 		try {
-			setTemplate(await getGRAEmailTemplate(idEncuesta));
+			setTemplate(await getGRAEmailTemplate(surveyId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
 			setLoading(false);
 		}
-	}, [idEncuesta]);
+	}, [surveyId]);
 
 	const save = useCallback(
 		async (tmpl: EmailTemplate, onSuccess?: () => void) => {
 			setSaving(true);
 			try {
-				await saveGRAEmailTemplate({ ...tmpl, idEncuesta });
+				await saveGRAEmailTemplate({ ...tmpl, surveyId });
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);
@@ -231,7 +231,7 @@ export function useGRAEmail(idEncuesta: number) {
 				setSaving(false);
 			}
 		},
-		[idEncuesta],
+		[surveyId],
 	);
 
 	const send = useCallback(async (req: GRAEmailSendRequest, onSuccess?: () => void) => {
@@ -254,10 +254,10 @@ export function useGRAUpload() {
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
 
-	const downloadTemplate = useCallback(async (idPeriodo: number) => {
+	const downloadTemplate = useCallback(async (periodId: number) => {
 		setError(null);
 		try {
-			await downloadGRATemplate(idPeriodo);
+			await downloadGRATemplate(periodId);
 		} catch (e) {
 			setError((e as Error).message);
 		}
@@ -268,8 +268,8 @@ export function useGRAUpload() {
 		setError(null);
 		setSuccess(false);
 		try {
-			const escuelaActual = getSchoolCookie();
-			await uploadGRAMassive(file, escuelaActual ?? undefined);
+			const school = getSchoolCookie();
+			await uploadGRAMassive(file, school ?? undefined);
 			setSuccess(true);
 		} catch (e) {
 			setError((e as Error).message);
@@ -287,7 +287,7 @@ export function useGRAReports() {
 	const [reportData, setReportData] = useState<DashboardResponse | null>(null);
 
 	const generate = useCallback(
-		async (params: { idPeriodoAcademico?: number; idCarrera?: number; idComision?: number }) => {
+		async (params: { academicPeriodId?: number; programId?: number; commissionId?: number }) => {
 			setLoading(true);
 			setError(null);
 			try {

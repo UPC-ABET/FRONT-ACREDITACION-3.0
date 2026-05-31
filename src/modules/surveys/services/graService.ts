@@ -1,6 +1,5 @@
 import {
 	apiPost,
-	apiGet,
 	apiDelete,
 	apiPostBlob,
 	triggerBlobDownload,
@@ -8,16 +7,19 @@ import {
 	ApiError,
 } from '@/shared/lib';
 import { getSurveyTypeId } from './academicService';
+import { performanceLevelsService } from '@/modules/academic/services/performanceLevelsService';
+import type { PerformanceLevelResponse } from '@/modules/academic/types';
 import type {
 	CompetenceConfig,
 	CompetenceFormData,
 	GRAStudent,
 	StudentSearchResult,
+	EmailTemplate,
 	GRAEmailSendRequest,
 	SendEmailResponse,
 	SurveyApiResponse,
 	DashboardResponse,
-	AcceptanceLevel,
+	PerformanceLevel,
 } from '../types';
 
 // ─── Internal backend shapes ───────────────────────────────────────────────
@@ -52,6 +54,35 @@ interface BackendGraStudent {
 	surveyId?: number;
 }
 
+interface BackendStudentSearchRequest {
+	codigoEstudiante: string;
+	idCarrera: number;
+}
+
+interface BackendStudentSearchResponse {
+	idEstudiante: number;
+	codigo: string;
+	nombre: string;
+	email: string;
+	carrera: string;
+	ciclo?: string;
+}
+
+interface BackendEmailTemplate {
+	asunto: string;
+	cuerpo: string;
+}
+
+interface BackendGetEmailTemplateRequest {
+	idEncuesta: number;
+}
+
+interface BackendSaveEmailTemplateRequest {
+	idEncuesta: number | undefined;
+	asunto: string;
+	cuerpo: string;
+}
+
 // ─── Adapters ──────────────────────────────────────────────────────────────
 
 function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
@@ -59,26 +90,40 @@ function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
 	return {
 		id: raw.id,
 		outcomeId: raw.outcomeId,
-		competenciaGeneral: extra.nameEs ?? raw.userOutcomeName ?? '',
-		competenciaEspecifica: extra.nameEn ?? extra.nameEs ?? '',
-		descripcion: extra.descriptionEs ?? '',
-		nivelAceptacion: extra.order ?? 3,
+		generalCompetence: extra.nameEs ?? raw.userOutcomeName ?? '',
+		specificCompetence: extra.nameEn ?? extra.nameEs ?? '',
+		description: extra.descriptionEs ?? '',
+		performanceLevel: extra.order ?? 3,
 		isActive: raw.isActive,
-		estado: raw.isActive ? 'ACTIVO' : 'INACTIVO',
-		idCarrera: extra.programId,
-		idPeriodo: extra.academicPeriodId,
+		programId: extra.programId,
+		periodId: extra.academicPeriodId,
 	};
 }
 
 function adaptGraStudent(raw: BackendGraStudent): GRAStudent {
 	return {
-		idNotificacion: raw.notificationId,
-		idEstudiante: raw.studentId,
-		codigoEstudiante: raw.studentCode,
-		nombreEstudiante: raw.studentName,
-		emailEstudiante: raw.studentEmail ?? '',
-		estadoEnvio: raw.status,
-		fechaEnvio: undefined,
+		notificationId: raw.notificationId,
+		studentId: raw.studentId,
+		studentCode: raw.studentCode,
+		studentName: raw.studentName,
+		studentEmail: raw.studentEmail ?? '',
+		sendStatus: raw.status,
+		sendDate: undefined,
+	};
+}
+
+function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): PerformanceLevel {
+	const nameEs = raw.name?.es ?? `Level ${index + 1}`;
+	const color =
+		raw.extra && typeof raw.extra.color === 'string' ? raw.extra.color : undefined;
+	return {
+		id: raw.id,
+		level: Number(raw.uniqueValue) || index + 1,
+		description: nameEs,
+		range: `${raw.minScore} – ${raw.maxScore}`,
+		minScore: Number(raw.minScore),
+		maxScore: Number(raw.maxScore),
+		color,
 	};
 }
 
@@ -103,23 +148,23 @@ export async function saveGRACompetence(data: CompetenceFormData) {
 	if (isNew) {
 		return apiPost('gra/config/create', {
 			outcomeId: data.outcomeId ?? 1,
-			nameEs: data.competenciaGeneral,
-			nameEn: data.competenciaEspecifica || data.competenciaGeneral,
-			descriptionEs: data.descripcion,
-			descriptionEn: data.descripcion,
-			order: data.nivelAceptacion,
-			programId: data.idCarrera ?? 0,
-			academicPeriodId: data.idPeriodoAcademico,
+			nameEs: data.generalCompetence,
+			nameEn: data.specificCompetence || data.generalCompetence,
+			descriptionEs: data.description,
+			descriptionEn: data.description,
+			order: data.performanceLevel,
+			programId: data.programId ?? 0,
+			academicPeriodId: data.academicPeriodId,
 			isVisible: true,
 		});
 	}
 
 	return apiPost(`gra/config/update/${data.id}`, {
-		nameEs: data.competenciaGeneral,
-		nameEn: data.competenciaEspecifica || data.competenciaGeneral,
-		descriptionEs: data.descripcion,
-		descriptionEn: data.descripcion,
-		order: data.nivelAceptacion,
+		nameEs: data.generalCompetence,
+		nameEn: data.specificCompetence || data.generalCompetence,
+		descriptionEs: data.description,
+		descriptionEn: data.description,
+		order: data.performanceLevel,
 		isVisible: true,
 	});
 }
@@ -129,15 +174,15 @@ export async function deleteGRACompetence(id: number) {
 }
 
 export async function cloneGRAConfiguration(params: {
-	idCarreraOrigen: number;
-	idPeriodoOrigen: number;
-	idCarreraDestino: number;
-	idPeriodoDestino: number;
+	sourceProgramId: number;
+	sourcePeriodId: number;
+	targetProgramId: number;
+	targetPeriodId: number;
 }) {
 	return apiPost('gra/config/replicate', {
-		sourceAcademicPeriodId: params.idPeriodoOrigen,
-		targetAcademicPeriodId: params.idPeriodoDestino,
-		programId: params.idCarreraDestino,
+		sourceAcademicPeriodId: params.sourcePeriodId,
+		targetAcademicPeriodId: params.targetPeriodId,
+		programId: params.targetProgramId,
 	});
 }
 
@@ -153,49 +198,41 @@ export async function listGRAOutcomes(params: { programId: number; academicPerio
 	>('gra/outcomes/list', params);
 }
 
-// ─── Acceptance levels (shared with PPP) ──────────────────────────────────
+// ─── Performance levels ────────────────────────────────────────────────────
 
-export async function listGRAAcceptanceLevels(
+export async function listGRAPerformanceLevels(
 	academicPeriodId: number,
-): Promise<AcceptanceLevel[]> {
-	const surveyTypeId = await getSurveyTypeId('GRA');
-	const res = await apiPost<
-		Array<{
-			id: number;
-			minScore: number;
-			maxScore: number;
-			name: { es?: string };
-			color?: string;
-			order?: number;
-		}>
-	>('acceptance-levels/list', {
-		surveyTypeCode: 'GRA',
-		...(surveyTypeId > 0 && { surveyTypeId }),
+): Promise<PerformanceLevel[]> {
+	const instrumentTypeId = await getSurveyTypeId('GRA');
+	const res = await performanceLevelsService.getByFilters({
+		...(instrumentTypeId > 0 && { instrumentTypeId }),
 		academicPeriodId,
+		isActive: true,
 	});
-	const list = Array.isArray(res) ? res : [];
-	return list.map((l, i) => ({
-		id: l.id,
-		nivel: l.order ?? i + 1,
-		descripcion: l.name?.es ?? `Nivel ${i + 1}`,
-		rango: `${l.minScore} – ${l.maxScore}`,
-		minScore: l.minScore,
-		maxScore: l.maxScore,
-		color: l.color,
-	}));
+	const list = res?.data ?? [];
+	return list.map((l, i) => adaptPerformanceLevel(l, i));
 }
 
 // ─── Students / Notifications ──────────────────────────────────────────────
 
 export async function searchStudentByCode(
-	codigoEstudiante: string,
-	idCarrera: number,
+	studentCode: string,
+	programId: number,
 ): Promise<StudentSearchResult> {
-	const res = await apiPost<SurveyApiResponse<StudentSearchResult>>(
+	const payload: BackendStudentSearchRequest = { codigoEstudiante: studentCode, idCarrera: programId };
+	const res = await apiPost<SurveyApiResponse<BackendStudentSearchResponse>>(
 		'email/findStudentCode-career-GRA',
-		{ codigoEstudiante, idCarrera },
+		payload,
 	);
-	return res.data?.resource as StudentSearchResult;
+	const raw = res.data?.resource;
+	return {
+		studentId: raw?.idEstudiante ?? 0,
+		code: raw?.codigo ?? '',
+		name: raw?.nombre ?? '',
+		email: raw?.email ?? '',
+		career: raw?.carrera ?? '',
+		cycle: raw?.ciclo,
+	};
 }
 
 export async function addStudentToNotification(params: {
@@ -236,49 +273,59 @@ export async function listGRAStudents(params: {
 
 // ─── Email sending ─────────────────────────────────────────────────────────
 
+interface BackendSendEmailResponse {
+	success: boolean;
+	enviados?: number;
+	fallidos?: number;
+}
+
 export async function sendGRAEmail(request: GRAEmailSendRequest): Promise<SendEmailResponse> {
-	const res = await apiPost<{ success: boolean; enviados?: number; fallidos?: number }>(
-		'gra/email/send',
-		request,
-	);
+	const res = await apiPost<BackendSendEmailResponse>('gra/email/send', request);
 	return {
 		success: res.success,
-		data: { enviados: res.enviados ?? 0, fallidos: res.fallidos ?? 0 },
+		data: { sent: res.enviados ?? 0, failed: res.fallidos ?? 0 },
 	};
 }
 
 // Legacy email functions (kept while backend migrates)
-export async function getGRAEmailTemplate(idEncuesta: number) {
-	const res = await apiPost<SurveyApiResponse<{ asunto: string; cuerpo: string }>>(
+export async function getGRAEmailTemplate(surveyId: number): Promise<EmailTemplate> {
+	const req: BackendGetEmailTemplateRequest = { idEncuesta: surveyId };
+	const res = await apiPost<SurveyApiResponse<BackendEmailTemplate>>(
 		'email/getConfigurationNotification-GRA',
-		{ idEncuesta },
+		req,
 	);
-	return res.data?.resource ?? { asunto: '', cuerpo: '' };
+	const raw = res.data?.resource ?? { asunto: '', cuerpo: '' };
+	return { subject: raw.asunto, body: raw.cuerpo };
 }
 
 export async function saveGRAEmailTemplate(template: {
-	idEncuesta?: number;
-	asunto: string;
-	cuerpo: string;
+	surveyId?: number;
+	subject: string;
+	body: string;
 }) {
-	return apiPost('email/saveConfirmationNotif-GRA', template);
+	const req: BackendSaveEmailTemplateRequest = {
+		idEncuesta: template.surveyId,
+		asunto: template.subject,
+		cuerpo: template.body,
+	};
+	return apiPost('email/saveConfirmationNotif-GRA', req);
 }
 
 // ─── Excel template & upload ───────────────────────────────────────────────
 
-export async function downloadGRATemplate(_idPeriodoAcademico: number): Promise<void> {
+export async function downloadGRATemplate(_periodId: number): Promise<void> {
 	throw new ApiError(
-		'La descarga de plantilla GRA no está disponible en esta versión del backend.',
+		'GRA template download is not available in this backend version.',
 	);
 }
 
-export async function uploadGRAMassive(file: File, _escuelaActual?: unknown): Promise<void> {
-	const archivoBase64 = await fileToBase64(file);
+export async function uploadGRAMassive(file: File, _school?: unknown): Promise<void> {
+	const fileBase64 = await fileToBase64(file);
 	const blob = await apiPostBlob('excel/uploadNotificationEncuesta-GRA', {
-		archivoBase64,
+		archivoBase64: fileBase64,
 		nombreArchivo: file.name,
 	});
-	triggerBlobDownload(blob, `Reporte_Carga_GRA_${Date.now()}.xlsx`);
+	triggerBlobDownload(blob, `GRA_Upload_Report_${Date.now()}.xlsx`);
 }
 
 // ─── Dashboard ─────────────────────────────────────────────────────────────
@@ -292,18 +339,19 @@ export async function generateGRADashboard(params: {
 }
 
 export async function generateGRAPerceptionReport(params: {
-	idPeriodoAcademico?: number;
-	idCarrera?: number;
-	idComision?: number;
+	academicPeriodId?: number;
+	programId?: number;
+	commissionId?: number;
 }) {
 	return generateGRADashboard({
-		academicPeriodId: params.idPeriodoAcademico,
-		programId: params.idCarrera,
+		academicPeriodId: params.academicPeriodId,
+		programId: params.programId,
 	});
 }
 
 // ─── GRA token & survey (admin read) ──────────────────────────────────────
 
+// Backend requires POST for token validation (GET is not exposed on this route).
 export async function validateGRAToken(token: string) {
-	return apiGet(`gra/token/validate/${encodeURIComponent(token)}`);
+	return apiPost(`gra/token/validate/${encodeURIComponent(token)}`, {});
 }

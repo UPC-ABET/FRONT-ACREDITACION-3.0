@@ -2,10 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { Select, Button, Toast } from '@/shared/components';
+import { useI18n } from '@/providers';
 import { usePPPReports, usePPPCycles } from '../../hooks';
 import { useABET } from '@/providers';
 
 export function PPPReports() {
+	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const { cycles, load: loadCycles } = usePPPCycles();
 	const { loading, error, reportData, generate } = usePPPReports();
@@ -26,58 +28,58 @@ export function PPPReports() {
 
 	async function handleGenerate() {
 		if (!cycle) {
-			setToast({ open: true, type: 'error', msg: 'Selecciona un ciclo académico.' });
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
 			return;
 		}
-		await generate({ idPeriodoAcademico: cycle.value });
+		await generate({ academicPeriodId: cycle.value });
 	}
 
-	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
 
 	return (
 		<div className="max-w-lg space-y-6">
 			<div>
-				<h3 className="text-base font-bold text-zinc-800">Dashboard PPP</h3>
+				<h3 className="text-base font-bold text-zinc-800">{t('surveys.ppp.reports.title')}</h3>
 				<p className="text-sm text-zinc-500 mt-1">
-					Genera el resumen de percepción promedio por ciclo académico.
+					{t('surveys.ppp.reports.description')}
 				</p>
 			</div>
 
 			<div className="space-y-4">
 				<Select
-					label="Ciclo Académico"
+					label={t('surveys.shared.academicCycle')}
 					options={cycleOptions}
 					value={cycle}
 					onChange={(_, val) => setCycle(val as { label: string; value: number } | null)}
-					placeholder="Selecciona un ciclo"
+					placeholder={t('surveys.shared.selectCycle')}
 					isSearchable
 				/>
 
 				<Button onClick={handleGenerate} disabled={loading || !cycle}>
-					{loading ? 'Generando...' : 'Generar Dashboard'}
+					{loading ? t('surveys.shared.generating') : t('surveys.shared.generateDashboard')}
 				</Button>
 			</div>
 
 			{reportData && (
 				<div className="p-4 bg-zinc-50 rounded-xl border border-zinc-200 space-y-3">
-					<p className="text-sm font-bold text-zinc-700">Resumen</p>
+					<p className="text-sm font-bold text-zinc-700">{t('surveys.shared.summary')}</p>
 					<div className="grid grid-cols-2 gap-3 text-sm">
 						<div>
-							<span className="text-xs text-zinc-500 block">Total encuestas</span>
+							<span className="text-xs text-zinc-500 block">{t('surveys.shared.totalSurveys')}</span>
 							<span className="font-semibold">{reportData.summary?.totalSurveys ?? '—'}</span>
 						</div>
 						{reportData.summary?.completionRatePct !== undefined && (
 							<div>
-								<span className="text-xs text-zinc-500 block">Tasa de completitud</span>
+								<span className="text-xs text-zinc-500 block">{t('surveys.shared.completionRate')}</span>
 								<span className="font-semibold">{reportData.summary.completionRatePct}%</span>
 							</div>
 						)}
-						{reportData.summary?.verde !== undefined && (
+						{reportData.summary?.green !== undefined && (
 							<div>
-								<span className="text-xs text-zinc-500 block">Verde / Amarillo / Rojo</span>
+								<span className="text-xs text-zinc-500 block">{t('surveys.shared.colorSummary')}</span>
 								<span className="font-semibold">
-									{reportData.summary.verde} / {reportData.summary.amarillo} /{' '}
-									{reportData.summary.rojo}
+									{reportData.summary.green} / {reportData.summary.yellow} /{' '}
+									{reportData.summary.red}
 								</span>
 							</div>
 						)}

@@ -2,17 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { Select, Tabs, Toast } from '@/shared/components';
-import { useGRACompetences, useGRACycles, usePPPAcceptanceLevels } from '../../../hooks';
-import { useABET } from '@/providers';
+import { useI18n, useABET } from '@/providers';
+import { useGRACompetences, useGRACycles, usePPPPerformanceLevels } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
-import { AcceptanceLevels } from '../../ppp/configuration/AcceptanceLevels';
-
-const TABS = [
-	{ id: 'competences', label: 'Competencias' },
-	{ id: 'levels', label: 'Niveles de Aceptación' },
-];
+import { PerformanceLevels } from '../../ppp/configuration/PerformanceLevels';
 
 export function GRAConfiguration() {
+	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const { cycles, load: loadCycles } = useGRACycles();
 	const {
@@ -24,7 +20,7 @@ export function GRAConfiguration() {
 		remove: removeComp,
 		clone: cloneComp,
 	} = useGRACompetences();
-	const levelsHook = usePPPAcceptanceLevels();
+	const levelsHook = usePPPPerformanceLevels();
 
 	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
 	const [activeTab, setActiveTab] = useState('competences');
@@ -33,6 +29,11 @@ export function GRAConfiguration() {
 		type: 'success',
 		msg: '',
 	});
+
+	const tabs = [
+		{ id: 'competences', label: t('surveys.tabs.competences') },
+		{ id: 'levels', label: t('surveys.tabs.levels') },
+	];
 
 	useEffect(() => {
 		loadCycles(modalityTypeId);
@@ -44,24 +45,24 @@ export function GRAConfiguration() {
 		levelsHook.load(selectedCycle.value);
 	}, [selectedCycle]); // eslint-disable-line react-hooks/exhaustive-deps
 
-	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
 
 	return (
 		<div className="space-y-6">
 			<div className="max-w-sm">
 				<Select
-					label="Ciclo Académico"
+					label={t('surveys.shared.academicCycle')}
 					options={cycleOptions}
 					value={selectedCycle}
 					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-					placeholder="Selecciona un ciclo"
+					placeholder={t('surveys.shared.selectCycle')}
 					isSearchable
 				/>
 			</div>
 
 			{selectedCycle && (
 				<>
-					<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+					<Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
 					<div className="pt-2">
 						{activeTab === 'competences' && (
@@ -78,7 +79,7 @@ export function GRAConfiguration() {
 						)}
 
 						{activeTab === 'levels' && (
-							<AcceptanceLevels
+							<PerformanceLevels
 								cycleId={selectedCycle.value}
 								levels={levelsHook.levels}
 								setLevels={levelsHook.setLevels}

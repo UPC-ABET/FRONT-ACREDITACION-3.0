@@ -15,7 +15,10 @@ import {
 	Toast,
 } from '@/shared/components';
 import { PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useI18n } from '@/providers';
 import type { CompetenceConfig, CompetenceFormData } from '../../types';
+import { competenceSchema } from '../../schemas/competenceSchema';
+import { MIN_PERFORMANCE_LEVEL, MAX_PERFORMANCE_LEVEL } from '../../constants/competence';
 
 interface CompetenceCRUDProps {
 	cycleId: number;
@@ -27,22 +30,22 @@ interface CompetenceCRUDProps {
 	onDelete: (id: number, onSuccess: () => void) => void;
 	onClone?: (
 		params: {
-			idCarreraOrigen: number;
-			idPeriodoOrigen: number;
-			idCarreraDestino: number;
-			idPeriodoDestino: number;
+			sourceProgramId: number;
+			sourcePeriodId: number;
+			targetProgramId: number;
+			targetPeriodId: number;
 		},
 		onSuccess: () => void,
 	) => void;
 	showCloneOption?: boolean;
 }
 
-const EMPTY_FORM: Omit<CompetenceFormData, 'idPeriodoAcademico' | 'escuela'> = {
+const EMPTY_FORM: Omit<CompetenceFormData, 'academicPeriodId' | 'school'> = {
 	id: 0,
-	competenciaGeneral: '',
-	competenciaEspecifica: '',
-	descripcion: '',
-	nivelAceptacion: 3,
+	generalCompetence: '',
+	specificCompetence: '',
+	description: '',
+	performanceLevel: 3,
 };
 
 export function CompetenceCRUD({
@@ -54,6 +57,7 @@ export function CompetenceCRUD({
 	onSave,
 	onDelete,
 }: CompetenceCRUDProps) {
+	const { t } = useI18n();
 	const [modalOpen, setModalOpen] = useState(false);
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [form, setForm] = useState(EMPTY_FORM);
@@ -76,24 +80,25 @@ export function CompetenceCRUD({
 	function openEdit(row: CompetenceConfig) {
 		setForm({
 			id: row.id,
-			competenciaGeneral: row.competenciaGeneral,
-			competenciaEspecifica: row.competenciaEspecifica,
-			descripcion: row.descripcion,
-			nivelAceptacion: row.nivelAceptacion,
+			generalCompetence: row.generalCompetence,
+			specificCompetence: row.specificCompetence,
+			description: row.description,
+			performanceLevel: row.performanceLevel,
 		});
 		setModalOpen(true);
 	}
 
 	function handleSave() {
-		if (!form.competenciaGeneral.trim() || !form.descripcion.trim()) {
-			setToast({ open: true, type: 'error', msg: 'Competencia y descripción son obligatorios.' });
+		const parsed = competenceSchema.safeParse(form);
+		if (!parsed.success) {
+			setToast({ open: true, type: 'error', msg: t(parsed.error.issues[0].message) });
 			return;
 		}
 		setSaving(true);
-		onSave({ ...form, idPeriodoAcademico: cycleId, escuela: '1' }, () => {
+		onSave({ ...form, academicPeriodId: cycleId, school: '1' }, () => {
 			setSaving(false);
 			setModalOpen(false);
-			setToast({ open: true, type: 'success', msg: 'Competencia guardada exitosamente.' });
+			setToast({ open: true, type: 'success', msg: t('surveys.competence.toast.saved') });
 			onLoad(cycleId);
 		});
 		setSaving(false);
@@ -102,30 +107,30 @@ export function CompetenceCRUD({
 	function handleDelete(id: number) {
 		onDelete(id, () => {
 			setDeleteId(null);
-			setToast({ open: true, type: 'success', msg: 'Competencia eliminada.' });
+			setToast({ open: true, type: 'success', msg: t('surveys.competence.toast.deleted') });
 			onLoad(cycleId);
 		});
 	}
 
 	const columns: ColumnDef<CompetenceConfig>[] = [
 		{
-			accessorKey: 'competenciaGeneral',
-			header: 'Competencia General',
+			accessorKey: 'generalCompetence',
+			header: t('surveys.competence.table.general'),
 		},
 		{
-			accessorKey: 'competenciaEspecifica',
-			header: 'Competencia Específica',
+			accessorKey: 'specificCompetence',
+			header: t('surveys.competence.table.specific'),
 		},
 		{
-			accessorKey: 'descripcion',
-			header: 'Descripción',
+			accessorKey: 'description',
+			header: t('surveys.competence.table.description'),
 			cell: ({ getValue }) => (
 				<span className="max-w-xs block truncate">{getValue() as string}</span>
 			),
 		},
 		{
-			accessorKey: 'nivelAceptacion',
-			header: 'Nivel',
+			accessorKey: 'performanceLevel',
+			header: t('surveys.competence.table.level'),
 			cell: ({ getValue }) => (
 				<span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-red-100 text-red-700 text-xs font-bold">
 					{getValue() as number}
@@ -133,22 +138,22 @@ export function CompetenceCRUD({
 			),
 		},
 		{
-			id: 'acciones',
-			header: 'Acciones',
+			id: 'actions',
+			header: t('surveys.competence.table.actions'),
 			cell: ({ row }) => (
 				<div className="flex gap-2">
 					<Button
 						size="sm"
 						variant="surface"
 						onClick={() => openEdit(row.original)}
-						aria-label="Editar">
+						aria-label={t('surveys.competence.actions.edit')}>
 						<PencilSquareIcon className="h-4 w-4" />
 					</Button>
 					<Button
 						size="sm"
 						variant="warning"
 						onClick={() => setDeleteId(row.original.id)}
-						aria-label="Eliminar">
+						aria-label={t('surveys.competence.actions.delete')}>
 						<TrashIcon className="h-4 w-4" />
 					</Button>
 				</div>
@@ -163,10 +168,10 @@ export function CompetenceCRUD({
 			<DataTable
 				columns={columns}
 				data={competences}
-				title="Competencias"
+				title={t('surveys.competence.table.title')}
 				actions={[
 					{
-						label: 'Agregar Competencia',
+						label: t('surveys.competence.add'),
 						onClick: openAdd,
 						icon: <PlusIcon className="h-4 w-4" />,
 					},
@@ -178,43 +183,50 @@ export function CompetenceCRUD({
 				<DialogContent className="sm:max-w-lg">
 					<DialogHeader>
 						<DialogTitle>
-							{form.id === 0 ? 'Agregar Competencia' : 'Editar Competencia'}
+							{form.id === 0
+								? t('surveys.competence.modal.addTitle')
+								: t('surveys.competence.modal.editTitle')}
 						</DialogTitle>
 					</DialogHeader>
 
 					<div className="space-y-3 py-2">
 						<Input
-							label="Competencia General"
-							value={form.competenciaGeneral}
-							onChange={(e) => setForm({ ...form, competenciaGeneral: e.target.value })}
-							placeholder="Ej: Pensamiento Crítico"
+							label={t('surveys.competence.modal.generalLabel')}
+							value={form.generalCompetence}
+							onChange={(e) => setForm({ ...form, generalCompetence: e.target.value })}
+							placeholder={t('surveys.competence.modal.generalPlaceholder')}
 						/>
 						<Input
-							label="Competencia Específica"
-							value={form.competenciaEspecifica}
-							onChange={(e) => setForm({ ...form, competenciaEspecifica: e.target.value })}
-							placeholder="Ej: Análisis de Problemas"
+							label={t('surveys.competence.modal.specificLabel')}
+							value={form.specificCompetence}
+							onChange={(e) => setForm({ ...form, specificCompetence: e.target.value })}
+							placeholder={t('surveys.competence.modal.specificPlaceholder')}
 						/>
 						<TextArea
-							label="Descripción"
-							value={form.descripcion}
-							onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
-							placeholder="Describe la competencia..."
+							label={t('surveys.competence.modal.descriptionLabel')}
+							value={form.description}
+							onChange={(e) => setForm({ ...form, description: e.target.value })}
+							placeholder={t('surveys.competence.modal.descriptionPlaceholder')}
 							rows={3}
 						/>
 						<div>
 							<label className="font-medium text-xs mb-2 text-zinc-700 block">
-								Nivel de Aceptación (1–5)
+								{t('surveys.competence.modal.levelLabel')
+									.replace('{{min}}', String(MIN_PERFORMANCE_LEVEL))
+									.replace('{{max}}', String(MAX_PERFORMANCE_LEVEL))}
 							</label>
 							<input
 								type="number"
-								min={1}
-								max={5}
-								value={form.nivelAceptacion}
+								min={MIN_PERFORMANCE_LEVEL}
+								max={MAX_PERFORMANCE_LEVEL}
+								value={form.performanceLevel}
 								onChange={(e) =>
 									setForm({
 										...form,
-										nivelAceptacion: Math.min(5, Math.max(1, Number(e.target.value))),
+										performanceLevel: Math.min(
+											MAX_PERFORMANCE_LEVEL,
+											Math.max(MIN_PERFORMANCE_LEVEL, Number(e.target.value)),
+										),
 									})
 								}
 								className="w-24 h-9 rounded-md border border-zinc-200 px-3 text-sm focus:outline-none focus:border-red-500"
@@ -224,7 +236,9 @@ export function CompetenceCRUD({
 
 					<DialogFooter showCloseButton>
 						<Button onClick={handleSave} disabled={saving}>
-							{saving ? 'Guardando...' : 'Guardar'}
+							{saving
+								? t('surveys.competence.modal.saving')
+								: t('surveys.competence.modal.save')}
 						</Button>
 					</DialogFooter>
 				</DialogContent>
@@ -234,14 +248,16 @@ export function CompetenceCRUD({
 			<Dialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Confirmar eliminación</DialogTitle>
+						<DialogTitle>{t('surveys.competence.modal.deleteTitle')}</DialogTitle>
 					</DialogHeader>
 					<p className="text-sm text-zinc-600 py-2">
-						¿Estás seguro de que deseas eliminar esta competencia? Esta acción no se puede deshacer.
+						{t('surveys.competence.modal.deleteBody')}
 					</p>
 					<DialogFooter showCloseButton>
-						<Button variant="warning" onClick={() => deleteId !== null && handleDelete(deleteId)}>
-							Eliminar
+						<Button
+							variant="warning"
+							onClick={() => deleteId !== null && handleDelete(deleteId)}>
+							{t('surveys.competence.modal.delete')}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

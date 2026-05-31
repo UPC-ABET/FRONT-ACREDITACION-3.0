@@ -2,25 +2,27 @@
 
 import React, { useState } from 'react';
 import { Tabs } from '@/shared/components';
+import { useI18n } from '@/providers';
 import { LCFCReports } from './LCFCReports';
 import { LCFCNotificationView } from './notifications/LCFCNotificationView';
 import { LCFCConfiguration } from './configuration/LCFCConfiguration';
 
-const TABS = [
-	{ id: 'reports', label: 'Reportes' },
-	{ id: 'notifications', label: 'Notificaciones' },
-	{ id: 'config', label: 'Configuración' },
-];
-
 export function LCFCManagementView() {
+	const { t } = useI18n();
 	const [activeTab, setActiveTab] = useState('reports');
+
+	const TABS = [
+		{ id: 'reports', label: t('surveys.lcfc.management.tabReports') },
+		{ id: 'notifications', label: t('surveys.lcfc.management.tabNotifications') },
+		{ id: 'config', label: t('surveys.lcfc.management.tabConfig') },
+	];
 
 	return (
 		<div className="space-y-6">
 			<div>
-				<h1 className="text-2xl font-bold text-zinc-900">LCFC — Logro de Fin de Ciclo</h1>
+				<h1 className="text-2xl font-bold text-zinc-900">LCFC — {t('surveys.lcfc.management.title')}</h1>
 				<p className="text-sm text-zinc-500 mt-1">
-					Gestión de encuestas de Logro de Fin de Ciclo por comisión y período
+					{t('surveys.lcfc.management.subtitle')}
 				</p>
 			</div>
 

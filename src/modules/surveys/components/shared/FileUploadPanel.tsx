@@ -13,7 +13,7 @@ interface FileUploadPanelProps {
 	error: string | null;
 	onUpload: (file: File) => void;
 	onDownloadTemplate?: () => void;
-	downloadLabel?: string;
+	downloadLabel: string;
 }
 
 const MAX_SIZE_MB = 10;
@@ -27,7 +27,7 @@ export function FileUploadPanel({
 	error,
 	onUpload,
 	onDownloadTemplate,
-	downloadLabel = 'Descargar Plantilla',
+	downloadLabel,
 }: FileUploadPanelProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);

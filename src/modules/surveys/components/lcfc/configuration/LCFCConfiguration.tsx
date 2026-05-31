@@ -15,11 +15,13 @@ import {
 	Toast,
 } from '@/shared/components';
 import { SparklesIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
+import { useI18n } from '@/providers';
 import { useLCFCConfiguration, useLCFCCycles } from '../../../hooks';
 import { useABET } from '@/providers';
 import type { LCFCCourse } from '../../../types';
 
 export function LCFCConfiguration() {
+	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const { cycles, load: loadCycles } = useLCFCCycles();
 	const {
@@ -70,21 +72,21 @@ export function LCFCConfiguration() {
 		});
 	}
 
-	const cycleOptions = cycles.map((c) => ({ label: c.nombre, value: c.id }));
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
 
 	const columns: ColumnDef<LCFCCourse>[] = [
-		{ accessorKey: 'codigo', header: 'Código' },
-		{ accessorKey: 'nombreCurso', header: 'Curso' },
+		{ accessorKey: 'code', header: t('surveys.lcfc.config.colCode') },
+		{ accessorKey: 'courseName', header: t('surveys.lcfc.config.colCourse') },
 		{
-			accessorKey: 'comisiones',
-			header: 'Comisiones',
+			accessorKey: 'commissions',
+			header: t('surveys.lcfc.config.colCommissions'),
 			cell: ({ getValue }) => {
-				const list = getValue() as Array<{ idComision: number; nombreComision: string }>;
+				const list = getValue() as Array<{ commissionId: number; commissionName: string }>;
 				return (
 					<div className="flex flex-wrap gap-1">
 						{list.map((c) => (
-							<Badge key={c.idComision} variant="outline">
-								{c.nombreComision}
+							<Badge key={c.commissionId} variant="outline">
+								{c.commissionName}
 							</Badge>
 						))}
 					</div>
