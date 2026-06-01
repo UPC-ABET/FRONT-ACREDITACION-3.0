@@ -23,7 +23,7 @@ import {
 	ArrowUpTrayIcon,
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { useIsAdmin, useLogout } from '@/modules/auth/hooks';
+import { useLogout } from '@/modules/auth/hooks';
 
 type NavChild = {
 	name: string;
@@ -40,7 +40,6 @@ type NavItem = {
 export function AppSidebar() {
 	const pathname = usePathname();
 	const { t } = useI18n();
-	const isAdmin = useIsAdmin();
 	const handleLogout = useLogout();
 
 	const isActive = (href?: string) => (href ? pathname === href : false);
@@ -96,18 +95,15 @@ export function AppSidebar() {
 			],
 		},
 
-		...(isAdmin
-			? [
-					{
-						name: t('nav.admin.label'),
-						icon: ShieldCheckIcon,
-						children: [
-							{ name: t('nav.admin.parameters'), href: '/admin/parameters' },
-							{ name: t('nav.admin.notifications'), href: '/admin/notifications' },
-						],
-					} as NavItem,
-				]
-			: []),
+		{
+			name: t('nav.admin.label'),
+			icon: ShieldCheckIcon,
+			children: [
+				{ name: t('nav.admin.parameters'), href: '/admin/parameters' },
+				{ name: t('nav.admin.notifications'), href: '/admin/notifications' },
+				{ name: t('nav.admin.configuration'), href: '/admin/configuration' },
+			],
+		},
 	];
 
 	return (

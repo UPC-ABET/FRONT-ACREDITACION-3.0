@@ -11,6 +11,7 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
+import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import type { TypeOption } from '@/modules/core';
 import { downloadErrorExcel, useDownloadTemplate, useUpload } from '../hooks';
@@ -74,8 +75,12 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 						setErrorOpen(true);
 					}
 				},
-				onError: () => {
-					setErrorMessage(t('loads.upload.error.generic'));
+				onError: (err) => {
+					const raw = err instanceof Error ? err.message : '';
+					const translated = raw ? tryTranslate(t, raw) : raw;
+					setErrorMessage(
+						translated && translated !== raw ? translated : t('loads.upload.error.generic'),
+					);
 					setErrorOpen(true);
 				},
 			},
@@ -137,10 +142,7 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 					)}
 
 					<div className="flex justify-end">
-						<Button
-							variant="primary"
-							onClick={handleUpload}
-							disabled={upload.isPending || !file}>
+						<Button variant="primary" onClick={handleUpload} disabled={upload.isPending || !file}>
 							{t('loads.upload.submit')}
 						</Button>
 					</div>
@@ -160,12 +162,7 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 				title={t('loads.upload.errorTitle')}
 				message={errorMessage}
 			/>
-			<Toast
-				isOpen={toast.isOpen}
-				onClose={clearToast}
-				type={toast.type}
-				message={toast.message}
-			/>
+			<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
 		</>
 	);
 }

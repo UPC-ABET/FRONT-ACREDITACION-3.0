@@ -84,7 +84,6 @@ Pattern:
 - **Top tabs select the domain.** IFC, Rubrics, General, Academic, Surveys, ... Adding a new domain = adding a tab entry, not a new route or sidebar item.
 - **Sub-tabs only when a domain has multiple screens** (e.g., IFC parameters → Codes | Fields).
 - **Tab state lives in the URL** via `?tab=<domain>` (and `?sub=<screen>` when needed). Shareable, no nested routes. Switching the top tab clears `?sub=` so sub-state doesn't leak across domains.
-- **Admin guard lives in the shell page** (`AdminParametersPage`, `AdminNotificationsPage`), not in `app/` and not duplicated per tab.
 
 ### Sidebar Navigation
 
@@ -108,6 +107,7 @@ shared/ → shared/ only (NEVER import from modules/)
 ### Cross-Module Imports
 
 Modules CAN import from other modules when consuming domain-owned exports:
+
 - `admin/notifications` → `@/modules/academic/components` (for `AcademicPeriodSelect`)
 - `admin/notifications` → `@/modules/core` (for `TYPE_GROUP_CODES`, `getTypesByGroupCode`)
 - `evaluation` → `@/modules/academic` (for DTOs)
@@ -126,29 +126,29 @@ Modules must NEVER import from another module's internal paths. Use the module b
 
 ### Files
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Folders | `kebab-case` | `finding-view/`, `rubric-editor/` |
-| Components (`.tsx`) | `PascalCase` | `IFCDashboard.tsx`, `LoginForm.tsx` |
-| Hooks (`.ts`) | `camelCase` starting with `use` | `useIFCView.ts`, `useAuth.ts` |
-| Services (`.ts`) | `camelCase` | `authService.ts`, `ifcsService.ts` |
-| Schemas (`.ts`) | `camelCase` | `ifcFormSchema.ts`, `createProjectSchema.ts` |
-| Types (`.ts`) | `camelCase` | `rubricEditor.ts`, `commissionTab.ts` |
-| Constants (`.ts`) | `camelCase` | `typeCodes.ts`, `ifcLabels.ts` |
-| Utils (`.ts`) | `camelCase` | `tryTranslate.ts`, `formatDate.ts` |
-| Barrel files | `index.ts` | Always `index.ts` |
-| Next.js route files | Next.js convention | `page.tsx`, `layout.tsx`, `not-found.tsx` |
+| Type                | Convention                      | Example                                      |
+| ------------------- | ------------------------------- | -------------------------------------------- |
+| Folders             | `kebab-case`                    | `finding-view/`, `rubric-editor/`            |
+| Components (`.tsx`) | `PascalCase`                    | `IFCDashboard.tsx`, `LoginForm.tsx`          |
+| Hooks (`.ts`)       | `camelCase` starting with `use` | `useIFCView.ts`, `useAuth.ts`                |
+| Services (`.ts`)    | `camelCase`                     | `authService.ts`, `ifcsService.ts`           |
+| Schemas (`.ts`)     | `camelCase`                     | `ifcFormSchema.ts`, `createProjectSchema.ts` |
+| Types (`.ts`)       | `camelCase`                     | `rubricEditor.ts`, `commissionTab.ts`        |
+| Constants (`.ts`)   | `camelCase`                     | `typeCodes.ts`, `ifcLabels.ts`               |
+| Utils (`.ts`)       | `camelCase`                     | `tryTranslate.ts`, `formatDate.ts`           |
+| Barrel files        | `index.ts`                      | Always `index.ts`                            |
+| Next.js route files | Next.js convention              | `page.tsx`, `layout.tsx`, `not-found.tsx`    |
 
 ### Code
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Constants | `SCREAMING_SNAKE_CASE` | `SCHOOL_OPTIONS`, `TYPE_GROUP_CODES` |
-| Types/Interfaces | `PascalCase` | `AuthUser`, `IFCRow`, `LoginPayload` |
-| Functions | `camelCase` | `getTypesByGroupCode`, `validatePrefixValue` |
-| React components | `PascalCase` | `function AcademicPeriodSelect()` |
-| Hooks | `camelCase` with `use` prefix | `useAuth`, `useIFCView` |
-| Enums (avoid) | Prefer `as const` objects | `TYPE_CODES.IFC_STATUS.SAVED` |
+| Type             | Convention                    | Example                                      |
+| ---------------- | ----------------------------- | -------------------------------------------- |
+| Constants        | `SCREAMING_SNAKE_CASE`        | `SCHOOL_OPTIONS`, `TYPE_GROUP_CODES`         |
+| Types/Interfaces | `PascalCase`                  | `AuthUser`, `IFCRow`, `LoginPayload`         |
+| Functions        | `camelCase`                   | `getTypesByGroupCode`, `validatePrefixValue` |
+| React components | `PascalCase`                  | `function AcademicPeriodSelect()`            |
+| Hooks            | `camelCase` with `use` prefix | `useAuth`, `useIFCView`                      |
+| Enums (avoid)    | Prefer `as const` objects     | `TYPE_CODES.IFC_STATUS.SAVED`                |
 
 ---
 
@@ -177,13 +177,12 @@ All modules import these from `@/modules/core`. Never duplicate type/parameter c
 
 - **Backend** sets an `HttpOnly; Secure; SameSite=Lax` cookie on login. The frontend never reads or writes auth tokens.
 - **`AuthProvider`** (`src/providers/AuthProvider.tsx`) calls `GET /users/me` on mount and stores the user in context.
-- **`useAuth()`** hook exposes: `user`, `activeRole`, `permissions`, `schoolId`, `isAuthenticated`, `isAdmin`, `isLoading`, `refreshUser`, `clearUser`.
+- **`useAuth()`** hook exposes: `user`, `activeRole`, `permissions`, `schoolId`, `isAuthenticated`, `isLoading`, `refreshUser`, `clearUser`.
 - **`SessionGuard`** (`src/providers/SessionGuard.tsx`) handles route guarding, session expiry, and auth redirects.
 - **`LayoutClient`** (`src/app/components/LayoutClient.tsx`) is a thin layout shell — no business logic.
 
 ### Rules
 
-- `useIsAdmin()` is a **UI hint only**. Backend always re-verifies permissions.
 - `js-cookie` is used only for non-sensitive UX preferences (school selector). Never for auth tokens.
 - All redirects go through `safeRedirect()` from `@/shared/lib/utils` which validates against trusted hosts.
 - Login flow: `loginByCredentials()` → backend sets cookie → `refreshUser()` → redirect.
@@ -198,8 +197,8 @@ All modules import these from `@/modules/core`. Never duplicate type/parameter c
 - Define query-key factories per module:
   ```ts
   const notificationConfigsKeys = {
-    all: ['notification-configs'] as const,
-    bundle: (periodId: number) => [...notificationConfigsKeys.all, 'bundle', periodId] as const,
+  	all: ['notification-configs'] as const,
+  	bundle: (periodId: number) => [...notificationConfigsKeys.all, 'bundle', periodId] as const,
   };
   ```
 - Global default `staleTime` is `30_000` (30 seconds), set in `QueryProvider`.

@@ -55,9 +55,7 @@ export default function UploadHistoryTable({
 			{isLoading && (
 				<p className="py-8 text-center text-sm text-gray-500">{t('uploadHistory.table.loading')}</p>
 			)}
-			{error && (
-				<p className="py-4 text-sm text-red-600">{error.message}</p>
-			)}
+			{error && <p className="py-4 text-sm text-red-600">{error.message}</p>}
 			{!isLoading && !error && rows.length === 0 && (
 				<p className="py-12 text-center text-sm text-gray-400">{t('uploadHistory.table.empty')}</p>
 			)}
@@ -106,16 +104,11 @@ export default function UploadHistoryTable({
 											<td className="px-4 py-4 font-mono text-xs whitespace-nowrap text-gray-500 sm:px-6">
 												#{log.id}
 											</td>
-											<td className="px-4 py-4 font-medium text-gray-900">
-												{typeLabel}
-											</td>
+											<td className="px-4 py-4 font-medium text-gray-900">{typeLabel}</td>
 											<td className="px-4 py-4">
 												<span
 													className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${palette.pill}`}>
-													<span
-														aria-hidden
-														className={`h-1.5 w-1.5 rounded-full ${palette.dot}`}
-													/>
+													<span aria-hidden className={`h-1.5 w-1.5 rounded-full ${palette.dot}`} />
 													{statusLabel}
 												</span>
 											</td>

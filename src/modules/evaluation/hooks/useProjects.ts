@@ -38,7 +38,7 @@ export function useProjectsByProfessor(
 	return useQuery({
 		queryKey: projectsQueryKeys.byProfessor(professorId!, params),
 		queryFn: () => projectsService.getByProfessor(professorId!, params).then((r) => r.data),
-		enabled: professorId != null && (options?.enabled !== false),
+		enabled: professorId != null && options?.enabled !== false,
 	});
 }
 

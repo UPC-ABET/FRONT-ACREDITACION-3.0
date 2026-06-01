@@ -29,7 +29,7 @@ export function AcademicPeriodSelect({ value, onChange, isClearable, onClear }: 
 		let active = true;
 		setLoading(true);
 		academicPeriodsService
-			.getByFilters({ modalityTypeId: modalityTypeId, isActive: true })
+			.getByFilters({ modalityTypeId })
 			.then((envelope) => {
 				if (!active) return;
 				const rows = (envelope?.data ?? [])

@@ -173,9 +173,7 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 		((user ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() : '') ||
 			t('navbar.user.name'));
 
-	const resolvedUserRole =
-		userRole ??
-		((user ? (user.isAdmin ? t('navbar.user.role') : '') : '') || t('navbar.user.role'));
+	const resolvedUserRole = userRole ?? t('navbar.user.role');
 
 	const resolvedUserInitials =
 		userInitials ??

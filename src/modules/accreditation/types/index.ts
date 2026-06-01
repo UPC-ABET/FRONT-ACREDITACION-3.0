@@ -1,3 +1,10 @@
+export type FilterCommissionRequest = Partial<{
+	isActive: boolean;
+	accreditorId: number;
+	code: string;
+	name: { es?: string; en?: string };
+}>;
+
 export type CommissionResponse = {
 	id: number;
 	extra?: Record<string, unknown>;

@@ -8,7 +8,6 @@ export type AuthUser = {
 	firstName: string;
 	lastName: string;
 	email: string;
-	isAdmin: boolean;
 };
 
 export type AuthRole = {
@@ -24,7 +23,6 @@ type AuthState = {
 	schoolId: number | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
-	isAdmin: boolean;
 	refreshUser: () => Promise<AuthUser | null>;
 	clearUser: () => void;
 };
@@ -100,7 +98,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			schoolId,
 			isAuthenticated: user !== null,
 			isLoading,
-			isAdmin: user?.isAdmin === true,
 			refreshUser,
 			clearUser,
 		}),

@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs } from '@/shared/components';
-import { useAuth, useI18n } from '@/providers';
+import { useI18n } from '@/providers';
 import { NotificationConfigPage } from '../components/NotificationConfigPage';
 
 const DEFAULT_TAB = 'ifc';
@@ -12,15 +11,6 @@ export default function AdminNotificationsPage() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const { t } = useI18n();
-	const { isAdmin, isLoading } = useAuth();
-
-	useEffect(() => {
-		if (!isLoading && !isAdmin) {
-			router.replace('/ifcs');
-		}
-	}, [isLoading, isAdmin, router]);
-
-	if (isLoading || !isAdmin) return null;
 
 	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
 

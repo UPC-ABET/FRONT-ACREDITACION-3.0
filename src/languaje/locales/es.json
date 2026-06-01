@@ -29,7 +29,8 @@
 		"admin": {
 			"label": "Administración",
 			"parameters": "Parámetros",
-			"notifications": "Notificaciones"
+			"notifications": "Notificaciones",
+			"configuration": "Configuración"
 		},
 		"logout": "Cerrar sesión",
 		"loads": {
@@ -202,6 +203,109 @@
 		"notifications": {
 			"tabs": {
 				"ifc": "IFC"
+			}
+		},
+		"configuration": {
+			"page": {
+				"title": "Configuración",
+				"subtitle": "Gestiona períodos académicos y la asociación de programas con comisiones."
+			},
+			"tabs": {
+				"periods": "Períodos académicos",
+				"programCommissions": "Programa × Comisión"
+			},
+			"periods": {
+				"title": "Períodos académicos",
+				"subtitle": "Abre nuevos períodos y activa el que esté vigente.",
+				"openButton": "Abrir período",
+				"selectLabel": "Período",
+				"status": {
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
+				"table": {
+					"title": "Períodos registrados",
+					"description": "Activar un período desactiva el período anterior de la misma modalidad.",
+					"loading": "Cargando períodos...",
+					"empty": "Aún no hay períodos registrados.",
+					"activate": "Activar",
+					"col": {
+						"code": "Código",
+						"modality": "Modalidad",
+						"dates": "Fechas",
+						"status": "Estado",
+						"actions": "Acciones"
+					}
+				},
+				"form": {
+					"title": "Abrir nuevo período",
+					"code": "Código",
+					"codeHelp": "Formato YYYY-01, YYYY-02 o YYYY-00.",
+					"startDate": "Fecha de inicio",
+					"endDate": "Fecha de fin",
+					"modality": "Modalidad",
+					"modalityPlaceholder": "Selecciona una modalidad",
+					"submit": "Abrir período",
+					"submitting": "Abriendo...",
+					"error": {
+						"codeRequired": "El código es obligatorio.",
+						"codeInvalid": "El código debe tener el formato YYYY-01, YYYY-02 o YYYY-00.",
+						"startDateRequired": "La fecha de inicio es obligatoria.",
+						"endDateRequired": "La fecha de fin es obligatoria.",
+						"endBeforeStart": "La fecha de fin no puede ser anterior a la fecha de inicio.",
+						"modalityRequired": "Selecciona una modalidad.",
+						"createFailed": "No se pudo crear el período."
+					}
+				},
+				"error": {
+					"activateFailed": "No se pudo activar el período."
+				}
+			},
+			"programCommissions": {
+				"title": "Programa × Comisión",
+				"subtitle": "Asocia programas con comisiones acreditadoras para el período seleccionado.",
+				"periodPlaceholder": "Selecciona un período",
+				"selectPeriodHint": "Selecciona un período académico para ver y gestionar sus asociaciones.",
+				"associateButton": "Nueva asociación",
+				"table": {
+					"title": "Asociaciones del período",
+					"description": "Cada fila vincula un programa con una comisión y un tipo de comisión.",
+					"loading": "Cargando asociaciones...",
+					"empty": "No hay asociaciones registradas para este período.",
+					"unassociate": "Desasociar",
+					"col": {
+						"program": "Programa",
+						"commission": "Comisión",
+						"commissionType": "Tipo de comisión",
+						"actions": "Acciones"
+					}
+				},
+				"form": {
+					"title": "Nueva asociación",
+					"program": "Programa",
+					"programPlaceholder": "Selecciona un programa",
+					"commission": "Comisión",
+					"commissionPlaceholder": "Selecciona una comisión",
+					"commissionType": "Tipo de comisión",
+					"commissionTypePlaceholder": "Selecciona un tipo",
+					"submit": "Asociar",
+					"submitting": "Asociando...",
+					"error": {
+						"programRequired": "Selecciona un programa.",
+						"commissionRequired": "Selecciona una comisión.",
+						"commissionTypeRequired": "Selecciona un tipo de comisión.",
+						"associateFailed": "No se pudo crear la asociación."
+					}
+				},
+				"unassociate": {
+					"title": "¿Desasociar?",
+					"body": "Esta acción solo procederá si la asociación no tiene outcomes registrados.",
+					"confirm": "Desasociar",
+					"running": "Desasociando..."
+				},
+				"error": {
+					"unassociateFailed": "No se pudo desasociar."
+				}
 			}
 		},
 		"notify": {
@@ -568,6 +672,22 @@
 			"createFailed": "No se pudo crear el tipo",
 			"updateFailed": "No se pudo actualizar el tipo",
 			"deleteFailed": "No se pudo eliminar el tipo"
+		},
+		"uploads": {
+			"periodNotFound": "El período académico no existe.",
+			"chartsAlreadyLoadedForPeriod": "El organigrama ya fue cargado para este período.",
+			"uploadLogNotFound": "No se encontró la carga indicada.",
+			"rollbackAlreadyDone": "Esta carga ya fue revertida.",
+			"typeCodeNotFound": "El tipo de carga no existe.",
+			"rollbackBlockedSections": "No se puede revertir: existen secciones que dependen de esta carga.",
+			"rollbackBlockedOutcomes": "No se puede revertir: existen outcomes que dependen de esta carga.",
+			"rollbackBlockedProfessors": "No se puede revertir: existen docentes que dependen de esta carga.",
+			"rollbackBlockedStaff": "No se puede revertir: existe personal que depende de esta carga.",
+			"rollbackBlockedNewerUpload": "No se puede revertir: existe una carga posterior basada en esta.",
+			"rollbackBlockedOutcomeRefs": "No se puede revertir: hay datos que dependen de estos outcomes (articulación, hallazgos, encuestas o notas). Elimínelos primero.",
+			"rollbackBlockedSectionRefs": "No se puede revertir: hay matrículas o encuestas asociadas a estas secciones. Elimínelas primero.",
+			"rollbackBlockedEnrollmentRefs": "No se puede revertir: hay alumnos por sección o encuestas asociadas a estas matrículas. Elimínelos primero.",
+			"rollbackBlockedSectionEnrollmentRefs": "No se puede revertir: hay notas o proyectos asociados a estas matrículas de sección. Elimínelos primero."
 		}
 	},
 	"table": {

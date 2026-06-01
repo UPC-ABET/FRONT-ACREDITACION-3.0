@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs } from '@/shared/components';
-import { useAuth, useI18n } from '@/providers';
+import { useI18n } from '@/providers';
 import { IfcCodesPage } from '../components/IfcCodesPage';
 import { IfcFieldsPage } from '../components/IfcFieldsPage';
 import { PerformanceLevelsPage } from '@/modules/evaluation/pages';
@@ -15,15 +14,6 @@ export default function AdminParametersPage() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const { t } = useI18n();
-	const { isAdmin, isLoading } = useAuth();
-
-	useEffect(() => {
-		if (!isLoading && !isAdmin) {
-			router.replace('/ifcs');
-		}
-	}, [isLoading, isAdmin, router]);
-
-	if (isLoading || !isAdmin) return null;
 
 	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
 	const activeSub = searchParams.get('sub') ?? DEFAULT_IFC_SUB;

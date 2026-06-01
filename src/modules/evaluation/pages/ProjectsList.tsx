@@ -146,7 +146,10 @@ export function ProjectsListPage() {
 				</div>
 				<Link
 					href="/projects/new"
-					className={cn(buttonVariants({ variant: 'primary', size: 'md' }), 'shrink-0 inline-flex items-center gap-1.5')}>
+					className={cn(
+						buttonVariants({ variant: 'primary', size: 'md' }),
+						'shrink-0 inline-flex items-center gap-1.5',
+					)}>
 					<PlusIcon className="h-4 w-4" />
 					{t('projects.list.addButton')}
 				</Link>

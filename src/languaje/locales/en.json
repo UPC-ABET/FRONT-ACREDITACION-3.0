@@ -29,7 +29,8 @@
 		"admin": {
 			"label": "Administration",
 			"parameters": "Parameters",
-			"notifications": "Notifications"
+			"notifications": "Notifications",
+			"configuration": "Configuration"
 		},
 		"logout": "Logout",
 		"loads": {
@@ -202,6 +203,109 @@
 		"notifications": {
 			"tabs": {
 				"ifc": "IFC"
+			}
+		},
+		"configuration": {
+			"page": {
+				"title": "Configuration",
+				"subtitle": "Manage academic periods and program/commission associations."
+			},
+			"tabs": {
+				"periods": "Academic periods",
+				"programCommissions": "Program × Commission"
+			},
+			"periods": {
+				"title": "Academic periods",
+				"subtitle": "Open new periods and activate the current one.",
+				"openButton": "Open period",
+				"selectLabel": "Period",
+				"status": {
+					"active": "Active",
+					"inactive": "Inactive"
+				},
+				"table": {
+					"title": "Registered periods",
+					"description": "Activating a period deactivates the previously active period of the same modality.",
+					"loading": "Loading periods...",
+					"empty": "No periods registered yet.",
+					"activate": "Activate",
+					"col": {
+						"code": "Code",
+						"modality": "Modality",
+						"dates": "Dates",
+						"status": "Status",
+						"actions": "Actions"
+					}
+				},
+				"form": {
+					"title": "Open new period",
+					"code": "Code",
+					"codeHelp": "Format YYYY-01, YYYY-02, or YYYY-00.",
+					"startDate": "Start date",
+					"endDate": "End date",
+					"modality": "Modality",
+					"modalityPlaceholder": "Select a modality",
+					"submit": "Open period",
+					"submitting": "Opening...",
+					"error": {
+						"codeRequired": "Code is required.",
+						"codeInvalid": "Code must match YYYY-01, YYYY-02, or YYYY-00.",
+						"startDateRequired": "Start date is required.",
+						"endDateRequired": "End date is required.",
+						"endBeforeStart": "End date cannot be before start date.",
+						"modalityRequired": "Pick a modality.",
+						"createFailed": "Could not create the period."
+					}
+				},
+				"error": {
+					"activateFailed": "Could not activate the period."
+				}
+			},
+			"programCommissions": {
+				"title": "Program × Commission",
+				"subtitle": "Associate programs with accrediting commissions for the chosen period.",
+				"periodPlaceholder": "Select a period",
+				"selectPeriodHint": "Pick an academic period to view and manage its associations.",
+				"associateButton": "New association",
+				"table": {
+					"title": "Associations for the period",
+					"description": "Each row links a program with a commission and a commission type.",
+					"loading": "Loading associations...",
+					"empty": "No associations registered for this period.",
+					"unassociate": "Unassociate",
+					"col": {
+						"program": "Program",
+						"commission": "Commission",
+						"commissionType": "Commission type",
+						"actions": "Actions"
+					}
+				},
+				"form": {
+					"title": "New association",
+					"program": "Program",
+					"programPlaceholder": "Select a program",
+					"commission": "Commission",
+					"commissionPlaceholder": "Select a commission",
+					"commissionType": "Commission type",
+					"commissionTypePlaceholder": "Select a type",
+					"submit": "Associate",
+					"submitting": "Associating...",
+					"error": {
+						"programRequired": "Pick a program.",
+						"commissionRequired": "Pick a commission.",
+						"commissionTypeRequired": "Pick a commission type.",
+						"associateFailed": "Could not create the association."
+					}
+				},
+				"unassociate": {
+					"title": "Unassociate?",
+					"body": "This action only proceeds if the association has no outcomes registered.",
+					"confirm": "Unassociate",
+					"running": "Unassociating..."
+				},
+				"error": {
+					"unassociateFailed": "Could not unassociate."
+				}
 			}
 		},
 		"notify": {
@@ -568,6 +672,22 @@
 			"createFailed": "Could not create the type",
 			"updateFailed": "Could not update the type",
 			"deleteFailed": "Could not delete the type"
+		},
+		"uploads": {
+			"periodNotFound": "The academic period does not exist.",
+			"chartsAlreadyLoadedForPeriod": "The organization chart has already been loaded for this period.",
+			"uploadLogNotFound": "Upload not found.",
+			"rollbackAlreadyDone": "This upload has already been rolled back.",
+			"typeCodeNotFound": "The upload type does not exist.",
+			"rollbackBlockedSections": "Cannot roll back: sections depend on this upload.",
+			"rollbackBlockedOutcomes": "Cannot roll back: outcomes depend on this upload.",
+			"rollbackBlockedProfessors": "Cannot roll back: professors depend on this upload.",
+			"rollbackBlockedStaff": "Cannot roll back: staff depends on this upload.",
+			"rollbackBlockedNewerUpload": "Cannot roll back: a newer upload depends on this one.",
+			"rollbackBlockedOutcomeRefs": "Can't roll back: other data depends on these outcomes (articulation, findings, surveys or grades). Remove it first.",
+			"rollbackBlockedSectionRefs": "Can't roll back: there are enrollments or surveys linked to these sections. Remove them first.",
+			"rollbackBlockedEnrollmentRefs": "Can't roll back: there are student-section enrollments or surveys linked to these enrollments. Remove them first.",
+			"rollbackBlockedSectionEnrollmentRefs": "Can't roll back: there are grades or projects linked to these section enrollments. Remove them first."
 		}
 	},
 	"table": {
