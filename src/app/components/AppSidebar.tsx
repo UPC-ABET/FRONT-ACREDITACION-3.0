@@ -53,7 +53,6 @@ export function AppSidebar() {
 			children: [
 				{ name: t('nav.rubricsList'), href: '/rubrics' },
 				{ name: t('nav.evaluationCourses'), href: '/rubrics/evaluation-courses' },
-				{ name: t('nav.performanceLevels'), href: '/rubrics/performance-levels' },
 				{ name: t('nav.projects'), href: '/projects' },
 				{ name: t('nav.gradeProjects'), href: '/grade-projects' },
 			],

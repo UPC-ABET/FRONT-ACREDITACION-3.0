@@ -10,9 +10,11 @@ type AcademicPeriodOption = { id: number; code: string };
 type Props = {
 	value: number | null;
 	onChange: (id: number) => void;
+	isClearable?: boolean;
+	onClear?: () => void;
 };
 
-export function AcademicPeriodSelect({ value, onChange }: Props) {
+export function AcademicPeriodSelect({ value, onChange, isClearable, onClear }: Props) {
 	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const [periods, setPeriods] = useState<AcademicPeriodOption[]>([]);
@@ -56,9 +58,11 @@ export function AcademicPeriodSelect({ value, onChange }: Props) {
 			isDisabled={loading}
 			placeholder={loading ? t('loading.default') : undefined}
 			value={selected}
+			isClearable={isClearable}
 			onChange={(_, opt) => {
 				const next = (opt as { value?: number | string } | null)?.value;
 				if (next != null) onChange(Number(next));
+				else onClear?.();
 			}}
 			options={options}
 		/>

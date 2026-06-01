@@ -88,6 +88,13 @@ export type FilterRubricDto = Partial<{
 	isActive: boolean;
 }>;
 
+export type GetAllRubricsParams = {
+	schoolId?: number;
+	academicPeriodId?: number;
+	programId?: number;
+	courseId?: number;
+};
+
 export type FinalizeEvaluationDto = {
 	projectId: number;
 	evaluatorId: number;

@@ -10,18 +10,12 @@ import {
 	DialogFooter,
 	DialogClose,
 	Button,
-	Select,
 } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib/authCookies';
-import {
-	useAcademicPeriods,
-	useStudyPlanCourses,
-	useUpdateStudyPlanCourse,
-} from '@/modules/academic/hooks';
+import { useStudyPlanCourses, useUpdateStudyPlanCourse } from '@/modules/academic/hooks';
+import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { StudyPlanCourseResponse } from '@/modules/academic';
-
-type AnyOption = { label: string; value: string | number };
 
 interface AddEvaluationCourseModalProps {
 	open: boolean;
@@ -37,36 +31,29 @@ export function AddEvaluationCourseModal({
 	const { t, locale } = useI18n();
 	const schoolId = getSchoolCookie()?.id as number | undefined;
 
-	const [selectedPeriod, setSelectedPeriod] = useState<AnyOption | null>(null);
+	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 	const [pendingIds, setPendingIds] = useState<Set<number>>(new Set());
 	const [addError, setAddError] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (!open) {
-			setSelectedPeriod(null);
+			setSelectedPeriodId(null);
 			setPendingIds(new Set());
 			setAddError(null);
 		}
 	}, [open]);
 
-	const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods(
-		{ isActive: true },
-		{ enabled: open },
-	);
-
-	const periodOptions: AnyOption[] = periods.map((p) => ({ label: p.code, value: p.id }));
-
 	const spcFilters = useMemo(
 		() => ({
-			academicPeriodId: Number(selectedPeriod?.value ?? 0),
+			academicPeriodId: selectedPeriodId ?? 0,
 			schoolId: schoolId,
 			isActive: true,
 		}),
-		[selectedPeriod?.value, schoolId],
+		[selectedPeriodId, schoolId],
 	);
 
 	const { data: spcList = [], isLoading: loadingCourses } = useStudyPlanCourses(spcFilters, {
-		enabled: !!selectedPeriod && !!schoolId,
+		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
 	const markedIds = useMemo(
@@ -118,24 +105,15 @@ export function AddEvaluationCourseModal({
 				</DialogHeader>
 
 				<div className="space-y-4">
-					<Select
-						label={t('evaluationCourses.modal.periodLabel')}
-						placeholder={
-							loadingPeriods
-								? t('evaluationCourses.modal.periodLoading')
-								: t('evaluationCourses.modal.periodPlaceholder')
-						}
-						options={periodOptions}
-						value={selectedPeriod}
-						isDisabled={loadingPeriods}
-						isSearchable
-						onChange={(_, v) => {
-							setSelectedPeriod(Array.isArray(v) ? (v[0] ?? null) : v);
+					<AcademicPeriodSelect
+						value={selectedPeriodId}
+						onChange={(id) => {
+							setSelectedPeriodId(id);
 							setPendingIds(new Set());
 						}}
 					/>
 
-					{selectedPeriod && (
+					{selectedPeriodId !== null && (
 						<div className="max-h-72 overflow-y-auto rounded-lg border border-zinc-200 bg-white">
 							{loadingCourses ? (
 								<p className="px-4 py-6 text-center text-sm text-zinc-400 animate-pulse">

@@ -9,12 +9,6 @@
 - **i18n**: Custom `useI18n()` hook with locale JSON files at `src/languaje/locales/{es,en}.json`
 - **Components**: Custom UI primitives in `src/shared/components/ui/`, some based on shadcn/ui
 
-## Database (mssql-abet MCP)
-
-**ALWAYS READ, NEVER WRITE.**
-Only use `read_records` and `describe_entities` on the mssql-abet MCP.
-Never use `create_record`, `update_record`, `delete_record`, or any stored procedure that modifies data.
-
 ---
 
 ## Architecture

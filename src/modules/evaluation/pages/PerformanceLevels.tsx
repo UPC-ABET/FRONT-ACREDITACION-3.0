@@ -32,6 +32,7 @@ import {
 	useDeletePerformanceLevel,
 	usePerformanceLevelForm,
 } from '@/modules/academic/hooks';
+import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '@/modules/academic/constants';
 import type { PerformanceLevelFormState } from '@/modules/academic/schemas';
@@ -43,12 +44,10 @@ function PerformanceLevelForm({
 	form,
 	onChange,
 	instrumentTypeOptions,
-	academicPeriodOptions,
 }: {
 	form: PerformanceLevelFormState;
 	onChange: (f: PerformanceLevelFormState) => void;
 	instrumentTypeOptions: OptionItem[];
-	academicPeriodOptions: OptionItem[];
 }) {
 	const set = (key: keyof PerformanceLevelFormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
 		onChange({
@@ -58,8 +57,6 @@ function PerformanceLevelForm({
 
 	const selectedInstrument =
 		instrumentTypeOptions.find((o) => o.value === form.instrumentTypeId) ?? null;
-	const selectedPeriod =
-		academicPeriodOptions.find((o) => o.value === form.academicPeriodId) ?? null;
 
 	return (
 		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -73,15 +70,9 @@ function PerformanceLevelForm({
 					onChange({ ...form, instrumentTypeId: opt?.value ?? 0 });
 				}}
 			/>
-			<Select
-				label="Período Académico"
-				options={academicPeriodOptions}
-				value={selectedPeriod}
-				placeholder="Seleccionar período"
-				onChange={(_name, val) => {
-					const opt = val as OptionItem | null;
-					onChange({ ...form, academicPeriodId: opt?.value ?? 0 });
-				}}
+			<AcademicPeriodSelect
+				value={form.academicPeriodId || null}
+				onChange={(id) => onChange({ ...form, academicPeriodId: id })}
 			/>
 
 			<Input label="Nombre (ES)" value={form.nameEs} onChange={set('nameEs')} required />
@@ -138,7 +129,7 @@ export function PerformanceLevelsPage() {
 	const { t, locale } = useI18n();
 
 	// Filters
-	const [selectedPeriod, setSelectedPeriod] = useState<OptionItem | null>(null);
+	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 	const [selectedInstrument, setSelectedInstrument] = useState<OptionItem | null>(null);
 
 	// Modal state
@@ -160,13 +151,13 @@ export function PerformanceLevelsPage() {
 	// Performance levels
 	const filters = useMemo(
 		() => ({
-			...(selectedPeriod?.value ? { academicPeriodId: selectedPeriod.value } : {}),
+			...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
 			...(selectedInstrument?.value ? { instrumentTypeId: selectedInstrument.value } : {}),
 		}),
-		[selectedPeriod, selectedInstrument],
+		[selectedPeriodId, selectedInstrument],
 	);
 
-	const hasFilters = selectedPeriod != null || selectedInstrument != null;
+	const hasFilters = selectedPeriodId != null || selectedInstrument != null;
 
 	const {
 		data: performanceLevels = [],
@@ -224,7 +215,7 @@ export function PerformanceLevelsPage() {
 	}
 
 	function handleClearFilters() {
-		setSelectedPeriod(null);
+		setSelectedPeriodId(null);
 		setSelectedInstrument(null);
 	}
 
@@ -241,11 +232,6 @@ export function PerformanceLevelsPage() {
 	const instrumentTypeMap = useMemo(
 		() => new Map(instrumentTypes.map((t) => [t.id, t])),
 		[instrumentTypes],
-	);
-
-	const academicPeriodOptions = useMemo<OptionItem[]>(
-		() => academicPeriods.filter((p) => p.isActive).map((p) => ({ label: p.code, value: p.id })),
-		[academicPeriods],
 	);
 
 	const academicPeriodMap = useMemo(
@@ -269,13 +255,11 @@ export function PerformanceLevelsPage() {
 			{/* Filters */}
 			<div className="space-y-4">
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<Select
-						label={t('performanceLevels.list.periodFilter')}
-						options={academicPeriodOptions}
-						value={selectedPeriod}
+					<AcademicPeriodSelect
+						value={selectedPeriodId}
+						onChange={setSelectedPeriodId}
 						isClearable
-						placeholder={t('performanceLevels.list.allPeriods')}
-						onChange={(_name, val) => setSelectedPeriod(val as OptionItem | null)}
+						onClear={() => setSelectedPeriodId(null)}
 					/>
 					<Select
 						label={t('performanceLevels.list.instrumentFilter')}
@@ -421,7 +405,6 @@ export function PerformanceLevelsPage() {
 						form={form}
 						onChange={setForm}
 						instrumentTypeOptions={instrumentTypeOptions}
-						academicPeriodOptions={academicPeriodOptions}
 					/>
 
 					{createMutation.isError && (

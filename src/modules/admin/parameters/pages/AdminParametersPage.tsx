@@ -6,6 +6,7 @@ import { Tabs } from '@/shared/components';
 import { useAuth, useI18n } from '@/providers';
 import { IfcCodesPage } from '../components/IfcCodesPage';
 import { IfcFieldsPage } from '../components/IfcFieldsPage';
+import { PerformanceLevelsPage } from '@/modules/evaluation/pages';
 
 const DEFAULT_TAB = 'ifc';
 const DEFAULT_IFC_SUB = 'codes';
@@ -27,7 +28,10 @@ export default function AdminParametersPage() {
 	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
 	const activeSub = searchParams.get('sub') ?? DEFAULT_IFC_SUB;
 
-	const topTabs = [{ id: 'ifc', label: t('admin.parameters.tabs.ifc') }];
+	const topTabs = [
+		{ id: 'ifc', label: t('admin.parameters.tabs.ifc') },
+		{ id: 'performance-levels', label: t('admin.parameters.tabs.performanceLevels') },
+	];
 
 	const ifcSubTabs = [
 		{ id: 'codes', label: t('admin.parameters.ifc.tabs.codes') },
@@ -58,6 +62,8 @@ export default function AdminParametersPage() {
 					{activeSub === 'fields' && <IfcFieldsPage />}
 				</div>
 			)}
+
+			{activeTab === 'performance-levels' && <PerformanceLevelsPage />}
 		</div>
 	);
 }

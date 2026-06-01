@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { PencilIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
 	Table,
 	TableBody,
@@ -19,11 +19,8 @@ import { buttonVariants } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib';
-import {
-	academicPeriodsService,
-	programsService,
-	coursesService,
-} from '@/modules/academic/services';
+import { programsService, coursesService } from '@/modules/academic/services';
+import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { projectsService } from '../services';
 import { TrashIcon } from 'lucide-react';
 
@@ -38,7 +35,7 @@ function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | nul
 export function ProjectsListPage() {
 	const { t, locale } = useI18n();
 	const [schoolId, setSchoolId] = useState<number | null>(null);
-	const [selectedPeriod, setSelectedPeriod] = useState<SelectOption | null>(null);
+	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
@@ -47,26 +44,21 @@ export function ProjectsListPage() {
 		setSchoolId(school?.id as number | null);
 	}, []);
 
-	const { data: academicPeriods = [] } = useQuery({
-		queryKey: ['academic-periods', 'filtered', { isActive: true }],
-		queryFn: () => academicPeriodsService.getByFilters({ isActive: true }).then((r) => r.data),
-	});
-
 	const { data: programs = [] } = useQuery({
 		queryKey: [
 			'programs',
 			'filtered',
-			{ schoolId: schoolId, academicPeriodId: selectedPeriod?.value, isActive: true },
+			{ schoolId: schoolId, academicPeriodId: selectedPeriodId, isActive: true },
 		],
 		queryFn: () =>
 			programsService
 				.getByFilters({
 					schoolId: schoolId!,
-					academicPeriodId: selectedPeriod!.value,
+					academicPeriodId: selectedPeriodId!,
 					isActive: true,
 				})
 				.then((r) => r.data),
-		enabled: !!selectedPeriod && !!schoolId,
+		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
 	const { data: courses = [] } = useQuery({
@@ -75,7 +67,7 @@ export function ProjectsListPage() {
 			'filtered',
 			{
 				schoolId: schoolId,
-				academicPeriodId: selectedPeriod?.value,
+				academicPeriodId: selectedPeriodId,
 				programId: selectedProgram?.value,
 				isActive: true,
 			},
@@ -84,12 +76,12 @@ export function ProjectsListPage() {
 			coursesService
 				.getByFilters({
 					schoolId: schoolId!,
-					academicPeriodId: selectedPeriod!.value,
+					academicPeriodId: selectedPeriodId!,
 					programId: selectedProgram!.value,
 					isActive: true,
 				})
 				.then((r) => r.data),
-		enabled: !!selectedPeriod && !!selectedProgram && !!schoolId,
+		enabled: !!selectedPeriodId && !!selectedProgram && !!schoolId,
 	});
 
 	const {
@@ -103,7 +95,7 @@ export function ProjectsListPage() {
 			'filtered',
 			{
 				schoolId: schoolId,
-				academicPeriodId: selectedPeriod?.value,
+				academicPeriodId: selectedPeriodId,
 				programId: selectedProgram?.value,
 				courseId: selectedCourse?.value,
 			},
@@ -112,18 +104,13 @@ export function ProjectsListPage() {
 			projectsService
 				.getByFilters({
 					schoolId: schoolId!,
-					...(selectedPeriod ? { academicPeriodId: selectedPeriod.value } : {}),
+					...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
 					...(selectedProgram ? { programId: selectedProgram.value } : {}),
 					...(selectedCourse ? { courseId: selectedCourse.value } : {}),
 				})
 				.then((r) => r.data),
-		enabled: !!schoolId,
+		enabled: !!schoolId && !!selectedPeriodId,
 	});
-
-	const periodOptions = useMemo(
-		() => academicPeriods.map((p) => ({ label: p.code, value: p.id })),
-		[academicPeriods],
-	);
 
 	const programOptions = useMemo(
 		() => programs.map((p) => ({ label: p.name[locale as 'es' | 'en'] ?? p.name.es, value: p.id })),
@@ -135,12 +122,6 @@ export function ProjectsListPage() {
 		[courses, locale],
 	);
 
-	const handlePeriodChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
-		setSelectedPeriod(toSelectOption(opt));
-		setSelectedProgram(null);
-		setSelectedCourse(null);
-	};
-
 	const handleProgramChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
 		setSelectedProgram(toSelectOption(opt));
 		setSelectedCourse(null);
@@ -151,7 +132,7 @@ export function ProjectsListPage() {
 	};
 
 	const handleClearFilters = () => {
-		setSelectedPeriod(null);
+		setSelectedPeriodId(null);
 		setSelectedProgram(null);
 		setSelectedCourse(null);
 	};
@@ -165,26 +146,34 @@ export function ProjectsListPage() {
 				</div>
 				<Link
 					href="/projects/new"
-					className={cn(buttonVariants({ variant: 'primary', size: 'md' }), 'shrink-0')}>
+					className={cn(buttonVariants({ variant: 'primary', size: 'md' }), 'shrink-0 inline-flex items-center gap-1.5')}>
+					<PlusIcon className="h-4 w-4" />
 					{t('projects.list.addButton')}
 				</Link>
 			</div>
 
 			<div className="space-y-4">
 				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-					<Select
-						label={t('projects.list.filters.academicPeriod')}
-						options={periodOptions}
-						value={selectedPeriod}
+					<AcademicPeriodSelect
+						value={selectedPeriodId}
+						onChange={(id) => {
+							setSelectedPeriodId(id);
+							setSelectedProgram(null);
+							setSelectedCourse(null);
+						}}
 						isClearable
-						onChange={handlePeriodChange}
+						onClear={() => {
+							setSelectedPeriodId(null);
+							setSelectedProgram(null);
+							setSelectedCourse(null);
+						}}
 					/>
 					<Select
 						label={t('projects.list.filters.program')}
 						options={programOptions}
 						value={selectedProgram}
 						isClearable
-						isDisabled={!selectedPeriod}
+						isDisabled={!selectedPeriodId}
 						onChange={handleProgramChange}
 					/>
 					<Select
@@ -197,7 +186,7 @@ export function ProjectsListPage() {
 					/>
 				</div>
 
-				{(selectedPeriod || selectedProgram || selectedCourse) && (
+				{(selectedPeriodId || selectedProgram || selectedCourse) && (
 					<div className="flex justify-end">
 						<button
 							type="button"
@@ -213,7 +202,9 @@ export function ProjectsListPage() {
 				)}
 			</div>
 
-			{isLoading ? (
+			{!selectedPeriodId ? (
+				<TableEmptyState message={t('projects.list.selectPeriod')} />
+			) : isLoading ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500 shadow-sm">
 					{t('projects.list.loading')}
 				</div>

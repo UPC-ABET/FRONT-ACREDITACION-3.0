@@ -189,7 +189,8 @@
 	"admin": {
 		"parameters": {
 			"tabs": {
-				"ifc": "IFC"
+				"ifc": "IFC",
+				"performanceLevels": "Performance Levels"
 			},
 			"ifc": {
 				"tabs": {
@@ -623,7 +624,13 @@
 			"createButton": "Create rubric",
 			"loading": "Loading rubrics...",
 			"error": "Rubrics could not be loaded.",
-			"empty": "No rubrics registered.",
+			"empty": "No rubrics found for the selected filters.",
+			"selectPeriod": "Select an academic period to view rubrics.",
+			"clearFilters": "Clear filters",
+			"filters": {
+				"program": "Program",
+				"course": "Course"
+			},
 			"columns": {
 				"course": "Course",
 				"period": "Academic Period",
@@ -948,6 +955,7 @@
 			"error": "Could not load projects.",
 			"errorProfessor": "No professor found for your user account.",
 			"empty": "You have no projects assigned for evaluation.",
+			"selectPeriod": "Select an academic period to view your projects.",
 			"table": {
 				"code": "Code",
 				"name": "Project Name",

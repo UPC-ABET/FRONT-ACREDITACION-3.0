@@ -189,7 +189,8 @@
 	"admin": {
 		"parameters": {
 			"tabs": {
-				"ifc": "IFC"
+				"ifc": "IFC",
+				"performanceLevels": "Niveles de Desempeño"
 			},
 			"ifc": {
 				"tabs": {
@@ -623,7 +624,13 @@
 			"createButton": "Crear rúbrica",
 			"loading": "Cargando rúbricas...",
 			"error": "No fue posible cargar las rúbricas.",
-			"empty": "No hay rúbricas registradas.",
+			"empty": "No hay rúbricas para los filtros seleccionados.",
+			"selectPeriod": "Selecciona un período académico para ver las rúbricas.",
+			"clearFilters": "Limpiar filtros",
+			"filters": {
+				"program": "Programa",
+				"course": "Curso"
+			},
 			"columns": {
 				"course": "Curso",
 				"period": "Período Académico",
@@ -948,6 +955,7 @@
 			"error": "No fue posible cargar los proyectos.",
 			"errorProfessor": "No se encontró el docente asociado a tu usuario.",
 			"empty": "No tienes proyectos asignados para evaluar.",
+			"selectPeriod": "Selecciona un período académico para ver tus proyectos.",
 			"table": {
 				"code": "Código",
 				"name": "Nombre del Proyecto",

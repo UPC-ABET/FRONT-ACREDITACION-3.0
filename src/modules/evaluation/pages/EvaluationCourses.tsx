@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
-	Select,
 	Table,
 	TableBody,
 	TableCell,
@@ -27,21 +26,20 @@ import {
 	useStudyPlanCourses,
 	useUpdateStudyPlanCourse,
 } from '@/modules/academic/hooks';
+import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { AddEvaluationCourseModal } from '../components/evaluation-courses/AddEvaluationCourseModal';
 import { StudyPlanCourseResponse } from '@/modules/academic';
 
-type AnyOption = { label: string; value: string | number };
-
 export function EvaluationCoursesPage() {
 	const { t, locale } = useI18n();
-	const [selectedPeriod, setSelectedPeriod] = useState<AnyOption | null>(null);
+	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [confirmTarget, setConfirmTarget] = useState<StudyPlanCourseResponse | null>(null);
 
 	const schoolId = getSchoolCookie()?.id as number | undefined;
 
-	const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods({ isActive: true });
-	const periodOptions: AnyOption[] = periods.map((p) => ({ label: p.code, value: p.id }));
+	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
+	const selectedPeriodCode = periods.find((p) => p.id === selectedPeriodId)?.code ?? '';
 
 	const {
 		data: courses = [],
@@ -51,12 +49,12 @@ export function EvaluationCoursesPage() {
 		refetch,
 	} = useStudyPlanCourses(
 		{
-			academicPeriodId: Number(selectedPeriod?.value ?? 0),
+			academicPeriodId: selectedPeriodId ?? 0,
 			schoolId: schoolId,
 			extra: { isEvaluateRubric: true },
 			isActive: true,
 		},
-		{ enabled: !!selectedPeriod && !!schoolId },
+		{ enabled: !!selectedPeriodId && !!schoolId },
 	);
 
 	const updateSpc = useUpdateStudyPlanCourse();
@@ -88,25 +86,11 @@ export function EvaluationCoursesPage() {
 			</div>
 
 			<div className="max-w-xs">
-				<Select
-					label={t('evaluationCourses.list.periodLabel')}
-					placeholder={
-						loadingPeriods
-							? t('evaluationCourses.list.periodLoading')
-							: t('evaluationCourses.list.periodPlaceholder')
-					}
-					options={periodOptions}
-					value={selectedPeriod}
-					isDisabled={loadingPeriods}
-					isSearchable
-					onChange={(_, v) => setSelectedPeriod(Array.isArray(v) ? (v[0] ?? null) : v)}
-				/>
+				<AcademicPeriodSelect value={selectedPeriodId} onChange={setSelectedPeriodId} />
 			</div>
 
-			{!selectedPeriod ? (
-				<div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-400">
-					{t('evaluationCourses.list.selectPeriodFirst')}
-				</div>
+			{!selectedPeriodId ? (
+				<TableEmptyState message={t('evaluationCourses.list.selectPeriodFirst')} />
 			) : loadingCourses ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500">
 					{t('evaluationCourses.list.loading')}
@@ -135,7 +119,7 @@ export function EvaluationCoursesPage() {
 									<span className="font-medium text-zinc-900">{courseName(spc)}</span>
 								</TableCell>
 								<TableCell>
-									<span className="text-zinc-600">{selectedPeriod.label}</span>
+									<span className="text-zinc-600">{selectedPeriodCode}</span>
 								</TableCell>
 								<TableCell>
 									<div className="flex justify-center">
