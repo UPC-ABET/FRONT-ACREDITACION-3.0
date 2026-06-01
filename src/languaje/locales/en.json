@@ -201,7 +201,8 @@
 	"admin": {
 		"parameters": {
 			"tabs": {
-				"ifc": "IFC"
+				"ifc": "IFC",
+				"performanceLevels": "Performance Levels"
 			},
 			"ifc": {
 				"tabs": {
@@ -960,6 +961,7 @@
 			"error": "Could not load projects.",
 			"errorProfessor": "No professor found for your user account.",
 			"empty": "You have no projects assigned for evaluation.",
+			"selectPeriod": "Select an academic period to view your projects.",
 			"table": {
 				"code": "Code",
 				"name": "Project Name",

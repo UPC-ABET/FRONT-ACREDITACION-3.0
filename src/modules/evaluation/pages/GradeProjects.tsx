@@ -14,12 +14,12 @@ import {
 	TableRow,
 	Tabs,
 } from '@/shared/components/ui';
-import { Select } from '@/shared/components/ui/Select';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import { useAuth } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib/authCookies';
-import { useAcademicPeriods, useProfessorByUserId } from '@/modules/academic/hooks';
+import { useProfessorByUserId } from '@/modules/academic/hooks';
+import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { useProjectsByProfessor } from '../hooks';
 import { TYPE_CODES } from '@/shared/constants';
 
@@ -30,16 +30,13 @@ const GRADE_TYPE_CODE: Record<RubricTab, string> = {
 	final: TYPE_CODES.GRADE_TYPE.FINAL,
 };
 
-type SelectOption = { label: string; value: number };
-type AnyOption = { label: string; value: string | number };
-
 export function GradeProjectsPage() {
 	const { t, locale } = useI18n();
 	const { user: authUser } = useAuth();
 
 	const [schoolId, setSchoolId] = useState<number | null>(null);
 	const [activeTab, setActiveTab] = useState<RubricTab>('partial');
-	const [selectedPeriod, setSelectedPeriod] = useState<SelectOption | null>(null);
+	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 
 	const userId = authUser?.id ?? null;
 
@@ -62,17 +59,14 @@ export function GradeProjectsPage() {
 		isLoading: isLoadingProjects,
 		isError: isErrorProjects,
 		error: projectsError,
-	} = useProjectsByProfessor(professor?.id, {
-		...(schoolId != null ? { schoolId } : {}),
-		...(selectedPeriod != null ? { academicPeriodId: selectedPeriod.value } : {}),
-		gradeTypeCode: GRADE_TYPE_CODE[activeTab],
-	});
-
-	const { data: academicPeriods = [] } = useAcademicPeriods({ isActive: true });
-
-	const periodOptions = useMemo(
-		() => academicPeriods.map((p) => ({ label: p.code, value: p.id })),
-		[academicPeriods],
+	} = useProjectsByProfessor(
+		professor?.id,
+		{
+			...(schoolId != null ? { schoolId } : {}),
+			...(selectedPeriodId != null ? { academicPeriodId: selectedPeriodId } : {}),
+			gradeTypeCode: GRADE_TYPE_CODE[activeTab],
+		},
+		{ enabled: selectedPeriodId !== null },
 	);
 
 	const isLoading =
@@ -99,11 +93,6 @@ export function GradeProjectsPage() {
 		setActiveTab(id as RubricTab);
 	};
 
-	const handlePeriodChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
-		const single = Array.isArray(opt) ? (opt[0] ?? null) : opt;
-		setSelectedPeriod(single ? { label: single.label, value: Number(single.value) } : null);
-	};
-
 	return (
 		<div className="space-y-6">
 			{/* Header */}
@@ -122,17 +111,18 @@ export function GradeProjectsPage() {
 
 			{/* Period filter */}
 			<div className="w-full max-w-xs">
-				<Select
-					label={t('projects.grade.filters.academicPeriod')}
-					options={periodOptions}
-					value={selectedPeriod}
+				<AcademicPeriodSelect
+					value={selectedPeriodId}
+					onChange={setSelectedPeriodId}
 					isClearable
-					onChange={handlePeriodChange}
+					onClear={() => setSelectedPeriodId(null)}
 				/>
 			</div>
 
 			{/* States */}
-			{isLoading ? (
+			{!selectedPeriodId ? (
+				<TableEmptyState message={t('projects.grade.selectPeriod')} />
+			) : isLoading ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500 shadow-sm">
 					{!professorEnabled || isFetchingProfessor || isLoadingProfessor
 						? t('projects.grade.loadingProfessor')

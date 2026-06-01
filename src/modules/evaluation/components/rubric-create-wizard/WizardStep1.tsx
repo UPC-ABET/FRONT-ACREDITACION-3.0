@@ -5,6 +5,7 @@ import { Select, Button } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib/authCookies';
 import { useAcademicPeriods, useStudyPlanCourses } from '@/modules/academic/hooks';
+import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { StudyPlanCourseResponse } from '@/modules/academic';
 
 export interface Step1Data {
@@ -32,35 +33,29 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 	const { t, locale } = useI18n();
 	const schoolId = getSchoolCookie()?.id as number | undefined;
 
-	const [selectedPeriod, setSelectedPeriod] = useState<AnyOption | null>(null);
+	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 	const [selectedSpcId, setSelectedSpcId] = useState<AnyOption | null>(null);
 
-	const { data: periods = [], isLoading: loadingPeriods } = useAcademicPeriods({ isActive: true });
+	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 
 	const spcFilters = useMemo(
 		() => ({
-			academicPeriodId: Number(selectedPeriod?.value ?? 0),
+			academicPeriodId: selectedPeriodId ?? 0,
 			schoolId: schoolId,
 			extra: { isEvaluateRubric: true },
 			isActive: true,
 		}),
-		[selectedPeriod?.value, schoolId],
+		[selectedPeriodId, schoolId],
 	);
 
 	const { data: spcList = [], isLoading: loadingCourses } = useStudyPlanCourses(spcFilters, {
-		enabled: !!selectedPeriod && !!schoolId,
+		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
-	const handlePeriodChange = (_: string | undefined, v: AnyOption | AnyOption[] | null) => {
-		const single = Array.isArray(v) ? (v[0] ?? null) : v;
-		setSelectedPeriod(single);
-		setSelectedSpcId(null);
-	};
-
 	const handleNext = () => {
-		if (!selectedPeriod || !selectedSpcId) return;
+		if (!selectedPeriodId || !selectedSpcId) return;
 		const spc = spcList.find((s) => s.id === Number(selectedSpcId.value));
-		const period = periods.find((p) => p.id === Number(selectedPeriod.value));
+		const period = periods.find((p) => p.id === selectedPeriodId);
 		if (!spc || !period) return;
 		onNext({
 			periodId: period.id,
@@ -72,13 +67,12 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 		});
 	};
 
-	const periodOptions: AnyOption[] = periods.map((p) => ({ label: p.code, value: p.id }));
 	const courseOptions: AnyOption[] = spcList.map((s) => ({
 		label: getSpcCourseName(s)[locale] || String(s.course?.id ?? s.courseId),
 		value: s.id,
 	}));
 
-	const canContinue = !!selectedPeriod && !!selectedSpcId;
+	const canContinue = !!selectedPeriodId && !!selectedSpcId;
 
 	return (
 		<div className="space-y-6">
@@ -88,24 +82,18 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 			</div>
 
 			<div className="grid gap-6 sm:grid-cols-2">
-				<Select
-					label={t('rubrics.wizard.step1.periodLabel')}
-					placeholder={
-						loadingPeriods
-							? t('rubrics.wizard.step1.periodLoading')
-							: t('rubrics.wizard.step1.periodPlaceholder')
-					}
-					options={periodOptions}
-					value={selectedPeriod}
-					isDisabled={loadingPeriods}
-					isSearchable
-					onChange={handlePeriodChange}
+				<AcademicPeriodSelect
+					value={selectedPeriodId}
+					onChange={(id) => {
+						setSelectedPeriodId(id);
+						setSelectedSpcId(null);
+					}}
 				/>
 
 				<Select
 					label={t('rubrics.wizard.step1.courseLabel')}
 					placeholder={
-						!selectedPeriod
+						!selectedPeriodId
 							? t('rubrics.wizard.step1.courseSelectPeriodFirst')
 							: loadingCourses
 								? t('rubrics.wizard.step1.courseLoading')
@@ -115,7 +103,7 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 					}
 					options={courseOptions}
 					value={selectedSpcId}
-					isDisabled={!selectedPeriod || loadingCourses || spcList.length === 0}
+					isDisabled={!selectedPeriodId || loadingCourses || spcList.length === 0}
 					isSearchable
 					onChange={(_, v) => setSelectedSpcId(Array.isArray(v) ? (v[0] ?? null) : v)}
 				/>

@@ -1,5 +1,5 @@
-import { PerformanceLevelsPage } from '@/modules/evaluation/pages';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-	return <PerformanceLevelsPage />;
+	redirect('/admin/parameters?tab=performance-levels');
 }

@@ -33,11 +33,12 @@ export function useProjects(filters: FilterProjectDto = {}) {
 export function useProjectsByProfessor(
 	professorId: string | number | undefined,
 	params?: ByProfessorParams,
+	options?: { enabled?: boolean },
 ) {
 	return useQuery({
 		queryKey: projectsQueryKeys.byProfessor(professorId!, params),
 		queryFn: () => projectsService.getByProfessor(professorId!, params).then((r) => r.data),
-		enabled: professorId != null,
+		enabled: professorId != null && (options?.enabled !== false),
 	});
 }
 
