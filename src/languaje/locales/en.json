@@ -34,20 +34,8 @@
 		"logout": "Logout",
 		"loads": {
 			"label": "Loads",
-			"sections": "Sections",
-			"enrolledStudents": "Enrolled Students",
-			"professors": "Professors",
-			"gradesRc": "RC Grades",
-			"studentSections": "Student × Section",
-			"ppp": "PPP",
-			"scrapingBanner": "Banner Scraping",
-			"gradesBanner": "Banner Grades",
-			"studyPlans": "Study Plan",
-			"charts": "Org Chart",
-			"articulation": "Articulation",
-			"delegates": "Delegates",
-			"history": "History",
-			"setup": "Cycle Setup"
+			"dashboard": "Dashboard",
+			"history": "History"
 		}
 	},
 	"ifcs": {
@@ -1638,6 +1626,8 @@
 		"studyPlans": {
 			"pageTitle": "Bulk upload of study plan",
 			"pageSubtitle": "Upload the study plan Excel for the selected period",
+			"downloadTemplate": "Download template",
+			"downloadingTemplate": "Downloading...",
 			"selectPeriod": "Select an academic period",
 			"title": "Study plan upload",
 			"description": "Format .xlsx: StudyPlanCode, StudyPlanName, ProgramCode, CourseCode, CourseName, IsElective, LevelType, Prerequisites",
@@ -1655,6 +1645,7 @@
 				"periodRequired": "Select an academic period",
 				"rowsWithErrors": "Errors were found. Check the downloaded file.",
 				"generic": "An error occurred during the upload",
+				"templateDownloadFailed": "Failed to download the template",
 				"studyPlanCodeEmpty": "The study plan code cannot be empty",
 				"programNotFound": "The program is not registered in the system",
 				"courseCodeEmpty": "The course code cannot be empty",
@@ -1803,9 +1794,35 @@
 			}
 		}
 	},
+	"loads": {
+		"page": {
+			"title": "Bulk uploads",
+			"subtitle": "Pick an upload type and an academic period, then drop in the Excel file."
+		},
+		"upload": {
+			"typeLabel": "Upload type",
+			"typePlaceholder": "Select an upload type",
+			"selectBoth": "Pick an upload type and an academic period to continue.",
+			"downloadTemplate": "Download template",
+			"downloadingTemplate": "Downloading...",
+			"dropzone": "Click or drag the Excel file here",
+			"submit": "Upload file",
+			"loadedSummary": "Loaded rows",
+			"successTitle": "Upload successful",
+			"successMessage": "Upload completed successfully.",
+			"errorTitle": "Upload error",
+			"error": {
+				"fileRequired": "Select an .xlsx file",
+				"periodRequired": "Select an academic period",
+				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"templateDownloadFailed": "Failed to download the template",
+				"generic": "An error occurred during the upload"
+			}
+		}
+	},
 	"uploadHistory": {
 		"title": "Upload history",
-		"subtitle": "Audit log of every bulk upload recorded in audit.upload_logs.",
+		"subtitle": "Audit log of every bulk upload recorded",
 		"table": {
 			"title": "Recorded uploads",
 			"description": "Each row is an upload transaction. You can roll it back or inspect its errors.",
@@ -1818,7 +1835,8 @@
 				"type": "Type",
 				"status": "Status",
 				"file": "File",
-				"rows": "Rows (loaded/total)",
+				"rows": "Rows",
+				"user": "User",
 				"date": "Date",
 				"actions": "Actions"
 			}

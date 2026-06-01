@@ -1,31 +1,29 @@
 'use client';
 
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@/providers';
 import { ErrorsDrawer, RollbackConfirmDialog, UploadHistoryTable } from '../components';
+import { findFlowByTypeCode, LOADS_QUERY_KEYS } from '../constants';
+import { rollbackUpload } from '../services';
 import type { UploadLog } from '../types';
 
-interface UploadHistoryPageProps {
-	// Maps a backend upload_type code to a rollback function. The page stays presentational
-	// and delegates dispatch to the container so it does not depend on every flow's service.
-	rollbackByUploadType: Record<string, (uploadLogId: number) => Promise<{ success: boolean }>>;
-}
-
-export default function UploadHistoryPage({ rollbackByUploadType }: UploadHistoryPageProps) {
+export default function UploadHistoryPage() {
 	const { t } = useI18n();
+	const queryClient = useQueryClient();
 	const [confirmLog, setConfirmLog] = useState<UploadLog | null>(null);
 	const [errorsLog, setErrorsLog] = useState<UploadLog | null>(null);
 	const [rolling, setRolling] = useState(false);
 
 	const handleConfirm = async (log: UploadLog) => {
-		const fn = rollbackByUploadType[log.upload_type];
-		if (!fn) {
+		if (!findFlowByTypeCode(log.uploadType.code)) {
 			setConfirmLog(null);
 			return;
 		}
 		setRolling(true);
 		try {
-			await fn(log.id);
+			await rollbackUpload(log.uploadType.code, { uploadLogId: log.id });
+			await queryClient.invalidateQueries({ queryKey: LOADS_QUERY_KEYS.uploadHistory });
 			setConfirmLog(null);
 		} finally {
 			setRolling(false);
@@ -33,10 +31,10 @@ export default function UploadHistoryPage({ rollbackByUploadType }: UploadHistor
 	};
 
 	return (
-		<div className="space-y-6">
-			<header>
+		<div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6">
+			<header className="space-y-1">
 				<h1 className="text-2xl font-semibold text-gray-900">{t('uploadHistory.title')}</h1>
-				<p className="mt-1 text-sm text-gray-500">{t('uploadHistory.subtitle')}</p>
+				<p className="text-sm text-gray-500">{t('uploadHistory.subtitle')}</p>
 			</header>
 
 			<UploadHistoryTable
@@ -52,8 +50,6 @@ export default function UploadHistoryPage({ rollbackByUploadType }: UploadHistor
 				loading={rolling}
 			/>
 
-			{/* The backend does not persist the annotated Excel, so the drawer opens empty from
-			    here. It is meant to be reused from the canvas with the freshly-returned blob. */}
 			<ErrorsDrawer
 				open={errorsLog !== null}
 				onClose={() => setErrorsLog(null)}

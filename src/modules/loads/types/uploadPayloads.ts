@@ -12,6 +12,8 @@ export interface UploadResult {
 export interface UploadPayload {
 	file: File;
 	academicPeriodId: number;
+	userId?: number;
+	lang?: 'es' | 'en';
 }
 
 export interface RollbackPayload {

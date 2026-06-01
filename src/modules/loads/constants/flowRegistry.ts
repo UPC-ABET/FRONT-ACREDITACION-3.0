@@ -1,212 +1,29 @@
-import { UPLOAD_TYPE_CODES } from './uploadTypes';
-import type { FlowDescriptor, StageCode } from '../types';
+import type { UploadFlow } from '../types';
 
-// Excel header column names match what the backend's BulkUploadView expects.
-// They are not translated on purpose: they are part of the file contract.
-export const FLOW_REGISTRY: FlowDescriptor[] = [
-	{
-		code: 'professors',
-		stage: 'PRE_ENROLL',
-		uploadType: UPLOAD_TYPE_CODES.PROFESSORS,
-		displayKey: 'uploads.canvas.flow.professors',
-		formI18nKey: 'uploads.professors',
-		expectedHeaders: ['UserName', 'Name'],
-		canBannerScrap: false,
-		uploadPath: '/uploads/professors',
-	},
-	{
-		code: 'articulation',
-		stage: 'PRE_ENROLL',
-		uploadType: UPLOAD_TYPE_CODES.ARTICULATION,
-		displayKey: 'uploads.canvas.flow.articulation',
-		formI18nKey: 'uploads.articulation',
-		expectedHeaders: [
-			'Acreditadora',
-			'Comision',
-			'Carrera',
-			'CodigoMalla',
-			'CodigoCurso',
-			'OutcomeCode',
-			'OutcomeNameEn',
-			'OutcomeDescription',
-			'OutcomeType',
-		],
-		canBannerScrap: false,
-		uploadPath: '/uploads/outcomes',
-	},
-	{
-		code: 'study-plans',
-		stage: 'PRE_ENROLL',
-		uploadType: UPLOAD_TYPE_CODES.STUDY_PLANS,
-		displayKey: 'uploads.canvas.flow.studyPlans',
-		formI18nKey: 'uploads.studyPlans',
-		expectedHeaders: [
-			'CodigoMalla',
-			'NombreMalla',
-			'CodigoCarrera',
-			'CodigoCurso',
-			'NombreCurso',
-			'EsElectivo',
-			'NivelCurso',
-			'Requisitos',
-		],
-		canBannerScrap: false,
-		uploadPath: '/uploads/study-plans',
-	},
-	{
-		code: 'charts',
-		stage: 'START_TERM',
-		uploadType: UPLOAD_TYPE_CODES.CHARTS,
-		displayKey: 'uploads.canvas.flow.charts',
-		formI18nKey: 'uploads.charts',
-		expectedHeaders: [
-			'EntityCode',
-			'Name',
-			'Level',
-			'EntityType',
-			'Responsible',
-			'Campus',
-			'ParentEntityCode',
-		],
-		canBannerScrap: false,
-		uploadPath: '/uploads/charts',
-	},
-	{
-		code: 'sections',
-		stage: 'START_TERM',
-		uploadType: UPLOAD_TYPE_CODES.SECTIONS,
-		displayKey: 'uploads.canvas.flow.sections',
-		formI18nKey: 'uploads.sections',
-		expectedHeaders: ['CodigoCurso', 'Seccion', 'Docente', 'Local', 'TipoEstudio'],
-		canBannerScrap: true,
-		uploadPath: '/uploads/sections',
-	},
-	{
-		code: 'enrolled-students',
-		stage: 'START_TERM',
-		uploadType: UPLOAD_TYPE_CODES.ENROLLED_STUDENTS,
-		displayKey: 'uploads.canvas.flow.enrolledStudents',
-		formI18nKey: 'uploads.enrolledStudents',
-		expectedHeaders: ['CodigoAlumno', 'NombreCompleto', 'Carrera', 'EstadoMatricula', 'Sede'],
-		canBannerScrap: true,
-		uploadPath: '/uploads/enrolled-students',
-	},
-	{
-		code: 'student-sections',
-		stage: 'START_TERM',
-		uploadType: UPLOAD_TYPE_CODES.STUDENT_SECTIONS,
-		displayKey: 'uploads.canvas.flow.studentSections',
-		formI18nKey: 'uploads.studentSections',
-		expectedHeaders: ['CodigoCurso', 'CodigoSeccion', 'CodigoAlumno'],
-		canBannerScrap: true,
-		uploadPath: '/uploads/student-sections',
-	},
-	{
-		code: 'delegates',
-		stage: 'START_TERM',
-		uploadType: UPLOAD_TYPE_CODES.DELEGATES,
-		displayKey: 'uploads.canvas.flow.delegates',
-		formI18nKey: 'uploads.delegates',
-		expectedHeaders: ['CodigoCurso', 'CodigoSeccion', 'CodigoAlumno'],
-		canBannerScrap: false,
-		uploadPath: '/uploads/delegates',
-	},
-	{
-		code: 'grades-rc',
-		stage: 'END_TERM',
-		uploadType: UPLOAD_TYPE_CODES.GRADES_RC,
-		displayKey: 'uploads.canvas.flow.gradesRc',
-		formI18nKey: 'uploads.gradesRc',
-		expectedHeaders: [
-			'CodigoCurso',
-			'CodigoSeccion',
-			'CodigoAlumno',
-			'NotaParcial',
-			'NotaFinal',
-			'NotaFDM',
-			'NotaReal',
-		],
-		canBannerScrap: true,
-		uploadPath: '/uploads/grades-rc',
-	},
-	{
-		code: 'grades-banner',
-		stage: 'END_TERM',
-		uploadType: UPLOAD_TYPE_CODES.GRADES_BANNER,
-		displayKey: 'uploads.canvas.flow.gradesBanner',
-		formI18nKey: 'uploads.gradesBanner',
-		expectedHeaders: ['CodigoAlumno', 'CursoCodigo', 'Nrc', 'TipoNota', 'Nota', 'Peso'],
-		canBannerScrap: true,
-		uploadPath: '/uploads/grades-banner',
-	},
-	{
-		code: 'ppp',
-		stage: 'END_TERM',
-		uploadType: UPLOAD_TYPE_CODES.PPP,
-		displayKey: 'uploads.canvas.flow.ppp',
-		formI18nKey: 'uploads.ppp',
-		expectedHeaders: [
-			'SurveyType',
-			'SurveyStatus',
-			'CodigoAlumno',
-			'PeriodoCode',
-			'CampusCode',
-			'ProgramCode',
-			'NroEncuesta',
-			'RazonSocial',
-			'NombreJefe',
-			'CargoJefe',
-			'TelefonoJefe',
-			'CorreoJefe',
-			'RUC',
-			'TotalHoras',
-			'NumeroInforme',
-			'FechaInicio',
-			'FechaFin',
-			'Comentario',
-			'OutcomeCode',
-			'Score',
-		],
-		canBannerScrap: false,
-		uploadPath: '/uploads/ppp',
-	},
-	{
-		code: 'scraping-banner',
-		stage: 'END_TERM',
-		uploadType: UPLOAD_TYPE_CODES.SCRAPING_BANNER,
-		displayKey: 'uploads.canvas.flow.scrapingBanner',
-		formI18nKey: 'uploads.scrapingBanner',
-		expectedHeaders: [
-			'CodigoAlumno',
-			'Nombres',
-			'Apellidos',
-			'CorreoInstitucional',
-			'CorreoPersonal',
-			'TelefonoMovil',
-			'ProgramaCodigo',
-			'NivelCodigo',
-			'PeriodoCodigo',
-			'CampusCodigo',
-			'MetodoEducativoCodigo',
-			'Nrc',
-			'CursoCodigoFull',
-			'DocenteIdBanner',
-		],
-		canBannerScrap: true,
-		uploadPath: '/uploads/scraping-banner',
-	},
-];
+// Each entry maps a TG1101 type code to the per-slug backend endpoints.
+// Mirrors the contract documented for /uploads/<slug>/{template,upload,rollback}.
+const flowsList: UploadFlow[] = [
+	{ typeCode: 'TG1101-T001', slug: 'professors' },
+	{ typeCode: 'TG1101-T002', slug: 'study-plans' },
+	{ typeCode: 'TG1101-T003', slug: 'outcomes' },
+	{ typeCode: 'TG1101-T004', slug: 'charts' },
+	{ typeCode: 'TG1101-T005', slug: 'sections' },
+	{ typeCode: 'TG1101-T006', slug: 'enrolled-students' },
+	{ typeCode: 'TG1101-T007', slug: 'grades-banner' },
+	{ typeCode: 'TG1101-T008', slug: 'grades-rc' },
+	{ typeCode: 'TG1101-T009', slug: 'articulation' },
+	{ typeCode: 'TG1101-T010', slug: 'student-sections' },
+].map(({ typeCode, slug }) => ({
+	typeCode,
+	slug,
+	uploadPath: `/uploads/${slug}/upload`,
+	templatePath: `/uploads/${slug}/template`,
+	rollbackPath: `/uploads/${slug}/rollback`,
+}));
 
-export const FLOWS_BY_STAGE = FLOW_REGISTRY.reduce<Record<StageCode, FlowDescriptor[]>>(
-	(acc, flow) => {
-		(acc[flow.stage] ??= []).push(flow);
-		return acc;
-	},
-	{ PRE_ENROLL: [], START_TERM: [], END_TERM: [] },
-);
+export const UPLOAD_FLOWS = flowsList;
 
-export const findFlowByCode = (code: string): FlowDescriptor | undefined =>
-	FLOW_REGISTRY.find((flow) => flow.code === code);
+const FLOWS_BY_TYPE_CODE = new Map(flowsList.map((flow) => [flow.typeCode, flow]));
 
-export const findFlowByUploadType = (uploadType: string): FlowDescriptor | undefined =>
-	FLOW_REGISTRY.find((flow) => flow.uploadType === uploadType);
+export const findFlowByTypeCode = (typeCode: string): UploadFlow | undefined =>
+	FLOWS_BY_TYPE_CODE.get(typeCode);

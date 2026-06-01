@@ -34,20 +34,8 @@
 		"logout": "Cerrar sesión",
 		"loads": {
 			"label": "Cargas",
-			"sections": "Secciones",
-			"enrolledStudents": "Matriculados",
-			"professors": "Docentes",
-			"gradesRc": "Notas RC",
-			"studentSections": "Alumno × Sección",
-			"ppp": "PPP",
-			"scrapingBanner": "Scraping Banner",
-			"gradesBanner": "Notas Banner",
-			"studyPlans": "Malla Curricular",
-			"charts": "Organigrama",
-			"articulation": "Articulación",
-			"delegates": "Delegados",
-			"history": "Historial",
-			"setup": "Apertura de Ciclo"
+			"dashboard": "Dashboard",
+			"history": "Historial"
 		}
 	},
 	"ifcs": {
@@ -1638,6 +1626,8 @@
 		"studyPlans": {
 			"pageTitle": "Carga masiva de malla curricular",
 			"pageSubtitle": "Sube el Excel de malla curricular para el período seleccionado",
+			"downloadTemplate": "Descargar plantilla",
+			"downloadingTemplate": "Descargando...",
 			"selectPeriod": "Selecciona un período académico",
 			"title": "Carga de malla curricular",
 			"description": "Formato .xlsx: CodigoMalla, NombreMalla, CodigoCarrera, CodigoCurso, NombreCurso, EsElectivo, NivelCurso, Requisitos",
@@ -1655,6 +1645,7 @@
 				"periodRequired": "Selecciona un período académico",
 				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
 				"generic": "Ocurrió un error durante la carga",
+				"templateDownloadFailed": "No se pudo descargar la plantilla",
 				"studyPlanCodeEmpty": "El código de malla no puede estar vacío",
 				"programNotFound": "La carrera no se encuentra registrada en el sistema",
 				"courseCodeEmpty": "El código de curso no puede estar vacío",
@@ -1803,9 +1794,35 @@
 			}
 		}
 	},
+	"loads": {
+		"page": {
+			"title": "Cargas masivas",
+			"subtitle": "Selecciona el tipo de carga y el período académico para subir el archivo Excel."
+		},
+		"upload": {
+			"typeLabel": "Tipo de carga",
+			"typePlaceholder": "Selecciona un tipo de carga",
+			"selectBoth": "Selecciona un tipo de carga y un período académico para continuar.",
+			"downloadTemplate": "Descargar plantilla",
+			"downloadingTemplate": "Descargando...",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"submit": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"successMessage": "Carga realizada exitosamente.",
+			"errorTitle": "Error en la carga",
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"templateDownloadFailed": "No se pudo descargar la plantilla",
+				"generic": "Ocurrió un error durante la carga"
+			}
+		}
+	},
 	"uploadHistory": {
 		"title": "Historial de cargas",
-		"subtitle": "Auditoría de las cargas masivas registradas en audit.upload_logs.",
+		"subtitle": "Auditoría de las cargas masivas registradas",
 		"table": {
 			"title": "Cargas registradas",
 			"description": "Cada fila representa una transacción de carga. Puedes revertirla o inspeccionar errores.",
@@ -1818,7 +1835,8 @@
 				"type": "Tipo",
 				"status": "Estado",
 				"file": "Archivo",
-				"rows": "Filas (cargadas/total)",
+				"rows": "Filas",
+				"user": "Usuario",
 				"date": "Fecha",
 				"actions": "Acciones"
 			}

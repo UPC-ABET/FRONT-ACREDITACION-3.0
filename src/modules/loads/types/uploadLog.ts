@@ -1,24 +1,39 @@
-export const UPLOAD_LOG_STATUSES = ['IN_PROGRESS', 'COMPLETED', 'FAILED', 'ROLLED_BACK'] as const;
-export type UploadLogStatus = (typeof UPLOAD_LOG_STATUSES)[number];
+import type { I18nText } from '@/shared/types';
+
+export interface UploadLogTypeRef {
+	code: string;
+	name: I18nText;
+}
+
+export interface UploadLogStatusRef {
+	code: string;
+	name: I18nText;
+}
+
+export interface UploadLogUser {
+	id: number;
+	fullName: string;
+	email: string;
+}
 
 export interface UploadLog {
 	id: number;
-	upload_type: string;
-	status: UploadLogStatus | string;
-	academic_period_id: number | null;
-	user_id: number | null;
-	source_file: string | null;
-	total_rows: number | null;
-	loaded_rows: number | null;
-	error_rows: number | null;
-	created_at: string;
-	rollback_at: string | null;
+	uploadType: UploadLogTypeRef;
+	status: UploadLogStatusRef;
+	academicPeriodId: number | null;
+	user: UploadLogUser | null;
+	sourceFile: string | null;
+	totalRows: number | null;
+	loadedRows: number | null;
+	errorRows: number | null;
+	createdAt: string;
+	rollbackAt: string | null;
 }
 
 export interface UploadLogFilters {
-	upload_type?: string;
-	status?: UploadLogStatus;
-	academic_period_id?: number;
+	uploadType?: string;
+	status?: string;
+	academicPeriodId?: number;
 	limit?: number;
 	offset?: number;
 }

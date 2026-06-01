@@ -1,12 +1,5 @@
-export { default as StageStepper } from './StageStepper';
-export { default as FlowRadialSelector } from './FlowRadialSelector';
-export { default as UploadCanvas } from './UploadCanvas';
-export { default as BannerScrapingDialog } from './BannerScrapingDialog';
-export { default as UploadForm } from './UploadForm';
+export { default as UploadPanel } from './UploadPanel';
+export { default as UploadTypeSelect } from './UploadTypeSelect';
 export { default as UploadHistoryTable } from './UploadHistoryTable';
 export { default as ErrorsDrawer } from './ErrorsDrawer';
 export { default as RollbackConfirmDialog } from './RollbackConfirmDialog';
-export { default as PeriodSelector } from './PeriodSelector';
-export { default as NewPeriodDialog } from './NewPeriodDialog';
-export { default as StudyPlanAssociationPanel } from './StudyPlanAssociationPanel';
-export { default as ProgramCommissionPanel } from './ProgramCommissionPanel';

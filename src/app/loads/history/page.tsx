@@ -1,7 +1,9 @@
 import dynamic from 'next/dynamic';
 
-const UploadHistoryPageContainer = dynamic(() =>
-	import('@/modules/loads').then((m) => m.UploadHistoryPageContainer),
+const UploadHistoryPage = dynamic(() =>
+	import('@/modules/loads').then((m) => m.UploadHistoryPage),
 );
 
-export default UploadHistoryPageContainer;
+export default function Page() {
+	return <UploadHistoryPage />;
+}

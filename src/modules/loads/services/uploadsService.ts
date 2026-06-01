@@ -1,34 +1,65 @@
-import { apiPost, apiUploadFormData, getApiData } from '@/shared/lib/apiClient';
-import { findFlowByCode } from '../constants';
+import { apiGetBlobResponse, apiPost, apiUploadFormData, getApiData } from '@/shared/lib/apiClient';
+import { triggerBlobDownload } from '@/shared/lib/fileDownload';
+import { findFlowByTypeCode } from '../constants';
 import type { UploadPayload, UploadResult, RollbackPayload } from '../types';
 
-function buildForm(file: File, academicPeriodId: number): FormData {
+function buildForm(payload: UploadPayload): FormData {
 	const fd = new FormData();
-	fd.append('file', file);
-	fd.append('academic_period_id', String(academicPeriodId));
+	fd.append('file', payload.file);
+	fd.append('academicPeriodId', String(payload.academicPeriodId));
+	if (payload.userId !== undefined) fd.append('userId', String(payload.userId));
+	if (payload.lang) fd.append('lang', payload.lang);
 	return fd;
 }
 
-function resolveFlowPath(flowCode: string): string {
-	const flow = findFlowByCode(flowCode);
-	if (!flow) throw new Error(`Unknown flow code: ${flowCode}`);
-	return flow.uploadPath;
+function resolveFlow(typeCode: string) {
+	const flow = findFlowByTypeCode(typeCode);
+	if (!flow) throw new Error(`Unknown upload type code: ${typeCode}`);
+	return flow;
 }
 
-export async function uploadFile(flowCode: string, payload: UploadPayload): Promise<UploadResult> {
-	const path = resolveFlowPath(flowCode);
-	const response = await apiUploadFormData(
-		`${path}/upload`,
-		buildForm(payload.file, payload.academicPeriodId),
-	);
+// Extracts the filename from a Content-Disposition header, handling both `filename=...`
+// and RFC 5987 `filename*=UTF-8''...` forms. Returns null when no filename is present.
+function parseContentDispositionFilename(header: string | null): string | null {
+	if (!header) return null;
+	const utf8Match = /filename\*=UTF-8''([^;]+)/i.exec(header);
+	if (utf8Match?.[1]) {
+		try {
+			return decodeURIComponent(utf8Match[1]);
+		} catch {
+			return utf8Match[1];
+		}
+	}
+	const plainMatch = /filename="?([^";]+)"?/i.exec(header);
+	return plainMatch?.[1] ?? null;
+}
+
+export async function uploadFile(typeCode: string, payload: UploadPayload): Promise<UploadResult> {
+	const flow = resolveFlow(typeCode);
+	const response = await apiUploadFormData(flow.uploadPath, buildForm(payload));
 	return getApiData<UploadResult>(response);
 }
 
 export async function rollbackUpload(
-	flowCode: string,
+	typeCode: string,
 	payload: RollbackPayload,
 ): Promise<{ success: boolean }> {
-	const path = resolveFlowPath(flowCode);
-	const response = await apiPost(`${path}/rollback`, { upload_log_id: payload.uploadLogId });
+	const flow = resolveFlow(typeCode);
+	const response = await apiPost(flow.rollbackPath, { uploadLogId: payload.uploadLogId });
 	return getApiData<{ success: boolean }>(response);
+}
+
+export async function downloadTemplate(
+	typeCode: string,
+	lang: 'es' | 'en',
+	fallbackFileName: string,
+): Promise<void> {
+	const flow = resolveFlow(typeCode);
+	const { blob, response } = await apiGetBlobResponse(
+		`${flow.templatePath}?lang=${encodeURIComponent(lang)}`,
+	);
+	const fileName =
+		parseContentDispositionFilename(response.headers.get('content-disposition')) ??
+		fallbackFileName;
+	triggerBlobDownload(blob, fileName);
 }

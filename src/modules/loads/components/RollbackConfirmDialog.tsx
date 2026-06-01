@@ -20,8 +20,9 @@ export default function RollbackConfirmDialog({
 	onConfirm,
 	loading,
 }: RollbackConfirmDialogProps) {
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	if (!log) return null;
+	const typeLabel = log.uploadType.name[locale] ?? log.uploadType.code;
 
 	return (
 		<Dialog
@@ -37,7 +38,7 @@ export default function RollbackConfirmDialog({
 					<div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-800">
 						⚠️{' '}
 						{interpolate(t('uploadHistory.rollback.warning'), {
-							type: log.upload_type,
+							type: typeLabel,
 							id: String(log.id),
 						})}
 					</div>
