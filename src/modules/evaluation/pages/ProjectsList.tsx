@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { PencilIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
 	Table,
 	TableBody,
@@ -146,7 +146,8 @@ export function ProjectsListPage() {
 				</div>
 				<Link
 					href="/projects/new"
-					className={cn(buttonVariants({ variant: 'primary', size: 'md' }), 'shrink-0')}>
+					className={cn(buttonVariants({ variant: 'primary', size: 'md' }), 'shrink-0 inline-flex items-center gap-1.5')}>
+					<PlusIcon className="h-4 w-4" />
 					{t('projects.list.addButton')}
 				</Link>
 			</div>
