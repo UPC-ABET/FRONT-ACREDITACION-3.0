@@ -636,7 +636,13 @@
 			"createButton": "Crear rúbrica",
 			"loading": "Cargando rúbricas...",
 			"error": "No fue posible cargar las rúbricas.",
-			"empty": "No hay rúbricas registradas.",
+			"empty": "No hay rúbricas para los filtros seleccionados.",
+			"selectPeriod": "Selecciona un período académico para ver las rúbricas.",
+			"clearFilters": "Limpiar filtros",
+			"filters": {
+				"program": "Programa",
+				"course": "Curso"
+			},
 			"columns": {
 				"course": "Curso",
 				"period": "Período Académico",

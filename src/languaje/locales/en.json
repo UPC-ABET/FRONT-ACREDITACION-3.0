@@ -636,7 +636,13 @@
 			"createButton": "Create rubric",
 			"loading": "Loading rubrics...",
 			"error": "Rubrics could not be loaded.",
-			"empty": "No rubrics registered.",
+			"empty": "No rubrics found for the selected filters.",
+			"selectPeriod": "Select an academic period to view rubrics.",
+			"clearFilters": "Clear filters",
+			"filters": {
+				"program": "Program",
+				"course": "Course"
+			},
 			"columns": {
 				"course": "Course",
 				"period": "Academic Period",

@@ -1,19 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { rubricsService } from '../services';
-import type { CreateRubricDto, CreateRubricFullDto } from '../types';
+import type { CreateRubricDto, CreateRubricFullDto, GetAllRubricsParams } from '../types';
 
 export const rubricsQueryKeys = {
 	all: ['rubrics'] as const,
+	filtered: (params: GetAllRubricsParams) => ['rubrics', 'filtered', params] as const,
 	detail: (rubricId: string | number) => ['rubrics', rubricId] as const,
 };
 
-export function useRubrics() {
+export function useRubrics(params: GetAllRubricsParams = {}) {
 	return useQuery({
-		queryKey: rubricsQueryKeys.all,
+		queryKey: rubricsQueryKeys.filtered(params),
 		queryFn: async () => {
-			const response = await rubricsService.getAll();
+			const response = await rubricsService.getAll(params);
 			return response.data;
 		},
+		enabled: !!params.academicPeriodId,
 	});
 }
 
