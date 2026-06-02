@@ -1,16 +1,14 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Select, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
+import { Input, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
 import type { LoginPayload } from '@/modules/auth/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
 import { safeRedirect } from '@/shared/lib';
-import { SCHOOL_OPTIONS } from '@/modules/auth/constants';
 import { useAuth, useI18n } from '@/providers';
 
 export default function LoginForm() {
-	const [schoolCode, setSchoolCode] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -21,26 +19,17 @@ export default function LoginForm() {
 	const { t } = useI18n();
 	const { refreshUser } = useAuth();
 
-	const localizedSchools = useMemo(
-		() =>
-			SCHOOL_OPTIONS.map((option) => ({
-				value: option.id,
-				label: t(option.labelKey),
-			})),
-		[t],
-	);
-
 	const handleSubmit = async (e?: React.FormEvent) => {
 		e?.preventDefault();
 		setError(null);
 		setDialogOpen(false);
 
-		if (!schoolCode || !email || !password) {
+		if (!email || !password) {
 			setError(t('login.error.required'));
 			return;
 		}
 
-		const payload: LoginPayload = { schoolCode: schoolCode, email, password };
+		const payload: LoginPayload = { email, password };
 		setLoading(true);
 		try {
 			await loginByCredentials(payload);
@@ -61,11 +50,7 @@ export default function LoginForm() {
 	};
 
 	const handleMicrosoftLogin = () => {
-		if (!schoolCode) {
-			setError(t('login.error.schoolRequired'));
-			return;
-		}
-		safeRedirect(getMicrosoftLoginUrl(schoolCode), 'assign');
+		safeRedirect(getMicrosoftLoginUrl(), 'assign');
 	};
 
 	return (
@@ -76,16 +61,6 @@ export default function LoginForm() {
 						{error}
 					</div>
 				)}
-
-				<div>
-					<Select
-						name="school"
-						value={localizedSchools.find((s) => s.value === schoolCode) || null}
-						onChange={(_, v) => setSchoolCode(!v || Array.isArray(v) ? '' : String(v.value))}
-						options={localizedSchools}
-						placeholder={t('login.school.placeholder')}
-					/>
-				</div>
 
 				<div>
 					<Input
