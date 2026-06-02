@@ -13,17 +13,18 @@ export function optionsForLevel(
 	levelNum: number,
 	selections: Record<number, SelectionValue>,
 ): ScopeOption[] {
-	const lvl = scope.levels.find((l) => l.levelNum === levelNum);
-	if (!lvl) return [];
+	const index = scope.levels.findIndex((l) => l.levelNum === levelNum);
+	if (index === -1) return [];
 
-	const firstLevelNum = scope.levels[0]?.levelNum ?? 0;
-	if (levelNum === firstLevelNum) return lvl.options;
+	const lvl = scope.levels[index];
+	if (index === 0) return lvl.options;
 
-	const parent = selections[levelNum - 1] ?? null;
+	const parentLevelNum = scope.levels[index - 1].levelNum;
+	const parent = selections[parentLevelNum] ?? null;
 	if (parent === null) return [];
 
 	if (parent === 'ALL') {
-		const parentOpts = optionsForLevel(scope, levelNum - 1, selections);
+		const parentOpts = optionsForLevel(scope, parentLevelNum, selections);
 		const parentIds = new Set(parentOpts.map((o) => o.id));
 		return lvl.options.filter((o) => o.parentId !== null && parentIds.has(o.parentId));
 	}

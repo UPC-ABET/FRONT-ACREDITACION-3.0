@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	ArrowDownTrayIcon,
 	BellAlertIcon,
@@ -17,7 +17,7 @@ import {
 	TableEmptyState,
 	Toast,
 } from '@/shared/components';
-import { useAuth, useI18n } from '@/providers';
+import { useABET, useAuth, useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { TYPE_CODES } from '@/shared/constants';
@@ -58,13 +58,36 @@ export function IFCDashboard() {
 	const [scopeErrorDismissed, setScopeErrorDismissed] = useState(false);
 	const [listErrorDismissed, setListErrorDismissed] = useState(false);
 
-	const { scope, loading: scopeLoading, error: scopeError, load: loadScope } = useOrgScope();
+	const {
+		scope,
+		loading: scopeLoading,
+		error: scopeError,
+		load: loadScope,
+		setScope,
+	} = useOrgScope();
 	const { rows, loading: listLoading, error: listError, load: loadList, setRows } = useIFCList();
 	const { data: statusTypes = [] } = useStatusTypes();
 	const { notifyOne, notifyMany, notifyingChartId, notifyingAll } = useIfcNotify();
 
 	const { user: authUser } = useAuth();
 	const currentUserId = authUser?.id ?? null;
+	const { modalityTypeId } = useABET();
+	const isFirstModalityRender = useRef(true);
+
+	useEffect(() => {
+		if (isFirstModalityRender.current) {
+			isFirstModalityRender.current = false;
+			return;
+		}
+		setPeriodId(null);
+		setSelections({});
+		setRows([]);
+		setScope(null);
+		setLastSearchedChartIds(null);
+		setLastSearchedPeriodId(null);
+		setScopeErrorDismissed(false);
+		setListErrorDismissed(false);
+	}, [modalityTypeId, setRows, setScope]);
 
 	const chartIncomplete =
 		scope !== null &&

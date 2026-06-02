@@ -18,14 +18,14 @@ type DropdownOption = { value: number | 'ALL'; label: string };
 export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 	const { locale: lang } = useI18n();
 
-	const firstLevelNum = scope.levels[0]?.levelNum ?? 0;
 	const allLabel = lang === 'en' ? 'All' : 'Todos';
 
 	const renderedLevels = useMemo(() => {
-		return scope.levels.map((level) => {
+		return scope.levels.map((level, index) => {
 			const opts = optionsForLevel(scope, level.levelNum, selections);
+			const parentLevelNum = index > 0 ? scope.levels[index - 1].levelNum : null;
 			const parentMissing =
-				level.levelNum > firstLevelNum && (selections[level.levelNum - 1] ?? null) === null;
+				parentLevelNum !== null && (selections[parentLevelNum] ?? null) === null;
 
 			const dropdownOptions: DropdownOption[] = [
 				{ value: 'ALL', label: allLabel },
@@ -47,7 +47,7 @@ export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 				empty: opts.length === 0 && !parentMissing,
 			};
 		});
-	}, [scope, selections, firstLevelNum, lang, allLabel]);
+	}, [scope, selections, lang, allLabel]);
 
 	return (
 		<>
