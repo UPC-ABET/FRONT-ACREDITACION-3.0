@@ -6,7 +6,6 @@ import { apiGet } from '@/shared/lib';
 type UseSessionExpiryParams = {
 	enabled: boolean;
 	onExpire: () => void;
-	/** Program modality code (TG102 type) sent with the session-check poll. */
 	modalityCode?: string;
 	idleMs?: number;
 	syncPollMs?: number;
@@ -23,7 +22,6 @@ export function useSessionExpiry({
 	syncPollMs = DEFAULT_SYNC_POLL_MS,
 }: UseSessionExpiryParams) {
 	const expiredRef = useRef(false);
-	// Hold the latest code in a ref so changing modality doesn't tear down the poll/listeners.
 	const modalityCodeRef = useRef(modalityCode);
 	modalityCodeRef.current = modalityCode;
 

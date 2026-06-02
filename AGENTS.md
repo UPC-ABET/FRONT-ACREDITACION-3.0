@@ -266,7 +266,7 @@ Live in their module's `components/` folder. Organized into subfolders by featur
 ## Code Style
 
 - **All code and comments in English.** No Spanish in source files.
-- **Default to no comments.** Only add a comment when the WHY is non-obvious.
+- **Default to no comments. Code must be self-explanatory.** Make names and structure carry the meaning instead of a comment. Comments are reserved ONLY for complex, high-reasoning logic (non-obvious algorithms, tricky edge cases, business rules that can't be inferred from the code) where the WHY genuinely can't be expressed in the code itself. If you reach for a comment to explain WHAT the code does, rewrite the code instead.
 - **No docblocks on barrel files.** Barrel `index.ts` files are pure re-exports, nothing else.
 - **No empty placeholder files.** Don't create folders/files until they have content.
 - **Use descriptive variable names.** Never abbreviate (`controlHeight`, not `h`; `fontSize`, not `fs`).

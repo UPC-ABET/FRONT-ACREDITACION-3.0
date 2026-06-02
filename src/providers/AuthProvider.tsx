@@ -1,7 +1,14 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ApiError, apiGet, clearPreferenceCookies, hasRouteAccess, logger } from '@/shared/lib';
+import {
+	ApiError,
+	apiGet,
+	clearPreferenceCookies,
+	hasRouteAccess,
+	logger,
+	setActiveSchoolId,
+} from '@/shared/lib';
 import { logoutUser } from '@/modules/auth/services';
 import { TYPE_CODES } from '@/shared/constants';
 import type { I18nText } from '@/shared/types';
@@ -47,11 +54,9 @@ type AuthState = {
 	userSchools: AuthSchool[];
 	isAuthenticated: boolean;
 	isLoading: boolean;
-	/** Program modality code (TG102 type) sent to `/users/me`. Defaults to REGULAR. */
 	modalityCode: string;
 	canAccessRoute: (path: string) => boolean;
 	refreshUser: (options?: { showGlobalLoading?: boolean }) => Promise<AuthUser | null>;
-	/** Switch the active modality and re-fetch `/users/me` with the selected code. */
 	changeModalityCode: (code: string) => Promise<AuthUser | null>;
 	clearUser: () => void;
 };
@@ -88,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		setPermissions([]);
 		setSchoolId(null);
 		setUserSchools([]);
+		setActiveSchoolId(null);
 	}, []);
 
 	const fetchUser = useCallback(
@@ -151,7 +157,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const changeModalityCode = useCallback(
 		(code: string) => {
 			setModalityCode(code);
-			// Re-fetch silently — no global loading toggle so the app doesn't flash a spinner.
 			return fetchUser(code);
 		},
 		[fetchUser],

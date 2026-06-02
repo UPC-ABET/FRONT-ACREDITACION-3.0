@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher, Select } from '@/shared/components';
-import { getSchoolCookie, setSchoolCookie } from '@/shared/lib';
+import { getSchoolCookie, setSchoolCookie, setActiveSchoolId } from '@/shared/lib';
 import { useABET, useAuth, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
 import { DEFAULT_USER_INITIALS, TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
@@ -224,8 +224,8 @@ function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 	}
 
 	useEffect(() => {
-		if (!selectedSchool) return;
-		setSchoolCookie(selectedSchool);
+		setActiveSchoolId(selectedSchool ? selectedSchool.id : null);
+		if (selectedSchool) setSchoolCookie(selectedSchool);
 	}, [selectedSchool]);
 
 	const resolvedUserName =

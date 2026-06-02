@@ -6,6 +6,7 @@
 
 import { ApiError } from './apiError';
 import { logger } from './logger';
+import { getSchoolCookie } from './authCookies';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -47,17 +48,41 @@ export function authHeader(): Record<string, string> {
 	return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+const SCHOOL_HEADER = 'X-School-Id';
+
+let activeSchoolId: number | null = null;
+let activeSchoolIdInitialized = false;
+
+function normalizeSchoolId(value: unknown): number | null {
+	return typeof value === 'number' && Number.isInteger(value) && value > 0 ? value : null;
+}
+
+export function setActiveSchoolId(schoolId: number | null): void {
+	activeSchoolId = normalizeSchoolId(schoolId);
+	activeSchoolIdInitialized = true;
+}
+
+function resolveSchoolId(): number | null {
+	if (!activeSchoolIdInitialized) {
+		activeSchoolId = normalizeSchoolId(getSchoolCookie()?.id);
+		activeSchoolIdInitialized = true;
+	}
+	return activeSchoolId;
+}
+
 export function buildHeaders(
 	extra: Record<string, string> = {},
 	isFormData = false,
 	tokenOverride?: string,
 ): Record<string, string> {
 	const token = tokenOverride ?? getToken();
+	const schoolId = resolveSchoolId();
 
 	return {
 		accept: '*/*',
 		...(isFormData ? {} : { 'Content-Type': 'application/json' }),
 		...(token ? { Authorization: `Bearer ${token}` } : {}),
+		[SCHOOL_HEADER]: schoolId === null ? 'null' : String(schoolId),
 		...extra,
 	};
 }
