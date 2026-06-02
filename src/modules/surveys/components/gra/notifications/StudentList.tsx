@@ -48,7 +48,7 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 	function handleDelete(id: number) {
 		remove(id, () => {
 			setDeleteId(null);
-			setToast({ open: true, type: 'success', msg: 'Estudiante eliminado de la notificación.' });
+			setToast({ open: true, type: 'success', msg: t('surveys.gra.notifications.toast.studentDeleted') });
 			load({ programId: programId, academicPeriodId: academicPeriodId });
 		});
 	}

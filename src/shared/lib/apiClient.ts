@@ -82,7 +82,7 @@ export function buildHeaders(
 		accept: '*/*',
 		...(isFormData ? {} : { 'Content-Type': 'application/json' }),
 		...(token ? { Authorization: `Bearer ${token}` } : {}),
-		[SCHOOL_HEADER]: schoolId === null ? 'null' : String(schoolId),
+		...(schoolId === null ? {} : { [SCHOOL_HEADER]: String(schoolId) }),
 		...extra,
 	};
 }
