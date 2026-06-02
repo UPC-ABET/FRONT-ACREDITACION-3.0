@@ -9,3 +9,11 @@ export const SCHOOL_OPTIONS = [
 	{ id: 'INGCIV', labelKey: 'school.ingciv' },
 	{ id: 'INGIND', labelKey: 'school.ingind' },
 ];
+
+export const SCHOOL_LABEL_KEYS_BY_CODE = SCHOOL_OPTIONS.reduce<Record<string, string>>(
+	(acc, option) => {
+		acc[option.id] = option.labelKey;
+		return acc;
+	},
+	{},
+);

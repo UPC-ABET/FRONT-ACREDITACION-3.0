@@ -3,18 +3,24 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
-import { getSchoolCookie } from '@/shared/lib';
+import { useSidebar, Button, LanguageSwitcher, Select } from '@/shared/components';
+import { getSchoolCookie, setSchoolCookie } from '@/shared/lib';
 import { useABET, useAuth, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
 import { DEFAULT_USER_INITIALS, TYPE_GROUP_CODES } from '@/shared/constants';
 import { getTypesByGroupCode } from '@/modules/core';
+import { SCHOOL_LABEL_KEYS_BY_CODE } from '@/modules/auth/constants';
 import type { NavbarProps } from '@/shared/types';
 
-function readCookieSchool(): string {
+type SchoolOption = {
+	value: string;
+	label: string;
+};
+
+function readCookieSchoolCode(): string {
 	const school = getSchoolCookie();
-	const schoolName = school?.code as string | undefined;
-	return typeof schoolName === 'string' ? schoolName : '';
+	const schoolCode = school?.code as string | undefined;
+	return typeof schoolCode === 'string' ? schoolCode : '';
 }
 
 const Sep = () => <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />;
@@ -75,25 +81,40 @@ function PillSwitcher({
 	);
 }
 
-function SchoolName({
+function SchoolSelector({
 	short = false,
 	label,
-	name,
+	options,
+	value,
+	onChange,
 }: {
 	short?: boolean;
 	label: string;
-	name: string;
+	options: SchoolOption[];
+	value: SchoolOption | null;
+	onChange: (value: string) => void;
 }) {
 	return (
-		<div className="flex items-center min-w-0 text-zinc-800 leading-none">
+		<div className="flex items-center gap-2 min-w-0 text-zinc-800">
 			<span
 				className={`font-semibold ${short ? 'text-[14px]' : 'text-[18px]'} flex-shrink-0 text-[var(--brand)]`}>
-				{label}:&nbsp;
+				{label}:
 			</span>
-			<span
-				className={`font-semibold ${short ? 'text-[12px] max-w-[150px]' : 'text-[14px] max-w-[220px]'}`}>
-				&quot;{name}&quot;
-			</span>
+			<div className={`${short ? 'w-[180px]' : 'w-[260px]'} max-w-[55vw]`}>
+				<Select
+					name="school"
+					value={value}
+					options={options}
+					size="sm"
+					isSearchable
+					isDisabled={options.length === 0}
+					placeholder={label}
+					onChange={(_, selected) => {
+						if (!selected || Array.isArray(selected)) return;
+						onChange(String(selected.value));
+					}}
+				/>
+			</div>
 		</div>
 	);
 }
@@ -130,14 +151,14 @@ function UserAvatar({
 	);
 }
 
-function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
+function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 	const { toggle, isMobile: isSidebarMobile } = useSidebar();
 	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
 	const { modalityTypeId, setModalityTypeId } = useABET();
-	const { user } = useAuth();
+	const { user, userSchools } = useAuth();
 
-	const [storedSchoolCode] = useState(readCookieSchool);
+	const [selectedSchoolCode, setSelectedSchoolCode] = useState(readCookieSchoolCode);
 
 	const { data: modalityOptions = [] } = useQuery({
 		queryKey: ['types', TYPE_GROUP_CODES.PROGRAM_MODALITY],
@@ -166,7 +187,38 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 		setModalityTypeId(Number(value));
 	}
 
-	const resolvedSchoolName = schoolName ?? storedSchoolCode;
+	const schoolOptions = useMemo(
+		() =>
+			userSchools.map((school) => {
+				const labelKey = SCHOOL_LABEL_KEYS_BY_CODE[school.code];
+				const translatedLabel = labelKey ? t(labelKey) : '';
+				const fallbackLabel =
+					school.name[locale] ?? school.name.es ?? school.name.en ?? school.code;
+				return {
+					value: school.code,
+					label: translatedLabel && translatedLabel !== labelKey ? translatedLabel : fallbackLabel,
+				};
+			}),
+		[userSchools, locale, t],
+	);
+
+	const selectedSchool =
+		userSchools.find((school) => school.code === selectedSchoolCode) ?? userSchools[0] ?? null;
+
+	const selectedSchoolOption =
+		schoolOptions.find((option) => option.value === selectedSchool?.code) ?? null;
+
+	function handleSelectSchool(value: string) {
+		const school = userSchools.find((item) => item.code === value);
+		if (!school) return;
+		setSelectedSchoolCode(school.code);
+		setSchoolCookie(school);
+	}
+
+	useEffect(() => {
+		if (!selectedSchool) return;
+		setSchoolCookie(selectedSchool);
+	}, [selectedSchool]);
 
 	const resolvedUserName =
 		userName ??
@@ -211,7 +263,13 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 				</div>
 				<div className="flex items-center justify-between px-4 h-14 gap-4">
 					<div className="ml-[12px]">
-						<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
+						<SchoolSelector
+							short
+							label={schoolLabelText}
+							options={schoolOptions}
+							value={selectedSchoolOption}
+							onChange={handleSelectSchool}
+						/>
 					</div>
 					{pillOptions.length > 0 && (
 						<PillSwitcher
@@ -230,7 +288,13 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 		return (
 			<nav className={`${navClass} h-[90px] flex items-center gap-3 px-4`}>
 				{menuBtn}
-				<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
+				<SchoolSelector
+					short
+					label={schoolLabelText}
+					options={schoolOptions}
+					value={selectedSchoolOption}
+					onChange={handleSelectSchool}
+				/>
 				<div className="flex-1" />
 				{pillOptions.length > 0 && (
 					<PillSwitcher
@@ -254,7 +318,12 @@ function Navbar({ schoolName, userName, userRole, userInitials }: NavbarProps) {
 	return (
 		<nav className={`${navClass} h-[80px] flex items-center gap-4 px-6`}>
 			{menuBtn}
-			<SchoolName label={schoolLabelText} name={resolvedSchoolName} />
+			<SchoolSelector
+				label={schoolLabelText}
+				options={schoolOptions}
+				value={selectedSchoolOption}
+				onChange={handleSelectSchool}
+			/>
 			<div className="flex-1" />
 			{pillOptions.length > 0 && (
 				<PillSwitcher

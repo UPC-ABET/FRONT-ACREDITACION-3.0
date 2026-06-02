@@ -2,6 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { apiGet } from '@/shared/lib';
+import type { I18nText } from '@/shared/types';
 
 export type AuthUser = {
 	id: number;
@@ -16,11 +17,21 @@ export type AuthRole = {
 	name: string;
 };
 
+export type AuthSchool = {
+	id: number;
+	code: string;
+	name: I18nText;
+	facultyId: number;
+	facultyCode: string;
+	facultyName: I18nText;
+};
+
 type AuthState = {
 	user: AuthUser | null;
 	activeRole: AuthRole | null;
 	permissions: string[];
 	schoolId: number | null;
+	userSchools: AuthSchool[];
 	isAuthenticated: boolean;
 	isLoading: boolean;
 	refreshUser: () => Promise<AuthUser | null>;
@@ -34,7 +45,8 @@ interface MePayload {
 	activeRole: AuthRole;
 	allowedRoles: AuthRole[];
 	permissions: string[];
-	schoolId: number;
+	schoolId?: number;
+	userSchools?: AuthSchool[];
 }
 
 interface Envelope<T> {
@@ -48,6 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [activeRole, setActiveRole] = useState<AuthRole | null>(null);
 	const [permissions, setPermissions] = useState<string[]>([]);
 	const [schoolId, setSchoolId] = useState<number | null>(null);
+	const [userSchools, setUserSchools] = useState<AuthSchool[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 
 	const fetchUser = useCallback(async (): Promise<AuthUser | null> => {
@@ -62,12 +75,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			setActiveRole(payload.activeRole ?? null);
 			setPermissions(payload.permissions ?? []);
 			setSchoolId(payload.schoolId ?? null);
+			setUserSchools(payload.userSchools ?? []);
 			return payload.user;
 		} catch {
 			setUser(null);
 			setActiveRole(null);
 			setPermissions([]);
 			setSchoolId(null);
+			setUserSchools([]);
 			return null;
 		}
 	}, []);
@@ -84,6 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		setActiveRole(null);
 		setPermissions([]);
 		setSchoolId(null);
+		setUserSchools([]);
 	}, []);
 
 	useEffect(() => {
@@ -96,12 +112,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			activeRole,
 			permissions,
 			schoolId,
+			userSchools,
 			isAuthenticated: user !== null,
 			isLoading,
 			refreshUser,
 			clearUser,
 		}),
-		[user, activeRole, permissions, schoolId, isLoading, refreshUser, clearUser],
+		[user, activeRole, permissions, schoolId, userSchools, isLoading, refreshUser, clearUser],
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
