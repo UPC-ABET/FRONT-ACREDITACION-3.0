@@ -43,9 +43,6 @@ export function AppSidebar() {
 	const { canAccessRoute } = useAuth();
 	const handleLogout = useLogout();
 
-	const isActive = (href?: string) =>
-		href ? pathname === href || (href !== '/' && pathname.startsWith(`${href}/`)) : false;
-
 	const navigation: NavItem[] = [
 		{ name: t('nav.home'), href: '/', icon: HomeIcon },
 		{
@@ -107,6 +104,17 @@ export function AppSidebar() {
 			],
 		},
 	];
+
+	const matchesHref = (href: string) =>
+		pathname === href || (href !== '/' && pathname.startsWith(`${href}/`));
+
+	const allHrefs = navigation.flatMap((item) =>
+		item.children ? item.children.map((child) => child.href) : item.href ? [item.href] : [],
+	);
+
+	const activeHref = allHrefs.filter(matchesHref).sort((a, b) => b.length - a.length)[0] ?? null;
+
+	const isActive = (href?: string) => Boolean(href) && href === activeHref;
 
 	const visibleNavigation = navigation
 		.map((item) => {
