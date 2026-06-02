@@ -81,18 +81,18 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 		);
 	}
 
-	const { project, students, rubric } = data;
+	const { project, students, rubric, course } = data;
 
 	const projectName = project.name[locale as 'es' | 'en'] ?? project.name.es;
-	const courseName = rubric.course.name[locale as 'es' | 'en'] ?? rubric.course.name.es;
+	const courseName = course?.name[locale as 'es' | 'en'] ?? course?.name.es ?? '—';
 	const rubricTypeName =
-		rubric.rubric.rubricType?.name[locale as 'es' | 'en'] ??
-		rubric.rubric.rubricType?.name.es ??
+		rubric?.rubric?.rubricType?.name[locale as 'es' | 'en'] ??
+		rubric?.rubric?.rubricType?.name.es ??
 		'—';
 	const gradeTypeName =
-		rubric.rubric.gradeType?.name[locale as 'es' | 'en'] ?? rubric.rubric.gradeType?.name.es ?? '—';
+		rubric?.rubric?.gradeType?.name[locale as 'es' | 'en'] ?? rubric?.rubric?.gradeType?.name.es ?? '—';
 
-	const isCapstone = rubric.rubric.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
+	const isCapstone = rubric?.rubric?.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 	const isFinal = gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
 	const isCapstoneFinal = isCapstone && isFinal;
 
@@ -213,7 +213,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 			</div>
 
 			{/* Rubric table */}
-			{isCapstoneFinal ? (
+			{rubric && isCapstoneFinal ? (
 				<ProjectRubricCapstoneTable
 					outcomes={rubric.outcomes}
 					questions={rubric.questions}
@@ -225,19 +225,17 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 					qualifStatuses={qualifStatuses}
 					nrNaTypeIds={nrNaTypeIds}
 				/>
-			) : (
-				rubric.questions.length > 0 && (
-					<ProjectRubricNonCapstoneTable
-						questions={rubric.questions}
-						students={students}
-						evaluatorId={evaluatorId}
-						rubricId={rubric.rubric.id}
-						projectId={projectId}
-						qualifStatuses={qualifStatuses}
-						nrNaTypeIds={nrNaTypeIds}
-					/>
-				)
-			)}
+			) : rubric && rubric.questions.length > 0 ? (
+				<ProjectRubricNonCapstoneTable
+					questions={rubric.questions}
+					students={students}
+					evaluatorId={evaluatorId}
+					rubricId={rubric.rubric.id}
+					projectId={projectId}
+					qualifStatuses={qualifStatuses}
+					nrNaTypeIds={nrNaTypeIds}
+				/>
+			) : null}
 		</div>
 	);
 }

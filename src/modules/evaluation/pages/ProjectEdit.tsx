@@ -126,10 +126,10 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 		);
 	}
 
-	const { project, students, evaluators, rubric } = data;
+	const { project, students, evaluators, rubric, course } = data;
 
 	const projectName = project.name[locale as 'es' | 'en'] ?? project.name.es;
-	const courseName = rubric.course.name[locale as 'es' | 'en'] ?? rubric.course.name.es;
+	const courseName = course?.name[locale as 'es' | 'en'] ?? course?.name.es ?? '—';
 
 	return (
 		<div className="space-y-6">
@@ -370,7 +370,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				onOpenChange={setStudentModalOpen}
 				projectId={projectId}
 				projectNumericId={project.id}
-				courseId={rubric.course.id}
+				courseId={course?.id ?? null}
 				academicPeriodId={data.academicPeriod?.id ?? null}
 				onSuccess={() => showToast('success', t('projects.edit.students.modal.successMessage'))}
 			/>

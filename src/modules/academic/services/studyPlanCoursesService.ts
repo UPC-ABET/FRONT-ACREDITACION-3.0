@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/shared';
-import { apiPost, apiPut } from '@/shared/lib';
+import { apiPost, apiPut, apiPatch } from '@/shared/lib';
 import { StudyPlanCourseResponse } from '../types';
 
 export type StudyPlanCourseFilters = {
@@ -20,5 +20,12 @@ export const studyPlanCoursesService = {
 		body: { extra: Record<string, unknown> },
 	): Promise<ApiResponse<StudyPlanCourseResponse>> {
 		return apiPut(`/study-plan-courses/update/${id}`, body);
+	},
+
+	enableEvaluation(
+		id: number,
+		isEvaluable: boolean,
+	): Promise<ApiResponse<StudyPlanCourseResponse>> {
+		return apiPatch(`/study-plan-courses/enable-evaluation/${id}`, { isEvaluable });
 	},
 };

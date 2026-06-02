@@ -28,3 +28,14 @@ export function useUpdateStudyPlanCourse() {
 		},
 	});
 }
+
+export function useEnableEvaluationCourse() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: ({ id, isEvaluable }: { id: number; isEvaluable: boolean }) =>
+			studyPlanCoursesService.enableEvaluation(id, isEvaluable),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: academicQueryKeys.studyPlanCourses() });
+		},
+	});
+}
