@@ -6,6 +6,8 @@ import { apiGet } from '@/shared/lib';
 type UseSessionExpiryParams = {
 	enabled: boolean;
 	onExpire: () => void;
+	/** Program modality code (TG102 type) sent with the session-check poll. */
+	modalityCode?: string;
 	idleMs?: number;
 	syncPollMs?: number;
 };
@@ -16,10 +18,14 @@ const DEFAULT_SYNC_POLL_MS = 60_000;
 export function useSessionExpiry({
 	enabled,
 	onExpire,
+	modalityCode,
 	idleMs = DEFAULT_IDLE_MS,
 	syncPollMs = DEFAULT_SYNC_POLL_MS,
 }: UseSessionExpiryParams) {
 	const expiredRef = useRef(false);
+	// Hold the latest code in a ref so changing modality doesn't tear down the poll/listeners.
+	const modalityCodeRef = useRef(modalityCode);
+	modalityCodeRef.current = modalityCode;
 
 	useEffect(() => {
 		if (!enabled) return;
@@ -32,7 +38,9 @@ export function useSessionExpiry({
 
 		const checkSession = async () => {
 			try {
-				await apiGet('/users/me');
+				const code = modalityCodeRef.current;
+				const query = code ? `?modalityCode=${encodeURIComponent(code)}` : '';
+				await apiGet(`/users/me${query}`);
 			} catch {
 				runExpire();
 			}

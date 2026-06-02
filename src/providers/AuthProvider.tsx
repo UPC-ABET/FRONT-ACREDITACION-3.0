@@ -2,7 +2,10 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { apiGet } from '@/shared/lib';
+import { TYPE_CODES } from '@/shared/constants';
 import type { I18nText } from '@/shared/types';
+
+const DEFAULT_MODALITY_CODE = TYPE_CODES.PROGRAM_MODALITY.REGULAR;
 
 export type AuthUser = {
 	id: number;
@@ -34,7 +37,11 @@ type AuthState = {
 	userSchools: AuthSchool[];
 	isAuthenticated: boolean;
 	isLoading: boolean;
+	/** Program modality code (TG102 type) sent to `/users/me`. Defaults to REGULAR. */
+	modalityCode: string;
 	refreshUser: () => Promise<AuthUser | null>;
+	/** Switch the active modality and re-fetch `/users/me` with the selected code. */
+	changeModalityCode: (code: string) => Promise<AuthUser | null>;
 	clearUser: () => void;
 };
 
@@ -62,10 +69,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [schoolId, setSchoolId] = useState<number | null>(null);
 	const [userSchools, setUserSchools] = useState<AuthSchool[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
+	const [modalityCode, setModalityCode] = useState<string>(DEFAULT_MODALITY_CODE);
 
-	const fetchUser = useCallback(async (): Promise<AuthUser | null> => {
+	const fetchUser = useCallback(async (code: string): Promise<AuthUser | null> => {
 		try {
-			const envelope = await apiGet<Envelope<MePayload>>('/users/me');
+			const query = code ? `?modalityCode=${encodeURIComponent(code)}` : '';
+			const envelope = await apiGet<Envelope<MePayload>>(`/users/me${query}`);
 			const payload = envelope?.data;
 			if (!payload?.user) {
 				setUser(null);
@@ -89,10 +98,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	const refreshUser = useCallback(async () => {
 		setIsLoading(true);
-		const u = await fetchUser();
+		const refreshedUser = await fetchUser(modalityCode);
 		setIsLoading(false);
-		return u;
-	}, [fetchUser]);
+		return refreshedUser;
+	}, [fetchUser, modalityCode]);
+
+	const changeModalityCode = useCallback(
+		(code: string) => {
+			setModalityCode(code);
+			// Re-fetch silently — no global loading toggle so the app doesn't flash a spinner.
+			return fetchUser(code);
+		},
+		[fetchUser],
+	);
 
 	const clearUser = useCallback(() => {
 		setUser(null);
@@ -103,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	}, []);
 
 	useEffect(() => {
-		fetchUser().finally(() => setIsLoading(false));
+		fetchUser(DEFAULT_MODALITY_CODE).finally(() => setIsLoading(false));
 	}, [fetchUser]);
 
 	const value = useMemo<AuthState>(
@@ -115,10 +133,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			userSchools,
 			isAuthenticated: user !== null,
 			isLoading,
+			modalityCode,
 			refreshUser,
+			changeModalityCode,
 			clearUser,
 		}),
-		[user, activeRole, permissions, schoolId, userSchools, isLoading, refreshUser, clearUser],
+		[
+			user,
+			activeRole,
+			permissions,
+			schoolId,
+			userSchools,
+			isLoading,
+			modalityCode,
+			refreshUser,
+			changeModalityCode,
+			clearUser,
+		],
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

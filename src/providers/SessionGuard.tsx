@@ -20,7 +20,7 @@ const SessionGuardContext = createContext<SessionGuardState | null>(null);
 export function SessionGuard({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
 	const router = useRouter();
-	const { isAuthenticated, isLoading, clearUser } = useAuth();
+	const { isAuthenticated, isLoading, clearUser, modalityCode } = useAuth();
 
 	const isAuthRoute = pathname?.startsWith('/auth') ?? false;
 	const isSurveyPublicRoute = pathname?.startsWith('/survey/') ?? false;
@@ -67,6 +67,7 @@ export function SessionGuard({ children }: { children: React.ReactNode }) {
 	useSessionExpiry({
 		enabled: mounted && !isAuthRoute && !isSurveyPublicRoute && isAuthenticated,
 		onExpire: expireSession,
+		modalityCode,
 	});
 
 	const value = useMemo<SessionGuardState>(() => {

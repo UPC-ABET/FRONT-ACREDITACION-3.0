@@ -7,7 +7,7 @@ import { useSidebar, Button, LanguageSwitcher, Select } from '@/shared/component
 import { getSchoolCookie, setSchoolCookie } from '@/shared/lib';
 import { useABET, useAuth, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
-import { DEFAULT_USER_INITIALS, TYPE_GROUP_CODES } from '@/shared/constants';
+import { DEFAULT_USER_INITIALS, TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import { getTypesByGroupCode } from '@/modules/core';
 import { SCHOOL_LABEL_KEYS_BY_CODE } from '@/modules/auth/constants';
 import type { NavbarProps } from '@/shared/types';
@@ -156,7 +156,7 @@ function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
 	const { modalityTypeId, setModalityTypeId } = useABET();
-	const { user, userSchools } = useAuth();
+	const { user, userSchools, changeModalityCode } = useAuth();
 
 	const [selectedSchoolCode, setSelectedSchoolCode] = useState(readCookieSchoolCode);
 
@@ -168,7 +168,10 @@ function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 
 	useEffect(() => {
 		if (modalityOptions.length > 0 && modalityTypeId === null) {
-			setModalityTypeId(modalityOptions[0].id);
+			const defaultOption =
+				modalityOptions.find((option) => option.code === TYPE_CODES.PROGRAM_MODALITY.REGULAR) ??
+				modalityOptions[0];
+			setModalityTypeId(defaultOption.id);
 		}
 	}, [modalityOptions, modalityTypeId, setModalityTypeId]);
 
@@ -184,7 +187,12 @@ function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 	const selectedProgramValue = modalityTypeId != null ? String(modalityTypeId) : '';
 
 	function handleSelectProgram(value: string) {
-		setModalityTypeId(Number(value));
+		const selectedId = Number(value);
+		setModalityTypeId(selectedId);
+		const selectedModality = modalityOptions.find((option) => option.id === selectedId);
+		if (selectedModality) {
+			changeModalityCode(selectedModality.code);
+		}
 	}
 
 	const schoolOptions = useMemo(
