@@ -281,18 +281,19 @@ export type ProjectDetailsResponse = {
 		modalityTypeId: number;
 		code: string;
 	} | null;
+	course: {
+		id: number;
+		name: { en: string; es: string };
+		description?: { en: string; es: string };
+		learningOutcome?: Record<string, unknown>;
+	} | null;
 	students: ProjectDetailsStudentResponse[];
 	evaluators?: ProjectDetailsEvaluatorResponse[];
-	rubric: {
+	rubric: null | {
 		rubric: {
 			id: number;
 			rubricType: { id: number; code: string; name: { en: string; es: string } };
 			gradeType: { id: number; code: string; name: { en: string; es: string } };
-		};
-		course: {
-			id: number;
-			name: { en: string; es: string };
-			description: { en: string; es: string };
 		};
 		outcomes: {
 			id: number;
