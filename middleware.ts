@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value
   const { pathname } = request.nextUrl
   const isAuthRoute = pathname.startsWith('/auth')
-  const isPublicSurvey = pathname.startsWith('/survey')
+  const isPublicSurvey = /^\/survey\/[^/]+\/respond(\/|$)/.test(pathname)
 
   // Public survey routes are accessible without authentication
   if (isPublicSurvey) {

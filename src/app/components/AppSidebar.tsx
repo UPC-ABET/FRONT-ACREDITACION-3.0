@@ -71,9 +71,9 @@ export function AppSidebar() {
 			name: t('nav.surveys.label'),
 			icon: ClipboardDocumentListIcon,
 			children: [
-				{ name: t('nav.surveys.ppp'), href: '/surveys/ppp' },
-				{ name: t('nav.surveys.gra'), href: '/surveys/gra' },
-				{ name: t('nav.surveys.lcfc'), href: '/surveys/lcfc' },
+				{ name: t('nav.surveys.ppp'), href: '/survey/ppp' },
+				{ name: t('nav.surveys.gra'), href: '/survey/gra' },
+				{ name: t('nav.surveys.lcfc'), href: '/survey/lcfc' },
 			],
 		},
 
@@ -110,10 +110,11 @@ export function AppSidebar() {
 
 	const visibleNavigation = navigation
 		.map((item) => {
-			if (!item.children) return canAccessRoute(item.href ?? '#') ? item : null;
-
-			const children = item.children.filter((child) => canAccessRoute(child.href));
-			return children.length > 0 ? { ...item, children } : null;
+			if (item.children) {
+				const children = item.children.filter((child) => canAccessRoute(child.href));
+				return children.length > 0 ? { ...item, children } : null;
+			}
+			return canAccessRoute(item.href ?? '#') ? item : null;
 		})
 		.filter((item): item is NavItem => item !== null);
 

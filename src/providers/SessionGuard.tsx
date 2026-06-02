@@ -24,7 +24,7 @@ export function SessionGuard({ children }: { children: React.ReactNode }) {
 		useAuth();
 
 	const isAuthRoute = pathname?.startsWith('/auth') ?? false;
-	const isSurveyPublicRoute = pathname?.startsWith('/survey/') ?? false;
+	const isSurveyPublicRoute = /^\/survey\/[^/]+\/respond(\/|$)/.test(pathname ?? '');
 
 	const [mounted, setMounted] = useState(false);
 	const [sessionExpiredOpen, setSessionExpiredOpen] = useState(false);
