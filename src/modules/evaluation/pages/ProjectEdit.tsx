@@ -114,7 +114,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 		return (
 			<div className="space-y-4">
 				<Link
-					href="/projects"
+					href="/evaluation/projects"
 					className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800">
 					<ArrowLeftIcon className="h-4 w-4" />
 					{t('projects.edit.backButton')}
@@ -135,7 +135,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 		<div className="space-y-6">
 			{/* Back link */}
 			<Link
-				href="/projects"
+				href="/evaluation/projects"
 				className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800">
 				<ArrowLeftIcon className="h-4 w-4" />
 				{t('projects.edit.backButton')}

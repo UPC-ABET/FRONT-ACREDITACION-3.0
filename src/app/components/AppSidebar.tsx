@@ -21,6 +21,7 @@ import {
 	ShieldCheckIcon,
 	DocumentCheckIcon,
 	ArrowUpTrayIcon,
+	AcademicCapIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth, useI18n } from '@/providers';
 import { useLogout } from '@/modules/auth/hooks';
@@ -51,8 +52,14 @@ export function AppSidebar() {
 			children: [
 				{ name: t('nav.rubricsList'), href: '/rubrics' },
 				{ name: t('nav.evaluationCourses'), href: '/rubrics/evaluation-courses' },
-				{ name: t('nav.projects'), href: '/projects' },
-				{ name: t('nav.gradeProjects'), href: '/grade-projects' },
+			],
+		},
+		{
+			name: t('nav.evaluation.label'),
+			icon: AcademicCapIcon,
+			children: [
+				{ name: t('nav.projects'), href: '/evaluation/projects' },
+				{ name: t('nav.gradeProjects'), href: '/evaluation/grade-projects' },
 			],
 		},
 		{

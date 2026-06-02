@@ -7,6 +7,9 @@
 		"performanceLevels": "Niveles de Desempeño",
 		"projects": "Proyectos Académicos",
 		"gradeProjects": "Calificar Proyectos",
+		"evaluation": {
+			"label": "Evaluación"
+		},
 		"ifcs": "IFCs",
 		"ifc": {
 			"label": "IFC",

@@ -13,6 +13,9 @@
 		"evaluationCourses": "Courses to Grade",
 		"projects": "Academic Projects",
 		"gradeProjects": "Grade Projects",
+		"evaluation": {
+			"label": "Evaluation"
+		},
 		"surveys": {
 			"label": "Surveys",
 			"ppp": "PPP — Pre-Professional",

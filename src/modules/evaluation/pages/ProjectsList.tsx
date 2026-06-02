@@ -145,7 +145,7 @@ export function ProjectsListPage() {
 					<p className="mt-2 text-zinc-600">{t('projects.list.description')}</p>
 				</div>
 				<Link
-					href="/projects/new"
+					href="/evaluation/projects/new"
 					className={cn(
 						buttonVariants({ variant: 'primary', size: 'md' }),
 						'shrink-0 inline-flex items-center gap-1.5',
@@ -282,7 +282,7 @@ export function ProjectsListPage() {
 								<TableCell className="text-center">
 									<div className="flex justify-center">
 										<Link
-											href={`/projects/${project.id}/edit`}
+											href={`/evaluation/projects/${project.id}/edit`}
 											className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
 											title={t('projects.list.table.edit')}>
 											<PencilIcon className="h-4 w-4" />

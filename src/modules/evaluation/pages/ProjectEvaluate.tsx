@@ -69,7 +69,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 		return (
 			<div className="space-y-4">
 				<Link
-					href="/grade-projects"
+					href="/evaluation/grade-projects"
 					className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800">
 					<ArrowLeftIcon className="h-4 w-4" />
 					{t('projects.evaluate.backButton')}
@@ -100,7 +100,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 		<div className="space-y-6">
 			{/* Back link */}
 			<Link
-				href="/grade-projects"
+				href="/evaluation/grade-projects"
 				className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800">
 				<ArrowLeftIcon className="h-4 w-4" />
 				{t('projects.evaluate.backButton')}

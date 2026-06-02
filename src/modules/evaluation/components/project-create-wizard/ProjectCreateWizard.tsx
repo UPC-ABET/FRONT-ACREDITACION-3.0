@@ -43,7 +43,7 @@ export function ProjectCreateWizard() {
 			};
 			const res = await projectsService.createFull(body);
 			const projectId = res.data?.id;
-			router.push(projectId ? `/projects/${projectId}/edit` : '/projects');
+			router.push(projectId ? `/evaluation/projects/${projectId}/edit` : '/evaluation/projects');
 		} catch (err) {
 			showError(err instanceof Error ? err.message : t('projects.create.error.create'));
 			setIsSubmitting(false);

@@ -221,7 +221,7 @@ export function GradeProjectsPage() {
 								{/* Acciones */}
 								<TableCell className="text-center">
 									<Link
-										href={`/grade-projects/${activeTab}/${project.projectId}/evaluate`}
+										href={`/evaluation/grade-projects/${activeTab}/${project.projectId}/evaluate`}
 										title={t('projects.grade.table.grade')}
 										className={cn(
 											'inline-flex items-center justify-center w-8 h-8 rounded-lg',
