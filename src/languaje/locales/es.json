@@ -1286,7 +1286,19 @@
 			"config": {
 				"colCode": "Código",
 				"colCourse": "Curso",
-				"colCommissions": "Comisiones"
+				"colCommissions": "Comisiones",
+				"toastGenerated": "Configuración generada exitosamente.",
+				"toastCloned": "Configuración clonada exitosamente.",
+				"cycleLabel": "Ciclo / Período",
+				"cyclePlaceholder": "Selecciona un período",
+				"generateButton": "Generar Configuración",
+				"cloneButton": "Clonar desde otro período",
+				"coursesTitle": "Cursos configurados ({{count}})",
+				"cloneDialogTitle": "Clonar configuración",
+				"cloneDialogBody": "Selecciona el período de origen para clonar su configuración al período actual ({{period}}).",
+				"originLabel": "Período de origen",
+				"originPlaceholder": "Selecciona un período de origen",
+				"cloneConfirm": "Clonar"
 			}
 		},
 		"gra": {
@@ -1326,7 +1338,20 @@
 					"pending": "Pendiente",
 					"responded": "Respondido"
 				},
+				"periodLabel": "Período académico",
+				"periodPlaceholder": "Selecciona un período",
+				"uploadTitle": "Carga masiva de estudiantes GRA",
+				"uploadDesc": "Sube un archivo Excel con los datos de los estudiantes a notificar.",
+				"addStudentTitle": "Agregar Estudiante Individual",
+				"studentCodePlaceholder": "Código del estudiante (ej: 2020001)",
+				"searchStudent": "Buscar estudiante",
+				"studentName": "Nombre",
+				"studentCode": "Código",
+				"studentCareer": "Carrera",
+				"adding": "Agregando...",
+				"addButton": "Agregar a Notificación",
 				"toast": {
+					"studentAdded": "{{name}} agregado exitosamente.",
 					"studentDeleted": "Estudiante eliminado de la notificación.",
 					"surveySent": "Encuestas enviadas exitosamente."
 				}
@@ -1396,9 +1421,30 @@
 			"noConfiguration": "Sin configuración para este ciclo",
 			"noConfigurationHint": "No existe configuración para el ciclo seleccionado. Puedes crear una nueva o clonar desde otro ciclo.",
 			"cloneConfiguration": "Clonar configuración",
-			"cloneToastHint": "Función de clonado: selecciona un ciclo de origen en el modal."
+			"cloneToastHint": "Función de clonado: selecciona un ciclo de origen en el modal.",
+			"fileUpload": {
+				"invalidFormat": "Formato inválido. Use: {{accept}}",
+				"fileTooLarge": "Archivo muy grande. Máximo {{mb}}MB.",
+				"processedSuccess": "Archivo procesado exitosamente. Se descargó el reporte.",
+				"step1Title": "Paso 1: Descarga la plantilla",
+				"step1Desc": "Descarga la plantilla Excel, llénala con los datos y luego súbela.",
+				"step2Title": "Paso 2: Sube el archivo completado",
+				"selectFile": "Selecciona el archivo",
+				"clickToSelect": "Haz clic para seleccionar un archivo",
+				"formats": "Formatos aceptados: {{accept}} · Máx. {{mb}}MB",
+				"uploading": "Subiendo...",
+				"uploadButton": "Subir Archivo"
+			}
 		},
 		"student": {
+			"loading": "Cargando encuesta...",
+			"invalidLink": {
+				"title": "Enlace inválido",
+				"message": "El enlace de acceso a la encuesta no es válido o está incompleto."
+			},
+			"accessError": {
+				"title": "Error de acceso"
+			},
 			"title": "Sistema ABET — Encuesta LCFC",
 			"subtitle": "Logro de Fin de Ciclo",
 			"programLabel": "Carrera",

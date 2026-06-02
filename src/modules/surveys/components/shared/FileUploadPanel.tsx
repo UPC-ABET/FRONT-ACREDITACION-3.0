@@ -3,17 +3,18 @@
 import React, { useRef, useState } from 'react';
 import { Button, Toast } from '@/shared/components';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon, DocumentIcon } from '@heroicons/react/24/outline';
+import { useI18n } from '@/providers';
 
 interface FileUploadPanelProps {
-	title: string;
-	description?: string;
-	accept?: string;
-	uploading: boolean;
-	success: boolean;
-	error: string | null;
-	onUpload: (file: File) => void;
-	onDownloadTemplate?: () => void;
-	downloadLabel: string;
+	readonly title: string;
+	readonly description?: string;
+	readonly accept?: string;
+	readonly uploading: boolean;
+	readonly success: boolean;
+	readonly error: string | null;
+	readonly onUpload: (file: File) => void;
+	readonly onDownloadTemplate?: () => void;
+	readonly downloadLabel: string;
 }
 
 const MAX_SIZE_MB = 10;
@@ -29,6 +30,7 @@ export function FileUploadPanel({
 	onDownloadTemplate,
 	downloadLabel,
 }: FileUploadPanelProps) {
+	const { t } = useI18n();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [validationError, setValidationError] = useState<string | null>(null);
@@ -46,11 +48,13 @@ export function FileUploadPanel({
 		const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
 		const validExts = accept.split(',').map((a) => a.trim().toLowerCase());
 		if (!validExts.includes(ext)) {
-			setValidationError(`Formato inválido. Use: ${accept}`);
+			setValidationError(t('surveys.shared.fileUpload.invalidFormat').replace('{{accept}}', accept));
 			return;
 		}
 		if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-			setValidationError(`Archivo muy grande. Máximo ${MAX_SIZE_MB}MB.`);
+			setValidationError(
+				t('surveys.shared.fileUpload.fileTooLarge').replace('{{mb}}', String(MAX_SIZE_MB)),
+			);
 			return;
 		}
 		setSelectedFile(file);
@@ -63,15 +67,11 @@ export function FileUploadPanel({
 
 	React.useEffect(() => {
 		if (success) {
-			setToast({
-				open: true,
-				type: 'success',
-				msg: 'Archivo procesado exitosamente. Se descargó el reporte.',
-			});
+			setToast({ open: true, type: 'success', msg: t('surveys.shared.fileUpload.processedSuccess') });
 			setSelectedFile(null);
 			if (inputRef.current) inputRef.current.value = '';
 		}
-	}, [success]);
+	}, [success, t]);
 
 	React.useEffect(() => {
 		if (error) setToast({ open: true, type: 'error', msg: error });
@@ -88,10 +88,10 @@ export function FileUploadPanel({
 				<div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-200">
 					<ArrowDownTrayIcon className="h-5 w-5 text-zinc-400 shrink-0" />
 					<div className="flex-1">
-						<p className="text-sm font-medium text-zinc-700">Paso 1: Descarga la plantilla</p>
-						<p className="text-xs text-zinc-500">
-							Descarga la plantilla Excel, llénala con los datos y luego súbela.
+						<p className="text-sm font-medium text-zinc-700">
+							{t('surveys.shared.fileUpload.step1Title')}
 						</p>
+						<p className="text-xs text-zinc-500">{t('surveys.shared.fileUpload.step1Desc')}</p>
 					</div>
 					<Button variant="surface" size="sm" onClick={onDownloadTemplate}>
 						{downloadLabel}
@@ -103,21 +103,28 @@ export function FileUploadPanel({
 				<div className="flex items-center gap-3">
 					<ArrowUpTrayIcon className="h-5 w-5 text-zinc-400 shrink-0" />
 					<p className="text-sm font-medium text-zinc-700">
-						{onDownloadTemplate ? 'Paso 2: Sube el archivo completado' : 'Selecciona el archivo'}
+						{onDownloadTemplate
+							? t('surveys.shared.fileUpload.step2Title')
+							: t('surveys.shared.fileUpload.selectFile')}
 					</p>
 				</div>
 
 				<div
+					role="button"
+					tabIndex={0}
 					className="border-2 border-dashed border-zinc-300 rounded-lg p-6 flex flex-col items-center gap-3 cursor-pointer hover:border-red-400 transition-colors"
-					onClick={() => inputRef.current?.click()}>
+					onClick={() => inputRef.current?.click()}
+					onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && inputRef.current?.click()}>
 					<DocumentIcon className="h-8 w-8 text-zinc-400" />
 					{selectedFile ? (
 						<p className="text-sm font-medium text-zinc-700">{selectedFile.name}</p>
 					) : (
-						<p className="text-sm text-zinc-500">Haz clic para seleccionar un archivo</p>
+						<p className="text-sm text-zinc-500">{t('surveys.shared.fileUpload.clickToSelect')}</p>
 					)}
 					<p className="text-xs text-zinc-400">
-						Formatos aceptados: {accept} · Máx. {MAX_SIZE_MB}MB
+						{t('surveys.shared.fileUpload.formats')
+							.replace('{{accept}}', accept)
+							.replace('{{mb}}', String(MAX_SIZE_MB))}
 					</p>
 				</div>
 
@@ -132,7 +139,9 @@ export function FileUploadPanel({
 				{validationError && <p className="text-xs text-red-600">{validationError}</p>}
 
 				<Button onClick={handleUpload} disabled={!selectedFile || uploading} className="w-full">
-					{uploading ? 'Subiendo...' : 'Subir Archivo'}
+					{uploading
+						? t('surveys.shared.fileUpload.uploading')
+						: t('surveys.shared.fileUpload.uploadButton')}
 				</Button>
 			</div>
 

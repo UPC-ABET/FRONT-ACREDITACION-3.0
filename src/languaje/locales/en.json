@@ -1286,7 +1286,19 @@
 			"config": {
 				"colCode": "Code",
 				"colCourse": "Course",
-				"colCommissions": "Commissions"
+				"colCommissions": "Commissions",
+				"toastGenerated": "Configuration generated successfully.",
+				"toastCloned": "Configuration cloned successfully.",
+				"cycleLabel": "Cycle / Period",
+				"cyclePlaceholder": "Select a period",
+				"generateButton": "Generate Configuration",
+				"cloneButton": "Clone from another period",
+				"coursesTitle": "Configured courses ({{count}})",
+				"cloneDialogTitle": "Clone configuration",
+				"cloneDialogBody": "Select the source period to clone its configuration to the current period ({{period}}).",
+				"originLabel": "Source period",
+				"originPlaceholder": "Select a source period",
+				"cloneConfirm": "Clone"
 			}
 		},
 		"gra": {
@@ -1328,8 +1340,21 @@
 				},
 				"toast": {
 					"studentDeleted": "Student removed from notification.",
-					"surveySent": "Surveys sent successfully."
-				}
+					"surveySent": "Surveys sent successfully.",
+					"studentAdded": "{{name}} added successfully."
+				},
+				"periodLabel": "Academic Period",
+				"periodPlaceholder": "Select a period",
+				"uploadTitle": "Bulk upload of GRA students",
+				"uploadDesc": "Upload an Excel file with the data of the students to notify.",
+				"addStudentTitle": "Add Individual Student",
+				"studentCodePlaceholder": "Student code (e.g. 2020001)",
+				"searchStudent": "Search student",
+				"studentName": "Name",
+				"studentCode": "Code",
+				"studentCareer": "Program",
+				"adding": "Adding...",
+				"addButton": "Add to Notification"
 			},
 			"management": {
 				"title": "Graduating Students Surveys",
@@ -1396,9 +1421,30 @@
 			"noConfiguration": "No configuration for this cycle",
 			"noConfigurationHint": "There is no configuration for the selected cycle. You can create a new one or clone from another cycle.",
 			"cloneConfiguration": "Clone configuration",
-			"cloneToastHint": "Clone function: select a source cycle in the modal."
+			"cloneToastHint": "Clone function: select a source cycle in the modal.",
+			"fileUpload": {
+				"invalidFormat": "Invalid format. Use: {{accept}}",
+				"fileTooLarge": "File too large. Maximum {{mb}}MB.",
+				"processedSuccess": "File processed successfully. Report downloaded.",
+				"step1Title": "Step 1: Download the template",
+				"step1Desc": "Download the Excel template, fill it with the data, then upload it.",
+				"step2Title": "Step 2: Upload the completed file",
+				"selectFile": "Select the file",
+				"clickToSelect": "Click to select a file",
+				"formats": "Accepted formats: {{accept}} · Max. {{mb}}MB",
+				"uploading": "Uploading...",
+				"uploadButton": "Upload File"
+			}
 		},
 		"student": {
+			"loading": "Loading survey...",
+			"invalidLink": {
+				"title": "Invalid link",
+				"message": "The survey access link is invalid or incomplete."
+			},
+			"accessError": {
+				"title": "Access error"
+			},
 			"title": "ABET System — LCFC Survey",
 			"subtitle": "End of Cycle Achievement",
 			"programLabel": "Program",

@@ -15,9 +15,8 @@ import {
 	Toast,
 } from '@/shared/components';
 import { SparklesIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
-import { useI18n } from '@/providers';
+import { useI18n, useABET } from '@/providers';
 import { useLCFCConfiguration, useLCFCCycles } from '../../../hooks';
-import { useABET } from '@/providers';
 import type { LCFCCourse } from '../../../types';
 
 export function LCFCConfiguration() {
@@ -31,7 +30,6 @@ export function LCFCConfiguration() {
 		load: loadConfig,
 		generate,
 		clone,
-		changeStatus,
 	} = useLCFCConfiguration();
 
 	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
@@ -58,7 +56,7 @@ export function LCFCConfiguration() {
 	function handleGenerate() {
 		if (!selectedCycle) return;
 		generate('1', selectedCycle.value, undefined, undefined, () => {
-			setToast({ open: true, type: 'success', msg: 'Configuración generada exitosamente.' });
+			setToast({ open: true, type: 'success', msg: t('surveys.lcfc.config.toastGenerated') });
 			loadConfig('1', selectedCycle.value);
 		});
 	}
@@ -67,7 +65,7 @@ export function LCFCConfiguration() {
 		if (!selectedCycle || !originCycle) return;
 		clone(originCycle.value, selectedCycle.value, () => {
 			setCloneDialogOpen(false);
-			setToast({ open: true, type: 'success', msg: 'Configuración clonada exitosamente.' });
+			setToast({ open: true, type: 'success', msg: t('surveys.lcfc.config.toastCloned') });
 			loadConfig('1', selectedCycle.value);
 		});
 	}
@@ -81,6 +79,7 @@ export function LCFCConfiguration() {
 			accessorKey: 'commissions',
 			header: t('surveys.lcfc.config.colCommissions'),
 			cell: ({ getValue }) => {
+				// NOSONAR — cell renderers are render functions, not React components
 				const list = getValue() as Array<{ commissionId: number; commissionName: string }>;
 				return (
 					<div className="flex flex-wrap gap-1">
@@ -99,11 +98,11 @@ export function LCFCConfiguration() {
 		<div className="space-y-6">
 			<div className="max-w-sm">
 				<Select
-					label="Ciclo / Período"
+					label={t('surveys.lcfc.config.cycleLabel')}
 					options={cycleOptions}
 					value={selectedCycle}
 					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-					placeholder="Selecciona un período"
+					placeholder={t('surveys.lcfc.config.cyclePlaceholder')}
 					isSearchable
 				/>
 			</div>
@@ -112,11 +111,11 @@ export function LCFCConfiguration() {
 				<div className="flex gap-2">
 					<Button size="sm" onClick={handleGenerate} disabled={loading}>
 						<SparklesIcon className="h-4 w-4 mr-1" />
-						Generar Configuración
+						{t('surveys.lcfc.config.generateButton')}
 					</Button>
 					<Button size="sm" variant="surface" onClick={() => setCloneDialogOpen(true)}>
 						<DocumentDuplicateIcon className="h-4 w-4 mr-1" />
-						Clonar desde otro período
+						{t('surveys.lcfc.config.cloneButton')}
 					</Button>
 				</div>
 			)}
@@ -125,32 +124,35 @@ export function LCFCConfiguration() {
 				<DataTable
 					columns={columns}
 					data={courses}
-					title={`Cursos configurados (${courses.length})`}
+					title={t('surveys.lcfc.config.coursesTitle').replace('{{count}}', String(courses.length))}
 				/>
 			)}
 
-			{/* Clone dialog */}
 			<Dialog open={cloneDialogOpen} onOpenChange={setCloneDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Clonar configuración</DialogTitle>
+						<DialogTitle>{t('surveys.lcfc.config.cloneDialogTitle')}</DialogTitle>
 					</DialogHeader>
 					<div className="space-y-4 py-2">
 						<p className="text-sm text-zinc-600">
-							Selecciona el período de origen para clonar su configuración al período actual (
-							<strong>{selectedCycle?.label}</strong>).
+							{t('surveys.lcfc.config.cloneDialogBody').replace(
+								'{{period}}',
+								selectedCycle?.label ?? '',
+							)}
 						</p>
 						<Select
-							label="Período de origen"
+							label={t('surveys.lcfc.config.originLabel')}
 							options={cycleOptions.filter((c) => c.value !== selectedCycle?.value)}
 							value={originCycle}
-							onChange={(_, val) => setOriginCycle(val as { label: string; value: number } | null)}
-							placeholder="Selecciona un período de origen"
+							onChange={(_, val) =>
+								setOriginCycle(val as { label: string; value: number } | null)
+							}
+							placeholder={t('surveys.lcfc.config.originPlaceholder')}
 						/>
 					</div>
 					<DialogFooter showCloseButton>
 						<Button onClick={handleClone} disabled={!originCycle}>
-							Clonar
+							{t('surveys.lcfc.config.cloneConfirm')}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

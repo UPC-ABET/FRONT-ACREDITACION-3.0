@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Input, Button, Toast } from '@/shared/components';
 import { MagnifyingGlassIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { useI18n } from '@/providers';
 import { useGRAStudentSearch } from '../../../hooks';
 
 interface AddStudentPanelProps {
@@ -16,6 +17,7 @@ export function AddStudentPanel({
 	academicPeriodId,
 	onStudentAdded,
 }: AddStudentPanelProps) {
+	const { t } = useI18n();
 	const { result, loading, error, search, add, reset } = useGRAStudentSearch();
 	const [codigo, setCodigo] = useState('');
 	const [adding, setAdding] = useState(false);
@@ -40,7 +42,11 @@ export function AddStudentPanel({
 				academicPeriodId: academicPeriodId,
 			},
 			() => {
-				setToast({ open: true, type: 'success', msg: `${result.name} agregado exitosamente.` });
+				setToast({
+					open: true,
+					type: 'success',
+					msg: t('surveys.gra.notifications.toast.studentAdded').replace('{{name}}', result.name),
+				});
 				setCodigo('');
 				reset();
 				onStudentAdded?.();
@@ -51,11 +57,13 @@ export function AddStudentPanel({
 
 	return (
 		<div className="space-y-4">
-			<h4 className="text-sm font-bold text-zinc-700">Agregar Estudiante Individual</h4>
+			<h4 className="text-sm font-bold text-zinc-700">
+				{t('surveys.gra.notifications.addStudentTitle')}
+			</h4>
 
 			<div className="flex gap-2">
 				<Input
-					placeholder="Código del estudiante (ej: 2020001)"
+					placeholder={t('surveys.gra.notifications.studentCodePlaceholder')}
 					value={codigo}
 					onChange={(e) => setCodigo(e.target.value)}
 					onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -64,7 +72,7 @@ export function AddStudentPanel({
 					onClick={handleSearch}
 					disabled={loading || !codigo.trim()}
 					size="md"
-					aria-label="Buscar estudiante">
+					aria-label={t('surveys.gra.notifications.searchStudent')}>
 					<MagnifyingGlassIcon className="h-4 w-4" />
 				</Button>
 			</div>
@@ -75,11 +83,15 @@ export function AddStudentPanel({
 				<div className="p-4 bg-zinc-50 rounded-xl border border-zinc-200 space-y-3">
 					<div className="grid grid-cols-2 gap-3 text-sm">
 						<div>
-							<span className="text-xs text-zinc-500 block">Nombre</span>
+							<span className="text-xs text-zinc-500 block">
+								{t('surveys.gra.notifications.studentName')}
+							</span>
 							<span className="font-medium text-zinc-800">{result.name}</span>
 						</div>
 						<div>
-							<span className="text-xs text-zinc-500 block">Código</span>
+							<span className="text-xs text-zinc-500 block">
+								{t('surveys.gra.notifications.studentCode')}
+							</span>
 							<span className="font-medium text-zinc-800">{result.code}</span>
 						</div>
 						<div>
@@ -87,14 +99,18 @@ export function AddStudentPanel({
 							<span className="font-medium text-zinc-800">{result.email}</span>
 						</div>
 						<div>
-							<span className="text-xs text-zinc-500 block">Carrera</span>
+							<span className="text-xs text-zinc-500 block">
+								{t('surveys.gra.notifications.studentCareer')}
+							</span>
 							<span className="font-medium text-zinc-800">{result.career}</span>
 						</div>
 					</div>
 
 					<Button onClick={handleAdd} disabled={adding} size="sm">
 						<UserPlusIcon className="h-4 w-4 mr-1" />
-						{adding ? 'Agregando...' : 'Agregar a Notificación'}
+						{adding
+							? t('surveys.gra.notifications.adding')
+							: t('surveys.gra.notifications.addButton')}
 					</Button>
 				</div>
 			)}

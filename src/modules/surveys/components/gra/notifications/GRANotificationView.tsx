@@ -2,13 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { Select, Tabs } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useI18n, useABET } from '@/providers';
 import { AddStudentPanel } from './AddStudentPanel';
 import { StudentList } from './StudentList';
 import { EditEmailTemplate } from './EditEmailTemplate';
 import { FileUploadPanel } from '../../shared/FileUploadPanel';
 import { useGRAUpload, useGRACycles } from '../../../hooks';
-import { useABET } from '@/providers';
 
 export function GRANotificationView() {
 	const { t } = useI18n();
@@ -16,7 +15,7 @@ export function GRANotificationView() {
 	const { cycles, load: loadCycles } = useGRACycles();
 	const [activeTab, setActiveTab] = useState('list');
 	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
-	const { loading, error, success, downloadTemplate, upload, reset } = useGRAUpload();
+	const { loading, error, success, downloadTemplate, upload } = useGRAUpload();
 
 	const NOTIFICATION_TABS = [
 		{ id: 'list', label: t('surveys.gra.notifications.tabs.list') },
@@ -37,11 +36,11 @@ export function GRANotificationView() {
 		<div className="space-y-6">
 			<div className="max-w-sm">
 				<Select
-					label="Período académico"
+					label={t('surveys.gra.notifications.periodLabel')}
 					options={cycleOptions}
 					value={selectedCycle}
 					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-					placeholder="Selecciona un período"
+					placeholder={t('surveys.gra.notifications.periodPlaceholder')}
 					isSearchable
 				/>
 			</div>
@@ -66,8 +65,8 @@ export function GRANotificationView() {
 						{activeTab === 'upload' && (
 							<div className="max-w-lg">
 								<FileUploadPanel
-									title="Carga masiva de estudiantes GRA"
-									description="Sube un archivo Excel con los datos de los estudiantes a notificar."
+									title={t('surveys.gra.notifications.uploadTitle')}
+									description={t('surveys.gra.notifications.uploadDesc')}
 									uploading={loading}
 									success={success}
 									error={error}
