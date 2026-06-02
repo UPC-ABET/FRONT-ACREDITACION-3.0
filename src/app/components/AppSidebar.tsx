@@ -22,7 +22,7 @@ import {
 	DocumentCheckIcon,
 	ArrowUpTrayIcon,
 } from '@heroicons/react/24/outline';
-import { useI18n } from '@/providers';
+import { useAuth, useI18n } from '@/providers';
 import { useLogout } from '@/modules/auth/hooks';
 
 type NavChild = {
@@ -40,9 +40,11 @@ type NavItem = {
 export function AppSidebar() {
 	const pathname = usePathname();
 	const { t } = useI18n();
+	const { canAccessRoute } = useAuth();
 	const handleLogout = useLogout();
 
-	const isActive = (href?: string) => (href ? pathname === href : false);
+	const isActive = (href?: string) =>
+		href ? pathname === href || (href !== '/' && pathname.startsWith(`${href}/`)) : false;
 
 	const navigation: NavItem[] = [
 		{ name: t('nav.home'), href: '/', icon: HomeIcon },
@@ -106,13 +108,22 @@ export function AppSidebar() {
 		},
 	];
 
+	const visibleNavigation = navigation
+		.map((item) => {
+			if (!item.children) return canAccessRoute(item.href ?? '#') ? item : null;
+
+			const children = item.children.filter((child) => canAccessRoute(child.href));
+			return children.length > 0 ? { ...item, children } : null;
+		})
+		.filter((item): item is NavItem => item !== null);
+
 	return (
 		<Sidebar>
 			<SidebarHeader />
 
 			<SidebarContent>
 				<SidebarGroup>
-					{navigation.map((item) => {
+					{visibleNavigation.map((item) => {
 						const childActive = item.children?.some((child) => isActive(child.href)) ?? false;
 
 						return (

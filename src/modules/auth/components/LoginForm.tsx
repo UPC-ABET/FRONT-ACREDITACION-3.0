@@ -33,7 +33,10 @@ export default function LoginForm() {
 		setLoading(true);
 		try {
 			await loginByCredentials(payload);
-			await refreshUser();
+			const refreshedUser = await refreshUser({ showGlobalLoading: false });
+			if (!refreshedUser) {
+				throw new Error('error.auth.noPermissionsConfigured');
+			}
 			router.replace('/');
 		} catch (err: unknown) {
 			const rawMessage = err instanceof Error ? err.message : '';

@@ -6,12 +6,7 @@
 	--foreground: #18181b; /* Un negro casi total (zinc-900) */
 	--brand: #c8102e;
 	--brand-border: rgba(200, 16, 46, 0.15);
-	--login-bg: image-set(
-		url("/_next/image?url=https%3A%2F%2Faulavirtual.upc.edu.pe%2Fbbcswebdav%2Finstitution%2FBranding%2FNew_Login%2Ffondo-bb.jpg&w=960&q=35")
-			1x,
-		url("/_next/image?url=https%3A%2F%2Faulavirtual.upc.edu.pe%2Fbbcswebdav%2Finstitution%2FBranding%2FNew_Login%2Ffondo-bb.jpg&w=1920&q=50")
-			2x
-	);
+	--login-bg: url('https://aulavirtual.upc.edu.pe/bbcswebdav/institution/Branding/New_Login/fondo-bb.jpg');
 }
 
 /* ELIMINAMOS TODO EL BLOQUE @media (prefers-color-scheme: dark)

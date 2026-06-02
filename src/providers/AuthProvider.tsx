@@ -1,7 +1,8 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { apiGet } from '@/shared/lib';
+import { ApiError, apiGet, clearPreferenceCookies, hasRouteAccess, logger } from '@/shared/lib';
+import { logoutUser } from '@/modules/auth/services';
 import { TYPE_CODES } from '@/shared/constants';
 import type { I18nText } from '@/shared/types';
 
@@ -29,17 +30,27 @@ export type AuthSchool = {
 	facultyName: I18nText;
 };
 
+export type AuthPermission = {
+	id: number;
+	code: string;
+	module: string;
+	route: string;
+	permissions: string[];
+};
+
 type AuthState = {
 	user: AuthUser | null;
 	activeRole: AuthRole | null;
-	permissions: string[];
+	permissions: AuthPermission[];
+	allowedRoutes: string[];
 	schoolId: number | null;
 	userSchools: AuthSchool[];
 	isAuthenticated: boolean;
 	isLoading: boolean;
 	/** Program modality code (TG102 type) sent to `/users/me`. Defaults to REGULAR. */
 	modalityCode: string;
-	refreshUser: () => Promise<AuthUser | null>;
+	canAccessRoute: (path: string) => boolean;
+	refreshUser: (options?: { showGlobalLoading?: boolean }) => Promise<AuthUser | null>;
 	/** Switch the active modality and re-fetch `/users/me` with the selected code. */
 	changeModalityCode: (code: string) => Promise<AuthUser | null>;
 	clearUser: () => void;
@@ -51,7 +62,7 @@ interface MePayload {
 	user: AuthUser;
 	activeRole: AuthRole;
 	allowedRoles: AuthRole[];
-	permissions: string[];
+	permissions: AuthPermission[];
 	schoolId?: number;
 	userSchools?: AuthSchool[];
 }
@@ -65,43 +76,77 @@ interface Envelope<T> {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [user, setUser] = useState<AuthUser | null>(null);
 	const [activeRole, setActiveRole] = useState<AuthRole | null>(null);
-	const [permissions, setPermissions] = useState<string[]>([]);
+	const [permissions, setPermissions] = useState<AuthPermission[]>([]);
 	const [schoolId, setSchoolId] = useState<number | null>(null);
 	const [userSchools, setUserSchools] = useState<AuthSchool[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [modalityCode, setModalityCode] = useState<string>(DEFAULT_MODALITY_CODE);
 
-	const fetchUser = useCallback(async (code: string): Promise<AuthUser | null> => {
-		try {
-			const query = code ? `?modalityCode=${encodeURIComponent(code)}` : '';
-			const envelope = await apiGet<Envelope<MePayload>>(`/users/me${query}`);
-			const payload = envelope?.data;
-			if (!payload?.user) {
-				setUser(null);
-				return null;
-			}
-			setUser(payload.user);
-			setActiveRole(payload.activeRole ?? null);
-			setPermissions(payload.permissions ?? []);
-			setSchoolId(payload.schoolId ?? null);
-			setUserSchools(payload.userSchools ?? []);
-			return payload.user;
-		} catch {
-			setUser(null);
-			setActiveRole(null);
-			setPermissions([]);
-			setSchoolId(null);
-			setUserSchools([]);
-			return null;
-		}
+	const clearAuthState = useCallback(() => {
+		setUser(null);
+		setActiveRole(null);
+		setPermissions([]);
+		setSchoolId(null);
+		setUserSchools([]);
 	}, []);
 
-	const refreshUser = useCallback(async () => {
-		setIsLoading(true);
-		const refreshedUser = await fetchUser(modalityCode);
-		setIsLoading(false);
-		return refreshedUser;
-	}, [fetchUser, modalityCode]);
+	const fetchUser = useCallback(
+		async (code: string, throwOnNoPermissions = false): Promise<AuthUser | null> => {
+			try {
+				const query = code ? `?modalityCode=${encodeURIComponent(code)}` : '';
+				const envelope = await apiGet<Envelope<MePayload>>(`/users/me${query}`);
+				const payload = envelope?.data;
+				if (!payload?.user) {
+					clearAuthState();
+					return null;
+				}
+
+				const nextPermissions = payload.permissions ?? [];
+				if (nextPermissions.length === 0) {
+					clearAuthState();
+					clearPreferenceCookies();
+					try {
+						await logoutUser();
+					} catch (err: unknown) {
+						logger.warn('Failed to close backend session for user without permissions', err);
+					}
+					if (throwOnNoPermissions) {
+						throw new ApiError('error.auth.noPermissionsConfigured', 403);
+					}
+					return null;
+				}
+
+				setUser(payload.user);
+				setActiveRole(payload.activeRole ?? null);
+				setPermissions(nextPermissions);
+				setSchoolId(payload.schoolId ?? null);
+				setUserSchools(payload.userSchools ?? []);
+				return payload.user;
+			} catch (err: unknown) {
+				clearAuthState();
+				if (throwOnNoPermissions && err instanceof ApiError) throw err;
+				return null;
+			}
+		},
+		[clearAuthState],
+	);
+
+	const refreshUser = useCallback(
+		async (options?: { showGlobalLoading?: boolean }) => {
+			const showGlobalLoading = options?.showGlobalLoading ?? true;
+			if (showGlobalLoading) {
+				setIsLoading(true);
+			}
+			try {
+				return await fetchUser(modalityCode, true);
+			} finally {
+				if (showGlobalLoading) {
+					setIsLoading(false);
+				}
+			}
+		},
+		[fetchUser, modalityCode],
+	);
 
 	const changeModalityCode = useCallback(
 		(code: string) => {
@@ -113,12 +158,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	);
 
 	const clearUser = useCallback(() => {
-		setUser(null);
-		setActiveRole(null);
-		setPermissions([]);
-		setSchoolId(null);
-		setUserSchools([]);
-	}, []);
+		clearAuthState();
+	}, [clearAuthState]);
+
+	const allowedRoutes = useMemo(
+		() =>
+			permissions
+				.map((permission) => permission.route)
+				.filter((route): route is string => typeof route === 'string' && route.trim() !== ''),
+		[permissions],
+	);
+
+	const canAccessRoute = useCallback(
+		(path: string) => hasRouteAccess(path, allowedRoutes),
+		[allowedRoutes],
+	);
 
 	useEffect(() => {
 		fetchUser(DEFAULT_MODALITY_CODE).finally(() => setIsLoading(false));
@@ -129,11 +183,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			user,
 			activeRole,
 			permissions,
+			allowedRoutes,
 			schoolId,
 			userSchools,
 			isAuthenticated: user !== null,
 			isLoading,
 			modalityCode,
+			canAccessRoute,
 			refreshUser,
 			changeModalityCode,
 			clearUser,
@@ -142,10 +198,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			user,
 			activeRole,
 			permissions,
+			allowedRoutes,
 			schoolId,
 			userSchools,
 			isLoading,
 			modalityCode,
+			canAccessRoute,
 			refreshUser,
 			changeModalityCode,
 			clearUser,

@@ -6,7 +6,7 @@ import { SessionExpiredAlert } from '@/shared/components';
 import { useAuth } from '@/providers/AuthProvider';
 import { useSessionExpiry } from '@/modules/auth/hooks';
 import { logoutUser } from '@/modules/auth/services';
-import { clearPreferenceCookies, safeRedirect } from '@/shared/lib';
+import { clearPreferenceCookies, getDefaultAuthorizedPath, safeRedirect } from '@/shared/lib';
 
 type SessionGuardState = {
 	mounted: boolean;
@@ -20,7 +20,8 @@ const SessionGuardContext = createContext<SessionGuardState | null>(null);
 export function SessionGuard({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname();
 	const router = useRouter();
-	const { isAuthenticated, isLoading, clearUser, modalityCode } = useAuth();
+	const { isAuthenticated, isLoading, allowedRoutes, canAccessRoute, clearUser, modalityCode } =
+		useAuth();
 
 	const isAuthRoute = pathname?.startsWith('/auth') ?? false;
 	const isSurveyPublicRoute = pathname?.startsWith('/survey/') ?? false;
@@ -55,14 +56,29 @@ export function SessionGuard({ children }: { children: React.ReactNode }) {
 		if (isSurveyPublicRoute) return;
 
 		if (isAuthenticated && isAuthRoute) {
-			router.replace('/');
+			router.replace(getDefaultAuthorizedPath(allowedRoutes) ?? '/');
 			return;
 		}
 
 		if (!isAuthenticated && !isAuthRoute) {
 			router.replace('/auth/login');
+			return;
 		}
-	}, [mounted, isLoading, isAuthenticated, pathname, isAuthRoute, isSurveyPublicRoute, router]);
+
+		if (isAuthenticated && !isAuthRoute && pathname && !canAccessRoute(pathname)) {
+			router.replace(getDefaultAuthorizedPath(allowedRoutes) ?? '/');
+		}
+	}, [
+		mounted,
+		isLoading,
+		isAuthenticated,
+		pathname,
+		isAuthRoute,
+		isSurveyPublicRoute,
+		allowedRoutes,
+		canAccessRoute,
+		router,
+	]);
 
 	useSessionExpiry({
 		enabled: mounted && !isAuthRoute && !isSurveyPublicRoute && isAuthenticated,
@@ -76,8 +92,21 @@ export function SessionGuard({ children }: { children: React.ReactNode }) {
 			return { mounted, showApp: false, showAuth: false, showPublic: false };
 		if (isAuthRoute)
 			return { mounted, showApp: false, showAuth: !isAuthenticated, showPublic: false };
-		return { mounted, showApp: isAuthenticated, showAuth: false, showPublic: false };
-	}, [mounted, isLoading, isAuthenticated, isAuthRoute, isSurveyPublicRoute]);
+		return {
+			mounted,
+			showApp: isAuthenticated && Boolean(pathname && canAccessRoute(pathname)),
+			showAuth: false,
+			showPublic: false,
+		};
+	}, [
+		mounted,
+		isLoading,
+		isAuthenticated,
+		isAuthRoute,
+		isSurveyPublicRoute,
+		pathname,
+		canAccessRoute,
+	]);
 
 	return (
 		<SessionGuardContext.Provider value={value}>

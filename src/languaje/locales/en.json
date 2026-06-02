@@ -582,7 +582,7 @@
 		"internalServer": "Internal server error",
 		"auth": {
 			"accessDenied": "Access denied — insufficient permissions",
-			"noPermissionsConfigured": "No permissions configured for this operation"
+			"noPermissionsConfigured": "You do not have permission to enter."
 		},
 		"user": {
 			"noRolesAssigned": "The user has no active roles assigned",
