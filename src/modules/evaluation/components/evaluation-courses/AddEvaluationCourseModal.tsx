@@ -13,7 +13,7 @@ import {
 } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib/authCookies';
-import { useStudyPlanCourses, useUpdateStudyPlanCourse } from '@/modules/academic/hooks';
+import { useStudyPlanCourses, useEnableEvaluationCourse } from '@/modules/academic/hooks';
 import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { StudyPlanCourseResponse } from '@/modules/academic';
 
@@ -57,11 +57,12 @@ export function AddEvaluationCourseModal({
 	});
 
 	const markedIds = useMemo(
-		() => new Set(spcList.filter((s) => s.extra?.isEvaluateRubric === true).map((s) => s.id)),
+		// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
+		() => new Set(spcList.filter((s) => s.extra?.is_evaluable === true).map((s) => s.id)),
 		[spcList],
 	);
 
-	const updateSpc = useUpdateStudyPlanCourse();
+	const enableEvaluation = useEnableEvaluationCourse();
 
 	const togglePending = (id: number) => {
 		setPendingIds((prev) => {
@@ -77,10 +78,9 @@ export function AddEvaluationCourseModal({
 		if (toAdd.length === 0) return;
 
 		Promise.all(
-			toAdd.map((spc) => {
-				const mergedExtra = { ...(spc.extra ?? {}), isEvaluateRubric: true };
-				return updateSpc.mutateAsync({ id: spc.id, body: { extra: mergedExtra } });
-			}),
+			toAdd.map((spc) =>
+				enableEvaluation.mutateAsync({ id: spc.id, isEvaluable: true }),
+			),
 		)
 			.then(() => {
 				setPendingIds(new Set());
@@ -95,7 +95,7 @@ export function AddEvaluationCourseModal({
 			? spc.course.name
 			: (spc.course?.name?.[locale] ?? String(spc.courseId));
 
-	const canConfirm = pendingIds.size > 0 && !updateSpc.isPending;
+	const canConfirm = pendingIds.size > 0 && !enableEvaluation.isPending;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -184,13 +184,13 @@ export function AddEvaluationCourseModal({
 				<DialogFooter>
 					<DialogClose
 						render={
-							<Button variant="secondary" disabled={updateSpc.isPending}>
+							<Button variant="secondary" disabled={enableEvaluation.isPending}>
 								{t('dialog.close')}
 							</Button>
 						}
 					/>
 					<Button variant="primary" disabled={!canConfirm} onClick={handleConfirm}>
-						{updateSpc.isPending
+						{enableEvaluation.isPending
 							? t('evaluationCourses.modal.adding')
 							: t('evaluationCourses.modal.confirm')}
 					</Button>

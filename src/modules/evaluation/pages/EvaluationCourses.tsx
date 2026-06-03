@@ -24,7 +24,7 @@ import { getSchoolCookie } from '@/shared/lib/authCookies';
 import {
 	useAcademicPeriods,
 	useStudyPlanCourses,
-	useUpdateStudyPlanCourse,
+	useEnableEvaluationCourse,
 } from '@/modules/academic/hooks';
 import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { AddEvaluationCourseModal } from '../components/evaluation-courses/AddEvaluationCourseModal';
@@ -50,19 +50,19 @@ export function EvaluationCoursesPage() {
 	} = useStudyPlanCourses(
 		{
 			academicPeriodId: selectedPeriodId ?? 0,
-			schoolId: schoolId,
-			extra: { isEvaluateRubric: true },
+			schoolId: schoolId,			
+			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase			
+			extra: { is_evaluable: true },
 			isActive: true,
 		},
 		{ enabled: !!selectedPeriodId && !!schoolId },
 	);
 
-	const updateSpc = useUpdateStudyPlanCourse();
+	const enableEvaluation = useEnableEvaluationCourse();
 
 	const handleRemove = (spc: StudyPlanCourseResponse) => {
-		const { isEvaluateRubric: _, ...rest } = (spc.extra ?? {}) as Record<string, unknown>;
-		updateSpc.mutate(
-			{ id: spc.id, body: { extra: rest } },
+		enableEvaluation.mutate(
+			{ id: spc.id, isEvaluable: false },
 			{ onSuccess: () => setConfirmTarget(null), onError: () => setConfirmTarget(null) },
 		);
 	};
@@ -164,7 +164,7 @@ export function EvaluationCoursesPage() {
 					<DialogFooter>
 						<DialogClose
 							render={
-								<Button variant="secondary" disabled={updateSpc.isPending}>
+								<Button variant="secondary" disabled={enableEvaluation.isPending}>
 									{t('dialog.close')}
 								</Button>
 							}
@@ -172,9 +172,9 @@ export function EvaluationCoursesPage() {
 						<Button
 							variant="primary"
 							className="bg-red-600 hover:bg-red-700"
-							disabled={updateSpc.isPending}
+							disabled={enableEvaluation.isPending}
 							onClick={() => confirmTarget && handleRemove(confirmTarget)}>
-							{updateSpc.isPending
+							{enableEvaluation.isPending
 								? t('evaluationCourses.confirm.removing')
 								: t('evaluationCourses.confirm.confirm')}
 						</Button>
