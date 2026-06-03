@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Select } from '@/shared/components';
+import { CompactNavbarSelect, Select } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
 import { academicPeriodsService } from '../services';
 
@@ -12,9 +12,16 @@ type Props = {
 	onChange: (id: number) => void;
 	isClearable?: boolean;
 	onClear?: () => void;
+	labelPlacement?: 'stacked' | 'inline';
 };
 
-export function AcademicPeriodSelect({ value, onChange, isClearable, onClear }: Props) {
+export function AcademicPeriodSelect({
+	value,
+	onChange,
+	isClearable,
+	onClear,
+	labelPlacement = 'stacked',
+}: Props) {
 	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const [periods, setPeriods] = useState<AcademicPeriodOption[]>([]);
@@ -51,6 +58,25 @@ export function AcademicPeriodSelect({ value, onChange, isClearable, onClear }: 
 	const options = useMemo(() => periods.map((p) => ({ value: p.id, label: p.code })), [periods]);
 
 	const selected = options.find((o) => o.value === value) ?? null;
+
+	if (labelPlacement === 'inline') {
+		return (
+			<CompactNavbarSelect
+				label={t('ifcs.page.period')}
+				value={selected ? String(selected.value) : ''}
+				options={options.map((option) => ({
+					value: String(option.value),
+					label: option.label,
+				}))}
+				placeholder={loading ? t('loading.default') : t('select.placeholder.default')}
+				disabled={loading}
+				onChange={(next) => {
+					if (next !== '') onChange(Number(next));
+					else if (isClearable) onClear?.();
+				}}
+			/>
+		);
+	}
 
 	return (
 		<Select

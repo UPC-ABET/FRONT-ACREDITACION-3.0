@@ -19,6 +19,7 @@ export * from './Typography';
 export * from './Navbar';
 export * from './LoadingDialog';
 export * from './Checkbox';
+export * from './CompactNavbarSelect';
 export * from './HoverCard';
 export * from './Popover';
 export * from './Label';
