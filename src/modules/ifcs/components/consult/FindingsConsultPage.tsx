@@ -11,11 +11,12 @@ import {
 	TableEmptyState,
 	Toast,
 } from '@/shared/components';
-import { useABET, useI18n } from '@/providers';
+import { useABET, useI18n, useSchoolSourceOverride } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { TYPE_CODES } from '@/shared/constants';
 import { useFindingsList, useOrgScope } from '../../hooks';
 import { deleteFinding } from '../../services/ifcFindingsService';
+import { getIfcSchools } from '../../services';
 import { optionsForLevel } from '../../services/scope';
 import type { FindingRow, ScopeTree, SelectionValue } from '../../types';
 import { ScopeDropdowns } from '../ScopeDropdowns';
@@ -45,8 +46,13 @@ export function FindingsConsultPage() {
 	const { t, locale: lang } = useI18n();
 	const router = useRouter();
 
-	const { academicPeriodId } = useABET();
+	const { academicPeriodId, schoolId } = useABET();
 	const [selections, setSelections] = useState<Record<number, SelectionValue>>({});
+
+	useSchoolSourceOverride({
+		key: `ifc-schools:${academicPeriodId ?? 'none'}`,
+		fetch: () => (academicPeriodId == null ? Promise.resolve([]) : getIfcSchools(academicPeriodId)),
+	});
 
 	const { scope, load: loadScope, setScope } = useOrgScope();
 	const { rows, load: loadList, refetch } = useFindingsList();
@@ -66,7 +72,7 @@ export function FindingsConsultPage() {
 	useEffect(() => {
 		setSelections({});
 		setHasSearched(false);
-		if (academicPeriodId === null) {
+		if (academicPeriodId === null || schoolId === null) {
 			setScope(null);
 			return;
 		}
@@ -79,7 +85,7 @@ export function FindingsConsultPage() {
 		return () => {
 			active = false;
 		};
-	}, [academicPeriodId, loadScope, setScope]);
+	}, [academicPeriodId, schoolId, loadScope, setScope]);
 
 	function handleSelect(levelNum: number, value: SelectionValue) {
 		if (!scope) return;

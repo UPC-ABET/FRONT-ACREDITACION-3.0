@@ -17,7 +17,7 @@ import {
 	TableEmptyState,
 	Toast,
 } from '@/shared/components';
-import { useABET, useAuth, useI18n } from '@/providers';
+import { useABET, useAuth, useI18n, useSchoolSourceOverride } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { TYPE_CODES } from '@/shared/constants';
@@ -30,6 +30,7 @@ import {
 	useStatusReportDownload,
 	useStatusTypes,
 } from '../hooks';
+import { getIfcSchools } from '../services';
 import { effectiveStatus, optionsForLevel } from '../services/scope';
 import type { IFCStatusFilter, ScopeTree, SelectionValue } from '../types';
 import { IFCTable } from './IFCTable';
@@ -87,7 +88,12 @@ export function IFCDashboard() {
 
 	const { user: authUser } = useAuth();
 	const currentUserId = authUser?.id ?? null;
-	const { academicPeriodId } = useABET();
+	const { academicPeriodId, schoolId } = useABET();
+
+	useSchoolSourceOverride({
+		key: `ifc-schools:${academicPeriodId ?? 'none'}`,
+		fetch: () => (academicPeriodId == null ? Promise.resolve([]) : getIfcSchools(academicPeriodId)),
+	});
 
 	useEffect(() => {
 		setSelections({});
@@ -96,7 +102,7 @@ export function IFCDashboard() {
 		setLastSearchedPeriodId(null);
 		setScopeErrorDismissed(false);
 		setListErrorDismissed(false);
-		if (academicPeriodId === null) {
+		if (academicPeriodId === null || schoolId === null) {
 			setScope(null);
 			return;
 		}
@@ -109,7 +115,7 @@ export function IFCDashboard() {
 		return () => {
 			active = false;
 		};
-	}, [academicPeriodId, loadScope, setRows, setScope]);
+	}, [academicPeriodId, schoolId, loadScope, setRows, setScope]);
 
 	const chartIncomplete =
 		scope !== null &&

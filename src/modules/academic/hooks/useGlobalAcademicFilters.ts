@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { SCHOOL_LABEL_KEYS_BY_CODE } from '@/modules/auth/constants';
 import { getTypesByGroupCode } from '@/modules/core';
-import { useABET, useAuth, useI18n } from '@/providers';
+import { useABET, useAuth, useI18n, useSchoolSource } from '@/providers';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
+import type { SchoolSourceItem } from '@/shared/types';
 import { getSchoolCookie, setActiveSchoolId, setSchoolCookie } from '@/shared/lib';
 
 type SchoolOption = {
@@ -23,8 +24,22 @@ export function useGlobalAcademicFilters() {
 	const queryClient = useQueryClient();
 	const { t, locale } = useI18n();
 	const { userSchools, changeModalityCode } = useAuth();
-	const { modalityTypeId, setModalityTypeId, academicPeriodId, setAcademicPeriodId } = useABET();
+	const { modalityTypeId, setModalityTypeId, academicPeriodId, setAcademicPeriodId, setSchoolId } =
+		useABET();
 	const [selectedSchoolCode, setSelectedSchoolCode] = useState(readCookieSchoolCode);
+
+	const schoolSource = useSchoolSource();
+	const schoolSourceQuery = useQuery({
+		queryKey: ['school-source', schoolSource?.key ?? 'default'],
+		queryFn: () => schoolSource!.fetch(),
+		enabled: schoolSource != null,
+		staleTime: Infinity,
+	});
+	const schools = useMemo<SchoolSourceItem[]>(
+		() => (schoolSource ? (schoolSourceQuery.data ?? []) : userSchools),
+		[schoolSource, schoolSourceQuery.data, userSchools],
+	);
+	const schoolsLoading = schoolSource != null && schoolSourceQuery.isLoading;
 
 	const { data: modalityOptions = [] } = useQuery({
 		queryKey: ['types', TYPE_GROUP_CODES.PROGRAM_MODALITY],
@@ -43,7 +58,7 @@ export function useGlobalAcademicFilters() {
 
 	const schoolOptions = useMemo<SchoolOption[]>(
 		() =>
-			userSchools.map((school) => {
+			schools.map((school) => {
 				const labelKey = SCHOOL_LABEL_KEYS_BY_CODE[school.code];
 				const translatedLabel = labelKey ? t(labelKey) : '';
 				const fallbackLabel =
@@ -53,18 +68,19 @@ export function useGlobalAcademicFilters() {
 					label: translatedLabel && translatedLabel !== labelKey ? translatedLabel : fallbackLabel,
 				};
 			}),
-		[userSchools, locale, t],
+		[schools, locale, t],
 	);
 
 	const selectedSchool =
-		userSchools.find((school) => school.code === selectedSchoolCode) ?? userSchools[0] ?? null;
+		schools.find((school) => school.code === selectedSchoolCode) ?? schools[0] ?? null;
 	const selectedSchoolOption =
 		schoolOptions.find((option) => option.value === selectedSchool?.code) ?? null;
 
 	useEffect(() => {
 		setActiveSchoolId(selectedSchool ? selectedSchool.id : null);
+		setSchoolId(selectedSchool ? selectedSchool.id : null);
 		if (selectedSchool) setSchoolCookie(selectedSchool);
-	}, [selectedSchool]);
+	}, [selectedSchool, setSchoolId]);
 
 	const modalitySelectOptions = useMemo(
 		() =>
@@ -83,12 +99,14 @@ export function useGlobalAcademicFilters() {
 	}));
 
 	function handleSchoolChange(code: string) {
-		const school = userSchools.find((item) => item.code === code);
+		const school = schools.find((item) => item.code === code);
 		if (!school) return;
 		setSelectedSchoolCode(school.code);
 		setSchoolCookie(school);
 		setActiveSchoolId(school.id);
-		setAcademicPeriodId(null);
+		setSchoolId(school.id);
+		// With a custom source (e.g. IFC) the school list depends on the period, so keep the period.
+		if (schoolSource == null) setAcademicPeriodId(null);
 		queryClient.invalidateQueries();
 	}
 
@@ -108,6 +126,7 @@ export function useGlobalAcademicFilters() {
 		modalitySelectOptions,
 		modalityTypeId,
 		schoolOptions,
+		schoolsLoading,
 		selectedModalityOption,
 		selectedSchoolOption,
 		setAcademicPeriodId,

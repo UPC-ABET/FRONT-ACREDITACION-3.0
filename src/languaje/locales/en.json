@@ -631,7 +631,8 @@
 		"internalServer": "Internal server error",
 		"auth": {
 			"accessDenied": "Access denied — insufficient permissions",
-			"noPermissionsConfigured": "You do not have permission to enter."
+			"noPermissionsConfigured": "You do not have permission to enter.",
+			"academicPeriodRequired": "Select an academic period to continue."
 		},
 		"user": {
 			"noRolesAssigned": "The user has no active roles assigned",

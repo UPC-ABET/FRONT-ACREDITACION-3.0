@@ -2,3 +2,4 @@ export * from './api';
 export * from './auth';
 export * from './i18n';
 export * from './navbar';
+export * from './school';

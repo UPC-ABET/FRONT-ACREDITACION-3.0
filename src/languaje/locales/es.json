@@ -631,7 +631,8 @@
 		"internalServer": "Error interno del servidor",
 		"auth": {
 			"accessDenied": "Acceso denegado — no tienes permisos suficientes",
-			"noPermissionsConfigured": "No tienes permisos para ingresar"
+			"noPermissionsConfigured": "No tienes permisos para ingresar",
+			"academicPeriodRequired": "Selecciona un período académico para continuar."
 		},
 		"user": {
 			"noRolesAssigned": "El usuario no tiene roles activos asignados",

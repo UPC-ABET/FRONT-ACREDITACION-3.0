@@ -32,11 +32,15 @@ function FilterItem({ children, embedded, mobile, widthClass }: FilterItemProps)
 
 function layoutClasses(embedded: boolean, layout: GlobalAcademicFiltersLayout) {
 	if (embedded && layout === 'mobile') return 'grid w-full min-w-0 grid-cols-3 gap-2 px-2';
-	if (embedded) return `flex w-full min-w-0 items-center ${layout === 'tablet' ? 'gap-2' : 'gap-3'}`;
+	if (embedded)
+		return `flex w-full min-w-0 items-center ${layout === 'tablet' ? 'gap-2' : 'gap-3'}`;
 	return 'flex w-full items-center gap-3 flex-wrap';
 }
 
-function embeddedWidth(layout: GlobalAcademicFiltersLayout, field: 'school' | 'modality' | 'period') {
+function embeddedWidth(
+	layout: GlobalAcademicFiltersLayout,
+	field: 'school' | 'modality' | 'period',
+) {
 	if (layout === 'tablet') {
 		return {
 			school: 'max-w-[150px]',
@@ -63,7 +67,10 @@ export function GlobalAcademicFilters({
 	const compactLabelPlacement = isMobileLayout ? 'stacked' : 'inline';
 
 	return (
-		<div className={embedded ? 'w-full min-w-0' : 'w-full border-b border-zinc-200 bg-white px-6 py-4'}>
+		<div
+			className={
+				embedded ? 'w-full min-w-0' : 'w-full border-b border-zinc-200 bg-white px-6 py-4'
+			}>
 			<div className={layoutClasses(embedded, layout)}>
 				<FilterItem
 					embedded={embedded}
@@ -74,7 +81,10 @@ export function GlobalAcademicFilters({
 							label={t('navbar.school.label')}
 							value={filters.selectedSchoolOption?.value ?? ''}
 							options={filters.schoolOptions}
-							placeholder={t('select.placeholder.default')}
+							placeholder={
+								filters.schoolsLoading ? t('loading.default') : t('select.placeholder.default')
+							}
+							disabled={filters.schoolsLoading}
 							labelPlacement={compactLabelPlacement}
 							density={compactDensity}
 							noOptionsMessage={t('select.noOptions')}
@@ -87,7 +97,7 @@ export function GlobalAcademicFilters({
 							value={filters.selectedSchoolOption}
 							options={filters.schoolOptions}
 							isSearchable
-							isDisabled={filters.schoolOptions.length === 0}
+							isDisabled={filters.schoolsLoading || filters.schoolOptions.length === 0}
 							onChange={(_, selected) => {
 								if (!selected || Array.isArray(selected)) return;
 								filters.handleSchoolChange(String(selected.value));

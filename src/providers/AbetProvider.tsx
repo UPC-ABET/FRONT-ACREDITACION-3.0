@@ -9,6 +9,7 @@ const ABETContext = createContext<ABETContextType | null>(null);
 export function ABETProvider({ children }: { children: React.ReactNode }) {
 	const [modalityTypeId, setModalityTypeId] = useState<number | null>(null);
 	const [academicPeriodId, setAcademicPeriodId] = useState<number | null>(null);
+	const [schoolId, setSchoolId] = useState<number | null>(null);
 
 	useEffect(() => {
 		setActiveModalityTypeId(modalityTypeId);
@@ -19,8 +20,15 @@ export function ABETProvider({ children }: { children: React.ReactNode }) {
 	}, [academicPeriodId]);
 
 	const value = useMemo<ABETContextType>(
-		() => ({ modalityTypeId, setModalityTypeId, academicPeriodId, setAcademicPeriodId }),
-		[modalityTypeId, academicPeriodId],
+		() => ({
+			modalityTypeId,
+			setModalityTypeId,
+			academicPeriodId,
+			setAcademicPeriodId,
+			schoolId,
+			setSchoolId,
+		}),
+		[modalityTypeId, academicPeriodId, schoolId],
 	);
 
 	return <ABETContext.Provider value={value}>{children}</ABETContext.Provider>;

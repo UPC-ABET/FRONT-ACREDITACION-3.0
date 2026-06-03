@@ -9,4 +9,7 @@ export type ABETContextType = {
 	/** Global academic period selected in the academic filters bar. */
 	academicPeriodId: number | null;
 	setAcademicPeriodId: (id: number | null) => void;
+	/** Reactive mirror of the active school selected in the academic filters bar. */
+	schoolId: number | null;
+	setSchoolId: (id: number | null) => void;
 };
