@@ -6,7 +6,6 @@ import type { UploadPayload, UploadResult, RollbackPayload } from '../types';
 function buildForm(payload: UploadPayload): FormData {
 	const fd = new FormData();
 	fd.append('file', payload.file);
-	fd.append('academicPeriodId', String(payload.academicPeriodId));
 	if (payload.userId !== undefined) fd.append('userId', String(payload.userId));
 	if (payload.lang) fd.append('lang', payload.lang);
 	return fd;

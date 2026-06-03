@@ -20,10 +20,9 @@ interface Envelope<T> {
 	data: T;
 }
 
-export async function listIFCs(chartIds: number[], periodId: number): Promise<IFCRow[]> {
+export async function listIFCs(chartIds: number[]): Promise<IFCRow[]> {
 	const envelope = await apiPost<Envelope<IFCRow[]>>('/ifcs/list', {
 		chartIds: chartIds.map(Number),
-		periodId: Number(periodId),
 	});
 	if (!envelope?.data) throw new ApiError('ifcs.error.generic');
 	return envelope.data;

@@ -12,16 +12,12 @@ export function useStatusReportDownload() {
 	const [error, setError] = useState<string | null>(null);
 
 	const download = useCallback(
-		async (chartIds: number[], periodId: number) => {
-			if (chartIds.length === 0 || periodId == null) return;
+		async (chartIds: number[]) => {
+			if (chartIds.length === 0) return;
 			setDownloading(true);
 			setError(null);
 			try {
-				const { blob, filename } = await downloadStatusReport(
-					chartIds,
-					periodId,
-					locale as 'es' | 'en',
-				);
+				const { blob, filename } = await downloadStatusReport(chartIds, locale as 'es' | 'en');
 				triggerBrowserDownload(blob, filename);
 			} catch (e: unknown) {
 				setError(getErrorMessage(e, 'ifcs.statusReport.error.downloadFailed'));

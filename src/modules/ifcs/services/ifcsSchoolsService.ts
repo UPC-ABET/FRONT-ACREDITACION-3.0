@@ -16,10 +16,8 @@ interface RawIfcSchool {
 	facultyName?: I18nText | null;
 }
 
-export async function getIfcSchools(academicPeriodId: number): Promise<SchoolSourceItem[]> {
-	const envelope = await apiGet<Envelope<RawIfcSchool[]>>('/ifcs/schools', {
-		headers: { 'X-Academic-Period-Id': String(academicPeriodId) },
-	});
+export async function getIfcSchools(): Promise<SchoolSourceItem[]> {
+	const envelope = await apiGet<Envelope<RawIfcSchool[]>>('/ifcs/schools');
 	if (!envelope?.data) throw new ApiError(envelope?.message ?? 'ifcs.error.generic');
 	return envelope.data.map((school) => ({
 		id: Number(school.id),

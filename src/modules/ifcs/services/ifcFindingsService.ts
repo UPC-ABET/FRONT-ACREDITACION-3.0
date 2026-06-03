@@ -7,10 +7,9 @@ interface Envelope<T> {
 	data: T;
 }
 
-export async function listFindings(chartIds: number[], periodId: number): Promise<FindingRow[]> {
+export async function listFindings(chartIds: number[]): Promise<FindingRow[]> {
 	const envelope = await apiPost<Envelope<FindingRow[]>>('/ifc-findings/list', {
 		chartIds: chartIds.map(Number),
-		periodId: Number(periodId),
 	});
 	if (!envelope?.data) throw new ApiError('ifcFindings.error.listFailed');
 

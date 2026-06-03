@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import type { SchoolSource } from '@/shared/types';
+import { useQuery } from '@tanstack/react-query';
+import type { SchoolSource, SchoolSourceItem } from '@/shared/types';
 
 interface SchoolSourceContextValue {
 	source: SchoolSource | null;
@@ -24,6 +25,30 @@ function useSchoolSourceContext(): SchoolSourceContextValue {
 
 export function useSchoolSource(): SchoolSource | null {
 	return useSchoolSourceContext().source;
+}
+
+type SchoolSourceData = {
+	hasSource: boolean;
+	schools: SchoolSourceItem[];
+	isLoading: boolean;
+	isEmpty: boolean;
+};
+
+export function useSchoolSourceData(): SchoolSourceData {
+	const source = useSchoolSource();
+	const query = useQuery({
+		queryKey: ['school-source', source?.key ?? 'default'],
+		queryFn: () => source!.fetch(),
+		enabled: source != null,
+		staleTime: Infinity,
+	});
+	const schools = query.data ?? [];
+	return {
+		hasSource: source != null,
+		schools,
+		isLoading: source != null && query.isLoading,
+		isEmpty: source != null && !query.isLoading && schools.length === 0,
+	};
 }
 
 export function useSchoolSourceOverride(source: SchoolSource): void {

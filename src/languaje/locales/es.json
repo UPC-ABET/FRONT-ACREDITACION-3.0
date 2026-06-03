@@ -47,6 +47,7 @@
 			"title": "Informe de Fin de Ciclo",
 			"period": "Período Académico",
 			"selectPeriod": "Seleccione un período académico en la barra superior para continuar.",
+			"noSchools": "No hay escuelas disponibles para el período seleccionado. Es posible que el organigrama aún no haya sido cargado. Contacte al administrador.",
 			"searchBtn": "Buscar"
 		},
 		"table": {

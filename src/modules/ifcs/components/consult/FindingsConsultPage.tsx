@@ -7,11 +7,12 @@ import {
 	Button,
 	Card,
 	LoadingDialog,
+	Skeleton,
 	SuccessDialog,
 	TableEmptyState,
 	Toast,
 } from '@/shared/components';
-import { useABET, useI18n, useSchoolSourceOverride } from '@/providers';
+import { useABET, useI18n, useSchoolSourceData, useSchoolSourceOverride } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { TYPE_CODES } from '@/shared/constants';
 import { useFindingsList, useOrgScope } from '../../hooks';
@@ -51,8 +52,11 @@ export function FindingsConsultPage() {
 
 	useSchoolSourceOverride({
 		key: `ifc-schools:${academicPeriodId ?? 'none'}`,
-		fetch: () => (academicPeriodId == null ? Promise.resolve([]) : getIfcSchools(academicPeriodId)),
+		fetch: () => (academicPeriodId == null ? Promise.resolve([]) : getIfcSchools()),
 	});
+
+	const { isEmpty: schoolSourceEmpty, isLoading: schoolsLoading } = useSchoolSourceData();
+	const noSchools = academicPeriodId !== null && schoolSourceEmpty;
 
 	const { scope, load: loadScope, setScope } = useOrgScope();
 	const { rows, load: loadList, refetch } = useFindingsList();
@@ -77,7 +81,7 @@ export function FindingsConsultPage() {
 			return;
 		}
 		let active = true;
-		void loadScope(academicPeriodId).then((tree) => {
+		void loadScope().then((tree) => {
 			if (!active || !tree || tree.levels.length === 0) return;
 			const firstLevel = tree.levels[0].levelNum;
 			setSelections(runAutoSelect(tree, {}, firstLevel));
@@ -108,7 +112,7 @@ export function FindingsConsultPage() {
 				? optionsForLevel(scope, lastLevel, selections).map((o) => o.id)
 				: [Number(lastSel)];
 		setHasSearched(true);
-		await loadList(chartIds, academicPeriodId);
+		await loadList(chartIds);
 	}
 
 	async function handleConfirmDelete() {
@@ -133,6 +137,13 @@ export function FindingsConsultPage() {
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6">
 					{academicPeriodId === null ? (
 						<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>
+					) : schoolsLoading ? (
+						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-10 w-full" />
+						</div>
+					) : noSchools ? (
+						<p className="text-sm italic text-zinc-500">{t('ifcs.page.noSchools')}</p>
 					) : (
 						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 							{!chartIncomplete && scope && scope.levels.length > 0 && (
@@ -141,7 +152,7 @@ export function FindingsConsultPage() {
 						</div>
 					)}
 
-					{!chartIncomplete && (
+					{!noSchools && !chartIncomplete && (
 						<div className="mt-6 flex justify-end border-t border-zinc-200 pt-5">
 							<Button variant="primary" size="lg" disabled={!canSearch} onClick={handleSearch}>
 								<MagnifyingGlassIcon className="h-5 w-5" />
@@ -158,11 +169,11 @@ export function FindingsConsultPage() {
 					</div>
 				)}
 
-				{!chartIncomplete && hasSearched && rows.length === 0 && !submitting && (
+				{!noSchools && !chartIncomplete && hasSearched && rows.length === 0 && !submitting && (
 					<TableEmptyState message={CONSULT_LABELS.empty[lang]} />
 				)}
 
-				{!chartIncomplete && rows.length > 0 && (
+				{!noSchools && !chartIncomplete && rows.length > 0 && (
 					<div className="overflow-x-auto">
 						<FindingsTable
 							rows={rows}

@@ -7,10 +7,8 @@ interface Envelope<T> {
 	data: T;
 }
 
-export async function getOrgScope(periodId: number): Promise<ScopeTree> {
-	const envelope = await apiPost<Envelope<ScopeTree>>('/org-scope/get-scope', {
-		periodId: periodId,
-	});
+export async function getOrgScope(): Promise<ScopeTree> {
+	const envelope = await apiPost<Envelope<ScopeTree>>('/org-scope/get-scope');
 	if (!envelope?.data) throw new ApiError('orgScope.error.generic');
 
 	// pg may return bigint as string in some endpoints -- normalise to number.

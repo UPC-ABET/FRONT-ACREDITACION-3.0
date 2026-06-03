@@ -10,7 +10,7 @@ export function useIFCList() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (chartIds: number[], periodId: number): Promise<IFCRow[]> => {
+	const load = useCallback(async (chartIds: number[]): Promise<IFCRow[]> => {
 		if (chartIds.length === 0) {
 			setRows([]);
 			return [];
@@ -18,7 +18,7 @@ export function useIFCList() {
 		setLoading(true);
 		setError(null);
 		try {
-			const data = await listIFCs(chartIds, periodId);
+			const data = await listIFCs(chartIds);
 			setRows(data);
 			return data;
 		} catch (e) {

@@ -47,6 +47,7 @@
 			"title": "End of Course Report",
 			"period": "Academic Period",
 			"selectPeriod": "Select an academic period in the top bar to continue.",
+			"noSchools": "No schools are available for the selected period yet. The organization chart may not have been uploaded. Please contact the administrator.",
 			"searchBtn": "Search"
 		},
 		"table": {

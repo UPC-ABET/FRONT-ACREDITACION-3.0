@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { SCHOOL_LABEL_KEYS_BY_CODE } from '@/modules/auth/constants';
 import { getTypesByGroupCode } from '@/modules/core';
-import { useABET, useAuth, useI18n, useSchoolSource } from '@/providers';
+import { useABET, useAuth, useI18n, useSchoolSource, useSchoolSourceData } from '@/providers';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import type { SchoolSourceItem } from '@/shared/types';
 import { getSchoolCookie, setActiveSchoolId, setSchoolCookie } from '@/shared/lib';
@@ -29,17 +29,15 @@ export function useGlobalAcademicFilters() {
 	const [selectedSchoolCode, setSelectedSchoolCode] = useState(readCookieSchoolCode);
 
 	const schoolSource = useSchoolSource();
-	const schoolSourceQuery = useQuery({
-		queryKey: ['school-source', schoolSource?.key ?? 'default'],
-		queryFn: () => schoolSource!.fetch(),
-		enabled: schoolSource != null,
-		staleTime: Infinity,
-	});
+	const {
+		schools: sourceSchools,
+		isLoading: schoolsLoading,
+		hasSource,
+	} = useSchoolSourceData();
 	const schools = useMemo<SchoolSourceItem[]>(
-		() => (schoolSource ? (schoolSourceQuery.data ?? []) : userSchools),
-		[schoolSource, schoolSourceQuery.data, userSchools],
+		() => (hasSource ? sourceSchools : userSchools),
+		[hasSource, sourceSchools, userSchools],
 	);
-	const schoolsLoading = schoolSource != null && schoolSourceQuery.isLoading;
 
 	const { data: modalityOptions = [] } = useQuery({
 		queryKey: ['types', TYPE_GROUP_CODES.PROGRAM_MODALITY],

@@ -3,12 +3,11 @@ import { parseFilename } from '@/shared/utils';
 
 export async function downloadStatusReport(
 	chartIds: number[],
-	periodId: number,
 	lang: 'es' | 'en',
 ): Promise<{ blob: Blob; filename: string }> {
 	const { blob, response } = await apiPostBlobResponse(
 		'/ifcs/status-report',
-		{ chartIds: chartIds.map(Number), periodId: Number(periodId), lang },
+		{ chartIds: chartIds.map(Number), lang },
 		{ accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
 	);
 	const filename = parseFilename(

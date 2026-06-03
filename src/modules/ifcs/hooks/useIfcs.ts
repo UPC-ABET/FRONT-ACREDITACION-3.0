@@ -27,7 +27,7 @@ export const ifcQueryKeys = {
 export function useIFCs(chartIds: number[], periodId: number, options?: { enabled?: boolean }) {
 	return useQuery({
 		queryKey: ifcQueryKeys.list(chartIds, periodId),
-		queryFn: () => listIFCs(chartIds, periodId),
+		queryFn: () => listIFCs(chartIds),
 		enabled: (options?.enabled ?? true) && chartIds.length > 0 && periodId > 0,
 	});
 }

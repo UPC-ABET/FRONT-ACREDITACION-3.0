@@ -7,19 +7,17 @@ interface Envelope<T> {
 	data: T;
 }
 
-export async function notifyIfc(chartId: number, periodId: number): Promise<NotifyResult> {
+export async function notifyIfc(chartId: number): Promise<NotifyResult> {
 	const envelope = await apiPost<Envelope<NotifyResult>>('/ifcs/notify', {
 		chartId: Number(chartId),
-		periodId: Number(periodId),
 	});
 	if (!envelope?.data) throw new ApiError('ifcs.notify.error.generic');
 	return envelope.data;
 }
 
-export async function notifyIfcAll(chartIds: number[], periodId: number): Promise<NotifyAllResult> {
+export async function notifyIfcAll(chartIds: number[]): Promise<NotifyAllResult> {
 	const envelope = await apiPost<Envelope<NotifyAllResult>>('/ifcs/notify-all', {
 		chartIds: chartIds.map(Number),
-		periodId: Number(periodId),
 	});
 	if (!envelope?.data) throw new ApiError('ifcs.notify.error.generic');
 	return {

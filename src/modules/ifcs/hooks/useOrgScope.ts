@@ -10,11 +10,11 @@ export function useOrgScope() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (periodId: number): Promise<ScopeTree | null> => {
+	const load = useCallback(async (): Promise<ScopeTree | null> => {
 		setLoading(true);
 		setError(null);
 		try {
-			const tree = await getOrgScope(periodId);
+			const tree = await getOrgScope();
 			setScope(tree);
 			return tree;
 		} catch (e) {

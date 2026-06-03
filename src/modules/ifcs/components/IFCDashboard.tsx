@@ -17,7 +17,7 @@ import {
 	TableEmptyState,
 	Toast,
 } from '@/shared/components';
-import { useABET, useAuth, useI18n, useSchoolSourceOverride } from '@/providers';
+import { useABET, useAuth, useI18n, useSchoolSourceData, useSchoolSourceOverride } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { TYPE_CODES } from '@/shared/constants';
@@ -92,8 +92,11 @@ export function IFCDashboard() {
 
 	useSchoolSourceOverride({
 		key: `ifc-schools:${academicPeriodId ?? 'none'}`,
-		fetch: () => (academicPeriodId == null ? Promise.resolve([]) : getIfcSchools(academicPeriodId)),
+		fetch: () => (academicPeriodId == null ? Promise.resolve([]) : getIfcSchools()),
 	});
+
+	const { isEmpty: schoolSourceEmpty, isLoading: schoolsLoading } = useSchoolSourceData();
+	const noSchools = academicPeriodId !== null && schoolSourceEmpty;
 
 	useEffect(() => {
 		setSelections({});
@@ -107,7 +110,7 @@ export function IFCDashboard() {
 			return;
 		}
 		let active = true;
-		void loadScope(academicPeriodId).then((tree) => {
+		void loadScope().then((tree) => {
 			if (!active || !tree || tree.levels.length === 0) return;
 			const firstLevel = tree.levels[0].levelNum;
 			setSelections(runAutoSelect(tree, {}, firstLevel));
@@ -150,7 +153,7 @@ export function IFCDashboard() {
 			setRows([]);
 			return;
 		}
-		await loadList(chartIds, academicPeriodId);
+		await loadList(chartIds);
 	}
 
 	const statusOptions: StatusOptionItem[] = useMemo(
@@ -222,7 +225,7 @@ export function IFCDashboard() {
 	async function handleNotifyOne(chartId: number) {
 		if (academicPeriodId === null) return;
 		try {
-			const r = await notifyOne(chartId, academicPeriodId);
+			const r = await notifyOne(chartId);
 			if (r.sent) {
 				setNotifySuccess(t('ifcs.notify.toast.success'));
 			} else {
@@ -236,7 +239,7 @@ export function IFCDashboard() {
 	async function handleNotifyAll() {
 		if (academicPeriodId === null || notifiableChartIds.length === 0) return;
 		try {
-			const result = await notifyMany(notifiableChartIds, academicPeriodId);
+			const result = await notifyMany(notifiableChartIds);
 			if (result.errors.length > 0) {
 				setNotifyError(
 					formatTemplate(t('ifcs.notify.toast.error'), { count: result.errors.length }),
@@ -269,6 +272,13 @@ export function IFCDashboard() {
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6">
 					{academicPeriodId === null ? (
 						<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>
+					) : schoolsLoading ? (
+						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-10 w-full" />
+						</div>
+					) : noSchools ? (
+						<p className="text-sm italic text-zinc-500">{t('ifcs.page.noSchools')}</p>
 					) : (
 						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 							{scopeLoading && (
@@ -283,7 +293,7 @@ export function IFCDashboard() {
 						</div>
 					)}
 
-					{!chartIncomplete && (
+					{!noSchools && !chartIncomplete && (
 						<div className="mt-6 flex flex-col gap-4 border-t border-zinc-200 pt-5 lg:flex-row lg:items-end lg:justify-between">
 							<div className="w-full lg:w-72">
 								<Select
@@ -305,7 +315,7 @@ export function IFCDashboard() {
 									variant="secondary"
 									size="lg"
 									disabled={!canDownloadReport || downloadingReport}
-									onClick={() => downloadReport(lastSearchedChartIds!, lastSearchedPeriodId!)}>
+									onClick={() => downloadReport(lastSearchedChartIds!)}>
 									<DocumentChartBarIcon className="h-5 w-5" />
 									{downloadingReport ? t('loading.default') : t('ifcs.statusReport.btn')}
 								</Button>
@@ -345,7 +355,7 @@ export function IFCDashboard() {
 					</div>
 				)}
 
-				{!chartIncomplete && listLoading && (
+				{!noSchools && !chartIncomplete && listLoading && (
 					<div className="space-y-3">
 						<Skeleton className="h-10 w-full" />
 						<Skeleton className="h-10 w-full" />
@@ -355,7 +365,7 @@ export function IFCDashboard() {
 					</div>
 				)}
 
-				{!chartIncomplete && !listLoading && (
+				{!noSchools && !chartIncomplete && !listLoading && (
 					<div className="overflow-x-auto">
 						<IFCTable
 							rows={visibleRows}

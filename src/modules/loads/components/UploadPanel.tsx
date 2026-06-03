@@ -59,7 +59,7 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 			return;
 		}
 		upload.mutate(
-			{ file, academicPeriodId, lang: locale },
+			{ file, lang: locale },
 			{
 				onSuccess: (data) => {
 					setResult(data);

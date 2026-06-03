@@ -20,7 +20,7 @@ export const findingQueryKeys = {
 export function useFindings(chartIds: number[], periodId: number, options?: { enabled?: boolean }) {
 	return useQuery({
 		queryKey: findingQueryKeys.list(chartIds, periodId),
-		queryFn: () => listFindings(chartIds, periodId),
+		queryFn: () => listFindings(chartIds),
 		enabled: (options?.enabled ?? true) && chartIds.length > 0 && periodId > 0,
 	});
 }
