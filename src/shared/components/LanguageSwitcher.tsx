@@ -48,7 +48,7 @@ function LanguageSwitcher() {
 			{open && (
 				<div
 					role="menu"
-					className="absolute right-0 mt-2 min-w-[96px] rounded-md border border-zinc-200 bg-white p-1 shadow-lg">
+					className="absolute right-0 top-full z-[60] mt-2 min-w-[96px] rounded-md border border-zinc-200 bg-white p-1 shadow-lg">
 					<Button
 						type="button"
 						variant="ghost"

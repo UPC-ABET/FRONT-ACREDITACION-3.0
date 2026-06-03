@@ -76,17 +76,20 @@ function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 
 	if (isMobile) {
 		return (
-			<nav className={`${navClass} flex h-[72px] items-center gap-3 px-4`}>
-				{menuBtn}
-				<div className="min-w-0 flex-1 overflow-visible">
-					<GlobalAcademicFilters embedded />
+			<nav className={`${navClass} flex flex-col overflow-visible`}>
+				<div className="flex h-[64px] items-center gap-3 px-4">
+					{menuBtn}
+					<div className="min-w-0 flex-1" />
+					<LanguageSwitcher />
+					<UserAvatar
+						initials={resolvedUserInitials}
+						name={resolvedUserName}
+						role={resolvedUserRole}
+					/>
 				</div>
-				<LanguageSwitcher />
-				<UserAvatar
-					initials={resolvedUserInitials}
-					name={resolvedUserName}
-					role={resolvedUserRole}
-				/>
+				<div className="h-[92px] px-4 pb-4">
+					<GlobalAcademicFilters embedded layout="mobile" />
+				</div>
 			</nav>
 		);
 	}
@@ -96,7 +99,7 @@ function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 			<nav className={`${navClass} flex h-[72px] items-center gap-3 px-4`}>
 				{menuBtn}
 				<div className="min-w-0 flex-1 overflow-visible">
-					<GlobalAcademicFilters embedded />
+					<GlobalAcademicFilters embedded layout="tablet" />
 				</div>
 				<Sep />
 				<LanguageSwitcher />
