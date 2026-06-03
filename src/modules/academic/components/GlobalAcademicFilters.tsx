@@ -1,203 +1,146 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { CompactNavbarSelect, Select } from '@/shared/components';
-import { SCHOOL_LABEL_KEYS_BY_CODE } from '@/modules/auth/constants';
-import { getTypesByGroupCode } from '@/modules/core';
+import { useI18n } from '@/providers';
+import { useGlobalAcademicFilters } from '../hooks/useGlobalAcademicFilters';
 import { AcademicPeriodSelect } from './AcademicPeriodSelect';
-import { useABET, useAuth, useI18n } from '@/providers';
-import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
-import { getSchoolCookie, setActiveSchoolId, setSchoolCookie } from '@/shared/lib';
 
-type SchoolOption = {
-	value: string;
-	label: string;
+type GlobalAcademicFiltersLayout = 'inline' | 'mobile' | 'tablet';
+
+type GlobalAcademicFiltersProps = {
+	embedded?: boolean;
+	layout?: GlobalAcademicFiltersLayout;
 };
 
-function readCookieSchoolCode(): string {
-	const school = getSchoolCookie();
-	const schoolCode = school?.code as string | undefined;
-	return typeof schoolCode === 'string' ? schoolCode : '';
-}
-
-function FilterItem({
-	children,
-	embedded,
-	embeddedClassName,
-}: {
+type FilterItemProps = {
 	children: ReactNode;
 	embedded: boolean;
-	embeddedClassName?: string;
-}) {
-	return (
-		<div
-			className={
-				embedded
-					? `${embeddedClassName ?? 'w-[220px]'} flex-none`
-					: 'min-w-[210px] flex-1 max-w-[340px]'
-			}>
-			{children}
-		</div>
-	);
+	mobile: boolean;
+	widthClass?: string;
+};
+
+function FilterItem({ children, embedded, mobile, widthClass }: FilterItemProps) {
+	const className = mobile
+		? 'min-w-0'
+		: embedded
+			? `${widthClass ?? 'max-w-[220px]'} min-w-0 flex-1`
+			: 'min-w-[210px] flex-1 max-w-[340px]';
+
+	return <div className={className}>{children}</div>;
 }
 
-export function GlobalAcademicFilters({ embedded = false }: { embedded?: boolean }) {
-	const queryClient = useQueryClient();
-	const { t, locale } = useI18n();
-	const { userSchools, changeModalityCode } = useAuth();
-	const { modalityTypeId, setModalityTypeId, academicPeriodId, setAcademicPeriodId } = useABET();
-	const [selectedSchoolCode, setSelectedSchoolCode] = useState(readCookieSchoolCode);
+function layoutClasses(embedded: boolean, layout: GlobalAcademicFiltersLayout) {
+	if (embedded && layout === 'mobile') return 'grid w-full min-w-0 grid-cols-3 gap-2 px-2';
+	if (embedded) return `flex w-full min-w-0 items-center ${layout === 'tablet' ? 'gap-2' : 'gap-3'}`;
+	return 'flex w-full items-center gap-3 flex-wrap';
+}
 
-	const { data: modalityOptions = [] } = useQuery({
-		queryKey: ['types', TYPE_GROUP_CODES.PROGRAM_MODALITY],
-		queryFn: () => getTypesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY),
-		staleTime: Infinity,
-	});
-
-	useEffect(() => {
-		if (modalityOptions.length > 0 && modalityTypeId === null) {
-			const defaultOption =
-				modalityOptions.find((option) => option.code === TYPE_CODES.PROGRAM_MODALITY.REGULAR) ??
-				modalityOptions[0];
-			setModalityTypeId(defaultOption.id);
-		}
-	}, [modalityOptions, modalityTypeId, setModalityTypeId]);
-
-	const schoolOptions = useMemo<SchoolOption[]>(
-		() =>
-			userSchools.map((school) => {
-				const labelKey = SCHOOL_LABEL_KEYS_BY_CODE[school.code];
-				const translatedLabel = labelKey ? t(labelKey) : '';
-				const fallbackLabel =
-					school.name[locale] ?? school.name.es ?? school.name.en ?? school.code;
-				return {
-					value: school.code,
-					label: translatedLabel && translatedLabel !== labelKey ? translatedLabel : fallbackLabel,
-				};
-			}),
-		[userSchools, locale, t],
-	);
-
-	const selectedSchool =
-		userSchools.find((school) => school.code === selectedSchoolCode) ?? userSchools[0] ?? null;
-
-	const selectedSchoolOption =
-		schoolOptions.find((option) => option.value === selectedSchool?.code) ?? null;
-
-	useEffect(() => {
-		setActiveSchoolId(selectedSchool ? selectedSchool.id : null);
-		if (selectedSchool) setSchoolCookie(selectedSchool);
-	}, [selectedSchool]);
-
-	const modalitySelectOptions = useMemo(
-		() =>
-			modalityOptions.map((option) => ({
-				value: option.id,
-				label: option.name[locale] ?? option.name.es ?? option.code,
-			})),
-		[modalityOptions, locale],
-	);
-
-	const selectedModalityOption =
-		modalitySelectOptions.find((option) => option.value === modalityTypeId) ?? null;
-
-	function handleSchoolChange(code: string) {
-		const school = userSchools.find((item) => item.code === code);
-		if (!school) return;
-		setSelectedSchoolCode(school.code);
-		setSchoolCookie(school);
-		setActiveSchoolId(school.id);
-		setAcademicPeriodId(null);
-		queryClient.invalidateQueries();
+function embeddedWidth(layout: GlobalAcademicFiltersLayout, field: 'school' | 'modality' | 'period') {
+	if (layout === 'tablet') {
+		return {
+			school: 'max-w-[150px]',
+			modality: 'max-w-[135px]',
+			period: 'max-w-[210px]',
+		}[field];
 	}
 
-	function handleModalityChange(id: number) {
-		setModalityTypeId(id);
-		setAcademicPeriodId(null);
-		const selectedModality = modalityOptions.find((option) => option.id === id);
-		if (selectedModality) {
-			changeModalityCode(selectedModality.code);
-		}
-		queryClient.invalidateQueries();
-	}
+	return {
+		school: 'max-w-[250px]',
+		modality: 'max-w-[230px]',
+		period: 'max-w-[310px]',
+	}[field];
+}
+
+export function GlobalAcademicFilters({
+	embedded = false,
+	layout = 'inline',
+}: GlobalAcademicFiltersProps) {
+	const { t } = useI18n();
+	const filters = useGlobalAcademicFilters();
+	const isMobileLayout = embedded && layout === 'mobile';
+	const compactDensity = layout === 'tablet' ? 'compact' : 'normal';
+	const compactLabelPlacement = isMobileLayout ? 'stacked' : 'inline';
 
 	return (
-		<div
-			className={
-				embedded ? 'w-full min-w-0' : 'w-full border-b border-zinc-200 bg-white px-6 py-4'
-			}>
-			<div
-				className={
-					embedded
-						? 'flex w-full min-w-0 items-center gap-3'
-						: 'flex w-full items-center gap-3 flex-wrap'
-				}>
-				<FilterItem embedded={embedded} embeddedClassName="w-[250px]">
+		<div className={embedded ? 'w-full min-w-0' : 'w-full border-b border-zinc-200 bg-white px-6 py-4'}>
+			<div className={layoutClasses(embedded, layout)}>
+				<FilterItem
+					embedded={embedded}
+					mobile={isMobileLayout}
+					widthClass={embeddedWidth(layout, 'school')}>
 					{embedded ? (
 						<CompactNavbarSelect
 							label={t('navbar.school.label')}
-							value={selectedSchoolOption?.value ?? ''}
-							options={schoolOptions}
+							value={filters.selectedSchoolOption?.value ?? ''}
+							options={filters.schoolOptions}
 							placeholder={t('select.placeholder.default')}
-							disabled={schoolOptions.length === 0}
-							onChange={handleSchoolChange}
+							labelPlacement={compactLabelPlacement}
+							density={compactDensity}
+							noOptionsMessage={t('select.noOptions')}
+							onChange={filters.handleSchoolChange}
 						/>
 					) : (
 						<Select
 							label={t('navbar.school.label')}
 							name="school"
-							value={selectedSchoolOption}
-							options={schoolOptions}
+							value={filters.selectedSchoolOption}
+							options={filters.schoolOptions}
 							isSearchable
-							isDisabled={schoolOptions.length === 0}
+							isDisabled={filters.schoolOptions.length === 0}
 							onChange={(_, selected) => {
 								if (!selected || Array.isArray(selected)) return;
-								handleSchoolChange(String(selected.value));
+								filters.handleSchoolChange(String(selected.value));
 							}}
 						/>
 					)}
 				</FilterItem>
 
-				<FilterItem embedded={embedded} embeddedClassName="w-[230px]">
+				<FilterItem
+					embedded={embedded}
+					mobile={isMobileLayout}
+					widthClass={embeddedWidth(layout, 'modality')}>
 					{embedded ? (
 						<CompactNavbarSelect
 							label={t('admin.configuration.periods.form.modality')}
-							value={modalityTypeId === null ? '' : String(modalityTypeId)}
-							options={modalitySelectOptions.map((option) => ({
-								value: String(option.value),
-								label: option.label,
-							}))}
+							value={filters.modalityTypeId === null ? '' : String(filters.modalityTypeId)}
+							options={filters.modalityCompactOptions}
 							placeholder={t('select.placeholder.default')}
-							disabled={modalitySelectOptions.length === 0}
+							labelPlacement={compactLabelPlacement}
+							density={compactDensity}
+							noOptionsMessage={t('select.noOptions')}
 							onChange={(value) => {
-								if (value !== '') handleModalityChange(Number(value));
+								if (value !== '') filters.handleModalityChange(Number(value));
 							}}
 						/>
 					) : (
 						<Select
 							label={t('admin.configuration.periods.form.modality')}
 							name="modality"
-							value={selectedModalityOption}
-							options={modalitySelectOptions}
+							value={filters.selectedModalityOption}
+							options={filters.modalitySelectOptions}
 							isSearchable={false}
-							isDisabled={modalitySelectOptions.length === 0}
+							isDisabled={filters.modalitySelectOptions.length === 0}
 							onChange={(_, selected) => {
 								if (!selected || Array.isArray(selected)) return;
-								handleModalityChange(Number(selected.value));
+								filters.handleModalityChange(Number(selected.value));
 							}}
 						/>
 					)}
 				</FilterItem>
 
-				<FilterItem embedded={embedded} embeddedClassName="w-[310px]">
+				<FilterItem
+					embedded={embedded}
+					mobile={isMobileLayout}
+					widthClass={embeddedWidth(layout, 'period')}>
 					<AcademicPeriodSelect
-						value={academicPeriodId}
-						onChange={(id) => setAcademicPeriodId(id)}
+						value={filters.academicPeriodId}
+						onChange={(id) => filters.setAcademicPeriodId(id)}
 						isClearable
-						onClear={() => setAcademicPeriodId(null)}
+						onClear={() => filters.setAcademicPeriodId(null)}
 						labelPlacement={embedded ? 'inline' : 'stacked'}
+						compactLabelPlacement={compactLabelPlacement}
+						compactDensity={compactDensity}
 					/>
 				</FilterItem>
 			</div>

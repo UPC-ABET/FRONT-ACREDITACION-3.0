@@ -712,6 +712,7 @@
 		"placeholder": {
 			"default": "Seleccione una opcion"
 		},
+		"noOptions": "No options",
 		"createLabel": "Crear: \"{value}\""
 	},
 	"school": {

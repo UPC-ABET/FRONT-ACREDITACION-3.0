@@ -13,6 +13,8 @@ type Props = {
 	isClearable?: boolean;
 	onClear?: () => void;
 	labelPlacement?: 'stacked' | 'inline';
+	compactLabelPlacement?: 'inline' | 'stacked';
+	compactDensity?: 'normal' | 'compact';
 };
 
 export function AcademicPeriodSelect({
@@ -21,6 +23,8 @@ export function AcademicPeriodSelect({
 	isClearable,
 	onClear,
 	labelPlacement = 'stacked',
+	compactLabelPlacement = 'inline',
+	compactDensity = 'normal',
 }: Props) {
 	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
@@ -70,6 +74,9 @@ export function AcademicPeriodSelect({
 				}))}
 				placeholder={loading ? t('loading.default') : t('select.placeholder.default')}
 				disabled={loading}
+				labelPlacement={compactLabelPlacement}
+				density={compactDensity}
+				noOptionsMessage={t('select.noOptions')}
 				onChange={(next) => {
 					if (next !== '') onChange(Number(next));
 					else if (isClearable) onClear?.();
