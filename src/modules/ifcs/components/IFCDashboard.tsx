@@ -91,8 +91,8 @@ export function IFCDashboard() {
 
 	const chartIncomplete =
 		scope !== null &&
-		!scope.levels.some(
-			(l) => l.typeCode === TYPE_CODES.CHART_LEVEL_TYPE.COURSE_COORDINATOR && l.options.length > 0,
+		!scope.levels.some((level) =>
+			level.options.some((option) => option.tag?.code === TYPE_CODES.CHART_ENTITY_TYPE.COURSE),
 		);
 
 	function runAutoSelect(

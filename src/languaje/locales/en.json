@@ -64,6 +64,9 @@
 		"status": {
 			"all": "All"
 		},
+		"scope": {
+			"level": "Level"
+		},
 		"view": {
 			"col": {
 				"completeness": "Completeness"
@@ -322,7 +325,7 @@
 				"to": "Recipients (To)",
 				"cc": "Cc",
 				"isActive": "Active",
-				"noLevels": "No levels available"
+				"noEntityTypes": "No entity types available"
 			},
 			"legend": {
 				"title": "Available variables",
@@ -1837,7 +1840,7 @@
 			"pageSubtitle": "Upload the org chart Excel for the selected period",
 			"selectPeriod": "Select an academic period",
 			"title": "Org chart upload",
-			"description": "Format .xlsx: EntityCode, Name, Level, EntityType, ResponsibleUserName, Campus, ParentEntityCode",
+			"description": "Format .xlsx: Code, Parent, Academic unit (English), Academic unit (Spanish), Responsible email, Entity type code, Entity code",
 			"dropzone": "Click or drag the Excel file here",
 			"upload": "Upload file",
 			"loadedSummary": "Loaded rows",
@@ -1853,10 +1856,8 @@
 				"rowsWithErrors": "Errors were found. Check the downloaded file.",
 				"generic": "An error occurred during the upload",
 				"entityCodeEmpty": "The entity code cannot be empty",
-				"levelInvalid": "The org chart level must be a number between 1 and 6",
 				"entityTypeInvalid": "The entity type is not valid",
 				"responsibleNotFound": "The responsible person is not registered in the system",
-				"campusNotFound": "The campus does not exist in the system",
 				"parentNotFound": "The parent entity is not registered"
 			}
 		},

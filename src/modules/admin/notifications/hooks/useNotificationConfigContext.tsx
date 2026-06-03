@@ -5,7 +5,7 @@ import type { CoreType, NotifyVar } from '../types';
 
 interface NotificationConfigContextValue {
 	periodId: number;
-	chartLevels: CoreType[];
+	chartEntityTypes: CoreType[];
 	notifyVars: NotifyVar[];
 	onSaved: () => void;
 	onError: (msg: string) => void;

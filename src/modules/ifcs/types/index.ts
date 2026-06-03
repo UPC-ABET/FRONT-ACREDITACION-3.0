@@ -1,15 +1,20 @@
 import type { I18nText } from '@/shared/types';
 export type { I18nText };
 
+export interface ScopeTag {
+	code: string;
+	name: I18nText;
+}
+
 export interface ScopeOption {
 	id: number;
 	label: I18nText;
 	parentId: number | null;
+	tag: ScopeTag | null;
 }
 
 export interface ScopeLevel {
 	levelNum: number;
-	typeCode: string;
 	options: ScopeOption[];
 }
 

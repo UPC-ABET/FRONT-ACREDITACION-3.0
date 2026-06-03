@@ -12,8 +12,8 @@ export interface NotificationConfig {
 	statusName: I18nText;
 	title: I18nText;
 	body: I18nText;
-	toChartLevelTypeIds: number[];
-	ccChartLevelTypeIds: number[];
+	toChartEntityTypeIds: number[];
+	ccChartEntityTypeIds: number[];
 	isActive: boolean;
 }
 
@@ -35,7 +35,7 @@ export interface UpsertConfigBody {
 	ifcStatusTypeId: number;
 	title: I18nText;
 	body: I18nText;
-	toChartLevelTypeIds?: number[];
-	ccChartLevelTypeIds?: number[];
+	toChartEntityTypeIds?: number[];
+	ccChartEntityTypeIds?: number[];
 	isActive?: boolean;
 }

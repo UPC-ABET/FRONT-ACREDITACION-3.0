@@ -11,7 +11,7 @@ interface ConfigsBundle {
 	notifyVars: NotifyVar[];
 	statuses: CoreType[];
 	triggers: CoreType[];
-	chartLevels: CoreType[];
+	chartEntityTypes: CoreType[];
 }
 
 const notificationConfigsKeys = {
@@ -20,19 +20,19 @@ const notificationConfigsKeys = {
 };
 
 async function fetchBundle(periodId: number): Promise<ConfigsBundle> {
-	const [configs, notifyVarsValue, statuses, triggers, chartLevels] = await Promise.all([
+	const [configs, notifyVarsValue, statuses, triggers, chartEntityTypes] = await Promise.all([
 		listNotificationConfigs(periodId),
 		getParameterByCode<NotifyVar[]>(PARAMETER_CODES.IFC_NOTIFICATION_VARS),
 		getTypesByGroupCode(TYPE_GROUP_CODES.IFC_STATUS) as Promise<CoreType[]>,
 		getTypesByGroupCode(TYPE_GROUP_CODES.NOTIFICATION_TRIGGER) as Promise<CoreType[]>,
-		getTypesByGroupCode(TYPE_GROUP_CODES.ORG_CHART_LEVEL) as Promise<CoreType[]>,
+		getTypesByGroupCode(TYPE_GROUP_CODES.ORG_CHART_ENTITY_TYPE) as Promise<CoreType[]>,
 	]);
 	return {
 		configs,
 		notifyVars: notifyVarsValue ?? [],
 		statuses,
 		triggers,
-		chartLevels,
+		chartEntityTypes,
 	};
 }
 

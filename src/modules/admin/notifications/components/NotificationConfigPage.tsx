@@ -39,7 +39,7 @@ export function NotificationConfigPage() {
 				{periodId !== null && data && (
 					<NotificationConfigProvider
 						periodId={periodId}
-						chartLevels={data.chartLevels}
+						chartEntityTypes={data.chartEntityTypes}
 						notifyVars={data.notifyVars}
 						onSaved={() => {
 							void refetch();

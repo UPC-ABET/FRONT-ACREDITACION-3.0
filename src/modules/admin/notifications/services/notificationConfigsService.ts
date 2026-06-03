@@ -15,8 +15,8 @@ function normalizeConfig(c: NotificationConfig): NotificationConfig {
 		academicPeriodId: Number(c.academicPeriodId),
 		triggerTypeId: Number(c.triggerTypeId),
 		ifcStatusTypeId: Number(c.ifcStatusTypeId),
-		toChartLevelTypeIds: (c.toChartLevelTypeIds ?? []).map(Number),
-		ccChartLevelTypeIds: (c.ccChartLevelTypeIds ?? []).map(Number),
+		toChartEntityTypeIds: (c.toChartEntityTypeIds ?? []).map(Number),
+		ccChartEntityTypeIds: (c.ccChartEntityTypeIds ?? []).map(Number),
 	};
 }
 

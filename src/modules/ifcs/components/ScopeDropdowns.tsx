@@ -3,7 +3,6 @@
 import { Fragment, useMemo } from 'react';
 import { Select } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { LEVEL_LABELS } from '../constants';
 import { optionsForLevel } from '../services/scope';
 import type { ScopeTree, SelectionValue } from '../types';
 
@@ -16,7 +15,7 @@ type Props = {
 type DropdownOption = { value: number | 'ALL'; label: string };
 
 export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
-	const { locale: lang } = useI18n();
+	const { t, locale: lang } = useI18n();
 
 	const allLabel = lang === 'en' ? 'All' : 'Todos';
 
@@ -26,6 +25,15 @@ export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 			const parentLevelNum = index > 0 ? scope.levels[index - 1].levelNum : null;
 			const parentMissing =
 				parentLevelNum !== null && (selections[parentLevelNum] ?? null) === null;
+
+			const taggedOptions = level.options.filter((option) => option.tag);
+			const distinctTagCodes = new Set(taggedOptions.map((option) => option.tag!.code));
+			const levelLabel =
+				distinctTagCodes.size === 1
+					? (taggedOptions[0].tag!.name[lang] ??
+						taggedOptions[0].tag!.name.es ??
+						taggedOptions[0].tag!.code)
+					: `${t('ifcs.scope.level')} ${level.levelNum}`;
 
 			const dropdownOptions: DropdownOption[] = [
 				{ value: 'ALL', label: allLabel },
@@ -41,22 +49,23 @@ export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 
 			return {
 				level,
+				levelLabel,
 				dropdownOptions,
 				selectedOpt,
 				disabled: parentMissing,
 				empty: opts.length === 0 && !parentMissing,
 			};
 		});
-	}, [scope, selections, lang, allLabel]);
+	}, [scope, selections, lang, allLabel, t]);
 
 	return (
 		<>
-			{renderedLevels.map(({ level, dropdownOptions, selectedOpt, disabled, empty }) => {
+			{renderedLevels.map(({ level, levelLabel, dropdownOptions, selectedOpt, disabled, empty }) => {
 				if (empty) return null;
 				return (
 					<Fragment key={level.levelNum}>
 						<Select
-							label={LEVEL_LABELS[level.typeCode]?.[lang] ?? level.typeCode}
+							label={levelLabel}
 							isDisabled={disabled}
 							value={selectedOpt}
 							onChange={(_, opt) => {

@@ -94,7 +94,7 @@ function RecipientsField({
 
 export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existingConfig }: Props) {
 	const { t, locale: lang } = useI18n();
-	const { periodId, chartLevels, notifyVars, onSaved, onError, onSuccess } =
+	const { periodId, chartEntityTypes, notifyVars, onSaved, onError, onSuccess } =
 		useNotificationConfigContext();
 	const [title, setTitle] = useState<I18nText>(() =>
 		existingConfig ? asI18n(existingConfig.title) : emptyI18n(),
@@ -102,19 +102,19 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 	const [body, setBody] = useState<I18nText>(() =>
 		existingConfig ? asI18n(existingConfig.body) : emptyI18n(),
 	);
-	const [toIds, setToIds] = useState<number[]>(() => existingConfig?.toChartLevelTypeIds ?? []);
-	const [ccIds, setCcIds] = useState<number[]>(() => existingConfig?.ccChartLevelTypeIds ?? []);
+	const [toIds, setToIds] = useState<number[]>(() => existingConfig?.toChartEntityTypeIds ?? []);
+	const [ccIds, setCcIds] = useState<number[]>(() => existingConfig?.ccChartEntityTypeIds ?? []);
 	const [isActive, setIsActive] = useState<boolean>(() => existingConfig?.isActive ?? true);
 	const [saving, setSaving] = useState(false);
 	const [confirmDelete, setConfirmDelete] = useState(false);
 
-	const chartLevelOptions = useMemo<RecipientOption[]>(
+	const chartEntityTypeOptions = useMemo<RecipientOption[]>(
 		() =>
-			chartLevels.map((c) => ({
+			chartEntityTypes.map((c) => ({
 				id: Number(c.id),
 				label: c.name?.[lang] ?? c.name?.es ?? c.code,
 			})),
-		[chartLevels, lang],
+		[chartEntityTypes, lang],
 	);
 
 	function toggleIdInList(list: number[], id: number): number[] {
@@ -130,8 +130,8 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 				ifcStatusTypeId: statusTypeId,
 				title,
 				body,
-				toChartLevelTypeIds: toIds,
-				ccChartLevelTypeIds: ccIds,
+				toChartEntityTypeIds: toIds,
+				ccChartEntityTypeIds: ccIds,
 				isActive: isActive,
 			};
 			await upsertNotificationConfig(payload);
@@ -186,18 +186,18 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 					<RecipientsField
 						icon={<UsersIcon className="h-5 w-5 text-red-700" />}
 						label={t('admin.notify.field.to')}
-						options={chartLevelOptions}
+						options={chartEntityTypeOptions}
 						selected={toIds}
 						onToggle={(id) => setToIds((prev) => toggleIdInList(prev, id))}
-						emptyLabel={t('admin.notify.field.noLevels')}
+						emptyLabel={t('admin.notify.field.noEntityTypes')}
 					/>
 					<RecipientsField
 						icon={<UserGroupIcon className="h-5 w-5 text-red-700" />}
 						label={t('admin.notify.field.cc')}
-						options={chartLevelOptions}
+						options={chartEntityTypeOptions}
 						selected={ccIds}
 						onToggle={(id) => setCcIds((prev) => toggleIdInList(prev, id))}
-						emptyLabel={t('admin.notify.field.noLevels')}
+						emptyLabel={t('admin.notify.field.noEntityTypes')}
 					/>
 				</div>
 			</section>

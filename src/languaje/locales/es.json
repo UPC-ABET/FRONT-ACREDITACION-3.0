@@ -64,6 +64,9 @@
 		"status": {
 			"all": "Todos"
 		},
+		"scope": {
+			"level": "Nivel"
+		},
 		"view": {
 			"col": {
 				"completeness": "Completitud"
@@ -322,7 +325,7 @@
 				"to": "Destinatarios (Para)",
 				"cc": "En copia (CC)",
 				"isActive": "Activo",
-				"noLevels": "No hay niveles disponibles"
+				"noEntityTypes": "No hay tipos de entidad disponibles"
 			},
 			"legend": {
 				"title": "Variables disponibles",
@@ -1837,7 +1840,7 @@
 			"pageSubtitle": "Sube el Excel de organigrama para el período seleccionado",
 			"selectPeriod": "Selecciona un período académico",
 			"title": "Carga de organigrama",
-			"description": "Formato .xlsx: CodigoEntidad, Nombre, Nivel, TipoEntidad, ResponsableUserName, Sede, CodigoEntidadPadre",
+			"description": "Formato .xlsx: Código, Padre, Unidad académica (Inglés), Unidad académica (Español), Correo del responsable, Código de tipo de entidad, Código de entidad",
 			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
 			"upload": "Cargar archivo",
 			"loadedSummary": "Filas cargadas",
@@ -1853,10 +1856,8 @@
 				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
 				"generic": "Ocurrió un error durante la carga",
 				"entityCodeEmpty": "El código de entidad no puede estar vacío",
-				"levelInvalid": "El nivel del organigrama debe ser un número entre 1 y 6",
 				"entityTypeInvalid": "El tipo de entidad no es válido",
 				"responsibleNotFound": "El responsable no se encuentra registrado en el sistema",
-				"campusNotFound": "La sede no existe en el sistema",
 				"parentNotFound": "La entidad padre no se encuentra registrada"
 			}
 		},
