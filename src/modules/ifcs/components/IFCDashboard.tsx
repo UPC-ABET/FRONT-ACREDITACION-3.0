@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	ArrowDownTrayIcon,
 	BellAlertIcon,
@@ -32,7 +32,6 @@ import {
 } from '../hooks';
 import { effectiveStatus, optionsForLevel } from '../services/scope';
 import type { IFCStatusFilter, ScopeTree, SelectionValue } from '../types';
-import { AcademicPeriodSelect } from './AcademicPeriodSelect';
 import { IFCTable } from './IFCTable';
 import { ScopeDropdowns } from './ScopeDropdowns';
 
@@ -44,11 +43,28 @@ function formatTemplate(template: string, vars: Record<string, string | number>)
 	return out;
 }
 
+function runAutoSelect(
+	tree: ScopeTree,
+	sels: Record<number, SelectionValue>,
+	fromLevel: number,
+): Record<number, SelectionValue> {
+	const next = { ...sels };
+	const levels = tree.levels.filter((level) => level.levelNum >= fromLevel);
+	for (const level of levels) {
+		const opts = optionsForLevel(tree, level.levelNum, next);
+		if (opts.length === 1) {
+			next[level.levelNum] = opts[0].id;
+		} else {
+			break;
+		}
+	}
+	return next;
+}
+
 type StatusOptionItem = { value: IFCStatusFilter; label: string };
 
 export function IFCDashboard() {
 	const { t, locale: lang } = useI18n();
-	const [periodId, setPeriodId] = useState<number | null>(null);
 	const [selections, setSelections] = useState<Record<number, SelectionValue>>({});
 	const [statusFilter, setStatusFilter] = useState<IFCStatusFilter>('ALL');
 	const [lastSearchedChartIds, setLastSearchedChartIds] = useState<number[] | null>(null);
@@ -71,61 +87,35 @@ export function IFCDashboard() {
 
 	const { user: authUser } = useAuth();
 	const currentUserId = authUser?.id ?? null;
-	const { modalityTypeId } = useABET();
-	const isFirstModalityRender = useRef(true);
+	const { academicPeriodId } = useABET();
 
 	useEffect(() => {
-		if (isFirstModalityRender.current) {
-			isFirstModalityRender.current = false;
-			return;
-		}
-		setPeriodId(null);
 		setSelections({});
 		setRows([]);
-		setScope(null);
 		setLastSearchedChartIds(null);
 		setLastSearchedPeriodId(null);
 		setScopeErrorDismissed(false);
 		setListErrorDismissed(false);
-	}, [modalityTypeId, setRows, setScope]);
+		if (academicPeriodId === null) {
+			setScope(null);
+			return;
+		}
+		let active = true;
+		void loadScope(academicPeriodId).then((tree) => {
+			if (!active || !tree || tree.levels.length === 0) return;
+			const firstLevel = tree.levels[0].levelNum;
+			setSelections(runAutoSelect(tree, {}, firstLevel));
+		});
+		return () => {
+			active = false;
+		};
+	}, [academicPeriodId, loadScope, setRows, setScope]);
 
 	const chartIncomplete =
 		scope !== null &&
 		!scope.levels.some((level) =>
 			level.options.some((option) => option.tag?.code === TYPE_CODES.CHART_ENTITY_TYPE.COURSE),
 		);
-
-	function runAutoSelect(
-		tree: ScopeTree,
-		sels: Record<number, SelectionValue>,
-		fromLevel: number,
-	): Record<number, SelectionValue> {
-		const next = { ...sels };
-		const levels = tree.levels.filter((l) => l.levelNum >= fromLevel);
-		for (const lvl of levels) {
-			const opts = optionsForLevel(tree, lvl.levelNum, next);
-			if (opts.length === 1) {
-				next[lvl.levelNum] = opts[0].id;
-			} else {
-				break;
-			}
-		}
-		return next;
-	}
-
-	async function handlePeriod(p: number) {
-		setPeriodId(p);
-		setSelections({});
-		setRows([]);
-		setLastSearchedChartIds(null);
-		setLastSearchedPeriodId(null);
-		setScopeErrorDismissed(false);
-		const tree = await loadScope(p);
-		if (tree && tree.levels.length > 0) {
-			const first = tree.levels[0].levelNum;
-			setSelections(runAutoSelect(tree, {}, first));
-		}
-	}
 
 	function handleSelect(levelNum: number, value: SelectionValue) {
 		if (!scope) return;
@@ -138,22 +128,23 @@ export function IFCDashboard() {
 
 	const lastLevel = scope?.levels.at(-1)?.levelNum ?? null;
 	const lastSel = lastLevel !== null ? (selections[lastLevel] ?? null) : null;
-	const canSearch = periodId !== null && scope !== null && !chartIncomplete && lastSel !== null;
+	const canSearch =
+		academicPeriodId !== null && scope !== null && !chartIncomplete && lastSel !== null;
 
 	async function handleSearch() {
-		if (!canSearch || !scope || lastLevel === null || periodId === null) return;
+		if (!canSearch || !scope || lastLevel === null || academicPeriodId === null) return;
 		setListErrorDismissed(false);
 		const chartIds =
 			lastSel === 'ALL'
 				? optionsForLevel(scope, lastLevel, selections).map((o) => o.id)
 				: [Number(lastSel)];
 		setLastSearchedChartIds(chartIds);
-		setLastSearchedPeriodId(periodId);
+		setLastSearchedPeriodId(academicPeriodId);
 		if (chartIds.length === 0) {
 			setRows([]);
 			return;
 		}
-		await loadList(chartIds, periodId);
+		await loadList(chartIds, academicPeriodId);
 	}
 
 	const statusOptions: StatusOptionItem[] = useMemo(
@@ -223,9 +214,9 @@ export function IFCDashboard() {
 	}, [visibleRows, currentUserId]);
 
 	async function handleNotifyOne(chartId: number) {
-		if (periodId === null) return;
+		if (academicPeriodId === null) return;
 		try {
-			const r = await notifyOne(chartId, periodId);
+			const r = await notifyOne(chartId, academicPeriodId);
 			if (r.sent) {
 				setNotifySuccess(t('ifcs.notify.toast.success'));
 			} else {
@@ -237,9 +228,9 @@ export function IFCDashboard() {
 	}
 
 	async function handleNotifyAll() {
-		if (periodId === null || notifiableChartIds.length === 0) return;
+		if (academicPeriodId === null || notifiableChartIds.length === 0) return;
 		try {
-			const result = await notifyMany(notifiableChartIds, periodId);
+			const result = await notifyMany(notifiableChartIds, academicPeriodId);
 			if (result.errors.length > 0) {
 				setNotifyError(
 					formatTemplate(t('ifcs.notify.toast.error'), { count: result.errors.length }),
@@ -270,18 +261,21 @@ export function IFCDashboard() {
 		<Card title={t('ifcs.page.title')}>
 			<div className="space-y-6">
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6">
-					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-						<AcademicPeriodSelect value={periodId} onChange={handlePeriod} />
-						{scopeLoading && (
-							<>
-								<Skeleton className="h-10 w-full" />
-								<Skeleton className="h-10 w-full" />
-							</>
-						)}
-						{!scopeLoading && !chartIncomplete && scope && scope.levels.length > 0 && (
-							<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
-						)}
-					</div>
+					{academicPeriodId === null ? (
+						<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>
+					) : (
+						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+							{scopeLoading && (
+								<>
+									<Skeleton className="h-10 w-full" />
+									<Skeleton className="h-10 w-full" />
+								</>
+							)}
+							{!scopeLoading && !chartIncomplete && scope && scope.levels.length > 0 && (
+								<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
+							)}
+						</div>
+					)}
 
 					{!chartIncomplete && (
 						<div className="mt-6 flex flex-col gap-4 border-t border-zinc-200 pt-5 lg:flex-row lg:items-end lg:justify-between">
@@ -321,7 +315,7 @@ export function IFCDashboard() {
 											: `${t('ifcs.pdf.downloadAll')} (${approvedIds.length})`}
 									</Button>
 								)}
-								{notifiableChartIds.length > 0 && periodId !== null && (
+								{notifiableChartIds.length > 0 && academicPeriodId !== null && (
 									<Button
 										variant="secondary"
 										size="lg"
@@ -359,7 +353,7 @@ export function IFCDashboard() {
 					<div className="overflow-x-auto">
 						<IFCTable
 							rows={visibleRows}
-							periodId={periodId}
+							periodId={academicPeriodId}
 							currentUserId={currentUserId}
 							notifyingChartId={notifyingChartId}
 							onNotify={handleNotifyOne}

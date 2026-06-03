@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { ChartHeadsConfigPage } from '@/modules/admin/chart-heads';
 import { PeriodsTab, ProgramCommissionsTab } from '../components';
 
 const DEFAULT_TAB = 'periods';
@@ -17,6 +18,7 @@ export default function AdminConfigurationPage() {
 	const topTabs = [
 		{ id: 'periods', label: t('admin.configuration.tabs.periods') },
 		{ id: 'program-commissions', label: t('admin.configuration.tabs.programCommissions') },
+		{ id: 'chart-heads', label: t('admin.configuration.tabs.chartHeads') },
 	];
 
 	const setTab = (id: string) => {
@@ -38,6 +40,7 @@ export default function AdminConfigurationPage() {
 
 			{activeTab === 'periods' && <PeriodsTab />}
 			{activeTab === 'program-commissions' && <ProgramCommissionsTab />}
+			{activeTab === 'chart-heads' && <ChartHeadsConfigPage />}
 		</div>
 	);
 }

@@ -1,4 +1,3 @@
-export * from './AcademicPeriodSelect';
 export * from './IFCDashboard';
 export * from './IFCTable';
 export * from './ScopeDropdowns';

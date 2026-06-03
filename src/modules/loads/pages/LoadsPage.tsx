@@ -1,17 +1,16 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import type { TypeOption } from '@/modules/core';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
-import { useI18n } from '@/providers';
+import { useABET, useI18n } from '@/providers';
 import { UploadPanel, UploadTypeSelect } from '../components';
 
 export default function LoadsPage() {
 	const { t } = useI18n();
+	const { academicPeriodId } = useABET();
 	const [typeCode, setTypeCode] = useState<string | null>(null);
-	const [academicPeriodId, setAcademicPeriodId] = useState<number | null>(null);
 
 	const { data: uploadTypes } = useTypesByGroupCode(TYPE_GROUP_CODES.UPLOAD_TYPE);
 
@@ -27,9 +26,8 @@ export default function LoadsPage() {
 				<p className="text-sm text-gray-500">{t('loads.page.subtitle')}</p>
 			</header>
 
-			<div className="grid gap-4 sm:grid-cols-2">
+			<div className="grid gap-4 sm:max-w-sm">
 				<UploadTypeSelect value={typeCode} onChange={setTypeCode} />
-				<AcademicPeriodSelect value={academicPeriodId} onChange={setAcademicPeriodId} />
 			</div>
 
 			{selectedType && academicPeriodId !== null ? (

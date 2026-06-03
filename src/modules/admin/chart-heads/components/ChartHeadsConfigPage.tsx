@@ -5,44 +5,45 @@ import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
-import { useNotificationConfigs } from '../hooks/useNotificationConfigs';
-import { NotificationConfigProvider } from '../hooks/useNotificationConfigContext';
-import { ConfigTabs } from './ConfigTabs';
+import { useChartHeadsConfig, useSchoolOptions, useUserOptions } from '../hooks';
+import { ChartHeadsForm } from './ChartHeadsForm';
 
-export function NotificationConfigPage() {
+export function ChartHeadsConfigPage() {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-	const { data, loading, error, refetch } = useNotificationConfigs(academicPeriodId);
+	const { data: config, isLoading, error } = useChartHeadsConfig(academicPeriodId);
+	const schools = useSchoolOptions();
+	const users = useUserOptions();
 
 	return (
-		<Card title={t('admin.notify.page.title')}>
+		<Card title={t('admin.chartHeads.page.title')}>
 			<div className="space-y-6">
 				{academicPeriodId === null && (
 					<div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-white py-14 text-zinc-500">
 						<CalendarDaysIcon className="h-10 w-10 text-zinc-400" />
-						<p className="text-base italic">{t('admin.notify.page.selectPeriod')}</p>
+						<p className="text-base italic">{t('admin.chartHeads.page.selectPeriod')}</p>
 					</div>
 				)}
 
-				{academicPeriodId !== null && loading && (
+				{academicPeriodId !== null && isLoading && (
 					<LoadingDialog isOpen label={t('loading.default')} />
 				)}
 
-				{academicPeriodId !== null && data && (
-					<NotificationConfigProvider
-						periodId={academicPeriodId}
-						chartEntityTypes={data.chartEntityTypes}
-						notifyVars={data.notifyVars}
-						onSaved={() => {
-							void refetch();
-						}}
+				{academicPeriodId !== null && config && (
+					<ChartHeadsForm
+						key={academicPeriodId}
+						academicPeriodId={academicPeriodId}
+						config={config}
+						schoolOptions={schools.data ?? []}
+						schoolsLoading={schools.isLoading}
+						userOptions={users.data ?? []}
+						usersLoading={users.isLoading}
+						onSuccess={setSuccessMsg}
 						onError={setErrorMsg}
-						onSuccess={setSuccessMsg}>
-						<ConfigTabs triggers={data.triggers} statuses={data.statuses} configs={data.configs} />
-					</NotificationConfigProvider>
+					/>
 				)}
 
 				{(error || errorMsg) && (
@@ -50,7 +51,10 @@ export function NotificationConfigPage() {
 						isOpen
 						type="error"
 						onClose={() => setErrorMsg(null)}
-						message={tryTranslate(t, errorMsg ?? error ?? 'admin.notify.error.listFailed')}
+						message={tryTranslate(
+							t,
+							errorMsg ?? error?.message ?? 'admin.chartHeads.error.loadFailed',
+						)}
 					/>
 				)}
 

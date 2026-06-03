@@ -46,6 +46,7 @@
 		"page": {
 			"title": "End of Course Report",
 			"period": "Academic Period",
+			"selectPeriod": "Select an academic period in the top bar to continue.",
 			"searchBtn": "Search"
 		},
 		"table": {
@@ -211,6 +212,47 @@
 				"ifc": "IFC"
 			}
 		},
+		"chartHeads": {
+			"page": {
+				"title": "Org chart configuration",
+				"selectPeriod": "Select a period to continue"
+			},
+			"dean": {
+				"title": "Dean"
+			},
+			"directors": {
+				"title": "School directors",
+				"add": "Add director",
+				"remove": "Remove",
+				"removeNote": "Removing a director only stops updating it on save; it is not deleted from the org chart.",
+				"empty": "No directors yet. Add one to get started.",
+				"rowLabel": "Director {number}"
+			},
+			"field": {
+				"firstName": "First name",
+				"lastName": "Last name",
+				"user": "Linked user",
+				"userPlaceholder": "No linked user",
+				"title": "Title",
+				"school": "School",
+				"schoolPlaceholder": "Select a school"
+			},
+			"btn": {
+				"save": "Save configuration"
+			},
+			"toast": {
+				"saved": "Configuration saved successfully."
+			},
+			"error": {
+				"loadFailed": "Could not load the configuration.",
+				"saveFailed": "Could not save the configuration.",
+				"firstNameRequired": "First name is required.",
+				"lastNameRequired": "Last name is required.",
+				"titleRequired": "Title is required in every language.",
+				"schoolRequired": "Select a school.",
+				"duplicateSchool": "This school is already assigned to another director."
+			}
+		},
 		"configuration": {
 			"page": {
 				"title": "Configuration",
@@ -218,7 +260,8 @@
 			},
 			"tabs": {
 				"periods": "Academic periods",
-				"programCommissions": "Program × Commission"
+				"programCommissions": "Program × Commission",
+				"chartHeads": "Org chart"
 			},
 			"periods": {
 				"title": "Academic periods",
@@ -694,6 +737,13 @@
 			"rollbackBlockedSectionRefs": "Can't roll back: there are enrollments or surveys linked to these sections. Remove them first.",
 			"rollbackBlockedEnrollmentRefs": "Can't roll back: there are student-section enrollments or surveys linked to these enrollments. Remove them first.",
 			"rollbackBlockedSectionEnrollmentRefs": "Can't roll back: there are grades or projects linked to these section enrollments. Remove them first."
+		},
+		"chartHeads": {
+			"configureFailed": "Could not save the org chart configuration.",
+			"periodNotFound": "The academic period does not exist.",
+			"schoolNotFound": "The selected school does not exist.",
+			"userNotFound": "The selected user does not exist.",
+			"duplicateSchoolInPayload": "The same school cannot be assigned to two directors."
 		}
 	},
 	"table": {

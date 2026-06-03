@@ -4,15 +4,14 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button, Toast } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
-import { useI18n } from '@/providers';
+import { useABET, useI18n } from '@/providers';
 import AssociateProgramCommissionDialog from './AssociateProgramCommissionDialog';
-import ConfigurationPeriodSelect from './ConfigurationPeriodSelect';
 import ProgramCommissionsTable from './ProgramCommissionsTable';
 
 export default function ProgramCommissionsTab() {
 	const { t } = useI18n();
 	const { toast, clearToast } = useApiErrorToast();
-	const [academicPeriodId, setAcademicPeriodId] = useState<number | null>(null);
+	const { academicPeriodId } = useABET();
 	const [dialogOpen, setDialogOpen] = useState(false);
 
 	return (
@@ -26,12 +25,7 @@ export default function ProgramCommissionsTab() {
 				</p>
 			</header>
 
-			<div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-				<ConfigurationPeriodSelect
-					value={academicPeriodId}
-					onChange={setAcademicPeriodId}
-					placeholder={t('admin.configuration.programCommissions.periodPlaceholder')}
-				/>
+			<div className="flex justify-end">
 				<Button
 					variant="primary"
 					size="md"

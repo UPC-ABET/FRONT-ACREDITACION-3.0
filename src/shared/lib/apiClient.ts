@@ -49,22 +49,34 @@ export function authHeader(): Record<string, string> {
 }
 
 const SCHOOL_HEADER = 'X-School-Id';
+const ACADEMIC_PERIOD_HEADER = 'X-Academic-Period-Id';
+const MODALITY_TYPE_HEADER = 'X-Modality-Type-Id';
 
 let activeSchoolId: number | null = null;
 let activeSchoolIdInitialized = false;
+let activeAcademicPeriodId: number | null = null;
+let activeModalityTypeId: number | null = null;
 
-function normalizeSchoolId(value: unknown): number | null {
+function normalizePositiveId(value: unknown): number | null {
 	return typeof value === 'number' && Number.isInteger(value) && value > 0 ? value : null;
 }
 
 export function setActiveSchoolId(schoolId: number | null): void {
-	activeSchoolId = normalizeSchoolId(schoolId);
+	activeSchoolId = normalizePositiveId(schoolId);
 	activeSchoolIdInitialized = true;
+}
+
+export function setActiveAcademicPeriodId(academicPeriodId: number | null): void {
+	activeAcademicPeriodId = normalizePositiveId(academicPeriodId);
+}
+
+export function setActiveModalityTypeId(modalityTypeId: number | null): void {
+	activeModalityTypeId = normalizePositiveId(modalityTypeId);
 }
 
 function resolveSchoolId(): number | null {
 	if (!activeSchoolIdInitialized) {
-		activeSchoolId = normalizeSchoolId(getSchoolCookie()?.id);
+		activeSchoolId = normalizePositiveId(getSchoolCookie()?.id);
 		activeSchoolIdInitialized = true;
 	}
 	return activeSchoolId;
@@ -83,6 +95,12 @@ export function buildHeaders(
 		...(isFormData ? {} : { 'Content-Type': 'application/json' }),
 		...(token ? { Authorization: `Bearer ${token}` } : {}),
 		...(schoolId === null ? {} : { [SCHOOL_HEADER]: String(schoolId) }),
+		...(activeAcademicPeriodId === null
+			? {}
+			: { [ACADEMIC_PERIOD_HEADER]: String(activeAcademicPeriodId) }),
+		...(activeModalityTypeId === null
+			? {}
+			: { [MODALITY_TYPE_HEADER]: String(activeModalityTypeId) }),
 		...extra,
 	};
 }
