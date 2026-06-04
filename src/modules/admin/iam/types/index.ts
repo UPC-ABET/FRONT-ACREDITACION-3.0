@@ -1,0 +1,151 @@
+import type { I18nText } from '@/shared/types';
+
+export interface IamUser {
+	id: number;
+	firstName: string;
+	lastName: string;
+	email: string;
+	phone: string | null;
+	documentTypeId: number | null;
+	documentCode: string | null;
+	isActive: boolean;
+	extra: Record<string, unknown> | null;
+}
+
+export interface UserCreateBody {
+	firstName: string;
+	lastName: string;
+	email: string;
+	phone?: string;
+	documentTypeId?: number;
+	documentCode?: string;
+	isActive?: boolean;
+	extra?: Record<string, unknown>;
+}
+
+export type UserUpdateBody = Partial<UserCreateBody>;
+
+export interface UserFilters {
+	firstName?: string;
+	lastName?: string;
+	email?: string;
+	phone?: string;
+	documentTypeId?: number;
+	documentCode?: string;
+	isActive?: boolean;
+}
+
+export interface AdminRole {
+	id: number;
+	code: string;
+	name: I18nText;
+	description: I18nText | null;
+	isActive: boolean;
+	extra: Record<string, unknown> | null;
+}
+
+export interface RoleCreateBody {
+	code: string;
+	name: I18nText;
+	description?: I18nText;
+	isActive?: boolean;
+	extra?: Record<string, unknown>;
+}
+
+export type RoleUpdateBody = Partial<RoleCreateBody>;
+
+export interface UserRole {
+	id: number;
+	userId: number;
+	roleId: number;
+	isActive: boolean;
+}
+
+export interface RoleModulePermission {
+	id: number;
+	roleId: number;
+	moduleTypeId: number;
+	permissionTypeId: number;
+	isActive: boolean;
+}
+
+export interface IamType {
+	id: number;
+	typeGroupId: number;
+	code: string;
+	name: I18nText;
+	description: I18nText | null;
+	extra: IamTypeExtra | null;
+}
+
+export interface IamTypeExtra {
+	route?: string;
+	module?: string;
+}
+
+export interface ModuleTypeCreateBody {
+	typeGroupId: number;
+	name: I18nText;
+	extra: Required<IamTypeExtra>;
+}
+
+export interface PermissionTypeCreateBody {
+	typeGroupId: number;
+	name: I18nText;
+}
+
+export interface TypeUpdateBody {
+	name?: I18nText;
+	extra?: IamTypeExtra;
+}
+
+export interface MatrixCell {
+	moduleTypeId: number;
+	permissionTypeId: number;
+}
+
+export interface UserFormValues {
+	firstName: string;
+	lastName: string;
+	email: string;
+	phone: string;
+	documentTypeId: number | null;
+	documentCode: string;
+	isActive: boolean;
+	roleIds: number[];
+}
+
+export interface UserFormErrors {
+	firstName?: string;
+	lastName?: string;
+	email?: string;
+}
+
+export interface RoleFormValues {
+	code: string;
+	name: I18nText;
+	description: I18nText;
+	isActive: boolean;
+	cells: MatrixCell[];
+}
+
+export interface RoleFormErrors {
+	code?: string;
+	name?: string;
+}
+
+export interface ModuleTypeFormValues {
+	name: I18nText;
+	route: string;
+	module: string;
+}
+
+export interface PermissionTypeFormValues {
+	name: I18nText;
+}
+
+export interface TypeFormErrors {
+	name?: string;
+	route?: string;
+	module?: string;
+}

@@ -269,7 +269,10 @@ export function IFCDashboard() {
 	return (
 		<Card title={t('ifcs.page.title')}>
 			<div className="space-y-6">
-				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6">
+				<div
+					className={`rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6${
+						chartIncomplete ? ' hidden' : ''
+					}`}>
 					{academicPeriodId === null ? (
 						<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>
 					) : schoolsLoading ? (

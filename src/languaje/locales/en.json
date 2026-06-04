@@ -33,7 +33,8 @@
 			"label": "Administration",
 			"parameters": "Parameters",
 			"notifications": "Notifications",
-			"configuration": "Configuration"
+			"configuration": "Configuration",
+			"iam": "Identity & Access"
 		},
 		"logout": "Logout",
 		"loads": {
@@ -196,6 +197,192 @@
 		}
 	},
 	"admin": {
+		"iam": {
+			"page": {
+				"title": "Identity & Access",
+				"subtitle": "Manage users, roles, modules and permissions in one place."
+			},
+			"tabs": {
+				"users": "Users",
+				"roles": "Roles",
+				"modules": "Modules",
+				"permissions": "Permissions"
+			},
+			"actions": {
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"retry": "Retry",
+			"users": {
+				"title": "Users",
+				"create": "New user",
+				"search": "Search users...",
+				"empty": "No users yet. Create the first one to get started.",
+				"notFound": "User not found.",
+				"col": {
+					"name": "Name",
+					"email": "Email",
+					"document": "Document",
+					"status": "Status",
+					"actions": "Actions"
+				},
+				"badge": {
+					"active": "Active",
+					"inactive": "Inactive"
+				},
+				"form": {
+					"createTitle": "New user",
+					"editTitle": "Edit user",
+					"back": "Back to users",
+					"firstName": "First name",
+					"lastName": "Last name",
+					"email": "Email",
+					"phone": "Phone",
+					"documentType": "Document type",
+					"documentTypePlaceholder": "Select a document type",
+					"documentCode": "Document number",
+					"isActive": "Active",
+					"roles": "Roles",
+					"rolesHint": "Select the roles this user will have.",
+					"rolesEmpty": "There are no roles yet. Create roles first."
+				},
+				"toast": {
+					"created": "User created successfully.",
+					"updated": "User updated successfully.",
+					"deleted": "User deleted successfully."
+				},
+				"confirmDelete": {
+					"title": "Delete user",
+					"message": "This will permanently delete the user. Continue?"
+				},
+				"error": {
+					"firstNameRequired": "First name is required.",
+					"lastNameRequired": "Last name is required.",
+					"emailRequired": "Email is required.",
+					"emailInvalid": "Enter a valid email address.",
+					"listFailed": "Could not load users.",
+					"rolesLoadFailed": "Could not load the user's roles.",
+					"saveFailed": "Could not save the user.",
+					"deleteFailed": "Could not delete the user."
+				}
+			},
+			"roles": {
+				"title": "Roles",
+				"create": "New role",
+				"search": "Search roles...",
+				"empty": "No roles yet. Create the first one to get started.",
+				"notFound": "Role not found.",
+				"col": {
+					"code": "Code",
+					"name": "Name",
+					"status": "Status",
+					"actions": "Actions"
+				},
+				"badge": {
+					"active": "Active",
+					"inactive": "Inactive"
+				},
+				"form": {
+					"createTitle": "New role",
+					"editTitle": "Edit role",
+					"back": "Back to roles",
+					"code": "Code",
+					"name": "Name",
+					"description": "Description",
+					"isActive": "Active",
+					"permissions": "Permissions",
+					"permissionsHint": "Check a cell to grant the module + permission to this role."
+				},
+				"matrix": {
+					"corner": "Module \\ Permission",
+					"noModules": "There are no modules yet. Create modules first.",
+					"noPermissions": "There are no permissions yet. Create permissions first."
+				},
+				"toast": {
+					"created": "Role created successfully.",
+					"updated": "Role updated successfully.",
+					"deleted": "Role deleted successfully."
+				},
+				"confirmDelete": {
+					"title": "Delete role",
+					"message": "This will permanently delete the role. Continue?"
+				},
+				"error": {
+					"codeRequired": "Code is required.",
+					"nameRequired": "Name is required in every language.",
+					"listFailed": "Could not load roles.",
+					"permissionsLoadFailed": "Could not load the role's permissions.",
+					"saveFailed": "Could not save the role.",
+					"deleteFailed": "Could not delete the role."
+				}
+			},
+			"modules": {
+				"title": "Modules",
+				"create": "New module",
+				"search": "Search modules...",
+				"empty": "No modules yet. Create the first one to get started.",
+				"col": {
+					"code": "Code",
+					"name": "Name",
+					"route": "Route",
+					"module": "Module",
+					"actions": "Actions"
+				},
+				"form": {
+					"createTitle": "New module",
+					"editTitle": "Edit module",
+					"name": "Name",
+					"route": "Route",
+					"routePlaceholder": "/admin/example",
+					"module": "Module key",
+					"modulePlaceholder": "EXAMPLE"
+				},
+				"toast": {
+					"created": "Module created successfully.",
+					"updated": "Module updated successfully.",
+					"deleted": "Module deleted successfully."
+				},
+				"confirmDelete": {
+					"title": "Delete module",
+					"message": "This will permanently delete the module. Continue?"
+				}
+			},
+			"permissions": {
+				"title": "Permissions",
+				"create": "New permission",
+				"search": "Search permissions...",
+				"empty": "No permissions yet. Create the first one to get started.",
+				"col": {
+					"code": "Code",
+					"name": "Name",
+					"actions": "Actions"
+				},
+				"form": {
+					"createTitle": "New permission",
+					"editTitle": "Edit permission",
+					"name": "Name"
+				},
+				"toast": {
+					"created": "Permission created successfully.",
+					"updated": "Permission updated successfully.",
+					"deleted": "Permission deleted successfully."
+				},
+				"confirmDelete": {
+					"title": "Delete permission",
+					"message": "This will permanently delete the permission. Continue?"
+				}
+			},
+			"types": {
+				"error": {
+					"nameRequired": "Name is required in every language.",
+					"routeRequired": "Route is required.",
+					"moduleRequired": "Module key is required.",
+					"listFailed": "Could not load the catalog.",
+					"saveFailed": "Could not save.",
+					"deleteFailed": "Could not delete."
+				}
+			}
+		},
 		"parameters": {
 			"tabs": {
 				"ifc": "IFC",

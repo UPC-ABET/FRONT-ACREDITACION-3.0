@@ -92,6 +92,7 @@ export function buildHeaders(
 
 	return {
 		accept: '*/*',
+		'ngrok-skip-browser-warning': 'true',
 		...(isFormData ? {} : { 'Content-Type': 'application/json' }),
 		...(token ? { Authorization: `Bearer ${token}` } : {}),
 		...(schoolId === null ? {} : { [SCHOOL_HEADER]: String(schoolId) }),

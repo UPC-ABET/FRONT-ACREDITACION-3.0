@@ -108,6 +108,7 @@ export function AppSidebar() {
 				{ name: t('nav.admin.parameters'), href: '/admin/parameters' },
 				{ name: t('nav.admin.notifications'), href: '/admin/notifications' },
 				{ name: t('nav.admin.configuration'), href: '/admin/configuration' },
+				{ name: t('nav.admin.iam'), href: '/admin/iam' },
 			],
 		},
 	];

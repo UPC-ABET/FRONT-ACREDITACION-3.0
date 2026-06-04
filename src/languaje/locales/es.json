@@ -33,7 +33,8 @@
 			"label": "Administración",
 			"parameters": "Parámetros",
 			"notifications": "Notificaciones",
-			"configuration": "Configuración"
+			"configuration": "Configuración",
+			"iam": "Identidad y Accesos"
 		},
 		"logout": "Cerrar sesión",
 		"loads": {
@@ -196,6 +197,192 @@
 		}
 	},
 	"admin": {
+		"iam": {
+			"page": {
+				"title": "Identidad y Accesos",
+				"subtitle": "Gestiona usuarios, roles, módulos y permisos en un solo lugar."
+			},
+			"tabs": {
+				"users": "Usuarios",
+				"roles": "Roles",
+				"modules": "Módulos",
+				"permissions": "Permisos"
+			},
+			"actions": {
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"retry": "Reintentar",
+			"users": {
+				"title": "Usuarios",
+				"create": "Nuevo usuario",
+				"search": "Buscar usuarios...",
+				"empty": "Aún no hay usuarios. Crea el primero para empezar.",
+				"notFound": "Usuario no encontrado.",
+				"col": {
+					"name": "Nombre",
+					"email": "Correo",
+					"document": "Documento",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"badge": {
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
+				"form": {
+					"createTitle": "Nuevo usuario",
+					"editTitle": "Editar usuario",
+					"back": "Volver a usuarios",
+					"firstName": "Nombres",
+					"lastName": "Apellidos",
+					"email": "Correo",
+					"phone": "Teléfono",
+					"documentType": "Tipo de documento",
+					"documentTypePlaceholder": "Selecciona un tipo de documento",
+					"documentCode": "Número de documento",
+					"isActive": "Activo",
+					"roles": "Roles",
+					"rolesHint": "Selecciona los roles que tendrá este usuario.",
+					"rolesEmpty": "Aún no hay roles. Crea roles primero."
+				},
+				"toast": {
+					"created": "Usuario creado correctamente.",
+					"updated": "Usuario actualizado correctamente.",
+					"deleted": "Usuario eliminado correctamente."
+				},
+				"confirmDelete": {
+					"title": "Eliminar usuario",
+					"message": "Esto eliminará el usuario de forma permanente. ¿Continuar?"
+				},
+				"error": {
+					"firstNameRequired": "Los nombres son obligatorios.",
+					"lastNameRequired": "Los apellidos son obligatorios.",
+					"emailRequired": "El correo es obligatorio.",
+					"emailInvalid": "Ingresa un correo válido.",
+					"listFailed": "No se pudieron cargar los usuarios.",
+					"rolesLoadFailed": "No se pudieron cargar los roles del usuario.",
+					"saveFailed": "No se pudo guardar el usuario.",
+					"deleteFailed": "No se pudo eliminar el usuario."
+				}
+			},
+			"roles": {
+				"title": "Roles",
+				"create": "Nuevo rol",
+				"search": "Buscar roles...",
+				"empty": "Aún no hay roles. Crea el primero para empezar.",
+				"notFound": "Rol no encontrado.",
+				"col": {
+					"code": "Código",
+					"name": "Nombre",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"badge": {
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
+				"form": {
+					"createTitle": "Nuevo rol",
+					"editTitle": "Editar rol",
+					"back": "Volver a roles",
+					"code": "Código",
+					"name": "Nombre",
+					"description": "Descripción",
+					"isActive": "Activo",
+					"permissions": "Permisos",
+					"permissionsHint": "Marca una celda para otorgar el módulo + permiso a este rol."
+				},
+				"matrix": {
+					"corner": "Módulo \\ Permiso",
+					"noModules": "Aún no hay módulos. Crea módulos primero.",
+					"noPermissions": "Aún no hay permisos. Crea permisos primero."
+				},
+				"toast": {
+					"created": "Rol creado correctamente.",
+					"updated": "Rol actualizado correctamente.",
+					"deleted": "Rol eliminado correctamente."
+				},
+				"confirmDelete": {
+					"title": "Eliminar rol",
+					"message": "Esto eliminará el rol de forma permanente. ¿Continuar?"
+				},
+				"error": {
+					"codeRequired": "El código es obligatorio.",
+					"nameRequired": "El nombre es obligatorio en todos los idiomas.",
+					"listFailed": "No se pudieron cargar los roles.",
+					"permissionsLoadFailed": "No se pudieron cargar los permisos del rol.",
+					"saveFailed": "No se pudo guardar el rol.",
+					"deleteFailed": "No se pudo eliminar el rol."
+				}
+			},
+			"modules": {
+				"title": "Módulos",
+				"create": "Nuevo módulo",
+				"search": "Buscar módulos...",
+				"empty": "Aún no hay módulos. Crea el primero para empezar.",
+				"col": {
+					"code": "Código",
+					"name": "Nombre",
+					"route": "Ruta",
+					"module": "Módulo",
+					"actions": "Acciones"
+				},
+				"form": {
+					"createTitle": "Nuevo módulo",
+					"editTitle": "Editar módulo",
+					"name": "Nombre",
+					"route": "Ruta",
+					"routePlaceholder": "/admin/ejemplo",
+					"module": "Clave del módulo",
+					"modulePlaceholder": "EJEMPLO"
+				},
+				"toast": {
+					"created": "Módulo creado correctamente.",
+					"updated": "Módulo actualizado correctamente.",
+					"deleted": "Módulo eliminado correctamente."
+				},
+				"confirmDelete": {
+					"title": "Eliminar módulo",
+					"message": "Esto eliminará el módulo de forma permanente. ¿Continuar?"
+				}
+			},
+			"permissions": {
+				"title": "Permisos",
+				"create": "Nuevo permiso",
+				"search": "Buscar permisos...",
+				"empty": "Aún no hay permisos. Crea el primero para empezar.",
+				"col": {
+					"code": "Código",
+					"name": "Nombre",
+					"actions": "Acciones"
+				},
+				"form": {
+					"createTitle": "Nuevo permiso",
+					"editTitle": "Editar permiso",
+					"name": "Nombre"
+				},
+				"toast": {
+					"created": "Permiso creado correctamente.",
+					"updated": "Permiso actualizado correctamente.",
+					"deleted": "Permiso eliminado correctamente."
+				},
+				"confirmDelete": {
+					"title": "Eliminar permiso",
+					"message": "Esto eliminará el permiso de forma permanente. ¿Continuar?"
+				}
+			},
+			"types": {
+				"error": {
+					"nameRequired": "El nombre es obligatorio en todos los idiomas.",
+					"routeRequired": "La ruta es obligatoria.",
+					"moduleRequired": "La clave del módulo es obligatoria.",
+					"listFailed": "No se pudo cargar el catálogo.",
+					"saveFailed": "No se pudo guardar.",
+					"deleteFailed": "No se pudo eliminar."
+				}
+			}
+		},
 		"parameters": {
 			"tabs": {
 				"ifc": "IFC",
