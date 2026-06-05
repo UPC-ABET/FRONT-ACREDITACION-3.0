@@ -22,6 +22,7 @@ import {
 	DocumentCheckIcon,
 	ArrowUpTrayIcon,
 	AcademicCapIcon,
+	BriefcaseIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth, useI18n } from '@/providers';
 import { useLogout } from '@/modules/auth/hooks';
@@ -62,6 +63,8 @@ export function AppSidebar() {
 				{ name: t('nav.gradeProjects'), href: '/evaluation/grade-projects' },
 			],
 		},
+		{ name: t('nav.portfolio'), href: '/portfolio', icon: BriefcaseIcon },
+
 		{
 			name: t('nav.ifc.label'),
 			icon: DocumentChartBarIcon,
