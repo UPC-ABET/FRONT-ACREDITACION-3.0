@@ -1165,7 +1165,8 @@
 		"charts": "Graficos",
 		"tables": "Tablas",
 		"modals": "Modales",
-		"public": "Publico"
+		"public": "Publico",
+		"portfolio": "Portafolio"
 	},
 	"notFound": {
 		"title": "Pagina no encontrada",
@@ -3069,7 +3070,13 @@
 			"actionView": "Ver",
 			"actionEdit": "Editar",
 			"actionDelete": "Eliminar",
-			"ariaLabel": "Tabla de proyectos de portafolio"
+			"ariaLabel": "Tabla de proyectos de portafolio",
+			"size": "Tamaño",
+			"modified": "Modificado",
+			"empty": "Esta carpeta está vacía.",
+			"noResults": "Ningún elemento coincide con la búsqueda.",
+			"download": "Descargar",
+			"delete": "Eliminar"
 		},
 		"form": {
 			"title": "Nuevo Proyecto de Portafolio",
@@ -3116,19 +3123,26 @@
 		"delete": {
 			"title": "Eliminar proyecto",
 			"body": "¿Estás seguro de eliminar el proyecto \"{{name}}\"? Esta acción no se puede deshacer.",
-			"confirm": "Sí, eliminar"
+			"confirm": "Sí, eliminar",
+			"bodyOne": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+			"bodyMany": "¿Estás seguro de que deseas eliminar {{count}} elementos? Esta acción no se puede deshacer."
 		},
 		"toast": {
 			"created": "Proyecto creado correctamente.",
 			"deleted": "Proyecto eliminado correctamente.",
-			"bulkUploaded": "Carga masiva procesada correctamente."
+			"bulkUploaded": "Carga masiva procesada correctamente.",
+			"folderCreated": "Carpeta creada correctamente.",
+			"uploaded": "Archivos subidos correctamente."
 		},
 		"error": {
 			"deleteFailed": "No se pudo eliminar el proyecto.",
 			"exportFailed": "No se pudo exportar el listado.",
 			"unassignFailed": "No se pudo quitar al estudiante.",
 			"loadFailed": "No se pudo cargar el proyecto.",
-			"createFailed": "No se pudo crear el proyecto."
+			"createFailed": "No se pudo crear el proyecto.",
+			"createFolderFailed": "No se pudo crear la carpeta.",
+			"uploadFailed": "No se pudieron subir los archivos.",
+			"downloadFailed": "No se pudo descargar."
 		},
 		"bulkUpload": {
 			"basicTitle": "Plantilla básica",
@@ -3149,6 +3163,31 @@
 				"accepted": "Aceptado",
 				"rejected": "Rechazado"
 			}
+		},
+		"title": "Portafolio",
+		"subtitle": "Explora, sube y gestiona los documentos de acreditación almacenados en la nube.",
+		"breadcrumb": {
+			"root": "Portafolio"
+		},
+		"toolbar": {
+			"newFolder": "Nueva carpeta",
+			"upload": "Subir",
+			"download": "Descargar",
+			"delete": "Eliminar",
+			"refresh": "Actualizar",
+			"searchPlaceholder": "Filtrar por nombre..."
+		},
+		"dropzone": {
+			"drop": "Suelta los archivos aquí para subirlos",
+			"uploading": "Subiendo"
+		},
+		"folder": {
+			"createTitle": "Nueva carpeta",
+			"nameLabel": "Nombre de la carpeta",
+			"namePlaceholder": "ej. Evidencias 2024",
+			"create": "Crear",
+			"creating": "Creando...",
+			"invalid": "Ingresa un nombre de carpeta válido."
 		}
 	}
 }

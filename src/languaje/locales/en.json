@@ -1165,7 +1165,8 @@
 		"charts": "Charts",
 		"tables": "Tables",
 		"modals": "Modals",
-		"public": "Public"
+		"public": "Public",
+		"portfolio": "Portfolio"
 	},
 	"notFound": {
 		"title": "Page not found",
@@ -3069,7 +3070,13 @@
 			"actionView": "View",
 			"actionEdit": "Edit",
 			"actionDelete": "Delete",
-			"ariaLabel": "Portfolio projects table"
+			"ariaLabel": "Portfolio projects table",
+			"size": "Size",
+			"modified": "Modified",
+			"empty": "This folder is empty.",
+			"noResults": "No items match your search.",
+			"download": "Download",
+			"delete": "Delete"
 		},
 		"form": {
 			"title": "New Portfolio Project",
@@ -3116,19 +3123,26 @@
 		"delete": {
 			"title": "Delete project",
 			"body": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
-			"confirm": "Yes, delete"
+			"confirm": "Yes, delete",
+			"bodyOne": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+			"bodyMany": "Are you sure you want to delete {{count}} items? This action cannot be undone."
 		},
 		"toast": {
 			"created": "Project created successfully.",
 			"deleted": "Project deleted successfully.",
-			"bulkUploaded": "Bulk upload processed successfully."
+			"bulkUploaded": "Bulk upload processed successfully.",
+			"folderCreated": "Folder created successfully.",
+			"uploaded": "Files uploaded successfully."
 		},
 		"error": {
 			"deleteFailed": "Could not delete the project.",
 			"exportFailed": "Could not export the list.",
 			"unassignFailed": "Could not remove the student.",
 			"loadFailed": "Could not load the project.",
-			"createFailed": "Could not create the project."
+			"createFailed": "Could not create the project.",
+			"createFolderFailed": "Could not create the folder.",
+			"uploadFailed": "Could not upload the files.",
+			"downloadFailed": "Could not download."
 		},
 		"bulkUpload": {
 			"basicTitle": "Basic template",
@@ -3149,6 +3163,31 @@
 				"accepted": "Accepted",
 				"rejected": "Rejected"
 			}
+		},
+		"title": "Portfolio",
+		"subtitle": "Browse, upload and manage accreditation documents stored in the cloud.",
+		"breadcrumb": {
+			"root": "Portfolio"
+		},
+		"toolbar": {
+			"newFolder": "New folder",
+			"upload": "Upload",
+			"download": "Download",
+			"delete": "Delete",
+			"refresh": "Refresh",
+			"searchPlaceholder": "Filter by name..."
+		},
+		"dropzone": {
+			"drop": "Drop files here to upload",
+			"uploading": "Uploading"
+		},
+		"folder": {
+			"createTitle": "New folder",
+			"nameLabel": "Folder name",
+			"namePlaceholder": "e.g. Evidence 2024",
+			"create": "Create",
+			"creating": "Creating...",
+			"invalid": "Enter a valid folder name."
 		}
 	}
 }
