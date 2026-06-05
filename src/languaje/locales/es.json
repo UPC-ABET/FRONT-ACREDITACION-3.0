@@ -1,6 +1,7 @@
 {
 	"nav": {
 		"home": "Inicio",
+		"portfolio": "Portafolio",
 		"rubrics": "Rúbricas",
 		"rubricsList": "Rúbricas",
 		"evaluationCourses": "Cursos a Calificar",
@@ -1132,6 +1133,7 @@
 	},
 	"page": {
 		"home": "Inicio",
+		"portfolio": "Portafolio",
 		"login": "Login",
 		"charts": "Graficos",
 		"tables": "Tablas",
@@ -2827,6 +2829,130 @@
 			"observationHint": "Requiere al menos {{min}} caracteres para guardar.",
 			"save": "Guardar evaluación",
 			"saving": "Guardando..."
+		}
+	},
+	"portfolio": {
+		"page": {
+			"title": "Portafolio de Proyectos",
+			"selectPeriod": "Selecciona un período académico para ver los proyectos.",
+			"searchBtn": "Buscar",
+			"clearFilters": "Limpiar filtros",
+			"exportBtn": "Exportar",
+			"createBtn": "Nuevo proyecto",
+			"showBulkUpload": "Carga masiva",
+			"hideBulkUpload": "Ocultar carga masiva",
+			"bulkUploadTitle": "Carga masiva de proyectos",
+			"resultsCount": "proyectos encontrados"
+		},
+		"filter": {
+			"program": "Programa",
+			"status": "Estado",
+			"origin": "Origen",
+			"originAll": "Todos los orígenes",
+			"originUpc": "UPC",
+			"originExternal": "Externo"
+		},
+		"status": {
+			"all": "Todos",
+			"approved": "Aprobado",
+			"disapproved": "Desaprobado",
+			"pending": "Pendiente",
+			"reviewed": "Revisado",
+			"preApproved": "Pre-aprobado"
+		},
+		"table": {
+			"code": "Código",
+			"name": "Nombre",
+			"company": "Empresa",
+			"students": "Estudiantes",
+			"status": "Estado",
+			"origin": "Origen",
+			"originUpc": "UPC",
+			"external": "Externo",
+			"actions": "Acciones",
+			"actionView": "Ver",
+			"actionEdit": "Editar",
+			"actionDelete": "Eliminar",
+			"ariaLabel": "Tabla de proyectos de portafolio"
+		},
+		"form": {
+			"title": "Nuevo Proyecto de Portafolio",
+			"fieldName": "Nombre del proyecto",
+			"fieldDescription": "Descripción",
+			"fieldProgram": "Programa",
+			"fieldCompany": "Empresa (seleccionar existente)",
+			"fieldCompanyCode": "O ingresar código de empresa",
+			"fieldIsFromUPC": "¿Es de UPC?",
+			"fieldStudentOne": "Estudiante 1",
+			"fieldStudentTwo": "Estudiante 2",
+			"submitBtn": "Crear proyecto",
+			"submitting": "Creando...",
+			"cancelBtn": "Cancelar",
+			"placeholderName": "Ej. Sistema de gestión académica",
+			"placeholderDescription": "Breve descripción del proyecto",
+			"placeholderCompanyCode": "Ej. EMP-001",
+			"academicPeriod": "Período académico",
+			"origin": "Origen",
+			"originUpc": "UPC",
+			"originExternal": "Externo",
+			"errorRequired": "Completa todos los campos obligatorios.",
+			"errorCompanyRequired": "Debes seleccionar una empresa o ingresar un código.",
+			"errorNameRequired": "El nombre es requerido.",
+			"errorDescriptionRequired": "La descripción es requerida.",
+			"errorProgramRequired": "El programa es requerido."
+		},
+		"detail": {
+			"backBtn": "Volver a Portafolio",
+			"editBtn": "Editar",
+			"company": "Empresa",
+			"origin": "Origen",
+			"researchLine": "Línea de investigación",
+			"problemSolved": "Problema resuelto",
+			"goal": "Objetivo",
+			"studentsTitle": "Estudiantes",
+			"noStudents": "Sin estudiantes asignados.",
+			"applicationsTitle": "Aplicaciones",
+			"removeStudentTitle": "Quitar estudiante",
+			"removeStudentBody": "¿Estás seguro de quitar a {{name}} del proyecto?",
+			"removeStudentConfirm": "Sí, quitar",
+			"studentRemoved": "Estudiante desasignado correctamente."
+		},
+		"delete": {
+			"title": "Eliminar proyecto",
+			"body": "¿Estás seguro de eliminar el proyecto \"{{name}}\"? Esta acción no se puede deshacer.",
+			"confirm": "Sí, eliminar"
+		},
+		"toast": {
+			"created": "Proyecto creado correctamente.",
+			"deleted": "Proyecto eliminado correctamente.",
+			"bulkUploaded": "Carga masiva procesada correctamente."
+		},
+		"error": {
+			"deleteFailed": "No se pudo eliminar el proyecto.",
+			"exportFailed": "No se pudo exportar el listado.",
+			"unassignFailed": "No se pudo quitar al estudiante.",
+			"loadFailed": "No se pudo cargar el proyecto.",
+			"createFailed": "No se pudo crear el proyecto."
+		},
+		"bulkUpload": {
+			"basicTitle": "Plantilla básica",
+			"basicDesc": "Descarga la plantilla vacía, complétala y súbela para crear proyectos en lote.",
+			"filledTitle": "Plantilla con datos",
+			"filledDesc": "Descarga la plantilla pre-llenada con los datos del período y súbela.",
+			"downloadTemplate": "Descargar plantilla",
+			"upload": "Subir archivo",
+			"errorDownload": "No se pudo descargar la plantilla.",
+			"errorUpload": "No se pudo procesar el archivo.",
+			"resultInserted": "Proyectos insertados",
+			"row": "Fila",
+			"moreErrors": "... {{count}} errores más"
+		},
+		"application": {
+			"status": {
+				"pending": "Pendiente",
+				"accepted": "Aceptado",
+				"rejected": "Rechazado"
+			}
 		}
 	}
 }
