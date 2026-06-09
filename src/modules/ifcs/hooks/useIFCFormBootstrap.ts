@@ -34,7 +34,7 @@ export function useIFCFormBootstrap(mode: IFCFormMode) {
 				getParameterByCode<IFCField[]>(PARAMETER_CODES.IFC_FIELDS),
 				getTypesByGroupCode(TYPE_GROUP_CODES.FINDING_CRITICALITY),
 				mode.kind === 'edit' ? getIFCView(mode.ifcId) : Promise.resolve(null),
-				mode.kind === 'create' ? getIFCPrefill(mode.chartId, mode.periodId) : Promise.resolve(null),
+				mode.kind === 'create' ? getIFCPrefill(mode.chartId) : Promise.resolve(null),
 			]);
 
 			const prefill: IFCPrefill =

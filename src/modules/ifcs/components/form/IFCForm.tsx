@@ -23,7 +23,6 @@ import { IFCInformationFields } from './IFCInformationFields';
 type Props = {
 	mode: 'create' | 'edit';
 	chartId?: number;
-	periodId?: number;
 	existing: IFCViewPayload | null;
 	prefill: IFCPrefill;
 	languages: string[];
@@ -85,7 +84,6 @@ export function IFCForm(props: Props) {
 				props.mode === 'create'
 					? await createIFC({
 							chartId: props.chartId!,
-							periodId: props.periodId!,
 							submit,
 							information: state.information,
 							findings: findingsPayload,

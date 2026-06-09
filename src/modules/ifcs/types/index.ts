@@ -240,7 +240,6 @@ export interface PayloadPreviousActionEvidence {
 
 export interface CreateIFCBody {
 	chartId: number;
-	periodId: number;
 	submit: boolean;
 	information?: Record<string, I18nText>;
 	findings: PayloadFinding[];
@@ -250,7 +249,7 @@ export interface CreateIFCBody {
 	previousActions?: PayloadPreviousActionEvidence[];
 }
 
-export type PatchIFCBody = Omit<CreateIFCBody, 'chartId' | 'periodId'>;
+export type PatchIFCBody = Omit<CreateIFCBody, 'chartId'>;
 
 // ---- Finding detail view ---------------------------------------------------
 

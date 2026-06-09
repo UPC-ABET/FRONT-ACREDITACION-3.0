@@ -46,7 +46,6 @@ export function IFCFormPage({ mode }: Props) {
 		<IFCForm
 			mode={mode}
 			chartId={bootstrapMode.kind === 'create' ? bootstrapMode.chartId : undefined}
-			periodId={bootstrapMode.kind === 'create' ? bootstrapMode.periodId : undefined}
 			existing={data.existing}
 			prefill={data.prefill}
 			languages={data.languages}
