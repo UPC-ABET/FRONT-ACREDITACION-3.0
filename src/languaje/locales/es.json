@@ -444,11 +444,11 @@
 		"configuration": {
 			"page": {
 				"title": "Configuración",
-				"subtitle": "Gestiona períodos académicos y la asociación de programas con comisiones."
+				"subtitle": "Gestiona períodos académicos y la asociación de carreras con comisiones."
 			},
 			"tabs": {
 				"periods": "Períodos académicos",
-				"programCommissions": "Programa × Comisión",
+				"programCommissions": "Carrera × Comisión",
 				"chartHeads": "Organigrama"
 			},
 			"periods": {
@@ -499,19 +499,19 @@
 				}
 			},
 			"programCommissions": {
-				"title": "Programa × Comisión",
-				"subtitle": "Asocia programas con comisiones acreditadoras para el período seleccionado.",
+				"title": "Carrera × Comisión",
+				"subtitle": "Asocia carreras con comisiones acreditadoras para el período seleccionado.",
 				"periodPlaceholder": "Selecciona un período",
 				"selectPeriodHint": "Selecciona un período académico para ver y gestionar sus asociaciones.",
 				"associateButton": "Nueva asociación",
 				"table": {
 					"title": "Asociaciones del período",
-					"description": "Cada fila vincula un programa con una comisión y un tipo de comisión.",
+					"description": "Cada fila vincula una carrera con una comisión y un tipo de comisión.",
 					"loading": "Cargando asociaciones...",
 					"empty": "No hay asociaciones registradas para este período.",
 					"unassociate": "Desasociar",
 					"col": {
-						"program": "Programa",
+						"program": "Carrera",
 						"commission": "Comisión",
 						"commissionType": "Tipo de comisión",
 						"actions": "Acciones"
@@ -519,8 +519,8 @@
 				},
 				"form": {
 					"title": "Nueva asociación",
-					"program": "Programa",
-					"programPlaceholder": "Selecciona un programa",
+					"program": "Carrera",
+					"programPlaceholder": "Selecciona una carrera",
 					"commission": "Comisión",
 					"commissionPlaceholder": "Selecciona una comisión",
 					"commissionType": "Tipo de comisión",
@@ -528,7 +528,7 @@
 					"submit": "Asociar",
 					"submitting": "Asociando...",
 					"error": {
-						"programRequired": "Selecciona un programa.",
+						"programRequired": "Selecciona una carrera.",
 						"commissionRequired": "Selecciona una comisión.",
 						"commissionTypeRequired": "Selecciona un tipo de comisión.",
 						"associateFailed": "No se pudo crear la asociación."
@@ -994,7 +994,7 @@
 			"selectPeriod": "Selecciona un período académico para ver las rúbricas.",
 			"clearFilters": "Limpiar filtros",
 			"filters": {
-				"program": "Programa",
+				"program": "Carrera",
 				"course": "Curso"
 			},
 			"columns": {
@@ -1300,7 +1300,7 @@
 			"selectPeriod": "Selecciona un período académico para comenzar.",
 			"filters": {
 				"academicPeriod": "Período Académico",
-				"program": "Programa",
+				"program": "Carrera",
 				"course": "Curso"
 			},
 			"table": {
@@ -1573,7 +1573,7 @@
 					"title": "Enviar encuesta GRA",
 					"bodyBefore": "Se enviará la encuesta a ",
 					"bodyEmphasis": "todos",
-					"bodyAfter": " los estudiantes registrados para el período y programa actuales.",
+					"bodyAfter": " los estudiantes registrados para el período y carrera actuales.",
 					"urlLabel": "URL base de la encuesta",
 					"urlPlaceholder": "https://tu-dominio.com/encuesta/gra",
 					"confirm": "Confirmar envío",
@@ -1986,7 +1986,7 @@
 				"studentNotFound": "El alumno no se encuentra registrado en el sistema",
 				"programNotFound": "La carrera no se encuentra registrada en el sistema",
 				"campusNotFound": "La sede no existe en el sistema",
-				"outcomeNotFound": "El outcome no se encuentra registrado para este programa",
+				"outcomeNotFound": "El outcome no se encuentra registrado para esta carrera",
 				"scoreInvalid": "El puntaje tiene un formato inválido"
 			}
 		},
