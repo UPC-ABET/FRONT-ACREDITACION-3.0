@@ -83,7 +83,9 @@ export function ModuleTypeFormDialog({
 			<DialogContent className="sm:max-w-lg">
 				<DialogHeader>
 					<DialogTitle>
-						{t(isEditing ? 'admin.iam.modules.form.editTitle' : 'admin.iam.modules.form.createTitle')}
+						{t(
+							isEditing ? 'admin.iam.modules.form.editTitle' : 'admin.iam.modules.form.createTitle',
+						)}
 					</DialogTitle>
 				</DialogHeader>
 
