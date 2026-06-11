@@ -1,5 +1,5 @@
-'use client'
+'use client';
 
-import { PublicPage } from '@/modules/tests'
+import { PublicPage } from '@/modules/tests';
 
-export default PublicPage
+export default PublicPage;

@@ -1,171 +1,2317 @@
 {
-  "nav": {
-    "home": "Inicio",
-    "tests": {
-      "label": "Pruebas",
-      "modals": "Modales",
-      "charts": "Graficos",
-      "tables": "Tablas",
-      "public": "Publico"
-    },
-    "logout": "Cerrar sesion"
-  },
-
-  "welcome": "Bienvenido a ABET.",
-
-  "navbar": {
-    "user": {
-      "name": "Administrador",
-      "role": "Admi"
-    },
-    "openMenu": "Abrir menu",
-    "school": {
-      "label": "Escuela",
-      "default": "QA"
-    },
-    "cycle": {
-      "label": "Ciclo"
-    },
-    "program": {
-      "regular": "Regular",
-      "epe": "EPE"
-    }
-  },
-
-  "language": {
-    "es": "ES",
-    "en": "EN"
-  },
-
-  "sidebar": {
-    "open": "Abrir sidebar",
-    "close": "Cerrar sidebar",
-    "logoAlt": "Logo ABET"
-  },
-
-  "dialog": {
-    "close": "Cerrar",
-    "actions": {
-      "accept": "Aceptar",
-      "decline": "Rechazar",
-      "cancel": "Cancelar",
-      "save": "Guardar"
-    },
-    "title": {
-      "form": "Nuevo Registro",
-      "error": "Algo salio mal",
-      "success": "Confirmacion",
-      "info": "Informacion",
-      "warning": "Aviso importante",
-      "confirm": "Confirmacion"
-    },
-    "message": {
-      "error": "Ocurrio un error al procesar la solicitud.",
-      "success": "Operacion completada con exito.",
-      "info": "Nueva informacion disponible.",
-      "warning": "Revisa los datos antes de continuar.",
-      "confirm": "Confirma para continuar."
-    }
-  },
-
-  "toast": {
-    "title": {
-      "success": "Exito",
-      "error": "Error",
-      "warning": "Aviso",
-      "info": "Info"
-    },
-    "message": {
-      "success": "Operacion completada con exito.",
-      "error": "Hubo un error al procesar la solicitud.",
-      "warning": "Atencion: revisa los datos ingresados.",
-      "info": "Nueva actualizacion disponible en el sistema."
-    },
-    "close": "Cerrar notificacion"
-  },
-
-  "tabs": {
-    "label": "Pestañas"
-  },
-
-  "loading": {
-    "default": "Cargando ..."
-  },
-
-  "login": {
-    "title": "Sistema de  acreditación",
-    "school": {
-      "placeholder": "Selecciona escuela"
-    },
-    "user": {
-      "placeholder": "Usuario"
-    },
-    "password": {
-      "placeholder": "Contrasena"
-    },
-    "remember": "Recuerdame",
-    "submit": "Iniciar sesion",
-    "forgot": "¿Olvidaste la contrasena?",
-    "loading": "Iniciando sesion...",
-    "error": {
-      "required": "Todos los campos son obligatorios",
-      "generic": "Error durante el login"
-    }
-  },
-
-  "auth": {
-    "invalidCredentials": "Credenciales invalidas"
-  },
-
-  "table": {
-    "search": {
-      "placeholder": "Buscar..."
-    },
-    "empty": "No se encontraron resultados disponibles.",
-    "pagination": {
-      "previous": "Anterior",
-      "next": "Siguiente",
-      "page": "Pagina",
-      "of": "de"
-    }
-  },
-
-  "select": {
-    "placeholder": {
-      "default": "Seleccione una opcion"
-    },
-    "createLabel": "Crear: \"{value}\""
-  },
-
-  "school": {
-    "eiscc": "ESCUELA DE INGENIERIA DE SOFTWARE Y CIENCIAS DE LA COMPUTACION",
-    "eiscb": "ESCUELA DE INGENIERIA DE SISTEMAS Y CIBER SEGURIDAD",
-    "inggmi": "ESCUELA DE INGENIERIA DE GESTION MINERA",
-    "inggem": "ESCUELA DE INGENIERIA DE GESTION EMPRESARIAL",
-    "escel": "ESCUELA DE INGENIERIA ELECTRONICA, MECATRONICA Y REDES",
-    "ingamb": "ESCUELA DE INGENIERIA AMBIENTAL",
-    "ingbio": "ESCUELA DE INGENIERIA BIOMEDICA",
-    "ingciv": "ESCUELA DE INGENIERIA CIVIL",
-    "ingind": "ESCUELA DE INGENIERIA INDUSTRIAL"
-  },
-
-  "app": {
-    "name": "Sistema de Acreditación ABET",
-    "description": "ABET"
-  },
-
-  "page": {
-    "home": "Inicio",
-    "login": "Login",
-    "charts": "Graficos",
-    "tables": "Tablas",
-    "modals": "Modales",
-    "public": "Publico"
-  },
-
-  "notFound": {
-    "title": "Pagina no encontrada",
-    "message": "Lo sentimos, no pudimos encontrar la pagina que estas buscando.",
-    "action": "Ir al inicio"
-  }
+	"nav": {
+		"home": "Inicio",
+		"rubrics": "Rúbricas",
+		"rubricsList": "Rúbricas",
+		"evaluationCourses": "Cursos a Calificar",
+		"performanceLevels": "Niveles de Desempeño",
+		"projects": "Proyectos Académicos",
+		"gradeProjects": "Calificar Proyectos",
+		"evaluation": {
+			"label": "Evaluación"
+		},
+		"ifcs": "IFCs",
+		"ifc": {
+			"label": "IFC",
+			"dashboard": "Dashboard",
+			"findings": "Hallazgos"
+		},
+		"surveys": {
+			"label": "Encuestas",
+			"ppp": "PPP — Prácticas Pre-Prof.",
+			"gra": "GRA — Graduandos",
+			"lcfc": "LCFC — Fin de Ciclo"
+		},
+		"tests": {
+			"label": "Pruebas",
+			"modals": "Modales",
+			"charts": "Graficos",
+			"tables": "Tablas",
+			"public": "Publico"
+		},
+		"admin": {
+			"label": "Administración",
+			"parameters": "Parámetros",
+			"notifications": "Notificaciones",
+			"configuration": "Configuración",
+			"iam": "Identidad y Accesos"
+		},
+		"logout": "Cerrar sesión",
+		"loads": {
+			"label": "Cargas",
+			"dashboard": "Dashboard",
+			"history": "Historial"
+		}
+	},
+	"ifcs": {
+		"page": {
+			"title": "Informe de Fin de Ciclo",
+			"period": "Período Académico",
+			"selectPeriod": "Seleccione un período académico en la barra superior para continuar.",
+			"noSchools": "No hay escuelas disponibles para el período seleccionado. Es posible que el organigrama aún no haya sido cargado. Contacte al administrador.",
+			"searchBtn": "Buscar"
+		},
+		"table": {
+			"code": "Código",
+			"program": "Carrera",
+			"course": "Curso",
+			"coordinator": "Docente",
+			"status": "Estado",
+			"actions": "Opciones",
+			"statusFilter": "Estado",
+			"empty": "Sin IFCs",
+			"actionView": "Ver",
+			"actionRegister": "Registrar",
+			"ariaLabel": "Tabla de IFCs"
+		},
+		"status": {
+			"all": "Todos"
+		},
+		"scope": {
+			"level": "Nivel"
+		},
+		"view": {
+			"col": {
+				"completeness": "Completitud"
+			},
+			"toast": {
+				"submitted": "IFC enviado a revisión",
+				"approved": "IFC aprobado",
+				"rejected": "IFC devuelto al coordinador"
+			},
+			"rejectEmpty": "La observación es obligatoria para rechazar"
+		},
+		"pdf": {
+			"downloadPdf": "Descargar PDF",
+			"downloadAll": "Descargar Todos",
+			"exportNotApproved": "El IFC debe estar aprobado para exportarse",
+			"error": {
+				"downloadFailed": "No se pudo descargar el PDF",
+				"bulkFailed": "No se pudo generar el ZIP de PDFs (al menos un IFC no está aprobado)"
+			}
+		},
+		"statusReport": {
+			"btn": "Reporte de Estado",
+			"tooltipNoScope": "Realiza una búsqueda primero",
+			"error": {
+				"downloadFailed": "No se pudo descargar el reporte de estado"
+			}
+		},
+		"form": {
+			"err": {
+				"requiredFields": "Hay campos obligatorios sin completar",
+				"findingIncomplete": "Cada hallazgo necesita descripción y criticidad",
+				"actionIncomplete": "Cada acción necesita descripción y un hallazgo enlazado"
+			}
+		},
+		"submit": {
+			"modal": {
+				"title": "¿Enviar IFC?",
+				"body": "Una vez enviado, nadie podrá editar el IFC hasta que un revisor lo apruebe u observe.",
+				"confirm": "Enviar",
+				"saveInstead": "Guardar en su lugar"
+			},
+			"toast": {
+				"successWithNotify": "IFC enviado. Se notificó a los revisores.",
+				"successNoConfig": "IFC enviado. No hay configuración de notificación para esta etapa.",
+				"successNoNotify": "IFC enviado. La notificación no pudo enviarse."
+			}
+		},
+		"notify": {
+			"btn": {
+				"tooltip": "Notificar",
+				"notifyAll": "Notificar a todos"
+			},
+			"toast": {
+				"success": "Notificación enviada",
+				"successAll": "{{count}} notificación(es) enviada(s)",
+				"partial": "{{sent}} enviada(s), {{skipped}} omitida(s) (sin configuración)",
+				"allSkipped": "Todas omitidas — no hay configuración de notificación para este escenario",
+				"error": "Falló el envío de {{count}} notificación(es)"
+			},
+			"reason": {
+				"noCourseChart": "No se encontró el organigrama del curso",
+				"noConfig": "No hay configuración de notificación para este escenario",
+				"noRecipients": "No hay destinatarios configurados",
+				"sendFailed": "El proveedor de correo rechazó el envío",
+				"unknown": "No se pudo enviar la notificación"
+			},
+			"error": {
+				"generic": "No se pudo enviar la notificación"
+			}
+		},
+		"error": {
+			"viewFailed": "No se pudo cargar el IFC",
+			"submitFailed": "No se pudo enviar el IFC",
+			"approveFailed": "No se pudo aprobar el IFC",
+			"rejectFailed": "No se pudo rechazar el IFC",
+			"prefillFailed": "No se pudo cargar la información del curso",
+			"createFailed": "No se pudo crear el IFC",
+			"patchFailed": "No se pudo guardar el IFC",
+			"saveFailed": "No se pudo guardar el IFC",
+			"bootstrapFailed": "No se pudo cargar el formulario",
+			"generic": "Ocurrió un error"
+		}
+	},
+	"ifcFindings": {
+		"page": {
+			"title": "Hallazgos"
+		},
+		"col": {
+			"criticality": "Criticidad",
+			"code": "Código",
+			"period": "Período Académico",
+			"description": "Descripción",
+			"actions": "Opciones"
+		},
+		"action": {
+			"view": "Ver",
+			"delete": "Eliminar"
+		},
+		"table": {
+			"ariaLabel": "Tabla de hallazgos"
+		},
+		"empty": "No hay hallazgos en este alcance",
+		"toast": {
+			"deleted": "Hallazgo eliminado"
+		},
+		"findingView": {
+			"col": {
+				"actionCode": "Código",
+				"actionDesc": "Descripción",
+				"actionStatus": "Estado"
+			},
+			"actionsEmpty": "No hay acciones asociadas",
+			"toast": {
+				"saved": "Hallazgo actualizado"
+			},
+			"err": {
+				"descriptionEmpty": "La descripción debe tener al menos un idioma completado"
+			}
+		},
+		"error": {
+			"listFailed": "No se pudo cargar la lista de hallazgos",
+			"deleteFailed": "No se pudo eliminar el hallazgo",
+			"viewFailed": "No se pudo cargar el hallazgo",
+			"patchFailed": "No se pudo guardar el hallazgo"
+		}
+	},
+	"admin": {
+		"iam": {
+			"page": {
+				"title": "Identidad y Accesos",
+				"subtitle": "Gestiona usuarios, roles, módulos y permisos en un solo lugar."
+			},
+			"tabs": {
+				"users": "Usuarios",
+				"roles": "Roles",
+				"modules": "Módulos",
+				"permissions": "Permisos"
+			},
+			"actions": {
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"retry": "Reintentar",
+			"users": {
+				"title": "Usuarios",
+				"create": "Nuevo usuario",
+				"search": "Buscar usuarios...",
+				"empty": "Aún no hay usuarios. Crea el primero para empezar.",
+				"notFound": "Usuario no encontrado.",
+				"col": {
+					"name": "Nombre",
+					"email": "Correo",
+					"document": "Documento",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"badge": {
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
+				"form": {
+					"createTitle": "Nuevo usuario",
+					"editTitle": "Editar usuario",
+					"back": "Volver a usuarios",
+					"firstName": "Nombres",
+					"lastName": "Apellidos",
+					"email": "Correo",
+					"phone": "Teléfono",
+					"documentType": "Tipo de documento",
+					"documentTypePlaceholder": "Selecciona un tipo de documento",
+					"documentCode": "Número de documento",
+					"isActive": "Activo",
+					"roles": "Roles",
+					"rolesHint": "Selecciona los roles que tendrá este usuario.",
+					"rolesEmpty": "Aún no hay roles. Crea roles primero."
+				},
+				"toast": {
+					"created": "Usuario creado correctamente.",
+					"updated": "Usuario actualizado correctamente.",
+					"deleted": "Usuario eliminado correctamente."
+				},
+				"confirmDelete": {
+					"title": "Eliminar usuario",
+					"message": "Esto eliminará el usuario de forma permanente. ¿Continuar?"
+				},
+				"error": {
+					"firstNameRequired": "Los nombres son obligatorios.",
+					"lastNameRequired": "Los apellidos son obligatorios.",
+					"emailRequired": "El correo es obligatorio.",
+					"emailInvalid": "Ingresa un correo válido.",
+					"listFailed": "No se pudieron cargar los usuarios.",
+					"rolesLoadFailed": "No se pudieron cargar los roles del usuario.",
+					"saveFailed": "No se pudo guardar el usuario.",
+					"deleteFailed": "No se pudo eliminar el usuario."
+				}
+			},
+			"roles": {
+				"title": "Roles",
+				"create": "Nuevo rol",
+				"search": "Buscar roles...",
+				"empty": "Aún no hay roles. Crea el primero para empezar.",
+				"notFound": "Rol no encontrado.",
+				"col": {
+					"code": "Código",
+					"name": "Nombre",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"badge": {
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
+				"form": {
+					"createTitle": "Nuevo rol",
+					"editTitle": "Editar rol",
+					"back": "Volver a roles",
+					"code": "Código",
+					"name": "Nombre",
+					"description": "Descripción",
+					"isActive": "Activo",
+					"permissions": "Permisos",
+					"permissionsHint": "Marca una celda para otorgar el módulo + permiso a este rol."
+				},
+				"matrix": {
+					"corner": "Módulo \\ Permiso",
+					"noModules": "Aún no hay módulos. Crea módulos primero.",
+					"noPermissions": "Aún no hay permisos. Crea permisos primero."
+				},
+				"toast": {
+					"created": "Rol creado correctamente.",
+					"updated": "Rol actualizado correctamente.",
+					"deleted": "Rol eliminado correctamente."
+				},
+				"confirmDelete": {
+					"title": "Eliminar rol",
+					"message": "Esto eliminará el rol de forma permanente. ¿Continuar?"
+				},
+				"error": {
+					"codeRequired": "El código es obligatorio.",
+					"nameRequired": "El nombre es obligatorio en todos los idiomas.",
+					"listFailed": "No se pudieron cargar los roles.",
+					"permissionsLoadFailed": "No se pudieron cargar los permisos del rol.",
+					"saveFailed": "No se pudo guardar el rol.",
+					"deleteFailed": "No se pudo eliminar el rol."
+				}
+			},
+			"modules": {
+				"title": "Módulos",
+				"create": "Nuevo módulo",
+				"search": "Buscar módulos...",
+				"empty": "Aún no hay módulos. Crea el primero para empezar.",
+				"col": {
+					"code": "Código",
+					"name": "Nombre",
+					"route": "Ruta",
+					"module": "Módulo",
+					"actions": "Acciones"
+				},
+				"form": {
+					"createTitle": "Nuevo módulo",
+					"editTitle": "Editar módulo",
+					"name": "Nombre",
+					"route": "Ruta",
+					"routePlaceholder": "/admin/ejemplo",
+					"module": "Clave del módulo",
+					"modulePlaceholder": "EJEMPLO"
+				},
+				"toast": {
+					"created": "Módulo creado correctamente.",
+					"updated": "Módulo actualizado correctamente.",
+					"deleted": "Módulo eliminado correctamente."
+				},
+				"confirmDelete": {
+					"title": "Eliminar módulo",
+					"message": "Esto eliminará el módulo de forma permanente. ¿Continuar?"
+				}
+			},
+			"permissions": {
+				"title": "Permisos",
+				"create": "Nuevo permiso",
+				"search": "Buscar permisos...",
+				"empty": "Aún no hay permisos. Crea el primero para empezar.",
+				"col": {
+					"code": "Código",
+					"name": "Nombre",
+					"actions": "Acciones"
+				},
+				"form": {
+					"createTitle": "Nuevo permiso",
+					"editTitle": "Editar permiso",
+					"name": "Nombre"
+				},
+				"toast": {
+					"created": "Permiso creado correctamente.",
+					"updated": "Permiso actualizado correctamente.",
+					"deleted": "Permiso eliminado correctamente."
+				},
+				"confirmDelete": {
+					"title": "Eliminar permiso",
+					"message": "Esto eliminará el permiso de forma permanente. ¿Continuar?"
+				}
+			},
+			"types": {
+				"error": {
+					"nameRequired": "El nombre es obligatorio en todos los idiomas.",
+					"routeRequired": "La ruta es obligatoria.",
+					"moduleRequired": "La clave del módulo es obligatoria.",
+					"listFailed": "No se pudo cargar el catálogo.",
+					"saveFailed": "No se pudo guardar.",
+					"deleteFailed": "No se pudo eliminar."
+				}
+			}
+		},
+		"parameters": {
+			"tabs": {
+				"ifc": "IFC",
+				"performanceLevels": "Niveles de Desempeño"
+			},
+			"ifc": {
+				"tabs": {
+					"codes": "Códigos",
+					"fields": "Campos"
+				}
+			}
+		},
+		"notifications": {
+			"tabs": {
+				"ifc": "IFC"
+			}
+		},
+		"chartHeads": {
+			"page": {
+				"title": "Configuración del organigrama",
+				"selectPeriod": "Seleccione un período para continuar"
+			},
+			"dean": {
+				"title": "Decano"
+			},
+			"directors": {
+				"title": "Directores de escuela",
+				"add": "Agregar director",
+				"remove": "Quitar",
+				"removeNote": "Quitar un director solo deja de actualizarlo al guardar; no lo elimina del organigrama.",
+				"empty": "Aún no hay directores. Agregue uno para comenzar.",
+				"rowLabel": "Director {number}"
+			},
+			"field": {
+				"firstName": "Nombres",
+				"lastName": "Apellidos",
+				"user": "Usuario vinculado",
+				"userPlaceholder": "Sin usuario vinculado",
+				"title": "Cargo",
+				"school": "Escuela",
+				"schoolPlaceholder": "Selecciona una escuela"
+			},
+			"btn": {
+				"save": "Guardar configuración"
+			},
+			"toast": {
+				"saved": "Configuración guardada correctamente."
+			},
+			"error": {
+				"loadFailed": "No se pudo cargar la configuración.",
+				"saveFailed": "No se pudo guardar la configuración.",
+				"firstNameRequired": "Los nombres son obligatorios.",
+				"lastNameRequired": "Los apellidos son obligatorios.",
+				"titleRequired": "El cargo es obligatorio en todos los idiomas.",
+				"schoolRequired": "Selecciona una escuela.",
+				"duplicateSchool": "Esta escuela ya fue asignada a otro director."
+			}
+		},
+		"configuration": {
+			"page": {
+				"title": "Configuración",
+				"subtitle": "Gestiona períodos académicos y la asociación de carreras con comisiones."
+			},
+			"tabs": {
+				"periods": "Períodos académicos",
+				"programCommissions": "Carrera × Comisión",
+				"chartHeads": "Organigrama"
+			},
+			"periods": {
+				"title": "Períodos académicos",
+				"subtitle": "Abre nuevos períodos y activa el que esté vigente.",
+				"openButton": "Abrir período",
+				"selectLabel": "Período",
+				"status": {
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
+				"table": {
+					"title": "Períodos registrados",
+					"description": "Activar un período desactiva el período anterior de la misma modalidad.",
+					"loading": "Cargando períodos...",
+					"empty": "Aún no hay períodos registrados.",
+					"activate": "Activar",
+					"col": {
+						"code": "Código",
+						"modality": "Modalidad",
+						"dates": "Fechas",
+						"status": "Estado",
+						"actions": "Acciones"
+					}
+				},
+				"form": {
+					"title": "Abrir nuevo período",
+					"code": "Código",
+					"codeHelp": "Formato YYYY-01, YYYY-02 o YYYY-00.",
+					"startDate": "Fecha de inicio",
+					"endDate": "Fecha de fin",
+					"modality": "Modalidad",
+					"modalityPlaceholder": "Selecciona una modalidad",
+					"submit": "Abrir período",
+					"submitting": "Abriendo...",
+					"error": {
+						"codeRequired": "El código es obligatorio.",
+						"codeInvalid": "El código debe tener el formato YYYY-01, YYYY-02 o YYYY-00.",
+						"startDateRequired": "La fecha de inicio es obligatoria.",
+						"endDateRequired": "La fecha de fin es obligatoria.",
+						"endBeforeStart": "La fecha de fin no puede ser anterior a la fecha de inicio.",
+						"modalityRequired": "Selecciona una modalidad.",
+						"createFailed": "No se pudo crear el período."
+					}
+				},
+				"error": {
+					"activateFailed": "No se pudo activar el período."
+				}
+			},
+			"programCommissions": {
+				"title": "Carrera × Comisión",
+				"subtitle": "Asocia carreras con comisiones acreditadoras para el período seleccionado.",
+				"periodPlaceholder": "Selecciona un período",
+				"selectPeriodHint": "Selecciona un período académico para ver y gestionar sus asociaciones.",
+				"associateButton": "Nueva asociación",
+				"table": {
+					"title": "Asociaciones del período",
+					"description": "Cada fila vincula una carrera con una comisión y un tipo de comisión.",
+					"loading": "Cargando asociaciones...",
+					"empty": "No hay asociaciones registradas para este período.",
+					"unassociate": "Desasociar",
+					"col": {
+						"program": "Carrera",
+						"commission": "Comisión",
+						"commissionType": "Tipo de comisión",
+						"actions": "Acciones"
+					}
+				},
+				"form": {
+					"title": "Nueva asociación",
+					"program": "Carrera",
+					"programPlaceholder": "Selecciona una carrera",
+					"commission": "Comisión",
+					"commissionPlaceholder": "Selecciona una comisión",
+					"commissionType": "Tipo de comisión",
+					"commissionTypePlaceholder": "Selecciona un tipo",
+					"submit": "Asociar",
+					"submitting": "Asociando...",
+					"error": {
+						"programRequired": "Selecciona una carrera.",
+						"commissionRequired": "Selecciona una comisión.",
+						"commissionTypeRequired": "Selecciona un tipo de comisión.",
+						"associateFailed": "No se pudo crear la asociación."
+					}
+				},
+				"unassociate": {
+					"title": "¿Desasociar?",
+					"body": "Esta acción solo procederá si la asociación no tiene outcomes registrados.",
+					"confirm": "Desasociar",
+					"running": "Desasociando..."
+				},
+				"error": {
+					"unassociateFailed": "No se pudo desasociar."
+				}
+			}
+		},
+		"notify": {
+			"page": {
+				"title": "Configuración de Notificaciones IFC",
+				"selectPeriod": "Seleccione un período para continuar"
+			},
+			"field": {
+				"title": "Asunto",
+				"body": "Cuerpo (HTML)",
+				"to": "Destinatarios (Para)",
+				"cc": "En copia (CC)",
+				"isActive": "Activo",
+				"noEntityTypes": "No hay tipos de entidad disponibles"
+			},
+			"legend": {
+				"title": "Variables disponibles",
+				"empty": "No hay variables disponibles para este estado"
+			},
+			"btn": {
+				"save": "Guardar",
+				"delete": "Eliminar",
+				"confirmDelete": "Confirmar eliminación"
+			},
+			"confirm": {
+				"delete": "¿Eliminar esta configuración?"
+			},
+			"toast": {
+				"saved": "Configuración guardada",
+				"deleted": "Configuración eliminada"
+			},
+			"error": {
+				"listFailed": "No se pudo cargar la configuración",
+				"saveFailed": "No se pudo guardar la configuración",
+				"deleteFailed": "No se pudo eliminar la configuración"
+			}
+		},
+		"params": {
+			"codes": {
+				"page": {
+					"title": "Códigos IFC",
+					"subtitle": "Prefijos para códigos generados",
+					"intro": "Estos prefijos se usan para componer automáticamente los códigos de hallazgos y acciones (por ejemplo, H-2026-001 o A-2026-001). Cambiarlos no afecta a los códigos ya existentes; solo aplica a los nuevos registros."
+				}
+			},
+			"fields": {
+				"page": {
+					"title": "Campos del formulario IFC",
+					"subtitle": "Información solicitada al crear o editar un IFC",
+					"intro": "Configura los campos de información que aparecen en el formulario del IFC. Cada campo necesita una llave técnica única, etiquetas en español e inglés, y un orden de aparición. Los cambios aplican a los próximos IFC que se creen."
+				},
+				"row": {
+					"title": "Campo"
+				},
+				"field": {
+					"key": "Llave técnica",
+					"keyPlaceholder": "ej. contexto",
+					"keyHelp": "Identificador interno. Sin espacios; usa letras, números y guiones bajos.",
+					"labelEs": "Etiqueta (ES)",
+					"labelEn": "Etiqueta (EN)",
+					"required": "Obligatorio",
+					"requiredHelp": "Si está activo, el usuario debe completar este campo antes de enviar."
+				},
+				"btn": {
+					"add": "Añadir campo",
+					"moveUp": "Mover arriba",
+					"moveDown": "Mover abajo",
+					"delete": "Eliminar campo"
+				},
+				"empty": "Aún no hay campos configurados. Añade el primero para que aparezca en el formulario de IFC.",
+				"unsaved": "Tienes cambios sin guardar.",
+				"allSaved": "Todo está sincronizado.",
+				"confirmDelete": {
+					"title": "Eliminar campo",
+					"body": "Se quitará este campo del formulario. ¿Deseas continuar?",
+					"confirm": "Eliminar"
+				},
+				"err": {
+					"keyRequired": "La llave técnica es obligatoria",
+					"keyDuplicate": "La llave debe ser única",
+					"labelRequired": "La etiqueta es obligatoria",
+					"fixBeforeSave": "Corrige los errores antes de guardar"
+				}
+			},
+			"field": {
+				"value": "Valor",
+				"valuePlaceholder": "ej. H",
+				"prefixHint": "Texto corto que precede al código generado."
+			},
+			"btn": {
+				"save": "Guardar",
+				"discard": "Descartar cambios",
+				"reset": "Restablecer",
+				"retry": "Reintentar",
+				"saveDisabledNoChanges": "No hay cambios para guardar",
+				"saveDisabledInvalid": "Completa el campo antes de guardar"
+			},
+			"toast": {
+				"saved": "Parámetro guardado"
+			},
+			"error": {
+				"loadFailed": "No se pudo cargar el parámetro",
+				"saveFailed": "No se pudo guardar el parámetro",
+				"notFound": "Parámetro no encontrado"
+			}
+		}
+	},
+	"welcome": "Bienvenido a ABET.",
+	"navbar": {
+		"user": {
+			"name": "Administrador",
+			"role": "Admi"
+		},
+		"openMenu": "Abrir menu",
+		"school": {
+			"label": "Escuela",
+			"default": "QA"
+		},
+		"cycle": {
+			"label": "Ciclo"
+		},
+		"program": {
+			"regular": "Regular",
+			"epe": "EPE"
+		}
+	},
+	"language": {
+		"es": "ES",
+		"en": "EN",
+		"name": {
+			"es": "Español",
+			"en": "Inglés"
+		}
+	},
+	"sidebar": {
+		"open": "Abrir sidebar",
+		"close": "Cerrar sidebar",
+		"logoAlt": "Logo ABET"
+	},
+	"dialog": {
+		"close": "Cerrar",
+		"actions": {
+			"accept": "Aceptar",
+			"decline": "Rechazar",
+			"cancel": "Cancelar",
+			"save": "Guardar"
+		},
+		"title": {
+			"form": "Nuevo Registro",
+			"error": "Algo salio mal",
+			"success": "Confirmacion",
+			"info": "Informacion",
+			"warning": "Aviso importante",
+			"confirm": "Confirmacion"
+		},
+		"message": {
+			"error": "Ocurrio un error al procesar la solicitud.",
+			"success": "Operacion completada con exito.",
+			"info": "Nueva información disponible.",
+			"warning": "Revisa los datos antes de continuar.",
+			"confirm": "Confirma para continuar."
+		}
+	},
+	"toast": {
+		"title": {
+			"success": "Exito",
+			"error": "Error",
+			"warning": "Aviso",
+			"info": "Info"
+		},
+		"message": {
+			"success": "Operacion completada con exito.",
+			"error": "Hubo un error al procesar la solicitud.",
+			"warning": "Atencion: revisa los datos ingresados.",
+			"info": "Nueva actualizacion disponible en el sistema."
+		},
+		"close": "Cerrar notificacion"
+	},
+	"tabs": {
+		"label": "Pestañas"
+	},
+	"loading": {
+		"default": "Cargando ..."
+	},
+	"sessionExpired": {
+		"title": "Sesion expirada",
+		"message": "Vuelve a iniciar sesion",
+		"action": "Cerrar sesion"
+	},
+	"login": {
+		"title": "Sistema de  acreditación",
+		"school": {
+			"placeholder": "Selecciona escuela"
+		},
+		"user": {
+			"placeholder": "Usuario"
+		},
+		"password": {
+			"placeholder": "Contraseña"
+		},
+		"remember": "Recuerdame",
+		"submit": "Iniciar sesión",
+		"microsoft": "Continuar con Microsoft",
+		"forgot": "¿Olvidaste la contrasena?",
+		"loading": "Iniciando sesión...",
+		"error": {
+			"required": "Todos los campos son obligatorios",
+			"generic": "Error durante el login",
+			"schoolRequired": "Selecciona una escuela antes de continuar"
+		}
+	},
+	"forgotPassword": {
+		"title": "Recuperar contraseña",
+		"subtitle": "Te enviaremos un enlace de recuperacion a tu correo.",
+		"loading": "Enviando solicitud...",
+		"form": {
+			"emailLabel": "Correo institucional",
+			"emailPlaceholder": "correo@upc.pe",
+			"submit": "Enviar enlace de recuperación",
+			"backToLogin": "Volver al inicio de sesión"
+		},
+		"error": {
+			"emailRequired": "Ingresa tu correo institucional.",
+			"emailInvalid": "Ingresa un correo valido.",
+			"requestFailed": "No se pudo procesar la solicitud"
+		},
+		"success": {
+			"defaultMessage": "Si el correo existe, se enviara un enlace de recuperación"
+		}
+	},
+	"resetPassword": {
+		"title": "Restablecer contraseña",
+		"subtitle": "Ingresa y confirma tu nueva contrasena.",
+		"loading": "Actualizando contrasena...",
+		"form": {
+			"passwordPlaceholder": "Nueva contraseña",
+			"confirmPasswordPlaceholder": "Confirmar nueva contraseña",
+			"submit": "Cambiar contraseña"
+		},
+		"error": {
+			"required": "Todos los campos son obligatorios",
+			"passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+			"passwordMismatch": "Las contraseñas no coinciden",
+			"invalidToken": "El enlace de recuperacion no es valido o expiro",
+			"requestFailed": "No se pudo procesar la solicitud"
+		},
+		"success": {
+			"title": "Contrasena actualizada",
+			"defaultMessage": "Tu contraseña fue actualizada correctamente",
+			"goToLogin": "Ir a iniciar sesión"
+		}
+	},
+	"auth": {
+		"invalidCredentials": "Credenciales invalidas",
+		"missingApiUrl": "Falta configurar la URL del servicio de autenticación"
+	},
+	"parameters": {
+		"error": {
+			"notFound": "Parámetro no encontrado"
+		}
+	},
+	"success": {
+		"ok": "Operación exitosa",
+		"created": "Registro creado exitosamente"
+	},
+	"error": {
+		"generic": "Ocurrió un error inesperado",
+		"validation": "Los datos ingresados no son válidos",
+		"badRequest": "Solicitud inválida",
+		"unauthorized": "No estás autenticado",
+		"forbidden": "No tienes permiso para realizar esta acción",
+		"notFound": "El recurso solicitado no fue encontrado",
+		"conflict": "Conflicto con el estado actual del recurso",
+		"internalServer": "Error interno del servidor",
+		"auth": {
+			"accessDenied": "Acceso denegado — no tienes permisos suficientes",
+			"noPermissionsConfigured": "No tienes permisos para ingresar",
+			"academicPeriodRequired": "Selecciona un período académico para continuar."
+		},
+		"user": {
+			"noRolesAssigned": "El usuario no tiene roles activos asignados",
+			"inactiveOrNotFound": "El usuario no existe o se encuentra inactivo",
+			"notFound": "Usuario no encontrado",
+			"invalidCredentials": "Correo o contraseña incorrectos",
+			"schoolNotFound": "La escuela seleccionada no existe",
+			"documentCodeExists": "Ya existe un usuario con ese código de documento",
+			"emailExists": "Ya existe un usuario con ese correo electrónico",
+			"createFailed": "No se pudo crear el usuario",
+			"updateFailed": "No se pudo actualizar el usuario",
+			"deleteFailed": "No se pudo eliminar el usuario"
+		},
+		"ifc": {
+			"notFound": "IFC no encontrado",
+			"ifcExists": "Ya existe un IFC con estos datos",
+			"invalidTransition": "Transición de estado no permitida",
+			"staffRequired": "No hay personal vinculado al solicitante",
+			"ownCoordinatorForbidden": "El coordinador no puede aprobar su propio IFC",
+			"notInChain": "El solicitante no pertenece a la cadena del organigrama",
+			"chartNotFound": "Organigrama no encontrado",
+			"alreadyExists": "Ya existe un IFC para este curso y período",
+			"notEditable": "El IFC no se puede editar en su estado actual",
+			"findingsRequired": "Se requiere al menos un hallazgo",
+			"actionsRequiredPerFinding": "Cada hallazgo necesita al menos una acción",
+			"findingTempIdMissing": "El ID temporal del hallazgo no fue resuelto",
+			"ifcInstrumentMissing": "El instrumento del IFC no está configurado",
+			"pdfRequiresApproved": "El PDF solo está disponible para IFCs aprobados",
+			"previousActionNotEligible": "La acción previa no puede ser reutilizada",
+			"createFailed": "No se pudo crear el IFC",
+			"updateFailed": "No se pudo actualizar el IFC",
+			"deleteFailed": "No se pudo eliminar el IFC",
+			"viewFailed": "No se pudo cargar el IFC",
+			"submitFailed": "No se pudo enviar el IFC",
+			"approveFailed": "No se pudo aprobar el IFC",
+			"rejectFailed": "No se pudo rechazar el IFC",
+			"patchFailed": "No se pudo guardar el IFC",
+			"prefillFailed": "No se pudo cargar la información previa",
+			"pdfFailed": "No se pudo generar el PDF",
+			"pdfBulkFailed": "No se pudo generar el ZIP de PDFs",
+			"statusReportFailed": "No se pudo generar el reporte de estado"
+		},
+		"ifcFinding": {
+			"notFound": "Hallazgo no encontrado",
+			"relationExists": "Ya existe una relación IFC-hallazgo duplicada",
+			"courseChartNotFound": "Organigrama del curso no encontrado",
+			"notInChainForPatch": "No perteneces a la cadena para editar este hallazgo",
+			"createFailed": "No se pudo crear el hallazgo",
+			"updateFailed": "No se pudo actualizar el hallazgo",
+			"deleteFailed": "No se pudo eliminar el hallazgo",
+			"listFailed": "No se pudo cargar la lista de hallazgos",
+			"viewFailed": "No se pudo cargar el hallazgo",
+			"patchFailed": "No se pudo guardar el hallazgo"
+		},
+		"notificationConfig": {
+			"notFound": "Configuración de notificación no encontrada",
+			"targetExists": "Ya existe una configuración duplicada",
+			"notAdmin": "No eres administrador",
+			"adminOnly": "Esta operación es solo para administradores",
+			"createFailed": "No se pudo crear la configuración",
+			"updateFailed": "No se pudo actualizar la configuración",
+			"deleteFailed": "No se pudo eliminar la configuración"
+		},
+		"parameter": {
+			"notFound": "Parámetro no encontrado",
+			"codeExists": "Ya existe un parámetro con ese código",
+			"createFailed": "No se pudo crear el parámetro",
+			"updateFailed": "No se pudo actualizar el parámetro",
+			"deleteFailed": "No se pudo eliminar el parámetro"
+		},
+		"orgScope": {
+			"userNotFound": "Usuario no encontrado",
+			"schoolNotFound": "Escuela no encontrada",
+			"getScopeFailed": "No se pudo obtener el alcance organizacional"
+		},
+		"academicPeriod": {
+			"notFound": "Período académico no encontrado",
+			"codeExists": "Ya existe un período con ese código",
+			"invalidDateRange": "La fecha de inicio es posterior a la fecha de fin",
+			"createFailed": "No se pudo crear el período académico",
+			"updateFailed": "No se pudo actualizar el período académico",
+			"deleteFailed": "No se pudo eliminar el período académico"
+		},
+		"type": {
+			"notFound": "Tipo no encontrado",
+			"codeExists": "Ya existe un tipo con ese código",
+			"createFailed": "No se pudo crear el tipo",
+			"updateFailed": "No se pudo actualizar el tipo",
+			"deleteFailed": "No se pudo eliminar el tipo"
+		},
+		"uploads": {
+			"periodNotFound": "El período académico no existe.",
+			"chartsAlreadyLoadedForPeriod": "El organigrama ya fue cargado para este período.",
+			"uploadLogNotFound": "No se encontró la carga indicada.",
+			"rollbackAlreadyDone": "Esta carga ya fue revertida.",
+			"typeCodeNotFound": "El tipo de carga no existe.",
+			"rollbackBlockedSections": "No se puede revertir: existen secciones que dependen de esta carga.",
+			"rollbackBlockedOutcomes": "No se puede revertir: existen outcomes que dependen de esta carga.",
+			"rollbackBlockedProfessors": "No se puede revertir: existen docentes que dependen de esta carga.",
+			"rollbackBlockedStaff": "No se puede revertir: existe personal que depende de esta carga.",
+			"rollbackBlockedNewerUpload": "No se puede revertir: existe una carga posterior basada en esta.",
+			"rollbackBlockedOutcomeRefs": "No se puede revertir: hay datos que dependen de estos outcomes (articulación, hallazgos, encuestas o notas). Elimínelos primero.",
+			"rollbackBlockedSectionRefs": "No se puede revertir: hay matrículas o encuestas asociadas a estas secciones. Elimínelas primero.",
+			"rollbackBlockedEnrollmentRefs": "No se puede revertir: hay alumnos por sección o encuestas asociadas a estas matrículas. Elimínelos primero.",
+			"rollbackBlockedSectionEnrollmentRefs": "No se puede revertir: hay notas o proyectos asociados a estas matrículas de sección. Elimínelos primero."
+		},
+		"chartHeads": {
+			"configureFailed": "No se pudo guardar la configuración del organigrama.",
+			"periodNotFound": "El período académico no existe.",
+			"schoolNotFound": "La escuela seleccionada no existe.",
+			"userNotFound": "El usuario seleccionado no existe.",
+			"duplicateSchoolInPayload": "No se puede asignar la misma escuela a dos directores."
+		}
+	},
+	"table": {
+		"search": {
+			"placeholder": "Buscar..."
+		},
+		"empty": "No se encontraron resultados disponibles.",
+		"pagination": {
+			"previous": "Anterior",
+			"next": "Siguiente",
+			"page": "Pagina",
+			"of": "de"
+		}
+	},
+	"select": {
+		"placeholder": {
+			"default": "Seleccione una opcion"
+		},
+		"noOptions": "No options",
+		"createLabel": "Crear: \"{value}\""
+	},
+	"school": {
+		"eiscb": "ESCUELA DE INGENIERIA DE SOFTWARE",
+		"eiscc": "ESCUELA DE INGENIERIA DE CIENCIAS DE LA COMPUTACION",
+		"inggmi": "INGENIERIA GMI",
+		"inggem": "INGENIERIA GEM",
+		"escel": "ESCUELA DE ELECTRONICA",
+		"ingamb": "INGENIERIA AMBIENTAL",
+		"ingbio": "INGENIERIA BIOMEDICA",
+		"ingciv": "INGENIERIA CIVIL",
+		"ingind": "INGENIERIA INDUSTRIAL"
+	},
+	"app": {
+		"name": "Sistema de Acreditación ABET",
+		"description": "ABET",
+		"missingApiUrl": "Falta configurar la URL del API"
+	},
+	"page": {
+		"home": "Inicio",
+		"login": "Login",
+		"charts": "Graficos",
+		"tables": "Tablas",
+		"modals": "Modales",
+		"public": "Publico"
+	},
+	"notFound": {
+		"title": "Pagina no encontrada",
+		"message": "Lo sentimos, no pudimos encontrar la pagina que estas buscando.",
+		"action": "Ir al inicio"
+	},
+	"rubrics": {
+		"list": {
+			"title": "Rúbricas",
+			"description": "Listado de rúbricas.",
+			"createButton": "Crear rúbrica",
+			"loading": "Cargando rúbricas...",
+			"error": "No fue posible cargar las rúbricas.",
+			"empty": "No hay rúbricas para los filtros seleccionados.",
+			"selectPeriod": "Selecciona un período académico para ver las rúbricas.",
+			"clearFilters": "Limpiar filtros",
+			"filters": {
+				"program": "Carrera",
+				"course": "Curso"
+			},
+			"columns": {
+				"course": "Curso",
+				"period": "Período Académico",
+				"gradeType": "Tipo de Evaluación",
+				"rubricType": "Tipo de Rúbrica",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"edit": "Editar",
+				"view": "Ver",
+				"delete": "Eliminar"
+			},
+			"deleteModal": {
+				"title": "¿Eliminar rúbrica?",
+				"body": "¿Estás seguro de que deseas eliminar la rúbrica de \"{{course}}\"? Esta acción no se puede deshacer.",
+				"confirm": "Eliminar",
+				"deleting": "Eliminando..."
+			}
+		},
+		"editor": {
+			"error": {
+				"saveError": "Error al guardar la rúbrica.",
+				"notFound": "Rúbrica no encontrada.",
+				"load": "Error al cargar la rúbrica."
+			},
+			"save": {
+				"autosaveRetry": "Reintentar guardado.",
+				"saveRubricSuccess": "Rúbrica guardada exitosamente."
+			},
+			"capstone": {
+				"saveRubric": "Guardar rúbrica",
+				"saving": "Guardando rúbrica...",
+				"noCommissions": "No se encontraron comisiones.",
+				"tooltips": {
+					"commissionCheckboxIncomplete": "Criterios incompletos para los outcomes.",
+					"saveDisabled": "Rúbrica no válida. Guardado deshabilitado."
+				},
+				"validation": {
+					"emptyOutcome": "No se han agregado criterios a este outcome. Agrega al menos un criterio para validar la rúbrica.",
+					"emptyOutcomeReadonly": "No se han agregado criterios a este outcome.",
+					"validationIncomplete": "Por favor, agrega al menos un criterio por cada outcome",
+					"validationComplete": "Rúbrica validada correctamente. Puede guardar los cambios."
+				},
+				"criteria": {
+					"saving": "Guardando criterio...",
+					"confirmDelete": "¿Estás seguro de que deseas eliminar este criterio? Esta acción no se puede deshacer.",
+					"criteriaLabel": "Criterio",
+					"criteriaPlaceholder": "Ingrese la descripción del criterio"
+				}
+			},
+			"nonCapstone": {
+				"totalScore": "Puntaje total",
+				"points": "puntos",
+				"saveRubric": "Guardar rúbrica",
+				"saving": "Guardando rúbrica...",
+				"tooltips": {
+					"saveDisabled": "Rúbrica no válida. Guardado deshabilitado.",
+					"maxCols": "Has alcanzado el número máximo de criterios."
+				},
+				"validation": {
+					"validationComplete": "Rúbrica validada correctamente. Puede guardar los cambios.",
+					"allFieldsRequired": "Todos los campos son obligatorios.",
+					"totalMustBe20": "La suma total de puntos debe ser 20.",
+					"minMustBeLessThanMax": "El puntaje mínimo debe ser menor que el máximo para cada criterio.",
+					"continuityRequired": "Los rangos de puntaje deben ser continuos entre criterios."
+				},
+				"question": {
+					"column": "Pregunta",
+					"label": "Pregunta",
+					"placeholder": "Ingrese la pregunta",
+					"addQuestion": "Agregar pregunta"
+				},
+				"criteria": {
+					"label": "Criterio",
+					"addCriteria": "Agregar criterio",
+					"placeholder": "Ingrese la descripción del criterio"
+				},
+				"score": {
+					"minScoreLabel": "Mín.",
+					"maxScoreLabel": "Máx."
+				}
+			},
+			"header": {
+				"academicPeriod": "Período académico",
+				"maxScore": "Puntaje máximo",
+				"units": {
+					"points": "puntos"
+				},
+				"editable": "Editable",
+				"readonly": "Solo lectura"
+			},
+			"performanceLevels": {
+				"title": "Niveles de desempeño",
+				"helper": "Los niveles de desempeño son aplicables a todos los criterios.",
+				"empty": "No se han definido niveles de desempeño para esta rúbrica."
+			}
+		},
+		"commission": {
+			"status": {
+				"complete": "Completa",
+				"incomplete": "Incompleta"
+			}
+		},
+		"wizard": {
+			"title": "Nueva rúbrica",
+			"subtitle": "Crea una rúbrica de evaluación.",
+			"stepIndicator": {
+				"ariaLabel": "Pasos para crear una rúbrica"
+			},
+			"steps": {
+				"step1": {
+					"label": "Curso",
+					"description": "Periodo y curso"
+				},
+				"step2": {
+					"label": "Evaluación",
+					"description": "Tipo y rúbrica"
+				},
+				"step3": {
+					"label": "Rúbrica",
+					"description": "Preguntas y criterios"
+				}
+			},
+			"step1": {
+				"title": "Seleccionar curso",
+				"subtitle": "Elige el periodo académico y el curso.",
+				"periodLabel": "Periodo académico",
+				"periodPlaceholder": "Selecciona un periodo",
+				"periodLoading": "Cargando periodos...",
+				"courseLabel": "Curso",
+				"coursePlaceholder": "Selecciona un curso",
+				"courseLoading": "Cargando cursos...",
+				"courseNoOptions": "Sin cursos disponibles",
+				"courseSelectPeriodFirst": "Selecciona un periodo primero",
+				"next": "Siguiente",
+				"verifying": "Verificando...",
+				"error": {
+					"loadPeriods": "No se pudieron cargar los periodos académicos.",
+					"loadCourses": "No se pudieron cargar los cursos.",
+					"noSchool": "No se pudo obtener la escuela del usuario.",
+					"noStudyPlan": "No se encontró un plan de estudios para este curso y periodo.",
+					"studyPlan": "Error al obtener datos del plan de estudios."
+				}
+			},
+			"step2": {
+				"title": "Tipo de evaluación",
+				"subtitle": "Selecciona el tipo de evaluación. El tipo de rúbrica se determinará automáticamente.",
+				"gradeTypeLabel": "Tipo de evaluación",
+				"gradeTypePlaceholder": "Selecciona un tipo",
+				"gradeTypeLoading": "Cargando tipos...",
+				"rubricTypeLabel": "Tipo de rúbrica:",
+				"verifyingOutcomes": "Verificando outcomes del curso...",
+				"back": "Atrás",
+				"next": "Siguiente",
+				"error": {
+					"loadTypes": "No se pudieron cargar los tipos de evaluación.",
+					"verifyOutcomes": "Error al verificar los outcomes del curso."
+				}
+			},
+			"step3": {
+				"back": "Atrás",
+				"submit": "Crear rúbrica",
+				"submitting": "Creando rúbrica...",
+				"capstone": {
+					"title": "Criterios por outcome",
+					"subtitle": "Define los niveles de evaluación para cada outcome.",
+					"criteriaLabel": "Criterio",
+					"criteriaPlaceholder": "Descripción del nivel de desempeño",
+					"addCriteria": "Agregar nivel",
+					"deleteCriteria": "Eliminar",
+					"commissionTooltipIncomplete": "Completa todos los criterios para marcar la comisión",
+					"emptyOutcome": "Sin criterios",
+					"emptyOutcomeHint": "Agrega al menos un criterio con el botón +",
+					"error": {
+						"loadOutcomes": "No se pudieron cargar los outcomes del curso."
+					},
+					"validation": {
+						"incomplete": "Completa la descripción de todos los criterios en todas las comisiones.",
+						"complete": "Rúbrica lista para guardar"
+					}
+				}
+			},
+			"error": {
+				"createRubric": "Error al crear la rúbrica. Intenta de nuevo."
+			}
+		}
+	},
+	"performanceLevels": {
+		"list": {
+			"title": "Niveles de Desempeño",
+			"description": "Configura los niveles de desempeño por período e instrumento.",
+			"createButton": "Nuevo nivel",
+			"clearFilters": "Limpiar filtros",
+			"loading": "Cargando niveles de desempeño...",
+			"error": "No fue posible cargar los niveles de desempeño.",
+			"empty": "No hay niveles de desempeño registrados para los filtros seleccionados.",
+			"selectFilter": "Selecciona un período académico y/o instrumento para comenzar.",
+			"periodFilter": "Período Académico",
+			"instrumentFilter": "Instrumento",
+			"allPeriods": "Todos los períodos",
+			"allInstruments": "Todos los instrumentos"
+		},
+		"table": {
+			"code": "Código",
+			"name": "Nombre",
+			"instrument": "Instrumento",
+			"period": "Período",
+			"uniqueValue": "Valor único",
+			"scoreRange": "Rango puntaje",
+			"color": "Color",
+			"actions": "Acciones",
+			"edit": "Editar",
+			"delete": "Eliminar"
+		},
+		"form": {
+			"createTitle": "Crear nivel de desempeño",
+			"createDescription": "Completa los campos para crear un nuevo nivel de desempeño.",
+			"editTitle": "Editar nivel de desempeño",
+			"editDescription": "Modifica los campos del nivel de desempeño.",
+			"cancel": "Cancelar",
+			"create": "Crear",
+			"update": "Actualizar",
+			"saving": "Guardando...",
+			"deleting": "Eliminando...",
+			"saveError": "Ocurrió un error al guardar."
+		},
+		"delete": {
+			"title": "Eliminar nivel de desempeño",
+			"description": "¿Estás seguro de que deseas eliminar el nivel",
+			"cancel": "Cancelar",
+			"confirm": "Eliminar"
+		}
+	},
+	"projects": {
+		"create": {
+			"title": "Crear Proyecto Académico",
+			"subtitle": "Completa los pasos para registrar un nuevo proyecto.",
+			"steps": {
+				"step1": {
+					"label": "Curso",
+					"description": "Selecciona el período y el curso"
+				},
+				"step2": {
+					"label": "Detalle",
+					"description": "Código, nombre, estudiantes y evaluadores"
+				}
+			},
+			"error": {
+				"create": "No fue posible crear el proyecto. Intenta de nuevo."
+			},
+			"step2": {
+				"infoTitle": "Información del Proyecto",
+				"fieldCode": "Código",
+				"fieldCodePlaceholder": "Ej. PROY-001",
+				"fieldName": "Nombre",
+				"fieldNamePlaceholder": "Nombre del proyecto",
+				"fieldDesc": "Descripción",
+				"fieldDescPlaceholder": "Descripción del proyecto",
+				"studentsTitle": "Estudiantes",
+				"studentsAdd": "Agregar estudiantes",
+				"studentsEmpty": "Aún no se han seleccionado estudiantes.",
+				"studentsLoading": "Cargando estudiantes...",
+				"studentsNoResults": "Sin resultados para la búsqueda.",
+				"studentsModal": {
+					"title": "Seleccionar estudiantes",
+					"searchPlaceholder": "Buscar por nombre o código...",
+					"searchPrompt": "Escribe para buscar un estudiante.",
+					"selected": "seleccionados",
+					"confirmButton": "Confirmar"
+				},
+				"evaluatorsTitle": "Evaluadores",
+				"evaluatorsAdd": "Agregar evaluador",
+				"evaluatorsEmpty": "Aún no se han agregado evaluadores.",
+				"evaluatorsSearch": "Buscar docente",
+				"evaluatorsSearchPlaceholder": "Nombre o correo del docente...",
+				"evaluatorsSearchPrompt": "Escribe para buscar un docente.",
+				"evaluatorsNoResults": "No se encontraron docentes.",
+				"evaluatorsRole": "Rol",
+				"evaluatorsRolePlaceholder": "Selecciona un rol",
+				"evaluatorsRoleLoading": "Cargando roles...",
+				"evaluatorsModal": {
+					"title": "Agregar evaluador",
+					"confirmButton": "Agregar"
+				},
+				"evaluators": {
+					"errorDuplicateRole": "Este docente ya tiene asignado ese rol."
+				},
+				"back": "Atrás",
+				"submit": "Crear Proyecto",
+				"submitting": "Creando..."
+			}
+		},
+		"list": {
+			"title": "Proyectos Académicos",
+			"description": "Listado de proyectos académicos.",
+			"addButton": "Agregar proyecto",
+			"clearFilters": "Limpiar filtros",
+			"loading": "Cargando proyectos...",
+			"error": "No fue posible cargar los proyectos.",
+			"empty": "No hay proyectos registrados.",
+			"selectPeriod": "Selecciona un período académico para comenzar.",
+			"filters": {
+				"academicPeriod": "Período Académico",
+				"program": "Carrera",
+				"course": "Curso"
+			},
+			"table": {
+				"code": "Código",
+				"name": "Nombre",
+				"evaluators": "Evaluadores",
+				"students": "Estudiantes",
+				"actions": "Acciones",
+				"view": "Ver",
+				"edit": "Editar"
+			}
+		},
+		"grade": {
+			"title": "Calificar Proyectos",
+			"description": "Proyectos académicos asignados para evaluación.",
+			"loading": "Cargando proyectos...",
+			"loadingProfessor": "Obteniendo datos del docente...",
+			"error": "No fue posible cargar los proyectos.",
+			"errorProfessor": "No se encontró el docente asociado a tu usuario.",
+			"empty": "No tienes proyectos asignados para evaluar.",
+			"selectPeriod": "Selecciona un período académico para ver tus proyectos.",
+			"table": {
+				"code": "Código",
+				"name": "Nombre del Proyecto",
+				"course": "Curso",
+				"evaluator": "Evaluador",
+				"students": "Estudiantes",
+				"evaluationDate": "Fecha de Evaluación",
+				"actions": "Acciones",
+				"grade": "Evaluar"
+			},
+			"tabs": {
+				"partial": "Rúbrica Parcial",
+				"final": "Rúbrica Final",
+				"ariaLabel": "Tipo de rúbrica"
+			},
+			"filters": {
+				"academicPeriod": "Período Académico"
+			}
+		},
+		"evaluate": {
+			"loading": "Cargando proyecto...",
+			"error": "No fue posible cargar el proyecto.",
+			"notFound": "Proyecto no encontrado.",
+			"backButton": "Volver",
+			"header": {
+				"course": "Curso",
+				"rubric": "Rúbrica",
+				"gradeType": "Tipo de nota"
+			},
+			"students": {
+				"title": "Estudiantes",
+				"grade": "Nota",
+				"noGrade": "Sin nota",
+				"empty": "No hay estudiantes en este proyecto."
+			},
+			"rubric": {
+				"question": "Pregunta",
+				"criteria": "Criterios",
+				"score": "Puntaje",
+				"duplicateGrades": "Duplicar notas",
+				"duplicateGradesInfo": "Al activar esta opción, la nota ingresada se asignará a todos los estudiantes del proyecto.",
+				"errorNaN": "Ingresa un número válido.",
+				"errorRange": "Uno o más puntajes están fuera del rango permitido para su pregunta.",
+				"fillAll": "Completa todos los puntajes para guardar.",
+				"saveButton": "Guardar calificaciones",
+				"saving": "Guardando..."
+			},
+			"capstone": {
+				"outcome": "Outcome",
+				"criteria": "Criterios",
+				"loadingLevels": "Cargando niveles de desempeño...",
+				"noLevels": "No se encontraron niveles de desempeño para este período.",
+				"fillAll": "Selecciona un nivel de desempeño para cada outcome y estudiante.",
+				"score": "Puntaje"
+			}
+		},
+		"edit": {
+			"loading": "Cargando proyecto...",
+			"error": "No fue posible cargar el proyecto.",
+			"backButton": "Volver a proyectos",
+			"header": {
+				"course": "Curso",
+				"rubricType": "Tipo de rúbrica",
+				"gradeType": "Tipo de nota",
+				"editButton": "Editar proyecto",
+				"saveButton": "Guardar cambios",
+				"cancelButton": "Cancelar",
+				"saving": "Guardando...",
+				"saveSuccess": "Proyecto actualizado correctamente.",
+				"saveError": "No se pudo actualizar el proyecto.",
+				"fieldCode": "Código",
+				"fieldName": "Nombre",
+				"fieldDesc": "Descripción"
+			},
+			"students": {
+				"title": "Estudiantes",
+				"empty": "No hay estudiantes en este proyecto.",
+				"removeButton": "Eliminar",
+				"addPlaceholder": "ID de matrícula",
+				"addButton": "Agregar",
+				"adding": "Agregando...",
+				"addError": "No se pudo agregar el estudiante.",
+				"removeError": "No se pudo eliminar el estudiante.",
+				"removeSuccess": "Estudiante eliminado correctamente.",
+				"modal": {
+					"title": "Agregar estudiantes",
+					"searchPlaceholder": "Buscar por nombre, código o correo...",
+					"loading": "Cargando estudiantes...",
+					"empty": "No hay estudiantes matriculados en este curso.",
+					"noResults": "Sin resultados para la búsqueda.",
+					"selected": "seleccionado(s)",
+					"section": "Sección",
+					"confirmButton": "Agregar seleccionados",
+					"adding": "Agregando...",
+					"successMessage": "Estudiantes agregados correctamente.",
+					"errorMessage": "No se pudo agregar los estudiantes."
+				}
+			},
+			"evaluators": {
+				"title": "Evaluadores",
+				"empty": "No hay evaluadores asignados.",
+				"removeButton": "Eliminar",
+				"addPlaceholder": "ID de docente",
+				"addButton": "Agregar",
+				"adding": "Agregando...",
+				"addError": "No se pudo agregar el evaluador.",
+				"removeError": "No se pudo eliminar el evaluador.",
+				"modal": {
+					"title": "Agregar evaluador",
+					"searchPlaceholder": "Buscar por nombre o apellido...",
+					"searchLabel": "Docente",
+					"searchPrompt": "Escribe para buscar un docente.",
+					"noResults": "Sin resultados.",
+					"roleLabel": "Rol del evaluador",
+					"rolePlaceholder": "Selecciona un rol",
+					"loadingRoles": "Cargando roles...",
+					"confirmButton": "Agregar evaluador",
+					"adding": "Agregando...",
+					"selectProfessorFirst": "Selecciona un docente primero.",
+					"selectRoleFirst": "Selecciona un rol para continuar.",
+					"successMessage": "Evaluador agregado correctamente.",
+					"errorMessage": "No se pudo agregar el evaluador."
+				},
+				"removeSuccess": "Evaluador eliminado correctamente."
+			}
+		}
+	},
+	"surveys": {
+		"competence": {
+			"table": {
+				"title": "Competencias",
+				"general": "Competencia General",
+				"specific": "Competencia Específica",
+				"description": "Descripción",
+				"level": "Nivel",
+				"actions": "Acciones"
+			},
+			"modal": {
+				"addTitle": "Agregar Competencia",
+				"editTitle": "Editar Competencia",
+				"generalLabel": "Competencia General",
+				"generalPlaceholder": "Ej: Pensamiento Crítico",
+				"specificLabel": "Competencia Específica",
+				"specificPlaceholder": "Ej: Análisis de Problemas",
+				"descriptionLabel": "Descripción",
+				"descriptionPlaceholder": "Describe la competencia...",
+				"levelLabel": "Nivel de Desempeño ({{min}}–{{max}})",
+				"save": "Guardar",
+				"saving": "Guardando...",
+				"delete": "Eliminar",
+				"deleteTitle": "Confirmar eliminación",
+				"deleteBody": "¿Estás seguro de que deseas eliminar esta competencia? Esta acción no se puede deshacer."
+			},
+			"toast": {
+				"required": "Competencia y descripción son obligatorios.",
+				"saved": "Competencia guardada exitosamente.",
+				"deleted": "Competencia eliminada."
+			},
+			"add": "Agregar Competencia",
+			"actions": {
+				"edit": "Editar competencia",
+				"delete": "Eliminar competencia"
+			}
+		},
+		"performanceLevels": {
+			"title": "Niveles de Desempeño",
+			"description": "Configura las descripciones y rangos para cada nivel de evaluación ({{min}}–{{max}}).",
+			"loading": "Cargando niveles...",
+			"save": "Guardar Niveles",
+			"saving": "Guardando...",
+			"descriptionPlaceholder": "Descripción",
+			"rangePlaceholder": "Rango (ej: 0-40%)",
+			"toast": {
+				"saved": "Niveles de desempeño guardados."
+			}
+		},
+		"tabs": {
+			"competences": "Competencias",
+			"levels": "Niveles de Desempeño"
+		},
+		"lcfc": {
+			"notifications": {
+				"title": "Envío de Notificaciones LCFC",
+				"description": "Configura el período y la URL base de la encuesta. El sistema enviará el correo a todos los estudiantes del período seleccionado.",
+				"cycleLabel": "Ciclo / Período académico",
+				"cyclePlaceholder": "Selecciona un período",
+				"urlLabel": "URL base de la encuesta",
+				"urlPlaceholder": "https://tu-dominio.com/encuesta/lcfc",
+				"dateLabel": "Fecha límite de registro",
+				"send": "Enviar Notificaciones",
+				"sending": "Enviando...",
+				"toast": {
+					"required": "Completa todos los campos antes de enviar.",
+					"sent": "Notificaciones enviadas exitosamente."
+				}
+			},
+			"management": {
+				"title": "Logro de Fin de Ciclo",
+				"subtitle": "Gestión de encuestas de Logro de Fin de Ciclo por comisión y período",
+				"tabReports": "Reportes",
+				"tabNotifications": "Notificaciones",
+				"tabConfig": "Configuración"
+			},
+			"reports": {
+				"title": "Dashboard — LCFC",
+				"description": "Resumen de percepción para encuestas de Logro de Fin de Ciclo."
+			},
+			"config": {
+				"colCode": "Código",
+				"colCourse": "Curso",
+				"colCommissions": "Comisiones",
+				"toastGenerated": "Configuración generada exitosamente.",
+				"toastCloned": "Configuración clonada exitosamente.",
+				"cycleLabel": "Ciclo / Período",
+				"cyclePlaceholder": "Selecciona un período",
+				"generateButton": "Generar Configuración",
+				"cloneButton": "Clonar desde otro período",
+				"coursesTitle": "Cursos configurados ({{count}})",
+				"cloneDialogTitle": "Clonar configuración",
+				"cloneDialogBody": "Selecciona el período de origen para clonar su configuración al período actual ({{period}}).",
+				"originLabel": "Período de origen",
+				"originPlaceholder": "Selecciona un período de origen",
+				"cloneConfirm": "Clonar"
+			}
+		},
+		"gra": {
+			"notifications": {
+				"title": "Estudiantes Notificados ({{count}})",
+				"sendSurvey": "Enviar Encuesta",
+				"downloadLabel": "Descargar Plantilla GRA",
+				"tabs": {
+					"list": "Estudiantes Notificados",
+					"add": "Agregar Estudiante",
+					"upload": "Carga Masiva",
+					"email": "Plantilla de Correo"
+				},
+				"columns": {
+					"code": "Código",
+					"name": "Nombre",
+					"email": "Email",
+					"sendStatus": "Envío",
+					"responseStatus": "Respuesta",
+					"actions": "Acciones"
+				},
+				"deleteTitle": "Eliminar estudiante",
+				"deleteBody": "¿Deseas eliminar este estudiante de la notificación?",
+				"delete": "Eliminar",
+				"sendDialog": {
+					"title": "Enviar encuesta GRA",
+					"bodyBefore": "Se enviará la encuesta a ",
+					"bodyEmphasis": "todos",
+					"bodyAfter": " los estudiantes registrados para el período y carrera actuales.",
+					"urlLabel": "URL base de la encuesta",
+					"urlPlaceholder": "https://tu-dominio.com/encuesta/gra",
+					"confirm": "Confirmar envío",
+					"sending": "Enviando..."
+				},
+				"status": {
+					"sent": "Enviado",
+					"pending": "Pendiente",
+					"responded": "Respondido"
+				},
+				"periodLabel": "Período académico",
+				"periodPlaceholder": "Selecciona un período",
+				"uploadTitle": "Carga masiva de estudiantes GRA",
+				"uploadDesc": "Sube un archivo Excel con los datos de los estudiantes a notificar.",
+				"addStudentTitle": "Agregar Estudiante Individual",
+				"studentCodePlaceholder": "Código del estudiante (ej: 2020001)",
+				"searchStudent": "Buscar estudiante",
+				"studentName": "Nombre",
+				"studentCode": "Código",
+				"studentCareer": "Carrera",
+				"adding": "Agregando...",
+				"addButton": "Agregar a Notificación",
+				"toast": {
+					"studentAdded": "{{name}} agregado exitosamente.",
+					"studentDeleted": "Estudiante eliminado de la notificación.",
+					"surveySent": "Encuestas enviadas exitosamente."
+				}
+			},
+			"management": {
+				"title": "Encuestas de Graduandos",
+				"subtitle": "Gestión de encuestas para estudiantes próximos a graduarse",
+				"tabReports": "Reportes",
+				"tabNotifications": "Notificaciones",
+				"tabConfig": "Configuración"
+			},
+			"reports": {
+				"title": "Dashboard — Graduandos",
+				"description": "Resumen de percepción por ciclo académico para encuestas de graduandos."
+			},
+			"emailTemplate": {
+				"title": "Plantilla de Correo Electrónico",
+				"description": "Personaliza el correo que se envía a los estudiantes con su encuesta.",
+				"loading": "Cargando plantilla...",
+				"subjectLabel": "Asunto",
+				"subjectPlaceholder": "Ej: Encuesta de Graduandos UPC 2024",
+				"availableParams": "Parámetros disponibles",
+				"bodyLabel": "Cuerpo del correo",
+				"bodyPlaceholder": "Escribe el contenido del correo...",
+				"saveButton": "Guardar Plantilla",
+				"saved": "Plantilla de correo guardada."
+			}
+		},
+		"ppp": {
+			"management": {
+				"title": "Prácticas Pre-Profesionales",
+				"subtitle": "Gestión de encuestas de Prácticas Pre-Profesionales",
+				"tabDownload": "Descargar Plantilla",
+				"tabUpload": "Carga Masiva",
+				"tabReports": "Reportes",
+				"tabConfig": "Configuración"
+			},
+			"download": {
+				"title": "Descargar Plantilla PPP",
+				"description": "Selecciona el ciclo académico y descarga la plantilla Excel para carga masiva de datos PPP.",
+				"button": "Descargar Plantilla",
+				"downloading": "Descargando...",
+				"success": "Plantilla descargada exitosamente."
+			},
+			"upload": {
+				"title": "Carga Masiva PPP",
+				"description": "Descarga la plantilla, completa los datos y súbela para procesar masivamente.",
+				"fileTitle": "Archivo de datos",
+				"downloadLabel": "Descargar Plantilla PPP",
+				"downloadError": "Error al descargar la plantilla."
+			},
+			"reports": {
+				"title": "Dashboard PPP",
+				"description": "Genera el resumen de percepción promedio por ciclo académico."
+			}
+		},
+		"shared": {
+			"academicCycle": "Ciclo Académico",
+			"selectCycle": "Selecciona un ciclo",
+			"generating": "Generando...",
+			"generateDashboard": "Generar Dashboard",
+			"summary": "Resumen",
+			"totalSurveys": "Total encuestas",
+			"completionRate": "Tasa de completitud",
+			"colorSummary": "Verde / Amarillo / Rojo",
+			"saving": "Guardando...",
+			"noConfiguration": "Sin configuración para este ciclo",
+			"noConfigurationHint": "No existe configuración para el ciclo seleccionado. Puedes crear una nueva o clonar desde otro ciclo.",
+			"cloneConfiguration": "Clonar configuración",
+			"cloneToastHint": "Función de clonado: selecciona un ciclo de origen en el modal.",
+			"fileUpload": {
+				"invalidFormat": "Formato inválido. Use: {{accept}}",
+				"fileTooLarge": "Archivo muy grande. Máximo {{mb}}MB.",
+				"processedSuccess": "Archivo procesado exitosamente. Se descargó el reporte.",
+				"step1Title": "Paso 1: Descarga la plantilla",
+				"step1Desc": "Descarga la plantilla Excel, llénala con los datos y luego súbela.",
+				"step2Title": "Paso 2: Sube el archivo completado",
+				"selectFile": "Selecciona el archivo",
+				"clickToSelect": "Haz clic para seleccionar un archivo",
+				"formats": "Formatos aceptados: {{accept}} · Máx. {{mb}}MB",
+				"uploading": "Subiendo...",
+				"uploadButton": "Subir Archivo"
+			}
+		},
+		"student": {
+			"loading": "Cargando encuesta...",
+			"invalidLink": {
+				"title": "Enlace inválido",
+				"message": "El enlace de acceso a la encuesta no es válido o está incompleto."
+			},
+			"accessError": {
+				"title": "Error de acceso"
+			},
+			"title": "Sistema ABET — Encuesta LCFC",
+			"subtitle": "Logro de Fin de Ciclo",
+			"programLabel": "Carrera",
+			"periodLabel": "Ciclo",
+			"courseLabel": "Curso",
+			"studentLabel": "Estudiante",
+			"progressLabel": "Progreso",
+			"progressText": "{{answered}} de {{total}} respondidos ({{pct}}%)",
+			"instructionsTitle": "Instrucciones:",
+			"instructionsBody": "Evalúa cada competencia seleccionando un puntaje del 1 al 5. Todos los campos son obligatorios. Una vez enviada, la encuesta no podrá modificarse.",
+			"generalPrefix": "General:",
+			"commentLabel": "Comentarios adicionales (obligatorio)",
+			"commentPlaceholder": "Escribe aquí tus comentarios sobre el curso, los contenidos, o cualquier observación relevante...",
+			"submitButton": "Enviar Encuesta",
+			"submittingButton": "Enviando...",
+			"score": {
+				"1": "Insuficiente",
+				"2": "Regular",
+				"3": "Bueno",
+				"4": "Muy Bueno",
+				"5": "Excelente"
+			},
+			"error": {
+				"incomplete": "Por favor, completa todos los outcomes antes de enviar.",
+				"commentRequired": "El comentario es obligatorio.",
+				"submitFailed": "No se pudo enviar la encuesta. Inténtalo nuevamente."
+			},
+			"alreadyAnswered": {
+				"title": "Encuesta ya respondida",
+				"message": "Ya has completado esta encuesta anteriormente. No es posible modificar tus respuestas una vez enviadas.",
+				"thanks": "Gracias por tu participación."
+			},
+			"success": {
+				"title": "¡Encuesta enviada exitosamente!",
+				"message": "Tus respuestas han sido registradas correctamente. Gracias por completar la encuesta de Logro de Fin de Ciclo.",
+				"hint": "Puedes cerrar esta ventana."
+			}
+		}
+	},
+	"evaluationCourses": {
+		"list": {
+			"title": "Cursos a Calificar",
+			"description": "Cursos habilitados para la creación de rúbricas y proyectos.",
+			"addButton": "Agregar curso",
+			"periodLabel": "Periodo académico",
+			"periodPlaceholder": "Selecciona un periodo",
+			"periodLoading": "Cargando periodos...",
+			"selectPeriodFirst": "Selecciona un periodo académico para ver los cursos.",
+			"loading": "Cargando cursos...",
+			"error": "No se pudieron cargar los cursos.",
+			"empty": "No hay cursos habilitados para este periodo.",
+			"removeButton": "Quitar curso",
+			"columns": {
+				"course": "Curso",
+				"period": "Periodo",
+				"actions": "Acciones"
+			}
+		},
+		"confirm": {
+			"title": "¿Quitar curso?",
+			"body": "¿Estás seguro de que deseas quitar \"{{course}}\" de la lista de cursos a calificar?",
+			"confirm": "Quitar",
+			"removing": "Quitando..."
+		},
+		"modal": {
+			"title": "Agregar curso a calificar",
+			"periodLabel": "Periodo académico",
+			"periodPlaceholder": "Selecciona un periodo",
+			"periodLoading": "Cargando periodos...",
+			"loadingCourses": "Cargando cursos...",
+			"empty": "No hay cursos disponibles para este periodo.",
+			"select": "Seleccionar",
+			"deselect": "Deseleccionar",
+			"alreadyAdded": "Ya habilitado",
+			"selectedCount": "{{count}} curso(s) seleccionado(s)",
+			"confirm": "Aceptar",
+			"adding": "Guardando...",
+			"errorAdd": "No se pudo habilitar el curso. Intenta de nuevo."
+		}
+	},
+	"uploads": {
+		"canvas": {
+			"title": "Panel de Carga Masiva Inteligente",
+			"subtitle": "Selecciona el hito del ciclo y el tipo de carga. Las cabeceras del Excel se validan antes de enviar.",
+			"stage": {
+				"ariaLabel": "Hitos de carga masiva",
+				"preEnroll": "Antes de matrícula",
+				"startTerm": "Inicio de ciclo",
+				"endTerm": "Cierre de ciclo"
+			},
+			"flow": {
+				"professors": "Docentes",
+				"articulation": "Articulación",
+				"studyPlans": "Malla curricular",
+				"charts": "Organigrama",
+				"sections": "Secciones",
+				"enrolledStudents": "Alumnos matriculados",
+				"studentSections": "Alumnos por sección",
+				"delegates": "Delegados",
+				"gradesRc": "Notas RC",
+				"gradesBanner": "Notas Banner",
+				"ppp": "Encuesta PPP",
+				"scrapingBanner": "Scraping Banner"
+			},
+			"upload": {
+				"title": "Carga",
+				"pickFlow": "Selecciona un tipo de carga",
+				"noFlowSelected": "Elige un tipo de carga arriba para comenzar.",
+				"dropzone": "Arrastra el Excel aquí o haz click para seleccionar",
+				"dragHintWith": "Arrastra el archivo Excel de {{flow}} aquí",
+				"invalidHeaders": "El archivo no tiene las columnas esperadas",
+				"missingColumns": "Faltan",
+				"headersValid": "Cabecera válida — listo para enviar",
+				"submit": "Procesar carga",
+				"submitting": "Procesando..."
+			},
+			"banner": {
+				"pullFromBanner": "Jalar de Banner/UPlanner",
+				"title": "Extraer datos de Banner",
+				"description": "Conectaremos con la API de Banner para extraer los datos de",
+				"username": "Usuario Banner",
+				"password": "Contraseña",
+				"start": "Iniciar extracción",
+				"starting": "Iniciando...",
+				"cancel": "Cancelar",
+				"running": "Extracción en curso",
+				"log": {
+					"connecting": "Conectando con Banner...",
+					"authenticated": "Autenticado correctamente",
+					"done": "Extracción completada",
+					"unknownError": "Error desconocido"
+				}
+			}
+		},
+		"sections": {
+			"pageTitle": "Carga masiva de secciones",
+			"pageSubtitle": "Sube el Excel de secciones para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de secciones",
+			"description": "Formato .xlsx: CodigoCurso, Seccion, Docente, Local, TipoEstudio",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"courseNotFound": "El curso no se encuentra registrado en el sistema",
+				"courseNotInStudyPlan": "El curso no está registrado para este período académico",
+				"professorNotFound": "El docente no se encuentra registrado en el sistema",
+				"campusNotFound": "La sede no existe en el sistema",
+				"sectionCodeEmpty": "El código de sección no puede estar vacío",
+				"sectionAlreadyExists": "La sección ya se encuentra registrada",
+				"studyTypeEmpty": "El TipoEstudio no puede estar vacío",
+				"studyTypeInvalid": "Valor de TipoEstudio inválido (usar P, V o S)"
+			}
+		},
+		"enrolledStudents": {
+			"pageTitle": "Carga masiva de alumnos matriculados",
+			"pageSubtitle": "Sube el Excel de alumnos matriculados para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de alumnos matriculados",
+			"description": "Formato .xlsx: CodigoAlumno, NombreCompleto, Carrera, EstadoMatricula, Sede",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"studentCodeEmpty": "El código de alumno no puede estar vacío",
+				"programNotFound": "La carrera no se encuentra registrada en el sistema",
+				"campusNotFound": "La sede no existe en el sistema",
+				"enrollmentStatusInvalid": "El estado de matrícula no es válido",
+				"studentAlreadyEnrolled": "El alumno ya está matriculado en este período"
+			}
+		},
+		"professors": {
+			"pageTitle": "Carga masiva de docentes",
+			"pageSubtitle": "Sube el Excel de docentes para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de docentes",
+			"description": "Formato .xlsx: UserName, Name",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"userNameEmpty": "El UserName (correo) no puede estar vacío",
+				"nameEmpty": "El nombre no puede estar vacío",
+				"professorAlreadyExists": "El docente ya se encuentra registrado"
+			}
+		},
+		"gradesRc": {
+			"pageTitle": "Carga masiva de notas RC",
+			"pageSubtitle": "Sube el Excel de notas RC para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de notas RC",
+			"description": "Formato .xlsx: CodigoCurso, CodigoSeccion, CodigoAlumno, NotaParcial, NotaFinal, NotaFDM, NotaReal",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"courseCodeEmpty": "El código de curso no puede estar vacío",
+				"sectionCodeEmpty": "El código de sección no puede estar vacío",
+				"studentCodeEmpty": "El código de alumno no puede estar vacío",
+				"enrollmentNotFound": "El alumno no está inscrito en la sección indicada",
+				"gradeAlreadyExists": "Ya existen notas cargadas para este alumno en esta sección",
+				"gradeTypeCatalogMissing": "El catálogo de tipos de nota no está configurado"
+			}
+		},
+		"studentSections": {
+			"pageTitle": "Carga masiva de alumnos por sección",
+			"pageSubtitle": "Sube el Excel de alumnos por sección para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de alumnos por sección",
+			"description": "Formato .xlsx: CodigoCurso, CodigoSeccion, CodigoAlumno",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"courseCodeEmpty": "El código de curso no puede estar vacío",
+				"sectionNotFound": "La sección no se encuentra registrada en el sistema",
+				"studentNotFound": "El alumno no se encuentra registrado en el sistema",
+				"enrolledStudentNotFound": "El alumno no está matriculado en este período",
+				"duplicateEntry": "El alumno ya está inscrito en esta sección"
+			}
+		},
+		"ppp": {
+			"pageTitle": "Carga masiva de encuestas PPP",
+			"pageSubtitle": "Sube el Excel de encuestas PPP para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de encuestas PPP",
+			"description": "Formato .xlsx: TipoEncuesta, Estado, CodigoAlumno, PeriodoAcademico, Sede, Carrera, NroEncuesta, RazonSocial, NombreJefe, CargoJefe, TelefonoJefe, CorreoJefe, RUC, TotalHoras, NumeroInforme, FechaInicio, FechaFin, Comentario, CodigoOutcome, Puntaje",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"surveyTypeInvalid": "El tipo de encuesta no es válido",
+				"studentNotFound": "El alumno no se encuentra registrado en el sistema",
+				"programNotFound": "La carrera no se encuentra registrada en el sistema",
+				"campusNotFound": "La sede no existe en el sistema",
+				"outcomeNotFound": "El outcome no se encuentra registrado para esta carrera",
+				"scoreInvalid": "El puntaje tiene un formato inválido"
+			}
+		},
+		"scrapingBanner": {
+			"pageTitle": "Carga scraping Banner (alumnos)",
+			"pageSubtitle": "Sube el Excel exportado del Banner API para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga scraping Banner",
+			"description": "Formato .xlsx: CodigoAlumno, Nombres, Apellidos, CorreoInstitucional, CorreoPersonal, TelefonoMovil, CodigoCarrera, Nivel, Periodo, Sede, MetodoEducativo, NRC, CodigoCurso, CodigoDocente",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"studentCodeEmpty": "El código de alumno no puede estar vacío",
+				"programNotFound": "La carrera no se encuentra registrada en el sistema",
+				"campusNotFound": "La sede no existe en el sistema",
+				"courseNotFound": "El curso no se encuentra registrado en el sistema",
+				"professorNotFound": "El docente no se encuentra registrado en el sistema"
+			}
+		},
+		"gradesBanner": {
+			"pageTitle": "Carga notas Banner (scraping)",
+			"pageSubtitle": "Sube el Excel de notas Banner para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga notas Banner",
+			"description": "Formato .xlsx: CodigoAlumno, CodigoCurso, NRC, TipoNota, Nota, Peso",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"studentCodeEmpty": "El código de alumno no puede estar vacío",
+				"enrollmentNotFound": "El alumno no está inscrito en la sección indicada",
+				"gradeTypeInvalid": "El tipo de nota no es válido",
+				"gradeAlreadyExists": "Ya existe una nota de este tipo para el alumno en esta sección"
+			}
+		},
+		"studyPlans": {
+			"pageTitle": "Carga masiva de malla curricular",
+			"pageSubtitle": "Sube el Excel de malla curricular para el período seleccionado",
+			"downloadTemplate": "Descargar plantilla",
+			"downloadingTemplate": "Descargando...",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de malla curricular",
+			"description": "Formato .xlsx: CodigoMalla, NombreMalla, CodigoCarrera, CodigoCurso, NombreCurso, EsElectivo, NivelCurso, Requisitos",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"templateDownloadFailed": "No se pudo descargar la plantilla",
+				"studyPlanCodeEmpty": "El código de malla no puede estar vacío",
+				"programNotFound": "La carrera no se encuentra registrada en el sistema",
+				"courseCodeEmpty": "El código de curso no puede estar vacío",
+				"courseNameEmpty": "El nombre de curso no puede estar vacío",
+				"levelTypeInvalid": "El tipo de nivel del curso no es válido",
+				"prerequisiteNotFound": "Un prerrequisito no existe en el sistema ni en este lote",
+				"courseAlreadyInStudyPlan": "El curso ya está registrado en esta malla"
+			}
+		},
+		"charts": {
+			"pageTitle": "Carga masiva de organigrama",
+			"pageSubtitle": "Sube el Excel de organigrama para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de organigrama",
+			"description": "Formato .xlsx: Código, Padre, Unidad académica (Inglés), Unidad académica (Español), Correo del responsable, Código de tipo de entidad, Código de entidad",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"entityCodeEmpty": "El código de entidad no puede estar vacío",
+				"entityTypeInvalid": "El tipo de entidad no es válido",
+				"responsibleNotFound": "El responsable no se encuentra registrado en el sistema",
+				"parentNotFound": "La entidad padre no se encuentra registrada"
+			}
+		},
+		"articulation": {
+			"pageTitle": "Carga masiva de articulación (Malla COCOs)",
+			"pageSubtitle": "Sube el Excel de articulación para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de articulación",
+			"description": "Formato .xlsx: CodigoAcreditadora, CodigoComision, CodigoCarrera, CodigoMalla, CodigoCurso, CodigoOutcome, NombreOutcomeEn, DescripcionOutcome, TipoOutcome",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"outcomeCodeEmpty": "El código de outcome no puede estar vacío",
+				"commissionNotFound": "La comisión no se encuentra registrada en el sistema",
+				"programNotFound": "La carrera no se encuentra registrada en el sistema",
+				"courseNotFound": "El curso no se encuentra registrado en el sistema",
+				"outcomeTypeInvalid": "El tipo de outcome debe ser CONTROL o VERIFICACION"
+			}
+		},
+		"delegates": {
+			"pageTitle": "Carga masiva de delegados",
+			"pageSubtitle": "Sube el Excel de delegados para el período seleccionado",
+			"selectPeriod": "Selecciona un período académico",
+			"title": "Carga de delegados",
+			"description": "Formato .xlsx: CodigoCurso, CodigoSeccion, CodigoAlumno",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"upload": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"errorTitle": "Error en la carga",
+			"result": {
+				"uploadSuccess": "Carga realizada exitosamente",
+				"uploadFailed": "Se encontraron errores en la carga"
+			},
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"generic": "Ocurrió un error durante la carga",
+				"courseCodeEmpty": "El código de curso no puede estar vacío",
+				"sectionNotFound": "La sección no se encuentra registrada en el sistema",
+				"enrollmentNotFound": "El alumno no está inscrito en la sección indicada"
+			}
+		}
+	},
+	"loadsSetup": {
+		"canvas": {
+			"title": "Configuración Inicial — The Bridge Canvas",
+			"subtitle": "Apertura de ciclo, asociación de mallas y asignación de comisiones acreditadoras."
+		},
+		"period": {
+			"selectorLabel": "Ciclo lectivo",
+			"selectPlaceholder": "Selecciona un ciclo",
+			"loading": "Cargando ciclos...",
+			"newButton": "Nuevo ciclo",
+			"dialogTitle": "Abrir nuevo ciclo académico",
+			"codeLabel": "Código del ciclo",
+			"codeHint": "Formato: AAAA-01, AAAA-02 o AAAA-00 (intensivo)",
+			"startLabel": "Fecha de inicio",
+			"endLabel": "Fecha de fin",
+			"modalityLabel": "Modalidad de estudios",
+			"modality": {
+				"regular": "Pregrado Regular",
+				"epe": "EPE (Estudios para Profesionales con Experiencia)"
+			},
+			"cancel": "Cancelar",
+			"create": "Crear ciclo",
+			"creating": "Creando...",
+			"error": {
+				"codeFormat": "El código debe tener formato AAAA-01, AAAA-02 o AAAA-00.",
+				"datesRequired": "Fechas de inicio y fin son obligatorias.",
+				"endBeforeStart": "La fecha de fin no puede ser anterior a la fecha de inicio.",
+				"generic": "No se pudo crear el ciclo. Inténtalo de nuevo."
+			}
+		},
+		"studyPlan": {
+			"title": "Asociación Malla × Ciclo",
+			"description": "Arrastra una malla del panel izquierdo al dropzone para asociarla al ciclo seleccionado. Se instancian automáticamente los cursos del período.",
+			"unassociatedTitle": "Mallas no asociadas",
+			"associatedTitle": "Mallas asociadas",
+			"noUnassociated": "Todas las mallas ya están asociadas.",
+			"dropHint": "Arrastra una malla aquí para asociarla al ciclo.",
+			"loading": "Cargando asociaciones...",
+			"coursesSuffix": "cursos",
+			"rollback": "Rollback",
+			"pickPeriodFirst": "Selecciona un ciclo para gestionar sus mallas.",
+			"errorTitle": "Error en la asociación de malla",
+			"error": {
+				"associate": "No se pudo asociar la malla.",
+				"unassociate": "No se pudo revertir la asociación (puede haber secciones cargadas)."
+			}
+		},
+		"programCommission": {
+			"title": "Asociación Carrera × Comisión",
+			"description": "Selecciona las comisiones de acreditación que fiscalizan cada carrera. Se guarda en segundo plano.",
+			"pickPeriodFirst": "Selecciona un ciclo para gestionar las comisiones de sus carreras.",
+			"errorTitle": "Error en la asociación carrera-comisión",
+			"error": {
+				"associate": "No se pudo asociar la comisión.",
+				"unassociate": "No se pudo revertir la asociación (puede haber outcomes cargados)."
+			}
+		}
+	},
+	"loads": {
+		"page": {
+			"title": "Cargas masivas",
+			"subtitle": "Selecciona el tipo de carga y el período académico para subir el archivo Excel."
+		},
+		"upload": {
+			"typeLabel": "Tipo de carga",
+			"typePlaceholder": "Selecciona un tipo de carga",
+			"selectBoth": "Selecciona un tipo de carga y un período académico para continuar.",
+			"downloadTemplate": "Descargar plantilla",
+			"downloadingTemplate": "Descargando...",
+			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
+			"submit": "Cargar archivo",
+			"loadedSummary": "Filas cargadas",
+			"successTitle": "Carga exitosa",
+			"successMessage": "Carga realizada exitosamente.",
+			"errorTitle": "Error en la carga",
+			"error": {
+				"fileRequired": "Selecciona un archivo .xlsx",
+				"periodRequired": "Selecciona un período académico",
+				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"templateDownloadFailed": "No se pudo descargar la plantilla",
+				"generic": "Ocurrió un error durante la carga"
+			}
+		}
+	},
+	"uploadHistory": {
+		"title": "Historial de cargas",
+		"subtitle": "Auditoría de las cargas masivas registradas",
+		"table": {
+			"title": "Cargas registradas",
+			"description": "Cada fila representa una transacción de carga. Puedes revertirla o inspeccionar errores.",
+			"loading": "Cargando historial...",
+			"empty": "No hay cargas registradas todavía.",
+			"viewErrors": "Ver errores",
+			"rollback": "Rollback",
+			"col": {
+				"id": "ID",
+				"type": "Tipo",
+				"status": "Estado",
+				"file": "Archivo",
+				"rows": "Filas",
+				"user": "Usuario",
+				"date": "Fecha",
+				"actions": "Acciones"
+			}
+		},
+		"drawer": {
+			"title": "Errores por fila",
+			"rowsWithErrors": "filas con error",
+			"empty": "No se detectaron errores en este archivo.",
+			"row": "Fila",
+			"editInline": "Editar en caliente",
+			"cancel": "Cancelar",
+			"resubmit": "Re-enviar",
+			"resubmitting": "Enviando...",
+			"close": "Cerrar panel"
+		},
+		"rollback": {
+			"title": "Confirmar rollback",
+			"warning": "Esta acción eliminará de forma irreversible todos los registros de {{type}} enlazados al Log ID #{{id}}.",
+			"confirmation": "¿Deseas proceder?",
+			"cancel": "Cancelar",
+			"confirm": "Sí, revertir",
+			"running": "Revirtiendo..."
+		}
+	},
+	"capstone": {
+		"title": "Consola de Evaluación Capstone (Notas RB)",
+		"subtitle": "Evaluación directa en plataforma para Sistemas, Software y Ciencias.",
+		"projects": {
+			"title": "Proyectos asignados",
+			"description": "Proyectos de fin de carrera en los que tú eres evaluador.",
+			"loading": "Cargando proyectos...",
+			"empty": "No tienes proyectos Capstone asignados este ciclo."
+		},
+		"students": {
+			"title": "Alumnos del proyecto",
+			"description": "Selecciona un alumno para abrir su matriz de evaluación."
+		},
+		"rubric": {
+			"loading": "Cargando rúbrica..."
+		},
+		"card": {
+			"gradedOf": "de",
+			"students": "alumnos calificados"
+		},
+		"slider": {
+			"outcome": "Outcome"
+		},
+		"matrix": {
+			"title": "Evaluación de {{name}} ({{code}})",
+			"description": "Desliza el puntaje de cada criterio. La suma debe equivaler a 20.",
+			"invalidRubric": "Esta rúbrica tiene una suma máxima de {{actual}} en lugar de {{expected}} — revisa su configuración.",
+			"sumLabel": "Suma total",
+			"observationLabel": "Observación",
+			"observationPlaceholder": "Feedback cualitativo del evaluador (mínimo 50 caracteres).",
+			"observationHint": "Requiere al menos {{min}} caracteres para guardar.",
+			"save": "Guardar evaluación",
+			"saving": "Guardando..."
+		}
+	}
 }

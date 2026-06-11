@@ -1,0 +1,472 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+import { PencilSquareIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
+import {
+	Button,
+	buttonVariants,
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogDescription,
+	Table,
+	TableBody,
+	TableCell,
+	TableEmptyState,
+	TableErrorState,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/shared/components/ui';
+import { Select } from '@/shared/components/ui/Select';
+import { Input } from '@/shared/components/ui/Input';
+import { cn } from '@/shared/lib/utils';
+import { useI18n } from '@/providers';
+import {
+	useAcademicPeriods,
+	usePerformanceLevels,
+	useCreatePerformanceLevel,
+	useUpdatePerformanceLevel,
+	useDeletePerformanceLevel,
+	usePerformanceLevelForm,
+} from '@/modules/academic/hooks';
+import { AcademicPeriodSelect } from '@/modules/academic/components';
+import { useTypeGroups, useTypes } from '@/modules/core/hooks';
+import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '@/modules/academic/constants';
+import type { PerformanceLevelFormState } from '@/modules/academic/schemas';
+import { PerformanceLevelResponse } from '@/modules/academic';
+
+type OptionItem = { label: string; value: number };
+
+function PerformanceLevelForm({
+	form,
+	onChange,
+	instrumentTypeOptions,
+}: {
+	form: PerformanceLevelFormState;
+	onChange: (f: PerformanceLevelFormState) => void;
+	instrumentTypeOptions: OptionItem[];
+}) {
+	const set = (key: keyof PerformanceLevelFormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
+		onChange({
+			...form,
+			[key]: e.target.type === 'number' ? Number(e.target.value) : e.target.value,
+		});
+
+	const selectedInstrument =
+		instrumentTypeOptions.find((o) => o.value === form.instrumentTypeId) ?? null;
+
+	return (
+		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+			<Select
+				label="Instrumento"
+				options={instrumentTypeOptions}
+				value={selectedInstrument}
+				placeholder="Seleccionar instrumento"
+				onChange={(_name, val) => {
+					const opt = val as OptionItem | null;
+					onChange({ ...form, instrumentTypeId: opt?.value ?? 0 });
+				}}
+			/>
+			<AcademicPeriodSelect
+				value={form.academicPeriodId || null}
+				onChange={(id) => onChange({ ...form, academicPeriodId: id })}
+			/>
+
+			<Input label="Nombre (ES)" value={form.nameEs} onChange={set('nameEs')} required />
+			<Input label="Nombre (EN)" value={form.nameEn} onChange={set('nameEn')} required />
+			<Input label="Código" value={form.code} onChange={set('code')} required />
+			<Input
+				label="Valor único"
+				type="number"
+				step="0.01"
+				value={form.uniqueValue}
+				onChange={set('uniqueValue')}
+				required
+			/>
+			<Input
+				label="Puntaje mínimo"
+				type="number"
+				step="0.01"
+				value={form.minScore}
+				onChange={set('minScore')}
+				required
+			/>
+			<Input
+				label="Puntaje máximo"
+				type="number"
+				step="0.01"
+				value={form.maxScore}
+				onChange={set('maxScore')}
+				required
+			/>
+			<Input
+				label="Valor máximo"
+				type="number"
+				step="0.01"
+				value={form.maxValue}
+				onChange={set('maxValue')}
+				required
+			/>
+			<div className="flex flex-col">
+				<label className="block text-base font-semibold text-zinc-900 mb-2 select-none">
+					Color
+				</label>
+				<input
+					type="color"
+					value={form.color}
+					onChange={(e) => onChange({ ...form, color: e.target.value })}
+					className="h-10 w-full rounded-md border border-zinc-200 bg-white p-1 cursor-pointer"
+				/>
+			</div>
+		</div>
+	);
+}
+
+export function PerformanceLevelsPage() {
+	const { t, locale } = useI18n();
+
+	// Filters
+	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
+	const [selectedInstrument, setSelectedInstrument] = useState<OptionItem | null>(null);
+
+	// Modal state
+	const [modalOpen, setModalOpen] = useState(false);
+	const [editingLevel, setEditingLevel] = useState<PerformanceLevelResponse | null>(null);
+	const [deleteConfirm, setDeleteConfirm] = useState<PerformanceLevelResponse | null>(null);
+	const { form, setForm, resetForm, populateForm, toDto } = usePerformanceLevelForm();
+
+	const { data: academicPeriods = [] } = useAcademicPeriods({});
+
+	const { data: typeGroups } = useTypeGroups({ code: 'TG206' });
+	const typeGroupId = typeGroups?.[0]?.id ?? null;
+
+	const { data: instrumentTypes = [] } = useTypes(
+		{ typeGroupId: typeGroupId ?? undefined },
+		{ enabled: typeGroupId != null },
+	);
+
+	// Performance levels
+	const filters = useMemo(
+		() => ({
+			...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
+			...(selectedInstrument?.value ? { instrumentTypeId: selectedInstrument.value } : {}),
+		}),
+		[selectedPeriodId, selectedInstrument],
+	);
+
+	const hasFilters = selectedPeriodId != null || selectedInstrument != null;
+
+	const {
+		data: performanceLevels = [],
+		isLoading,
+		isError,
+		error,
+	} = usePerformanceLevels(filters, { enabled: hasFilters });
+
+	const sortedLevels = useMemo(
+		() => [...performanceLevels].sort((a, b) => Number(a.uniqueValue) - Number(b.uniqueValue)),
+		[performanceLevels],
+	);
+
+	// Mutations
+	const createMutation = useCreatePerformanceLevel();
+	const updateMutation = useUpdatePerformanceLevel();
+	const deleteMutation = useDeletePerformanceLevel();
+
+	const isMutating =
+		createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
+
+	// Handlers
+	function openCreateModal() {
+		setEditingLevel(null);
+		resetForm();
+		setModalOpen(true);
+	}
+
+	function openEditModal(level: PerformanceLevelResponse) {
+		setEditingLevel(level);
+		populateForm(level);
+		setModalOpen(true);
+	}
+
+	function handleModalClose() {
+		if (isMutating) return;
+		setModalOpen(false);
+		setEditingLevel(null);
+	}
+
+	async function handleSubmit() {
+		const dto = toDto();
+		if (editingLevel) {
+			await updateMutation.mutateAsync({ id: editingLevel.id, ...dto });
+		} else {
+			await createMutation.mutateAsync(dto);
+		}
+		handleModalClose();
+	}
+
+	async function handleDelete() {
+		if (!deleteConfirm) return;
+		await deleteMutation.mutateAsync(deleteConfirm.id);
+		setDeleteConfirm(null);
+	}
+
+	function handleClearFilters() {
+		setSelectedPeriodId(null);
+		setSelectedInstrument(null);
+	}
+
+	// Derived
+	const instrumentTypeOptions = useMemo<OptionItem[]>(
+		() =>
+			instrumentTypes.map((t) => ({
+				label: t.name?.[locale as 'es' | 'en'] ?? t.name?.es ?? t.code,
+				value: t.id,
+			})),
+		[instrumentTypes, locale],
+	);
+
+	const instrumentTypeMap = useMemo(
+		() => new Map(instrumentTypes.map((t) => [t.id, t])),
+		[instrumentTypes],
+	);
+
+	const academicPeriodMap = useMemo(
+		() => new Map(academicPeriods.map((p) => [p.id, p])),
+		[academicPeriods],
+	);
+
+	return (
+		<div className="space-y-8">
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+				<div>
+					<h1 className="text-3xl font-bold text-zinc-900">{t('performanceLevels.list.title')}</h1>
+					<p className="mt-2 text-zinc-600">{t('performanceLevels.list.description')}</p>
+				</div>
+				<Button variant="primary" size="md" onClick={openCreateModal}>
+					<PlusIcon className="h-4 w-4 mr-2" />
+					{t('performanceLevels.list.createButton')}
+				</Button>
+			</div>
+
+			{/* Filters */}
+			<div className="space-y-4">
+				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<AcademicPeriodSelect
+						value={selectedPeriodId}
+						onChange={setSelectedPeriodId}
+						isClearable
+						onClear={() => setSelectedPeriodId(null)}
+					/>
+					<Select
+						label={t('performanceLevels.list.instrumentFilter')}
+						options={instrumentTypeOptions}
+						value={selectedInstrument}
+						isClearable
+						placeholder={t('performanceLevels.list.allInstruments')}
+						onChange={(_name, val) => setSelectedInstrument(val as OptionItem | null)}
+					/>
+				</div>
+
+				{hasFilters && (
+					<div className="flex justify-end">
+						<button
+							type="button"
+							onClick={handleClearFilters}
+							className={cn(
+								buttonVariants({ variant: 'warning', size: 'md' }),
+								'inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-red-100 hover:text-red-500',
+							)}>
+							<TrashIcon className="h-4 w-4" />
+							{t('performanceLevels.list.clearFilters')}
+						</button>
+					</div>
+				)}
+			</div>
+
+			{/* Content */}
+			{!hasFilters ? (
+				<TableEmptyState message={t('performanceLevels.list.selectFilter')} />
+			) : isLoading ? (
+				<div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500 shadow-sm">
+					{t('performanceLevels.list.loading')}
+				</div>
+			) : isError ? (
+				<TableErrorState
+					message={error instanceof Error ? error.message : t('performanceLevels.list.error')}
+				/>
+			) : !sortedLevels.length ? (
+				<TableEmptyState message={t('performanceLevels.list.empty')} />
+			) : (
+				<div className="space-y-3">
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>{t('performanceLevels.table.code')}</TableHead>
+								<TableHead>{t('performanceLevels.table.name')}</TableHead>
+								<TableHead>{t('performanceLevels.table.instrument')}</TableHead>
+								<TableHead>{t('performanceLevels.table.period')}</TableHead>
+								<TableHead>{t('performanceLevels.table.uniqueValue')}</TableHead>
+								<TableHead>{t('performanceLevels.table.scoreRange')}</TableHead>
+								<TableHead>{t('performanceLevels.table.color')}</TableHead>
+								<TableHead className="text-center">
+									{t('performanceLevels.table.actions')}
+								</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{sortedLevels.map((level) => {
+								const color =
+									(level.extra as { color?: string })?.color ?? DEFAULT_PERFORMANCE_LEVEL_COLOR;
+								const instrType = instrumentTypeMap.get(level.instrumentTypeId);
+								const acadPeriod = academicPeriodMap.get(level.academicPeriodId);
+								return (
+									<TableRow key={level.id}>
+										<TableCell>
+											<span className="font-medium text-zinc-900">{level.code}</span>
+										</TableCell>
+										<TableCell>
+											<span className="text-zinc-700">
+												{level.name?.[locale as 'es' | 'en'] ?? level.name?.es}
+											</span>
+										</TableCell>
+										<TableCell>
+											<span className="text-zinc-700">
+												{instrType?.name?.[locale as 'es' | 'en'] ?? instrType?.code ?? '-'}
+											</span>
+										</TableCell>
+										<TableCell>
+											<span className="text-zinc-700">{acadPeriod?.code ?? '-'}</span>
+										</TableCell>
+										<TableCell>
+											<span className="text-zinc-700">{Number(level.uniqueValue).toFixed(2)}</span>
+										</TableCell>
+										<TableCell>
+											<span className="text-zinc-700">
+												{Number(level.minScore).toFixed(2)} - {Number(level.maxScore).toFixed(2)} /{' '}
+												{Number(level.maxValue).toFixed(2)}
+											</span>
+										</TableCell>
+										<TableCell>
+											<div className="flex items-center gap-2">
+												<span
+													className="inline-block h-5 w-5 rounded-full border border-zinc-200"
+													style={{ backgroundColor: color }}
+												/>
+												<span className="text-xs text-zinc-500 font-mono">{color}</span>
+											</div>
+										</TableCell>
+										<TableCell className="text-center">
+											<div className="flex items-center justify-center gap-1">
+												<button
+													type="button"
+													title={t('performanceLevels.table.edit')}
+													onClick={() => openEditModal(level)}
+													className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600">
+													<PencilSquareIcon className="h-4 w-4" />
+												</button>
+												<button
+													type="button"
+													title={t('performanceLevels.table.delete')}
+													onClick={() => setDeleteConfirm(level)}
+													className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600">
+													<TrashIcon className="h-4 w-4" />
+												</button>
+											</div>
+										</TableCell>
+									</TableRow>
+								);
+							})}
+						</TableBody>
+					</Table>
+				</div>
+			)}
+
+			{/* Create / Edit Modal */}
+			<Dialog open={modalOpen} onOpenChange={handleModalClose}>
+				<DialogContent className="sm:max-w-2xl">
+					<DialogHeader>
+						<DialogTitle>
+							{editingLevel
+								? t('performanceLevels.form.editTitle')
+								: t('performanceLevels.form.createTitle')}
+						</DialogTitle>
+						<DialogDescription>
+							{editingLevel
+								? t('performanceLevels.form.editDescription')
+								: t('performanceLevels.form.createDescription')}
+						</DialogDescription>
+					</DialogHeader>
+
+					<PerformanceLevelForm
+						form={form}
+						onChange={setForm}
+						instrumentTypeOptions={instrumentTypeOptions}
+					/>
+
+					{createMutation.isError && (
+						<p className="text-sm text-red-600 mt-2">
+							{createMutation.error?.message || t('performanceLevels.form.saveError')}
+						</p>
+					)}
+					{updateMutation.isError && (
+						<p className="text-sm text-red-600 mt-2">
+							{updateMutation.error?.message || t('performanceLevels.form.saveError')}
+						</p>
+					)}
+
+					<DialogFooter>
+						<Button variant="secondary" onClick={handleModalClose} disabled={isMutating}>
+							{t('performanceLevels.form.cancel')}
+						</Button>
+						<Button variant="primary" onClick={handleSubmit} disabled={isMutating}>
+							{isMutating
+								? t('performanceLevels.form.saving')
+								: editingLevel
+									? t('performanceLevels.form.update')
+									: t('performanceLevels.form.create')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			{/* Delete Confirmation Modal */}
+			<Dialog open={deleteConfirm != null} onOpenChange={() => setDeleteConfirm(null)}>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle>{t('performanceLevels.delete.title')}</DialogTitle>
+						<DialogDescription>
+							{t('performanceLevels.delete.description')}{' '}
+							<strong>
+								{deleteConfirm?.name?.[locale as 'es' | 'en'] ?? deleteConfirm?.code ?? ''}
+							</strong>
+						</DialogDescription>
+					</DialogHeader>
+
+					{deleteMutation.isError && (
+						<p className="text-sm text-red-600">
+							{deleteMutation.error?.message || t('performanceLevels.form.saveError')}
+						</p>
+					)}
+
+					<DialogFooter>
+						<Button
+							variant="secondary"
+							onClick={() => setDeleteConfirm(null)}
+							disabled={isMutating}>
+							{t('performanceLevels.delete.cancel')}
+						</Button>
+						<Button variant="primary" onClick={handleDelete} disabled={isMutating}>
+							{isMutating
+								? t('performanceLevels.form.deleting')
+								: t('performanceLevels.delete.confirm')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</div>
+	);
+}

@@ -1,0 +1,82 @@
+'use client';
+
+import { Fragment, useMemo } from 'react';
+import { Select } from '@/shared/components';
+import { useI18n } from '@/providers';
+import { optionsForLevel } from '../services/scope';
+import type { ScopeTree, SelectionValue } from '../types';
+
+type Props = {
+	scope: ScopeTree;
+	selections: Record<number, SelectionValue>;
+	onSelect: (levelNum: number, value: SelectionValue) => void;
+};
+
+type DropdownOption = { value: number | 'ALL'; label: string };
+
+export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
+	const { t, locale: lang } = useI18n();
+
+	const allLabel = lang === 'en' ? 'All' : 'Todos';
+
+	const renderedLevels = useMemo(() => {
+		return scope.levels.map((level, index) => {
+			const opts = optionsForLevel(scope, level.levelNum, selections);
+			const parentLevelNum = index > 0 ? scope.levels[index - 1].levelNum : null;
+			const parentMissing =
+				parentLevelNum !== null && (selections[parentLevelNum] ?? null) === null;
+
+			const taggedOptions = level.options.filter((option) => option.tag);
+			const distinctTagCodes = new Set(taggedOptions.map((option) => option.tag!.code));
+			const levelLabel =
+				distinctTagCodes.size === 1
+					? (taggedOptions[0].tag!.name[lang] ??
+						taggedOptions[0].tag!.name.es ??
+						taggedOptions[0].tag!.code)
+					: `${t('ifcs.scope.level')} ${level.levelNum}`;
+
+			const dropdownOptions: DropdownOption[] = [
+				{ value: 'ALL', label: allLabel },
+				...opts.map((o) => ({
+					value: o.id,
+					label: o.label[lang] ?? o.label.es ?? '',
+				})),
+			];
+
+			const current = selections[level.levelNum] ?? null;
+			const selectedOpt =
+				current === null ? null : (dropdownOptions.find((o) => o.value === current) ?? null);
+
+			return {
+				level,
+				levelLabel,
+				dropdownOptions,
+				selectedOpt,
+				disabled: parentMissing,
+				empty: opts.length === 0 && !parentMissing,
+			};
+		});
+	}, [scope, selections, lang, allLabel, t]);
+
+	return (
+		<>
+			{renderedLevels.map(({ level, levelLabel, dropdownOptions, selectedOpt, disabled, empty }) => {
+				if (empty) return null;
+				return (
+					<Fragment key={level.levelNum}>
+						<Select
+							label={levelLabel}
+							isDisabled={disabled}
+							value={selectedOpt}
+							onChange={(_, opt) => {
+								const next = (opt as { value?: number | 'ALL' } | null)?.value ?? null;
+								onSelect(level.levelNum, next);
+							}}
+							options={dropdownOptions}
+						/>
+					</Fragment>
+				);
+			})}
+		</>
+	);
+}

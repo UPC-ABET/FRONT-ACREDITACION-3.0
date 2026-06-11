@@ -1,5 +1,5 @@
-'use client'
+'use client';
 
-import { TablesPage } from '@/modules/tests'
+import { TablesPage } from '@/modules/tests';
 
-export default TablesPage
+export default TablesPage;

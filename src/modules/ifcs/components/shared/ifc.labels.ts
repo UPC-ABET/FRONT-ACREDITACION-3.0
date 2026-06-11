@@ -1,0 +1,22 @@
+export const IFC_SHARED_LABELS = {
+	sectionOutcome: { en: 'Course Achievement Results', es: 'Resultado de los logros del Curso' },
+	resultadoAlcanzado: { en: 'Achieved Outcome', es: 'Resultado Alcanzado' },
+	studentOutcome: { en: 'Student Outcome', es: 'Student Outcome' },
+	sectionPreviousActions: { en: 'Previous Actions', es: 'Acciones Previas' },
+	colCode: { en: 'Code', es: 'Código' },
+	colDescription: { en: 'Description', es: 'Descripción' },
+	colFinding: { en: 'Finding', es: 'Hallazgo' },
+	colCompleteness: { en: 'Completeness', es: 'Completitud' },
+	colEvidence: { en: 'Evidence', es: 'Evidencia' },
+	evidenceAdd: { en: 'Add evidence', es: 'Agregar evidencia' },
+	evidenceEdit: { en: 'Edit evidence', es: 'Editar evidencia' },
+	evidenceView: { en: 'View evidence', es: 'Ver evidencia' },
+	evidenceModalTitle: { en: 'Evidence · ', es: 'Evidencia · ' },
+	evidenceSave: { en: 'Save', es: 'Guardar' },
+	evidenceCancel: { en: 'Cancel', es: 'Cancelar' },
+	evidenceEmpty: { en: 'No evidence registered.', es: 'Sin evidencia registrada.' },
+	previousActionsEmpty: {
+		en: 'No previous actions from prior periods.',
+		es: 'No hay acciones previas de periodos anteriores.',
+	},
+} as const;

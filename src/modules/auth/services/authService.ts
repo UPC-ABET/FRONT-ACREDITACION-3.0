@@ -1,70 +1,73 @@
-import type { LoginPayload } from '@/shared/types'
+import { requestJson, getApiBaseUrl, clearPreferenceCookies, ApiError } from '@/shared/lib';
+import type { LoginPayload, LoginResponse } from '@/modules/auth/types';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? ''
-const USERS_BASE_PATH = `${BASE_URL}/users`
+const USERS_BASE_PATH = '/users';
 
-type LoginResponse = {
-  code: number
-  message: string
-  data: {
-    user: any
-    access_token: string
-  }
-}
+export const loginByCredentials = async (payload: LoginPayload): Promise<void> => {
+	const { response, body } = await requestJson<LoginResponse>(
+		`${USERS_BASE_PATH}/login-by-credentials`,
+		{
+			method: 'POST',
+			body: {
+				email: payload.email,
+				password: payload.password,
+			},
+		},
+	);
 
-export const loginByCredentials = async (
-  payload: LoginPayload
-): Promise<{ accessToken: string; user: any }> => {
-  if (!BASE_URL) {
-    throw new Error('auth.missingApiUrl')
-  }
+	if (!response.ok) {
+		throw new ApiError(body?.message ?? 'auth.error.loginFailed', response.status);
+	}
+};
 
-  const res = await fetch(`${USERS_BASE_PATH}/login-by-credentials`, {
-    method: 'POST',
-    headers: {
-      accept: '*/*',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      email: payload.codigo,
-      password: payload.password,
-    }),
-  })
-
-  const body = (await res.json().catch(() => null)) as LoginResponse | null
-
-  if (!res.ok || !body?.data?.access_token) {
-    throw new Error(body?.message || 'login.error.generic')
-  }
-
-  return {
-    accessToken: body.data.access_token,
-    user: body.data.user,
-  }
-}
-
-const getStoredToken = () => {
-  const raw = localStorage.getItem('bearerToken')
-  if (!raw) return ''
-  try {
-    return JSON.parse(raw) as string
-  } catch {
-    return ''
-  }
-}
+export const clearClientSession = () => {
+	if (typeof window === 'undefined') return;
+	clearPreferenceCookies();
+};
 
 export const logoutUser = async (): Promise<void> => {
-  if (!BASE_URL) {
-    throw new Error('auth.missingApiUrl')
-  }
+	await requestJson(`${USERS_BASE_PATH}/logout`, {
+		method: 'POST',
+	});
+};
 
-  const token = getStoredToken()
+export const getMicrosoftLoginUrl = (): string => {
+	return `${getApiBaseUrl()}/auth/microsoft`;
+};
 
-  await fetch(`${USERS_BASE_PATH}/logout`, {
-    method: 'POST',
-    headers: {
-      accept: '*/*',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-  })
-}
+export const requestForgotPassword = async (email: string): Promise<string> => {
+	const { response, body } = await requestJson<{
+		code: number;
+		message: string;
+		data?: { message?: string };
+	}>('/auth/forgot-password', {
+		method: 'POST',
+		body: { email },
+	});
+
+	if (!response.ok) {
+		throw new ApiError(body?.message ?? 'auth.error.forgotPasswordFailed', response.status);
+	}
+
+	return body?.data?.message ?? body?.message ?? '';
+};
+
+export const requestResetPassword = async (
+	token: string,
+	password: string,
+	confirmPassword: string,
+): Promise<string> => {
+	await new Promise((resolve) => setTimeout(resolve, 500));
+
+	if (!token) {
+		throw new ApiError('resetPassword.error.invalidToken');
+	}
+	if (password.length < 8) {
+		throw new ApiError('resetPassword.error.passwordMinLength');
+	}
+	if (password !== confirmPassword) {
+		throw new ApiError('resetPassword.error.passwordMismatch');
+	}
+
+	return 'resetPassword.success.defaultMessage';
+};
