@@ -73,7 +73,8 @@ export function UsersTab() {
 						row.original.documentTypeId != null
 							? documentTypeNameById.get(row.original.documentTypeId)
 							: undefined;
-					if (!row.original.documentCode && !typeName) return <span className="text-zinc-400">—</span>;
+					if (!row.original.documentCode && !typeName)
+						return <span className="text-zinc-400">—</span>;
 					return (
 						<span className="flex flex-col">
 							{typeName && <span className="text-xs text-zinc-400">{typeName}</span>}
@@ -87,7 +88,11 @@ export function UsersTab() {
 				header: t('admin.iam.users.col.status'),
 				cell: ({ row }) => (
 					<Badge variant={row.original.isActive ? 'success' : 'default'}>
-						{t(row.original.isActive ? 'admin.iam.users.badge.active' : 'admin.iam.users.badge.inactive')}
+						{t(
+							row.original.isActive
+								? 'admin.iam.users.badge.active'
+								: 'admin.iam.users.badge.inactive',
+						)}
 					</Badge>
 				),
 			},
@@ -121,7 +126,7 @@ export function UsersTab() {
 	);
 
 	if (mode !== 'list') {
-		const editingUser = mode === 'edit' ? users.find((user) => user.id === editId) ?? null : null;
+		const editingUser = mode === 'edit' ? (users.find((user) => user.id === editId) ?? null) : null;
 		const editLoading = mode === 'edit' && !editingUser && isLoading;
 		const editNotFound = mode === 'edit' && !editingUser && !isLoading;
 
@@ -150,7 +155,12 @@ export function UsersTab() {
 					/>
 				)}
 
-				<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
+				<Toast
+					isOpen={toast.isOpen}
+					onClose={clearToast}
+					type={toast.type}
+					message={toast.message}
+				/>
 			</div>
 		);
 	}

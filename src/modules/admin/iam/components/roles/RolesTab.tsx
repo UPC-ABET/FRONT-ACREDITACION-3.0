@@ -58,7 +58,11 @@ export function RolesTab() {
 				header: t('admin.iam.roles.col.status'),
 				cell: ({ row }) => (
 					<Badge variant={row.original.isActive ? 'success' : 'default'}>
-						{t(row.original.isActive ? 'admin.iam.roles.badge.active' : 'admin.iam.roles.badge.inactive')}
+						{t(
+							row.original.isActive
+								? 'admin.iam.roles.badge.active'
+								: 'admin.iam.roles.badge.inactive',
+						)}
 					</Badge>
 				),
 			},
@@ -92,7 +96,7 @@ export function RolesTab() {
 	);
 
 	if (mode !== 'list') {
-		const editingRole = mode === 'edit' ? roles.find((role) => role.id === editId) ?? null : null;
+		const editingRole = mode === 'edit' ? (roles.find((role) => role.id === editId) ?? null) : null;
 		const editLoading = mode === 'edit' && !editingRole && isLoading;
 		const editNotFound = mode === 'edit' && !editingRole && !isLoading;
 
@@ -121,7 +125,12 @@ export function RolesTab() {
 					/>
 				)}
 
-				<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
+				<Toast
+					isOpen={toast.isOpen}
+					onClose={clearToast}
+					type={toast.type}
+					message={toast.message}
+				/>
 			</div>
 		);
 	}

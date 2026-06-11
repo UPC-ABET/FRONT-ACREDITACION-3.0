@@ -94,7 +94,12 @@ export function CompactNavbarSelect({
 						displayValue
 					)}
 				</span>
-				<span className={cn('w-px flex-none bg-zinc-200', isCompact ? 'ml-2 h-4' : 'ml-3 h-5 max-xl:ml-2 max-xl:h-4')} />
+				<span
+					className={cn(
+						'w-px flex-none bg-zinc-200',
+						isCompact ? 'ml-2 h-4' : 'ml-3 h-5 max-xl:ml-2 max-xl:h-4',
+					)}
+				/>
 				<ChevronDownIcon
 					className={cn(
 						'ml-2 flex-none text-zinc-400 transition-transform',
@@ -110,26 +115,28 @@ export function CompactNavbarSelect({
 						<div className="px-3 py-3 text-center text-[13px] font-medium text-zinc-400">
 							{noOptionsMessage}
 						</div>
-					) : options.map((option) => {
-						const isSelected = option.value === value;
-						return (
-							<button
-								key={option.value}
-								type="button"
-								onClick={() => {
-									onChange(option.value);
-									setIsOpen(false);
-								}}
-								className={cn(
-									'w-full truncate px-3 py-2 text-left text-[13px] transition-colors hover:bg-red-100 hover:text-zinc-900',
-									isSelected
-										? 'bg-red-600 font-semibold text-white hover:bg-red-600 hover:text-white'
-										: 'text-zinc-800',
-								)}>
-								{option.label}
-							</button>
-						);
-					})}
+					) : (
+						options.map((option) => {
+							const isSelected = option.value === value;
+							return (
+								<button
+									key={option.value}
+									type="button"
+									onClick={() => {
+										onChange(option.value);
+										setIsOpen(false);
+									}}
+									className={cn(
+										'w-full truncate px-3 py-2 text-left text-[13px] transition-colors hover:bg-red-100 hover:text-zinc-900',
+										isSelected
+											? 'bg-red-600 font-semibold text-white hover:bg-red-600 hover:text-white'
+											: 'text-zinc-800',
+									)}>
+									{option.label}
+								</button>
+							);
+						})
+					)}
 				</div>
 			)}
 		</div>

@@ -122,7 +122,9 @@ export function RoleFormView({ role, onCancel, onSuccess, onError }: Props) {
 						<span className="text-base font-semibold text-zinc-900">
 							{t('admin.iam.roles.form.permissions')}
 						</span>
-						<span className="text-xs text-zinc-500">{t('admin.iam.roles.form.permissionsHint')}</span>
+						<span className="text-xs text-zinc-500">
+							{t('admin.iam.roles.form.permissionsHint')}
+						</span>
 					</div>
 					{axesLoading ? (
 						<p className="text-sm text-zinc-500">{t('loading.default')}</p>

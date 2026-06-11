@@ -23,14 +23,7 @@ export function LCFCConfiguration() {
 	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
 	const { cycles, load: loadCycles } = useLCFCCycles();
-	const {
-		courses,
-		loading,
-		error,
-		load: loadConfig,
-		generate,
-		clone,
-	} = useLCFCConfiguration();
+	const { courses, loading, error, load: loadConfig, generate, clone } = useLCFCConfiguration();
 
 	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
 	const [originCycle, setOriginCycle] = useState<{ label: string; value: number } | null>(null);
@@ -144,9 +137,7 @@ export function LCFCConfiguration() {
 							label={t('surveys.lcfc.config.originLabel')}
 							options={cycleOptions.filter((c) => c.value !== selectedCycle?.value)}
 							value={originCycle}
-							onChange={(_, val) =>
-								setOriginCycle(val as { label: string; value: number } | null)
-							}
+							onChange={(_, val) => setOriginCycle(val as { label: string; value: number } | null)}
 							placeholder={t('surveys.lcfc.config.originPlaceholder')}
 						/>
 					</div>

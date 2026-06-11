@@ -66,7 +66,9 @@ export function ModulesTab() {
 				id: 'route',
 				header: t('admin.iam.modules.col.route'),
 				cell: ({ row }) => (
-					<span className="font-mono text-xs text-zinc-500">{row.original.extra?.route ?? '—'}</span>
+					<span className="font-mono text-xs text-zinc-500">
+						{row.original.extra?.route ?? '—'}
+					</span>
 				),
 			},
 			{
@@ -157,12 +159,7 @@ export function ModulesTab() {
 				isLoading={remove.isPending}
 			/>
 
-			<Toast
-				isOpen={toast.isOpen}
-				onClose={clearToast}
-				type={toast.type}
-				message={toast.message}
-			/>
+			<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
 		</div>
 	);
 }

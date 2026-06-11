@@ -77,11 +77,7 @@ export function AddEvaluationCourseModal({
 		const toAdd = spcList.filter((s) => pendingIds.has(s.id));
 		if (toAdd.length === 0) return;
 
-		Promise.all(
-			toAdd.map((spc) =>
-				enableEvaluation.mutateAsync({ id: spc.id, isEvaluable: true }),
-			),
-		)
+		Promise.all(toAdd.map((spc) => enableEvaluation.mutateAsync({ id: spc.id, isEvaluable: true })))
 			.then(() => {
 				setPendingIds(new Set());
 				onSuccess?.();

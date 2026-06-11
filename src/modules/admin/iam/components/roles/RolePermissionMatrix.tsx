@@ -39,11 +39,7 @@ export function RolePermissionMatrix({ modules, permissions, value, onChange, di
 		if (disabled) return;
 		const key = cellKey(moduleTypeId, permissionTypeId);
 		if (selectedKeys.has(key)) {
-			onChange(
-				value.filter(
-					(cell) => cellKey(cell.moduleTypeId, cell.permissionTypeId) !== key,
-				),
-			);
+			onChange(value.filter((cell) => cellKey(cell.moduleTypeId, cell.permissionTypeId) !== key));
 		} else {
 			onChange([...value, { moduleTypeId, permissionTypeId }]);
 		}
@@ -71,7 +67,9 @@ export function RolePermissionMatrix({ modules, permissions, value, onChange, di
 				</thead>
 				<tbody>
 					{modules.map((module) => (
-						<tr key={module.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50/70">
+						<tr
+							key={module.id}
+							className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50/70">
 							<th
 								scope="row"
 								className="sticky left-0 z-10 bg-white px-4 py-3 text-left text-sm font-semibold text-zinc-800 whitespace-nowrap">

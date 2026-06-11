@@ -52,7 +52,12 @@ export function useSaveUser() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async ({ id, body, roleIds, currentRoleLinks }: SaveUserInput): Promise<IamUser> => {
+		mutationFn: async ({
+			id,
+			body,
+			roleIds,
+			currentRoleLinks,
+		}: SaveUserInput): Promise<IamUser> => {
 			const user = id
 				? await updateUser(id, body as UserUpdateBody)
 				: await createUser(body as UserCreateBody);

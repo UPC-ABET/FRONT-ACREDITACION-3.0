@@ -40,7 +40,9 @@ async function syncRolePermissions(
 	desiredCells: MatrixCell[],
 	currentLinks: RoleModulePermission[],
 ): Promise<void> {
-	const desired = new Set(desiredCells.map((cell) => cellKey(cell.moduleTypeId, cell.permissionTypeId)));
+	const desired = new Set(
+		desiredCells.map((cell) => cellKey(cell.moduleTypeId, cell.permissionTypeId)),
+	);
 	const current = new Set(
 		currentLinks.map((link) => cellKey(link.moduleTypeId, link.permissionTypeId)),
 	);
