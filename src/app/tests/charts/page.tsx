@@ -1,7 +1,10 @@
-import { ChartsPage } from '@/modules/tests';
+import { Metadata } from 'next';
+import ChartsPageClient from './ChartsPageClient';
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: 'Graficos',
 };
 
-export default ChartsPage;
+export default function Page() {
+	return <ChartsPageClient />;
+}

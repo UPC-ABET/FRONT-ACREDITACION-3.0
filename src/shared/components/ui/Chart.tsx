@@ -3,6 +3,13 @@
 import * as React from 'react';
 import { ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
+type TooltipEntry = {
+	name?: string;
+	value?: string | number;
+	color?: string;
+	fill?: string;
+};
+
 export type ChartConfig = {
 	[key: string]: {
 		label?: React.ReactNode;
@@ -23,14 +30,12 @@ export function ChartContainer({
 	children: React.ReactElement;
 	className?: string;
 }) {
-	// Generamos los estilos inyectando las variables de color
-	const chartStyles = React.useMemo(() => {
-		return Object.entries(config)
-			.map(([key, value]) => {
-				if (!value.color) return null;
-				return `--color-${key}: ${value.color};`;
-			})
-			.join('\n');
+	const cssVars = React.useMemo(() => {
+		const vars: Record<string, string> = {};
+		for (const [key, value] of Object.entries(config)) {
+			if (value.color) vars[`--color-${key}`] = value.color;
+		}
+		return vars;
 	}, [config]);
 
 	const [isMounted, setIsMounted] = React.useState(false);
@@ -41,8 +46,7 @@ export function ChartContainer({
 
 	return (
 		<ChartContext.Provider value={{ config }}>
-			<style dangerouslySetInnerHTML={{ __html: `:root { ${chartStyles} }` }} />
-			<div className={`w-full ${className}`}>
+			<div className={`w-full ${className}`} style={cssVars}>
 				{isMounted ? (
 					<ResponsiveContainer width="100%" height="100%">
 						{children}
@@ -55,14 +59,22 @@ export function ChartContainer({
 	);
 }
 
-export function ChartTooltipContent({ active, payload, label }: any) {
+export function ChartTooltipContent({
+	active,
+	payload,
+	label,
+}: {
+	active?: boolean;
+	payload?: TooltipEntry[];
+	label?: string;
+}) {
 	if (!active || !payload) return null;
 
 	return (
 		<div className="rounded-lg border border-zinc-200 bg-white p-3 shadow-md">
 			<p className="mb-2 text-xs font-bold text-zinc-500 uppercase">{label}</p>
 			<div className="space-y-1.5">
-				{payload.map((item: any, index: number) => (
+				{payload.map((item, index) => (
 					<div key={index} className="flex items-center gap-2">
 						<div
 							className="h-2 w-2 rounded-full"
@@ -77,16 +89,18 @@ export function ChartTooltipContent({ active, payload, label }: any) {
 	);
 }
 
-export function ChartLegendContent({ payload }: any) {
+export function ChartLegendContent({
+	payload,
+}: {
+	payload?: Array<{ color?: string; value: string }>;
+}) {
 	if (!payload) return null;
 
 	return (
 		<div className="flex flex-wrap items-center justify-center gap-6 mt-4">
-			{payload.map((entry: any, index: number) => (
+			{payload.map((entry, index) => (
 				<div key={index} className="flex items-center gap-2">
-					{/* El circulito de color */}
 					<div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
-					{/* El texto de la configuración */}
 					<span className="text-xs font-medium text-zinc-600">{entry.value}</span>
 				</div>
 			))}

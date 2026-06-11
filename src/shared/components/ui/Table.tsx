@@ -69,6 +69,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
 	return (
 		<th
 			data-slot="table-head"
+			scope="col"
 			className={cn(
 				'h-12 px-6 text-left align-middle font-bold text-zinc-500 uppercase text-[13px] tracking-wider whitespace-nowrap',
 				className,
@@ -115,6 +116,7 @@ interface DataTableProps<TData, TValue> {
 	searchColumnId?: string;
 	actions?: DataTableAction[];
 	showPagination?: boolean;
+	'aria-label'?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -127,6 +129,7 @@ export function DataTable<TData, TValue>({
 	searchColumnId,
 	actions = [],
 	showPagination = true,
+	'aria-label': ariaLabel,
 }: DataTableProps<TData, TValue>) {
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [globalFilter, setGlobalFilter] = React.useState('');
@@ -212,7 +215,7 @@ export function DataTable<TData, TValue>({
 				</div>
 			)}
 
-			<Table>
+			<Table aria-label={ariaLabel} aria-rowcount={showPagination ? data.length : undefined}>
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (
 						<TableRow key={headerGroup.id}>

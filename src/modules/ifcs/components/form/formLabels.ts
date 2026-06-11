@@ -1,0 +1,17 @@
+export const FORM_LABELS = {
+	coordinator: { en: 'Coordinator', es: 'Coordinador' },
+	sectionFindings: { en: 'Findings', es: 'Hallazgos' },
+	sectionActions: { en: 'Actions', es: 'Acciones' },
+	colDescription: { en: 'Description', es: 'Descripción' },
+	colCriticality: { en: 'Criticality', es: 'Criticidad' },
+	colFinding: { en: 'Finding', es: 'Hallazgo' },
+	selectCriticality: { en: 'Select criticality', es: 'Seleccionar criticidad' },
+	findingPlaceholder: { en: 'Finding', es: 'Hallazgo' },
+	actionPlaceholder: { en: 'Action', es: 'Acción' },
+	btnAddFinding: { en: 'Add Finding', es: 'Agregar Hallazgo' },
+	btnAddAction: { en: 'Add Action', es: 'Agregar Acción' },
+	btnDelete: { en: 'Delete', es: 'Eliminar' },
+	btnSave: { en: 'Save', es: 'Guardar' },
+	btnSubmit: { en: 'Submit', es: 'Enviar' },
+	btnCancel: { en: 'Cancel', es: 'Cancelar' },
+} as const;

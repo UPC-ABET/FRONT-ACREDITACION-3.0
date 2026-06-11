@@ -1,0 +1,5 @@
+export * from './ChartHeadsConfigPage';
+export * from './ChartHeadsForm';
+export * from './DeanSection';
+export * from './DirectorsSection';
+export * from './HeadFields';

@@ -1,0 +1,90 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { Select, Tabs } from '@/shared/components';
+import { useI18n, useABET } from '@/providers';
+import { AddStudentPanel } from './AddStudentPanel';
+import { StudentList } from './StudentList';
+import { EditEmailTemplate } from './EditEmailTemplate';
+import { FileUploadPanel } from '../../shared/FileUploadPanel';
+import { useGRAUpload, useGRACycles } from '../../../hooks';
+
+export function GRANotificationView() {
+	const { t } = useI18n();
+	const { modalityTypeId } = useABET();
+	const { cycles, load: loadCycles } = useGRACycles();
+	const [activeTab, setActiveTab] = useState('list');
+	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
+	const { loading, error, success, downloadTemplate, upload } = useGRAUpload();
+
+	const NOTIFICATION_TABS = [
+		{ id: 'list', label: t('surveys.gra.notifications.tabs.list') },
+		{ id: 'add', label: t('surveys.gra.notifications.tabs.add') },
+		{ id: 'upload', label: t('surveys.gra.notifications.tabs.upload') },
+		{ id: 'email', label: t('surveys.gra.notifications.tabs.email') },
+	];
+
+	useEffect(() => {
+		loadCycles(modalityTypeId);
+	}, [modalityTypeId, loadCycles]);
+
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
+	const academicPeriodId = selectedCycle?.value ?? 0;
+	const programId = 0;
+
+	return (
+		<div className="space-y-6">
+			<div className="max-w-sm">
+				<Select
+					label={t('surveys.gra.notifications.periodLabel')}
+					options={cycleOptions}
+					value={selectedCycle}
+					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
+					placeholder={t('surveys.gra.notifications.periodPlaceholder')}
+					isSearchable
+				/>
+			</div>
+
+			{selectedCycle && (
+				<>
+					<Tabs tabs={NOTIFICATION_TABS} activeTab={activeTab} onChange={setActiveTab} />
+
+					<div className="pt-2">
+						{activeTab === 'list' && (
+							<StudentList programId={programId} academicPeriodId={academicPeriodId} />
+						)}
+
+						{activeTab === 'add' && (
+							<AddStudentPanel
+								programId={programId}
+								academicPeriodId={academicPeriodId}
+								onStudentAdded={() => setActiveTab('list')}
+							/>
+						)}
+
+						{activeTab === 'upload' && (
+							<div className="max-w-lg">
+								<FileUploadPanel
+									title={t('surveys.gra.notifications.uploadTitle')}
+									description={t('surveys.gra.notifications.uploadDesc')}
+									uploading={loading}
+									success={success}
+									error={error}
+									onUpload={upload}
+									onDownloadTemplate={() => downloadTemplate(academicPeriodId)}
+									downloadLabel={t('surveys.gra.notifications.downloadLabel')}
+								/>
+							</div>
+						)}
+
+						{activeTab === 'email' && (
+							<div className="max-w-lg">
+								<EditEmailTemplate surveyId={academicPeriodId} />
+							</div>
+						)}
+					</div>
+				</>
+			)}
+		</div>
+	);
+}

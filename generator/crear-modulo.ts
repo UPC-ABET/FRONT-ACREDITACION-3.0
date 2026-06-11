@@ -31,13 +31,7 @@ for (const folder of subfolders) {
 }
 
 // ── 2. Servicio CRUD en su propio archivo ────────────────────────────────────
-const serviceContent = `/**
- * ${moduleNameCapitalized} Service
- *
- * CRUD para el módulo ${moduleName}.
- */
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
+const serviceContent = `import { apiGet, apiPost, apiPut, apiDelete } from '@/shared/lib';
 
 export interface ${moduleNameCapitalized} {
     id: string | number;
@@ -51,45 +45,25 @@ export interface PaginatedResponse<T> {
     limit: number;
 }
 
-async function request<T>(url: string, options?: RequestInit): Promise<T> {
-    const res = await fetch(url, {
-        headers: { 'Content-Type': 'application/json' },
-        ...options,
-    });
-    if (!res.ok) throw new Error(\`[\${res.status}] \${res.statusText} — \${url}\`);
-    return res.json() as Promise<T>;
-}
-
 export const ${moduleName}Service = {
-    /** Obtiene lista paginada */
     getAll(page = 1, limit = 20): Promise<PaginatedResponse<${moduleNameCapitalized}>> {
-        return request(\`\${BASE_URL}/${moduleName}?page=\${page}&limit=\${limit}\`);
+        return apiGet(\`/${moduleName}?page=\${page}&limit=\${limit}\`);
     },
 
-    /** Obtiene un registro por id */
     getById(id: string | number): Promise<${moduleNameCapitalized}> {
-        return request(\`\${BASE_URL}/${moduleName}/\${id}\`);
+        return apiGet(\`/${moduleName}/\${id}\`);
     },
 
-    /** Crea un nuevo registro */
     create(body: Omit<${moduleNameCapitalized}, 'id'>): Promise<${moduleNameCapitalized}> {
-        return request(\`\${BASE_URL}/${moduleName}\`, {
-            method: 'POST',
-            body: JSON.stringify(body),
-        });
+        return apiPost(\`/${moduleName}\`, body);
     },
 
-    /** Actualiza un registro existente */
     update(id: string | number, body: Partial<Omit<${moduleNameCapitalized}, 'id'>>): Promise<${moduleNameCapitalized}> {
-        return request(\`\${BASE_URL}/${moduleName}/\${id}\`, {
-            method: 'PUT',
-            body: JSON.stringify(body),
-        });
+        return apiPut(\`/${moduleName}/\${id}\`, body);
     },
 
-    /** Elimina un registro */
     delete(id: string | number): Promise<void> {
-        return request(\`\${BASE_URL}/${moduleName}/\${id}\`, { method: 'DELETE' });
+        return apiDelete(\`/${moduleName}/\${id}\`);
     },
 };
 `;

@@ -3,11 +3,12 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useAuth, useI18n } from '@/providers';
 
 function NotFoundPage() {
 	const router = useRouter();
 	const { t } = useI18n();
+	const { isAuthenticated } = useAuth();
 
 	useEffect(() => {
 		document.body.classList.add('not-found');
@@ -15,9 +16,7 @@ function NotFoundPage() {
 	}, []);
 
 	const handleGoHome = () => {
-		const token = localStorage.getItem('bearerToken');
-
-		if (token) {
+		if (isAuthenticated) {
 			router.push('/');
 		} else {
 			router.push('/auth/login');

@@ -1,0 +1,141 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { Select, Button, Tabs, Toast } from '@/shared/components';
+import { useI18n, useABET } from '@/providers';
+import { usePPPCompetences, usePPPCycles, usePPPPerformanceLevels } from '../../../hooks';
+import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
+import { PerformanceLevels } from './PerformanceLevels';
+
+export function PPPConfiguration() {
+	const { t } = useI18n();
+	const { modalityTypeId } = useABET();
+	const { cycles, load: loadCycles } = usePPPCycles();
+	const {
+		competences,
+		loading: compLoading,
+		error: compError,
+		load: loadComp,
+		save: saveComp,
+		remove: removeComp,
+		clone: cloneComp,
+	} = usePPPCompetences();
+	const levelsHook = usePPPPerformanceLevels();
+
+	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
+	const [activeTab, setActiveTab] = useState('competences');
+	const [showClone, setShowClone] = useState(false);
+	const [toast, setToast] = useState<{
+		open: boolean;
+		type: 'success' | 'error' | 'info';
+		msg: string;
+	}>({
+		open: false,
+		type: 'success',
+		msg: '',
+	});
+
+	const tabs = [
+		{ id: 'competences', label: t('surveys.tabs.competences') },
+		{ id: 'levels', label: t('surveys.tabs.levels') },
+	];
+
+	useEffect(() => {
+		loadCycles(modalityTypeId);
+	}, [modalityTypeId, loadCycles]);
+
+	useEffect(() => {
+		if (!selectedCycle) return;
+		loadComp(selectedCycle.value);
+		levelsHook.load(selectedCycle.value);
+	}, [selectedCycle]); // eslint-disable-line react-hooks/exhaustive-deps
+
+	useEffect(() => {
+		if (selectedCycle && competences.length === 0 && !compLoading) {
+			setShowClone(true);
+		} else {
+			setShowClone(false);
+		}
+	}, [competences, compLoading, selectedCycle]);
+
+	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
+
+	return (
+		<div className="space-y-6">
+			<div className="max-w-sm">
+				<Select
+					label={t('surveys.shared.academicCycle')}
+					options={cycleOptions}
+					value={selectedCycle}
+					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
+					placeholder={t('surveys.shared.selectCycle')}
+					isSearchable
+				/>
+			</div>
+
+			{selectedCycle && showClone && (
+				<div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
+					<div className="flex-1">
+						<p className="text-sm font-bold text-amber-800">
+							{t('surveys.shared.noConfiguration')}
+						</p>
+						<p className="text-xs text-amber-700 mt-1">{t('surveys.shared.noConfigurationHint')}</p>
+					</div>
+					<Button
+						size="sm"
+						variant="warning"
+						onClick={() => {
+							setToast({
+								open: true,
+								type: 'info',
+								msg: t('surveys.shared.cloneToastHint'),
+							});
+						}}>
+						{t('surveys.shared.cloneConfiguration')}
+					</Button>
+				</div>
+			)}
+
+			{selectedCycle && (
+				<>
+					<Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+
+					<div className="pt-2">
+						{activeTab === 'competences' && (
+							<CompetenceCRUD
+								cycleId={selectedCycle.value}
+								competences={competences}
+								loading={compLoading}
+								error={compError}
+								onLoad={loadComp}
+								onSave={saveComp}
+								onDelete={removeComp}
+								onClone={cloneComp}
+								showCloneOption={showClone}
+							/>
+						)}
+
+						{activeTab === 'levels' && (
+							<PerformanceLevels
+								cycleId={selectedCycle.value}
+								levels={levelsHook.levels}
+								setLevels={levelsHook.setLevels}
+								loading={levelsHook.loading}
+								error={levelsHook.error}
+								onLoad={levelsHook.load}
+								onSave={levelsHook.save}
+							/>
+						)}
+					</div>
+				</>
+			)}
+
+			<Toast
+				isOpen={toast.open}
+				type={toast.type}
+				message={toast.msg}
+				onClose={() => setToast({ ...toast, open: false })}
+			/>
+		</div>
+	);
+}

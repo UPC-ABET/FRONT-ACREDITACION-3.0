@@ -2,9 +2,15 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('bearerToken')?.value
+  const token = request.cookies.get('accessToken')?.value
   const { pathname } = request.nextUrl
   const isAuthRoute = pathname.startsWith('/auth')
+  const isPublicSurvey = /^\/survey\/[^/]+\/respond(\/|$)/.test(pathname)
+
+  // Public survey routes are accessible without authentication
+  if (isPublicSurvey) {
+    return NextResponse.next()
+  }
 
   if (!token && !isAuthRoute) {
     return NextResponse.redirect(new URL('/auth/login', request.url))

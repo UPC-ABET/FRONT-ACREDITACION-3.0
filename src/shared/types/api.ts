@@ -1,20 +1,13 @@
 export type ApiResponse<T> = {
-	ok: boolean;
+	code: number;
+	message: string;
 	data: T;
-	message?: string;
-	errors?: string[];
 };
 
 export type ApiEnvelope<T> = {
 	data?: T;
 	resource?: T;
 	message?: string;
-};
-
-export type ApiError = {
-	message: string;
-	code?: string;
-	details?: string[];
 };
 
 export type Pagination = {

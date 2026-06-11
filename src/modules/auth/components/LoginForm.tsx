@@ -1,15 +1,14 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Select, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
-import { LoginPayload } from '@/shared/types';
+import { Input, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
+import type { LoginPayload } from '@/modules/auth/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
-import { schoolOptions } from '@/modules/auth/constants';
-import { useI18n } from '@/providers';
+import { safeRedirect } from '@/shared/lib';
+import { useAuth, useI18n } from '@/providers';
 
 export default function LoginForm() {
-	const [schoolCode, setSchoolCode] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -18,36 +17,29 @@ export default function LoginForm() {
 	const [dialogMessage, setDialogMessage] = useState('');
 	const router = useRouter();
 	const { t } = useI18n();
-
-	const localizedSchools = useMemo(
-		() =>
-			schoolOptions.map((option) => ({
-				value: option.id,
-				label: t(option.labelKey),
-			})),
-		[t],
-	);
+	const { refreshUser } = useAuth();
 
 	const handleSubmit = async (e?: React.FormEvent) => {
 		e?.preventDefault();
 		setError(null);
 		setDialogOpen(false);
 
-		if (!schoolCode || !email || !password) {
+		if (!email || !password) {
 			setError(t('login.error.required'));
 			return;
 		}
 
-		const payload: LoginPayload = { school_code: schoolCode, email, password };
+		const payload: LoginPayload = { email, password };
 		setLoading(true);
 		try {
-			const res = await loginByCredentials(payload);
-			localStorage.setItem('bearerToken', JSON.stringify(res.accessToken));
-			localStorage.setItem('token', JSON.stringify(res.user));
-			localStorage.setItem('escuela', JSON.stringify(schoolCode));
-			window.location.replace('/');
-		} catch (err: any) {
-			const rawMessage = typeof err?.message === 'string' ? err.message : '';
+			await loginByCredentials(payload);
+			const refreshedUser = await refreshUser({ showGlobalLoading: false });
+			if (!refreshedUser) {
+				throw new Error('error.auth.noPermissionsConfigured');
+			}
+			router.replace('/');
+		} catch (err: unknown) {
+			const rawMessage = err instanceof Error ? err.message : '';
 			const translated = rawMessage ? t(rawMessage) : '';
 			const resolvedMessage =
 				translated && translated !== rawMessage
@@ -61,33 +53,23 @@ export default function LoginForm() {
 	};
 
 	const handleMicrosoftLogin = () => {
-		if (!schoolCode) {
-			setError(t('login.error.schoolRequired'));
-			return;
-		}
-		window.location.assign(getMicrosoftLoginUrl(schoolCode));
+		safeRedirect(getMicrosoftLoginUrl(), 'assign');
 	};
 
 	return (
 		<form onSubmit={handleSubmit} className="space-y-6">
 			<div className="space-y-2">
-				{error && <div className="text-sm text-red-600">{error}</div>}
-
-				<div>
-					<Select
-						name="escuela"
-						value={localizedSchools.find((s) => s.value === schoolCode) || null}
-						onChange={(_, v) => setSchoolCode((v as any)?.value || '')}
-						options={localizedSchools}
-						placeholder={t('login.school.placeholder')}
-					/>
-				</div>
+				{error && (
+					<div role="alert" className="text-sm text-red-600">
+						{error}
+					</div>
+				)}
 
 				<div>
 					<Input
 						id="email"
 						value={email}
-						onChange={(e: any) => setEmail(e.target.value)}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
 						placeholder={t('login.user.placeholder')}
 					/>
 				</div>
@@ -97,15 +79,15 @@ export default function LoginForm() {
 						id="password"
 						type="password"
 						value={password}
-						onChange={(e: any) => setPassword(e.target.value)}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
 						placeholder={t('login.password.placeholder')}
 					/>
 				</div>
 			</div>
 
 			<div className="flex items-center">
-				<label className="flex items-center text-sm">
-					<input type="checkbox" className="mr-2" /> {t('login.remember')}
+				<label htmlFor="remember-me" className="flex items-center text-sm">
+					<input id="remember-me" type="checkbox" className="mr-2" /> {t('login.remember')}
 				</label>
 			</div>
 

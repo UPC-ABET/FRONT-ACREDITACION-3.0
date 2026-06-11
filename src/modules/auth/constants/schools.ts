@@ -1,7 +1,4 @@
-export const schoolOptions = [
-	{ id: 'SCH_SOFT', labelKey: 'school.sch_soft' },
-	{ id: 'SCH_SIST', labelKey: 'school.sch_sist' },
-	{ id: 'SCH_ADMIN', labelKey: 'school.sch_admin' },
+export const SCHOOL_OPTIONS = [
 	{ id: 'EISCB', labelKey: 'school.eiscb' },
 	{ id: 'EISCC', labelKey: 'school.eiscc' },
 	{ id: 'INGGMI', labelKey: 'school.inggmi' },
@@ -12,3 +9,11 @@ export const schoolOptions = [
 	{ id: 'INGCIV', labelKey: 'school.ingciv' },
 	{ id: 'INGIND', labelKey: 'school.ingind' },
 ];
+
+export const SCHOOL_LABEL_KEYS_BY_CODE = SCHOOL_OPTIONS.reduce<Record<string, string>>(
+	(acc, option) => {
+		acc[option.id] = option.labelKey;
+		return acc;
+	},
+	{},
+);

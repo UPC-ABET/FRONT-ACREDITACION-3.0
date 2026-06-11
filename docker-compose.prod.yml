@@ -1,0 +1,20 @@
+# ABET Frontend — production compose (image pulled from GHCR).
+
+services:
+  sys_acc_front:
+    image: ghcr.io/upc-abet/front-acreditacion-3.0:latest
+    container_name: sys_acc_front
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      # Exposed only on localhost; Nginx reverse-proxies to it.
+      - "127.0.0.1:3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - sys_acc_web
+
+networks:
+  sys_acc_web:
+    external: true
