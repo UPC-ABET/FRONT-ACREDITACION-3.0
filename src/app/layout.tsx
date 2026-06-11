@@ -5,6 +5,13 @@ import { AuthProvider, LocaleProvider, QueryProvider, SessionGuard } from '@/pro
 import LayoutClient from '@/app/components/LayoutClient';
 import { APP_DESCRIPTION, APP_NAME, DEFAULT_LOCALE } from '@/shared/constants';
 
+// TODO (tech debt): app-wide force-dynamic to bypass Next 16's `useSearchParams()`
+// prerender bailout. Works because this is an auth-gated, client-rendered SPA, but
+// it disables static optimization for ALL routes. Refine by scoping dynamic
+// rendering to only the pages that need it (per-page Suspense / route config),
+// then remove this.
+export const dynamic = 'force-dynamic';
+
 const geistSans = Geist({
 	variable: '--font-geist-sans',
 	subsets: ['latin'],

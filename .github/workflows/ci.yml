@@ -1,0 +1,37 @@
+name: CI
+
+# Runs on PRs and pushes to develop, AND is callable by the deploy
+# workflow (workflow_call) so deploy only proceeds when CI is green.
+on:
+  pull_request:
+  push:
+    branches: [develop]
+  workflow_call:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_API_URL: "/api"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      # `next build` also type-checks the project, so it's our compile gate.
+      - name: Build
+        run: pnpm build

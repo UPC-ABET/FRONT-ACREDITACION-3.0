@@ -24,7 +24,7 @@ interface AddStudentModalProps {
 	onOpenChange: (open: boolean) => void;
 	projectId: string;
 	projectNumericId: number;
-	courseId: number;
+	courseId: number | null;
 	academicPeriodId: number | null;
 	onSuccess?: () => void;
 }
@@ -61,7 +61,7 @@ export function AddStudentModal({
 
 	// Fetch on open
 	useEffect(() => {
-		if (!open) return;
+		if (!open || courseId == null) return;
 		setIsLoading(true);
 		coursesService
 			.getEnrolledStudents(courseId, {
