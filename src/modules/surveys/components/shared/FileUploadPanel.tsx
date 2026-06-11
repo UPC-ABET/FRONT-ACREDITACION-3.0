@@ -48,7 +48,9 @@ export function FileUploadPanel({
 		const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
 		const validExts = accept.split(',').map((a) => a.trim().toLowerCase());
 		if (!validExts.includes(ext)) {
-			setValidationError(t('surveys.shared.fileUpload.invalidFormat').replace('{{accept}}', accept));
+			setValidationError(
+				t('surveys.shared.fileUpload.invalidFormat').replace('{{accept}}', accept),
+			);
 			return;
 		}
 		if (file.size > MAX_SIZE_MB * 1024 * 1024) {
@@ -67,7 +69,11 @@ export function FileUploadPanel({
 
 	React.useEffect(() => {
 		if (success) {
-			setToast({ open: true, type: 'success', msg: t('surveys.shared.fileUpload.processedSuccess') });
+			setToast({
+				open: true,
+				type: 'success',
+				msg: t('surveys.shared.fileUpload.processedSuccess'),
+			});
 			setSelectedFile(null);
 			if (inputRef.current) inputRef.current.value = '';
 		}

@@ -29,11 +29,7 @@ export function useGlobalAcademicFilters() {
 	const [selectedSchoolCode, setSelectedSchoolCode] = useState(readCookieSchoolCode);
 
 	const schoolSource = useSchoolSource();
-	const {
-		schools: sourceSchools,
-		isLoading: schoolsLoading,
-		hasSource,
-	} = useSchoolSourceData();
+	const { schools: sourceSchools, isLoading: schoolsLoading, hasSource } = useSchoolSourceData();
 	const schools = useMemo<SchoolSourceItem[]>(
 		() => (hasSource ? sourceSchools : userSchools),
 		[hasSource, sourceSchools, userSchools],
