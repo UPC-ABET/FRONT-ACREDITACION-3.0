@@ -3029,141 +3029,6 @@
 		}
 	},
 	"portfolio": {
-		"page": {
-			"title": "Project Portfolio",
-			"selectPeriod": "Select an academic period to view projects.",
-			"searchBtn": "Search",
-			"clearFilters": "Clear filters",
-			"exportBtn": "Export",
-			"createBtn": "New project",
-			"showBulkUpload": "Bulk upload",
-			"hideBulkUpload": "Hide bulk upload",
-			"bulkUploadTitle": "Bulk upload projects",
-			"resultsCount": "projects found"
-		},
-		"filter": {
-			"program": "Program",
-			"status": "Status",
-			"origin": "Origin",
-			"originAll": "All origins",
-			"originUpc": "UPC",
-			"originExternal": "External"
-		},
-		"status": {
-			"all": "All",
-			"approved": "Approved",
-			"disapproved": "Disapproved",
-			"pending": "Pending",
-			"reviewed": "Reviewed",
-			"preApproved": "Pre-approved"
-		},
-		"table": {
-			"code": "Code",
-			"name": "Name",
-			"company": "Company",
-			"students": "Students",
-			"status": "Status",
-			"origin": "Origin",
-			"originUpc": "UPC",
-			"external": "External",
-			"actions": "Actions",
-			"actionView": "View",
-			"actionEdit": "Edit",
-			"actionDelete": "Delete",
-			"ariaLabel": "Portfolio projects table",
-			"size": "Size",
-			"modified": "Modified",
-			"empty": "This folder is empty.",
-			"noResults": "No items match your search.",
-			"download": "Download",
-			"delete": "Delete"
-		},
-		"form": {
-			"title": "New Portfolio Project",
-			"fieldName": "Project name",
-			"fieldDescription": "Description",
-			"fieldProgram": "Program",
-			"fieldCompany": "Company (select existing)",
-			"fieldCompanyCode": "Or enter company code",
-			"fieldIsFromUPC": "Is from UPC?",
-			"fieldStudentOne": "Student 1",
-			"fieldStudentTwo": "Student 2",
-			"submitBtn": "Create project",
-			"submitting": "Creating...",
-			"cancelBtn": "Cancel",
-			"placeholderName": "E.g. Academic management system",
-			"placeholderDescription": "Brief project description",
-			"placeholderCompanyCode": "E.g. EMP-001",
-			"academicPeriod": "Academic period",
-			"origin": "Origin",
-			"originUpc": "UPC",
-			"originExternal": "External",
-			"errorRequired": "Please fill in all required fields.",
-			"errorCompanyRequired": "You must select a company or enter a code.",
-			"errorNameRequired": "Name is required.",
-			"errorDescriptionRequired": "Description is required.",
-			"errorProgramRequired": "Program is required."
-		},
-		"detail": {
-			"backBtn": "Back to Portfolio",
-			"editBtn": "Edit",
-			"company": "Company",
-			"origin": "Origin",
-			"researchLine": "Research line",
-			"problemSolved": "Problem solved",
-			"goal": "Goal",
-			"studentsTitle": "Students",
-			"noStudents": "No students assigned.",
-			"applicationsTitle": "Applications",
-			"removeStudentTitle": "Remove student",
-			"removeStudentBody": "Are you sure you want to remove {{name}} from this project?",
-			"removeStudentConfirm": "Yes, remove",
-			"studentRemoved": "Student unassigned successfully."
-		},
-		"delete": {
-			"title": "Delete project",
-			"body": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
-			"confirm": "Yes, delete",
-			"bodyOne": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
-			"bodyMany": "Are you sure you want to delete {{count}} items? This action cannot be undone."
-		},
-		"toast": {
-			"created": "Project created successfully.",
-			"deleted": "Project deleted successfully.",
-			"bulkUploaded": "Bulk upload processed successfully.",
-			"folderCreated": "Folder created successfully.",
-			"uploaded": "Files uploaded successfully."
-		},
-		"error": {
-			"deleteFailed": "Could not delete the project.",
-			"exportFailed": "Could not export the list.",
-			"unassignFailed": "Could not remove the student.",
-			"loadFailed": "Could not load the project.",
-			"createFailed": "Could not create the project.",
-			"createFolderFailed": "Could not create the folder.",
-			"uploadFailed": "Could not upload the files.",
-			"downloadFailed": "Could not download."
-		},
-		"bulkUpload": {
-			"basicTitle": "Basic template",
-			"basicDesc": "Download the blank template, fill it in and upload it to create projects in bulk.",
-			"filledTitle": "Pre-filled template",
-			"filledDesc": "Download the template pre-filled with period data and upload it.",
-			"downloadTemplate": "Download template",
-			"upload": "Upload file",
-			"errorDownload": "Could not download the template.",
-			"errorUpload": "Could not process the file.",
-			"resultInserted": "Projects inserted",
-			"row": "Row",
-			"moreErrors": "... {{count}} more errors"
-		},
-		"application": {
-			"status": {
-				"pending": "Pending",
-				"accepted": "Accepted",
-				"rejected": "Rejected"
-			}
-		},
 		"title": "Portfolio",
 		"subtitle": "Browse, upload and manage accreditation documents stored in the cloud.",
 		"breadcrumb": {
@@ -3181,6 +3046,16 @@
 			"drop": "Drop files here to upload",
 			"uploading": "Uploading"
 		},
+		"table": {
+			"name": "Name",
+			"size": "Size",
+			"modified": "Modified",
+			"actions": "Actions",
+			"empty": "This folder is empty.",
+			"noResults": "No items match your search.",
+			"download": "Download",
+			"delete": "Delete"
+		},
 		"folder": {
 			"createTitle": "New folder",
 			"nameLabel": "Folder name",
@@ -3188,6 +3063,24 @@
 			"create": "Create",
 			"creating": "Creating...",
 			"invalid": "Enter a valid folder name."
+		},
+		"delete": {
+			"title": "Delete items?",
+			"bodyOne": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+			"bodyMany": "Are you sure you want to delete {{count}} items? This action cannot be undone.",
+			"confirm": "Delete"
+		},
+		"toast": {
+			"folderCreated": "Folder created successfully.",
+			"deleted": "Items deleted successfully.",
+			"uploaded": "Files uploaded successfully."
+		},
+		"error": {
+			"loadFailed": "Could not load files.",
+			"createFolderFailed": "Could not create the folder.",
+			"deleteFailed": "Could not delete the selected items.",
+			"uploadFailed": "Could not upload the files.",
+			"downloadFailed": "Could not download."
 		}
 	}
 }
