@@ -2832,127 +2832,58 @@
 		}
 	},
 	"portfolio": {
-		"page": {
-			"title": "Portafolio de Proyectos",
-			"selectPeriod": "Selecciona un período académico para ver los proyectos.",
-			"searchBtn": "Buscar",
-			"clearFilters": "Limpiar filtros",
-			"exportBtn": "Exportar",
-			"createBtn": "Nuevo proyecto",
-			"showBulkUpload": "Carga masiva",
-			"hideBulkUpload": "Ocultar carga masiva",
-			"bulkUploadTitle": "Carga masiva de proyectos",
-			"resultsCount": "proyectos encontrados"
+		"title": "Portafolio",
+		"subtitle": "Explora, sube y gestiona los documentos de acreditación almacenados en la nube.",
+		"breadcrumb": {
+			"root": "Portafolio"
 		},
-		"filter": {
-			"program": "Programa",
-			"status": "Estado",
-			"origin": "Origen",
-			"originAll": "Todos los orígenes",
-			"originUpc": "UPC",
-			"originExternal": "Externo"
+		"toolbar": {
+			"newFolder": "Nueva carpeta",
+			"upload": "Subir",
+			"download": "Descargar",
+			"delete": "Eliminar",
+			"refresh": "Actualizar",
+			"searchPlaceholder": "Filtrar por nombre..."
 		},
-		"status": {
-			"all": "Todos",
-			"approved": "Aprobado",
-			"disapproved": "Desaprobado",
-			"pending": "Pendiente",
-			"reviewed": "Revisado",
-			"preApproved": "Pre-aprobado"
+		"dropzone": {
+			"drop": "Suelta los archivos aquí para subirlos",
+			"uploading": "Subiendo"
 		},
 		"table": {
-			"code": "Código",
 			"name": "Nombre",
-			"company": "Empresa",
-			"students": "Estudiantes",
-			"status": "Estado",
-			"origin": "Origen",
-			"originUpc": "UPC",
-			"external": "Externo",
+			"size": "Tamaño",
+			"modified": "Modificado",
 			"actions": "Acciones",
-			"actionView": "Ver",
-			"actionEdit": "Editar",
-			"actionDelete": "Eliminar",
-			"ariaLabel": "Tabla de proyectos de portafolio"
+			"empty": "Esta carpeta está vacía.",
+			"noResults": "Ningún elemento coincide con la búsqueda.",
+			"download": "Descargar",
+			"delete": "Eliminar"
 		},
-		"form": {
-			"title": "Nuevo Proyecto de Portafolio",
-			"fieldName": "Nombre del proyecto",
-			"fieldDescription": "Descripción",
-			"fieldProgram": "Programa",
-			"fieldCompany": "Empresa (seleccionar existente)",
-			"fieldCompanyCode": "O ingresar código de empresa",
-			"fieldIsFromUPC": "¿Es de UPC?",
-			"fieldStudentOne": "Estudiante 1",
-			"fieldStudentTwo": "Estudiante 2",
-			"submitBtn": "Crear proyecto",
-			"submitting": "Creando...",
-			"cancelBtn": "Cancelar",
-			"placeholderName": "Ej. Sistema de gestión académica",
-			"placeholderDescription": "Breve descripción del proyecto",
-			"placeholderCompanyCode": "Ej. EMP-001",
-			"academicPeriod": "Período académico",
-			"origin": "Origen",
-			"originUpc": "UPC",
-			"originExternal": "Externo",
-			"errorRequired": "Completa todos los campos obligatorios.",
-			"errorCompanyRequired": "Debes seleccionar una empresa o ingresar un código.",
-			"errorNameRequired": "El nombre es requerido.",
-			"errorDescriptionRequired": "La descripción es requerida.",
-			"errorProgramRequired": "El programa es requerido."
-		},
-		"detail": {
-			"backBtn": "Volver a Portafolio",
-			"editBtn": "Editar",
-			"company": "Empresa",
-			"origin": "Origen",
-			"researchLine": "Línea de investigación",
-			"problemSolved": "Problema resuelto",
-			"goal": "Objetivo",
-			"studentsTitle": "Estudiantes",
-			"noStudents": "Sin estudiantes asignados.",
-			"applicationsTitle": "Aplicaciones",
-			"removeStudentTitle": "Quitar estudiante",
-			"removeStudentBody": "¿Estás seguro de quitar a {{name}} del proyecto?",
-			"removeStudentConfirm": "Sí, quitar",
-			"studentRemoved": "Estudiante desasignado correctamente."
+		"folder": {
+			"createTitle": "Nueva carpeta",
+			"nameLabel": "Nombre de la carpeta",
+			"namePlaceholder": "ej. Evidencias 2024",
+			"create": "Crear",
+			"creating": "Creando...",
+			"invalid": "Ingresa un nombre de carpeta válido."
 		},
 		"delete": {
-			"title": "Eliminar proyecto",
-			"body": "¿Estás seguro de eliminar el proyecto \"{{name}}\"? Esta acción no se puede deshacer.",
-			"confirm": "Sí, eliminar"
+			"title": "¿Eliminar elementos?",
+			"bodyOne": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+			"bodyMany": "¿Estás seguro de que deseas eliminar {{count}} elementos? Esta acción no se puede deshacer.",
+			"confirm": "Eliminar"
 		},
 		"toast": {
-			"created": "Proyecto creado correctamente.",
-			"deleted": "Proyecto eliminado correctamente.",
-			"bulkUploaded": "Carga masiva procesada correctamente."
+			"folderCreated": "Carpeta creada correctamente.",
+			"deleted": "Elementos eliminados correctamente.",
+			"uploaded": "Archivos subidos correctamente."
 		},
 		"error": {
-			"deleteFailed": "No se pudo eliminar el proyecto.",
-			"exportFailed": "No se pudo exportar el listado.",
-			"unassignFailed": "No se pudo quitar al estudiante.",
-			"loadFailed": "No se pudo cargar el proyecto.",
-			"createFailed": "No se pudo crear el proyecto."
-		},
-		"bulkUpload": {
-			"basicTitle": "Plantilla básica",
-			"basicDesc": "Descarga la plantilla vacía, complétala y súbela para crear proyectos en lote.",
-			"filledTitle": "Plantilla con datos",
-			"filledDesc": "Descarga la plantilla pre-llenada con los datos del período y súbela.",
-			"downloadTemplate": "Descargar plantilla",
-			"upload": "Subir archivo",
-			"errorDownload": "No se pudo descargar la plantilla.",
-			"errorUpload": "No se pudo procesar el archivo.",
-			"resultInserted": "Proyectos insertados",
-			"row": "Fila",
-			"moreErrors": "... {{count}} errores más"
-		},
-		"application": {
-			"status": {
-				"pending": "Pendiente",
-				"accepted": "Aceptado",
-				"rejected": "Rechazado"
-			}
+			"loadFailed": "No se pudieron cargar los archivos.",
+			"createFolderFailed": "No se pudo crear la carpeta.",
+			"deleteFailed": "No se pudieron eliminar los elementos seleccionados.",
+			"uploadFailed": "No se pudieron subir los archivos.",
+			"downloadFailed": "No se pudo descargar."
 		}
 	}
 }
