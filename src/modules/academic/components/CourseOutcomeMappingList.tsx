@@ -226,10 +226,11 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 												<div className="flex justify-end">
 													<Button
 														variant="ghost"
-														size="sm"
-														onClick={() => onView(row.programCommissionId)}>
+														size="icon"
+														onClick={() => onView(row.programCommissionId)}
+														aria-label={t('loads.courseOutcomeMappingMaintenance.actions.view')}
+														title={t('loads.courseOutcomeMappingMaintenance.actions.view')}>
 														<EyeIcon className="h-4 w-4" />
-														<span>{t('loads.courseOutcomeMappingMaintenance.actions.view')}</span>
 													</Button>
 												</div>
 											</TableCell>

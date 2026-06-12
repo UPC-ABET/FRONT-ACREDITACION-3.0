@@ -366,6 +366,19 @@ export function CourseOutcomeMappingGrid({
 				)}
 			</Card>
 
+			<CollapsibleSection
+				title={t('loads.courseOutcomeMappingMaintenance.grid.legend')}
+				icon={<InformationCircleIcon className="h-4 w-4" />}>
+				<ul className="divide-y divide-zinc-100">
+					{view.outcomeTypes.map((type) => (
+						<li key={type.id} className="flex items-center gap-4 px-4 py-3">
+							<CourseOutcomeMappingGlyph type={type} className="w-6" />
+							<span className="text-sm text-zinc-700">{localized(type.name, locale)}</span>
+						</li>
+					))}
+				</ul>
+			</CollapsibleSection>
+
 			{view.levels.map((level) => (
 				<CollapsibleSection
 					key={level.levelTypeId}
@@ -382,19 +395,6 @@ export function CourseOutcomeMappingGrid({
 					{renderTable(view.electives)}
 				</CollapsibleSection>
 			)}
-
-			<CollapsibleSection
-				title={t('loads.courseOutcomeMappingMaintenance.grid.legend')}
-				icon={<InformationCircleIcon className="h-4 w-4" />}>
-				<ul className="divide-y divide-zinc-100">
-					{view.outcomeTypes.map((type) => (
-						<li key={type.id} className="flex items-center gap-4 px-4 py-3">
-							<CourseOutcomeMappingGlyph type={type} className="w-6" />
-							<span className="text-sm text-zinc-700">{localized(type.name, locale)}</span>
-						</li>
-					))}
-				</ul>
-			</CollapsibleSection>
 
 			<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
 		</div>
