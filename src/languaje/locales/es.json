@@ -592,7 +592,7 @@
 			},
 			"survey": {
 				"title": "Notificaciones de encuestas",
-				"subtitle": "Plantillas de correo por tipo de encuesta y programa",
+				"subtitle": "Plantillas de correo por tipo de encuesta y carrera",
 				"create": "Nueva notificación",
 				"form": {
 					"createTitle": "Nueva notificación de encuesta",
@@ -603,7 +603,7 @@
 				},
 				"col": {
 					"surveyType": "Tipo de encuesta",
-					"program": "Programa",
+					"program": "Carrera",
 					"name": "Nombre",
 					"status": "Estado",
 					"actions": "Acciones"
@@ -611,13 +611,13 @@
 				"field": {
 					"surveyType": "Tipo de encuesta",
 					"surveyTypePlaceholder": "Seleccione un tipo",
-					"program": "Programa",
-					"programPlaceholder": "Seleccione un programa",
+					"program": "Carrera",
+					"programPlaceholder": "Seleccione una carrera",
 					"ccReceivers": "Destinatarios en copia (correos)",
 					"ccReceiversPlaceholder": "correo1@ejemplo.com, correo2@ejemplo.com"
 				},
 				"error": {
-					"required": "Seleccione el tipo de encuesta y el programa"
+					"required": "Seleccione el tipo de encuesta y la carrera"
 				}
 			},
 			"user": {
@@ -1269,8 +1269,8 @@
 					"loadPeriods": "No se pudieron cargar los periodos académicos.",
 					"loadCourses": "No se pudieron cargar los cursos.",
 					"noSchool": "No se pudo obtener la escuela del usuario.",
-					"noStudyPlan": "No se encontró un plan de estudios para este curso y periodo.",
-					"studyPlan": "Error al obtener datos del plan de estudios."
+					"noStudyPlan": "No se encontró una malla curricular para este curso y periodo.",
+					"studyPlan": "Error al obtener datos de la malla curricular."
 				}
 			},
 			"step2": {
