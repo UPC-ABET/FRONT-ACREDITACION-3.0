@@ -1,12 +1,22 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getApiData } from '@/shared/lib';
+import { courseOutcomeMappingFiltersService } from '../services/courseOutcomeMappingFiltersService';
 import {
 	courseOutcomeMappingMaintenanceService,
 	courseOutcomeMappingsService,
 	type CourseOutcomeMappingFilters,
 } from '../services/courseOutcomeMappingsService';
-import type { CourseOutcomeMappingBulkSave, CourseOutcomeMappingFilter } from '../types';
+import type {
+	AccreditorOption,
+	CommissionOption,
+	CourseOutcomeMappingBulkSave,
+	CourseOutcomeMappingFilter,
+	CourseOutcomeMappingFilterRow,
+	CourseOutcomeMappingView,
+	ProgramOption,
+} from '../types';
 import { academicQueryKeys } from './queryKeys';
 
 export function useCourseOutcomeMappings(
@@ -20,11 +30,46 @@ export function useCourseOutcomeMappings(
 	});
 }
 
-export function useCourseOutcomeMappingFilters(filter: CourseOutcomeMappingFilter, enabled = true) {
+export function useAccreditors() {
 	return useQuery({
-		queryKey: academicQueryKeys.courseOutcomeMappingMaintenanceFilters(filter),
+		queryKey: academicQueryKeys.accreditors(),
 		queryFn: () =>
-			courseOutcomeMappingMaintenanceService.getByFilters(filter).then((response) => response.data),
+			courseOutcomeMappingFiltersService
+				.accreditors()
+				.then((response) => getApiData<AccreditorOption[]>(response)),
+		staleTime: Infinity,
+	});
+}
+
+export function useCommissionOptions(accreditorId: number | null) {
+	return useQuery({
+		queryKey: academicQueryKeys.commissionOptions(accreditorId ?? 0),
+		queryFn: () =>
+			courseOutcomeMappingFiltersService
+				.commissionOptions(accreditorId!)
+				.then((response) => getApiData<CommissionOption[]>(response)),
+		enabled: accreditorId != null,
+	});
+}
+
+export function useProgramOptions(commissionId: number | null) {
+	return useQuery({
+		queryKey: academicQueryKeys.programOptions(commissionId ?? 0),
+		queryFn: () =>
+			courseOutcomeMappingFiltersService
+				.programOptions(commissionId!)
+				.then((response) => getApiData<ProgramOption[]>(response)),
+		enabled: commissionId != null,
+	});
+}
+
+export function useProgramCommissionsDetailed(filter: CourseOutcomeMappingFilter, enabled = true) {
+	return useQuery({
+		queryKey: academicQueryKeys.programCommissionsDetailed(filter),
+		queryFn: () =>
+			courseOutcomeMappingFiltersService
+				.detailedByFilters(filter)
+				.then((response) => getApiData<CourseOutcomeMappingFilterRow[]>(response)),
 		enabled,
 		placeholderData: (previousData) => previousData,
 	});
@@ -36,7 +81,7 @@ export function useCourseOutcomeMappingView(programCommissionId: number | null) 
 		queryFn: () =>
 			courseOutcomeMappingMaintenanceService
 				.view(programCommissionId!)
-				.then((response) => response.data),
+				.then((response) => getApiData<CourseOutcomeMappingView>(response)),
 		enabled: programCommissionId != null,
 	});
 }
@@ -46,7 +91,9 @@ export function useCourseOutcomeMappingBulkSave() {
 
 	return useMutation({
 		mutationFn: (body: CourseOutcomeMappingBulkSave) =>
-			courseOutcomeMappingMaintenanceService.bulkSave(body).then((response) => response.data),
+			courseOutcomeMappingMaintenanceService
+				.bulkSave(body)
+				.then((response) => getApiData<CourseOutcomeMappingView>(response)),
 		onSuccess: (_data, variables) => {
 			queryClient.invalidateQueries({
 				queryKey: academicQueryKeys.courseOutcomeMappingMaintenanceView(

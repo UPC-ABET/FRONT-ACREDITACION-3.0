@@ -2,8 +2,6 @@ import { ApiResponse } from '@/shared';
 import { apiPost, apiPut } from '@/shared/lib';
 import type {
 	CourseOutcomeMappingBulkSave,
-	CourseOutcomeMappingFilter,
-	CourseOutcomeMappingFilterRow,
 	CourseOutcomeMappingResponse,
 	CourseOutcomeMappingView,
 } from '../types';
@@ -24,12 +22,6 @@ export const courseOutcomeMappingsService = {
 const MAINTENANCE_BASE = '/course-outcome-mappings/maintenance';
 
 export const courseOutcomeMappingMaintenanceService = {
-	getByFilters(
-		filter: CourseOutcomeMappingFilter,
-	): Promise<ApiResponse<CourseOutcomeMappingFilterRow[]>> {
-		return apiPost(`${MAINTENANCE_BASE}/get-by-filters`, filter);
-	},
-
 	view(programCommissionId: number): Promise<ApiResponse<CourseOutcomeMappingView>> {
 		return apiPost(`${MAINTENANCE_BASE}/view`, { programCommissionId });
 	},

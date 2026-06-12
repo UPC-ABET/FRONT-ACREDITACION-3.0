@@ -356,6 +356,25 @@ export type CourseOutcomeMappingFilter = Partial<{
 	programId: number;
 }>;
 
+export type AccreditorOption = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+};
+
+export type CommissionOption = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+	accreditorId: number;
+};
+
+export type ProgramOption = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+};
+
 export type CourseOutcomeMappingFilterRow = {
 	programCommissionId: number;
 	accreditorId: number;

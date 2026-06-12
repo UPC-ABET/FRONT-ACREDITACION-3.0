@@ -14,8 +14,12 @@ import {
 	TableRow,
 } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
-import { useCourseOutcomeMappingFilters } from '../hooks';
-import type { CourseOutcomeMappingFilterRow } from '../types';
+import {
+	useAccreditors,
+	useCommissionOptions,
+	useProgramCommissionsDetailed,
+	useProgramOptions,
+} from '../hooks';
 
 interface CourseOutcomeMappingListProps {
 	onView: (programCommissionId: number) => void;
@@ -29,19 +33,6 @@ interface FilterOption {
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
 	if (!text) return '';
 	return text[locale as 'es' | 'en'] ?? text.es ?? text.en ?? '';
-}
-
-function distinctOptions(
-	rows: CourseOutcomeMappingFilterRow[],
-	getValue: (row: CourseOutcomeMappingFilterRow) => number,
-	getLabel: (row: CourseOutcomeMappingFilterRow) => string,
-): FilterOption[] {
-	const byValue = new Map<number, FilterOption>();
-	for (const row of rows) {
-		const value = getValue(row);
-		if (!byValue.has(value)) byValue.set(value, { value, label: getLabel(row) });
-	}
-	return [...byValue.values()];
 }
 
 export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListProps) {
@@ -60,54 +51,46 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 		setProgramId(null);
 	}
 
-	const filtersQuery = useCourseOutcomeMappingFilters({}, academicPeriodId != null);
-
-	const rows = useMemo(() => filtersQuery.data ?? [], [filtersQuery.data]);
-
-	const accreditorOptions = useMemo(
-		() =>
-			distinctOptions(
-				rows,
-				(row) => row.accreditorId,
-				(row) => `${row.accreditorCode} - ${localized(row.accreditorName, locale)}`,
-			),
-		[rows, locale],
+	const accreditorsQuery = useAccreditors();
+	const commissionsQuery = useCommissionOptions(accreditorId);
+	const programsQuery = useProgramOptions(commissionId);
+	const detailedQuery = useProgramCommissionsDetailed(
+		{
+			accreditorId: accreditorId ?? undefined,
+			commissionId: commissionId ?? undefined,
+			programId: programId ?? undefined,
+		},
+		academicPeriodId != null,
 	);
 
-	const commissionOptions = useMemo(
+	const accreditorOptions = useMemo<FilterOption[]>(
 		() =>
-			distinctOptions(
-				rows.filter((row) => accreditorId == null || row.accreditorId === accreditorId),
-				(row) => row.commissionId,
-				(row) => `${row.commissionCode} - ${localized(row.commissionName, locale)}`,
-			),
-		[rows, accreditorId, locale],
+			(accreditorsQuery.data ?? []).map((accreditor) => ({
+				value: accreditor.id,
+				label: `${accreditor.code} - ${localized(accreditor.name, locale)}`,
+			})),
+		[accreditorsQuery.data, locale],
 	);
 
-	const programOptions = useMemo(
+	const commissionOptions = useMemo<FilterOption[]>(
 		() =>
-			distinctOptions(
-				rows.filter(
-					(row) =>
-						(accreditorId == null || row.accreditorId === accreditorId) &&
-						(commissionId == null || row.commissionId === commissionId),
-				),
-				(row) => row.programId,
-				(row) => localized(row.programName, locale) || String(row.programId),
-			),
-		[rows, accreditorId, commissionId, locale],
+			(commissionsQuery.data ?? []).map((commission) => ({
+				value: commission.id,
+				label: `${commission.code} - ${localized(commission.name, locale)}`,
+			})),
+		[commissionsQuery.data, locale],
 	);
 
-	const tableRows = useMemo(
+	const programOptions = useMemo<FilterOption[]>(
 		() =>
-			rows.filter(
-				(row) =>
-					(accreditorId == null || row.accreditorId === accreditorId) &&
-					(commissionId == null || row.commissionId === commissionId) &&
-					(programId == null || row.programId === programId),
-			),
-		[rows, accreditorId, commissionId, programId],
+			(programsQuery.data ?? []).map((program) => ({
+				value: program.id,
+				label: localized(program.name, locale) || program.code,
+			})),
+		[programsQuery.data, locale],
 	);
+
+	const tableRows = detailedQuery.data ?? [];
 
 	const selectedOption = (options: FilterOption[], value: number | null) =>
 		options.find((option) => option.value === value) ?? null;
@@ -151,7 +134,6 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 						placeholder={t('loads.courseOutcomeMappingMaintenance.filters.accreditorPlaceholder')}
 						isSearchable
 						isClearable
-						isDisabled={academicPeriodId == null}
 						options={accreditorOptions}
 						value={selectedOption(accreditorOptions, accreditorId)}
 						onChange={(_name, value) =>
@@ -164,7 +146,7 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 						placeholder={t('loads.courseOutcomeMappingMaintenance.filters.commissionPlaceholder')}
 						isSearchable
 						isClearable
-						isDisabled={academicPeriodId == null || accreditorId == null}
+						isDisabled={accreditorId == null}
 						options={commissionOptions}
 						value={selectedOption(commissionOptions, commissionId)}
 						onChange={(_name, value) =>
@@ -188,16 +170,16 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 
 				{academicPeriodId == null ? (
 					renderNotice(t('loads.courseOutcomeMappingMaintenance.selectPeriod'))
-				) : filtersQuery.isError ? (
+				) : detailedQuery.isError ? (
 					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
 						<p className="text-sm text-zinc-500">
 							{t('loads.courseOutcomeMappingMaintenance.error.loadFailed')}
 						</p>
-						<Button variant="surface" size="sm" onClick={() => filtersQuery.refetch()}>
+						<Button variant="surface" size="sm" onClick={() => detailedQuery.refetch()}>
 							{t('loads.courseOutcomeMappingMaintenance.retry')}
 						</Button>
 					</div>
-				) : filtersQuery.isLoading ? (
+				) : detailedQuery.isLoading ? (
 					<div className="space-y-2" aria-busy>
 						{Array.from({ length: 6 }).map((_, index) => (
 							<div key={index} className="h-12 animate-pulse rounded-lg bg-zinc-100" />
@@ -208,7 +190,7 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 				) : (
 					<div
 						className={
-							filtersQuery.isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'
+							detailedQuery.isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'
 						}>
 						<div className="overflow-x-auto">
 							<Table>
