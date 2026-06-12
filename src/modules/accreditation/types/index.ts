@@ -31,3 +31,25 @@ export type OutcomeResponse = {
 	outcomeName: { en: string; es: string };
 	outcomeDescription: { en: string; es: string };
 };
+
+export type OutcomeMaintenanceItem = {
+	id: number;
+	commissionCode: string;
+	outcomeCode: string;
+	outcomeName: { es: string; en: string };
+	outcomeDescription: { es: string; en: string };
+};
+
+export type OutcomeMaintenanceList = {
+	items: OutcomeMaintenanceItem[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+};
+
+export type OutcomeMaintenanceUpdate = {
+	outcomeCode?: string;
+	outcomeName?: { es: string; en: string };
+	outcomeDescription?: { es: string; en: string };
+};

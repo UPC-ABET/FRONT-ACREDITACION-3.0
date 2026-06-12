@@ -5,7 +5,7 @@ import { useTypesByGroupCode } from '@/modules/core/hooks';
 import type { TypeOption } from '@/modules/core';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { useABET, useI18n } from '@/providers';
-import { UploadPanel, UploadTypeSelect } from '../components';
+import { UploadMaintenance, UploadPanel, UploadTypeSelect } from '../components';
 
 export default function LoadsPage() {
 	const { t } = useI18n();
@@ -41,6 +41,8 @@ export default function LoadsPage() {
 					{t('loads.upload.selectBoth')}
 				</p>
 			)}
+
+			{selectedType && <UploadMaintenance typeCode={selectedType.code} />}
 		</div>
 	);
 }

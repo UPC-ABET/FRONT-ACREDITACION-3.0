@@ -918,6 +918,31 @@
 		"notFound": "El recurso solicitado no fue encontrado",
 		"conflict": "Conflicto con el estado actual del recurso",
 		"internalServer": "Error interno del servidor",
+		"professor": {
+			"inUse": "No se puede eliminar el docente porque está en uso.",
+			"codeExists": "El código ya está asignado a otro docente.",
+			"notFound": "Docente no encontrado.",
+			"updateFailed": "No se pudo actualizar el docente.",
+			"deleteFailed": "No se pudo eliminar el docente.",
+			"usedInCourseSections": "Asignado a secciones de curso",
+			"usedInProjectEvaluators": "Asignado como evaluador de proyecto",
+			"usedInCharts": "Aparece en un organigrama",
+			"usedInFindings": "Vinculado a hallazgos de mejora",
+			"usedInIfcStatuses": "Vinculado a registros de estado IFC",
+			"sharedStaff": "Otro docente comparte esta identidad de personal"
+		},
+		"outcome": {
+			"inUse": "No se puede eliminar el outcome porque está en uso.",
+			"outcomeCodeExists": "El código ya está asignado a otro outcome de la comisión.",
+			"notFound": "Outcome no encontrado.",
+			"updateFailed": "No se pudo actualizar el outcome.",
+			"usedInCourseOutcomeMappings": "Mapeado a un curso",
+			"usedInRubricQuestions": "Usado en una pregunta de rúbrica",
+			"usedInStudentCourseOutcomeGrades": "Tiene notas de estudiantes",
+			"usedInFindingOutcomes": "Vinculado a un hallazgo",
+			"usedInOutcomeConfigs": "Tiene una configuración de encuesta",
+			"usedInScores": "Tiene puntajes de encuesta"
+		},
 		"auth": {
 			"accessDenied": "Acceso denegado — no tienes permisos suficientes",
 			"noPermissionsConfigured": "No tienes permisos para ingresar",
@@ -2342,6 +2367,99 @@
 				"fileTypeInvalid": "Solo se permiten archivos .xlsx",
 				"templateDownloadFailed": "No se pudo descargar la plantilla",
 				"generic": "Ocurrió un error durante la carga"
+			}
+		},
+		"maintenance": {
+			"title": "Mantenimiento de docentes",
+			"subtitle": "Edita o elimina los docentes cargados.",
+			"searchPlaceholder": "Buscar por código o nombre...",
+			"results": "resultados",
+			"page": "Página",
+			"prev": "Anterior",
+			"next": "Siguiente",
+			"retry": "Reintentar",
+			"col": {
+				"code": "Código",
+				"firstName": "Nombres",
+				"lastName": "Apellidos",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"empty": {
+				"title": "Sin docentes",
+				"subtitle": "No se encontraron docentes con los filtros actuales."
+			},
+			"error": {
+				"loadFailed": "No se pudieron cargar los docentes."
+			},
+			"edit": {
+				"title": "Editar docente",
+				"subtitle": "Actualiza el código, nombres y apellidos.",
+				"save": "Guardar",
+				"error": "No se pudo guardar el docente."
+			},
+			"delete": {
+				"title": "Eliminar docente",
+				"message": "Esto eliminará el docente de forma permanente. ¿Continuar?",
+				"error": "No se pudo eliminar el docente.",
+				"blockedTitle": "No se puede eliminar",
+				"blockedSubtitle": "Este docente está en uso en:"
+			},
+			"toast": {
+				"updated": "Docente actualizado correctamente.",
+				"deleted": "Docente eliminado correctamente."
+			}
+		},
+		"outcomesMaintenance": {
+			"title": "Mantenimiento de outcomes",
+			"subtitle": "Edita o elimina los outcomes por carrera y período académico.",
+			"programLabel": "Carrera",
+			"programPlaceholder": "Selecciona una carrera",
+			"selectPeriod": "Selecciona un período académico para continuar.",
+			"selectProgram": "Selecciona una carrera para ver los outcomes.",
+			"searchPlaceholder": "Buscar por código o nombre...",
+			"results": "resultados",
+			"page": "Página",
+			"prev": "Anterior",
+			"next": "Siguiente",
+			"retry": "Reintentar",
+			"col": {
+				"commissionCode": "Comisión",
+				"outcomeCode": "Código",
+				"outcomeName": "Nombre",
+				"outcomeDescription": "Descripción",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"empty": {
+				"title": "Sin outcomes",
+				"subtitle": "No se encontraron outcomes con los filtros actuales."
+			},
+			"error": {
+				"loadFailed": "No se pudieron cargar los outcomes."
+			},
+			"edit": {
+				"title": "Editar outcome",
+				"subtitle": "Actualiza el código, nombre y descripción (es/en).",
+				"save": "Guardar",
+				"error": "No se pudo guardar el outcome."
+			},
+			"delete": {
+				"title": "Eliminar outcome",
+				"message": "Esto eliminará el outcome de forma permanente. ¿Continuar?",
+				"error": "No se pudo eliminar el outcome.",
+				"blockedTitle": "No se puede eliminar",
+				"blockedSubtitle": "Este outcome está en uso en:"
+			},
+			"toast": {
+				"updated": "Outcome actualizado correctamente.",
+				"deleted": "Outcome eliminado correctamente."
 			}
 		}
 	},

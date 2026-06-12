@@ -918,6 +918,31 @@
 		"notFound": "The requested resource was not found",
 		"conflict": "Conflict with the current state of the resource",
 		"internalServer": "Internal server error",
+		"professor": {
+			"inUse": "This teacher cannot be deleted because it is in use.",
+			"codeExists": "The code is already assigned to another teacher.",
+			"notFound": "Teacher not found.",
+			"updateFailed": "Could not update the teacher.",
+			"deleteFailed": "Could not delete the teacher.",
+			"usedInCourseSections": "Assigned to course sections",
+			"usedInProjectEvaluators": "Assigned as a project evaluator",
+			"usedInCharts": "Appears in an org chart",
+			"usedInFindings": "Linked to improvement findings",
+			"usedInIfcStatuses": "Linked to IFC status records",
+			"sharedStaff": "Another teacher shares this staff identity"
+		},
+		"outcome": {
+			"inUse": "This outcome cannot be deleted because it is in use.",
+			"outcomeCodeExists": "The code is already assigned to another outcome in the commission.",
+			"notFound": "Outcome not found.",
+			"updateFailed": "Could not update the outcome.",
+			"usedInCourseOutcomeMappings": "Mapped to a course",
+			"usedInRubricQuestions": "Used in a rubric question",
+			"usedInStudentCourseOutcomeGrades": "Has student grades",
+			"usedInFindingOutcomes": "Linked to a finding",
+			"usedInOutcomeConfigs": "Has a survey outcome config",
+			"usedInScores": "Has survey scores"
+		},
 		"auth": {
 			"accessDenied": "Access denied — insufficient permissions",
 			"noPermissionsConfigured": "You do not have permission to enter.",
@@ -2342,6 +2367,99 @@
 				"fileTypeInvalid": "Only .xlsx files are allowed",
 				"templateDownloadFailed": "Failed to download the template",
 				"generic": "An error occurred during the upload"
+			}
+		},
+		"maintenance": {
+			"title": "Teachers maintenance",
+			"subtitle": "Edit or delete the uploaded teachers.",
+			"searchPlaceholder": "Search by code or name...",
+			"results": "results",
+			"page": "Page",
+			"prev": "Previous",
+			"next": "Next",
+			"retry": "Retry",
+			"col": {
+				"code": "Code",
+				"firstName": "First name",
+				"lastName": "Last name",
+				"actions": "Actions"
+			},
+			"actions": {
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"empty": {
+				"title": "No teachers",
+				"subtitle": "No teachers found with the current filters."
+			},
+			"error": {
+				"loadFailed": "Could not load the teachers."
+			},
+			"edit": {
+				"title": "Edit teacher",
+				"subtitle": "Update the code, first name and last name.",
+				"save": "Save",
+				"error": "Could not save the teacher."
+			},
+			"delete": {
+				"title": "Delete teacher",
+				"message": "This will permanently delete the teacher. Continue?",
+				"error": "Could not delete the teacher.",
+				"blockedTitle": "Cannot delete",
+				"blockedSubtitle": "This teacher is in use in:"
+			},
+			"toast": {
+				"updated": "Teacher updated successfully.",
+				"deleted": "Teacher deleted successfully."
+			}
+		},
+		"outcomesMaintenance": {
+			"title": "Outcomes maintenance",
+			"subtitle": "Edit or delete outcomes by program and academic period.",
+			"programLabel": "Program",
+			"programPlaceholder": "Select a program",
+			"selectPeriod": "Select an academic period to continue.",
+			"selectProgram": "Select a program to view its outcomes.",
+			"searchPlaceholder": "Search by code or name...",
+			"results": "results",
+			"page": "Page",
+			"prev": "Previous",
+			"next": "Next",
+			"retry": "Retry",
+			"col": {
+				"commissionCode": "Commission",
+				"outcomeCode": "Code",
+				"outcomeName": "Name",
+				"outcomeDescription": "Description",
+				"actions": "Actions"
+			},
+			"actions": {
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"empty": {
+				"title": "No outcomes",
+				"subtitle": "No outcomes found with the current filters."
+			},
+			"error": {
+				"loadFailed": "Could not load the outcomes."
+			},
+			"edit": {
+				"title": "Edit outcome",
+				"subtitle": "Update the code, name and description (es/en).",
+				"save": "Save",
+				"error": "Could not save the outcome."
+			},
+			"delete": {
+				"title": "Delete outcome",
+				"message": "This will permanently delete the outcome. Continue?",
+				"error": "Could not delete the outcome.",
+				"blockedTitle": "Cannot delete",
+				"blockedSubtitle": "This outcome is in use in:"
+			},
+			"toast": {
+				"updated": "Outcome updated successfully.",
+				"deleted": "Outcome deleted successfully."
 			}
 		}
 	},

@@ -139,6 +139,28 @@ export type ProfessorSearchResponse = {
 	staff: ProfessorStaffResponse;
 };
 
+export type ProfessorMaintenanceItem = {
+	id: number;
+	staffId: number;
+	code: string;
+	firstName: string;
+	lastName: string;
+};
+
+export type ProfessorMaintenanceList = {
+	items: ProfessorMaintenanceItem[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+};
+
+export type ProfessorMaintenanceUpdate = {
+	code?: string;
+	firstName?: string;
+	lastName?: string;
+};
+
 export type ProfessorResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
