@@ -308,76 +308,80 @@ export function CourseOutcomeMappingGrid({
 
 	return (
 		<div className="space-y-4">
-			<Card>
-				<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-					<div className="space-y-1">
-						<Button variant="ghost" size="sm" onClick={onBack} className="mb-1 -ml-2">
-							<ArrowLeftIcon className="h-4 w-4" />
-							<span>{t('loads.courseOutcomeMappingMaintenance.actions.back')}</span>
-						</Button>
-						<h2 className="text-lg font-semibold text-gray-900">
-							{localized(header.programName, locale)}
-						</h2>
-						<p className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-gray-500">
-							<span className="font-mono">{header.accreditorCode}</span>
-							<span className="font-mono">{header.commissionCode}</span>
-							<span className="font-mono">{header.academicPeriodCode}</span>
-						</p>
-					</div>
-					<div className="flex items-center gap-2">
-						{editMode ? (
-							<>
-								<Button
-									variant="secondary"
-									size="sm"
-									onClick={handleCancel}
-									disabled={bulkSave.isPending}>
-									<XMarkIcon className="h-4 w-4" />
-									<span>{t('dialog.actions.cancel')}</span>
-								</Button>
+			<div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+				<Card className="lg:flex-1">
+					<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+						<div className="space-y-1">
+							<Button variant="ghost" size="sm" onClick={onBack} className="mb-1 -ml-2">
+								<ArrowLeftIcon className="h-4 w-4" />
+								<span>{t('loads.courseOutcomeMappingMaintenance.actions.back')}</span>
+							</Button>
+							<h2 className="text-lg font-semibold text-gray-900">
+								{localized(header.programName, locale)}
+							</h2>
+							<p className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-gray-500">
+								<span className="font-mono">{header.accreditorCode}</span>
+								<span className="font-mono">{header.commissionCode}</span>
+								<span className="font-mono">{header.academicPeriodCode}</span>
+							</p>
+						</div>
+						<div className="flex items-center gap-2">
+							{editMode ? (
+								<>
+									<Button
+										variant="secondary"
+										size="sm"
+										onClick={handleCancel}
+										disabled={bulkSave.isPending}>
+										<XMarkIcon className="h-4 w-4" />
+										<span>{t('dialog.actions.cancel')}</span>
+									</Button>
+									<Button
+										variant="primary"
+										size="sm"
+										onClick={handleSave}
+										disabled={bulkSave.isPending}>
+										<CheckIcon className="h-4 w-4" />
+										<span>{t('loads.courseOutcomeMappingMaintenance.actions.save')}</span>
+									</Button>
+								</>
+							) : (
 								<Button
 									variant="primary"
 									size="sm"
-									onClick={handleSave}
-									disabled={bulkSave.isPending}>
-									<CheckIcon className="h-4 w-4" />
-									<span>{t('loads.courseOutcomeMappingMaintenance.actions.save')}</span>
+									onClick={() => setEditMode(true)}
+									disabled={!canEdit}>
+									<PencilSquareIcon className="h-4 w-4" />
+									<span>{t('loads.courseOutcomeMappingMaintenance.actions.edit')}</span>
 								</Button>
-							</>
-						) : (
-							<Button
-								variant="primary"
-								size="sm"
-								onClick={() => setEditMode(true)}
-								disabled={!canEdit}>
-								<PencilSquareIcon className="h-4 w-4" />
-								<span>{t('loads.courseOutcomeMappingMaintenance.actions.edit')}</span>
-							</Button>
-						)}
+							)}
+						</div>
 					</div>
+
+					{saveErrors.length > 0 && (
+						<ul className="mt-4 list-disc space-y-1 rounded-lg border border-red-200 bg-red-50 px-5 py-3 pl-8 text-sm text-red-700">
+							{saveErrors.map((reason, index) => (
+								<li key={`${reason}-${index}`}>{reason}</li>
+							))}
+						</ul>
+					)}
+				</Card>
+
+				<div className="lg:w-80 lg:shrink-0">
+					<CollapsibleSection
+						title={t('loads.courseOutcomeMappingMaintenance.grid.legend')}
+						icon={<InformationCircleIcon className="h-4 w-4" />}>
+						<ul className="divide-y divide-zinc-100">
+							{view.outcomeTypes.map((type) => (
+								<li key={type.id} className="flex items-center gap-4 px-4 py-3">
+									<CourseOutcomeMappingGlyph type={type} className="w-6" />
+									<span className="text-sm text-zinc-700">{localized(type.name, locale)}</span>
+								</li>
+							))}
+						</ul>
+					</CollapsibleSection>
 				</div>
-
-				{saveErrors.length > 0 && (
-					<ul className="mt-4 list-disc space-y-1 rounded-lg border border-red-200 bg-red-50 px-5 py-3 pl-8 text-sm text-red-700">
-						{saveErrors.map((reason, index) => (
-							<li key={`${reason}-${index}`}>{reason}</li>
-						))}
-					</ul>
-				)}
-			</Card>
-
-			<CollapsibleSection
-				title={t('loads.courseOutcomeMappingMaintenance.grid.legend')}
-				icon={<InformationCircleIcon className="h-4 w-4" />}>
-				<ul className="divide-y divide-zinc-100">
-					{view.outcomeTypes.map((type) => (
-						<li key={type.id} className="flex items-center gap-4 px-4 py-3">
-							<CourseOutcomeMappingGlyph type={type} className="w-6" />
-							<span className="text-sm text-zinc-700">{localized(type.name, locale)}</span>
-						</li>
-					))}
-				</ul>
-			</CollapsibleSection>
+			</div>
 
 			{view.levels.map((level) => (
 				<CollapsibleSection
