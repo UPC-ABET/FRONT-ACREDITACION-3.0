@@ -324,3 +324,46 @@ export type StudentSectionEnrollmentMaintenanceUpdate = {
 	courseSectionId?: number;
 	enrolledStudentId?: number;
 };
+
+// ─── Study plans maintenance (master list, scoped by modality) ──────────────────
+
+export type StudyPlanMaintenanceItem = {
+	id: number;
+	code: string;
+	programName: { es: string; en: string };
+};
+
+export type StudyPlanMaintenanceList = PaginatedEnvelope<StudyPlanMaintenanceItem>;
+
+export type StudyPlanMaintenanceUpdate = {
+	code?: string;
+	programId?: number;
+};
+
+// ─── Study plan courses view (scoped by period) ─────────────────────────────────
+
+export type StudyPlanCourseRow = {
+	id: number;
+	courseId: number;
+	courseCode: string;
+	courseName: { es: string; en: string };
+	learningOutcome: { es: string; en: string };
+};
+
+export type StudyPlanLevelGroup = {
+	level: number;
+	levelTypeId: number;
+	levelName: { es: string; en: string };
+	courses: StudyPlanCourseRow[];
+};
+
+export type StudyPlanCoursesViewData = {
+	levels: StudyPlanLevelGroup[];
+	electives: StudyPlanCourseRow[];
+};
+
+export type CourseUpdateBody = {
+	code?: string;
+	name?: { es: string; en: string };
+	learningOutcome?: { es: string; en: string };
+};

@@ -5,7 +5,6 @@ import { FilterProgramRequest } from '../types';
 export const programsQueryKeys = {
 	all: ['programs'] as const,
 	filtered: (filters: FilterProgramRequest) => ['programs', 'filtered', filters] as const,
-	list: ['programs', 'all'] as const,
 };
 
 export function usePrograms(filters: FilterProgramRequest = {}) {
@@ -15,11 +14,16 @@ export function usePrograms(filters: FilterProgramRequest = {}) {
 	});
 }
 
-/** Full program list for select filters (GET /programs/get-all). Loaded once. */
-export function useAllPrograms() {
+/**
+ * Programs of the active modality for program selectors (GET /programs/by-modality).
+ * The modality travels as the X-Modality-Type-Id header; it is part of the key so a
+ * modality switch re-fetches, and the query is disabled until a modality is selected.
+ */
+export function useProgramsByModality(modalityTypeId: number | null) {
 	return useQuery({
-		queryKey: programsQueryKeys.list,
-		queryFn: () => programsService.getAll().then((r) => r.data ?? []),
+		queryKey: [...programsQueryKeys.all, 'by-modality', modalityTypeId] as const,
+		queryFn: () => programsService.byModality().then((r) => r.data ?? []),
+		enabled: modalityTypeId != null,
 		staleTime: Infinity,
 	});
 }

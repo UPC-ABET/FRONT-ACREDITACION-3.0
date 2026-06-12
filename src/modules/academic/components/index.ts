@@ -8,3 +8,8 @@ export * from './EnrolledStudentsMaintenance';
 export * from './EnrolledStudentMaintenanceEditDialog';
 export * from './StudentSectionEnrollmentsMaintenance';
 export * from './StudentSectionEnrollmentEditDialog';
+export * from './StudyPlansMaintenance';
+export * from './StudyPlanMasterList';
+export * from './StudyPlanCoursesView';
+export * from './StudyPlanEditDialog';
+export * from './StudyPlanCourseEditDialog';

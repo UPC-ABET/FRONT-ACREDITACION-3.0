@@ -952,6 +952,18 @@
 			"notFound": "Matrícula no encontrada.",
 			"updateFailed": "No se pudo actualizar la matrícula."
 		},
+		"studyPlan": {
+			"inUse": "No se puede eliminar la malla porque está en uso.",
+			"usedInAcademicPeriods": "Está ofertada en períodos académicos",
+			"codeExists": "El código ya está asignado a otra malla de la carrera.",
+			"notFound": "Malla no encontrada.",
+			"updateFailed": "No se pudo actualizar la malla."
+		},
+		"studyPlanCourse": {
+			"inUse": "No se puede quitar el curso porque está en uso.",
+			"usedInRubrics": "Tiene rúbricas",
+			"usedInCourseOutcomeMappings": "Tiene articulación de outcomes"
+		},
 		"courseSection": {
 			"inUse": "No se puede eliminar la sección porque está en uso.",
 			"sectionExists": "Ya existe una sección con ese código.",
@@ -2637,6 +2649,97 @@
 			"toast": {
 				"updated": "Matrícula actualizada correctamente.",
 				"deleted": "Matrícula eliminada correctamente."
+			}
+		},
+		"studyPlansMaintenance": {
+			"title": "Mantenimiento de mallas curriculares",
+			"subtitle": "Edita, revisa o elimina las mallas curriculares de la modalidad seleccionada.",
+			"selectModality": "Selecciona una modalidad en la cabecera para continuar.",
+			"programLabel": "Carrera",
+			"programPlaceholder": "Todas las carreras",
+			"searchPlaceholder": "Buscar por código o carrera...",
+			"results": "resultados",
+			"page": "Página",
+			"prev": "Anterior",
+			"next": "Siguiente",
+			"retry": "Reintentar",
+			"col": {
+				"code": "Código de malla",
+				"program": "Carrera",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"view": "Ver cursos",
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"empty": {
+				"title": "Sin mallas curriculares",
+				"subtitle": "No se encontraron mallas con los filtros actuales."
+			},
+			"error": {
+				"loadFailed": "No se pudieron cargar las mallas curriculares."
+			},
+			"edit": {
+				"title": "Editar malla curricular",
+				"subtitle": "Actualiza el código y la carrera de la malla.",
+				"save": "Guardar",
+				"error": "No se pudo guardar la malla.",
+				"current": "Actual",
+				"programPlaceholder": "Selecciona una carrera"
+			},
+			"delete": {
+				"title": "Eliminar malla curricular",
+				"message": "Esto eliminará la malla de forma permanente. ¿Continuar?",
+				"error": "No se pudo eliminar la malla.",
+				"blockedTitle": "No se puede eliminar",
+				"blockedSubtitle": "Esta malla está en uso en:"
+			},
+			"toast": {
+				"updated": "Malla actualizada correctamente.",
+				"deleted": "Malla eliminada correctamente."
+			}
+		},
+		"studyPlanCoursesView": {
+			"back": "Volver a las mallas",
+			"title": "Cursos de la malla curricular",
+			"subtitle": "Cursos agrupados por nivel para el período académico seleccionado.",
+			"selectPeriod": "Selecciona un período académico en la cabecera para continuar.",
+			"retry": "Reintentar",
+			"electives": "Electivos",
+			"col": {
+				"courseCode": "Código",
+				"courseName": "Curso",
+				"learningOutcome": "Resultado de aprendizaje",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"empty": {
+				"title": "Sin cursos",
+				"subtitle": "La malla no está ofertada en este período académico."
+			},
+			"error": {
+				"loadFailed": "No se pudieron cargar los cursos."
+			},
+			"edit": {
+				"title": "Editar curso",
+				"subtitle": "Edita el curso compartido (afecta todos los lugares donde se usa).",
+				"save": "Guardar",
+				"error": "No se pudo guardar el curso."
+			},
+			"delete": {
+				"title": "Quitar curso de la malla",
+				"message": "Esto quitará el curso de esta malla (no elimina el curso). ¿Continuar?",
+				"error": "No se pudo quitar el curso de la malla.",
+				"blockedTitle": "No se puede quitar",
+				"blockedSubtitle": "Este curso de la malla está en uso en:"
+			},
+			"toast": {
+				"updated": "Curso actualizado correctamente.",
+				"deleted": "Curso quitado de la malla correctamente."
 			}
 		}
 	},

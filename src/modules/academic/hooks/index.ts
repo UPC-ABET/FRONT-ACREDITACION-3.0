@@ -10,5 +10,7 @@ export * from './useProfessorsMaintenance';
 export * from './useCourseSectionsMaintenance';
 export * from './useEnrolledStudentsMaintenance';
 export * from './useStudentSectionEnrollmentsMaintenance';
+export * from './useStudyPlansMaintenance';
+export * from './useStudyPlanCoursesView';
 export * from './usePrograms';
 export * from './useGlobalAcademicFilters';

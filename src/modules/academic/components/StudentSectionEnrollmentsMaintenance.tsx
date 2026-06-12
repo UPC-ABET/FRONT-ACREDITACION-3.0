@@ -33,7 +33,7 @@ import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
 import {
-	useAllPrograms,
+	useProgramsByModality,
 	useStudentSectionEnrollmentMaintenanceMutations,
 	useStudentSectionEnrollmentsMaintenance,
 } from '../hooks';
@@ -82,10 +82,10 @@ function RowActions({
 
 export function StudentSectionEnrollmentsMaintenance() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId } = useABET();
+	const { academicPeriodId, modalityTypeId } = useABET();
 	const { toast, showToast, clearToast } = useApiErrorToast();
 
-	const { data: programs = [] } = useAllPrograms();
+	const { data: programs = [] } = useProgramsByModality(modalityTypeId);
 
 	const [programId, setProgramId] = useState<number | null>(null);
 	const [search, setSearch] = useState('');

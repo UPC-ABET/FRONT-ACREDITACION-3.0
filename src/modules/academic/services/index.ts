@@ -9,3 +9,4 @@ export * from './professorsService';
 export * from './programsService';
 export * from './studentSectionEnrollmentsService';
 export * from './studyPlanCoursesService';
+export * from './studyPlansService';

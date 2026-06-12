@@ -952,6 +952,18 @@
 			"notFound": "Enrollment not found.",
 			"updateFailed": "Could not update the enrollment."
 		},
+		"studyPlan": {
+			"inUse": "This study plan cannot be deleted because it is in use.",
+			"usedInAcademicPeriods": "Offered in academic periods",
+			"codeExists": "The code is already assigned to another study plan in the program.",
+			"notFound": "Study plan not found.",
+			"updateFailed": "Could not update the study plan."
+		},
+		"studyPlanCourse": {
+			"inUse": "This course cannot be removed because it is in use.",
+			"usedInRubrics": "Has rubrics",
+			"usedInCourseOutcomeMappings": "Has outcome mappings"
+		},
 		"courseSection": {
 			"inUse": "This section cannot be deleted because it is in use.",
 			"sectionExists": "A section with that code already exists.",
@@ -2637,6 +2649,97 @@
 			"toast": {
 				"updated": "Enrollment updated successfully.",
 				"deleted": "Enrollment deleted successfully."
+			}
+		},
+		"studyPlansMaintenance": {
+			"title": "Study plans maintenance",
+			"subtitle": "Edit, review or delete the study plans for the selected modality.",
+			"selectModality": "Select a modality in the header to continue.",
+			"programLabel": "Program",
+			"programPlaceholder": "All programs",
+			"searchPlaceholder": "Search by code or program...",
+			"results": "results",
+			"page": "Page",
+			"prev": "Previous",
+			"next": "Next",
+			"retry": "Retry",
+			"col": {
+				"code": "Study Plan Code",
+				"program": "Program Name",
+				"actions": "Actions"
+			},
+			"actions": {
+				"view": "View courses",
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"empty": {
+				"title": "No study plans",
+				"subtitle": "No study plans found with the current filters."
+			},
+			"error": {
+				"loadFailed": "Could not load the study plans."
+			},
+			"edit": {
+				"title": "Edit study plan",
+				"subtitle": "Update the study plan code and program.",
+				"save": "Save",
+				"error": "Could not save the study plan.",
+				"current": "Current",
+				"programPlaceholder": "Select a program"
+			},
+			"delete": {
+				"title": "Delete study plan",
+				"message": "This will permanently delete the study plan. Continue?",
+				"error": "Could not delete the study plan.",
+				"blockedTitle": "Cannot delete",
+				"blockedSubtitle": "This study plan is in use in:"
+			},
+			"toast": {
+				"updated": "Study plan updated successfully.",
+				"deleted": "Study plan deleted successfully."
+			}
+		},
+		"studyPlanCoursesView": {
+			"back": "Back to study plans",
+			"title": "Study plan courses",
+			"subtitle": "Courses grouped by level for the selected academic period.",
+			"selectPeriod": "Select an academic period in the header to continue.",
+			"retry": "Retry",
+			"electives": "Electives",
+			"col": {
+				"courseCode": "Course Code",
+				"courseName": "Course Name",
+				"learningOutcome": "Learning Outcome",
+				"actions": "Actions"
+			},
+			"actions": {
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"empty": {
+				"title": "No courses",
+				"subtitle": "The study plan is not offered in this academic period."
+			},
+			"error": {
+				"loadFailed": "Could not load the courses."
+			},
+			"edit": {
+				"title": "Edit course",
+				"subtitle": "Edits the shared course (affects everywhere it is used).",
+				"save": "Save",
+				"error": "Could not save the course."
+			},
+			"delete": {
+				"title": "Remove course from plan",
+				"message": "This removes the course from this plan (does not delete the course). Continue?",
+				"error": "Could not remove the course from the plan.",
+				"blockedTitle": "Cannot remove",
+				"blockedSubtitle": "This plan course is in use in:"
+			},
+			"toast": {
+				"updated": "Course updated successfully.",
+				"deleted": "Course removed from the plan successfully."
 			}
 		}
 	},

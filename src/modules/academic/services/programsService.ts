@@ -7,7 +7,9 @@ export const programsService = {
 		return apiPost('/programs/get-by-filters', filters);
 	},
 
-	getAll(): Promise<ApiResponse<ProgramResponse[]>> {
-		return apiGet('/programs/get-all');
+	// Programs of the active modality. Modality travels as the X-Modality-Type-Id
+	// header (injected globally), not a query param.
+	byModality(): Promise<ApiResponse<ProgramResponse[]>> {
+		return apiGet('/programs/by-modality');
 	},
 };

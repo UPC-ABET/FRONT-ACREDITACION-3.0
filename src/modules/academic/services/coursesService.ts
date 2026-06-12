@@ -3,14 +3,20 @@ import type {
 	FilterCourseRequest,
 	CourseResponse,
 	CourseLookupItem,
+	CourseUpdateBody,
 	EnrolledStudentResponse,
 	PaginatedEnvelope,
 } from '../types';
-import { apiGet, apiPost } from '@/shared/lib';
+import { apiGet, apiPost, apiPut } from '@/shared/lib';
 
 export const coursesService = {
 	getByFilters(filters: FilterCourseRequest = {}): Promise<ApiResponse<CourseResponse[]>> {
 		return apiPost('/courses/get-by-filters', filters);
+	},
+
+	// Edits the shared course record (affects everywhere the course is used).
+	update(courseId: number, body: CourseUpdateBody): Promise<ApiResponse<CourseResponse>> {
+		return apiPut(`/courses/update/${courseId}`, body);
 	},
 
 	lookup(params: {

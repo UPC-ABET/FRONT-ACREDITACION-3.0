@@ -5,6 +5,7 @@ import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	ExclamationTriangleIcon,
+	EyeIcon,
 	MagnifyingGlassIcon,
 	PencilSquareIcon,
 	TrashIcon,
@@ -33,18 +34,12 @@ import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
 import {
-	useCampuses,
-	useEnrolledStudentMaintenanceMutations,
-	useEnrolledStudentsMaintenance,
 	useProgramsByModality,
-	useSectionModalityTypes,
+	useStudyPlanMaintenanceMutations,
+	useStudyPlansMaintenance,
 } from '../hooks';
-import type {
-	EnrolledStudentMaintenanceItem,
-	EnrolledStudentMaintenanceUpdate,
-	ProgramResponse,
-} from '../types';
-import { EnrolledStudentMaintenanceEditDialog } from './EnrolledStudentMaintenanceEditDialog';
+import type { StudyPlanMaintenanceItem, StudyPlanMaintenanceUpdate } from '../types';
+import { StudyPlanEditDialog } from './StudyPlanEditDialog';
 
 const PAGE_SIZE = 20;
 
@@ -54,18 +49,25 @@ function localized(text: { es?: string; en?: string } | undefined, locale: strin
 }
 
 function RowActions({
+	onView,
 	onEdit,
 	onDelete,
+	viewLabel,
 	editLabel,
 	deleteLabel,
 }: {
+	onView: () => void;
 	onEdit: () => void;
 	onDelete: () => void;
+	viewLabel: string;
 	editLabel: string;
 	deleteLabel: string;
 }) {
 	return (
 		<div className="flex items-center justify-end gap-1">
+			<Button variant="ghost" size="icon" onClick={onView} aria-label={viewLabel} title={viewLabel}>
+				<EyeIcon className="h-4 w-4" />
+			</Button>
 			<Button variant="ghost" size="icon" onClick={onEdit} aria-label={editLabel} title={editLabel}>
 				<PencilSquareIcon className="h-4 w-4" />
 			</Button>
@@ -82,32 +84,30 @@ function RowActions({
 	);
 }
 
-export function EnrolledStudentsMaintenance() {
+export function StudyPlanMasterList({ onView }: { onView: (studyPlanId: number) => void }) {
 	const { t, locale } = useI18n();
-	const { academicPeriodId, modalityTypeId } = useABET();
+	const { modalityTypeId } = useABET();
 	const { toast, showToast, clearToast } = useApiErrorToast();
 
 	const { data: programs = [] } = useProgramsByModality(modalityTypeId);
-	const { data: campuses = [] } = useCampuses();
-	const { data: modalityTypes = [] } = useSectionModalityTypes();
 
 	const [programId, setProgramId] = useState<number | null>(null);
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
 	const [page, setPage] = useState(1);
-	const [editing, setEditing] = useState<EnrolledStudentMaintenanceItem | null>(null);
+	const [editing, setEditing] = useState<StudyPlanMaintenanceItem | null>(null);
 	const [editError, setEditError] = useState<string | null>(null);
-	const [pendingDelete, setPendingDelete] = useState<EnrolledStudentMaintenanceItem | null>(null);
+	const [pendingDelete, setPendingDelete] = useState<StudyPlanMaintenanceItem | null>(null);
 	const [blockedReasons, setBlockedReasons] = useState<string[] | null>(null);
 
-	const { update, remove } = useEnrolledStudentMaintenanceMutations();
+	const { update, remove } = useStudyPlanMaintenanceMutations();
 
 	useEffect(() => {
 		const timer = setTimeout(() => setDebouncedSearch(search), 300);
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	// A new search, program filter, or header period always returns to the first page.
+	// A new search, program filter, or modality always returns to the first page.
 	const handleSearchChange = (value: string) => {
 		setSearch(value);
 		setPage(1);
@@ -120,10 +120,11 @@ export function EnrolledStudentsMaintenance() {
 
 	useEffect(() => {
 		setPage(1);
-	}, [academicPeriodId]);
+		setProgramId(null);
+	}, [modalityTypeId]);
 
-	const { data, isLoading, isFetching, isError, refetch } = useEnrolledStudentsMaintenance({
-		academicPeriodId,
+	const { data, isLoading, isFetching, isError, refetch } = useStudyPlansMaintenance({
+		modalityTypeId,
 		programId,
 		page,
 		pageSize: PAGE_SIZE,
@@ -136,7 +137,7 @@ export function EnrolledStudentsMaintenance() {
 
 	const programOptions = useMemo(
 		() =>
-			programs.map((program: ProgramResponse) => ({
+			programs.map((program) => ({
 				value: program.id,
 				label: localized(program.name, locale) || program.code,
 			})),
@@ -144,20 +145,17 @@ export function EnrolledStudentsMaintenance() {
 	);
 	const selectedProgram = programOptions.find((option) => option.value === programId) ?? null;
 
-	const handleSaveEdit = async (body: EnrolledStudentMaintenanceUpdate) => {
+	const handleSaveEdit = async (body: StudyPlanMaintenanceUpdate) => {
 		if (!editing) return;
 		setEditError(null);
 		try {
 			await update.mutateAsync({ id: editing.id, body });
-			showToast('loads.enrolledStudentsMaintenance.toast.updated', 'success');
+			showToast('loads.studyPlansMaintenance.toast.updated', 'success');
 			setEditing(null);
 		} catch (error) {
 			const [reason] = getApiErrorReasons(error);
 			setEditError(
-				tryTranslate(
-					t,
-					reason ?? getErrorMessage(error, 'loads.enrolledStudentsMaintenance.edit.error'),
-				),
+				tryTranslate(t, reason ?? getErrorMessage(error, 'loads.studyPlansMaintenance.edit.error')),
 			);
 		}
 	};
@@ -166,7 +164,7 @@ export function EnrolledStudentsMaintenance() {
 		if (!pendingDelete) return;
 		try {
 			await remove.mutateAsync(pendingDelete.id);
-			showToast('loads.enrolledStudentsMaintenance.toast.deleted', 'success');
+			showToast('loads.studyPlansMaintenance.toast.deleted', 'success');
 			setPendingDelete(null);
 		} catch (error) {
 			const reasons = getApiErrorReasons(error);
@@ -174,40 +172,41 @@ export function EnrolledStudentsMaintenance() {
 			if (reasons.length > 0) {
 				setBlockedReasons(reasons);
 			} else {
-				showToast(getErrorMessage(error, 'loads.enrolledStudentsMaintenance.delete.error'), 'error');
+				showToast(getErrorMessage(error, 'loads.studyPlansMaintenance.delete.error'), 'error');
 			}
 		}
 	};
 
-	const openEdit = (item: EnrolledStudentMaintenanceItem) => {
+	const openEdit = (item: StudyPlanMaintenanceItem) => {
 		setEditError(null);
 		setEditing(item);
 	};
 
-	const editLabel = t('loads.enrolledStudentsMaintenance.actions.edit');
-	const deleteLabel = t('loads.enrolledStudentsMaintenance.actions.delete');
+	const viewLabel = t('loads.studyPlansMaintenance.actions.view');
+	const editLabel = t('loads.studyPlansMaintenance.actions.edit');
+	const deleteLabel = t('loads.studyPlansMaintenance.actions.delete');
 
-	const noPeriodSelected = academicPeriodId == null;
+	const noModalitySelected = modalityTypeId == null;
 
 	return (
 		<Card>
 			<div className="space-y-5">
 				<div className="space-y-1">
 					<h2 className="text-lg font-semibold text-gray-900">
-						{t('loads.enrolledStudentsMaintenance.title')}
+						{t('loads.studyPlansMaintenance.title')}
 					</h2>
-					<p className="text-sm text-gray-500">{t('loads.enrolledStudentsMaintenance.subtitle')}</p>
+					<p className="text-sm text-gray-500">{t('loads.studyPlansMaintenance.subtitle')}</p>
 				</div>
 
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
 					<div className="w-full sm:max-w-xs">
 						<Select
 							name="program"
-							label={t('loads.enrolledStudentsMaintenance.programLabel')}
-							placeholder={t('loads.enrolledStudentsMaintenance.programPlaceholder')}
+							label={t('loads.studyPlansMaintenance.programLabel')}
+							placeholder={t('loads.studyPlansMaintenance.programPlaceholder')}
 							isSearchable
 							isClearable
-							isDisabled={noPeriodSelected}
+							isDisabled={noModalitySelected}
 							options={programOptions}
 							value={selectedProgram}
 							onChange={(_name, value) =>
@@ -221,27 +220,23 @@ export function EnrolledStudentsMaintenance() {
 							type="search"
 							value={search}
 							onChange={(event) => handleSearchChange(event.target.value)}
-							placeholder={t('loads.enrolledStudentsMaintenance.searchPlaceholder')}
-							aria-label={t('loads.enrolledStudentsMaintenance.searchPlaceholder')}
-							disabled={noPeriodSelected}
+							placeholder={t('loads.studyPlansMaintenance.searchPlaceholder')}
+							aria-label={t('loads.studyPlansMaintenance.searchPlaceholder')}
+							disabled={noModalitySelected}
 							className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
 						/>
 					</div>
 				</div>
 
-				{noPeriodSelected ? (
+				{noModalitySelected ? (
 					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm text-zinc-500">
-							{t('loads.enrolledStudentsMaintenance.selectPeriod')}
-						</p>
+						<p className="text-sm text-zinc-500">{t('loads.studyPlansMaintenance.selectModality')}</p>
 					</div>
 				) : isError ? (
 					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm text-zinc-500">
-							{t('loads.enrolledStudentsMaintenance.error.loadFailed')}
-						</p>
+						<p className="text-sm text-zinc-500">{t('loads.studyPlansMaintenance.error.loadFailed')}</p>
 						<Button variant="surface" size="sm" onClick={() => refetch()}>
-							{t('loads.enrolledStudentsMaintenance.retry')}
+							{t('loads.studyPlansMaintenance.retry')}
 						</Button>
 					</div>
 				) : isLoading ? (
@@ -253,11 +248,9 @@ export function EnrolledStudentsMaintenance() {
 				) : items.length === 0 ? (
 					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
 						<p className="text-sm font-medium text-zinc-700">
-							{t('loads.enrolledStudentsMaintenance.empty.title')}
+							{t('loads.studyPlansMaintenance.empty.title')}
 						</p>
-						<p className="text-sm text-zinc-500">
-							{t('loads.enrolledStudentsMaintenance.empty.subtitle')}
-						</p>
+						<p className="text-sm text-zinc-500">{t('loads.studyPlansMaintenance.empty.subtitle')}</p>
 					</div>
 				) : (
 					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
@@ -266,36 +259,26 @@ export function EnrolledStudentsMaintenance() {
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.studentCode')}</TableHead>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.firstName')}</TableHead>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.lastName')}</TableHead>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.campus')}</TableHead>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.program')}</TableHead>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.modality')}</TableHead>
+										<TableHead>{t('loads.studyPlansMaintenance.col.code')}</TableHead>
+										<TableHead>{t('loads.studyPlansMaintenance.col.program')}</TableHead>
 										<TableHead className="text-right">
-											{t('loads.enrolledStudentsMaintenance.col.actions')}
+											{t('loads.studyPlansMaintenance.col.actions')}
 										</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
 									{items.map((item) => (
 										<TableRow key={item.id}>
-											<TableCell className="font-mono text-zinc-800">{item.studentCode}</TableCell>
-											<TableCell className="text-zinc-700">{item.firstName}</TableCell>
-											<TableCell className="text-zinc-700">{item.lastName}</TableCell>
-											<TableCell className="text-zinc-700">
-												{localized(item.campusName, locale)}
-											</TableCell>
+											<TableCell className="font-mono text-zinc-800">{item.code}</TableCell>
 											<TableCell className="text-zinc-700">
 												{localized(item.programName, locale)}
 											</TableCell>
-											<TableCell className="text-zinc-700">
-												{localized(item.modalityTypeName, locale)}
-											</TableCell>
 											<TableCell>
 												<RowActions
+													onView={() => onView(item.id)}
 													onEdit={() => openEdit(item)}
 													onDelete={() => setPendingDelete(item)}
+													viewLabel={viewLabel}
 													editLabel={editLabel}
 													deleteLabel={deleteLabel}
 												/>
@@ -314,21 +297,17 @@ export function EnrolledStudentsMaintenance() {
 									className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
 									<div className="flex items-start justify-between gap-3">
 										<div className="min-w-0 space-y-1">
-											<p className="font-mono text-xs text-zinc-400">{item.studentCode}</p>
-											<p className="truncate font-medium text-zinc-900">
-												{item.firstName} {item.lastName}
-											</p>
-											<p className="text-sm text-zinc-500">{localized(item.programName, locale)}</p>
-											<p className="flex flex-wrap gap-2 text-xs text-zinc-400">
-												<span>{localized(item.campusName, locale)}</span>
-												<span>·</span>
-												<span>{localized(item.modalityTypeName, locale)}</span>
+											<p className="font-mono font-medium text-zinc-900">{item.code}</p>
+											<p className="truncate text-sm text-zinc-500">
+												{localized(item.programName, locale)}
 											</p>
 										</div>
 										<div className="shrink-0">
 											<RowActions
+												onView={() => onView(item.id)}
 												onEdit={() => openEdit(item)}
 												onDelete={() => setPendingDelete(item)}
+												viewLabel={viewLabel}
 												editLabel={editLabel}
 												deleteLabel={deleteLabel}
 											/>
@@ -340,10 +319,10 @@ export function EnrolledStudentsMaintenance() {
 					</div>
 				)}
 
-				{!noPeriodSelected && !isLoading && !isError && items.length > 0 && (
+				{!noModalitySelected && !isLoading && !isError && items.length > 0 && (
 					<div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
 						<p className="text-xs text-zinc-500">
-							{total} {t('loads.enrolledStudentsMaintenance.results')}
+							{total} {t('loads.studyPlansMaintenance.results')}
 						</p>
 						<div className="flex items-center justify-center gap-3">
 							<Button
@@ -351,18 +330,18 @@ export function EnrolledStudentsMaintenance() {
 								size="sm"
 								disabled={page <= 1 || isFetching}
 								onClick={() => setPage((current) => Math.max(1, current - 1))}
-								aria-label={t('loads.enrolledStudentsMaintenance.prev')}>
+								aria-label={t('loads.studyPlansMaintenance.prev')}>
 								<ChevronLeftIcon className="h-4 w-4" />
 							</Button>
 							<span className="text-sm text-zinc-600">
-								{t('loads.enrolledStudentsMaintenance.page')} {page} / {totalPages}
+								{t('loads.studyPlansMaintenance.page')} {page} / {totalPages}
 							</span>
 							<Button
 								variant="surface"
 								size="sm"
 								disabled={page >= totalPages || isFetching}
 								onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-								aria-label={t('loads.enrolledStudentsMaintenance.next')}>
+								aria-label={t('loads.studyPlansMaintenance.next')}>
 								<ChevronRightIcon className="h-4 w-4" />
 							</Button>
 						</div>
@@ -371,11 +350,9 @@ export function EnrolledStudentsMaintenance() {
 			</div>
 
 			{editing && (
-				<EnrolledStudentMaintenanceEditDialog
+				<StudyPlanEditDialog
 					item={editing}
 					programs={programs}
-					campuses={campuses}
-					modalityTypes={modalityTypes}
 					saving={update.isPending}
 					errorMessage={editError}
 					onClose={() => setEditing(null)}
@@ -386,9 +363,9 @@ export function EnrolledStudentsMaintenance() {
 			<ConfirmDialog
 				isOpen={pendingDelete != null}
 				onClose={() => setPendingDelete(null)}
-				title={t('loads.enrolledStudentsMaintenance.delete.title')}
-				message={t('loads.enrolledStudentsMaintenance.delete.message')}
-				confirmLabel={t('loads.enrolledStudentsMaintenance.actions.delete')}
+				title={t('loads.studyPlansMaintenance.delete.title')}
+				message={t('loads.studyPlansMaintenance.delete.message')}
+				confirmLabel={t('loads.studyPlansMaintenance.actions.delete')}
 				declineLabel={t('dialog.actions.cancel')}
 				onConfirm={handleConfirmDelete}
 				onDecline={() => setPendingDelete(null)}
@@ -404,10 +381,10 @@ export function EnrolledStudentsMaintenance() {
 					<DialogHeader>
 						<div className="flex items-center gap-2 text-red-700">
 							<ExclamationTriangleIcon className="h-5 w-5" />
-							<DialogTitle>{t('loads.enrolledStudentsMaintenance.delete.blockedTitle')}</DialogTitle>
+							<DialogTitle>{t('loads.studyPlansMaintenance.delete.blockedTitle')}</DialogTitle>
 						</div>
 						<DialogDescription>
-							{t('loads.enrolledStudentsMaintenance.delete.blockedSubtitle')}
+							{t('loads.studyPlansMaintenance.delete.blockedSubtitle')}
 						</DialogDescription>
 					</DialogHeader>
 					<ul className="list-disc space-y-1 pl-5 text-sm text-zinc-700">
