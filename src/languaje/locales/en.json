@@ -5,7 +5,7 @@
 		"performanceLevels": "Performance Levels",
 		"ifc": {
 			"label": "IFC",
-			"dashboard": "Dashboard",
+			"overview": "Overview",
 			"findings": "Findings"
 		},
 		"rubrics": "Rubrics",
@@ -32,7 +32,7 @@
 		"logout": "Logout",
 		"loads": {
 			"label": "Loads",
-			"dashboard": "Dashboard",
+			"upload": "Upload",
 			"history": "History"
 		}
 	},
@@ -2376,6 +2376,11 @@
 		"page": {
 			"title": "Bulk uploads",
 			"subtitle": "Pick an upload type and an academic period, then drop in the Excel file."
+		},
+		"tabs": {
+			"label": "Upload sections",
+			"upload": "Excel Upload",
+			"maintenance": "Maintenance"
 		},
 		"upload": {
 			"typeLabel": "Upload type",

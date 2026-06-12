@@ -13,7 +13,7 @@
 		"ifcs": "IFCs",
 		"ifc": {
 			"label": "IFC",
-			"dashboard": "Dashboard",
+			"overview": "Resumen",
 			"findings": "Hallazgos"
 		},
 		"surveys": {
@@ -32,7 +32,7 @@
 		"logout": "Cerrar sesión",
 		"loads": {
 			"label": "Cargas",
-			"dashboard": "Dashboard",
+			"upload": "Carga",
 			"history": "Historial"
 		}
 	},
@@ -2376,6 +2376,11 @@
 		"page": {
 			"title": "Cargas masivas",
 			"subtitle": "Selecciona el tipo de carga y el período académico para subir el archivo Excel."
+		},
+		"tabs": {
+			"label": "Secciones de carga",
+			"upload": "Carga Excel",
+			"maintenance": "Mantenimiento"
 		},
 		"upload": {
 			"typeLabel": "Tipo de carga",

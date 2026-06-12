@@ -52,7 +52,7 @@ export function StudyPlanCourseEditDialog({ item, saving, errorMessage, onClose,
 			onOpenChange={(open) => {
 				if (!open && !saving) onClose();
 			}}>
-			<DialogContent className="sm:max-w-lg">
+			<DialogContent className="sm:max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>{t('loads.studyPlanCoursesView.edit.title')}</DialogTitle>
 					<DialogDescription>{t('loads.studyPlanCoursesView.edit.subtitle')}</DialogDescription>

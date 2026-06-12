@@ -43,7 +43,7 @@ export function ProfessorMaintenanceEditDialog({
 			onOpenChange={(open) => {
 				if (!open && !saving) onClose();
 			}}>
-			<DialogContent className="sm:max-w-md">
+			<DialogContent className="sm:max-w-xl">
 				<DialogHeader>
 					<DialogTitle>{t('loads.maintenance.edit.title')}</DialogTitle>
 					<DialogDescription>{t('loads.maintenance.edit.subtitle')}</DialogDescription>

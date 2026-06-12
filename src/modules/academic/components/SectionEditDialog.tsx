@@ -122,7 +122,7 @@ export function SectionEditDialog({
 			onOpenChange={(open) => {
 				if (!open && !saving) onClose();
 			}}>
-			<DialogContent className="sm:max-w-lg">
+			<DialogContent className="sm:max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>{t('loads.sectionsMaintenance.edit.title')}</DialogTitle>
 					<DialogDescription>{t('loads.sectionsMaintenance.edit.subtitle')}</DialogDescription>

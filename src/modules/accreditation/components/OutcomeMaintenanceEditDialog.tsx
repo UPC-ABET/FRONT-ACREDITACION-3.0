@@ -48,7 +48,7 @@ export function OutcomeMaintenanceEditDialog({
 			onOpenChange={(open) => {
 				if (!open && !saving) onClose();
 			}}>
-			<DialogContent className="sm:max-w-lg">
+			<DialogContent className="sm:max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>{t('loads.outcomesMaintenance.edit.title')}</DialogTitle>
 					<DialogDescription>{t('loads.outcomesMaintenance.edit.subtitle')}</DialogDescription>
