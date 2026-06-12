@@ -62,11 +62,11 @@ export default function UploadHistoryTable({
 		{ ...(filters ?? {}), page, pageSize: PAGE_SIZE },
 		academicPeriodId,
 	);
-	const rows = data?.items ?? [];
+	const noPeriodSelected = academicPeriodId == null;
+
+	const rows = noPeriodSelected ? [] : (data?.items ?? []);
 	const total = data?.total ?? 0;
 	const totalPages = data?.totalPages ?? 1;
-
-	const noPeriodSelected = academicPeriodId == null;
 
 	return (
 		<Card title={t('uploadHistory.table.title')} description={t('uploadHistory.table.description')}>
