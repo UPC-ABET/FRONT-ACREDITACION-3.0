@@ -349,3 +349,86 @@ export type CourseUpdateBody = {
 	name?: { es: string; en: string };
 	learningOutcome?: { es: string; en: string };
 };
+
+export type CourseOutcomeMappingFilter = Partial<{
+	academicPeriodId: number;
+	accreditorId: number;
+	commissionId: number;
+	programId: number;
+}>;
+
+export type CourseOutcomeMappingFilterRow = {
+	programCommissionId: number;
+	accreditorId: number;
+	accreditorCode: string;
+	accreditorName: { es: string; en: string };
+	commissionId: number;
+	commissionCode: string;
+	commissionName: { es: string; en: string };
+	programId: number;
+	programName: { es: string; en: string };
+	academicPeriodId: number;
+	academicPeriodCode: string;
+};
+
+export type CourseOutcomeMappingOutcomeType = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+	glyph: string;
+	color: string;
+	role: string;
+};
+
+export type CourseOutcomeMappingColumn = {
+	outcomeId: number;
+	outcomeCode: string;
+	outcomeName: { es: string; en: string };
+};
+
+export type CourseOutcomeMark = {
+	outcomeId: number;
+	outcomeTypeId: number;
+};
+
+export type CourseOutcomeMappingCourse = {
+	studyPlanCourseId: number;
+	studyPlanCode: string;
+	courseCode: string;
+	courseName: { es: string; en: string };
+	isTrainingCourse: boolean;
+	mappings: CourseOutcomeMark[];
+};
+
+export type CourseOutcomeMappingLevel = {
+	levelTypeId: number;
+	levelName: { es: string; en: string };
+	level: number;
+	courses: CourseOutcomeMappingCourse[];
+};
+
+export type CourseOutcomeMappingHeader = {
+	programCommissionId: number;
+	accreditorCode: string;
+	commissionCode: string;
+	programName: { es: string; en: string };
+	academicPeriodCode: string;
+};
+
+export type CourseOutcomeMappingView = {
+	header: CourseOutcomeMappingHeader;
+	outcomeTypes: CourseOutcomeMappingOutcomeType[];
+	outcomes: CourseOutcomeMappingColumn[];
+	levels: CourseOutcomeMappingLevel[];
+	electives: CourseOutcomeMappingCourse[];
+};
+
+export type CourseOutcomeMappingBulkSaveCourse = {
+	studyPlanCourseId: number;
+	outcomes: CourseOutcomeMark[];
+};
+
+export type CourseOutcomeMappingBulkSave = {
+	programCommissionId: number;
+	courses: CourseOutcomeMappingBulkSaveCourse[];
+};

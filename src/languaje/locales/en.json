@@ -904,6 +904,12 @@
 	},
 	"error": {
 		"generic": "An unexpected error occurred",
+		"courseOutcomeMapping": {
+			"courseOutOfScope": "The course does not belong to the selected program.",
+			"outcomeOutOfScope": "The outcome does not belong to the selected commission.",
+			"invalidOutcomeType": "Invalid mark type for the mapping.",
+			"duplicateCourseOutcome": "The course has the same outcome marked more than once."
+		},
 		"validation": "The submitted data is not valid",
 		"badRequest": "Invalid request",
 		"unauthorized": "You are not authenticated",
@@ -2494,6 +2500,52 @@
 			"toast": {
 				"updated": "Outcome updated successfully.",
 				"deleted": "Outcome deleted successfully."
+			}
+		},
+		"courseOutcomeMappingMaintenance": {
+			"title": "Course outcome mapping maintenance",
+			"subtitle": "View and edit how courses map to Student Outcomes per program.",
+			"filters": {
+				"academicPeriod": "Academic period",
+				"academicPeriodPlaceholder": "Select a period",
+				"accreditor": "Accreditor",
+				"accreditorPlaceholder": "Select an accreditor",
+				"commission": "Commission",
+				"commissionPlaceholder": "Select a commission",
+				"program": "Program",
+				"programPlaceholder": "Select a program"
+			},
+			"selectPeriod": "Select an academic period to continue.",
+			"empty": "No records found for the current filters.",
+			"retry": "Retry",
+			"col": {
+				"accreditorCode": "Accreditor code",
+				"commissionCode": "Commission code",
+				"program": "Program",
+				"academicPeriod": "Period",
+				"actions": "Actions"
+			},
+			"actions": {
+				"view": "View",
+				"back": "Back",
+				"edit": "Edit",
+				"save": "Save"
+			},
+			"grid": {
+				"studyPlanCode": "Study plan",
+				"courseCode": "Code",
+				"courseName": "Course",
+				"cf": "CF",
+				"studentOutcome": "Student Outcome",
+				"electives": "Electives",
+				"legend": "Legend"
+			},
+			"toast": {
+				"saved": "Changes saved successfully."
+			},
+			"error": {
+				"loadFailed": "The outcome mapping could not be loaded.",
+				"saveFailed": "The changes could not be saved."
 			}
 		},
 		"sectionsMaintenance": {

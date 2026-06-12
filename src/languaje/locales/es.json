@@ -904,6 +904,12 @@
 	},
 	"error": {
 		"generic": "Ocurrió un error inesperado",
+		"courseOutcomeMapping": {
+			"courseOutOfScope": "El curso no pertenece a la carrera seleccionada.",
+			"outcomeOutOfScope": "El outcome no pertenece a la comisión seleccionada.",
+			"invalidOutcomeType": "Tipo de marca no válido para el mapeo.",
+			"duplicateCourseOutcome": "El curso tiene el mismo outcome marcado más de una vez."
+		},
 		"validation": "Los datos ingresados no son válidos",
 		"badRequest": "Solicitud inválida",
 		"unauthorized": "No estás autenticado",
@@ -2494,6 +2500,52 @@
 			"toast": {
 				"updated": "Outcome actualizado correctamente.",
 				"deleted": "Outcome eliminado correctamente."
+			}
+		},
+		"courseOutcomeMappingMaintenance": {
+			"title": "Mantenimiento de mapeo de outcomes",
+			"subtitle": "Visualiza y edita el mapeo de cursos contra los Student Outcomes por carrera.",
+			"filters": {
+				"academicPeriod": "Período académico",
+				"academicPeriodPlaceholder": "Selecciona un período",
+				"accreditor": "Acreditador",
+				"accreditorPlaceholder": "Selecciona un acreditador",
+				"commission": "Comisión",
+				"commissionPlaceholder": "Selecciona una comisión",
+				"program": "Carrera",
+				"programPlaceholder": "Selecciona una carrera"
+			},
+			"selectPeriod": "Selecciona un período académico para continuar.",
+			"empty": "No se encontraron registros con los filtros actuales.",
+			"retry": "Reintentar",
+			"col": {
+				"accreditorCode": "Código Acreditador",
+				"commissionCode": "Código Comisión",
+				"program": "Carrera",
+				"academicPeriod": "Período",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"view": "Ver",
+				"back": "Volver",
+				"edit": "Editar",
+				"save": "Guardar"
+			},
+			"grid": {
+				"studyPlanCode": "Malla",
+				"courseCode": "Código",
+				"courseName": "Curso",
+				"cf": "CF",
+				"studentOutcome": "Student Outcome",
+				"electives": "Electivos",
+				"legend": "Leyenda"
+			},
+			"toast": {
+				"saved": "Cambios guardados correctamente."
+			},
+			"error": {
+				"loadFailed": "No se pudo cargar el mapeo de outcomes.",
+				"saveFailed": "No se pudieron guardar los cambios."
 			}
 		},
 		"sectionsMaintenance": {

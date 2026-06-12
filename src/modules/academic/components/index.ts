@@ -13,3 +13,7 @@ export * from './StudyPlanMasterList';
 export * from './StudyPlanCoursesView';
 export * from './StudyPlanEditDialog';
 export * from './StudyPlanCourseEditDialog';
+export * from './CourseOutcomeMappingMaintenance';
+export * from './CourseOutcomeMappingGrid';
+export * from './CourseOutcomeMappingList';
+export * from './CourseOutcomeMappingGlyph';
