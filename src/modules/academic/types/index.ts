@@ -281,3 +281,26 @@ export type PaginatedEnvelope<T> = {
 	pageSize: number;
 	totalPages: number;
 };
+
+// ─── Enrolled students maintenance ──────────────────────────────────────────────
+
+export type EnrolledStudentMaintenanceItem = {
+	id: number;
+	studentCode: string;
+	firstName: string;
+	lastName: string;
+	campusName: { es: string; en: string };
+	programName: { es: string; en: string };
+	modalityTypeName: { es: string; en: string };
+};
+
+export type EnrolledStudentMaintenanceList = PaginatedEnvelope<EnrolledStudentMaintenanceItem>;
+
+export type EnrolledStudentMaintenanceUpdate = {
+	studentCode?: string;
+	firstName?: string;
+	lastName?: string;
+	programId?: number;
+	campusId?: number;
+	enrollementModalityTypeId?: number;
+};

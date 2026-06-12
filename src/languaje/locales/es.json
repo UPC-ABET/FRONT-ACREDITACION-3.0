@@ -936,6 +936,13 @@
 			"usedInOutcomeConfigs": "Tiene una configuración de encuesta",
 			"usedInScores": "Tiene puntajes de encuesta"
 		},
+		"enrolledStudent": {
+			"inUse": "No se puede eliminar el estudiante porque está en uso.",
+			"usedInStudentSectionEnrollments": "Tiene matrículas en secciones",
+			"codeExists": "El código ya está asignado a otro estudiante.",
+			"notFound": "Estudiante no encontrado.",
+			"updateFailed": "No se pudo actualizar el estudiante."
+		},
 		"courseSection": {
 			"inUse": "No se puede eliminar la sección porque está en uso.",
 			"sectionExists": "Ya existe una sección con ese código.",
@@ -2513,6 +2520,58 @@
 			"toast": {
 				"updated": "Sección actualizada correctamente.",
 				"deleted": "Sección eliminada correctamente."
+			}
+		},
+		"enrolledStudentsMaintenance": {
+			"title": "Mantenimiento de estudiantes matriculados",
+			"subtitle": "Edita o elimina los estudiantes matriculados del período académico seleccionado.",
+			"selectPeriod": "Selecciona un período académico en la cabecera para continuar.",
+			"searchPlaceholder": "Buscar por código, nombres o apellidos...",
+			"results": "resultados",
+			"page": "Página",
+			"prev": "Anterior",
+			"next": "Siguiente",
+			"retry": "Reintentar",
+			"col": {
+				"studentCode": "Código",
+				"firstName": "Nombres",
+				"lastName": "Apellidos",
+				"campus": "Campus",
+				"program": "Carrera",
+				"modality": "Modalidad",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"empty": {
+				"title": "Sin estudiantes matriculados",
+				"subtitle": "No se encontraron estudiantes con los filtros actuales."
+			},
+			"error": {
+				"loadFailed": "No se pudieron cargar los estudiantes matriculados."
+			},
+			"edit": {
+				"title": "Editar estudiante matriculado",
+				"subtitle": "Actualiza los datos del estudiante y su matrícula.",
+				"save": "Guardar",
+				"error": "No se pudo guardar el estudiante.",
+				"current": "Actual",
+				"programPlaceholder": "Selecciona una carrera",
+				"campusPlaceholder": "Selecciona un campus",
+				"modalityPlaceholder": "Selecciona una modalidad"
+			},
+			"delete": {
+				"title": "Eliminar estudiante matriculado",
+				"message": "Esto eliminará el estudiante matriculado de forma permanente. ¿Continuar?",
+				"error": "No se pudo eliminar el estudiante.",
+				"blockedTitle": "No se puede eliminar",
+				"blockedSubtitle": "Este estudiante está en uso en:"
+			},
+			"toast": {
+				"updated": "Estudiante actualizado correctamente.",
+				"deleted": "Estudiante eliminado correctamente."
 			}
 		}
 	},

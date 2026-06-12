@@ -3,6 +3,7 @@ export * from './campusesService';
 export * from './courseOutcomeMappingsService';
 export * from './courseSectionsService';
 export * from './coursesService';
+export * from './enrolledStudentsService';
 export * from './performanceLevelsService';
 export * from './professorsService';
 export * from './programsService';

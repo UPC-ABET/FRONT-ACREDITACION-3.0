@@ -8,5 +8,6 @@ export * from './useCourses';
 export * from './useProfessors';
 export * from './useProfessorsMaintenance';
 export * from './useCourseSectionsMaintenance';
+export * from './useEnrolledStudentsMaintenance';
 export * from './usePrograms';
 export * from './useGlobalAcademicFilters';

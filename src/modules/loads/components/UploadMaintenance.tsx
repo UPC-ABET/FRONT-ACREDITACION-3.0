@@ -1,6 +1,10 @@
 'use client';
 
-import { ProfessorsMaintenance, SectionsMaintenance } from '@/modules/academic';
+import {
+	EnrolledStudentsMaintenance,
+	ProfessorsMaintenance,
+	SectionsMaintenance,
+} from '@/modules/academic';
 import { OutcomesMaintenance } from '@/modules/accreditation';
 import { TYPE_CODES } from '@/shared/constants';
 
@@ -21,6 +25,8 @@ export default function UploadMaintenance({ typeCode }: UploadMaintenanceProps) 
 			return <OutcomesMaintenance />;
 		case TYPE_CODES.UPLOAD_TYPE.SECTIONS:
 			return <SectionsMaintenance />;
+		case TYPE_CODES.UPLOAD_TYPE.ENROLLED_STUDENTS:
+			return <EnrolledStudentsMaintenance />;
 		default:
 			return null;
 	}

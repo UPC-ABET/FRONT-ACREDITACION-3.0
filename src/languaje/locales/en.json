@@ -936,6 +936,13 @@
 			"usedInOutcomeConfigs": "Has a survey outcome config",
 			"usedInScores": "Has survey scores"
 		},
+		"enrolledStudent": {
+			"inUse": "This student cannot be deleted because it is in use.",
+			"usedInStudentSectionEnrollments": "Has section enrollments",
+			"codeExists": "The code is already assigned to another student.",
+			"notFound": "Student not found.",
+			"updateFailed": "Could not update the student."
+		},
 		"courseSection": {
 			"inUse": "This section cannot be deleted because it is in use.",
 			"sectionExists": "A section with that code already exists.",
@@ -2513,6 +2520,58 @@
 			"toast": {
 				"updated": "Section updated successfully.",
 				"deleted": "Section deleted successfully."
+			}
+		},
+		"enrolledStudentsMaintenance": {
+			"title": "Enrolled students maintenance",
+			"subtitle": "Edit or delete the enrolled students for the selected academic period.",
+			"selectPeriod": "Select an academic period in the header to continue.",
+			"searchPlaceholder": "Search by code, first or last name...",
+			"results": "results",
+			"page": "Page",
+			"prev": "Previous",
+			"next": "Next",
+			"retry": "Retry",
+			"col": {
+				"studentCode": "Student Code",
+				"firstName": "First Name",
+				"lastName": "Last Name",
+				"campus": "Campus",
+				"program": "Program",
+				"modality": "Modality",
+				"actions": "Actions"
+			},
+			"actions": {
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"empty": {
+				"title": "No enrolled students",
+				"subtitle": "No students found with the current filters."
+			},
+			"error": {
+				"loadFailed": "Could not load the enrolled students."
+			},
+			"edit": {
+				"title": "Edit enrolled student",
+				"subtitle": "Update the student's details and enrollment.",
+				"save": "Save",
+				"error": "Could not save the student.",
+				"current": "Current",
+				"programPlaceholder": "Select a program",
+				"campusPlaceholder": "Select a campus",
+				"modalityPlaceholder": "Select a modality"
+			},
+			"delete": {
+				"title": "Delete enrolled student",
+				"message": "This will permanently delete the enrolled student. Continue?",
+				"error": "Could not delete the student.",
+				"blockedTitle": "Cannot delete",
+				"blockedSubtitle": "This student is in use in:"
+			},
+			"toast": {
+				"updated": "Student updated successfully.",
+				"deleted": "Student deleted successfully."
 			}
 		}
 	},
