@@ -9,8 +9,6 @@ import type {
 
 const LANG = 'es-PE';
 
-// ─── Internal backend shapes ───────────────────────────────────────────────
-
 interface BackendTokenValidation {
 	surveyId?: number;
 	surveyStatus?: string;
@@ -26,7 +24,6 @@ interface BackendTokenValidation {
 	maxRegisterDate?: string;
 	academicPeriod?: string;
 	isCompleted?: boolean;
-	// LCFC legacy fields that may still come from old endpoint
 	estado?: boolean;
 	nombreCarrera?: string;
 	ciclo?: string;
@@ -46,7 +43,6 @@ interface BackendOutcome {
 	commissionId?: number;
 	commissionName?: string;
 	order?: number;
-	// legacy fields
 	comisionId?: number;
 	comisionNombre?: string;
 	competenciaEspecifica?: string;
@@ -69,8 +65,6 @@ interface BackendLcfcSubmitPayload {
 	escuela: string;
 	lista: Array<{ comisionId: number; outcomeId: number; puntaje: number; descripcion?: string }>;
 }
-
-// ─── Adapters ──────────────────────────────────────────────────────────────
 
 function adaptTokenVerification(
 	raw: BackendTokenValidation,
@@ -140,8 +134,6 @@ function adaptLegacySurveyOutcomesResponse(
 	return adaptOutcomes(raw.lista ?? [], dummyVerif);
 }
 
-// ─── LCFC Student Survey ───────────────────────────────────────────────────
-
 export async function verifyLCFCSurveyToken(
 	_school: string,
 	token: string,
@@ -152,7 +144,6 @@ export async function verifyLCFCSurveyToken(
 		);
 		return adaptTokenVerification(res, token);
 	} catch {
-		// Legacy endpoint
 		const res = await apiGet<{ success: boolean; resource?: BackendTokenValidation }>(
 			`lcfc/notificacion/escuela/${encodeURIComponent(_school)}/token/${encodeURIComponent(token)}`,
 		);
@@ -187,7 +178,6 @@ export async function getLCFCSurveyOutcomes(
 		return adaptOutcomes(list, dummyVerif);
 	}
 
-	// Legacy endpoint
 	const url =
 		`lcfc/encuesta/escuela/${encodeURIComponent(_school)}` +
 		`/idioma/${LANG}/alumno/${_studentId}/encuesta/${_surveyId}`;
@@ -203,7 +193,6 @@ export async function submitLCFCSurvey(
 	request: SurveySubmitRequest,
 ): Promise<SurveySubmitResponse> {
 	if (request.token) {
-		// New backend
 		const scores = request.items.map((item) => ({
 			outcomeId: item.outcomeId,
 			score: item.score,
@@ -220,7 +209,6 @@ export async function submitLCFCSurvey(
 		};
 	}
 
-	// Legacy endpoint — map back to backend's expected Spanish keys
 	const payload: BackendLcfcSubmitPayload = {
 		comentario: request.comment,
 		encuestaId: request.surveyId,
@@ -234,8 +222,6 @@ export async function submitLCFCSurvey(
 	};
 	return apiPost<SurveySubmitResponse>('lcfc/encuesta/completar', payload);
 }
-
-// ─── GRA Student Survey ────────────────────────────────────────────────────
 
 export async function verifyGRASurveyToken(token: string): Promise<SurveyTokenVerification> {
 	const res = await apiGet<BackendTokenValidation>(

@@ -60,19 +60,23 @@ export function StudentSectionEnrollmentEditDialog({
 
 	const loadSections = useCallback(
 		({ search, page }: { search: string; page: number }) =>
-			courseSectionsService.maintenanceList({ search, page, pageSize: PAGE_SIZE }).then((response) => ({
-				items: response.data.items,
-				totalPages: response.data.totalPages,
-			})),
+			courseSectionsService
+				.maintenanceList({ search, page, pageSize: PAGE_SIZE })
+				.then((response) => ({
+					items: response.data.items,
+					totalPages: response.data.totalPages,
+				})),
 		[],
 	);
 
 	const loadStudents = useCallback(
 		({ search, page }: { search: string; page: number }) =>
-			enrolledStudentsService.maintenanceList({ search, page, pageSize: PAGE_SIZE }).then((response) => ({
-				items: response.data.items,
-				totalPages: response.data.totalPages,
-			})),
+			enrolledStudentsService
+				.maintenanceList({ search, page, pageSize: PAGE_SIZE })
+				.then((response) => ({
+					items: response.data.items,
+					totalPages: response.data.totalPages,
+				})),
 		[],
 	);
 
@@ -112,10 +116,7 @@ export function StudentSectionEnrollmentEditDialog({
 							getId={(sectionItem) => sectionItem.id}
 							getLabel={sectionLabel}
 						/>
-						<CurrentValue
-							label={currentLabel}
-							value={`${item.courseCode} — ${item.sectionCode}`}
-						/>
+						<CurrentValue label={currentLabel} value={`${item.courseCode} — ${item.sectionCode}`} />
 					</div>
 
 					<div>

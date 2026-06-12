@@ -11,8 +11,6 @@ import { useRubricNonCapstoneState } from '../../hooks/useRubricNonCapstoneState
 import { useRubricNonCapstoneValidation } from '../../hooks/useRubricNonCapstoneValidation';
 import { useRubricNonCapstoneSave } from '../../hooks/useRubricNonCapstoneSave';
 
-// ── ValidationMessages ────────────────────────────────────────────────────────
-
 function ValidationMessages({
 	items,
 	successMessage,
@@ -50,8 +48,6 @@ function ValidationMessages({
 		</ul>
 	);
 }
-
-// ── RubricEditorNonCapstone ───────────────────────────────────────────────────
 
 interface RubricEditorNonCapstoneProps {
 	rubric: RubricDetail;

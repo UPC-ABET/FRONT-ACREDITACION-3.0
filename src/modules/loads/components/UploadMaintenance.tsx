@@ -14,11 +14,6 @@ interface UploadMaintenanceProps {
 	typeCode: string;
 }
 
-/**
- * Renders the maintenance panel for an upload type, when one exists. Upload
- * types without a maintenance panel render nothing. Add new cases here as more
- * upload types gain maintenance support.
- */
 export default function UploadMaintenance({ typeCode }: UploadMaintenanceProps) {
 	switch (typeCode) {
 		case TYPE_CODES.UPLOAD_TYPE.STAFF:

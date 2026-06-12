@@ -207,7 +207,9 @@ export function StudyPlanCoursesView({
 					</div>
 				) : isError ? (
 					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm text-zinc-500">{t('loads.studyPlanCoursesView.error.loadFailed')}</p>
+						<p className="text-sm text-zinc-500">
+							{t('loads.studyPlanCoursesView.error.loadFailed')}
+						</p>
 						<Button variant="surface" size="sm" onClick={() => refetch()}>
 							{t('loads.studyPlanCoursesView.retry')}
 						</Button>
@@ -223,7 +225,9 @@ export function StudyPlanCoursesView({
 						<p className="text-sm font-medium text-zinc-700">
 							{t('loads.studyPlanCoursesView.empty.title')}
 						</p>
-						<p className="text-sm text-zinc-500">{t('loads.studyPlanCoursesView.empty.subtitle')}</p>
+						<p className="text-sm text-zinc-500">
+							{t('loads.studyPlanCoursesView.empty.subtitle')}
+						</p>
 					</div>
 				) : (
 					<div className="space-y-8">

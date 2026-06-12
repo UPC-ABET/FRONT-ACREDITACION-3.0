@@ -56,7 +56,6 @@ export function useCourseSectionMaintenanceMutations() {
 	return { update, remove };
 }
 
-/** Campuses — a small reference list loaded once. */
 export function useCampuses() {
 	return useQuery({
 		queryKey: ['campuses', 'all'],
@@ -65,7 +64,6 @@ export function useCampuses() {
 	});
 }
 
-/** Section study-modality types (TG103) — loaded once. */
 export function useSectionModalityTypes() {
 	return useQuery({
 		queryKey: ['types', TYPE_GROUP_CODES.SECTION_MODALITY],

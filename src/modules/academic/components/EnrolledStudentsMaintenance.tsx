@@ -107,7 +107,6 @@ export function EnrolledStudentsMaintenance() {
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	// A new search, program filter, or header period always returns to the first page.
 	const handleSearchChange = (value: string) => {
 		setSearch(value);
 		setPage(1);
@@ -174,7 +173,10 @@ export function EnrolledStudentsMaintenance() {
 			if (reasons.length > 0) {
 				setBlockedReasons(reasons);
 			} else {
-				showToast(getErrorMessage(error, 'loads.enrolledStudentsMaintenance.delete.error'), 'error');
+				showToast(
+					getErrorMessage(error, 'loads.enrolledStudentsMaintenance.delete.error'),
+					'error',
+				);
 			}
 		}
 	};
@@ -261,7 +263,6 @@ export function EnrolledStudentsMaintenance() {
 					</div>
 				) : (
 					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-						{/* Desktop / tablet: table */}
 						<div className="hidden overflow-x-auto md:block">
 							<Table>
 								<TableHeader>
@@ -306,7 +307,6 @@ export function EnrolledStudentsMaintenance() {
 							</Table>
 						</div>
 
-						{/* Mobile: stacked cards */}
 						<ul className="space-y-3 md:hidden">
 							{items.map((item) => (
 								<li
@@ -404,7 +404,9 @@ export function EnrolledStudentsMaintenance() {
 					<DialogHeader>
 						<div className="flex items-center gap-2 text-red-700">
 							<ExclamationTriangleIcon className="h-5 w-5" />
-							<DialogTitle>{t('loads.enrolledStudentsMaintenance.delete.blockedTitle')}</DialogTitle>
+							<DialogTitle>
+								{t('loads.enrolledStudentsMaintenance.delete.blockedTitle')}
+							</DialogTitle>
 						</div>
 						<DialogDescription>
 							{t('loads.enrolledStudentsMaintenance.delete.blockedSubtitle')}

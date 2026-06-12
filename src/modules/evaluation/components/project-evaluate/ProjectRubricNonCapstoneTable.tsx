@@ -8,8 +8,6 @@ import { useI18n } from '@/providers';
 import { useSubmitEvaluation } from '../../hooks/useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
 function fmtNum(raw: string): string {
 	const n = parseFloat(raw);
 	if (isNaN(n)) return raw;
@@ -30,8 +28,6 @@ function validateScore(
 	return undefined;
 }
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 type Scores = Record<number, Record<number, string>>;
 type DupScores = Record<number, string>;
 
@@ -40,8 +36,6 @@ type CriteriaScoreEntry = {
 	score: number;
 	commentaries: Record<string, string>;
 };
-
-// ── Main component ────────────────────────────────────────────────────────────
 
 interface ProjectRubricNonCapstoneTableProps {
 	questions: RubricQuestionDetailsResponse[];
@@ -67,7 +61,6 @@ export function ProjectRubricNonCapstoneTable({
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 
-	// ── Pre-fill from existing scores ─────────────────────────────────────────
 	// Business rule: only ONE criteria per question will ever carry scores.
 	// Find that criteria first, then read each student's entry from it.
 
@@ -109,8 +102,6 @@ export function ProjectRubricNonCapstoneTable({
 		setScores(initialScores);
 	}, [initialScores]);
 
-	// ── Ranges per question ───────────────────────────────────────────────────
-
 	const ranges = useMemo(() => {
 		const result: Record<number, { min: number; max: number }> = {};
 		for (const q of questions) {
@@ -123,8 +114,6 @@ export function ProjectRubricNonCapstoneTable({
 
 	const msgNaN = t('projects.evaluate.rubric.errorNaN');
 	const msgRange = t('projects.evaluate.rubric.errorRange');
-
-	// ── Derived state ─────────────────────────────────────────────────────────
 
 	const allFilled = useMemo(() => {
 		if (!questions.length) return false;
@@ -162,15 +151,12 @@ export function ProjectRubricNonCapstoneTable({
 
 	const canSave = allFilled && !hasErrors;
 
-	// ── Handlers ──────────────────────────────────────────────────────────────
-
 	const handleScore = (qId: number, stIdx: number, val: string): void =>
 		setScores((prev) => ({ ...prev, [qId]: { ...prev[qId], [stIdx]: val } }));
 
 	const handleDupScore = (qId: number, val: string): void =>
 		setDupScores((prev) => ({ ...prev, [qId]: val }));
 
-	// Returns the criteria whose [min, max] range contains the given score (inclusive).
 	const findMatchingCriteria = (q: RubricQuestionDetailsResponse, score: number) =>
 		q.criterias.find((c) => {
 			const min = parseFloat(c.minValue);
@@ -239,7 +225,6 @@ export function ProjectRubricNonCapstoneTable({
 			}
 		}
 
-		// Submit one request per student; skip students with no scored criteria
 		for (const [projectStudentId, criteriaScores] of studentPayloads.entries()) {
 			if (!criteriaScores.length) continue;
 
@@ -254,13 +239,10 @@ export function ProjectRubricNonCapstoneTable({
 		}
 	};
 
-	// ── Render ────────────────────────────────────────────────────────────────
-
 	return (
 		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 			<div className="w-full overflow-x-auto">
 				<table className="w-full table-auto border-collapse text-sm">
-					{/* Header */}
 					<thead>
 						<tr className="border-b border-zinc-200 bg-zinc-50">
 							<th className="w-48 min-w-[12rem] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
@@ -288,7 +270,6 @@ export function ProjectRubricNonCapstoneTable({
 						</tr>
 					</thead>
 
-					{/* Rows */}
 					<tbody className="divide-y divide-zinc-100">
 						{questions.map((q) => {
 							const range = ranges[q.id] ?? { min: 0, max: 0 };
@@ -296,12 +277,10 @@ export function ProjectRubricNonCapstoneTable({
 
 							return (
 								<tr key={q.id} className="align-middle">
-									{/* Question */}
 									<td className="px-4 py-4">
 										<p className="text-xs leading-snug text-zinc-700">{questionText}</p>
 									</td>
 
-									{/* Criteria */}
 									<td className="px-4 py-4">
 										<div className="flex gap-2">
 											{q.criterias.map((c) => {
@@ -322,7 +301,6 @@ export function ProjectRubricNonCapstoneTable({
 										</div>
 									</td>
 
-									{/* Scores */}
 									<td className="px-4 py-4 text-center">
 										{duplicateMode ? (
 											<div className="flex justify-center">
@@ -366,7 +344,6 @@ export function ProjectRubricNonCapstoneTable({
 				</table>
 			</div>
 
-			{/* Footer */}
 			<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
 				<ValidationMessages
 					items={[
@@ -399,8 +376,6 @@ export function ProjectRubricNonCapstoneTable({
 	);
 }
 
-// ── Compact score input ───────────────────────────────────────────────────────
-
 interface ScoreInputProps {
 	value: string;
 	min: number;
@@ -430,8 +405,6 @@ function ScoreInput({ value, min, max, error, onChange }: ScoreInputProps): JSX.
 		/>
 	);
 }
-
-// ── Validation messages ───────────────────────────────────────────────────────
 
 function ValidationMessages({
 	items,

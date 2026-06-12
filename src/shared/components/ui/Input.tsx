@@ -30,8 +30,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             w-full px-3 py-2 text-sm rounded-md border outline-none transition-all
             bg-white text-zinc-900 
             placeholder:text-zinc-400
-            /* Diseño solicitado: border-red-600 (primary) */
-            border-zinc-200 focus:border-red-700 
+            border-zinc-200 focus:border-red-700
             disabled:bg-gray-100 disabled:text-gray-600 disabled:cursor-not-allowed
             ${error ? 'border-red-500 ring-2 ring-red-500/20' : ''}
             ${className}
@@ -39,7 +38,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 					{...props}
 				/>
 
-				{/* Mensajes de error/helper con tu estilo */}
 				{error ? (
 					<p className="font-medium text-xs mt-2 text-red-500 italic">{error}</p>
 				) : helperText ? (

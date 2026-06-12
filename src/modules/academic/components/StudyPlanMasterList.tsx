@@ -107,7 +107,6 @@ export function StudyPlanMasterList({ onView }: { onView: (studyPlanId: number) 
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	// A new search, program filter, or modality always returns to the first page.
 	const handleSearchChange = (value: string) => {
 		setSearch(value);
 		setPage(1);
@@ -230,11 +229,15 @@ export function StudyPlanMasterList({ onView }: { onView: (studyPlanId: number) 
 
 				{noModalitySelected ? (
 					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm text-zinc-500">{t('loads.studyPlansMaintenance.selectModality')}</p>
+						<p className="text-sm text-zinc-500">
+							{t('loads.studyPlansMaintenance.selectModality')}
+						</p>
 					</div>
 				) : isError ? (
 					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm text-zinc-500">{t('loads.studyPlansMaintenance.error.loadFailed')}</p>
+						<p className="text-sm text-zinc-500">
+							{t('loads.studyPlansMaintenance.error.loadFailed')}
+						</p>
 						<Button variant="surface" size="sm" onClick={() => refetch()}>
 							{t('loads.studyPlansMaintenance.retry')}
 						</Button>
@@ -250,11 +253,12 @@ export function StudyPlanMasterList({ onView }: { onView: (studyPlanId: number) 
 						<p className="text-sm font-medium text-zinc-700">
 							{t('loads.studyPlansMaintenance.empty.title')}
 						</p>
-						<p className="text-sm text-zinc-500">{t('loads.studyPlansMaintenance.empty.subtitle')}</p>
+						<p className="text-sm text-zinc-500">
+							{t('loads.studyPlansMaintenance.empty.subtitle')}
+						</p>
 					</div>
 				) : (
 					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-						{/* Desktop / tablet: table */}
 						<div className="hidden overflow-x-auto md:block">
 							<Table>
 								<TableHeader>
@@ -289,7 +293,6 @@ export function StudyPlanMasterList({ onView }: { onView: (studyPlanId: number) 
 							</Table>
 						</div>
 
-						{/* Mobile: stacked cards */}
 						<ul className="space-y-3 md:hidden">
 							{items.map((item) => (
 								<li

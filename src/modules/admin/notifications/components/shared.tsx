@@ -5,7 +5,6 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { Badge, Button, Toggle } from '@/shared/components';
 import { useI18n } from '@/providers';
 
-/** Consistent page-level header shown at the top of every notifications tab. */
 export function TabHeader({ title, description }: { title: string; description?: string }) {
 	return (
 		<div className="space-y-1">
@@ -15,7 +14,6 @@ export function TabHeader({ title, description }: { title: string; description?:
 	);
 }
 
-/** Consistent section block inside an editor (uppercase heading + optional hint). */
 export function FormSection({
 	title,
 	hint,
@@ -36,7 +34,6 @@ export function FormSection({
 	);
 }
 
-/** Card surface that wraps editor form sections. */
 export function EditorCard({ title, children }: { title?: string; children: ReactNode }) {
 	return (
 		<div className="space-y-8 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -46,7 +43,6 @@ export function EditorCard({ title, children }: { title?: string; children: Reac
 	);
 }
 
-/** Back button + card + footer wrapper used by list→editor tabs (Survey, User). */
 export function EditorShell({
 	title,
 	onBack,
@@ -71,7 +67,6 @@ export function EditorShell({
 	);
 }
 
-/** Footer action bar: optional left content (e.g. status toggle) and right-aligned buttons. */
 export function EditorActions({ left, children }: { left?: ReactNode; children: ReactNode }) {
 	return (
 		<div className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-zinc-50/60 p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -81,7 +76,6 @@ export function EditorActions({ left, children }: { left?: ReactNode; children: 
 	);
 }
 
-/** Active/inactive status toggle with a consistent label (for editor footers). */
 export function ActiveToggle({
 	checked,
 	onChange,
@@ -100,7 +94,6 @@ export function ActiveToggle({
 	);
 }
 
-/** Consistent active/inactive badge for list tables. */
 export function StatusBadge({ active }: { active: boolean }) {
 	const { t } = useI18n();
 	return (
@@ -110,7 +103,6 @@ export function StatusBadge({ active }: { active: boolean }) {
 	);
 }
 
-/** Consistent inline loading line shown beneath tables/editors. */
 export function InlineLoading() {
 	const { t } = useI18n();
 	return <p className="text-sm text-zinc-500">{t('loading.default')}</p>;

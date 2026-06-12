@@ -128,11 +128,9 @@ function PerformanceLevelForm({
 export function PerformanceLevelsPage() {
 	const { t, locale } = useI18n();
 
-	// Filters
 	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 	const [selectedInstrument, setSelectedInstrument] = useState<OptionItem | null>(null);
 
-	// Modal state
 	const [modalOpen, setModalOpen] = useState(false);
 	const [editingLevel, setEditingLevel] = useState<PerformanceLevelResponse | null>(null);
 	const [deleteConfirm, setDeleteConfirm] = useState<PerformanceLevelResponse | null>(null);
@@ -148,7 +146,6 @@ export function PerformanceLevelsPage() {
 		{ enabled: typeGroupId != null },
 	);
 
-	// Performance levels
 	const filters = useMemo(
 		() => ({
 			...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
@@ -171,7 +168,6 @@ export function PerformanceLevelsPage() {
 		[performanceLevels],
 	);
 
-	// Mutations
 	const createMutation = useCreatePerformanceLevel();
 	const updateMutation = useUpdatePerformanceLevel();
 	const deleteMutation = useDeletePerformanceLevel();
@@ -179,7 +175,6 @@ export function PerformanceLevelsPage() {
 	const isMutating =
 		createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
 
-	// Handlers
 	function openCreateModal() {
 		setEditingLevel(null);
 		resetForm();
@@ -219,7 +214,6 @@ export function PerformanceLevelsPage() {
 		setSelectedInstrument(null);
 	}
 
-	// Derived
 	const instrumentTypeOptions = useMemo<OptionItem[]>(
 		() =>
 			instrumentTypes.map((t) => ({
@@ -252,7 +246,6 @@ export function PerformanceLevelsPage() {
 				</Button>
 			</div>
 
-			{/* Filters */}
 			<div className="space-y-4">
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<AcademicPeriodSelect
@@ -287,7 +280,6 @@ export function PerformanceLevelsPage() {
 				)}
 			</div>
 
-			{/* Content */}
 			{!hasFilters ? (
 				<TableEmptyState message={t('performanceLevels.list.selectFilter')} />
 			) : isLoading ? (
@@ -385,7 +377,6 @@ export function PerformanceLevelsPage() {
 				</div>
 			)}
 
-			{/* Create / Edit Modal */}
 			<Dialog open={modalOpen} onOpenChange={handleModalClose}>
 				<DialogContent className="sm:max-w-2xl">
 					<DialogHeader>
@@ -433,7 +424,6 @@ export function PerformanceLevelsPage() {
 				</DialogContent>
 			</Dialog>
 
-			{/* Delete Confirmation Modal */}
 			<Dialog open={deleteConfirm != null} onOpenChange={() => setDeleteConfirm(null)}>
 				<DialogContent className="sm:max-w-md">
 					<DialogHeader>

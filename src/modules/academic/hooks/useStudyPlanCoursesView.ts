@@ -18,8 +18,7 @@ export function useStudyPlanCoursesView(
 		// Period travels as the X-Academic-Period-Id header; it is part of the key so a
 		// period switch re-fetches. Disabled until both the plan and a period exist.
 		queryKey: studyPlanCoursesViewKeys.view(studyPlanId, academicPeriodId),
-		queryFn: () =>
-			studyPlansService.getCoursesView(studyPlanId!).then((response) => response.data),
+		queryFn: () => studyPlansService.getCoursesView(studyPlanId!).then((response) => response.data),
 		enabled: studyPlanId != null && academicPeriodId != null,
 		placeholderData: (previousData) => previousData,
 	});

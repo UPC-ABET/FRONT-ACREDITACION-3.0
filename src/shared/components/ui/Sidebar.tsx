@@ -5,7 +5,6 @@ import { useScreen } from '@/shared/hooks';
 import { useI18n } from '@/providers';
 import { Button } from '@/shared/components';
 
-// ── TYPES
 type SidebarContextType = {
 	open: boolean;
 	setOpen: (v: boolean) => void;
@@ -13,7 +12,6 @@ type SidebarContextType = {
 	isMobile: boolean;
 };
 
-// ── CONTEXT
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
 export function SidebarProvider({
@@ -44,7 +42,6 @@ export function useSidebar() {
 	return ctx;
 }
 
-// ── SIDEBAR ROOT
 function Sidebar({
 	children,
 	className = '',
@@ -68,9 +65,7 @@ function Sidebar({
 				className={[
 					'fixed sm:relative z-40 flex flex-col h-screen',
 					'transition-all duration-300 ease-in-out',
-					// Dark zinc-900 background
 					'bg-zinc-900',
-					// Subtle right border
 					'border-r border-zinc-800',
 					isMobile
 						? open
@@ -84,7 +79,6 @@ function Sidebar({
 				style={{
 					boxShadow: '4px 0 24px rgba(0,0,0,0.4)',
 				}}>
-				{/* Top red accent stripe — thicker, glowing */}
 				<div
 					className="absolute top-0 left-0 right-0 h-[3px]"
 					style={{
@@ -93,7 +87,6 @@ function Sidebar({
 					}}
 				/>
 
-				{/* Subtle noise/texture overlay for depth */}
 				<div
 					className="absolute inset-0 pointer-events-none opacity-[0.025]"
 					style={{
@@ -110,7 +103,6 @@ function Sidebar({
 
 export { Sidebar };
 
-// ── HEADER
 export function SidebarHeader({ className = '' }: { className?: string }) {
 	const { open, toggle } = useSidebar();
 	const { t } = useI18n();
@@ -123,7 +115,6 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 				'transition-all duration-300',
 				className,
 			].join(' ')}>
-			{/* Faint red glow behind logo area */}
 			<div
 				className="absolute inset-0 pointer-events-none"
 				style={{
@@ -132,7 +123,6 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 				}}
 			/>
 
-			{/* Logo / Toggle cuando esta contraido */}
 			{open ? (
 				<img
 					src="/assets/ABETLogo.png"
@@ -152,7 +142,6 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 				</button>
 			)}
 
-			{/* Toggle button (solo cuando esta abierto) */}
 			{open && (
 				<Button
 					variant="ghost"
@@ -172,7 +161,6 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 	);
 }
 
-// ── CONTENT
 export function SidebarContent({
 	children,
 	className = '',
@@ -188,7 +176,6 @@ export function SidebarContent({
 	);
 }
 
-// ── FOOTER
 export function SidebarFooter({
 	children,
 	className = '',
@@ -207,7 +194,6 @@ export function SidebarFooter({
 	);
 }
 
-// ── GROUP
 export function SidebarGroup({
 	label,
 	children,
@@ -223,7 +209,6 @@ export function SidebarGroup({
 		<div className={`mt-1 ${className}`}>
 			{label && open && (
 				<div className="flex items-center gap-2 px-2.5 mb-2 mt-1">
-					{/* Small red dash before label */}
 					<div className="w-3 h-px bg-[#C8102E] opacity-80 flex-shrink-0" />
 					<p className="text-[9px] font-bold uppercase tracking-[0.14em] text-zinc-500">{label}</p>
 				</div>
@@ -233,7 +218,6 @@ export function SidebarGroup({
 	);
 }
 
-// ── ITEM
 export function SidebarItem({
 	icon,
 	label,
@@ -275,7 +259,6 @@ export function SidebarItem({
 			style={
 				active
 					? {
-							// ROJO SÓLIDO (Hijo Activo - Protagonista)
 							background: 'linear-gradient(135deg, rgba(200,16,46,1) 0%, rgba(180,10,36,1) 100%)',
 							boxShadow: '0 4px 12px rgba(200,16,46,0.4), inset 0 1px 0 rgba(255,255,255,0.15)',
 						}
@@ -334,14 +317,13 @@ export function SidebarItem({
 	);
 }
 
-// ── NAV GROUP (collapsible)
 export function SidebarNavGroup({
 	label,
 	icon,
 	badge,
 	badgeVariant = 'neutral',
 	defaultOpen = true,
-	active = false, // Este 'active' indica que un hijo está seleccionado
+	active = false,
 	children,
 }: {
 	label: string;
@@ -369,10 +351,8 @@ export function SidebarNavGroup({
 				}}
 				className={[
 					'relative flex items-center gap-3 px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
-					// Si está activo, aplicamos un fondo rojo sutil (Opción A)
 					active ? 'bg-red-500/10' : 'hover:bg-zinc-800/70',
 				].join(' ')}>
-				{/* Indicador lateral sutil para el padre */}
 				{active && (
 					<div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-red-600 rounded-r-full" />
 				)}
@@ -431,7 +411,6 @@ export function SidebarNavGroup({
 	);
 }
 
-// ── DIVIDER
 export function SidebarDivider() {
 	return (
 		<div className="my-2 mx-2 flex items-center gap-2">

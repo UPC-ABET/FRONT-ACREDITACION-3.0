@@ -42,7 +42,6 @@ export interface CapstoneStudentEvaluation {
 	student_id: number;
 	student_code: string;
 	student_name: string;
-	// criterion_id -> selected score.
 	scores: Record<number, number>;
 	observation: string;
 }

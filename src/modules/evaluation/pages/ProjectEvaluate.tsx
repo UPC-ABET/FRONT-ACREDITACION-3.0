@@ -100,7 +100,6 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 
 	return (
 		<div className="space-y-6">
-			{/* Back link */}
 			<Link
 				href="/evaluation/grade-projects"
 				className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800">
@@ -108,10 +107,8 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 				{t('projects.evaluate.backButton')}
 			</Link>
 
-			{/* Header */}
 			<div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
 				<div className="flex flex-col gap-4">
-					{/* Project title + code */}
 					<div className="flex flex-wrap items-start justify-between gap-3">
 						<div className="space-y-1">
 							<h1 className="text-3xl font-bold tracking-tight text-zinc-900">{projectName}</h1>
@@ -121,7 +118,6 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 						</div>
 					</div>
 
-					{/* Context metadata */}
 					<div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-zinc-600">
 						<div className="flex items-center gap-1.5">
 							<span className="font-medium text-zinc-400">
@@ -147,7 +143,6 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 				</div>
 			</div>
 
-			{/* Students summary */}
 			<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 				<div className="border-b border-zinc-100 px-6 py-4">
 					<h2 className="text-base font-semibold text-zinc-900">
@@ -161,7 +156,6 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 					) : (
 						students.map((student) => (
 							<div key={student.id} className="flex items-center justify-between gap-4 px-6 py-4">
-								{/* Student info */}
 								<div className="flex flex-col gap-0.5">
 									<span className="font-medium text-zinc-900">
 										{student.firstName} {student.lastName}
@@ -173,7 +167,6 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 									</div>
 								</div>
 
-								{/* Qualification status */}
 								<select
 									value={qualifStatuses[student.id] ?? ''}
 									onChange={(e) =>
@@ -192,7 +185,6 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 									))}
 								</select>
 
-								{/* Total grade */}
 								<div className="flex flex-col items-end gap-0.5">
 									<span className="text-xs font-medium text-zinc-400">
 										{t('projects.evaluate.students.grade')}
@@ -214,7 +206,6 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 				</div>
 			</div>
 
-			{/* Rubric table */}
 			{rubric && isCapstoneFinal ? (
 				<ProjectRubricCapstoneTable
 					outcomes={rubric.outcomes}

@@ -98,7 +98,6 @@ export function SectionsMaintenance() {
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	// Reset to page 1 when the search or the header period changes.
 	useEffect(() => {
 		// eslint-disable-next-line react-hooks/set-state-in-effect -- sync paging with external period/search
 		setPage(1);
@@ -209,7 +208,6 @@ export function SectionsMaintenance() {
 					</div>
 				) : (
 					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-						{/* Desktop / tablet: table */}
 						<div className="hidden overflow-x-auto md:block">
 							<Table>
 								<TableHeader>
@@ -250,7 +248,6 @@ export function SectionsMaintenance() {
 							</Table>
 						</div>
 
-						{/* Mobile: stacked cards */}
 						<ul className="space-y-3 md:hidden">
 							{items.map((item) => (
 								<li

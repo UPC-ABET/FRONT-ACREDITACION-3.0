@@ -1,5 +1,3 @@
-// ── Request types ──
-
 export type CreateProgramRequest = {
 	extra?: Record<string, unknown>;
 	isActive?: boolean;
@@ -46,8 +44,6 @@ export type UpdateProgramRequest = {
 	degree?: string;
 };
 
-// ── Response types ──
-
 export type AcademicPeriodResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
@@ -73,7 +69,7 @@ export type CourseResponse = {
 };
 
 export type EnrolledStudentResponse = {
-	id: number; // enrolledStudentId
+	id: number;
 	studentSectionEnrollmentId: number;
 	studentId: number;
 	firstName: string;
@@ -231,23 +227,17 @@ export type CourseOutcomeMappingResponse = {
 	updatedAt: string | null;
 };
 
-// ─── Campuses (load-once reference list) ────────────────────────────────────────
-
 export type CampusResponse = {
 	id: number;
 	code: string;
 	name: { es: string; en: string };
 };
 
-// ─── Course lookup (paginated picker) ───────────────────────────────────────────
-
 export type CourseLookupItem = {
 	id: number;
 	code: string;
 	name: { es: string; en: string };
 };
-
-// ─── Course sections maintenance ────────────────────────────────────────────────
 
 export type CourseSectionMaintenanceItem = {
 	id: number;
@@ -282,8 +272,6 @@ export type PaginatedEnvelope<T> = {
 	totalPages: number;
 };
 
-// ─── Enrolled students maintenance ──────────────────────────────────────────────
-
 export type EnrolledStudentMaintenanceItem = {
 	id: number;
 	studentCode: string;
@@ -305,8 +293,6 @@ export type EnrolledStudentMaintenanceUpdate = {
 	enrollementModalityTypeId?: number;
 };
 
-// ─── Student section enrollments maintenance ────────────────────────────────────
-
 export type StudentSectionEnrollmentMaintenanceItem = {
 	id: number;
 	courseName: { es: string; en: string };
@@ -325,8 +311,6 @@ export type StudentSectionEnrollmentMaintenanceUpdate = {
 	enrolledStudentId?: number;
 };
 
-// ─── Study plans maintenance (master list, scoped by modality) ──────────────────
-
 export type StudyPlanMaintenanceItem = {
 	id: number;
 	code: string;
@@ -339,8 +323,6 @@ export type StudyPlanMaintenanceUpdate = {
 	code?: string;
 	programId?: number;
 };
-
-// ─── Study plan courses view (scoped by period) ─────────────────────────────────
 
 export type StudyPlanCourseRow = {
 	id: number;

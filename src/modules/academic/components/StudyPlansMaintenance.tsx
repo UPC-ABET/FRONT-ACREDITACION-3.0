@@ -9,10 +9,7 @@ export function StudyPlansMaintenance() {
 
 	if (viewingPlanId != null) {
 		return (
-			<StudyPlanCoursesView
-				studyPlanId={viewingPlanId}
-				onBack={() => setViewingPlanId(null)}
-			/>
+			<StudyPlanCoursesView studyPlanId={viewingPlanId} onBack={() => setViewingPlanId(null)} />
 		);
 	}
 

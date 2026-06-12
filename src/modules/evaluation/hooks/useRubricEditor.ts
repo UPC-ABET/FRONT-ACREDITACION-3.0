@@ -34,8 +34,6 @@ function unwrapApiData<T>(response: unknown): T | null {
 	return data as T;
 }
 
-// ── Local API response types ──────────────────────────────────────────────────
-
 interface ApiRubricCriteria {
 	id: number;
 	text: string | { en: string; es: string };
@@ -88,8 +86,6 @@ function toI18nText(raw: { en: string; es: string } | string | undefined): {
 	return typeof raw === 'string' ? { en: raw, es: raw } : raw;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-
 export const rubricEditorQueryKeys = {
 	detail: (rubricId: string | number) => evaluationQueryKeys.rubricEditor(rubricId),
 };
@@ -112,7 +108,6 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				return initialRubric;
 			}
 
-			// ── Step 1: GET /rubrics/get-by-id/:id ──────────────────────────────────
 			const res = await rubricsService.getById(rubricId);
 			logger.debug('[useRubricEditor] rubricsService.getById response', res);
 			if (!res) {
@@ -130,8 +125,6 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				throw new ApiError('Missing rubric field in API response');
 			}
 
-			// ── Step 2: GET /performance-levels/get-by-filters ──────────────────────
-			// Filter by the academic period of the rubric's study plan course.
 			const academicPeriodId: number | undefined =
 				data.academicPeriod?.id != null ? Number(data.academicPeriod.id) : undefined;
 			const levelsRes = await performanceLevelsService.getByFilters({
@@ -149,12 +142,10 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				color: (level.extra as { color?: string } | undefined)?.color ?? null,
 			}));
 
-			// ── Build lookup map for outcomes ────────────────────────────────────────
 			const outcomesById = new Map<number, ApiRubricOutcome>(
 				(data.outcomes ?? []).map((o) => [o.id, o]),
 			);
 
-			// ── Build CommissionTab[] ─────────────────────────────────────────────────
 			const allApiQuestions: ApiRubricQuestion[] = data.questions ?? [];
 
 			const commissions: CommissionTab[] = (data.commissions ?? []).map((commission) => {
@@ -164,7 +155,6 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 						const outcome = outcomesById.get(outcomeId);
 						if (!outcome) return null;
 
-						// Outcome description — always used as the question text
 						const outcomeDescription = toI18nText(outcome.description);
 
 						// Each outcome maps to exactly ONE question whose text = outcome description.
@@ -213,7 +203,6 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				};
 			});
 
-			// ── Build RubricQuestion[] ───────────────────────────────────────────────
 			const questions = (data.questions ?? []).map((q, index: number) => ({
 				id: String(q.id),
 				order: index + 1,
@@ -228,17 +217,13 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				),
 			}));
 
-			// ── Grade type name ──────────────────────────────────────────────────────
 			const gradeType = toI18nText(rubric.gradeType?.name);
 
-			// ── Program (top-level in new API) ───────────────────────────────────────
 			const prog = data.program;
 			const programName = toI18nText(prog?.name);
 
-			// ── Course name ──────────────────────────────────────────────────────────
 			const courseName = toI18nText(data.course?.name);
 
-			// ── Map to RubricDetail view model ───────────────────────────────────────
 			const rubricDetail: RubricDetail = {
 				id: String(rubric.id),
 				gradeTypeCode: rubric.gradeType?.code ?? '',

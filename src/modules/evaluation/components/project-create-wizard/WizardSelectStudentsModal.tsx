@@ -42,7 +42,6 @@ export function WizardSelectStudentsModal({
 	const [draft, setDraft] = useState<Map<number, EnrolledStudentResponse>>(new Map());
 	const [search, setSearch] = useState('');
 
-	// Reset on close
 	useEffect(() => {
 		if (!open) {
 			setSearch('');
@@ -51,7 +50,6 @@ export function WizardSelectStudentsModal({
 		}
 	}, [open]);
 
-	// Fetch once on open — same call as AddStudentModal
 	useEffect(() => {
 		if (!open) return;
 
@@ -65,7 +63,6 @@ export function WizardSelectStudentsModal({
 			.then((r) => {
 				const data = r.data ?? [];
 				setStudents(data);
-				// Pre-check already selected
 				setDraft(
 					new Map(
 						data
@@ -79,7 +76,6 @@ export function WizardSelectStudentsModal({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open]);
 
-	// Client-side filter — same as AddStudentModal
 	const filtered = useMemo(() => {
 		const term = search.trim().toLowerCase();
 		if (!term) return students;

@@ -154,7 +154,6 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 				]}
 			/>
 
-			{/* Delete confirm */}
 			<Dialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
 				<DialogContent>
 					<DialogHeader>
@@ -169,7 +168,6 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 				</DialogContent>
 			</Dialog>
 
-			{/* Send dialog */}
 			<Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
 				<DialogContent>
 					<DialogHeader>

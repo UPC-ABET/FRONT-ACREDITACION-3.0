@@ -85,7 +85,6 @@ export function ProfessorsMaintenance() {
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	// A new search always returns to the first page.
 	const handleSearchChange = (value: string) => {
 		setSearch(value);
 		setPage(1);
@@ -184,7 +183,6 @@ export function ProfessorsMaintenance() {
 					</div>
 				) : (
 					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-						{/* Desktop / tablet: table */}
 						<div className="hidden overflow-x-auto md:block">
 							<Table>
 								<TableHeader>
@@ -217,7 +215,6 @@ export function ProfessorsMaintenance() {
 							</Table>
 						</div>
 
-						{/* Mobile: stacked cards */}
 						<ul className="space-y-3 md:hidden">
 							{items.map((item) => (
 								<li

@@ -35,7 +35,6 @@ export function useOutcomesMaintenance(params: MaintenanceListParams) {
 				})
 				.then((response) => response.data),
 		enabled,
-		// Keep the previous page visible while the next page loads (smooth pagination).
 		placeholderData: (previousData) => previousData,
 	});
 }

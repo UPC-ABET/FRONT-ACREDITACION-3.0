@@ -104,7 +104,6 @@ export function StudentSectionEnrollmentsMaintenance() {
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	// A new search, program filter, or header period always returns to the first page.
 	const handleSearchChange = (value: string) => {
 		setSearch(value);
 		setPage(1);
@@ -119,13 +118,15 @@ export function StudentSectionEnrollmentsMaintenance() {
 		setPage(1);
 	}, [academicPeriodId]);
 
-	const { data, isLoading, isFetching, isError, refetch } = useStudentSectionEnrollmentsMaintenance({
-		academicPeriodId,
-		programId,
-		page,
-		pageSize: PAGE_SIZE,
-		search: debouncedSearch,
-	});
+	const { data, isLoading, isFetching, isError, refetch } = useStudentSectionEnrollmentsMaintenance(
+		{
+			academicPeriodId,
+			programId,
+			page,
+			pageSize: PAGE_SIZE,
+			search: debouncedSearch,
+		},
+	);
 
 	const items = data?.items ?? [];
 	const total = data?.total ?? 0;
@@ -263,7 +264,6 @@ export function StudentSectionEnrollmentsMaintenance() {
 					</div>
 				) : (
 					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-						{/* Desktop / tablet: table */}
 						<div className="hidden overflow-x-auto md:block">
 							<Table>
 								<TableHeader>
@@ -314,7 +314,6 @@ export function StudentSectionEnrollmentsMaintenance() {
 							</Table>
 						</div>
 
-						{/* Mobile: stacked cards */}
 						<ul className="space-y-3 md:hidden">
 							{items.map((item) => (
 								<li

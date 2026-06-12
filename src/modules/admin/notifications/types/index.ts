@@ -43,8 +43,6 @@ export interface UpsertConfigBody {
 	isActive?: boolean;
 }
 
-// ─── Survey notifications (/notification-messages) ──────────────────────────────
-
 export interface SurveyMessage {
 	id: number;
 	surveyTypeId: number;
@@ -74,8 +72,6 @@ export interface SurveyMessageFilters {
 	isActive?: boolean;
 }
 
-// ─── Email templates (/email-templates) ─────────────────────────────────────────
-
 export interface EmailTemplate {
 	id: number;
 	isActive: boolean;
@@ -104,8 +100,6 @@ export interface EmailTemplateFilters {
 	code?: string;
 	isActive?: boolean;
 }
-
-// ─── Notification logs (/notification-logs) ─────────────────────────────────────
 
 export interface NotificationStatusType {
 	id: number;
@@ -138,7 +132,6 @@ export interface NotificationLogFilters {
 	isActive?: boolean;
 }
 
-// Lightweight option for program selectors.
 export interface ProgramOption {
 	id: number;
 	name: string;

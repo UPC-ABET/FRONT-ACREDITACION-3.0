@@ -1,9 +1,3 @@
-/**
- * SHARED API CLIENT
- *
- * Cliente HTTP base compartido para toda la app.
- */
-
 import { ApiError } from './apiError';
 import { logger } from './logger';
 import { getSchoolCookie } from './authCookies';

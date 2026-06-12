@@ -10,8 +10,6 @@ import { performanceLevelsService } from '@/modules/academic/services';
 import { useSubmitEvaluation } from '../../hooks/useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 type OutcomeRow = {
 	id: number;
 	code: string;
@@ -29,8 +27,6 @@ type PerformanceLevel = {
 type Selections = Record<number, Record<number, number | null>>;
 // criteriaId → selected uniqueValue (duplicate mode)
 type DupSelections = Record<number, number | null>;
-
-// ── Component ─────────────────────────────────────────────────────────────────
 
 interface ProjectRubricCapstoneTableProps {
 	outcomes: OutcomeRow[];
@@ -60,8 +56,6 @@ export function ProjectRubricCapstoneTable({
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 
-	// ── Fetch performance levels ──────────────────────────────────────────────
-
 	const { data: rawLevels = [], isLoading: isLoadingLevels } = useQuery({
 		queryKey: ['performance-levels', { academicPeriodId: academicPeriodId, isActive: true }],
 		queryFn: () =>
@@ -80,8 +74,6 @@ export function ProjectRubricCapstoneTable({
 		[rawLevels],
 	);
 
-	// ── Map outcomeId → question ──────────────────────────────────────────────
-
 	const questionByOutcome = useMemo(() => {
 		const map = new Map<number, RubricQuestionDetailsResponse>();
 		for (const q of questions) {
@@ -89,8 +81,6 @@ export function ProjectRubricCapstoneTable({
 		}
 		return map;
 	}, [questions]);
-
-	// ── All criteriaIds across all outcomes ───────────────────────────────────
 
 	const allCriteriaIds = useMemo(() => {
 		const ids: number[] = [];
@@ -100,8 +90,6 @@ export function ProjectRubricCapstoneTable({
 		}
 		return ids;
 	}, [outcomes, questionByOutcome]);
-
-	// ── Pre-fill selections from existing scores ──────────────────────────────
 
 	const initialSelections = useMemo<Selections>(() => {
 		const result: Selections = {};
@@ -137,7 +125,6 @@ export function ProjectRubricCapstoneTable({
 		setDupSelections(initialDupSelections);
 	}, [initialDupSelections]);
 
-	// ── Validation ────────────────────────────────────────────────────────────
 	const allFilled = useMemo(() => {
 		if (!allCriteriaIds.length || !students.length) return false;
 		for (const st of students) {
@@ -163,8 +150,6 @@ export function ProjectRubricCapstoneTable({
 		qualifStatuses,
 		nrNaTypeIds,
 	]);
-
-	// ── Handlers ──────────────────────────────────────────────────────────────
 
 	const handleSelect = (criteriaId: number, projectStudentId: number, value: number) =>
 		setSelections((prev) => ({
@@ -220,13 +205,10 @@ export function ProjectRubricCapstoneTable({
 		}
 	};
 
-	// ── Render ────────────────────────────────────────────────────────────────
-
 	return (
 		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 			<div className="w-full overflow-x-auto">
 				<table className="w-full table-auto border-collapse text-sm">
-					{/* Header */}
 					<thead>
 						<tr className="border-b border-zinc-200 bg-zinc-50">
 							<th className="w-40 min-w-[14rem] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
@@ -254,7 +236,6 @@ export function ProjectRubricCapstoneTable({
 						</tr>
 					</thead>
 
-					{/* Rows */}
 					<tbody>
 						{outcomes.flatMap((outcome) => {
 							const q = questionByOutcome.get(outcome.id);
@@ -272,7 +253,6 @@ export function ProjectRubricCapstoneTable({
 									<tr
 										key={criteria.id}
 										className={cn('align-top', isLastInOutcome && 'border-b border-zinc-200')}>
-										{/* Col 1 — Outcome (rowspan) */}
 										{isFirstInOutcome && (
 											<td
 												rowSpan={criterias.length}
@@ -287,14 +267,12 @@ export function ProjectRubricCapstoneTable({
 											</td>
 										)}
 
-										{/* Col 2 — Criteria description */}
 										<td className="px-4 py-4">
 											<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-xs leading-snug text-zinc-600">
 												{criteriaDesc}
 											</div>
 										</td>
 
-										{/* Col 3 — Grading */}
 										<td className="px-4 py-4">
 											{isLoadingLevels ? (
 												<p className="text-xs text-zinc-400">
@@ -305,7 +283,6 @@ export function ProjectRubricCapstoneTable({
 													{t('projects.evaluate.capstone.noLevels')}
 												</p>
 											) : duplicateMode ? (
-												/* Single row — duplicate mode */
 												<PLSelector
 													levels={performanceLevels}
 													selected={dupSelections[criteria.id] ?? null}
@@ -313,7 +290,6 @@ export function ProjectRubricCapstoneTable({
 													onChange={(val) => handleDupSelect(criteria.id, val)}
 												/>
 											) : (
-												/* One row per student (NR/NA hidden) */
 												<div className="flex flex-col gap-2">
 													{students
 														.filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1))
@@ -344,7 +320,6 @@ export function ProjectRubricCapstoneTable({
 				</table>
 			</div>
 
-			{/* Footer */}
 			<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
 				{!allFilled && (
 					<ul className="space-y-1 text-sm">
@@ -375,8 +350,6 @@ export function ProjectRubricCapstoneTable({
 	);
 }
 
-// ── Performance level button ──────────────────────────────────────────────────
-
 interface PLButtonProps {
 	value: number;
 	label: string;
@@ -400,8 +373,6 @@ function PLButton({ label, selected, onClick }: PLButtonProps) {
 	);
 }
 
-// ── Responsive PL selector: buttons on md+, <select> on small ────────────────
-
 interface PLSelectorProps {
 	levels: PerformanceLevel[];
 	selected: number | null;
@@ -412,7 +383,6 @@ interface PLSelectorProps {
 function PLSelector({ levels, selected, locale, onChange }: PLSelectorProps) {
 	return (
 		<>
-			{/* Buttons — md and above */}
 			<div className="hidden flex-wrap gap-1.5 md:flex">
 				{levels.map((pl) => {
 					const label = `${pl.uniqueValue} - ${pl.name[locale as 'es' | 'en'] ?? pl.name.es}`;
@@ -428,7 +398,6 @@ function PLSelector({ levels, selected, locale, onChange }: PLSelectorProps) {
 				})}
 			</div>
 
-			{/* Select — small screens only */}
 			<select
 				value={selected ?? ''}
 				onChange={(e) => {

@@ -18,7 +18,7 @@ async function fetchLanguages(): Promise<string[]> {
 			return value as string[];
 		}
 	} catch {
-		// fall through to fallback
+		// Malformed cached value: fall through to the fallback list.
 	}
 	return FALLBACK;
 }

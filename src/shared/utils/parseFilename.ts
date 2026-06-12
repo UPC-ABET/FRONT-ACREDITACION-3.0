@@ -5,7 +5,7 @@ export function parseFilename(header: string | null, fallback: string): string {
 		try {
 			return decodeURIComponent(rfc5987[1]);
 		} catch {
-			// fall through
+			// Undecodable RFC 5987 value: fall back to the plain filename.
 		}
 	}
 	const plain = header.match(/filename="([^"]+)"/);

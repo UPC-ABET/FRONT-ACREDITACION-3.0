@@ -20,7 +20,6 @@ export type ChartConfig = {
 
 const ChartContext = React.createContext<{ config: ChartConfig } | null>(null);
 
-// --- Contenedor Principal ---
 export function ChartContainer({
 	config,
 	children,

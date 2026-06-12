@@ -91,7 +91,8 @@ export function EnrolledStudentMaintenanceEditDialog({
 
 	const selectedProgram = programOptions.find((option) => option.value === programId) ?? null;
 	const selectedCampus = campusOptions.find((option) => option.value === campusId) ?? null;
-	const selectedModality = modalityOptions.find((option) => option.value === modalityTypeId) ?? null;
+	const selectedModality =
+		modalityOptions.find((option) => option.value === modalityTypeId) ?? null;
 
 	const canSave =
 		studentCode.trim() !== '' && firstName.trim() !== '' && lastName.trim() !== '' && !saving;

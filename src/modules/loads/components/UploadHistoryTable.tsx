@@ -54,7 +54,6 @@ export default function UploadHistoryTable({
 	const { academicPeriodId } = useABET();
 	const [page, setPage] = useState(1);
 
-	// A period switch always returns to the first page.
 	useEffect(() => {
 		setPage(1);
 	}, [academicPeriodId]);

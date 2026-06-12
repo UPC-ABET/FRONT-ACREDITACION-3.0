@@ -25,7 +25,6 @@ export function useProfessorsMaintenance(params: MaintenanceListParams) {
 					search: params.search.trim() || undefined,
 				})
 				.then((response) => response.data),
-		// Keep the previous page visible while the next page loads (smooth pagination).
 		placeholderData: (previousData) => previousData,
 	});
 }

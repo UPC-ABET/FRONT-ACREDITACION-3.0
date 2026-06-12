@@ -8,7 +8,7 @@ import type {
 } from '../types';
 
 export const studyPlansService = {
-	// Master list. Modality travels as the X-Modality-Type-Id header (injected globally).
+	// Modality travels as the X-Modality-Type-Id header (injected globally).
 	maintenanceList(params: {
 		page?: number;
 		pageSize?: number;
@@ -35,8 +35,7 @@ export const studyPlansService = {
 		return apiDelete(`/study-plans/maintenance/${id}`);
 	},
 
-	// Courses grouped by level for this plan. Period travels as the
-	// X-Academic-Period-Id header (injected globally); courses are period-specific.
+	// Period travels as the X-Academic-Period-Id header (injected globally); courses are period-specific.
 	getCoursesView(studyPlanId: number): Promise<ApiResponse<StudyPlanCoursesViewData>> {
 		return apiGet(`/study-plans/maintenance/${studyPlanId}/courses`);
 	},

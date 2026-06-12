@@ -1,5 +1,5 @@
-// comando a ejecutar:
+// build command:
 //  npx tsc -p tsconfig.scripts.json
 
-//comando para crear modulo:
-// node dist-scripts/generator/crear-modulo.js rubricas(nombre del modulo)
+// create a module:
+// node dist-scripts/generator/crear-modulo.js rubricas(module name)

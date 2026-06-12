@@ -2,8 +2,6 @@ import { apiGet } from '@/shared/lib';
 import { logger } from '@/shared/lib/logger';
 import type { AcademicPeriod, Program } from '../types';
 
-// ─── Shared helpers ───────────────────────────────────────────────────────────
-
 interface BackendEntity {
 	id: number;
 	code?: string;
@@ -29,8 +27,6 @@ function adaptDisplayName(raw: BackendEntity): string {
 	);
 }
 
-// ─── Academic Periods ─────────────────────────────────────────────────────────
-
 export async function getAcademicPeriods(): Promise<AcademicPeriod[]> {
 	try {
 		const res = await apiGet<Envelope<BackendEntity>>('academic-periods/get-all');
@@ -43,8 +39,6 @@ export async function getAcademicPeriods(): Promise<AcademicPeriod[]> {
 		return [];
 	}
 }
-
-// ─── Programs ─────────────────────────────────────────────────────────────────
 
 export async function getPrograms(): Promise<Program[]> {
 	try {
@@ -59,7 +53,6 @@ export async function getPrograms(): Promise<Program[]> {
 	}
 }
 
-// ─── Survey Type IDs (cached from /types/by-group-code/TG601) ────────────────
 // The performance-levels endpoint requires instrumentTypeId (numeric FK to types table).
 
 let _surveyTypeIds: Map<string, number> | null = null;
@@ -68,7 +61,6 @@ function extractTypesList(raw: unknown): Array<{ id: number; code: string }> {
 	if (Array.isArray(raw)) return raw as Array<{ id: number; code: string }>;
 	if (raw && typeof raw === 'object') {
 		const obj = raw as Record<string, unknown>;
-		// try common envelope shapes: .data, .data.items, .items, .types, .result
 		const inner = obj.data ?? obj.items ?? obj.types ?? obj.result;
 		if (Array.isArray(inner)) return inner as Array<{ id: number; code: string }>;
 		if (inner && typeof inner === 'object') {
@@ -90,7 +82,6 @@ export async function getSurveyTypeId(code: string): Promise<number> {
 				if (item && typeof item === 'object') {
 					const t = item as Record<string, unknown>;
 					const id = typeof t.id === 'number' ? t.id : Number(t.id);
-					// accept any field that looks like a code: code, typeCode, surveyTypeCode, codigo
 					const rawCode = String(
 						t.code ?? t.typeCode ?? t.surveyTypeCode ?? t.codigo ?? '',
 					).toUpperCase();

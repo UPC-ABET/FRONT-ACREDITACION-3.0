@@ -1,9 +1,3 @@
-/**
- * IFC SHARED COMPONENTS
- *
- * Keep them prop-driven and lang-aware so they survive a write context.
- */
-
 export * from './IFCPageTitle';
 export * from './IFCOutcomeResults';
 export * from './IFCLearningOutcomeReached';

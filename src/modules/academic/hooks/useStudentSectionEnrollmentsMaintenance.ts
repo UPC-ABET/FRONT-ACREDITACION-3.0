@@ -45,7 +45,9 @@ export function useStudentSectionEnrollmentMaintenanceMutations() {
 
 	const update = useMutation({
 		mutationFn: ({ id, body }: { id: number; body: StudentSectionEnrollmentMaintenanceUpdate }) =>
-			studentSectionEnrollmentsService.maintenanceUpdate(id, body).then((response) => response.data),
+			studentSectionEnrollmentsService
+				.maintenanceUpdate(id, body)
+				.then((response) => response.data),
 		onSuccess: invalidate,
 	});
 

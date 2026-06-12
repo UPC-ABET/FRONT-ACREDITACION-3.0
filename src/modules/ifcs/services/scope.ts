@@ -1,13 +1,6 @@
 import { TYPE_CODES } from '@/shared/constants';
 import type { IFCRow, ScopeOption, ScopeTree, SelectionValue } from '../types';
 
-/**
- * Cascading-dropdown helper.
- *
- * Returns the options visible at `levelNum`, given the user's current
- * selections at higher levels. Used by both `ScopeDropdowns` (rendering)
- * and `IFCDashboard` (auto-select + ALL-expansion).
- */
 export function optionsForLevel(
 	scope: ScopeTree,
 	levelNum: number,
@@ -32,10 +25,7 @@ export function optionsForLevel(
 	return lvl.options.filter((o) => o.parentId === parent);
 }
 
-/**
- * Resolve the IFC status code for a row.
- * A null `ifc` becomes the UNREGISTERED type code (frontend-only label).
- */
+// A null `ifc` becomes the UNREGISTERED type code (frontend-only label).
 export function effectiveStatus(row: IFCRow): string {
 	if (row.ifc === null) return TYPE_CODES.IFC_STATUS.UNREGISTERED;
 	return row.ifc.statusCode ?? TYPE_CODES.IFC_STATUS.SAVED;

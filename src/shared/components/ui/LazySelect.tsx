@@ -20,10 +20,8 @@ interface LazyOption<T> {
 interface LazySelectProps<T> {
 	label?: string;
 	placeholder?: string;
-	/** Current selection (id + display label), or null. */
 	value: LazySelectValue | null;
 	onChange: (item: T | null) => void;
-	/** Fetches one page for the given search term (1-based page). */
 	loadPage: (params: { search: string; page: number }) => Promise<LazyPageResult<T>>;
 	getId: (item: T) => number;
 	getLabel: (item: T) => string;
@@ -48,14 +46,6 @@ const selectStyles = {
 	}),
 };
 
-/**
- * Reusable async <select> backed by a paginated endpoint:
- *  - opens → fetch page 1
- *  - typing → debounced (~300ms) refetch page 1, replacing the list
- *  - scroll to bottom → fetch next page and append (while page < totalPages)
- *
- * It is decoupled from any specific service via `loadPage`/`getId`/`getLabel`.
- */
 export function LazySelect<T>({
 	label,
 	placeholder,

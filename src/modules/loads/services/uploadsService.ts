@@ -17,8 +17,6 @@ function resolveFlow(typeCode: string) {
 	return flow;
 }
 
-// Extracts the filename from a Content-Disposition header, handling both `filename=...`
-// and RFC 5987 `filename*=UTF-8''...` forms. Returns null when no filename is present.
 function parseContentDispositionFilename(header: string | null): string | null {
 	if (!header) return null;
 	const utf8Match = /filename\*=UTF-8''([^;]+)/i.exec(header);

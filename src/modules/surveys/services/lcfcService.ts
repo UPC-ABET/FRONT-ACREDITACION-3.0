@@ -9,8 +9,6 @@ import type {
 	PageInfo,
 } from '../types';
 
-// ─── Internal backend shapes ───────────────────────────────────────────────
-
 interface BackendLcfcConfig {
 	id: number;
 	isActive: boolean;
@@ -24,8 +22,6 @@ interface BackendLcfcConfig {
 	courseSectionId?: number;
 }
 
-// ─── Adapter ───────────────────────────────────────────────────────────────
-
 function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 	return {
 		courseId: raw.courseSectionId ?? raw.extra?.courseSectionId ?? raw.id,
@@ -35,8 +31,6 @@ function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 		commissions: [],
 	};
 }
-
-// ─── Configuration ─────────────────────────────────────────────────────────
 
 export async function listLCFCCourses(
 	_school: string,
@@ -92,19 +86,13 @@ export async function changeLCFCConfigStatus(configId: number, newStatus: LCFCCo
 	});
 }
 
-// ─── Notifications (new backend: single send-all operation) ────────────────
-
 export async function sendLCFCNotification(request: LCFCNotificationSendRequest) {
 	return apiPost('lcfc/notification/send', request);
 }
 
-// ─── Email params (legacy) ─────────────────────────────────────────────────
-
 export async function getLCFCEmailParams(): Promise<LCFCEmailParam[]> {
 	return [];
 }
-
-// ─── Excel template & upload ───────────────────────────────────────────────
 
 export async function downloadLCFCTemplate(_periodId: number): Promise<void> {
 	throw new ApiError('LCFC template download is not available in this backend version.');
@@ -113,8 +101,6 @@ export async function downloadLCFCTemplate(_periodId: number): Promise<void> {
 export async function uploadLCFCMassive(_file: File, _school?: unknown): Promise<void> {
 	throw new ApiError('LCFC bulk upload is not available in this backend version.');
 }
-
-// ─── Dashboard ─────────────────────────────────────────────────────────────
 
 export async function generateLCFCDashboard(params: {
 	academicPeriodId?: number;
@@ -133,8 +119,6 @@ export async function generateLCFCPerceptionReport(params: {
 		programId: params.programId,
 	});
 }
-
-// ─── Token & survey (student-facing admin read) ────────────────────────────
 
 export async function validateLCFCToken(token: string) {
 	return apiGet(`lcfc/token/validate/${encodeURIComponent(token)}`);

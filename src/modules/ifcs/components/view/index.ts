@@ -1,8 +1,3 @@
-/**
- * IFC VIEW COMPONENTS
- *
- */
-
 export { default as IFCViewPage } from './IFCViewPage';
 export * from './IFCHeaderCard';
 export * from './IFCInformationBlock';

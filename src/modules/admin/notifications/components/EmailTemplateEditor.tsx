@@ -16,11 +16,8 @@ type Props = {
 	onCancel: () => void;
 	onSuccess: (messageKey: string) => void;
 	onError: (message: string) => void;
-	/** When set, the category is fixed to this id and the selector is hidden. */
 	lockedCategoryId?: number | null;
-	/** Variables shown alongside the body editor. */
 	notifyVars?: NotifyVar[];
-	/** Overrides the editor card title (e.g. for the User tab). */
 	title?: string;
 };
 

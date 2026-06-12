@@ -1,9 +1,3 @@
-/**
- * File download and conversion helpers.
- *
- * Isolated from api-client to keep HTTP concerns separate from browser file utilities.
- */
-
 export function triggerFileDownload(base64: string, contentType: string, fileName: string): void {
 	const byteCharacters = atob(base64);
 	const byteArray = new Uint8Array(byteCharacters.length);

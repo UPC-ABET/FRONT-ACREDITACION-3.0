@@ -133,7 +133,6 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 
 	return (
 		<div className="space-y-6">
-			{/* Back link */}
 			<Link
 				href="/evaluation/projects"
 				className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800">
@@ -141,11 +140,9 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				{t('projects.edit.backButton')}
 			</Link>
 
-			{/* Header */}
 			<div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
 				{isEditingHeader ? (
 					<div className="flex flex-col gap-4">
-						{/* Edit mode fields */}
 						<div className="flex flex-col gap-3">
 							<div className="flex flex-col gap-1">
 								<label className="text-xs font-medium text-zinc-500">
@@ -180,7 +177,6 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 							</div>
 						</div>
 
-						{/* Edit mode actions */}
 						<div className="flex items-center justify-end gap-2 border-t border-zinc-100 pt-4">
 							<Button
 								variant="secondary"
@@ -243,7 +239,6 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				)}
 			</div>
 
-			{/* Students section */}
 			<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
 					<div className="flex items-center gap-3">
@@ -303,7 +298,6 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				</div>
 			</div>
 
-			{/* Evaluators section */}
 			<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
 					<div className="flex items-center gap-3">
