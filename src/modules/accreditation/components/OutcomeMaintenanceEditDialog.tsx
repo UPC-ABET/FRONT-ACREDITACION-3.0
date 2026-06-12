@@ -70,7 +70,7 @@ export function OutcomeMaintenanceEditDialog({
 					/>
 					<I18nTextField
 						layout="row"
-						rows={3}
+						rows={4}
 						label={t('loads.outcomesMaintenance.col.outcomeDescription')}
 						value={description}
 						onChange={setDescription}

@@ -28,7 +28,7 @@ import {
 	TableRow,
 	Toast,
 } from '@/shared/components';
-import { usePrograms, type ProgramResponse } from '@/modules/academic';
+import { useProgramsByModality, type ProgramResponse } from '@/modules/academic';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
@@ -75,10 +75,10 @@ function RowActions({
 
 export function OutcomesMaintenance() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId } = useABET();
+	const { academicPeriodId, modalityTypeId } = useABET();
 	const { toast, showToast, clearToast } = useApiErrorToast();
 
-	const { data: programs = [] } = usePrograms();
+	const { data: programs = [] } = useProgramsByModality(modalityTypeId);
 
 	const [programId, setProgramId] = useState<number | null>(null);
 	const [search, setSearch] = useState('');

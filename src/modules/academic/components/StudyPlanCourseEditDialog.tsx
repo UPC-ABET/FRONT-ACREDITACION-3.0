@@ -74,7 +74,7 @@ export function StudyPlanCourseEditDialog({ item, saving, errorMessage, onClose,
 					/>
 					<I18nTextField
 						layout="row"
-						rows={3}
+						rows={4}
 						label={t('loads.studyPlanCoursesView.col.learningOutcome')}
 						value={learningOutcome}
 						onChange={setLearningOutcome}
