@@ -3,14 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import {
-	Badge,
-	Button,
-	ConfirmDialog,
-	DataTable,
-	TableErrorState,
-	Toast,
-} from '@/shared/components';
+import { Button, ConfirmDialog, DataTable, TableErrorState, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { TYPE_CODES } from '@/shared/constants';
 import { useApiErrorToast } from '@/shared/hooks';
@@ -23,6 +16,7 @@ import {
 } from '../hooks/useEmailTemplates';
 import type { CoreType, EmailTemplate } from '../types';
 import { EmailTemplateEditor } from './EmailTemplateEditor';
+import { InlineLoading, StatusBadge, TabHeader } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 type View = { mode: 'list' } | { mode: 'new' } | { mode: 'edit'; template: EmailTemplate };
@@ -78,15 +72,7 @@ export function UserTemplatesTab() {
 			{
 				id: 'status',
 				header: t('admin.notify.template.col.status'),
-				cell: ({ row }) => (
-					<Badge variant={row.original.isActive ? 'success' : 'default'}>
-						{t(
-							row.original.isActive
-								? 'admin.notify.badge.active'
-								: 'admin.notify.badge.inactive',
-						)}
-					</Badge>
-				),
+				cell: ({ row }) => <StatusBadge active={row.original.isActive} />,
 			},
 			{
 				id: 'actions',
@@ -123,6 +109,11 @@ export function UserTemplatesTab() {
 					template={view.mode === 'edit' ? view.template : null}
 					lockedCategoryId={userCategoryId}
 					notifyVars={userVars}
+					title={t(
+						view.mode === 'edit'
+							? 'admin.notify.user.form.editTitle'
+							: 'admin.notify.user.form.createTitle',
+					)}
 					onCancel={() => setView({ mode: 'list' })}
 					onSuccess={(messageKey) => {
 						showToast(messageKey, 'success');
@@ -130,7 +121,12 @@ export function UserTemplatesTab() {
 					}}
 					onError={(message) => showToast(message, 'error')}
 				/>
-				<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
+				<Toast
+					isOpen={toast.isOpen}
+					onClose={clearToast}
+					type={toast.type}
+					message={toast.message}
+				/>
 			</div>
 		);
 	}
@@ -146,11 +142,14 @@ export function UserTemplatesTab() {
 	}
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-6">
+			<TabHeader
+				title={t('admin.notify.user.title')}
+				description={t('admin.notify.user.subtitle')}
+			/>
 			<DataTable
 				columns={columns}
 				data={userTemplates}
-				title={t('admin.notify.user.title')}
 				searchPlaceholder={t('admin.notify.template.search')}
 				aria-label={t('admin.notify.user.title')}
 				actions={[
@@ -162,7 +161,7 @@ export function UserTemplatesTab() {
 					},
 				]}
 			/>
-			{isLoading && <p className="text-sm text-zinc-500">{t('loading.default')}</p>}
+			{isLoading && <InlineLoading />}
 
 			<ConfirmDialog
 				isOpen={pendingDelete != null}

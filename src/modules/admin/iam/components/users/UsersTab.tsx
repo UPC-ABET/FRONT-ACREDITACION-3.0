@@ -84,6 +84,23 @@ export function UsersTab() {
 				},
 			},
 			{
+				id: 'teacher',
+				header: t('admin.iam.users.col.teacher'),
+				cell: ({ row }) => {
+					const teacher = row.original.linkedTeacher;
+					if (!teacher) return <span className="text-zinc-400">—</span>;
+					const fullName = `${teacher.firstName} ${teacher.lastName}`.trim();
+					return (
+						<span className="flex flex-col">
+							{teacher.code && (
+								<span className="font-mono text-xs text-zinc-400">{teacher.code}</span>
+							)}
+							<span className="text-zinc-700">{fullName || '—'}</span>
+						</span>
+					);
+				},
+			},
+			{
 				id: 'status',
 				header: t('admin.iam.users.col.status'),
 				cell: ({ row }) => (

@@ -8,6 +8,7 @@ function normalizeLog(log: NotificationLog): NotificationLog {
 		categoryTypeId: Number(log.categoryTypeId),
 		emailTemplateId: log.emailTemplateId == null ? null : Number(log.emailTemplateId),
 		notifierUserId: log.notifierUserId == null ? null : Number(log.notifierUserId),
+		statusTypeId: Number(log.statusTypeId),
 		toEmails: log.toEmails ?? [],
 		ccEmails: log.ccEmails ?? [],
 		toStaffIds: (log.toStaffIds ?? []).map(Number),

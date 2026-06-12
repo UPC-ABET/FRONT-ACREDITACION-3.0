@@ -1,17 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, Input, Select, Toggle } from '@/shared/components';
+import { Button, Input, Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import type { I18nText } from '@/shared/types';
-import {
-	useEmailTemplateMutations,
-	useNotificationCategories,
-} from '../hooks/useEmailTemplates';
+import { useEmailTemplateMutations, useNotificationCategories } from '../hooks/useEmailTemplates';
 import type { CoreType, EmailTemplate, EmailTemplateBody, NotifyVar } from '../types';
 import { TemplateFields } from './TemplateFields';
+import { ActiveToggle, EditorActions, EditorShell, FormSection } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 type Props = {
@@ -23,6 +20,8 @@ type Props = {
 	lockedCategoryId?: number | null;
 	/** Variables shown alongside the body editor. */
 	notifyVars?: NotifyVar[];
+	/** Overrides the editor card title (e.g. for the User tab). */
+	title?: string;
 };
 
 function asI18n(text: I18nText | undefined | null): I18nText {
@@ -36,6 +35,7 @@ export function EmailTemplateEditor({
 	onError,
 	lockedCategoryId = null,
 	notifyVars,
+	title,
 }: Props) {
 	const { t, locale } = useI18n();
 	const isEditing = template != null;
@@ -64,7 +64,8 @@ export function EmailTemplateEditor({
 		[categories, locale],
 	);
 
-	const selectedCategory = categoryOptions.find((option) => option.value === categoryTypeId) ?? null;
+	const selectedCategory =
+		categoryOptions.find((option) => option.value === categoryTypeId) ?? null;
 
 	async function handleSubmit() {
 		if (categoryTypeId == null || !code.trim()) {
@@ -90,35 +91,51 @@ export function EmailTemplateEditor({
 		}
 	}
 
-	return (
-		<div className="space-y-6">
-			<Button variant="ghost" size="sm" onClick={onCancel} className="self-start">
-				<ArrowLeftIcon className="h-4 w-4" />
-				{t('admin.notify.btn.back')}
-			</Button>
+	const resolvedTitle =
+		title ??
+		t(
+			isEditing ? 'admin.notify.template.form.editTitle' : 'admin.notify.template.form.createTitle',
+		);
 
-			<div className="grid gap-4 sm:grid-cols-2">
-				{lockedCategoryId == null && (
-					<Select
-						name="category"
-						label={t('admin.notify.template.field.category')}
-						placeholder={t('admin.notify.template.field.categoryPlaceholder')}
-						isSearchable
-						options={categoryOptions}
-						value={selectedCategory}
-						onChange={(_name, value) =>
-							setCategoryTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
-						}
+	return (
+		<EditorShell
+			title={resolvedTitle}
+			onBack={onCancel}
+			footer={
+				<EditorActions left={<ActiveToggle checked={isActive} onChange={setIsActive} />}>
+					{error && <span className="text-sm font-medium text-red-700">{error}</span>}
+					<Button variant="secondary" onClick={onCancel}>
+						{t('dialog.actions.cancel')}
+					</Button>
+					<Button variant="primary" disabled={saving} onClick={handleSubmit}>
+						{saving ? t('loading.default') : t('admin.notify.btn.save')}
+					</Button>
+				</EditorActions>
+			}>
+			<FormSection title={t('admin.notify.template.section.identity')}>
+				<div className="grid gap-4 sm:grid-cols-2">
+					{lockedCategoryId == null && (
+						<Select
+							name="category"
+							label={t('admin.notify.template.field.category')}
+							placeholder={t('admin.notify.template.field.categoryPlaceholder')}
+							isSearchable
+							options={categoryOptions}
+							value={selectedCategory}
+							onChange={(_name, value) =>
+								setCategoryTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
+							}
+						/>
+					)}
+					<Input
+						label={t('admin.notify.template.field.code')}
+						value={code}
+						onChange={(event) => setCode(event.target.value)}
+						disabled={isEditing}
+						required
 					/>
-				)}
-				<Input
-					label={t('admin.notify.template.field.code')}
-					value={code}
-					onChange={(event) => setCode(event.target.value)}
-					disabled={isEditing}
-					required
-				/>
-			</div>
+				</div>
+			</FormSection>
 
 			<TemplateFields
 				name={name}
@@ -130,25 +147,6 @@ export function EmailTemplateEditor({
 				notifyVars={notifyVars}
 				disabled={saving}
 			/>
-
-			<div className="flex flex-col gap-4 rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:flex-row sm:items-center sm:justify-between">
-				<div className="flex items-center gap-3">
-					<Toggle checked={isActive} onChange={setIsActive} />
-					<span className="text-base font-medium text-zinc-900">
-						{t('admin.notify.field.isActive')}
-					</span>
-				</div>
-
-				<div className="flex items-center gap-3">
-					{error && <span className="text-sm font-medium text-red-700">{error}</span>}
-					<Button variant="secondary" onClick={onCancel}>
-						{t('dialog.actions.cancel')}
-					</Button>
-					<Button variant="primary" disabled={saving} onClick={handleSubmit}>
-						{saving ? t('loading.default') : t('admin.notify.btn.save')}
-					</Button>
-				</div>
-			</div>
-		</div>
+		</EditorShell>
 	);
 }
