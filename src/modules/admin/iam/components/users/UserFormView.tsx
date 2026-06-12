@@ -136,6 +136,17 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 					{t(isEditing ? 'admin.iam.users.form.editTitle' : 'admin.iam.users.form.createTitle')}
 				</h2>
 
+				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-4">
+					<LinkedTeacherField
+						selected={linkedTeacher}
+						onChange={handleTeacherChange}
+						disabled={saving}
+					/>
+					<p className="mt-1 text-xs text-zinc-500">
+						{t('admin.iam.users.form.linkedTeacherHint')}
+					</p>
+				</div>
+
 				<div className="grid gap-4 sm:grid-cols-2">
 					<Input
 						label={t('admin.iam.users.form.firstName')}
@@ -181,16 +192,6 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 						value={documentCode}
 						onChange={(event) => setDocumentCode(event.target.value)}
 					/>
-					<div className="sm:col-span-2">
-						<LinkedTeacherField
-							selected={linkedTeacher}
-							onChange={handleTeacherChange}
-							disabled={saving}
-						/>
-						<p className="mt-1 text-xs text-zinc-500">
-							{t('admin.iam.users.form.linkedTeacherHint')}
-						</p>
-					</div>
 				</div>
 
 				<div className="space-y-2">
