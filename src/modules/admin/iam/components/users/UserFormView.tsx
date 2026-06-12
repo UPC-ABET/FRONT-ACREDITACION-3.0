@@ -9,9 +9,16 @@ import { useDocumentTypes, useRoles, useSaveUser, useUserRoles } from '../../hoo
 import { hasUserErrors, validateUserForm } from '../../schemas';
 import type { IamUser, UserCreateBody, UserFormErrors, UserRole } from '../../types';
 import { localizedText } from '../localizedText';
+import { LinkedTeacherField, type TeacherOption } from './LinkedTeacherField';
 import { UserRolesField } from './UserRolesField';
 
 const NO_ROLE_LINKS: UserRole[] = [];
+
+function teacherFromUser(user: IamUser | null): TeacherOption | null {
+	if (!user?.linkedTeacher) return null;
+	const { staffId, code, firstName, lastName } = user.linkedTeacher;
+	return { staffId, code, firstName, lastName };
+}
 
 type Props = {
 	user: IamUser | null;
@@ -37,8 +44,19 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 	const [phone, setPhone] = useState(user?.phone ?? '');
 	const [documentTypeId, setDocumentTypeId] = useState<number | null>(user?.documentTypeId ?? null);
 	const [documentCode, setDocumentCode] = useState(user?.documentCode ?? '');
+	const [linkedTeacher, setLinkedTeacher] = useState<TeacherOption | null>(() =>
+		teacherFromUser(user),
+	);
 	const [roleIds, setRoleIds] = useState<number[]>([]);
 	const [errors, setErrors] = useState<UserFormErrors>({});
+
+	const handleTeacherChange = (teacher: TeacherOption | null) => {
+		setLinkedTeacher(teacher);
+		if (teacher) {
+			setFirstName(teacher.firstName);
+			setLastName(teacher.lastName);
+		}
+	};
 
 	const isActiveRef = useRef(true);
 	useEffect(() => {
@@ -85,6 +103,7 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 			firstName: firstName.trim(),
 			lastName: lastName.trim(),
 			email: email.trim(),
+			staffId: linkedTeacher?.staffId ?? null,
 			...(phone.trim() ? { phone: phone.trim() } : {}),
 			...(documentTypeId != null ? { documentTypeId } : {}),
 			...(documentCode.trim() ? { documentCode: documentCode.trim() } : {}),
@@ -162,6 +181,16 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 						value={documentCode}
 						onChange={(event) => setDocumentCode(event.target.value)}
 					/>
+					<div className="sm:col-span-2">
+						<LinkedTeacherField
+							selected={linkedTeacher}
+							onChange={handleTeacherChange}
+							disabled={saving}
+						/>
+						<p className="mt-1 text-xs text-zinc-500">
+							{t('admin.iam.users.form.linkedTeacherHint')}
+						</p>
+					</div>
 				</div>
 
 				<div className="space-y-2">

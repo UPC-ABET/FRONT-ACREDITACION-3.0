@@ -3,14 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import {
-	Badge,
-	Button,
-	ConfirmDialog,
-	DataTable,
-	TableErrorState,
-	Toast,
-} from '@/shared/components';
+import { Button, ConfirmDialog, DataTable, TableErrorState, Toast } from '@/shared/components';
 import { usePrograms, type ProgramResponse } from '@/modules/academic';
 import { useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
@@ -22,6 +15,7 @@ import {
 } from '../hooks/useSurveyMessages';
 import type { CoreType, SurveyMessage } from '../types';
 import { SurveyMessageEditor } from './SurveyMessageEditor';
+import { InlineLoading, StatusBadge, TabHeader } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 type View = { mode: 'list' } | { mode: 'new' } | { mode: 'edit'; message: SurveyMessage };
@@ -85,15 +79,7 @@ export function SurveyMessagesTab() {
 			{
 				id: 'status',
 				header: t('admin.notify.survey.col.status'),
-				cell: ({ row }) => (
-					<Badge variant={row.original.isActive ? 'success' : 'default'}>
-						{t(
-							row.original.isActive
-								? 'admin.notify.badge.active'
-								: 'admin.notify.badge.inactive',
-						)}
-					</Badge>
-				),
+				cell: ({ row }) => <StatusBadge active={row.original.isActive} />,
 			},
 			{
 				id: 'actions',
@@ -135,7 +121,12 @@ export function SurveyMessagesTab() {
 					}}
 					onError={(message) => showToast(message, 'error')}
 				/>
-				<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
+				<Toast
+					isOpen={toast.isOpen}
+					onClose={clearToast}
+					type={toast.type}
+					message={toast.message}
+				/>
 			</div>
 		);
 	}
@@ -151,11 +142,14 @@ export function SurveyMessagesTab() {
 	}
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-6">
+			<TabHeader
+				title={t('admin.notify.survey.title')}
+				description={t('admin.notify.survey.subtitle')}
+			/>
 			<DataTable
 				columns={columns}
 				data={messages}
-				title={t('admin.notify.survey.title')}
 				aria-label={t('admin.notify.survey.title')}
 				actions={[
 					{
@@ -166,7 +160,7 @@ export function SurveyMessagesTab() {
 					},
 				]}
 			/>
-			{isLoading && <p className="text-sm text-zinc-500">{t('loading.default')}</p>}
+			{isLoading && <InlineLoading />}
 
 			<ConfirmDialog
 				isOpen={pendingDelete != null}

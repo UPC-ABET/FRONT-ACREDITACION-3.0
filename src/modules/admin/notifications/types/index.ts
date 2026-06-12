@@ -107,6 +107,12 @@ export interface EmailTemplateFilters {
 
 // ─── Notification logs (/notification-logs) ─────────────────────────────────────
 
+export interface NotificationStatusType {
+	id: number;
+	code: string;
+	name: I18nText;
+}
+
 export interface NotificationLog {
 	id: number;
 	categoryTypeId: number;
@@ -117,7 +123,8 @@ export interface NotificationLog {
 	toStaffIds: number[];
 	ccStaffIds: number[];
 	providerMessageId: string | null;
-	status: string;
+	statusTypeId: number;
+	statusType: NotificationStatusType;
 	errorMessage: string | null;
 	context: Record<string, unknown> | null;
 	createdAt: string | null;
@@ -127,7 +134,7 @@ export interface NotificationLogFilters {
 	categoryTypeId?: number;
 	emailTemplateId?: number;
 	notifierUserId?: number;
-	status?: string;
+	statusTypeId?: number;
 	isActive?: boolean;
 }
 

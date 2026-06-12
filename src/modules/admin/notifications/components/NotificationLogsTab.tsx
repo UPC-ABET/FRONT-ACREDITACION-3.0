@@ -2,18 +2,18 @@
 
 import { useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge, DataTable, Input, Select, TableErrorState } from '@/shared/components';
+import { Badge, DataTable, Select, TableErrorState } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { TYPE_CODES } from '@/shared/constants';
 import { useNotificationCategories } from '../hooks/useEmailTemplates';
-import { useNotificationLogs } from '../hooks/useNotificationLogs';
+import { useNotificationLogs, useNotificationStatuses } from '../hooks/useNotificationLogs';
 import type { CoreType, NotificationLog, NotificationLogFilters } from '../types';
+import { InlineLoading, TabHeader } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
-function statusVariant(status: string): 'success' | 'danger' | 'default' {
-	const value = status?.toLowerCase() ?? '';
-	if (value.includes('sent') || value.includes('success') || value.includes('deliver'))
-		return 'success';
-	if (value.includes('fail') || value.includes('error') || value.includes('reject')) return 'danger';
+function statusVariant(code: string): 'success' | 'danger' | 'default' {
+	if (code === TYPE_CODES.NOTIFICATION_STATUS.SENT) return 'success';
+	if (code === TYPE_CODES.NOTIFICATION_STATUS.FAILED) return 'danger';
 	return 'default';
 }
 
@@ -26,16 +26,17 @@ function formatDate(value: string | null): string {
 export function NotificationLogsTab() {
 	const { t, locale } = useI18n();
 	const { data: categories = [] } = useNotificationCategories();
+	const { data: statuses = [] } = useNotificationStatuses();
 
 	const [categoryTypeId, setCategoryTypeId] = useState<number | null>(null);
-	const [status, setStatus] = useState('');
+	const [statusTypeId, setStatusTypeId] = useState<number | null>(null);
 
 	const filters = useMemo<NotificationLogFilters>(
 		() => ({
 			...(categoryTypeId != null ? { categoryTypeId } : {}),
-			...(status.trim() ? { status: status.trim() } : {}),
+			...(statusTypeId != null ? { statusTypeId } : {}),
 		}),
-		[categoryTypeId, status],
+		[categoryTypeId, statusTypeId],
 	);
 
 	const { data: logs = [], isLoading, isError, refetch } = useNotificationLogs(filters);
@@ -57,7 +58,19 @@ export function NotificationLogsTab() {
 		[categories, locale],
 	);
 
-	const selectedCategory = categoryOptions.find((option) => option.value === categoryTypeId) ?? null;
+	const selectedCategory =
+		categoryOptions.find((option) => option.value === categoryTypeId) ?? null;
+
+	const statusOptions = useMemo(
+		() =>
+			(statuses as CoreType[]).map((status) => ({
+				value: status.id,
+				label: localizedTypeName(status.name, locale, status.code),
+			})),
+		[statuses, locale],
+	);
+
+	const selectedStatus = statusOptions.find((option) => option.value === statusTypeId) ?? null;
 
 	const columns = useMemo<ColumnDef<NotificationLog>[]>(
 		() => [
@@ -85,19 +98,22 @@ export function NotificationLogsTab() {
 			{
 				id: 'status',
 				header: t('admin.notify.log.col.status'),
-				cell: ({ row }) => (
-					<Badge variant={statusVariant(row.original.status)}>{row.original.status || '—'}</Badge>
-				),
+				cell: ({ row }) => {
+					const statusType = row.original.statusType;
+					return (
+						<Badge variant={statusVariant(statusType.code)}>
+							{localizedTypeName(statusType.name, locale, statusType.code)}
+						</Badge>
+					);
+				},
 			},
 			{
 				id: 'error',
 				header: t('admin.notify.log.col.error'),
-				cell: ({ row }) => (
-					<span className="text-red-700">{row.original.errorMessage ?? '—'}</span>
-				),
+				cell: ({ row }) => <span className="text-red-700">{row.original.errorMessage ?? '—'}</span>,
 			},
 		],
-		[t, categoryNameById],
+		[t, locale, categoryNameById],
 	);
 
 	if (isError) {
@@ -111,7 +127,8 @@ export function NotificationLogsTab() {
 	}
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-6">
+			<TabHeader title={t('admin.notify.log.title')} description={t('admin.notify.log.subtitle')} />
 			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[280px_280px]">
 				<Select
 					name="category"
@@ -124,21 +141,21 @@ export function NotificationLogsTab() {
 						setCategoryTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
 					}
 				/>
-				<Input
+				<Select
+					name="status"
 					label={t('admin.notify.log.filter.status')}
-					value={status}
-					onChange={(event) => setStatus(event.target.value)}
 					placeholder={t('admin.notify.log.filter.statusPlaceholder')}
+					isClearable
+					options={statusOptions}
+					value={selectedStatus}
+					onChange={(_name, value) =>
+						setStatusTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
+					}
 				/>
 			</div>
 
-			<DataTable
-				columns={columns}
-				data={logs}
-				title={t('admin.notify.log.title')}
-				aria-label={t('admin.notify.log.title')}
-			/>
-			{isLoading && <p className="text-sm text-zinc-500">{t('loading.default')}</p>}
+			<DataTable columns={columns} data={logs} aria-label={t('admin.notify.log.title')} />
+			{isLoading && <InlineLoading />}
 		</div>
 	);
 }

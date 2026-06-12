@@ -128,10 +128,13 @@ export type ProfessorStaffResponse = {
 	jobTitle: { en: string; es: string };
 	jobDescription: { en: string; es: string };
 	user?: ProfessorStaffUserResponse;
+	firstName?: string;
+	lastName?: string;
 };
 
 export type ProfessorSearchResponse = {
 	id: number;
+	code?: string;
 	staffId: number;
 	staff: ProfessorStaffResponse;
 };

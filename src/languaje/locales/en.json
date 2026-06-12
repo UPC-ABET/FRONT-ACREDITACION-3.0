@@ -223,6 +223,7 @@
 					"name": "Name",
 					"email": "Email",
 					"document": "Document",
+					"teacher": "Linked teacher",
 					"status": "Status",
 					"actions": "Actions"
 				},
@@ -241,6 +242,9 @@
 					"documentType": "Document type",
 					"documentTypePlaceholder": "Select a document type",
 					"documentCode": "Document number",
+					"linkedTeacher": "Linked teacher",
+					"linkedTeacherPlaceholder": "Search by teacher code or name",
+					"linkedTeacherHint": "Link a user account to a registered teacher.",
 					"isActive": "Active",
 					"roles": "Roles",
 					"rolesHint": "Select the roles this user will have.",
@@ -550,7 +554,8 @@
 		},
 		"notify": {
 			"page": {
-				"title": "IFC Notification Configuration",
+				"title": "IFC notifications",
+				"subtitle": "Configure email templates per IFC trigger and status",
 				"selectPeriod": "Select a period to continue"
 			},
 			"field": {
@@ -594,7 +599,15 @@
 			},
 			"survey": {
 				"title": "Survey notifications",
+				"subtitle": "Email templates per survey type and program",
 				"create": "New notification",
+				"form": {
+					"createTitle": "New survey notification",
+					"editTitle": "Edit survey notification"
+				},
+				"section": {
+					"target": "Target"
+				},
 				"col": {
 					"surveyType": "Survey type",
 					"program": "Program",
@@ -616,12 +629,24 @@
 			},
 			"user": {
 				"title": "User notifications",
-				"create": "New template"
+				"subtitle": "Email templates targeted at users",
+				"create": "New template",
+				"form": {
+					"createTitle": "New user template",
+					"editTitle": "Edit user template"
+				}
 			},
 			"template": {
 				"title": "Email templates",
 				"search": "Search by code",
 				"create": "New template",
+				"form": {
+					"createTitle": "New template",
+					"editTitle": "Edit template"
+				},
+				"section": {
+					"identity": "Identification"
+				},
 				"col": {
 					"code": "Code",
 					"category": "Category",
@@ -640,6 +665,7 @@
 			},
 			"log": {
 				"title": "Notification logs",
+				"subtitle": "History of emails sent by the system",
 				"col": {
 					"date": "Date",
 					"category": "Category",
@@ -651,7 +677,7 @@
 					"category": "Category",
 					"categoryPlaceholder": "All",
 					"status": "Status",
-					"statusPlaceholder": "e.g. SENT"
+					"statusPlaceholder": "All"
 				}
 			}
 		},

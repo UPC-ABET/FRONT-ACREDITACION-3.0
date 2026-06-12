@@ -7,7 +7,7 @@ import {
 	UserGroupIcon,
 	UsersIcon,
 } from '@heroicons/react/24/outline';
-import { Button, I18nTextField, Toggle } from '@/shared/components';
+import { Button } from '@/shared/components';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { useI18n } from '@/providers';
 import type { I18nText } from '@/shared/types';
@@ -17,7 +17,8 @@ import {
 	upsertNotificationConfig,
 } from '../services/notificationConfigsService';
 import type { NotificationConfig, UpsertConfigBody } from '../types';
-import { VariableLegend } from './VariableLegend';
+import { TemplateFields } from './TemplateFields';
+import { ActiveToggle, EditorActions, EditorCard, FormSection } from './shared';
 
 type Props = {
 	triggerTypeId: number;
@@ -164,98 +165,75 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 	}
 
 	return (
-		<div className="space-y-8">
-			<section className="space-y-4">
-				<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
-					{t('admin.notify.field.name')}
-				</h3>
-				<I18nTextField as="input" layout="row" value={name} onChange={setName} />
-			</section>
+		<div className="space-y-5">
+			<EditorCard>
+				<TemplateFields
+					name={name}
+					subject={subject}
+					body={body}
+					onName={setName}
+					onSubject={setSubject}
+					onBody={setBody}
+					notifyVars={notifyVars}
+					statusCode={statusCode}
+					disabled={saving}
+				/>
 
-			<section className="space-y-4">
-				<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
-					{t('admin.notify.field.subject')}
-				</h3>
-				<I18nTextField as="input" layout="row" value={subject} onChange={setSubject} />
-			</section>
+				<FormSection title={`${t('admin.notify.field.to')} / ${t('admin.notify.field.cc')}`}>
+					<div className="grid gap-5 md:grid-cols-2">
+						<RecipientsField
+							icon={<UsersIcon className="h-5 w-5 text-red-700" />}
+							label={t('admin.notify.field.to')}
+							options={chartEntityTypeOptions}
+							selected={toIds}
+							onToggle={(id) => setToIds((prev) => toggleIdInList(prev, id))}
+							emptyLabel={t('admin.notify.field.noEntityTypes')}
+						/>
+						<RecipientsField
+							icon={<UserGroupIcon className="h-5 w-5 text-red-700" />}
+							label={t('admin.notify.field.cc')}
+							options={chartEntityTypeOptions}
+							selected={ccIds}
+							onToggle={(id) => setCcIds((prev) => toggleIdInList(prev, id))}
+							emptyLabel={t('admin.notify.field.noEntityTypes')}
+						/>
+					</div>
+				</FormSection>
+			</EditorCard>
 
-			<section className="space-y-4">
-				<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
-					{t('admin.notify.field.body')}
-				</h3>
-				<div className="grid gap-5 lg:grid-cols-[1fr_320px]">
-					<I18nTextField layout="row" rows={10} value={body} onChange={setBody} />
-					<VariableLegend notifyVars={notifyVars} currentStatusCode={statusCode} />
-				</div>
-			</section>
-
-			<section className="space-y-4">
-				<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
-					{t('admin.notify.field.to')} / {t('admin.notify.field.cc')}
-				</h3>
-				<div className="grid gap-5 md:grid-cols-2">
-					<RecipientsField
-						icon={<UsersIcon className="h-5 w-5 text-red-700" />}
-						label={t('admin.notify.field.to')}
-						options={chartEntityTypeOptions}
-						selected={toIds}
-						onToggle={(id) => setToIds((prev) => toggleIdInList(prev, id))}
-						emptyLabel={t('admin.notify.field.noEntityTypes')}
-					/>
-					<RecipientsField
-						icon={<UserGroupIcon className="h-5 w-5 text-red-700" />}
-						label={t('admin.notify.field.cc')}
-						options={chartEntityTypeOptions}
-						selected={ccIds}
-						onToggle={(id) => setCcIds((prev) => toggleIdInList(prev, id))}
-						emptyLabel={t('admin.notify.field.noEntityTypes')}
-					/>
-				</div>
-			</section>
-
-			<section className="flex flex-col gap-4 rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:flex-row sm:items-center sm:justify-between">
-				<div className="flex items-center gap-3">
-					<Toggle checked={isActive} onChange={setIsActive} />
-					<span className="text-base font-medium text-zinc-900">
-						{t('admin.notify.field.isActive')}
-					</span>
-				</div>
-
-				<div className="flex flex-wrap items-center gap-3">
-					{existingConfig && !confirmDelete && (
+			<EditorActions left={<ActiveToggle checked={isActive} onChange={setIsActive} />}>
+				{existingConfig && !confirmDelete && (
+					<Button
+						variant="ghost"
+						disabled={saving}
+						onClick={() => setConfirmDelete(true)}
+						className="text-red-700 hover:bg-red-50">
+						<TrashIcon className="h-5 w-5" />
+						{t('admin.notify.btn.delete')}
+					</Button>
+				)}
+				{existingConfig && confirmDelete && (
+					<div className="flex flex-wrap items-center gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-3">
+						<ExclamationTriangleIcon className="h-5 w-5 text-red-700" />
+						<span className="text-sm font-medium text-red-800">
+							{t('admin.notify.confirm.delete')}
+						</span>
 						<Button
 							variant="ghost"
-							size="lg"
+							size="md"
 							disabled={saving}
-							onClick={() => setConfirmDelete(true)}
-							className="text-red-700 hover:bg-red-50">
-							<TrashIcon className="h-5 w-5" />
-							{t('admin.notify.btn.delete')}
+							onClick={() => setConfirmDelete(false)}>
+							{t('dialog.actions.cancel')}
 						</Button>
-					)}
-					{existingConfig && confirmDelete && (
-						<div className="flex flex-wrap items-center gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-3">
-							<ExclamationTriangleIcon className="h-5 w-5 text-red-700" />
-							<span className="text-sm font-medium text-red-800">
-								{t('admin.notify.confirm.delete')}
-							</span>
-							<Button
-								variant="ghost"
-								size="md"
-								disabled={saving}
-								onClick={() => setConfirmDelete(false)}>
-								{t('dialog.actions.cancel')}
-							</Button>
-							<Button variant="primary" size="md" disabled={saving} onClick={handleDelete}>
-								{t('admin.notify.btn.confirmDelete')}
-							</Button>
-						</div>
-					)}
-					<Button variant="primary" size="lg" disabled={saving} onClick={handleSave}>
-						{saving ? t('loading.default') : t('admin.notify.btn.save')}
-					</Button>
-				</div>
-			</section>
+						<Button variant="primary" size="md" disabled={saving} onClick={handleDelete}>
+							{t('admin.notify.btn.confirmDelete')}
+						</Button>
+					</div>
+				)}
+				<Button variant="primary" disabled={saving} onClick={handleSave}>
+					{saving ? t('loading.default') : t('admin.notify.btn.save')}
+				</Button>
+			</EditorActions>
 		</div>
 	);
 }

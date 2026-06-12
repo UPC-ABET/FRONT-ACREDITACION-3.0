@@ -3,6 +3,7 @@ export * from './ConfigTabs';
 export * from './ConfigEditor';
 export * from './VariableLegend';
 export * from './TemplateFields';
+export * from './shared';
 export * from './SurveyMessagesTab';
 export * from './SurveyMessageEditor';
 export * from './EmailTemplateEditor';

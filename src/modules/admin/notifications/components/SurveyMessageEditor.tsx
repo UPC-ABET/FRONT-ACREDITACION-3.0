@@ -1,8 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, Input, Select, Toggle } from '@/shared/components';
+import { Button, Input, Select } from '@/shared/components';
 import { usePrograms, type ProgramResponse } from '@/modules/academic';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
@@ -14,6 +13,7 @@ import {
 } from '../hooks/useSurveyMessages';
 import type { CoreType, SurveyMessage, SurveyMessageBody } from '../types';
 import { TemplateFields } from './TemplateFields';
+import { ActiveToggle, EditorActions, EditorShell, FormSection } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 type Props = {
@@ -35,6 +35,7 @@ function parseCcReceivers(value: unknown): string {
 
 export function SurveyMessageEditor({ message, onCancel, onSuccess, onError }: Props) {
 	const { t, locale } = useI18n();
+	const isEditing = message != null;
 
 	const { data: surveyTypes = [] } = useSurveyTypes();
 	const { data: programs = [] } = usePrograms();
@@ -72,7 +73,8 @@ export function SurveyMessageEditor({ message, onCancel, onSuccess, onError }: P
 		[programs, locale],
 	);
 
-	const selectedSurveyType = surveyTypeOptions.find((option) => option.value === surveyTypeId) ?? null;
+	const selectedSurveyType =
+		surveyTypeOptions.find((option) => option.value === surveyTypeId) ?? null;
 	const selectedProgram = programOptions.find((option) => option.value === programId) ?? null;
 
 	async function handleSubmit() {
@@ -106,36 +108,48 @@ export function SurveyMessageEditor({ message, onCancel, onSuccess, onError }: P
 	}
 
 	return (
-		<div className="space-y-6">
-			<Button variant="ghost" size="sm" onClick={onCancel} className="self-start">
-				<ArrowLeftIcon className="h-4 w-4" />
-				{t('admin.notify.btn.back')}
-			</Button>
-
-			<div className="grid gap-4 sm:grid-cols-2">
-				<Select
-					name="surveyType"
-					label={t('admin.notify.survey.field.surveyType')}
-					placeholder={t('admin.notify.survey.field.surveyTypePlaceholder')}
-					isSearchable
-					options={surveyTypeOptions}
-					value={selectedSurveyType}
-					onChange={(_name, value) =>
-						setSurveyTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
-					}
-				/>
-				<Select
-					name="program"
-					label={t('admin.notify.survey.field.program')}
-					placeholder={t('admin.notify.survey.field.programPlaceholder')}
-					isSearchable
-					options={programOptions}
-					value={selectedProgram}
-					onChange={(_name, value) =>
-						setProgramId(value && !Array.isArray(value) ? Number(value.value) : null)
-					}
-				/>
-			</div>
+		<EditorShell
+			title={t(
+				isEditing ? 'admin.notify.survey.form.editTitle' : 'admin.notify.survey.form.createTitle',
+			)}
+			onBack={onCancel}
+			footer={
+				<EditorActions left={<ActiveToggle checked={isActive} onChange={setIsActive} />}>
+					{error && <span className="text-sm font-medium text-red-700">{error}</span>}
+					<Button variant="secondary" onClick={onCancel}>
+						{t('dialog.actions.cancel')}
+					</Button>
+					<Button variant="primary" disabled={saving} onClick={handleSubmit}>
+						{saving ? t('loading.default') : t('admin.notify.btn.save')}
+					</Button>
+				</EditorActions>
+			}>
+			<FormSection title={t('admin.notify.survey.section.target')}>
+				<div className="grid gap-4 sm:grid-cols-2">
+					<Select
+						name="surveyType"
+						label={t('admin.notify.survey.field.surveyType')}
+						placeholder={t('admin.notify.survey.field.surveyTypePlaceholder')}
+						isSearchable
+						options={surveyTypeOptions}
+						value={selectedSurveyType}
+						onChange={(_name, value) =>
+							setSurveyTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
+						}
+					/>
+					<Select
+						name="program"
+						label={t('admin.notify.survey.field.program')}
+						placeholder={t('admin.notify.survey.field.programPlaceholder')}
+						isSearchable
+						options={programOptions}
+						value={selectedProgram}
+						onChange={(_name, value) =>
+							setProgramId(value && !Array.isArray(value) ? Number(value.value) : null)
+						}
+					/>
+				</div>
+			</FormSection>
 
 			<TemplateFields
 				name={name}
@@ -148,31 +162,13 @@ export function SurveyMessageEditor({ message, onCancel, onSuccess, onError }: P
 				disabled={saving}
 			/>
 
-			<Input
-				label={t('admin.notify.survey.field.ccReceivers')}
-				value={ccReceivers}
-				onChange={(event) => setCcReceivers(event.target.value)}
-				placeholder={t('admin.notify.survey.field.ccReceiversPlaceholder')}
-			/>
-
-			<div className="flex flex-col gap-4 rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:flex-row sm:items-center sm:justify-between">
-				<div className="flex items-center gap-3">
-					<Toggle checked={isActive} onChange={setIsActive} />
-					<span className="text-base font-medium text-zinc-900">
-						{t('admin.notify.field.isActive')}
-					</span>
-				</div>
-
-				<div className="flex items-center gap-3">
-					{error && <span className="text-sm font-medium text-red-700">{error}</span>}
-					<Button variant="secondary" onClick={onCancel}>
-						{t('dialog.actions.cancel')}
-					</Button>
-					<Button variant="primary" disabled={saving} onClick={handleSubmit}>
-						{saving ? t('loading.default') : t('admin.notify.btn.save')}
-					</Button>
-				</div>
-			</div>
-		</div>
+			<FormSection title={t('admin.notify.survey.field.ccReceivers')}>
+				<Input
+					value={ccReceivers}
+					onChange={(event) => setCcReceivers(event.target.value)}
+					placeholder={t('admin.notify.survey.field.ccReceiversPlaceholder')}
+				/>
+			</FormSection>
+		</EditorShell>
 	);
 }

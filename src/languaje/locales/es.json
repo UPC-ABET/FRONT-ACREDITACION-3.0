@@ -223,6 +223,7 @@
 					"name": "Nombre",
 					"email": "Correo",
 					"document": "Documento",
+					"teacher": "Docente vinculado",
 					"status": "Estado",
 					"actions": "Acciones"
 				},
@@ -241,6 +242,9 @@
 					"documentType": "Tipo de documento",
 					"documentTypePlaceholder": "Selecciona un tipo de documento",
 					"documentCode": "Número de documento",
+					"linkedTeacher": "Docente vinculado",
+					"linkedTeacherPlaceholder": "Busca por código o nombre del docente",
+					"linkedTeacherHint": "Vincula una cuenta de usuario con un docente registrado.",
 					"isActive": "Activo",
 					"roles": "Roles",
 					"rolesHint": "Selecciona los roles que tendrá este usuario.",
@@ -550,7 +554,8 @@
 		},
 		"notify": {
 			"page": {
-				"title": "Configuración de Notificaciones IFC",
+				"title": "Notificaciones IFC",
+				"subtitle": "Configura las plantillas de correo por disparador y estado del IFC",
 				"selectPeriod": "Seleccione un período para continuar"
 			},
 			"field": {
@@ -594,7 +599,15 @@
 			},
 			"survey": {
 				"title": "Notificaciones de encuestas",
+				"subtitle": "Plantillas de correo por tipo de encuesta y programa",
 				"create": "Nueva notificación",
+				"form": {
+					"createTitle": "Nueva notificación de encuesta",
+					"editTitle": "Editar notificación de encuesta"
+				},
+				"section": {
+					"target": "Destino"
+				},
 				"col": {
 					"surveyType": "Tipo de encuesta",
 					"program": "Programa",
@@ -616,12 +629,24 @@
 			},
 			"user": {
 				"title": "Notificaciones de usuario",
-				"create": "Nueva plantilla"
+				"subtitle": "Plantillas de correo dirigidas a los usuarios",
+				"create": "Nueva plantilla",
+				"form": {
+					"createTitle": "Nueva plantilla de usuario",
+					"editTitle": "Editar plantilla de usuario"
+				}
 			},
 			"template": {
 				"title": "Plantillas de correo",
 				"search": "Buscar por código",
 				"create": "Nueva plantilla",
+				"form": {
+					"createTitle": "Nueva plantilla",
+					"editTitle": "Editar plantilla"
+				},
+				"section": {
+					"identity": "Identificación"
+				},
 				"col": {
 					"code": "Código",
 					"category": "Categoría",
@@ -640,6 +665,7 @@
 			},
 			"log": {
 				"title": "Registros de notificaciones",
+				"subtitle": "Historial de correos enviados por el sistema",
 				"col": {
 					"date": "Fecha",
 					"category": "Categoría",
@@ -651,7 +677,7 @@
 					"category": "Categoría",
 					"categoryPlaceholder": "Todas",
 					"status": "Estado",
-					"statusPlaceholder": "ej. SENT"
+					"statusPlaceholder": "Todos"
 				}
 			}
 		},

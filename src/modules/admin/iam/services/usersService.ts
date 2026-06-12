@@ -7,6 +7,10 @@ function normalizeUser(user: IamUser): IamUser {
 		id: Number(user.id),
 		documentTypeId: user.documentTypeId == null ? null : Number(user.documentTypeId),
 		isActive: Boolean(user.isActive),
+		staffId: user.staffId == null ? null : Number(user.staffId),
+		linkedTeacher: user.linkedTeacher
+			? { ...user.linkedTeacher, staffId: Number(user.linkedTeacher.staffId) }
+			: null,
 	};
 }
 
