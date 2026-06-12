@@ -1,0 +1,48 @@
+'use client';
+
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { chartsService } from '../services/chartsService';
+import type { ChartCreatePayload, ChartUpdatePayload } from '../types';
+import { chartsQueryKeys } from './queryKeys';
+
+export function useChartTree(academicPeriodId: number | null, schoolId: number | null) {
+	return useQuery({
+		queryKey: chartsQueryKeys.tree(academicPeriodId, schoolId),
+		queryFn: () => chartsService.tree(),
+		enabled: academicPeriodId != null && schoolId != null,
+	});
+}
+
+export function usePrograms(enabled: boolean) {
+	return useQuery({
+		queryKey: chartsQueryKeys.programs(),
+		queryFn: () => chartsService.programsGetAll(),
+		enabled,
+		staleTime: Infinity,
+	});
+}
+
+export function useChartMutations() {
+	const queryClient = useQueryClient();
+
+	const invalidateTree = () =>
+		queryClient.invalidateQueries({ queryKey: [...chartsQueryKeys.all, 'tree'] });
+
+	const create = useMutation({
+		mutationFn: (payload: ChartCreatePayload) => chartsService.create(payload),
+		onSuccess: invalidateTree,
+	});
+
+	const update = useMutation({
+		mutationFn: ({ chartId, payload }: { chartId: number; payload: ChartUpdatePayload }) =>
+			chartsService.update(chartId, payload),
+		onSuccess: invalidateTree,
+	});
+
+	const remove = useMutation({
+		mutationFn: (chartId: number) => chartsService.remove(chartId),
+		onSuccess: invalidateTree,
+	});
+
+	return { create, update, remove };
+}

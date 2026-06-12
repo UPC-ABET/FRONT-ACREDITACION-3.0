@@ -904,6 +904,17 @@
 	},
 	"error": {
 		"generic": "An unexpected error occurred",
+		"chart": {
+			"hasIfc": "A descendant course coordinator has an IFC for its course in this period.",
+			"readOnlyNode": "This node is read-only and cannot be modified.",
+			"parentNotFound": "The parent node was not found.",
+			"cannotAddUnderDean": "Children cannot be added directly under the Dean.",
+			"staffNotFound": "The selected staff member was not found.",
+			"entityTypeInvalid": "The entity type is not valid.",
+			"entityTypeReadOnly": "The entity type is read-only.",
+			"entityCodeRequired": "The entity is required for this type.",
+			"entityNotFound": "The selected entity was not found."
+		},
 		"courseOutcomeMapping": {
 			"courseOutOfScope": "The course does not belong to the selected program.",
 			"outcomeOutOfScope": "The outcome does not belong to the selected commission.",
@@ -2544,6 +2555,66 @@
 			"error": {
 				"loadFailed": "The outcome mapping could not be loaded.",
 				"saveFailed": "The changes could not be saved."
+			}
+		},
+		"organizationChartMaintenance": {
+			"title": "Organization chart maintenance",
+			"subtitle": "View and edit the school's organizational structure for the active period.",
+			"selectContext": "Select a school and an academic period in the top bar to continue.",
+			"notConfigured": "This school has no organization chart configured for this period.",
+			"retry": "Retry",
+			"toolbar": {
+				"zoomIn": "Zoom in",
+				"zoomOut": "Zoom out",
+				"expandAll": "Expand all",
+				"collapseAll": "Collapse all",
+				"exportPng": "Export image",
+				"exportPdf": "Export PDF"
+			},
+			"actions": {
+				"edit": "Edit",
+				"addChild": "Add child",
+				"delete": "Delete"
+			},
+			"form": {
+				"createTitle": "Add node",
+				"editTitle": "Edit node",
+				"parentLabel": "Reports to",
+				"staff": "Staff",
+				"staffPlaceholder": "Search by name or code...",
+				"titleEs": "Role title (ES)",
+				"titleEn": "Role title (EN)",
+				"entityType": "Entity type",
+				"entityTypePlaceholder": "Select a type",
+				"entityCode": "Entity",
+				"programPlaceholder": "Select a program",
+				"coursePlaceholder": "Search a course...",
+				"save": "Save",
+				"saving": "Saving...",
+				"error": {
+					"staffRequired": "Select the staff member.",
+					"titleRequired": "Enter the role title.",
+					"entityTypeRequired": "Select an entity type.",
+					"entityCodeRequired": "Select the entity.",
+					"saveFailed": "The node could not be saved."
+				}
+			},
+			"toast": {
+				"saved": "Organization chart updated successfully.",
+				"deleted": "Node deleted successfully."
+			},
+			"delete": {
+				"title": "Delete node",
+				"message": "This will remove the node and all its descendants. Continue?",
+				"blockedTitle": "Cannot delete",
+				"blockedSubtitle": "It could not be deleted for the following reasons:"
+			},
+			"export": {
+				"error": "The organization chart could not be exported."
+			},
+			"error": {
+				"loadFailed": "The organization chart could not be loaded.",
+				"deleteFailed": "The node could not be deleted."
 			}
 		},
 		"sectionsMaintenance": {

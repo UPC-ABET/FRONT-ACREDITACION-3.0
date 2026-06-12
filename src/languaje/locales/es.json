@@ -904,6 +904,17 @@
 	},
 	"error": {
 		"generic": "Ocurrió un error inesperado",
+		"chart": {
+			"hasIfc": "Un coordinador de curso dependiente tiene un IFC para su curso en este período.",
+			"readOnlyNode": "Este nodo es de solo lectura y no puede modificarse.",
+			"parentNotFound": "No se encontró el nodo padre.",
+			"cannotAddUnderDean": "No se pueden agregar dependientes directamente bajo el Decano.",
+			"staffNotFound": "No se encontró al personal seleccionado.",
+			"entityTypeInvalid": "El tipo de entidad no es válido.",
+			"entityTypeReadOnly": "El tipo de entidad es de solo lectura.",
+			"entityCodeRequired": "La entidad es obligatoria para este tipo.",
+			"entityNotFound": "No se encontró la entidad seleccionada."
+		},
 		"courseOutcomeMapping": {
 			"courseOutOfScope": "El curso no pertenece a la carrera seleccionada.",
 			"outcomeOutOfScope": "El outcome no pertenece a la comisión seleccionada.",
@@ -2544,6 +2555,66 @@
 			"error": {
 				"loadFailed": "No se pudo cargar el mapeo de outcomes.",
 				"saveFailed": "No se pudieron guardar los cambios."
+			}
+		},
+		"organizationChartMaintenance": {
+			"title": "Mantenimiento de organigrama",
+			"subtitle": "Visualiza y edita la estructura organizacional de la escuela para el período activo.",
+			"selectContext": "Selecciona una escuela y un período académico en la barra superior para continuar.",
+			"notConfigured": "La escuela no tiene un organigrama configurado para este período.",
+			"retry": "Reintentar",
+			"toolbar": {
+				"zoomIn": "Acercar",
+				"zoomOut": "Alejar",
+				"expandAll": "Expandir todo",
+				"collapseAll": "Colapsar todo",
+				"exportPng": "Exportar imagen",
+				"exportPdf": "Exportar PDF"
+			},
+			"actions": {
+				"edit": "Editar",
+				"addChild": "Agregar dependiente",
+				"delete": "Eliminar"
+			},
+			"form": {
+				"createTitle": "Agregar nodo",
+				"editTitle": "Editar nodo",
+				"parentLabel": "Depende de",
+				"staff": "Personal",
+				"staffPlaceholder": "Busca por nombre o código...",
+				"titleEs": "Cargo o rol (ES)",
+				"titleEn": "Cargo o rol (EN)",
+				"entityType": "Tipo de entidad",
+				"entityTypePlaceholder": "Selecciona un tipo",
+				"entityCode": "Entidad",
+				"programPlaceholder": "Selecciona una carrera",
+				"coursePlaceholder": "Busca un curso...",
+				"save": "Guardar",
+				"saving": "Guardando...",
+				"error": {
+					"staffRequired": "Selecciona al personal.",
+					"titleRequired": "Ingresa el cargo o rol.",
+					"entityTypeRequired": "Selecciona un tipo de entidad.",
+					"entityCodeRequired": "Selecciona la entidad.",
+					"saveFailed": "No se pudo guardar el nodo."
+				}
+			},
+			"toast": {
+				"saved": "Organigrama actualizado correctamente.",
+				"deleted": "Nodo eliminado correctamente."
+			},
+			"delete": {
+				"title": "Eliminar nodo",
+				"message": "Esto eliminará el nodo y todos sus dependientes. ¿Continuar?",
+				"blockedTitle": "No se puede eliminar",
+				"blockedSubtitle": "No se pudo eliminar por lo siguiente:"
+			},
+			"export": {
+				"error": "No se pudo exportar el organigrama."
+			},
+			"error": {
+				"loadFailed": "No se pudo cargar el organigrama.",
+				"deleteFailed": "No se pudo eliminar el nodo."
 			}
 		},
 		"sectionsMaintenance": {
