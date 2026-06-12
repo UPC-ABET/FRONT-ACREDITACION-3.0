@@ -55,43 +55,39 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 
 	if (academicPeriodId !== syncedPeriodId) {
 		setSyncedPeriodId(academicPeriodId);
+		setAccreditorId(null);
 		setCommissionId(null);
 		setProgramId(null);
 	}
 
-	const baseQuery = useCourseOutcomeMappingFilters({});
-	const scopedQuery = useCourseOutcomeMappingFilters(
-		{ academicPeriodId: academicPeriodId ?? undefined },
-		academicPeriodId != null,
-	);
+	const filtersQuery = useCourseOutcomeMappingFilters({}, academicPeriodId != null);
 
-	const baseRows = useMemo(() => baseQuery.data ?? [], [baseQuery.data]);
-	const scopedRows = useMemo(() => scopedQuery.data ?? [], [scopedQuery.data]);
+	const rows = useMemo(() => filtersQuery.data ?? [], [filtersQuery.data]);
 
 	const accreditorOptions = useMemo(
 		() =>
 			distinctOptions(
-				baseRows,
+				rows,
 				(row) => row.accreditorId,
 				(row) => `${row.accreditorCode} - ${localized(row.accreditorName, locale)}`,
 			),
-		[baseRows, locale],
+		[rows, locale],
 	);
 
 	const commissionOptions = useMemo(
 		() =>
 			distinctOptions(
-				scopedRows.filter((row) => accreditorId == null || row.accreditorId === accreditorId),
+				rows.filter((row) => accreditorId == null || row.accreditorId === accreditorId),
 				(row) => row.commissionId,
 				(row) => `${row.commissionCode} - ${localized(row.commissionName, locale)}`,
 			),
-		[scopedRows, accreditorId, locale],
+		[rows, accreditorId, locale],
 	);
 
 	const programOptions = useMemo(
 		() =>
 			distinctOptions(
-				scopedRows.filter(
+				rows.filter(
 					(row) =>
 						(accreditorId == null || row.accreditorId === accreditorId) &&
 						(commissionId == null || row.commissionId === commissionId),
@@ -99,18 +95,18 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 				(row) => row.programId,
 				(row) => localized(row.programName, locale) || String(row.programId),
 			),
-		[scopedRows, accreditorId, commissionId, locale],
+		[rows, accreditorId, commissionId, locale],
 	);
 
 	const tableRows = useMemo(
 		() =>
-			scopedRows.filter(
+			rows.filter(
 				(row) =>
 					(accreditorId == null || row.accreditorId === accreditorId) &&
 					(commissionId == null || row.commissionId === commissionId) &&
 					(programId == null || row.programId === programId),
 			),
-		[scopedRows, accreditorId, commissionId, programId],
+		[rows, accreditorId, commissionId, programId],
 	);
 
 	const selectedOption = (options: FilterOption[], value: number | null) =>
@@ -192,16 +188,16 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 
 				{academicPeriodId == null ? (
 					renderNotice(t('loads.courseOutcomeMappingMaintenance.selectPeriod'))
-				) : scopedQuery.isError ? (
+				) : filtersQuery.isError ? (
 					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
 						<p className="text-sm text-zinc-500">
 							{t('loads.courseOutcomeMappingMaintenance.error.loadFailed')}
 						</p>
-						<Button variant="surface" size="sm" onClick={() => scopedQuery.refetch()}>
+						<Button variant="surface" size="sm" onClick={() => filtersQuery.refetch()}>
 							{t('loads.courseOutcomeMappingMaintenance.retry')}
 						</Button>
 					</div>
-				) : scopedQuery.isLoading ? (
+				) : filtersQuery.isLoading ? (
 					<div className="space-y-2" aria-busy>
 						{Array.from({ length: 6 }).map((_, index) => (
 							<div key={index} className="h-12 animate-pulse rounded-lg bg-zinc-100" />
@@ -212,7 +208,7 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 				) : (
 					<div
 						className={
-							scopedQuery.isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'
+							filtersQuery.isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'
 						}>
 						<div className="overflow-x-auto">
 							<Table>

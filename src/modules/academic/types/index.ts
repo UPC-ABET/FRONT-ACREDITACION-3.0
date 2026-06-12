@@ -351,7 +351,6 @@ export type CourseUpdateBody = {
 };
 
 export type CourseOutcomeMappingFilter = Partial<{
-	academicPeriodId: number;
 	accreditorId: number;
 	commissionId: number;
 	programId: number;
