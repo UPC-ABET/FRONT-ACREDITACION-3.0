@@ -1048,6 +1048,11 @@
 			"of": "de"
 		}
 	},
+	"academic": {
+		"period": {
+			"requiredForData": "Selecciona un per\u00edodo acad\u00e9mico."
+		}
+	},
 	"select": {
 		"placeholder": {
 			"default": "Seleccione una opcion"
@@ -2334,6 +2339,7 @@
 				"fileRequired": "Selecciona un archivo .xlsx",
 				"periodRequired": "Selecciona un período académico",
 				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
+				"fileTypeInvalid": "Solo se permiten archivos .xlsx",
 				"templateDownloadFailed": "No se pudo descargar la plantilla",
 				"generic": "Ocurrió un error durante la carga"
 			}

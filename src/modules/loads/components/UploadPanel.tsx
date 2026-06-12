@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import type { DragEvent } from 'react';
 import { Download, Upload } from 'lucide-react';
 import {
 	Button,
@@ -34,11 +35,49 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 	const [successOpen, setSuccessOpen] = useState(false);
 	const [errorOpen, setErrorOpen] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
+	const [isDraggingFile, setIsDraggingFile] = useState(false);
 
 	const handleFileChange = (selected: File | null) => {
 		setLocalError(null);
 		setResult(null);
 		setFile(selected);
+	};
+
+	const isExcelFile = (selected: File) =>
+		selected.name.toLowerCase().endsWith('.xlsx') ||
+		selected.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+	const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		setIsDraggingFile(false);
+
+		const selected = event.dataTransfer.files?.[0] ?? null;
+		if (!selected) return;
+
+		if (!isExcelFile(selected)) {
+			handleFileChange(null);
+			setLocalError(t('loads.upload.error.fileTypeInvalid'));
+			if (inputRef.current) inputRef.current.value = '';
+			return;
+		}
+
+		handleFileChange(selected);
+		if (inputRef.current) inputRef.current.value = '';
+	};
+
+	const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		event.dataTransfer.dropEffect = 'copy';
+		setIsDraggingFile(true);
+	};
+
+	const handleDragLeave = (event: DragEvent<HTMLLabelElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
+		setIsDraggingFile(false);
 	};
 
 	const handleDownloadTemplate = () => {
@@ -117,9 +156,22 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 
 					<label
 						htmlFor={fileInputId}
-						className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-10 text-center transition-colors hover:border-red-400 hover:bg-red-50/40">
-						<Upload className="mb-2 h-6 w-6 text-gray-400" />
-						<span className="text-sm font-medium text-gray-700">
+						onDrop={handleDrop}
+						onDragOver={handleDragOver}
+						onDragEnter={handleDragOver}
+						onDragLeave={handleDragLeave}
+						className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 text-center transition-colors ${
+							isDraggingFile
+								? 'border-red-500 bg-red-50'
+								: 'border-gray-300 bg-gray-50 hover:border-red-400 hover:bg-red-50/40'
+						}`}>
+						<Upload
+							className={`mb-2 h-6 w-6 ${isDraggingFile ? 'text-red-500' : 'text-gray-400'}`}
+						/>
+						<span
+							className={`text-sm font-medium ${
+								isDraggingFile ? 'text-red-700' : 'text-gray-700'
+							}`}>
 							{file ? file.name : t('loads.upload.dropzone')}
 						</span>
 						<span className="mt-1 text-xs text-gray-400">.xlsx</span>

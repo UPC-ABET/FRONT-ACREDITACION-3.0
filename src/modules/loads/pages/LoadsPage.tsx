@@ -31,7 +31,11 @@ export default function LoadsPage() {
 			</div>
 
 			{selectedType && academicPeriodId !== null ? (
-				<UploadPanel type={selectedType} academicPeriodId={academicPeriodId} />
+				<UploadPanel
+					key={selectedType.code}
+					type={selectedType}
+					academicPeriodId={academicPeriodId}
+				/>
 			) : (
 				<p className="rounded-md border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-sm text-gray-500">
 					{t('loads.upload.selectBoth')}

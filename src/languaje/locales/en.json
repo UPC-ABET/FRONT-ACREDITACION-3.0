@@ -1048,6 +1048,11 @@
 			"of": "of"
 		}
 	},
+	"academic": {
+		"period": {
+			"requiredForData": "Select an academic period."
+		}
+	},
 	"select": {
 		"placeholder": {
 			"default": "Select an option"
@@ -2334,6 +2339,7 @@
 				"fileRequired": "Select an .xlsx file",
 				"periodRequired": "Select an academic period",
 				"rowsWithErrors": "Errors were found. Check the downloaded file.",
+				"fileTypeInvalid": "Only .xlsx files are allowed",
 				"templateDownloadFailed": "Failed to download the template",
 				"generic": "An error occurred during the upload"
 			}
