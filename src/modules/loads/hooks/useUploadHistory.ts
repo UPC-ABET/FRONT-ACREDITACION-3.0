@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { findUploadLog, listUploadLogs } from '../services';
 import { LOADS_QUERY_KEYS } from '../constants';
-import type { UploadLog, UploadLogFilters } from '../types';
+import type { UploadLog, UploadLogFilters, UploadLogPage } from '../types';
 
 export function useUploadHistory(filters: UploadLogFilters = {}) {
-	return useQuery<UploadLog[], Error>({
+	return useQuery<UploadLogPage, Error>({
 		queryKey: LOADS_QUERY_KEYS.uploadHistoryList(filters as Record<string, unknown>),
 		queryFn: () => listUploadLogs(filters),
+		placeholderData: (previousData) => previousData,
 	});
 }
 

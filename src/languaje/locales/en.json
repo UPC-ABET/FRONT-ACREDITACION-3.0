@@ -22,13 +22,6 @@
 			"gra": "GRA — Graduating",
 			"lcfc": "LCFC — End of Cycle"
 		},
-		"tests": {
-			"label": "Tests",
-			"modals": "Modals",
-			"charts": "Charts",
-			"tables": "Tables",
-			"public": "Public"
-		},
 		"admin": {
 			"label": "Administration",
 			"parameters": "Parameters",
@@ -942,6 +935,14 @@
 			"usedInFindingOutcomes": "Linked to a finding",
 			"usedInOutcomeConfigs": "Has a survey outcome config",
 			"usedInScores": "Has survey scores"
+		},
+		"courseSection": {
+			"inUse": "This section cannot be deleted because it is in use.",
+			"sectionExists": "A section with that code already exists.",
+			"notFound": "Section not found.",
+			"updateFailed": "Could not update the section.",
+			"usedInStudentSectionEnrollments": "Has enrolled students",
+			"usedInSurveys": "Has surveys"
 		},
 		"auth": {
 			"accessDenied": "Access denied — insufficient permissions",
@@ -2461,6 +2462,58 @@
 				"updated": "Outcome updated successfully.",
 				"deleted": "Outcome deleted successfully."
 			}
+		},
+		"sectionsMaintenance": {
+			"title": "Sections maintenance",
+			"subtitle": "Edit or delete the sections for the selected academic period.",
+			"selectPeriod": "Select an academic period in the header to continue.",
+			"searchPlaceholder": "Search by section, course, professor or campus...",
+			"results": "results",
+			"page": "Page",
+			"prev": "Previous",
+			"next": "Next",
+			"retry": "Retry",
+			"col": {
+				"courseCode": "Course",
+				"sectionCode": "Section",
+				"professorCode": "Professor",
+				"campusCode": "Campus",
+				"modality": "Modality",
+				"actions": "Actions"
+			},
+			"actions": {
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"empty": {
+				"title": "No sections",
+				"subtitle": "No sections found with the current filters."
+			},
+			"error": {
+				"loadFailed": "Could not load the sections."
+			},
+			"edit": {
+				"title": "Edit section",
+				"subtitle": "Update the section and its assignments.",
+				"save": "Save",
+				"error": "Could not save the section.",
+				"current": "Current",
+				"coursePlaceholder": "Search course...",
+				"professorPlaceholder": "Search professor...",
+				"campusPlaceholder": "Select a campus",
+				"modalityPlaceholder": "Select a modality"
+			},
+			"delete": {
+				"title": "Delete section",
+				"message": "This will permanently delete the section. Continue?",
+				"error": "Could not delete the section.",
+				"blockedTitle": "Cannot delete",
+				"blockedSubtitle": "This section is in use in:"
+			},
+			"toast": {
+				"updated": "Section updated successfully.",
+				"deleted": "Section deleted successfully."
+			}
 		}
 	},
 	"uploadHistory": {
@@ -2473,6 +2526,10 @@
 			"empty": "No uploads recorded yet.",
 			"viewErrors": "View errors",
 			"rollback": "Rollback",
+			"results": "results",
+			"page": "Page",
+			"prev": "Previous",
+			"next": "Next",
 			"col": {
 				"id": "ID",
 				"type": "Type",

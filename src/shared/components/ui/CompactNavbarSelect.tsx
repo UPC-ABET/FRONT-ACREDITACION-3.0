@@ -149,9 +149,7 @@ export function CompactNavbarSelect({
 									}}
 									className={cn(
 										'w-full px-3 py-2 text-left text-[13px] transition-colors hover:bg-red-100 hover:text-zinc-900',
-										wrapOptions
-											? 'whitespace-normal break-words leading-snug'
-											: 'truncate',
+										wrapOptions ? 'whitespace-normal break-words leading-snug' : 'truncate',
 										isSelected
 											? 'bg-red-600 font-semibold text-white hover:bg-red-600 hover:text-white'
 											: 'text-zinc-800',

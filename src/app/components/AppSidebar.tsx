@@ -14,7 +14,6 @@ import {
 } from '@/shared/components';
 import {
 	HomeIcon,
-	Cog6ToothIcon,
 	ArrowRightStartOnRectangleIcon,
 	ClipboardDocumentListIcon,
 	DocumentChartBarIcon,
@@ -87,17 +86,6 @@ export function AppSidebar() {
 			children: [
 				{ name: t('nav.loads.dashboard'), href: '/loads' },
 				{ name: t('nav.loads.history'), href: '/loads/history' },
-			],
-		},
-
-		{
-			name: t('nav.tests.label'),
-			icon: Cog6ToothIcon,
-			children: [
-				{ name: t('nav.tests.modals'), href: '/tests/modals' },
-				{ name: t('nav.tests.charts'), href: '/tests/charts' },
-				{ name: t('nav.tests.tables'), href: '/tests/tables' },
-				{ name: t('nav.tests.public'), href: '/tests/public' },
 			],
 		},
 

@@ -1,8 +1,10 @@
 'use client';
 
-import { Eye, Undo2 } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronLeft, ChevronRight, Eye, Undo2 } from 'lucide-react';
 import { Card, Button } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { TYPE_CODES } from '@/shared/constants';
 import { useUploadHistory } from '../hooks';
 import type { UploadLog, UploadLogFilters } from '../types';
 
@@ -12,12 +14,14 @@ interface UploadHistoryTableProps {
 	onViewErrors?: (log: UploadLog) => void;
 }
 
+const PAGE_SIZE = 20;
+
 const STATUS_STYLE: Record<string, { dot: string; pill: string }> = {
-	'TG1102-T001': {
+	[TYPE_CODES.UPLOAD_STATUS.COMPLETED]: {
 		dot: 'bg-emerald-500',
 		pill: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
 	},
-	'TG1102-T002': {
+	[TYPE_CODES.UPLOAD_STATUS.ROLLED_BACK]: {
 		dot: 'bg-gray-400',
 		pill: 'bg-gray-50 text-gray-600 ring-gray-500/20',
 	},
@@ -47,8 +51,15 @@ export default function UploadHistoryTable({
 	onViewErrors,
 }: UploadHistoryTableProps) {
 	const { t, locale } = useI18n();
-	const { data: logs, isLoading, error } = useUploadHistory(filters ?? {});
-	const rows = logs ?? [];
+	const [page, setPage] = useState(1);
+	const { data, isLoading, isFetching, error } = useUploadHistory({
+		...(filters ?? {}),
+		page,
+		pageSize: PAGE_SIZE,
+	});
+	const rows = data?.items ?? [];
+	const total = data?.total ?? 0;
+	const totalPages = data?.totalPages ?? 1;
 
 	return (
 		<Card title={t('uploadHistory.table.title')} description={t('uploadHistory.table.description')}>
@@ -61,7 +72,10 @@ export default function UploadHistoryTable({
 			)}
 
 			{rows.length > 0 && (
-				<div className="-mx-4 overflow-x-auto sm:-mx-6">
+				<div
+					className={`-mx-4 overflow-x-auto sm:-mx-6 ${
+						isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'
+					}`}>
 					<div className="inline-block min-w-full align-middle">
 						<table className="min-w-full divide-y divide-gray-200 text-sm">
 							<thead className="bg-gray-50/60">
@@ -95,7 +109,7 @@ export default function UploadHistoryTable({
 							<tbody className="divide-y divide-gray-100 bg-white">
 								{rows.map((log) => {
 									const palette = STATUS_STYLE[log.status.code] ?? FALLBACK_STATUS_STYLE;
-									const isCompleted = log.status.code === 'TG1102-T001';
+									const isCompleted = log.status.code === TYPE_CODES.UPLOAD_STATUS.COMPLETED;
 									const typeLabel = log.uploadType.name[locale] ?? log.uploadType.code;
 									const statusLabel = log.status.name[locale] ?? log.status.code;
 									const hasErrors = (log.errorRows ?? 0) > 0;
@@ -172,6 +186,35 @@ export default function UploadHistoryTable({
 								})}
 							</tbody>
 						</table>
+					</div>
+				</div>
+			)}
+
+			{!isLoading && !error && rows.length > 0 && (
+				<div className="flex flex-col gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+					<p className="text-xs text-gray-500">
+						{total} {t('uploadHistory.table.results')}
+					</p>
+					<div className="flex items-center justify-center gap-3">
+						<Button
+							variant="surface"
+							size="sm"
+							disabled={page <= 1 || isFetching}
+							onClick={() => setPage((current) => Math.max(1, current - 1))}
+							aria-label={t('uploadHistory.table.prev')}>
+							<ChevronLeft className="h-4 w-4" />
+						</Button>
+						<span className="text-sm text-gray-600">
+							{t('uploadHistory.table.page')} {page} / {totalPages}
+						</span>
+						<Button
+							variant="surface"
+							size="sm"
+							disabled={page >= totalPages || isFetching}
+							onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+							aria-label={t('uploadHistory.table.next')}>
+							<ChevronRight className="h-4 w-4" />
+						</Button>
 					</div>
 				</div>
 			)}

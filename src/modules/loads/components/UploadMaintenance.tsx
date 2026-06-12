@@ -1,7 +1,8 @@
 'use client';
 
-import { ProfessorsMaintenance } from '@/modules/academic';
+import { ProfessorsMaintenance, SectionsMaintenance } from '@/modules/academic';
 import { OutcomesMaintenance } from '@/modules/accreditation';
+import { TYPE_CODES } from '@/shared/constants';
 
 interface UploadMaintenanceProps {
 	typeCode: string;
@@ -14,10 +15,12 @@ interface UploadMaintenanceProps {
  */
 export default function UploadMaintenance({ typeCode }: UploadMaintenanceProps) {
 	switch (typeCode) {
-		case 'TG1101-T001': // staff / docentes
+		case TYPE_CODES.UPLOAD_TYPE.STAFF:
 			return <ProfessorsMaintenance />;
-		case 'TG1101-T003': // outcomes
+		case TYPE_CODES.UPLOAD_TYPE.OUTCOMES:
 			return <OutcomesMaintenance />;
+		case TYPE_CODES.UPLOAD_TYPE.SECTIONS:
+			return <SectionsMaintenance />;
 		default:
 			return null;
 	}

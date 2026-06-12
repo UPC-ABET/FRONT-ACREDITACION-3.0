@@ -7,5 +7,6 @@ export * from './useAcademicPeriods';
 export * from './useCourses';
 export * from './useProfessors';
 export * from './useProfessorsMaintenance';
+export * from './useCourseSectionsMaintenance';
 export * from './usePrograms';
 export * from './useGlobalAcademicFilters';

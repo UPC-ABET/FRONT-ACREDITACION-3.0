@@ -1,10 +1,29 @@
 import { ApiResponse } from '@/shared';
-import { FilterCourseRequest, CourseResponse, EnrolledStudentResponse } from '../types';
-import { apiPost } from '@/shared/lib';
+import type {
+	FilterCourseRequest,
+	CourseResponse,
+	CourseLookupItem,
+	EnrolledStudentResponse,
+	PaginatedEnvelope,
+} from '../types';
+import { apiGet, apiPost } from '@/shared/lib';
 
 export const coursesService = {
 	getByFilters(filters: FilterCourseRequest = {}): Promise<ApiResponse<CourseResponse[]>> {
 		return apiPost('/courses/get-by-filters', filters);
+	},
+
+	lookup(params: {
+		search?: string;
+		page?: number;
+		pageSize?: number;
+	}): Promise<ApiResponse<PaginatedEnvelope<CourseLookupItem>>> {
+		const query = new URLSearchParams();
+		if (params.search) query.set('search', params.search);
+		if (params.page != null) query.set('page', String(params.page));
+		if (params.pageSize != null) query.set('pageSize', String(params.pageSize));
+		const qs = query.toString();
+		return apiGet(`/courses/lookup${qs ? `?${qs}` : ''}`);
 	},
 
 	getEnrolledStudents(

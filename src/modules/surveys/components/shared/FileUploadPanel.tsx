@@ -149,9 +149,7 @@ export function FileUploadPanel({
 					role="button"
 					tabIndex={0}
 					className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center gap-3 cursor-pointer transition-colors ${
-						isDraggingFile
-							? 'border-red-500 bg-red-50'
-							: 'border-zinc-300 hover:border-red-400'
+						isDraggingFile ? 'border-red-500 bg-red-50' : 'border-zinc-300 hover:border-red-400'
 					}`}
 					onClick={() => inputRef.current?.click()}
 					onDrop={handleDrop}
@@ -159,7 +157,9 @@ export function FileUploadPanel({
 					onDragEnter={handleDragOver}
 					onDragLeave={handleDragLeave}
 					onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && inputRef.current?.click()}>
-					<DocumentIcon className={`h-8 w-8 ${isDraggingFile ? 'text-red-500' : 'text-zinc-400'}`} />
+					<DocumentIcon
+						className={`h-8 w-8 ${isDraggingFile ? 'text-red-500' : 'text-zinc-400'}`}
+					/>
 					{selectedFile ? (
 						<p className="text-sm font-medium text-zinc-700">{selectedFile.name}</p>
 					) : (

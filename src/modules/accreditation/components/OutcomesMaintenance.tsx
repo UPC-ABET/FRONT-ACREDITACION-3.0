@@ -216,129 +216,110 @@ export function OutcomesMaintenance() {
 					</div>
 				</div>
 
-				{academicPeriodId == null
-					? renderNotice(t('loads.outcomesMaintenance.selectPeriod'))
-					: programId == null
-						? renderNotice(t('loads.outcomesMaintenance.selectProgram'))
-						: isError
-							? (
-								<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-									<p className="text-sm text-zinc-500">
-										{t('loads.outcomesMaintenance.error.loadFailed')}
-									</p>
-									<Button variant="surface" size="sm" onClick={() => refetch()}>
-										{t('loads.outcomesMaintenance.retry')}
-									</Button>
-								</div>
-							)
-							: isLoading
-								? (
-									<div className="space-y-2" aria-busy>
-										{Array.from({ length: 6 }).map((_, index) => (
-											<div key={index} className="h-12 animate-pulse rounded-lg bg-zinc-100" />
-										))}
-									</div>
-								)
-								: items.length === 0
-									? (
-										<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-											<p className="text-sm font-medium text-zinc-700">
-												{t('loads.outcomesMaintenance.empty.title')}
-											</p>
-											<p className="text-sm text-zinc-500">
-												{t('loads.outcomesMaintenance.empty.subtitle')}
-											</p>
-										</div>
-									)
-									: (
-										<div
-											className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-											{/* Desktop / tablet: table */}
-											<div className="hidden overflow-x-auto md:block">
-												<Table>
-													<TableHeader>
-														<TableRow>
-															<TableHead>
-																{t('loads.outcomesMaintenance.col.commissionCode')}
-															</TableHead>
-															<TableHead>
-																{t('loads.outcomesMaintenance.col.outcomeCode')}
-															</TableHead>
-															<TableHead>
-																{t('loads.outcomesMaintenance.col.outcomeName')}
-															</TableHead>
-															<TableHead>
-																{t('loads.outcomesMaintenance.col.outcomeDescription')}
-															</TableHead>
-															<TableHead className="text-right">
-																{t('loads.outcomesMaintenance.col.actions')}
-															</TableHead>
-														</TableRow>
-													</TableHeader>
-													<TableBody>
-														{items.map((item) => (
-															<TableRow key={item.id}>
-																<TableCell className="font-mono text-zinc-700">
-																	{item.commissionCode}
-																</TableCell>
-																<TableCell className="font-mono text-zinc-800">
-																	{item.outcomeCode}
-																</TableCell>
-																<TableCell className="text-zinc-700">
-																	{localized(item.outcomeName, locale)}
-																</TableCell>
-																<TableCell>
-																	<span className="line-clamp-2 max-w-md text-sm text-zinc-500">
-																		{localized(item.outcomeDescription, locale)}
-																	</span>
-																</TableCell>
-																<TableCell>
-																	<RowActions
-																		onEdit={() => openEdit(item)}
-																		onDelete={() => setPendingDelete(item)}
-																		editLabel={editLabel}
-																		deleteLabel={deleteLabel}
-																	/>
-																</TableCell>
-															</TableRow>
-														))}
-													</TableBody>
-												</Table>
-											</div>
+				{academicPeriodId == null ? (
+					renderNotice(t('loads.outcomesMaintenance.selectPeriod'))
+				) : programId == null ? (
+					renderNotice(t('loads.outcomesMaintenance.selectProgram'))
+				) : isError ? (
+					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
+						<p className="text-sm text-zinc-500">
+							{t('loads.outcomesMaintenance.error.loadFailed')}
+						</p>
+						<Button variant="surface" size="sm" onClick={() => refetch()}>
+							{t('loads.outcomesMaintenance.retry')}
+						</Button>
+					</div>
+				) : isLoading ? (
+					<div className="space-y-2" aria-busy>
+						{Array.from({ length: 6 }).map((_, index) => (
+							<div key={index} className="h-12 animate-pulse rounded-lg bg-zinc-100" />
+						))}
+					</div>
+				) : items.length === 0 ? (
+					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
+						<p className="text-sm font-medium text-zinc-700">
+							{t('loads.outcomesMaintenance.empty.title')}
+						</p>
+						<p className="text-sm text-zinc-500">{t('loads.outcomesMaintenance.empty.subtitle')}</p>
+					</div>
+				) : (
+					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
+						{/* Desktop / tablet: table */}
+						<div className="hidden overflow-x-auto md:block">
+							<Table>
+								<TableHeader>
+									<TableRow>
+										<TableHead>{t('loads.outcomesMaintenance.col.commissionCode')}</TableHead>
+										<TableHead>{t('loads.outcomesMaintenance.col.outcomeCode')}</TableHead>
+										<TableHead>{t('loads.outcomesMaintenance.col.outcomeName')}</TableHead>
+										<TableHead>{t('loads.outcomesMaintenance.col.outcomeDescription')}</TableHead>
+										<TableHead className="text-right">
+											{t('loads.outcomesMaintenance.col.actions')}
+										</TableHead>
+									</TableRow>
+								</TableHeader>
+								<TableBody>
+									{items.map((item) => (
+										<TableRow key={item.id}>
+											<TableCell className="font-mono text-zinc-700">
+												{item.commissionCode}
+											</TableCell>
+											<TableCell className="font-mono text-zinc-800">{item.outcomeCode}</TableCell>
+											<TableCell className="text-zinc-700">
+												{localized(item.outcomeName, locale)}
+											</TableCell>
+											<TableCell>
+												<span className="line-clamp-2 max-w-md text-sm text-zinc-500">
+													{localized(item.outcomeDescription, locale)}
+												</span>
+											</TableCell>
+											<TableCell>
+												<RowActions
+													onEdit={() => openEdit(item)}
+													onDelete={() => setPendingDelete(item)}
+													editLabel={editLabel}
+													deleteLabel={deleteLabel}
+												/>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</div>
 
-											{/* Mobile: stacked cards */}
-											<ul className="space-y-3 md:hidden">
-												{items.map((item) => (
-													<li
-														key={item.id}
-														className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
-														<div className="flex items-start justify-between gap-3">
-															<div className="min-w-0 space-y-1">
-																<p className="flex flex-wrap items-center gap-2 text-xs text-zinc-400">
-																	<span className="font-mono">{item.commissionCode}</span>
-																	<span className="font-mono text-zinc-500">{item.outcomeCode}</span>
-																</p>
-																<p className="font-medium text-zinc-900">
-																	{localized(item.outcomeName, locale)}
-																</p>
-																<p className="line-clamp-2 text-sm text-zinc-500">
-																	{localized(item.outcomeDescription, locale)}
-																</p>
-															</div>
-															<div className="shrink-0">
-																<RowActions
-																	onEdit={() => openEdit(item)}
-																	onDelete={() => setPendingDelete(item)}
-																	editLabel={editLabel}
-																	deleteLabel={deleteLabel}
-																/>
-															</div>
-														</div>
-													</li>
-												))}
-											</ul>
+						{/* Mobile: stacked cards */}
+						<ul className="space-y-3 md:hidden">
+							{items.map((item) => (
+								<li
+									key={item.id}
+									className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+									<div className="flex items-start justify-between gap-3">
+										<div className="min-w-0 space-y-1">
+											<p className="flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+												<span className="font-mono">{item.commissionCode}</span>
+												<span className="font-mono text-zinc-500">{item.outcomeCode}</span>
+											</p>
+											<p className="font-medium text-zinc-900">
+												{localized(item.outcomeName, locale)}
+											</p>
+											<p className="line-clamp-2 text-sm text-zinc-500">
+												{localized(item.outcomeDescription, locale)}
+											</p>
 										</div>
-									)}
+										<div className="shrink-0">
+											<RowActions
+												onEdit={() => openEdit(item)}
+												onDelete={() => setPendingDelete(item)}
+												editLabel={editLabel}
+												deleteLabel={deleteLabel}
+											/>
+										</div>
+									</div>
+								</li>
+							))}
+						</ul>
+					</div>
+				)}
 
 				{!needsSelection && !isLoading && !isError && items.length > 0 && (
 					<div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between">

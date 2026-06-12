@@ -22,13 +22,6 @@
 			"gra": "GRA — Graduandos",
 			"lcfc": "LCFC — Fin de Ciclo"
 		},
-		"tests": {
-			"label": "Pruebas",
-			"modals": "Modales",
-			"charts": "Graficos",
-			"tables": "Tablas",
-			"public": "Publico"
-		},
 		"admin": {
 			"label": "Administración",
 			"parameters": "Parámetros",
@@ -942,6 +935,14 @@
 			"usedInFindingOutcomes": "Vinculado a un hallazgo",
 			"usedInOutcomeConfigs": "Tiene una configuración de encuesta",
 			"usedInScores": "Tiene puntajes de encuesta"
+		},
+		"courseSection": {
+			"inUse": "No se puede eliminar la sección porque está en uso.",
+			"sectionExists": "Ya existe una sección con ese código.",
+			"notFound": "Sección no encontrada.",
+			"updateFailed": "No se pudo actualizar la sección.",
+			"usedInStudentSectionEnrollments": "Tiene estudiantes matriculados",
+			"usedInSurveys": "Tiene encuestas asociadas"
 		},
 		"auth": {
 			"accessDenied": "Acceso denegado — no tienes permisos suficientes",
@@ -2461,6 +2462,58 @@
 				"updated": "Outcome actualizado correctamente.",
 				"deleted": "Outcome eliminado correctamente."
 			}
+		},
+		"sectionsMaintenance": {
+			"title": "Mantenimiento de secciones",
+			"subtitle": "Edita o elimina las secciones del período académico seleccionado.",
+			"selectPeriod": "Selecciona un período académico en la cabecera para continuar.",
+			"searchPlaceholder": "Buscar por sección, curso, docente o campus...",
+			"results": "resultados",
+			"page": "Página",
+			"prev": "Anterior",
+			"next": "Siguiente",
+			"retry": "Reintentar",
+			"col": {
+				"courseCode": "Curso",
+				"sectionCode": "Sección",
+				"professorCode": "Docente",
+				"campusCode": "Campus",
+				"modality": "Modalidad",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"empty": {
+				"title": "Sin secciones",
+				"subtitle": "No se encontraron secciones con los filtros actuales."
+			},
+			"error": {
+				"loadFailed": "No se pudieron cargar las secciones."
+			},
+			"edit": {
+				"title": "Editar sección",
+				"subtitle": "Actualiza la sección y sus asignaciones.",
+				"save": "Guardar",
+				"error": "No se pudo guardar la sección.",
+				"current": "Actual",
+				"coursePlaceholder": "Buscar curso...",
+				"professorPlaceholder": "Buscar docente...",
+				"campusPlaceholder": "Selecciona un campus",
+				"modalityPlaceholder": "Selecciona una modalidad"
+			},
+			"delete": {
+				"title": "Eliminar sección",
+				"message": "Esto eliminará la sección de forma permanente. ¿Continuar?",
+				"error": "No se pudo eliminar la sección.",
+				"blockedTitle": "No se puede eliminar",
+				"blockedSubtitle": "Esta sección está en uso en:"
+			},
+			"toast": {
+				"updated": "Sección actualizada correctamente.",
+				"deleted": "Sección eliminada correctamente."
+			}
 		}
 	},
 	"uploadHistory": {
@@ -2473,6 +2526,10 @@
 			"empty": "No hay cargas registradas todavía.",
 			"viewErrors": "Ver errores",
 			"rollback": "Rollback",
+			"results": "resultados",
+			"page": "Página",
+			"prev": "Anterior",
+			"next": "Siguiente",
 			"col": {
 				"id": "ID",
 				"type": "Tipo",

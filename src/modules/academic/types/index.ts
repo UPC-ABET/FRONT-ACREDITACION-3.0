@@ -230,3 +230,54 @@ export type CourseOutcomeMappingResponse = {
 	createdAt: string;
 	updatedAt: string | null;
 };
+
+// ─── Campuses (load-once reference list) ────────────────────────────────────────
+
+export type CampusResponse = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+};
+
+// ─── Course lookup (paginated picker) ───────────────────────────────────────────
+
+export type CourseLookupItem = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+};
+
+// ─── Course sections maintenance ────────────────────────────────────────────────
+
+export type CourseSectionMaintenanceItem = {
+	id: number;
+	courseCode: string;
+	sectionCode: string;
+	professorCode: string;
+	campusCode: string;
+	modalityTypeName: { es: string; en: string };
+};
+
+export type CourseSectionMaintenanceList = {
+	items: CourseSectionMaintenanceItem[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+};
+
+export type CourseSectionMaintenanceUpdate = {
+	sectionCode?: string;
+	courseId?: number;
+	professorId?: number;
+	campusId?: number;
+	sectionModalityTypeId?: number;
+};
+
+export type PaginatedEnvelope<T> = {
+	items: T[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+};
