@@ -70,7 +70,7 @@ export default function LoadsPage() {
 					{effectiveTab === 'maintenance' ? (
 						<UploadMaintenance typeCode={selectedType.code} />
 					) : (
-						<div className="max-w-3xl">
+						<div className="mx-auto max-w-3xl">
 							{canUpload ? (
 								<UploadPanel
 									key={selectedType.code}

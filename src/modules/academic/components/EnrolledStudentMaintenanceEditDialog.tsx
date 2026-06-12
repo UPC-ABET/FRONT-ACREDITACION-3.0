@@ -119,7 +119,7 @@ export function EnrolledStudentMaintenanceEditDialog({
 			onOpenChange={(open) => {
 				if (!open && !saving) onClose();
 			}}>
-			<DialogContent className="sm:max-w-2xl">
+			<DialogContent className="sm:max-w-3xl">
 				<DialogHeader>
 					<DialogTitle>{t('loads.enrolledStudentsMaintenance.edit.title')}</DialogTitle>
 					<DialogDescription>
