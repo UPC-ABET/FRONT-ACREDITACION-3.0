@@ -397,7 +397,10 @@
 		},
 		"notifications": {
 			"tabs": {
-				"ifc": "IFC"
+				"ifc": "IFC",
+				"survey": "Surveys",
+				"user": "User",
+				"logs": "Logs"
 			}
 		},
 		"chartHeads": {
@@ -552,6 +555,8 @@
 			},
 			"field": {
 				"title": "Subject",
+				"name": "Template name",
+				"subject": "Subject",
 				"body": "Body (HTML)",
 				"to": "Recipients (To)",
 				"cc": "Cc",
@@ -562,22 +567,92 @@
 				"title": "Available variables",
 				"empty": "No variables available for this status"
 			},
+			"badge": {
+				"active": "Active",
+				"inactive": "Inactive"
+			},
 			"btn": {
 				"save": "Save",
 				"delete": "Delete",
-				"confirmDelete": "Confirm delete"
+				"confirmDelete": "Confirm delete",
+				"back": "Back",
+				"edit": "Edit",
+				"retry": "Retry"
 			},
 			"confirm": {
-				"delete": "Delete this configuration?"
+				"delete": "Delete this record?",
+				"deleteTitle": "Delete"
 			},
 			"toast": {
-				"saved": "Configuration saved",
-				"deleted": "Configuration deleted"
+				"saved": "Changes saved",
+				"deleted": "Record deleted"
 			},
 			"error": {
-				"listFailed": "Could not load the configuration",
-				"saveFailed": "Could not save the configuration",
-				"deleteFailed": "Could not delete the configuration"
+				"listFailed": "Could not load the data",
+				"saveFailed": "Could not save",
+				"deleteFailed": "Could not delete"
+			},
+			"survey": {
+				"title": "Survey notifications",
+				"create": "New notification",
+				"col": {
+					"surveyType": "Survey type",
+					"program": "Program",
+					"name": "Name",
+					"status": "Status",
+					"actions": "Actions"
+				},
+				"field": {
+					"surveyType": "Survey type",
+					"surveyTypePlaceholder": "Select a type",
+					"program": "Program",
+					"programPlaceholder": "Select a program",
+					"ccReceivers": "Cc recipients (emails)",
+					"ccReceiversPlaceholder": "email1@example.com, email2@example.com"
+				},
+				"error": {
+					"required": "Select the survey type and the program"
+				}
+			},
+			"user": {
+				"title": "User notifications",
+				"create": "New template"
+			},
+			"template": {
+				"title": "Email templates",
+				"search": "Search by code",
+				"create": "New template",
+				"col": {
+					"code": "Code",
+					"category": "Category",
+					"name": "Name",
+					"status": "Status",
+					"actions": "Actions"
+				},
+				"field": {
+					"category": "Category",
+					"categoryPlaceholder": "Select a category",
+					"code": "Code"
+				},
+				"error": {
+					"required": "Category and code are required"
+				}
+			},
+			"log": {
+				"title": "Notification logs",
+				"col": {
+					"date": "Date",
+					"category": "Category",
+					"to": "To",
+					"status": "Status",
+					"error": "Error"
+				},
+				"filter": {
+					"category": "Category",
+					"categoryPlaceholder": "All",
+					"status": "Status",
+					"statusPlaceholder": "e.g. SENT"
+				}
 			}
 		},
 		"params": {

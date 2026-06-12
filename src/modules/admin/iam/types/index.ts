@@ -111,7 +111,6 @@ export interface UserFormValues {
 	phone: string;
 	documentTypeId: number | null;
 	documentCode: string;
-	isActive: boolean;
 	roleIds: number[];
 }
 
@@ -125,7 +124,6 @@ export interface RoleFormValues {
 	code: string;
 	name: I18nText;
 	description: I18nText;
-	isActive: boolean;
 	cells: MatrixCell[];
 }
 

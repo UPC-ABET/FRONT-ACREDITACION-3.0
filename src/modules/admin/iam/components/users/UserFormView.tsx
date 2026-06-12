@@ -1,15 +1,17 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, Input, Select, Toggle } from '@/shared/components';
+import { Button, Input, Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { useDocumentTypes, useRoles, useSaveUser, useUserRoles } from '../../hooks';
 import { hasUserErrors, validateUserForm } from '../../schemas';
-import type { IamUser, UserCreateBody, UserFormErrors } from '../../types';
+import type { IamUser, UserCreateBody, UserFormErrors, UserRole } from '../../types';
 import { localizedText } from '../localizedText';
 import { UserRolesField } from './UserRolesField';
+
+const NO_ROLE_LINKS: UserRole[] = [];
 
 type Props = {
 	user: IamUser | null;
@@ -25,7 +27,9 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 
 	const { data: roles = [], isLoading: rolesLoading } = useRoles();
 	const { data: documentTypes = [] } = useDocumentTypes();
-	const { data: userRoleLinks = [], isLoading: userRolesLoading } = useUserRoles(user?.id ?? null);
+	const { data: userRoleLinks = NO_ROLE_LINKS, isLoading: userRolesLoading } = useUserRoles(
+		user?.id ?? null,
+	);
 
 	const [firstName, setFirstName] = useState(user?.firstName ?? '');
 	const [lastName, setLastName] = useState(user?.lastName ?? '');
@@ -33,9 +37,16 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 	const [phone, setPhone] = useState(user?.phone ?? '');
 	const [documentTypeId, setDocumentTypeId] = useState<number | null>(user?.documentTypeId ?? null);
 	const [documentCode, setDocumentCode] = useState(user?.documentCode ?? '');
-	const [isActive, setIsActive] = useState(user?.isActive ?? true);
 	const [roleIds, setRoleIds] = useState<number[]>([]);
 	const [errors, setErrors] = useState<UserFormErrors>({});
+
+	const isActiveRef = useRef(true);
+	useEffect(() => {
+		isActiveRef.current = true;
+		return () => {
+			isActiveRef.current = false;
+		};
+	}, []);
 
 	useEffect(() => {
 		// eslint-disable-next-line react-hooks/set-state-in-effect -- sync role selection with loaded assignments
@@ -64,7 +75,6 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 			phone,
 			documentTypeId,
 			documentCode,
-			isActive,
 			roleIds,
 		};
 		const nextErrors = validateUserForm(values);
@@ -75,7 +85,6 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 			firstName: firstName.trim(),
 			lastName: lastName.trim(),
 			email: email.trim(),
-			isActive,
 			...(phone.trim() ? { phone: phone.trim() } : {}),
 			...(documentTypeId != null ? { documentTypeId } : {}),
 			...(documentCode.trim() ? { documentCode: documentCode.trim() } : {}),
@@ -88,8 +97,10 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 				roleIds,
 				currentRoleLinks: userRoleLinks,
 			});
+			if (!isActiveRef.current) return;
 			onSuccess(isEditing ? 'admin.iam.users.toast.updated' : 'admin.iam.users.toast.created');
 		} catch (error) {
+			if (!isActiveRef.current) return;
 			onError(getErrorMessage(error, 'admin.iam.users.error.saveFailed'));
 		}
 	};
@@ -153,14 +164,6 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 					/>
 				</div>
 
-				<div className="flex flex-wrap gap-6">
-					<Toggle
-						label={t('admin.iam.users.form.isActive')}
-						checked={isActive}
-						onChange={setIsActive}
-					/>
-				</div>
-
 				<div className="space-y-2">
 					<div className="flex flex-col gap-1">
 						<span className="text-base font-semibold text-zinc-900">
@@ -182,7 +185,7 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 			</div>
 
 			<div className="flex justify-end gap-2">
-				<Button variant="secondary" disabled={saving} onClick={onCancel}>
+				<Button variant="secondary" onClick={onCancel}>
 					{t('dialog.actions.cancel')}
 				</Button>
 				<Button variant="primary" disabled={saving} onClick={handleSubmit}>
