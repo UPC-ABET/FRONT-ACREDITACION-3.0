@@ -47,7 +47,7 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 		selected.name.toLowerCase().endsWith('.xlsx') ||
 		selected.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-	const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
+	const handleDrop = (event: DragEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
 		setIsDraggingFile(false);
@@ -66,14 +66,14 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 		if (inputRef.current) inputRef.current.value = '';
 	};
 
-	const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
+	const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
 		event.dataTransfer.dropEffect = 'copy';
 		setIsDraggingFile(true);
 	};
 
-	const handleDragLeave = (event: DragEvent<HTMLLabelElement>) => {
+	const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
 		if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
@@ -154,8 +154,16 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 						</Button>
 					</header>
 
-					<label
-						htmlFor={fileInputId}
+					<div
+						role="button"
+						tabIndex={0}
+						onClick={() => inputRef.current?.click()}
+						onKeyDown={(event) => {
+							if (event.key === 'Enter' || event.key === ' ') {
+								event.preventDefault();
+								inputRef.current?.click();
+							}
+						}}
 						onDrop={handleDrop}
 						onDragOver={handleDragOver}
 						onDragEnter={handleDragOver}
@@ -175,15 +183,15 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 							{file ? file.name : t('loads.upload.dropzone')}
 						</span>
 						<span className="mt-1 text-xs text-gray-400">.xlsx</span>
-						<input
-							id={fileInputId}
-							ref={inputRef}
-							type="file"
-							accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-							className="hidden"
-							onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)}
-						/>
-					</label>
+					</div>
+					<input
+						id={fileInputId}
+						ref={inputRef}
+						type="file"
+						accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+						className="hidden"
+						onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)}
+					/>
 
 					{localError && <p className="text-sm text-red-600">{localError}</p>}
 

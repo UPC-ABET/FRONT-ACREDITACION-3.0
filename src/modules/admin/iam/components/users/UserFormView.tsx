@@ -43,7 +43,9 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 	const [email, setEmail] = useState(user?.email ?? '');
 	const [phone, setPhone] = useState(user?.phone ?? '');
 	const [documentTypeId, setDocumentTypeId] = useState<number | null>(user?.documentTypeId ?? null);
-	const [documentCode, setDocumentCode] = useState(user?.documentCode ?? '');
+	const [documentCode, setDocumentCode] = useState(
+		user?.documentCode != null ? String(user.documentCode) : '',
+	);
 	const [linkedTeacher, setLinkedTeacher] = useState<TeacherOption | null>(() =>
 		teacherFromUser(user),
 	);
