@@ -7,4 +7,5 @@ export * from './enrolledStudentsService';
 export * from './performanceLevelsService';
 export * from './professorsService';
 export * from './programsService';
+export * from './studentSectionEnrollmentsService';
 export * from './studyPlanCoursesService';

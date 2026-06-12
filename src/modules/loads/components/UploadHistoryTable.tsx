@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Eye, Undo2 } from 'lucide-react';
 import { Card, Button } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useABET, useI18n } from '@/providers';
 import { TYPE_CODES } from '@/shared/constants';
 import { useUploadHistory } from '../hooks';
 import type { UploadLog, UploadLogFilters } from '../types';
@@ -51,23 +51,36 @@ export default function UploadHistoryTable({
 	onViewErrors,
 }: UploadHistoryTableProps) {
 	const { t, locale } = useI18n();
+	const { academicPeriodId } = useABET();
 	const [page, setPage] = useState(1);
-	const { data, isLoading, isFetching, error } = useUploadHistory({
-		...(filters ?? {}),
-		page,
-		pageSize: PAGE_SIZE,
-	});
+
+	// A period switch always returns to the first page.
+	useEffect(() => {
+		setPage(1);
+	}, [academicPeriodId]);
+
+	const { data, isLoading, isFetching, error } = useUploadHistory(
+		{ ...(filters ?? {}), page, pageSize: PAGE_SIZE },
+		academicPeriodId,
+	);
 	const rows = data?.items ?? [];
 	const total = data?.total ?? 0;
 	const totalPages = data?.totalPages ?? 1;
 
+	const noPeriodSelected = academicPeriodId == null;
+
 	return (
 		<Card title={t('uploadHistory.table.title')} description={t('uploadHistory.table.description')}>
-			{isLoading && (
+			{noPeriodSelected && (
+				<p className="py-12 text-center text-sm text-gray-400">
+					{t('uploadHistory.table.selectPeriod')}
+				</p>
+			)}
+			{!noPeriodSelected && isLoading && (
 				<p className="py-8 text-center text-sm text-gray-500">{t('uploadHistory.table.loading')}</p>
 			)}
-			{error && <p className="py-4 text-sm text-red-600">{error.message}</p>}
-			{!isLoading && !error && rows.length === 0 && (
+			{!noPeriodSelected && error && <p className="py-4 text-sm text-red-600">{error.message}</p>}
+			{!noPeriodSelected && !isLoading && !error && rows.length === 0 && (
 				<p className="py-12 text-center text-sm text-gray-400">{t('uploadHistory.table.empty')}</p>
 			)}
 

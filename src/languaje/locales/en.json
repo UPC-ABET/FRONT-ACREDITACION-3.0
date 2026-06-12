@@ -943,6 +943,15 @@
 			"notFound": "Student not found.",
 			"updateFailed": "Could not update the student."
 		},
+		"studentSectionEnrollment": {
+			"inUse": "This enrollment cannot be deleted because it is in use.",
+			"usedInStudentCourseGrades": "Has course grades",
+			"usedInProjectStudents": "In a project",
+			"usedInStudentCourseOutcomeGrades": "Has outcome grades",
+			"enrollmentExists": "The student is already enrolled in that section.",
+			"notFound": "Enrollment not found.",
+			"updateFailed": "Could not update the enrollment."
+		},
 		"courseSection": {
 			"inUse": "This section cannot be deleted because it is in use.",
 			"sectionExists": "A section with that code already exists.",
@@ -2525,6 +2534,8 @@
 		"enrolledStudentsMaintenance": {
 			"title": "Enrolled students maintenance",
 			"subtitle": "Edit or delete the enrolled students for the selected academic period.",
+			"programLabel": "Program",
+			"programPlaceholder": "All programs",
 			"selectPeriod": "Select an academic period in the header to continue.",
 			"searchPlaceholder": "Search by code, first or last name...",
 			"results": "results",
@@ -2573,6 +2584,60 @@
 				"updated": "Student updated successfully.",
 				"deleted": "Student deleted successfully."
 			}
+		},
+		"studentSectionEnrollmentsMaintenance": {
+			"title": "Student section enrollments maintenance",
+			"subtitle": "Edit or delete student enrollments in sections for the selected academic period.",
+			"selectPeriod": "Select an academic period in the header to continue.",
+			"programLabel": "Program",
+			"programPlaceholder": "All programs",
+			"searchPlaceholder": "Search by course, section, code or name...",
+			"results": "results",
+			"page": "Page",
+			"prev": "Previous",
+			"next": "Next",
+			"retry": "Retry",
+			"col": {
+				"courseName": "Course Name",
+				"courseCode": "Course Code",
+				"sectionCode": "Section Code",
+				"studentCode": "Student Code",
+				"studentName": "Student Name",
+				"actions": "Actions"
+			},
+			"actions": {
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"empty": {
+				"title": "No enrollments",
+				"subtitle": "No enrollments found with the current filters."
+			},
+			"error": {
+				"loadFailed": "Could not load the enrollments."
+			},
+			"edit": {
+				"title": "Edit enrollment",
+				"subtitle": "Change the section or the student of this enrollment.",
+				"save": "Save",
+				"error": "Could not save the enrollment.",
+				"current": "Current",
+				"section": "Section",
+				"sectionPlaceholder": "Search section...",
+				"student": "Student",
+				"studentPlaceholder": "Search student..."
+			},
+			"delete": {
+				"title": "Delete enrollment",
+				"message": "This will permanently delete the enrollment. Continue?",
+				"error": "Could not delete the enrollment.",
+				"blockedTitle": "Cannot delete",
+				"blockedSubtitle": "This enrollment is in use in:"
+			},
+			"toast": {
+				"updated": "Enrollment updated successfully.",
+				"deleted": "Enrollment deleted successfully."
+			}
 		}
 	},
 	"uploadHistory": {
@@ -2583,6 +2648,7 @@
 			"description": "Each row is an upload transaction. You can roll it back or inspect its errors.",
 			"loading": "Loading history...",
 			"empty": "No uploads recorded yet.",
+			"selectPeriod": "Select an academic period in the header to continue.",
 			"viewErrors": "View errors",
 			"rollback": "Rollback",
 			"results": "results",

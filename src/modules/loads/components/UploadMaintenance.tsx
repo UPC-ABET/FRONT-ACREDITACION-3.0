@@ -4,6 +4,7 @@ import {
 	EnrolledStudentsMaintenance,
 	ProfessorsMaintenance,
 	SectionsMaintenance,
+	StudentSectionEnrollmentsMaintenance,
 } from '@/modules/academic';
 import { OutcomesMaintenance } from '@/modules/accreditation';
 import { TYPE_CODES } from '@/shared/constants';
@@ -27,6 +28,8 @@ export default function UploadMaintenance({ typeCode }: UploadMaintenanceProps) 
 			return <SectionsMaintenance />;
 		case TYPE_CODES.UPLOAD_TYPE.ENROLLED_STUDENTS:
 			return <EnrolledStudentsMaintenance />;
+		case TYPE_CODES.UPLOAD_TYPE.STUDENT_SECTIONS:
+			return <StudentSectionEnrollmentsMaintenance />;
 		default:
 			return null;
 	}

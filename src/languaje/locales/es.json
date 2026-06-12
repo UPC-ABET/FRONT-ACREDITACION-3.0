@@ -943,6 +943,15 @@
 			"notFound": "Estudiante no encontrado.",
 			"updateFailed": "No se pudo actualizar el estudiante."
 		},
+		"studentSectionEnrollment": {
+			"inUse": "No se puede eliminar la matrícula porque está en uso.",
+			"usedInStudentCourseGrades": "Tiene notas del curso",
+			"usedInProjectStudents": "Está en un proyecto",
+			"usedInStudentCourseOutcomeGrades": "Tiene notas de outcomes",
+			"enrollmentExists": "El estudiante ya está matriculado en esa sección.",
+			"notFound": "Matrícula no encontrada.",
+			"updateFailed": "No se pudo actualizar la matrícula."
+		},
 		"courseSection": {
 			"inUse": "No se puede eliminar la sección porque está en uso.",
 			"sectionExists": "Ya existe una sección con ese código.",
@@ -2525,6 +2534,8 @@
 		"enrolledStudentsMaintenance": {
 			"title": "Mantenimiento de estudiantes matriculados",
 			"subtitle": "Edita o elimina los estudiantes matriculados del período académico seleccionado.",
+			"programLabel": "Carrera",
+			"programPlaceholder": "Todas las carreras",
 			"selectPeriod": "Selecciona un período académico en la cabecera para continuar.",
 			"searchPlaceholder": "Buscar por código, nombres o apellidos...",
 			"results": "resultados",
@@ -2573,6 +2584,60 @@
 				"updated": "Estudiante actualizado correctamente.",
 				"deleted": "Estudiante eliminado correctamente."
 			}
+		},
+		"studentSectionEnrollmentsMaintenance": {
+			"title": "Mantenimiento de matrículas en secciones",
+			"subtitle": "Edita o elimina las matrículas de estudiantes en secciones del período académico seleccionado.",
+			"selectPeriod": "Selecciona un período académico en la cabecera para continuar.",
+			"programLabel": "Carrera",
+			"programPlaceholder": "Todas las carreras",
+			"searchPlaceholder": "Buscar por curso, sección, código o nombre...",
+			"results": "resultados",
+			"page": "Página",
+			"prev": "Anterior",
+			"next": "Siguiente",
+			"retry": "Reintentar",
+			"col": {
+				"courseName": "Curso",
+				"courseCode": "Código de curso",
+				"sectionCode": "Sección",
+				"studentCode": "Código de estudiante",
+				"studentName": "Estudiante",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"empty": {
+				"title": "Sin matrículas",
+				"subtitle": "No se encontraron matrículas con los filtros actuales."
+			},
+			"error": {
+				"loadFailed": "No se pudieron cargar las matrículas."
+			},
+			"edit": {
+				"title": "Editar matrícula",
+				"subtitle": "Cambia la sección o el estudiante de esta matrícula.",
+				"save": "Guardar",
+				"error": "No se pudo guardar la matrícula.",
+				"current": "Actual",
+				"section": "Sección",
+				"sectionPlaceholder": "Buscar sección...",
+				"student": "Estudiante",
+				"studentPlaceholder": "Buscar estudiante..."
+			},
+			"delete": {
+				"title": "Eliminar matrícula",
+				"message": "Esto eliminará la matrícula de forma permanente. ¿Continuar?",
+				"error": "No se pudo eliminar la matrícula.",
+				"blockedTitle": "No se puede eliminar",
+				"blockedSubtitle": "Esta matrícula está en uso en:"
+			},
+			"toast": {
+				"updated": "Matrícula actualizada correctamente.",
+				"deleted": "Matrícula eliminada correctamente."
+			}
 		}
 	},
 	"uploadHistory": {
@@ -2583,6 +2648,7 @@
 			"description": "Cada fila representa una transacción de carga. Puedes revertirla o inspeccionar errores.",
 			"loading": "Cargando historial...",
 			"empty": "No hay cargas registradas todavía.",
+			"selectPeriod": "Selecciona un período académico en la cabecera para continuar.",
 			"viewErrors": "Ver errores",
 			"rollback": "Rollback",
 			"results": "resultados",

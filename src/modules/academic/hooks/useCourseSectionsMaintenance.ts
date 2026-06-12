@@ -25,7 +25,6 @@ export function useCourseSectionsMaintenance(params: MaintenanceListParams) {
 		queryFn: () =>
 			courseSectionsService
 				.maintenanceList({
-					academicPeriodId: params.academicPeriodId!,
 					page: params.page,
 					pageSize: params.pageSize,
 					search: params.search.trim() || undefined,

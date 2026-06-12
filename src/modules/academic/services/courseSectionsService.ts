@@ -7,18 +7,18 @@ import type {
 } from '../types';
 
 export const courseSectionsService = {
+	// Period travels as the X-Academic-Period-Id header (injected globally), not a query param.
 	maintenanceList(params: {
-		academicPeriodId: number;
 		page?: number;
 		pageSize?: number;
 		search?: string;
 	}): Promise<ApiResponse<CourseSectionMaintenanceList>> {
 		const query = new URLSearchParams();
-		query.set('academicPeriodId', String(params.academicPeriodId));
 		if (params.page != null) query.set('page', String(params.page));
 		if (params.pageSize != null) query.set('pageSize', String(params.pageSize));
 		if (params.search) query.set('search', params.search);
-		return apiGet(`/course-sections/maintenance?${query.toString()}`);
+		const qs = query.toString();
+		return apiGet(`/course-sections/maintenance${qs ? `?${qs}` : ''}`);
 	},
 
 	maintenanceUpdate(

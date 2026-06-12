@@ -304,3 +304,23 @@ export type EnrolledStudentMaintenanceUpdate = {
 	campusId?: number;
 	enrollementModalityTypeId?: number;
 };
+
+// ─── Student section enrollments maintenance ────────────────────────────────────
+
+export type StudentSectionEnrollmentMaintenanceItem = {
+	id: number;
+	courseName: { es: string; en: string };
+	courseCode: string;
+	sectionCode: string;
+	studentCode: string;
+	studentFirstName: string;
+	studentLastName: string;
+};
+
+export type StudentSectionEnrollmentMaintenanceList =
+	PaginatedEnvelope<StudentSectionEnrollmentMaintenanceItem>;
+
+export type StudentSectionEnrollmentMaintenanceUpdate = {
+	courseSectionId?: number;
+	enrolledStudentId?: number;
+};

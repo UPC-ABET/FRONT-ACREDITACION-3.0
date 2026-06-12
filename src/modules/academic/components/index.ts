@@ -6,3 +6,5 @@ export * from './SectionsMaintenance';
 export * from './SectionEditDialog';
 export * from './EnrolledStudentsMaintenance';
 export * from './EnrolledStudentMaintenanceEditDialog';
+export * from './StudentSectionEnrollmentsMaintenance';
+export * from './StudentSectionEnrollmentEditDialog';

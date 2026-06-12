@@ -34,17 +34,15 @@ import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
 import {
 	useAllPrograms,
-	useCampuses,
-	useEnrolledStudentMaintenanceMutations,
-	useEnrolledStudentsMaintenance,
-	useSectionModalityTypes,
+	useStudentSectionEnrollmentMaintenanceMutations,
+	useStudentSectionEnrollmentsMaintenance,
 } from '../hooks';
 import type {
-	EnrolledStudentMaintenanceItem,
-	EnrolledStudentMaintenanceUpdate,
 	ProgramResponse,
+	StudentSectionEnrollmentMaintenanceItem,
+	StudentSectionEnrollmentMaintenanceUpdate,
 } from '../types';
-import { EnrolledStudentMaintenanceEditDialog } from './EnrolledStudentMaintenanceEditDialog';
+import { StudentSectionEnrollmentEditDialog } from './StudentSectionEnrollmentEditDialog';
 
 const PAGE_SIZE = 20;
 
@@ -82,25 +80,24 @@ function RowActions({
 	);
 }
 
-export function EnrolledStudentsMaintenance() {
+export function StudentSectionEnrollmentsMaintenance() {
 	const { t, locale } = useI18n();
 	const { academicPeriodId } = useABET();
 	const { toast, showToast, clearToast } = useApiErrorToast();
 
 	const { data: programs = [] } = useAllPrograms();
-	const { data: campuses = [] } = useCampuses();
-	const { data: modalityTypes = [] } = useSectionModalityTypes();
 
 	const [programId, setProgramId] = useState<number | null>(null);
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
 	const [page, setPage] = useState(1);
-	const [editing, setEditing] = useState<EnrolledStudentMaintenanceItem | null>(null);
+	const [editing, setEditing] = useState<StudentSectionEnrollmentMaintenanceItem | null>(null);
 	const [editError, setEditError] = useState<string | null>(null);
-	const [pendingDelete, setPendingDelete] = useState<EnrolledStudentMaintenanceItem | null>(null);
+	const [pendingDelete, setPendingDelete] =
+		useState<StudentSectionEnrollmentMaintenanceItem | null>(null);
 	const [blockedReasons, setBlockedReasons] = useState<string[] | null>(null);
 
-	const { update, remove } = useEnrolledStudentMaintenanceMutations();
+	const { update, remove } = useStudentSectionEnrollmentMaintenanceMutations();
 
 	useEffect(() => {
 		const timer = setTimeout(() => setDebouncedSearch(search), 300);
@@ -122,7 +119,7 @@ export function EnrolledStudentsMaintenance() {
 		setPage(1);
 	}, [academicPeriodId]);
 
-	const { data, isLoading, isFetching, isError, refetch } = useEnrolledStudentsMaintenance({
+	const { data, isLoading, isFetching, isError, refetch } = useStudentSectionEnrollmentsMaintenance({
 		academicPeriodId,
 		programId,
 		page,
@@ -144,19 +141,19 @@ export function EnrolledStudentsMaintenance() {
 	);
 	const selectedProgram = programOptions.find((option) => option.value === programId) ?? null;
 
-	const handleSaveEdit = async (body: EnrolledStudentMaintenanceUpdate) => {
+	const handleSaveEdit = async (body: StudentSectionEnrollmentMaintenanceUpdate) => {
 		if (!editing) return;
 		setEditError(null);
 		try {
 			await update.mutateAsync({ id: editing.id, body });
-			showToast('loads.enrolledStudentsMaintenance.toast.updated', 'success');
+			showToast('loads.studentSectionEnrollmentsMaintenance.toast.updated', 'success');
 			setEditing(null);
 		} catch (error) {
 			const [reason] = getApiErrorReasons(error);
 			setEditError(
 				tryTranslate(
 					t,
-					reason ?? getErrorMessage(error, 'loads.enrolledStudentsMaintenance.edit.error'),
+					reason ?? getErrorMessage(error, 'loads.studentSectionEnrollmentsMaintenance.edit.error'),
 				),
 			);
 		}
@@ -166,7 +163,7 @@ export function EnrolledStudentsMaintenance() {
 		if (!pendingDelete) return;
 		try {
 			await remove.mutateAsync(pendingDelete.id);
-			showToast('loads.enrolledStudentsMaintenance.toast.deleted', 'success');
+			showToast('loads.studentSectionEnrollmentsMaintenance.toast.deleted', 'success');
 			setPendingDelete(null);
 		} catch (error) {
 			const reasons = getApiErrorReasons(error);
@@ -174,18 +171,21 @@ export function EnrolledStudentsMaintenance() {
 			if (reasons.length > 0) {
 				setBlockedReasons(reasons);
 			} else {
-				showToast(getErrorMessage(error, 'loads.enrolledStudentsMaintenance.delete.error'), 'error');
+				showToast(
+					getErrorMessage(error, 'loads.studentSectionEnrollmentsMaintenance.delete.error'),
+					'error',
+				);
 			}
 		}
 	};
 
-	const openEdit = (item: EnrolledStudentMaintenanceItem) => {
+	const openEdit = (item: StudentSectionEnrollmentMaintenanceItem) => {
 		setEditError(null);
 		setEditing(item);
 	};
 
-	const editLabel = t('loads.enrolledStudentsMaintenance.actions.edit');
-	const deleteLabel = t('loads.enrolledStudentsMaintenance.actions.delete');
+	const editLabel = t('loads.studentSectionEnrollmentsMaintenance.actions.edit');
+	const deleteLabel = t('loads.studentSectionEnrollmentsMaintenance.actions.delete');
 
 	const noPeriodSelected = academicPeriodId == null;
 
@@ -194,17 +194,19 @@ export function EnrolledStudentsMaintenance() {
 			<div className="space-y-5">
 				<div className="space-y-1">
 					<h2 className="text-lg font-semibold text-gray-900">
-						{t('loads.enrolledStudentsMaintenance.title')}
+						{t('loads.studentSectionEnrollmentsMaintenance.title')}
 					</h2>
-					<p className="text-sm text-gray-500">{t('loads.enrolledStudentsMaintenance.subtitle')}</p>
+					<p className="text-sm text-gray-500">
+						{t('loads.studentSectionEnrollmentsMaintenance.subtitle')}
+					</p>
 				</div>
 
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
 					<div className="w-full sm:max-w-xs">
 						<Select
 							name="program"
-							label={t('loads.enrolledStudentsMaintenance.programLabel')}
-							placeholder={t('loads.enrolledStudentsMaintenance.programPlaceholder')}
+							label={t('loads.studentSectionEnrollmentsMaintenance.programLabel')}
+							placeholder={t('loads.studentSectionEnrollmentsMaintenance.programPlaceholder')}
 							isSearchable
 							isClearable
 							isDisabled={noPeriodSelected}
@@ -221,8 +223,8 @@ export function EnrolledStudentsMaintenance() {
 							type="search"
 							value={search}
 							onChange={(event) => handleSearchChange(event.target.value)}
-							placeholder={t('loads.enrolledStudentsMaintenance.searchPlaceholder')}
-							aria-label={t('loads.enrolledStudentsMaintenance.searchPlaceholder')}
+							placeholder={t('loads.studentSectionEnrollmentsMaintenance.searchPlaceholder')}
+							aria-label={t('loads.studentSectionEnrollmentsMaintenance.searchPlaceholder')}
 							disabled={noPeriodSelected}
 							className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
 						/>
@@ -232,16 +234,16 @@ export function EnrolledStudentsMaintenance() {
 				{noPeriodSelected ? (
 					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
 						<p className="text-sm text-zinc-500">
-							{t('loads.enrolledStudentsMaintenance.selectPeriod')}
+							{t('loads.studentSectionEnrollmentsMaintenance.selectPeriod')}
 						</p>
 					</div>
 				) : isError ? (
 					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
 						<p className="text-sm text-zinc-500">
-							{t('loads.enrolledStudentsMaintenance.error.loadFailed')}
+							{t('loads.studentSectionEnrollmentsMaintenance.error.loadFailed')}
 						</p>
 						<Button variant="surface" size="sm" onClick={() => refetch()}>
-							{t('loads.enrolledStudentsMaintenance.retry')}
+							{t('loads.studentSectionEnrollmentsMaintenance.retry')}
 						</Button>
 					</div>
 				) : isLoading ? (
@@ -253,10 +255,10 @@ export function EnrolledStudentsMaintenance() {
 				) : items.length === 0 ? (
 					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
 						<p className="text-sm font-medium text-zinc-700">
-							{t('loads.enrolledStudentsMaintenance.empty.title')}
+							{t('loads.studentSectionEnrollmentsMaintenance.empty.title')}
 						</p>
 						<p className="text-sm text-zinc-500">
-							{t('loads.enrolledStudentsMaintenance.empty.subtitle')}
+							{t('loads.studentSectionEnrollmentsMaintenance.empty.subtitle')}
 						</p>
 					</div>
 				) : (
@@ -266,31 +268,37 @@ export function EnrolledStudentsMaintenance() {
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.studentCode')}</TableHead>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.firstName')}</TableHead>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.lastName')}</TableHead>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.campus')}</TableHead>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.program')}</TableHead>
-										<TableHead>{t('loads.enrolledStudentsMaintenance.col.modality')}</TableHead>
+										<TableHead>
+											{t('loads.studentSectionEnrollmentsMaintenance.col.courseName')}
+										</TableHead>
+										<TableHead>
+											{t('loads.studentSectionEnrollmentsMaintenance.col.courseCode')}
+										</TableHead>
+										<TableHead>
+											{t('loads.studentSectionEnrollmentsMaintenance.col.sectionCode')}
+										</TableHead>
+										<TableHead>
+											{t('loads.studentSectionEnrollmentsMaintenance.col.studentCode')}
+										</TableHead>
+										<TableHead>
+											{t('loads.studentSectionEnrollmentsMaintenance.col.studentName')}
+										</TableHead>
 										<TableHead className="text-right">
-											{t('loads.enrolledStudentsMaintenance.col.actions')}
+											{t('loads.studentSectionEnrollmentsMaintenance.col.actions')}
 										</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
 									{items.map((item) => (
 										<TableRow key={item.id}>
-											<TableCell className="font-mono text-zinc-800">{item.studentCode}</TableCell>
-											<TableCell className="text-zinc-700">{item.firstName}</TableCell>
-											<TableCell className="text-zinc-700">{item.lastName}</TableCell>
-											<TableCell className="text-zinc-700">
-												{localized(item.campusName, locale)}
+											<TableCell className="text-zinc-800">
+												{localized(item.courseName, locale)}
 											</TableCell>
+											<TableCell className="font-mono text-zinc-700">{item.courseCode}</TableCell>
+											<TableCell className="font-mono text-zinc-700">{item.sectionCode}</TableCell>
+											<TableCell className="font-mono text-zinc-700">{item.studentCode}</TableCell>
 											<TableCell className="text-zinc-700">
-												{localized(item.programName, locale)}
-											</TableCell>
-											<TableCell className="text-zinc-700">
-												{localized(item.modalityTypeName, locale)}
+												{item.studentFirstName} {item.studentLastName}
 											</TableCell>
 											<TableCell>
 												<RowActions
@@ -314,15 +322,17 @@ export function EnrolledStudentsMaintenance() {
 									className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
 									<div className="flex items-start justify-between gap-3">
 										<div className="min-w-0 space-y-1">
-											<p className="font-mono text-xs text-zinc-400">{item.studentCode}</p>
 											<p className="truncate font-medium text-zinc-900">
-												{item.firstName} {item.lastName}
+												{localized(item.courseName, locale)}
 											</p>
-											<p className="text-sm text-zinc-500">{localized(item.programName, locale)}</p>
-											<p className="flex flex-wrap gap-2 text-xs text-zinc-400">
-												<span>{localized(item.campusName, locale)}</span>
+											<p className="flex flex-wrap items-center gap-2 font-mono text-xs text-zinc-500">
+												<span>{item.courseCode}</span>
 												<span>·</span>
-												<span>{localized(item.modalityTypeName, locale)}</span>
+												<span>{item.sectionCode}</span>
+											</p>
+											<p className="text-sm text-zinc-600">
+												<span className="font-mono text-zinc-500">{item.studentCode}</span>{' '}
+												{item.studentFirstName} {item.studentLastName}
 											</p>
 										</div>
 										<div className="shrink-0">
@@ -343,7 +353,7 @@ export function EnrolledStudentsMaintenance() {
 				{!noPeriodSelected && !isLoading && !isError && items.length > 0 && (
 					<div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
 						<p className="text-xs text-zinc-500">
-							{total} {t('loads.enrolledStudentsMaintenance.results')}
+							{total} {t('loads.studentSectionEnrollmentsMaintenance.results')}
 						</p>
 						<div className="flex items-center justify-center gap-3">
 							<Button
@@ -351,18 +361,18 @@ export function EnrolledStudentsMaintenance() {
 								size="sm"
 								disabled={page <= 1 || isFetching}
 								onClick={() => setPage((current) => Math.max(1, current - 1))}
-								aria-label={t('loads.enrolledStudentsMaintenance.prev')}>
+								aria-label={t('loads.studentSectionEnrollmentsMaintenance.prev')}>
 								<ChevronLeftIcon className="h-4 w-4" />
 							</Button>
 							<span className="text-sm text-zinc-600">
-								{t('loads.enrolledStudentsMaintenance.page')} {page} / {totalPages}
+								{t('loads.studentSectionEnrollmentsMaintenance.page')} {page} / {totalPages}
 							</span>
 							<Button
 								variant="surface"
 								size="sm"
 								disabled={page >= totalPages || isFetching}
 								onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-								aria-label={t('loads.enrolledStudentsMaintenance.next')}>
+								aria-label={t('loads.studentSectionEnrollmentsMaintenance.next')}>
 								<ChevronRightIcon className="h-4 w-4" />
 							</Button>
 						</div>
@@ -371,11 +381,8 @@ export function EnrolledStudentsMaintenance() {
 			</div>
 
 			{editing && (
-				<EnrolledStudentMaintenanceEditDialog
+				<StudentSectionEnrollmentEditDialog
 					item={editing}
-					programs={programs}
-					campuses={campuses}
-					modalityTypes={modalityTypes}
 					saving={update.isPending}
 					errorMessage={editError}
 					onClose={() => setEditing(null)}
@@ -386,9 +393,9 @@ export function EnrolledStudentsMaintenance() {
 			<ConfirmDialog
 				isOpen={pendingDelete != null}
 				onClose={() => setPendingDelete(null)}
-				title={t('loads.enrolledStudentsMaintenance.delete.title')}
-				message={t('loads.enrolledStudentsMaintenance.delete.message')}
-				confirmLabel={t('loads.enrolledStudentsMaintenance.actions.delete')}
+				title={t('loads.studentSectionEnrollmentsMaintenance.delete.title')}
+				message={t('loads.studentSectionEnrollmentsMaintenance.delete.message')}
+				confirmLabel={t('loads.studentSectionEnrollmentsMaintenance.actions.delete')}
 				declineLabel={t('dialog.actions.cancel')}
 				onConfirm={handleConfirmDelete}
 				onDecline={() => setPendingDelete(null)}
@@ -404,10 +411,12 @@ export function EnrolledStudentsMaintenance() {
 					<DialogHeader>
 						<div className="flex items-center gap-2 text-red-700">
 							<ExclamationTriangleIcon className="h-5 w-5" />
-							<DialogTitle>{t('loads.enrolledStudentsMaintenance.delete.blockedTitle')}</DialogTitle>
+							<DialogTitle>
+								{t('loads.studentSectionEnrollmentsMaintenance.delete.blockedTitle')}
+							</DialogTitle>
 						</div>
 						<DialogDescription>
-							{t('loads.enrolledStudentsMaintenance.delete.blockedSubtitle')}
+							{t('loads.studentSectionEnrollmentsMaintenance.delete.blockedSubtitle')}
 						</DialogDescription>
 					</DialogHeader>
 					<ul className="list-disc space-y-1 pl-5 text-sm text-zinc-700">
