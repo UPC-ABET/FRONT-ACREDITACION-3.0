@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { SCHOOL_LABEL_KEYS_BY_CODE } from '@/modules/auth/constants';
 import { getTypesByGroupCode } from '@/modules/core';
 import { useABET, useAuth, useI18n, useSchoolSource, useSchoolSourceData } from '@/providers';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
@@ -22,7 +21,7 @@ function readCookieSchoolCode(): string {
 
 export function useGlobalAcademicFilters() {
 	const queryClient = useQueryClient();
-	const { t, locale } = useI18n();
+	const { locale } = useI18n();
 	const { userSchools, changeModalityCode } = useAuth();
 	const { modalityTypeId, setModalityTypeId, academicPeriodId, setAcademicPeriodId, setSchoolId } =
 		useABET();
@@ -52,17 +51,11 @@ export function useGlobalAcademicFilters() {
 
 	const schoolOptions = useMemo<SchoolOption[]>(
 		() =>
-			schools.map((school) => {
-				const labelKey = SCHOOL_LABEL_KEYS_BY_CODE[school.code];
-				const translatedLabel = labelKey ? t(labelKey) : '';
-				const fallbackLabel =
-					school.name[locale] ?? school.name.es ?? school.name.en ?? school.code;
-				return {
-					value: school.code,
-					label: translatedLabel && translatedLabel !== labelKey ? translatedLabel : fallbackLabel,
-				};
-			}),
-		[schools, locale, t],
+			schools.map((school) => ({
+				value: school.code,
+				label: school.name[locale] ?? school.name.es ?? school.name.en ?? school.code,
+			})),
+		[schools, locale],
 	);
 
 	const selectedSchool =

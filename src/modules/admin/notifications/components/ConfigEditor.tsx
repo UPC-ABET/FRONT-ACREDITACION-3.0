@@ -96,8 +96,11 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 	const { t, locale: lang } = useI18n();
 	const { periodId, chartEntityTypes, notifyVars, onSaved, onError, onSuccess } =
 		useNotificationConfigContext();
-	const [title, setTitle] = useState<I18nText>(() =>
-		existingConfig ? asI18n(existingConfig.title) : emptyI18n(),
+	const [name, setName] = useState<I18nText>(() =>
+		existingConfig ? asI18n(existingConfig.name) : emptyI18n(),
+	);
+	const [subject, setSubject] = useState<I18nText>(() =>
+		existingConfig ? asI18n(existingConfig.subject) : emptyI18n(),
 	);
 	const [body, setBody] = useState<I18nText>(() =>
 		existingConfig ? asI18n(existingConfig.body) : emptyI18n(),
@@ -128,7 +131,8 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 				academicPeriodId: periodId,
 				triggerTypeId: triggerTypeId,
 				ifcStatusTypeId: statusTypeId,
-				title,
+				name,
+				subject,
 				body,
 				toChartEntityTypeIds: toIds,
 				ccChartEntityTypeIds: ccIds,
@@ -163,9 +167,16 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 		<div className="space-y-8">
 			<section className="space-y-4">
 				<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
-					{t('admin.notify.field.title')}
+					{t('admin.notify.field.name')}
 				</h3>
-				<I18nTextField as="input" layout="row" value={title} onChange={setTitle} />
+				<I18nTextField as="input" layout="row" value={name} onChange={setName} />
+			</section>
+
+			<section className="space-y-4">
+				<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
+					{t('admin.notify.field.subject')}
+				</h3>
+				<I18nTextField as="input" layout="row" value={subject} onChange={setSubject} />
 			</section>
 
 			<section className="space-y-4">

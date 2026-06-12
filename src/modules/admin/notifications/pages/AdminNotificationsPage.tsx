@@ -4,6 +4,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { NotificationConfigPage } from '../components/NotificationConfigPage';
+import { SurveyMessagesTab } from '../components/SurveyMessagesTab';
+import { UserTemplatesTab } from '../components/UserTemplatesTab';
+import { NotificationLogsTab } from '../components/NotificationLogsTab';
 
 const DEFAULT_TAB = 'ifc';
 
@@ -14,7 +17,12 @@ export default function AdminNotificationsPage() {
 
 	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
 
-	const topTabs = [{ id: 'ifc', label: t('admin.notifications.tabs.ifc') }];
+	const topTabs = [
+		{ id: 'ifc', label: t('admin.notifications.tabs.ifc') },
+		{ id: 'survey', label: t('admin.notifications.tabs.survey') },
+		{ id: 'user', label: t('admin.notifications.tabs.user') },
+		{ id: 'logs', label: t('admin.notifications.tabs.logs') },
+	];
 
 	const setTab = (id: string) => {
 		const next = new URLSearchParams(searchParams.toString());
@@ -26,6 +34,9 @@ export default function AdminNotificationsPage() {
 		<div className="space-y-6">
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
 			{activeTab === 'ifc' && <NotificationConfigPage />}
+			{activeTab === 'survey' && <SurveyMessagesTab />}
+			{activeTab === 'user' && <UserTemplatesTab />}
+			{activeTab === 'logs' && <NotificationLogsTab />}
 		</div>
 	);
 }

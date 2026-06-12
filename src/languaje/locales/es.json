@@ -397,7 +397,10 @@
 		},
 		"notifications": {
 			"tabs": {
-				"ifc": "IFC"
+				"ifc": "IFC",
+				"survey": "Encuestas",
+				"user": "Usuario",
+				"logs": "Registros"
 			}
 		},
 		"chartHeads": {
@@ -552,6 +555,8 @@
 			},
 			"field": {
 				"title": "Asunto",
+				"name": "Nombre de la plantilla",
+				"subject": "Asunto",
 				"body": "Cuerpo (HTML)",
 				"to": "Destinatarios (Para)",
 				"cc": "En copia (CC)",
@@ -562,22 +567,92 @@
 				"title": "Variables disponibles",
 				"empty": "No hay variables disponibles para este estado"
 			},
+			"badge": {
+				"active": "Activo",
+				"inactive": "Inactivo"
+			},
 			"btn": {
 				"save": "Guardar",
 				"delete": "Eliminar",
-				"confirmDelete": "Confirmar eliminación"
+				"confirmDelete": "Confirmar eliminación",
+				"back": "Volver",
+				"edit": "Editar",
+				"retry": "Reintentar"
 			},
 			"confirm": {
-				"delete": "¿Eliminar esta configuración?"
+				"delete": "¿Eliminar este registro?",
+				"deleteTitle": "Eliminar"
 			},
 			"toast": {
-				"saved": "Configuración guardada",
-				"deleted": "Configuración eliminada"
+				"saved": "Cambios guardados",
+				"deleted": "Registro eliminado"
 			},
 			"error": {
-				"listFailed": "No se pudo cargar la configuración",
-				"saveFailed": "No se pudo guardar la configuración",
-				"deleteFailed": "No se pudo eliminar la configuración"
+				"listFailed": "No se pudo cargar la información",
+				"saveFailed": "No se pudo guardar",
+				"deleteFailed": "No se pudo eliminar"
+			},
+			"survey": {
+				"title": "Notificaciones de encuestas",
+				"create": "Nueva notificación",
+				"col": {
+					"surveyType": "Tipo de encuesta",
+					"program": "Programa",
+					"name": "Nombre",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"field": {
+					"surveyType": "Tipo de encuesta",
+					"surveyTypePlaceholder": "Seleccione un tipo",
+					"program": "Programa",
+					"programPlaceholder": "Seleccione un programa",
+					"ccReceivers": "Destinatarios en copia (correos)",
+					"ccReceiversPlaceholder": "correo1@ejemplo.com, correo2@ejemplo.com"
+				},
+				"error": {
+					"required": "Seleccione el tipo de encuesta y el programa"
+				}
+			},
+			"user": {
+				"title": "Notificaciones de usuario",
+				"create": "Nueva plantilla"
+			},
+			"template": {
+				"title": "Plantillas de correo",
+				"search": "Buscar por código",
+				"create": "Nueva plantilla",
+				"col": {
+					"code": "Código",
+					"category": "Categoría",
+					"name": "Nombre",
+					"status": "Estado",
+					"actions": "Acciones"
+				},
+				"field": {
+					"category": "Categoría",
+					"categoryPlaceholder": "Seleccione una categoría",
+					"code": "Código"
+				},
+				"error": {
+					"required": "La categoría y el código son obligatorios"
+				}
+			},
+			"log": {
+				"title": "Registros de notificaciones",
+				"col": {
+					"date": "Fecha",
+					"category": "Categoría",
+					"to": "Para",
+					"status": "Estado",
+					"error": "Error"
+				},
+				"filter": {
+					"category": "Categoría",
+					"categoryPlaceholder": "Todas",
+					"status": "Estado",
+					"statusPlaceholder": "ej. SENT"
+				}
 			}
 		},
 		"params": {

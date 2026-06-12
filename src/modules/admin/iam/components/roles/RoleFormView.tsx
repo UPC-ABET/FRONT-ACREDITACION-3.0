@@ -1,16 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, I18nTextField, Input, Toggle } from '@/shared/components';
+import { Button, I18nTextField, Input } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useLanguages } from '@/shared/hooks';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import type { I18nText } from '@/shared/types';
 import { useModules, usePermissions, useRoleModulePermissions, useSaveRole } from '../../hooks';
 import { hasRoleErrors, validateRoleForm } from '../../schemas';
-import type { AdminRole, MatrixCell, RoleFormErrors } from '../../types';
+import type { AdminRole, MatrixCell, RoleFormErrors, RoleModulePermission } from '../../types';
 import { RolePermissionMatrix } from './RolePermissionMatrix';
+
+const NO_PERMISSION_LINKS: RoleModulePermission[] = [];
 
 type Props = {
 	role: AdminRole | null;
@@ -27,18 +29,24 @@ export function RoleFormView({ role, onCancel, onSuccess, onError }: Props) {
 
 	const { data: modules = [], isLoading: modulesLoading } = useModules();
 	const { data: permissions = [], isLoading: permissionsLoading } = usePermissions();
-	const { data: roleLinks = [], isLoading: linksLoading } = useRoleModulePermissions(
-		role?.id ?? null,
-	);
+	const { data: roleLinks = NO_PERMISSION_LINKS, isLoading: linksLoading } =
+		useRoleModulePermissions(role?.id ?? null);
 
 	const [code, setCode] = useState(role?.code ?? '');
 	const [name, setName] = useState<I18nText>(role ? { ...role.name } : {});
 	const [description, setDescription] = useState<I18nText>(
 		role?.description ? { ...role.description } : {},
 	);
-	const [isActive, setIsActive] = useState(role?.isActive ?? true);
 	const [cells, setCells] = useState<MatrixCell[]>([]);
 	const [errors, setErrors] = useState<RoleFormErrors>({});
+
+	const isActiveRef = useRef(true);
+	useEffect(() => {
+		isActiveRef.current = true;
+		return () => {
+			isActiveRef.current = false;
+		};
+	}, []);
 
 	useEffect(() => {
 		const next = roleLinks.map((link) => ({
@@ -53,19 +61,21 @@ export function RoleFormView({ role, onCancel, onSuccess, onError }: Props) {
 	const axesLoading = modulesLoading || permissionsLoading || (isEditing && linksLoading);
 
 	const handleSubmit = async () => {
-		const nextErrors = validateRoleForm({ code, name, description, isActive, cells }, languages);
+		const nextErrors = validateRoleForm({ code, name, description, cells }, languages);
 		setErrors(nextErrors);
 		if (hasRoleErrors(nextErrors)) return;
 
 		try {
 			await saveRole.mutateAsync({
 				id: role?.id ?? null,
-				body: { code: code.trim(), name, description, isActive },
+				body: { code: code.trim(), name, description },
 				cells,
 				currentPermissionLinks: roleLinks,
 			});
+			if (!isActiveRef.current) return;
 			onSuccess(isEditing ? 'admin.iam.roles.toast.updated' : 'admin.iam.roles.toast.created');
 		} catch (error) {
+			if (!isActiveRef.current) return;
 			onError(getErrorMessage(error, 'admin.iam.roles.error.saveFailed'));
 		}
 	};
@@ -82,22 +92,13 @@ export function RoleFormView({ role, onCancel, onSuccess, onError }: Props) {
 					{t(isEditing ? 'admin.iam.roles.form.editTitle' : 'admin.iam.roles.form.createTitle')}
 				</h2>
 
-				<div className="grid gap-4 sm:grid-cols-2">
-					<Input
-						label={t('admin.iam.roles.form.code')}
-						value={code}
-						onChange={(event) => setCode(event.target.value)}
-						error={errors.code ? t(errors.code) : undefined}
-						required
-					/>
-					<div className="flex items-end pb-1">
-						<Toggle
-							label={t('admin.iam.roles.form.isActive')}
-							checked={isActive}
-							onChange={setIsActive}
-						/>
-					</div>
-				</div>
+				<Input
+					label={t('admin.iam.roles.form.code')}
+					value={code}
+					onChange={(event) => setCode(event.target.value)}
+					error={errors.code ? t(errors.code) : undefined}
+					required
+				/>
 
 				<I18nTextField
 					as="input"
@@ -141,7 +142,7 @@ export function RoleFormView({ role, onCancel, onSuccess, onError }: Props) {
 			</div>
 
 			<div className="flex justify-end gap-2">
-				<Button variant="secondary" disabled={saving} onClick={onCancel}>
+				<Button variant="secondary" onClick={onCancel}>
 					{t('dialog.actions.cancel')}
 				</Button>
 				<Button variant="primary" disabled={saving} onClick={handleSubmit}>
