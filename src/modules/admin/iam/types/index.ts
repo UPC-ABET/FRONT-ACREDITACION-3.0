@@ -1,5 +1,12 @@
 import type { I18nText } from '@/shared/types';
 
+export interface LinkedTeacher {
+	staffId: number;
+	code: string | null;
+	firstName: string;
+	lastName: string;
+}
+
 export interface IamUser {
 	id: number;
 	firstName: string;
@@ -9,6 +16,8 @@ export interface IamUser {
 	documentTypeId: number | null;
 	documentCode: string | null;
 	isActive: boolean;
+	staffId: number | null;
+	linkedTeacher: LinkedTeacher | null;
 	extra: Record<string, unknown> | null;
 }
 
@@ -20,6 +29,7 @@ export interface UserCreateBody {
 	documentTypeId?: number;
 	documentCode?: string;
 	isActive?: boolean;
+	staffId?: number | null;
 	extra?: Record<string, unknown>;
 }
 

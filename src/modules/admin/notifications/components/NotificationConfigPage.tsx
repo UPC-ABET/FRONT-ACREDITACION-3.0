@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { CalendarDaysIcon } from '@heroicons/react/24/outline';
-import { Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
+import { LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useNotificationConfigs } from '../hooks/useNotificationConfigs';
 import { NotificationConfigProvider } from '../hooks/useNotificationConfigContext';
 import { ConfigTabs } from './ConfigTabs';
+import { TabHeader } from './shared';
 
 export function NotificationConfigPage() {
 	const { t } = useI18n();
@@ -18,7 +19,11 @@ export function NotificationConfigPage() {
 	const { data, loading, error, refetch } = useNotificationConfigs(academicPeriodId);
 
 	return (
-		<Card title={t('admin.notify.page.title')}>
+		<div className="space-y-6">
+			<TabHeader
+				title={t('admin.notify.page.title')}
+				description={t('admin.notify.page.subtitle')}
+			/>
 			<div className="space-y-6">
 				{academicPeriodId === null && (
 					<div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-white py-14 text-zinc-500">
@@ -58,6 +63,6 @@ export function NotificationConfigPage() {
 					<SuccessDialog isOpen onClose={() => setSuccessMsg(null)} message={successMsg} />
 				)}
 			</div>
-		</Card>
+		</div>
 	);
 }

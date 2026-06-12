@@ -4,6 +4,7 @@ import { I18nTextField } from '@/shared/components';
 import { useI18n } from '@/providers';
 import type { I18nText } from '@/shared/types';
 import type { NotifyVar } from '../types';
+import { FormSection } from './shared';
 import { VariableLegend } from './VariableLegend';
 
 type Props = {
@@ -14,10 +15,10 @@ type Props = {
 	onSubject: (value: I18nText) => void;
 	onBody: (value: I18nText) => void;
 	notifyVars?: NotifyVar[];
+	/** Gates which variables are shown (IFC variables can be status-specific). */
+	statusCode?: string | null;
 	disabled?: boolean;
 };
-
-const headingClass = 'text-lg font-bold uppercase tracking-wider text-zinc-900';
 
 export function TemplateFields({
 	name,
@@ -27,19 +28,18 @@ export function TemplateFields({
 	onSubject,
 	onBody,
 	notifyVars,
+	statusCode = null,
 	disabled,
 }: Props) {
 	const { t } = useI18n();
 
 	return (
 		<div className="space-y-8">
-			<section className="space-y-4">
-				<h3 className={headingClass}>{t('admin.notify.field.name')}</h3>
+			<FormSection title={t('admin.notify.field.name')}>
 				<I18nTextField as="input" layout="row" value={name} onChange={onName} disabled={disabled} />
-			</section>
+			</FormSection>
 
-			<section className="space-y-4">
-				<h3 className={headingClass}>{t('admin.notify.field.subject')}</h3>
+			<FormSection title={t('admin.notify.field.subject')}>
 				<I18nTextField
 					as="input"
 					layout="row"
@@ -47,10 +47,9 @@ export function TemplateFields({
 					onChange={onSubject}
 					disabled={disabled}
 				/>
-			</section>
+			</FormSection>
 
-			<section className="space-y-4">
-				<h3 className={headingClass}>{t('admin.notify.field.body')}</h3>
+			<FormSection title={t('admin.notify.field.body')}>
 				<div className="grid gap-5 lg:grid-cols-[1fr_320px]">
 					<I18nTextField
 						layout="row"
@@ -60,10 +59,10 @@ export function TemplateFields({
 						disabled={disabled}
 					/>
 					{notifyVars && notifyVars.length > 0 && (
-						<VariableLegend notifyVars={notifyVars} currentStatusCode={null} />
+						<VariableLegend notifyVars={notifyVars} currentStatusCode={statusCode} />
 					)}
 				</div>
-			</section>
+			</FormSection>
 		</div>
 	);
 }

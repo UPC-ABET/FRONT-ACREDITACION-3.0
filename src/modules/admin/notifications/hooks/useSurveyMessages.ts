@@ -48,8 +48,7 @@ interface SaveSurveyMessageInput {
 export function useSurveyMessageMutations() {
 	const queryClient = useQueryClient();
 
-	const invalidate = () =>
-		queryClient.invalidateQueries({ queryKey: surveyMessagesKeys.all });
+	const invalidate = () => queryClient.invalidateQueries({ queryKey: surveyMessagesKeys.all });
 
 	const save = useMutation({
 		mutationFn: ({ id, body }: SaveSurveyMessageInput): Promise<SurveyMessage> =>
