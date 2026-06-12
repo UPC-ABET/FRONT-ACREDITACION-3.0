@@ -13,7 +13,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useABET, useI18n } from '@/providers';
 import { useCourseOutcomeMappingFilters } from '../hooks';
 import type { CourseOutcomeMappingFilterRow } from '../types';
 
@@ -46,11 +46,18 @@ function distinctOptions(
 
 export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListProps) {
 	const { t, locale } = useI18n();
+	const { academicPeriodId } = useABET();
 
-	const [academicPeriodId, setAcademicPeriodId] = useState<number | null>(null);
 	const [accreditorId, setAccreditorId] = useState<number | null>(null);
 	const [commissionId, setCommissionId] = useState<number | null>(null);
 	const [programId, setProgramId] = useState<number | null>(null);
+	const [syncedPeriodId, setSyncedPeriodId] = useState(academicPeriodId);
+
+	if (academicPeriodId !== syncedPeriodId) {
+		setSyncedPeriodId(academicPeriodId);
+		setCommissionId(null);
+		setProgramId(null);
+	}
 
 	const baseQuery = useCourseOutcomeMappingFilters({});
 	const scopedQuery = useCourseOutcomeMappingFilters(
@@ -60,16 +67,6 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 
 	const baseRows = useMemo(() => baseQuery.data ?? [], [baseQuery.data]);
 	const scopedRows = useMemo(() => scopedQuery.data ?? [], [scopedQuery.data]);
-
-	const academicPeriodOptions = useMemo(
-		() =>
-			distinctOptions(
-				baseRows,
-				(row) => row.academicPeriodId,
-				(row) => row.academicPeriodCode,
-			).sort((a, b) => b.label.localeCompare(a.label)),
-		[baseRows],
-	);
 
 	const accreditorOptions = useMemo(
 		() =>
@@ -119,12 +116,6 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 	const selectedOption = (options: FilterOption[], value: number | null) =>
 		options.find((option) => option.value === value) ?? null;
 
-	const handlePeriodChange = (value: number | null) => {
-		setAcademicPeriodId(value);
-		setCommissionId(null);
-		setProgramId(null);
-	};
-
 	const handleAccreditorChange = (value: number | null) => {
 		setAccreditorId(value);
 		setCommissionId(null);
@@ -157,21 +148,7 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 					</p>
 				</div>
 
-				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-					<Select
-						name="academicPeriod"
-						label={t('loads.courseOutcomeMappingMaintenance.filters.academicPeriod')}
-						placeholder={t(
-							'loads.courseOutcomeMappingMaintenance.filters.academicPeriodPlaceholder',
-						)}
-						isSearchable
-						isClearable
-						options={academicPeriodOptions}
-						value={selectedOption(academicPeriodOptions, academicPeriodId)}
-						onChange={(_name, value) =>
-							handlePeriodChange(toValue(value && !Array.isArray(value) ? value : null))
-						}
-					/>
+				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 					<Select
 						name="accreditor"
 						label={t('loads.courseOutcomeMappingMaintenance.filters.accreditor')}
@@ -259,12 +236,8 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 								<TableBody>
 									{tableRows.map((row) => (
 										<TableRow key={row.programCommissionId}>
-											<TableCell className="font-mono text-zinc-700">
-												{row.accreditorCode}
-											</TableCell>
-											<TableCell className="font-mono text-zinc-700">
-												{row.commissionCode}
-											</TableCell>
+											<TableCell className="font-mono text-zinc-700">{row.accreditorCode}</TableCell>
+											<TableCell className="font-mono text-zinc-700">{row.commissionCode}</TableCell>
 											<TableCell className="text-zinc-800">
 												{localized(row.programName, locale)}
 											</TableCell>

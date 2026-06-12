@@ -2506,8 +2506,6 @@
 			"title": "Mantenimiento de mapeo de outcomes",
 			"subtitle": "Visualiza y edita el mapeo de cursos contra los Student Outcomes por carrera.",
 			"filters": {
-				"academicPeriod": "Período académico",
-				"academicPeriodPlaceholder": "Selecciona un período",
 				"accreditor": "Acreditador",
 				"accreditorPlaceholder": "Selecciona un acreditador",
 				"commission": "Comisión",
@@ -2515,7 +2513,7 @@
 				"program": "Carrera",
 				"programPlaceholder": "Selecciona una carrera"
 			},
-			"selectPeriod": "Selecciona un período académico para continuar.",
+			"selectPeriod": "Selecciona un período académico en la barra superior para continuar.",
 			"empty": "No se encontraron registros con los filtros actuales.",
 			"retry": "Reintentar",
 			"col": {

@@ -2506,8 +2506,6 @@
 			"title": "Course outcome mapping maintenance",
 			"subtitle": "View and edit how courses map to Student Outcomes per program.",
 			"filters": {
-				"academicPeriod": "Academic period",
-				"academicPeriodPlaceholder": "Select a period",
 				"accreditor": "Accreditor",
 				"accreditorPlaceholder": "Select an accreditor",
 				"commission": "Commission",
@@ -2515,7 +2513,7 @@
 				"program": "Program",
 				"programPlaceholder": "Select a program"
 			},
-			"selectPeriod": "Select an academic period to continue.",
+			"selectPeriod": "Select an academic period in the top bar to continue.",
 			"empty": "No records found for the current filters.",
 			"retry": "Retry",
 			"col": {
