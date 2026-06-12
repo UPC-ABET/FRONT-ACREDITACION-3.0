@@ -10,16 +10,18 @@ import {
 	MagnifyingGlassIcon,
 	TrashIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Card, ConfirmDialog, Skeleton, SuccessDialog, Toast } from '@/shared/components/ui';
+import {
+	Button,
+	Card,
+	ConfirmDialog,
+	Skeleton,
+	SuccessDialog,
+	Toast,
+} from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import type { S3Entry } from '../types';
-import {
-	useCreateFolder,
-	useDeleteEntries,
-	usePortfolioFiles,
-	useUploadFiles,
-} from '../hooks';
+import { useCreateFolder, useDeleteEntries, usePortfolioFiles, useUploadFiles } from '../hooks';
 import { portfolioS3Service } from '../services';
 import {
 	buildBreadcrumbs,
@@ -38,7 +40,9 @@ export function PortfolioFileManagerPage() {
 	const [confirmDelete, setConfirmDelete] = useState<S3Entry[] | null>(null);
 	const [downloadingKey, setDownloadingKey] = useState<string | null>(null);
 	const [isDragging, setIsDragging] = useState(false);
-	const [uploadProgress, setUploadProgress] = useState<{ done: number; total: number } | null>(null);
+	const [uploadProgress, setUploadProgress] = useState<{ done: number; total: number } | null>(
+		null,
+	);
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 	const [toastError, setToastError] = useState<string | null>(null);
 
@@ -49,7 +53,10 @@ export function PortfolioFileManagerPage() {
 	const { mutateAsync: deleteEntries, isPending: deleting } = useDeleteEntries();
 	const { mutateAsync: uploadFiles } = useUploadFiles();
 
-	const breadcrumbs = useMemo(() => buildBreadcrumbs(prefix, t('portfolio.breadcrumb.root')), [prefix, t]);
+	const breadcrumbs = useMemo(
+		() => buildBreadcrumbs(prefix, t('portfolio.breadcrumb.root')),
+		[prefix, t],
+	);
 
 	const entries = useMemo(() => {
 		const all: S3Entry[] = [...(data?.folders ?? []), ...(data?.files ?? [])];
@@ -261,9 +268,7 @@ export function PortfolioFileManagerPage() {
 							<Button
 								variant="warning"
 								size="md"
-								onClick={() =>
-									setConfirmDelete(entries.filter((e) => selectedKeys.has(e.key)))
-								}>
+								onClick={() => setConfirmDelete(entries.filter((e) => selectedKeys.has(e.key)))}>
 								<TrashIcon className="h-5 w-5" />
 								{t('portfolio.toolbar.delete')} ({selectedCount})
 							</Button>
