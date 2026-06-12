@@ -76,9 +76,7 @@ export function FileManagerTable({
 										/>
 										<span
 											className={`truncate font-medium ${
-												entry.isFolder
-													? 'text-zinc-800 group-hover:text-red-600'
-													: 'text-zinc-700'
+												entry.isFolder ? 'text-zinc-800 group-hover:text-red-600' : 'text-zinc-700'
 											}`}
 											title={entry.name}>
 											{entry.name}

@@ -47,8 +47,9 @@ export function useUploadFiles() {
 			let done = 0;
 			for (const file of files) {
 				// Preserve folder structure when a directory is dropped.
-				const relPath = ((file as File & { webkitRelativePath?: string }).webkitRelativePath ||
-					file.name).replace(/^\/+/, '');
+				const relPath = (
+					(file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name
+				).replace(/^\/+/, '');
 				await portfolioS3Service.uploadFile(`${prefix}${relPath}`, file);
 				done += 1;
 				onProgress?.(done, files.length);
