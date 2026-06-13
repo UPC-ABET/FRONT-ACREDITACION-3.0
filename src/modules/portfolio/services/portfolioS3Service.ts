@@ -79,4 +79,62 @@ export const portfolioS3Service = {
 		});
 		if (!res.ok) return readError(res, 'Failed to delete');
 	},
+
+	/** Renames a single file or folder (extension preserved for files). */
+	async rename(key: string, newName: string): Promise<void> {
+		const res = await fetch(`${BASE}/rename`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ key, newName }),
+		});
+		if (!res.ok) return readError(res, 'Failed to rename');
+	},
+
+	/** Copies files/folders into the destination prefix (auto-renames on collision). */
+	async copy(keys: string[], destPrefix: string): Promise<void> {
+		const res = await fetch(`${BASE}/copy`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ keys, destPrefix }),
+		});
+		if (!res.ok) return readError(res, 'Failed to copy');
+	},
+
+	/** Moves files/folders into the destination prefix. */
+	async move(keys: string[], destPrefix: string): Promise<void> {
+		const res = await fetch(`${BASE}/move`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ keys, destPrefix }),
+		});
+		if (!res.ok) return readError(res, 'Failed to move');
+	},
+
+	/** Creates a plain-text comment file under the given prefix. */
+	async createTextFile(prefix: string, name: string): Promise<void> {
+		const res = await fetch(`${BASE}/text-file`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ prefix, name }),
+		});
+		if (!res.ok) return readError(res, 'Failed to create comment');
+	},
+
+	/** Lists every object key under a prefix (used by the tree view). */
+	async listAllKeys(prefix = ''): Promise<string[]> {
+		const res = await fetch(`${BASE}/all-keys?prefix=${encodeURIComponent(prefix)}`);
+		if (!res.ok) return readError(res, 'Failed to load tree');
+		return (await res.json()).keys as string[];
+	},
+
+	/** Returns the combined byte size of the given files/folders. */
+	async totalSize(keys: string[]): Promise<number> {
+		const res = await fetch(`${BASE}/size`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ keys }),
+		});
+		if (!res.ok) return readError(res, 'Failed to compute size');
+		return (await res.json()).totalBytes as number;
+	},
 };

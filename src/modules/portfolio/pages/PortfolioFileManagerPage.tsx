@@ -5,10 +5,16 @@ import {
 	ArrowDownTrayIcon,
 	ArrowPathIcon,
 	ArrowUpTrayIcon,
+	ClipboardDocumentIcon,
+	ClipboardIcon,
 	CloudArrowUpIcon,
+	DocumentPlusIcon,
 	FolderPlusIcon,
+	ListBulletIcon,
 	MagnifyingGlassIcon,
+	PencilSquareIcon,
 	TrashIcon,
+	TruckIcon,
 } from '@heroicons/react/24/outline';
 import {
 	Button,
@@ -21,14 +27,33 @@ import {
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import type { S3Entry } from '../types';
-import { useCreateFolder, useDeleteEntries, usePortfolioFiles, useUploadFiles } from '../hooks';
+import {
+	useCopyEntries,
+	useCreateFolder,
+	useCreateTextFile,
+	useDeleteEntries,
+	useMoveEntries,
+	usePortfolioFiles,
+	useRenameEntry,
+	useUploadFiles,
+} from '../hooks';
 import { portfolioS3Service } from '../services';
 import {
 	buildBreadcrumbs,
+	CreateCommentDialog,
 	CreateFolderDialog,
 	FileBreadcrumbs,
 	FileManagerTable,
+	formatBytes,
+	MoveDialog,
+	RenameDialog,
+	TreeViewerDialog,
 } from '../components';
+
+/** Download guard: refuse selections larger than 1 GB (matches the legacy client). */
+const DOWNLOAD_LIMIT = 1024 ** 3;
+/** Upload guard: skip files larger than 4 GB. */
+const FILE_LIMIT = 4 * 1024 ** 3;
 
 export function PortfolioFileManagerPage() {
 	const { t } = useI18n();
@@ -37,6 +62,11 @@ export function PortfolioFileManagerPage() {
 	const [search, setSearch] = useState('');
 	const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
 	const [showCreateFolder, setShowCreateFolder] = useState(false);
+	const [showCreateComment, setShowCreateComment] = useState(false);
+	const [showTree, setShowTree] = useState(false);
+	const [renameTarget, setRenameTarget] = useState<S3Entry | null>(null);
+	const [moveSources, setMoveSources] = useState<S3Entry[] | null>(null);
+	const [clipboard, setClipboard] = useState<S3Entry[]>([]);
 	const [confirmDelete, setConfirmDelete] = useState<S3Entry[] | null>(null);
 	const [downloadingKey, setDownloadingKey] = useState<string | null>(null);
 	const [isDragging, setIsDragging] = useState(false);
@@ -50,8 +80,17 @@ export function PortfolioFileManagerPage() {
 
 	const { data, isLoading, isError, error, refetch, isFetching } = usePortfolioFiles(prefix);
 	const { mutateAsync: createFolder, isPending: creatingFolder } = useCreateFolder();
+	const { mutateAsync: createTextFile, isPending: creatingComment } = useCreateTextFile();
+	const { mutateAsync: renameEntry, isPending: renaming } = useRenameEntry();
+	const { mutateAsync: copyEntries } = useCopyEntries();
+	const { mutateAsync: moveEntries, isPending: moving } = useMoveEntries();
 	const { mutateAsync: deleteEntries, isPending: deleting } = useDeleteEntries();
 	const { mutateAsync: uploadFiles } = useUploadFiles();
+
+	// Surfaces a thrown i18n key (or raw message) as a translated toast.
+	function showError(e: unknown, fallbackKey: string) {
+		setToastError(t(getErrorMessage(e, fallbackKey)));
+	}
 
 	const breadcrumbs = useMemo(
 		() => buildBreadcrumbs(prefix, t('portfolio.breadcrumb.root')),
@@ -64,6 +103,11 @@ export function PortfolioFileManagerPage() {
 		const q = search.toLowerCase();
 		return all.filter((e) => e.name.toLowerCase().includes(q));
 	}, [data, search]);
+
+	const selectedEntries = useMemo(
+		() => entries.filter((e) => selectedKeys.has(e.key)),
+		[entries, selectedKeys],
+	);
 
 	function clearSelection() {
 		setSelectedKeys(new Set());
@@ -91,22 +135,47 @@ export function PortfolioFileManagerPage() {
 		});
 	}
 
-	async function handleDownload(entry: S3Entry) {
+	/** Performs the actual download for one entry (no size guard). */
+	async function downloadEntry(entry: S3Entry) {
 		setDownloadingKey(entry.key);
 		try {
 			if (entry.isFolder) await portfolioS3Service.downloadFolder(entry.key, entry.name);
 			else await portfolioS3Service.downloadFile(entry.key, entry.name);
 		} catch (e) {
-			setToastError(getErrorMessage(e, t('portfolio.error.downloadFailed')));
+			showError(e, 'portfolio.error.downloadFailed');
 		} finally {
 			setDownloadingKey(null);
 		}
 	}
 
+	/** Returns true when the combined size of `keys` is within the download limit. */
+	async function withinDownloadLimit(keys: string[]): Promise<boolean> {
+		try {
+			const bytes = await portfolioS3Service.totalSize(keys);
+			if (bytes > DOWNLOAD_LIMIT) {
+				setToastError(
+					t('portfolio.guard.downloadTooLarge').replace('{{size}}', formatBytes(bytes)),
+				);
+				return false;
+			}
+			return true;
+		} catch (e) {
+			showError(e, 'portfolio.error.sizeFailed');
+			return false;
+		}
+	}
+
+	async function handleDownload(entry: S3Entry) {
+		// Only folders need the size guard; a single file is bounded by the upload limit.
+		if (entry.isFolder && !(await withinDownloadLimit([entry.key]))) return;
+		await downloadEntry(entry);
+	}
+
 	async function handleDownloadSelected() {
-		const selected = entries.filter((e) => selectedKeys.has(e.key));
-		for (const entry of selected) {
-			await handleDownload(entry);
+		if (selectedEntries.length === 0) return;
+		if (!(await withinDownloadLimit(selectedEntries.map((e) => e.key)))) return;
+		for (const entry of selectedEntries) {
+			await downloadEntry(entry);
 		}
 	}
 
@@ -117,7 +186,61 @@ export function PortfolioFileManagerPage() {
 			setSuccessMessage(t('portfolio.toast.folderCreated'));
 		} catch (e) {
 			setShowCreateFolder(false);
-			setToastError(getErrorMessage(e, t('portfolio.error.createFolderFailed')));
+			showError(e, 'portfolio.error.createFolderFailed');
+		}
+	}
+
+	async function handleCreateComment(name: string) {
+		try {
+			await createTextFile({ prefix, name });
+			setShowCreateComment(false);
+			setSuccessMessage(t('portfolio.toast.commentCreated'));
+		} catch (e) {
+			setShowCreateComment(false);
+			showError(e, 'portfolio.error.createCommentFailed');
+		}
+	}
+
+	async function handleRename(newName: string) {
+		if (!renameTarget) return;
+		try {
+			await renameEntry({ key: renameTarget.key, newName });
+			setRenameTarget(null);
+			clearSelection();
+			setSuccessMessage(t('portfolio.toast.renamed'));
+		} catch (e) {
+			setRenameTarget(null);
+			showError(e, 'portfolio.error.renameFailed');
+		}
+	}
+
+	async function handleMove(destPrefix: string) {
+		if (!moveSources) return;
+		try {
+			await moveEntries({ keys: moveSources.map((s) => s.key), destPrefix });
+			setMoveSources(null);
+			clearSelection();
+			setSuccessMessage(t('portfolio.toast.moved'));
+		} catch (e) {
+			setMoveSources(null);
+			showError(e, 'portfolio.error.moveFailed');
+		}
+	}
+
+	function handleCopy() {
+		setClipboard(selectedEntries);
+		clearSelection();
+		setSuccessMessage(t('portfolio.toast.copied'));
+	}
+
+	async function handlePaste() {
+		if (clipboard.length === 0) return;
+		try {
+			await copyEntries({ keys: clipboard.map((c) => c.key), destPrefix: prefix });
+			setClipboard([]);
+			setSuccessMessage(t('portfolio.toast.pasted'));
+		} catch (e) {
+			showError(e, 'portfolio.error.copyFailed');
 		}
 	}
 
@@ -130,22 +253,27 @@ export function PortfolioFileManagerPage() {
 			setSuccessMessage(t('portfolio.toast.deleted'));
 		} catch (e) {
 			setConfirmDelete(null);
-			setToastError(getErrorMessage(e, t('portfolio.error.deleteFailed')));
+			showError(e, 'portfolio.error.deleteFailed');
 		}
 	}
 
 	async function uploadFileList(files: File[]) {
-		if (files.length === 0) return;
-		setUploadProgress({ done: 0, total: files.length });
+		const tooBig = files.filter((f) => f.size > FILE_LIMIT);
+		const allowed = files.filter((f) => f.size <= FILE_LIMIT);
+		if (tooBig.length > 0) {
+			setToastError(t('portfolio.guard.fileTooLarge').replace('{{count}}', String(tooBig.length)));
+		}
+		if (allowed.length === 0) return;
+		setUploadProgress({ done: 0, total: allowed.length });
 		try {
 			await uploadFiles({
 				prefix,
-				files,
+				files: allowed,
 				onProgress: (done, total) => setUploadProgress({ done, total }),
 			});
 			setSuccessMessage(t('portfolio.toast.uploaded'));
 		} catch (e) {
-			setToastError(getErrorMessage(e, t('portfolio.error.uploadFailed')));
+			showError(e, 'portfolio.error.uploadFailed');
 		} finally {
 			setUploadProgress(null);
 		}
@@ -180,7 +308,7 @@ export function PortfolioFileManagerPage() {
 		if (isError) {
 			return (
 				<p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-					{getErrorMessage(error, t('portfolio.error.loadFailed'))}
+					{t(getErrorMessage(error, 'portfolio.error.loadFailed'))}
 				</p>
 			);
 		}
@@ -242,6 +370,10 @@ export function PortfolioFileManagerPage() {
 						<FolderPlusIcon className="h-5 w-5" />
 						{t('portfolio.toolbar.newFolder')}
 					</Button>
+					<Button variant="secondary" size="md" onClick={() => setShowCreateComment(true)}>
+						<DocumentPlusIcon className="h-5 w-5" />
+						{t('portfolio.toolbar.newComment')}
+					</Button>
 					<Button
 						variant="secondary"
 						size="md"
@@ -252,6 +384,10 @@ export function PortfolioFileManagerPage() {
 							? `${t('portfolio.dropzone.uploading')} ${uploadProgress.done}/${uploadProgress.total}`
 							: t('portfolio.toolbar.upload')}
 					</Button>
+					<Button variant="surface" size="md" onClick={() => setShowTree(true)}>
+						<ListBulletIcon className="h-5 w-5" />
+						{t('portfolio.toolbar.tree')}
+					</Button>
 					<input
 						ref={fileInputRef}
 						type="file"
@@ -259,16 +395,36 @@ export function PortfolioFileManagerPage() {
 						className="hidden"
 						onChange={handleInputUpload}
 					/>
+					{clipboard.length > 0 && (
+						<Button variant="surface" size="md" onClick={handlePaste}>
+							<ClipboardIcon className="h-5 w-5" />
+							{t('portfolio.toolbar.paste')} ({clipboard.length})
+						</Button>
+					)}
 					{selectedCount > 0 && (
 						<>
+							<Button variant="surface" size="md" onClick={handleCopy}>
+								<ClipboardDocumentIcon className="h-5 w-5" />
+								{t('portfolio.toolbar.copy')} ({selectedCount})
+							</Button>
+							{selectedCount === 1 && (
+								<Button
+									variant="surface"
+									size="md"
+									onClick={() => setRenameTarget(selectedEntries[0])}>
+									<PencilSquareIcon className="h-5 w-5" />
+									{t('portfolio.toolbar.rename')}
+								</Button>
+							)}
+							<Button variant="surface" size="md" onClick={() => setMoveSources(selectedEntries)}>
+								<TruckIcon className="h-5 w-5" />
+								{t('portfolio.toolbar.move')} ({selectedCount})
+							</Button>
 							<Button variant="surface" size="md" onClick={handleDownloadSelected}>
 								<ArrowDownTrayIcon className="h-5 w-5" />
 								{t('portfolio.toolbar.download')} ({selectedCount})
 							</Button>
-							<Button
-								variant="warning"
-								size="md"
-								onClick={() => setConfirmDelete(entries.filter((e) => selectedKeys.has(e.key)))}>
+							<Button variant="warning" size="md" onClick={() => setConfirmDelete(selectedEntries)}>
 								<TrashIcon className="h-5 w-5" />
 								{t('portfolio.toolbar.delete')} ({selectedCount})
 							</Button>
@@ -302,12 +458,43 @@ export function PortfolioFileManagerPage() {
 
 			{/* Modals */}
 			<CreateFolderDialog
-				key={showCreateFolder ? 'open' : 'closed'}
+				key={showCreateFolder ? 'folder-open' : 'folder-closed'}
 				isOpen={showCreateFolder}
 				onClose={() => setShowCreateFolder(false)}
 				onConfirm={handleCreateFolder}
 				isLoading={creatingFolder}
 			/>
+
+			<CreateCommentDialog
+				key={showCreateComment ? 'comment-open' : 'comment-closed'}
+				isOpen={showCreateComment}
+				onClose={() => setShowCreateComment(false)}
+				onConfirm={handleCreateComment}
+				isLoading={creatingComment}
+			/>
+
+			<RenameDialog
+				key={renameTarget?.key ?? 'rename-closed'}
+				isOpen={renameTarget != null}
+				entry={renameTarget}
+				onClose={() => setRenameTarget(null)}
+				onConfirm={handleRename}
+				isLoading={renaming}
+			/>
+
+			{moveSources && (
+				<MoveDialog
+					key={`move-${moveSources.map((s) => s.key).join('|')}`}
+					isOpen
+					sources={moveSources}
+					startPrefix={prefix}
+					onClose={() => setMoveSources(null)}
+					onConfirm={handleMove}
+					isLoading={moving}
+				/>
+			)}
+
+			<TreeViewerDialog isOpen={showTree} prefix={prefix} onClose={() => setShowTree(false)} />
 
 			<ConfirmDialog
 				isOpen={confirmDelete != null}
