@@ -12,6 +12,7 @@ import {
 	DialogClose,
 	Button,
 	Select,
+	Input,
 } from '@/shared/components/ui';
 import { LoadingState } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
@@ -37,6 +38,7 @@ export function AddEvaluationCourseModal({
 
 	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
 	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
+	const [search, setSearch] = useState('');
 	const [pendingIds, setPendingIds] = useState<Set<number>>(new Set());
 	const [addError, setAddError] = useState<string | null>(null);
 
@@ -44,6 +46,7 @@ export function AddEvaluationCourseModal({
 		if (!open) {
 			setSelectedProgramId(null);
 			setSelectedProgramOpt(null);
+			setSearch('');
 			setPendingIds(new Set());
 			setAddError(null);
 		}
@@ -111,6 +114,12 @@ export function AddEvaluationCourseModal({
 		value: p.id,
 	}));
 
+	const filteredSpcList = useMemo(() => {
+		if (!search.trim()) return spcList;
+		const q = search.trim().toLowerCase();
+		return spcList.filter((spc) => courseName(spc).toLowerCase().includes(q));
+	}, [spcList, search]);
+
 	const canConfirm = pendingIds.size > 0 && !enableEvaluation.isPending;
 
 	return (
@@ -138,46 +147,56 @@ export function AddEvaluationCourseModal({
 							const opt = Array.isArray(v) ? (v[0] ?? null) : v;
 							setSelectedProgramOpt(opt as AnyOption | null);
 							setSelectedProgramId(opt ? Number(opt.value) : null);
+							setSearch('');
 							setPendingIds(new Set());
 						}}
 					/>
 
 					{selectedProgramId !== null && (
-						<div className="max-h-72 overflow-y-auto rounded-lg border border-zinc-200 bg-white">
-							{loadingCourses ? (
-								<LoadingState
-									className="py-6"
-									label={t('evaluationCourses.modal.loadingCourses')}
-								/>
-							) : spcList.length === 0 ? (
-								<p className="px-4 py-6 text-center text-sm text-zinc-400">
-									{t('evaluationCourses.modal.empty')}
-								</p>
-							) : (
-								<ul className="divide-y divide-zinc-100">
-									{spcList.map((spc) => {
-										const isMarked = markedIds.has(spc.id);
-										const isPending = pendingIds.has(spc.id);
+						<div className="space-y-2">
+							<Input
+								placeholder={t('evaluationCourses.modal.searchPlaceholder')}
+								value={search}
+								onChange={(e) => setSearch(e.target.value)}
+							/>
+							<div className="max-h-64 overflow-y-auto rounded-lg border border-zinc-200 bg-white">
+								{loadingCourses ? (
+									<LoadingState
+										className="py-6"
+										label={t('evaluationCourses.modal.loadingCourses')}
+									/>
+								) : filteredSpcList.length === 0 ? (
+									<p className="px-4 py-6 text-center text-sm text-zinc-400">
+										{search.trim()
+											? t('evaluationCourses.modal.searchNoResults')
+											: t('evaluationCourses.modal.empty')}
+									</p>
+								) : (
+									<ul className="divide-y divide-zinc-100">
+										{filteredSpcList.map((spc) => {
+											const isMarked = markedIds.has(spc.id);
+											const isPending = pendingIds.has(spc.id);
 
-										return (
-											<li
-												key={spc.id}
-												className="flex items-center justify-between gap-3 px-4 py-3">
-												<span className={`text-sm ${isMarked ? 'text-zinc-400' : 'text-zinc-800'}`}>
-													{courseName(spc)}
-												</span>
-												<button
-													type="button"
-													disabled={isMarked}
-													onClick={() => togglePending(spc.id)}
-													title={
-														isMarked
-															? t('evaluationCourses.modal.alreadyAdded')
-															: isPending
-																? t('evaluationCourses.modal.deselect')
-																: t('evaluationCourses.modal.select')
-													}
-													className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-colors
+											return (
+												<li
+													key={spc.id}
+													className="flex items-center justify-between gap-3 px-4 py-3">
+													<span
+														className={`text-sm ${isMarked ? 'text-zinc-400' : 'text-zinc-800'}`}>
+														{courseName(spc)}
+													</span>
+													<button
+														type="button"
+														disabled={isMarked}
+														onClick={() => togglePending(spc.id)}
+														title={
+															isMarked
+																? t('evaluationCourses.modal.alreadyAdded')
+																: isPending
+																	? t('evaluationCourses.modal.deselect')
+																	: t('evaluationCourses.modal.select')
+														}
+														className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-colors
                             ${
 															isMarked
 																? 'cursor-not-allowed border-emerald-200 bg-emerald-50 text-emerald-400'
@@ -185,17 +204,18 @@ export function AddEvaluationCourseModal({
 																	? 'border-blue-500 bg-blue-500 text-white hover:bg-blue-600'
 																	: 'border-zinc-300 bg-white text-zinc-400 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600'
 														}`}>
-													{isMarked || isPending ? (
-														<CheckIcon className="h-4 w-4" />
-													) : (
-														<PlusIcon className="h-4 w-4" />
-													)}
-												</button>
-											</li>
-										);
-									})}
-								</ul>
-							)}
+														{isMarked || isPending ? (
+															<CheckIcon className="h-4 w-4" />
+														) : (
+															<PlusIcon className="h-4 w-4" />
+														)}
+													</button>
+												</li>
+											);
+										})}
+									</ul>
+								)}
+							</div>
 						</div>
 					)}
 

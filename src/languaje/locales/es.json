@@ -1954,6 +1954,8 @@
 			"programPlaceholder": "Selecciona una carrera",
 			"programLoading": "Cargando carreras...",
 			"programNoOptions": "Sin carreras disponibles",
+			"searchPlaceholder": "Buscar curso...",
+			"searchNoResults": "No se encontraron cursos.",
 			"loadingCourses": "Cargando cursos...",
 			"empty": "No hay cursos disponibles para esta carrera.",
 			"select": "Seleccionar",

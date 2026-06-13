@@ -1954,6 +1954,8 @@
 			"programPlaceholder": "Select a major",
 			"programLoading": "Loading majors...",
 			"programNoOptions": "No majors available",
+			"searchPlaceholder": "Search course...",
+			"searchNoResults": "No courses found.",
 			"loadingCourses": "Loading courses...",
 			"empty": "No courses available for this major.",
 			"select": "Select",
