@@ -3111,6 +3111,9 @@
 			"downloadTooLarge": "The selection exceeds 1 GB ({{size}}). Reduce it to download.",
 			"fileTooLarge": "{{count}} file(s) exceed the 4 GB limit and were skipped."
 		},
+		"download": {
+			"selectionName": "portfolio-selection"
+		},
 		"toast": {
 			"folderCreated": "Folder created successfully.",
 			"commentCreated": "Comment created successfully.",
@@ -3156,6 +3159,7 @@
 			"createFolderFailed": "Could not create the folder.",
 			"downloadUrlFailed": "Could not prepare the download.",
 			"downloadFolderFailed": "Could not download the folder.",
+			"downloadFailed": "Could not download the file.",
 			"renameFailed": "Could not rename the item.",
 			"copyFailed": "Could not copy the items.",
 			"moveFailed": "Could not move the items.",

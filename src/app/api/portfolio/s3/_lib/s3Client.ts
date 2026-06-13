@@ -1,18 +1,17 @@
 import { S3Client } from '@aws-sdk/client-s3';
+import { validateEnv } from '@/configs/env.config';
 
-/**
- * Server-side only S3 client. Credentials live in env vars (VITE_AWS_*) and are
- * never shipped to the browser because this file is only imported from route
- * handlers (the `_lib` folder is ignored by the Next.js router).
- */
-export const BUCKET = process.env.VITE_AWS_BUCKET_NAME ?? '';
+// No NEXT_PUBLIC_ prefix keeps these credentials out of the browser bundle.
+const env = validateEnv();
+
+export const BUCKET = env.AWS_BUCKET_NAME;
 
 export function getS3Client(): S3Client {
 	return new S3Client({
-		region: process.env.VITE_AWS_BUCKET_REGION ?? 'us-east-1',
+		region: env.AWS_REGION,
 		credentials: {
-			accessKeyId: process.env.VITE_AWS_PUBLIC_KEY ?? '',
-			secretAccessKey: process.env.VITE_AWS_SECRET_KEY ?? '',
+			accessKeyId: env.AWS_ACCESS_KEY_ID,
+			secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
 		},
 	});
 }

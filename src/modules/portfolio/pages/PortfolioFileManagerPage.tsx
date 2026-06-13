@@ -174,8 +174,18 @@ export function PortfolioFileManagerPage() {
 	async function handleDownloadSelected() {
 		if (selectedEntries.length === 0) return;
 		if (!(await withinDownloadLimit(selectedEntries.map((e) => e.key)))) return;
-		for (const entry of selectedEntries) {
-			await downloadEntry(entry);
+		if (selectedEntries.length === 1) {
+			await downloadEntry(selectedEntries[0]);
+			return;
+		}
+		// One server-side zip avoids the N browser downloads that get blocked when triggered in a loop.
+		try {
+			await portfolioS3Service.downloadSelection(
+				selectedEntries.map((e) => e.key),
+				t('portfolio.download.selectionName'),
+			);
+		} catch (e) {
+			showError(e, 'portfolio.error.downloadFailed');
 		}
 	}
 

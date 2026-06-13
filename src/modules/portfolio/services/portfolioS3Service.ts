@@ -2,8 +2,8 @@ import type { S3ListResponse } from '../types';
 
 const BASE = '/api/portfolio/s3';
 
-async function readError(res: Response, fallback: string): Promise<never> {
-	let message = fallback;
+async function readError(res: Response, fallbackKey: string): Promise<never> {
+	let message = fallbackKey;
 	try {
 		const data = await res.json();
 		if (data?.error) message = data.error;
@@ -27,29 +27,37 @@ function triggerBlobDownload(blob: Blob, filename: string) {
 export const portfolioS3Service = {
 	async list(prefix = ''): Promise<S3ListResponse> {
 		const res = await fetch(`${BASE}/list?prefix=${encodeURIComponent(prefix)}`);
-		if (!res.ok) return readError(res, 'Failed to list files');
+		if (!res.ok) return readError(res, 'error.s3.listFailed');
 		return res.json();
 	},
 
 	async getDownloadUrl(key: string): Promise<string> {
 		const res = await fetch(`${BASE}/download-url?key=${encodeURIComponent(key)}`);
-		if (!res.ok) return readError(res, 'Failed to get download URL');
+		if (!res.ok) return readError(res, 'error.s3.downloadUrlFailed');
 		return (await res.json()).url as string;
 	},
 
-	/** Downloads a single file (fetches via presigned URL to force the filename). */
 	async downloadFile(key: string, name: string): Promise<void> {
 		const url = await this.getDownloadUrl(key);
 		const res = await fetch(url);
-		if (!res.ok) throw new Error('Failed to download file');
+		if (!res.ok) throw new Error('error.s3.downloadFailed');
 		triggerBlobDownload(await res.blob(), name);
 	},
 
-	/** Downloads a whole folder as a ZIP assembled server-side. */
 	async downloadFolder(prefix: string, name: string): Promise<void> {
 		const res = await fetch(`${BASE}/download-folder?prefix=${encodeURIComponent(prefix)}`);
-		if (!res.ok) return readError(res, 'Failed to download folder');
+		if (!res.ok) return readError(res, 'error.s3.downloadFolderFailed');
 		triggerBlobDownload(await res.blob(), `${name}.zip`);
+	},
+
+	async downloadSelection(keys: string[], zipName: string): Promise<void> {
+		const res = await fetch(`${BASE}/download-selection`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ keys }),
+		});
+		if (!res.ok) return readError(res, 'error.s3.downloadFolderFailed');
+		triggerBlobDownload(await res.blob(), `${zipName}.zip`);
 	},
 
 	async uploadFile(key: string, file: File): Promise<void> {
@@ -59,7 +67,7 @@ export const portfolioS3Service = {
 			method: 'POST',
 			body: formData,
 		});
-		if (!res.ok) return readError(res, 'Failed to upload file');
+		if (!res.ok) return readError(res, 'error.s3.uploadFailed');
 	},
 
 	async createFolder(prefix: string, name: string): Promise<void> {
@@ -68,7 +76,7 @@ export const portfolioS3Service = {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ prefix, name }),
 		});
-		if (!res.ok) return readError(res, 'Failed to create folder');
+		if (!res.ok) return readError(res, 'error.s3.createFolderFailed');
 	},
 
 	async deleteEntries(keys: string[]): Promise<void> {
@@ -77,64 +85,58 @@ export const portfolioS3Service = {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ keys }),
 		});
-		if (!res.ok) return readError(res, 'Failed to delete');
+		if (!res.ok) return readError(res, 'error.s3.deleteFailed');
 	},
 
-	/** Renames a single file or folder (extension preserved for files). */
 	async rename(key: string, newName: string): Promise<void> {
 		const res = await fetch(`${BASE}/rename`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ key, newName }),
 		});
-		if (!res.ok) return readError(res, 'Failed to rename');
+		if (!res.ok) return readError(res, 'error.s3.renameFailed');
 	},
 
-	/** Copies files/folders into the destination prefix (auto-renames on collision). */
 	async copy(keys: string[], destPrefix: string): Promise<void> {
 		const res = await fetch(`${BASE}/copy`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ keys, destPrefix }),
 		});
-		if (!res.ok) return readError(res, 'Failed to copy');
+		if (!res.ok) return readError(res, 'error.s3.copyFailed');
 	},
 
-	/** Moves files/folders into the destination prefix. */
 	async move(keys: string[], destPrefix: string): Promise<void> {
 		const res = await fetch(`${BASE}/move`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ keys, destPrefix }),
 		});
-		if (!res.ok) return readError(res, 'Failed to move');
+		if (!res.ok) return readError(res, 'error.s3.moveFailed');
 	},
 
-	/** Creates a plain-text comment file under the given prefix. */
 	async createTextFile(prefix: string, name: string): Promise<void> {
 		const res = await fetch(`${BASE}/text-file`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ prefix, name }),
 		});
-		if (!res.ok) return readError(res, 'Failed to create comment');
+		if (!res.ok) return readError(res, 'error.s3.createCommentFailed');
 	},
 
-	/** Lists every object key under a prefix (used by the tree view). */
 	async listAllKeys(prefix = ''): Promise<string[]> {
 		const res = await fetch(`${BASE}/all-keys?prefix=${encodeURIComponent(prefix)}`);
-		if (!res.ok) return readError(res, 'Failed to load tree');
+		if (!res.ok) return readError(res, 'error.s3.treeFailed');
 		return (await res.json()).keys as string[];
 	},
 
-	/** Returns the combined byte size of the given files/folders. */
 	async totalSize(keys: string[]): Promise<number> {
 		const res = await fetch(`${BASE}/size`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ keys }),
 		});
-		if (!res.ok) return readError(res, 'Failed to compute size');
+		if (!res.ok) return readError(res, 'error.s3.sizeFailed');
 		return (await res.json()).totalBytes as number;
 	},
 };

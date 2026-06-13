@@ -3111,6 +3111,9 @@
 			"downloadTooLarge": "La selección supera 1 GB ({{size}}). Reduce la cantidad para poder descargar.",
 			"fileTooLarge": "{{count}} archivo(s) superan el tamaño máximo de 4 GB y se omitieron."
 		},
+		"download": {
+			"selectionName": "seleccion-portafolio"
+		},
 		"toast": {
 			"folderCreated": "Carpeta creada correctamente.",
 			"commentCreated": "Comentario creado correctamente.",
@@ -3156,6 +3159,7 @@
 			"createFolderFailed": "No se pudo crear la carpeta.",
 			"downloadUrlFailed": "No se pudo preparar la descarga.",
 			"downloadFolderFailed": "No se pudo descargar la carpeta.",
+			"downloadFailed": "No se pudo descargar el archivo.",
 			"renameFailed": "No se pudo renombrar el elemento.",
 			"copyFailed": "No se pudieron copiar los elementos.",
 			"moveFailed": "No se pudieron mover los elementos.",
