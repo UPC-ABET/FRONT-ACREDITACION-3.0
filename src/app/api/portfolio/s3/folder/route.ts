@@ -1,28 +1,31 @@
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { NextRequest, NextResponse } from 'next/server';
 import { BUCKET, getS3Client } from '../_lib/s3Client';
+import { requireAuth } from '../_lib/auth';
+import { toAbsolute, toRelative } from '../_lib/scope';
+import { resolveUniqueName, validateName } from '../_lib/s3Operations';
 
-/**
- * POST /api/portfolio/s3/folder
- * Body: { prefix: string, name: string }
- * Creates an empty folder placeholder object (`{prefix}{name}/`).
- */
 export async function POST(request: NextRequest) {
+	const denied = await requireAuth(request);
+	if (denied) return denied;
+
 	try {
 		const { prefix = '', name } = (await request.json()) as { prefix?: string; name?: string };
 
-		const clean = (name ?? '').trim().replace(/[/\\]/g, '');
-		if (!clean) {
-			return NextResponse.json({ error: 'Invalid folder name' }, { status: 400 });
+		const validationError = validateName(name ?? '');
+		if (validationError) {
+			return NextResponse.json({ error: validationError }, { status: 400 });
 		}
 
-		const key = `${prefix}${clean}/`;
+		const destPrefix = toAbsolute(prefix);
 		const client = getS3Client();
-		await client.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: '' }));
+		const unique = await resolveUniqueName(client, destPrefix, (name ?? '').trim(), true);
+		const key = `${destPrefix}${unique}/`;
 
-		return NextResponse.json({ ok: true, key });
+		await client.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: '' }));
+		return NextResponse.json({ ok: true, key: toRelative(key) });
 	} catch (err) {
-		const message = err instanceof Error ? err.message : 'S3 create folder error';
-		return NextResponse.json({ error: message }, { status: 500 });
+		const detail = err instanceof Error ? err.message : 'unknown';
+		return NextResponse.json({ error: 'error.s3.createFolderFailed', detail }, { status: 500 });
 	}
 }

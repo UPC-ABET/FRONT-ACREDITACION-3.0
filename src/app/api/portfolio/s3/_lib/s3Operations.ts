@@ -6,31 +6,26 @@ import {
 } from '@aws-sdk/client-s3';
 import { BUCKET } from './s3Client';
 
-/** Characters not allowed in folder/file names (mirrors the old desktop client). */
 export const INVALID_NAME_CHARS = /[\\/:*?"<>|]/;
 export const MAX_NAME_LENGTH = 255;
 const BATCH = 1000;
 
-/** True when the key represents a folder (S3 keys ending with a slash). */
 export function isFolderKey(key: string): boolean {
 	return key.endsWith('/');
 }
 
-/** Returns the parent prefix of a key (the folder it lives in). */
 export function parentPrefix(key: string): string {
 	const trimmed = isFolderKey(key) ? key.slice(0, -1) : key;
 	const slash = trimmed.lastIndexOf('/');
 	return slash === -1 ? '' : trimmed.slice(0, slash + 1);
 }
 
-/** Returns the last path segment (folder or file name) of a key. */
 export function lastSegment(key: string): string {
 	const trimmed = isFolderKey(key) ? key.slice(0, -1) : key;
 	const slash = trimmed.lastIndexOf('/');
 	return slash === -1 ? trimmed : trimmed.slice(slash + 1);
 }
 
-/** Lists every object key under a prefix, following pagination. */
 export async function listAllKeys(client: S3Client, prefix: string): Promise<string[]> {
 	const keys: string[] = [];
 	let continuationToken: string | undefined;
@@ -50,7 +45,6 @@ export async function listAllKeys(client: S3Client, prefix: string): Promise<str
 	return keys;
 }
 
-/** Sums the byte size of every object under the given keys (recursive for folders). */
 export async function totalSize(client: S3Client, keys: string[]): Promise<number> {
 	let total = 0;
 	for (const key of keys) {
@@ -78,7 +72,6 @@ export async function totalSize(client: S3Client, keys: string[]): Promise<numbe
 	return total;
 }
 
-/** True when an object or folder placeholder exists at the given key. */
 export async function keyExists(client: S3Client, key: string): Promise<boolean> {
 	const response = await client.send(
 		new ListObjectsV2Command({ Bucket: BUCKET, Prefix: key, MaxKeys: 1 }),
@@ -86,10 +79,6 @@ export async function keyExists(client: S3Client, key: string): Promise<boolean>
 	return (response.Contents ?? []).some((o) => o.Key === key);
 }
 
-/**
- * Resolves a name that does not collide inside `destPrefix`, appending ` (n)`
- * before the extension (files) or at the end (folders) until it is free.
- */
 export async function resolveUniqueName(
 	client: S3Client,
 	destPrefix: string,
@@ -102,7 +91,7 @@ export async function resolveUniqueName(
 
 	let candidate = name;
 	let counter = 1;
-	// Folders are probed as `${destPrefix}${candidate}/`, files as `${destPrefix}${candidate}`.
+	// Append ` (n)` before the extension until the destination has no collision.
 	while (
 		await keyExists(client, isFolder ? `${destPrefix}${candidate}/` : `${destPrefix}${candidate}`)
 	) {
@@ -112,18 +101,20 @@ export async function resolveUniqueName(
 	return candidate;
 }
 
-/** Copies a single object within the bucket. */
 export async function copyObject(client: S3Client, source: string, dest: string): Promise<void> {
+	// CopySource must keep `/` as path separators but URL-encode each segment;
+	// encoding the whole key would turn the separators into %2F and break nested
+	// keys (and any key containing spaces or special characters).
+	const encodedSource = source.split('/').map(encodeURIComponent).join('/');
 	await client.send(
 		new CopyObjectCommand({
 			Bucket: BUCKET,
-			CopySource: `/${BUCKET}/${encodeURIComponent(source)}`,
+			CopySource: `/${BUCKET}/${encodedSource}`,
 			Key: dest,
 		}),
 	);
 }
 
-/** Recursively copies every object under `sourcePrefix` into `destPrefix`. */
 export async function copyPrefix(
 	client: S3Client,
 	sourcePrefix: string,
@@ -136,7 +127,6 @@ export async function copyPrefix(
 	}
 }
 
-/** Deletes the given keys in batches of 1000. */
 export async function deleteKeys(client: S3Client, keys: string[]): Promise<void> {
 	for (let i = 0; i < keys.length; i += BATCH) {
 		const chunk = keys.slice(i, i + BATCH);
@@ -149,13 +139,11 @@ export async function deleteKeys(client: S3Client, keys: string[]): Promise<void
 	}
 }
 
-/** Deletes everything under a prefix (the folder and all its contents). */
 export async function deletePrefix(client: S3Client, prefix: string): Promise<void> {
 	const keys = await listAllKeys(client, prefix);
 	await deleteKeys(client, keys.length > 0 ? keys : [prefix]);
 }
 
-/** Validates a folder/file name, returning an i18n error key when invalid. */
 export function validateName(name: string): string | null {
 	const clean = name.trim();
 	if (!clean) return 'error.s3.invalidName';

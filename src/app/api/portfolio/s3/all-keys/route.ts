@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getS3Client } from '../_lib/s3Client';
+import { requireAuth } from '../_lib/auth';
+import { toAbsolute, toRelative } from '../_lib/scope';
 import { listAllKeys } from '../_lib/s3Operations';
 
-/**
- * GET /api/portfolio/s3/all-keys?prefix=EPE/
- * Returns every object key under the prefix — used to render the full tree view.
- */
 export async function GET(request: NextRequest) {
+	const denied = await requireAuth(request);
+	if (denied) return denied;
+
 	try {
-		const prefix = request.nextUrl.searchParams.get('prefix') ?? '';
+		const relativePrefix = request.nextUrl.searchParams.get('prefix') ?? '';
 		const client = getS3Client();
-		const keys = await listAllKeys(client, prefix);
-		return NextResponse.json({ prefix, keys });
+		const keys = await listAllKeys(client, toAbsolute(relativePrefix));
+		return NextResponse.json({ prefix: relativePrefix, keys: keys.map(toRelative) });
 	} catch (err) {
-		const message = err instanceof Error ? err.message : 'error.s3.treeFailed';
-		return NextResponse.json({ error: 'error.s3.treeFailed', detail: message }, { status: 500 });
+		const detail = err instanceof Error ? err.message : 'unknown';
+		return NextResponse.json({ error: 'error.s3.treeFailed', detail }, { status: 500 });
 	}
 }

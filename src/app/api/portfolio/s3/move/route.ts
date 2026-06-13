@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getS3Client } from '../_lib/s3Client';
+import { requireAuth } from '../_lib/auth';
+import { toAbsolute } from '../_lib/scope';
 import {
 	copyObject,
 	copyPrefix,
@@ -11,12 +13,10 @@ import {
 	resolveUniqueName,
 } from '../_lib/s3Operations';
 
-/**
- * POST /api/portfolio/s3/move
- * Body: { keys: string[], destPrefix: string }
- * Moves files/folders into `destPrefix` (copy + delete), auto-renaming on collisions.
- */
 export async function POST(request: NextRequest) {
+	const denied = await requireAuth(request);
+	if (denied) return denied;
+
 	try {
 		const { keys, destPrefix = '' } = (await request.json()) as {
 			keys?: string[];
@@ -26,32 +26,34 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'error.s3.noSelection' }, { status: 400 });
 		}
 
-		// Reject no-op / invalid destinations up front.
-		for (const key of keys) {
-			if (parentPrefix(key) === destPrefix) {
+		const dest = toAbsolute(destPrefix);
+		for (const relativeKey of keys) {
+			const key = toAbsolute(relativeKey);
+			if (parentPrefix(key) === dest) {
 				return NextResponse.json({ error: 'error.s3.moveSameLocation' }, { status: 400 });
 			}
-			if (isFolderKey(key) && destPrefix.startsWith(key)) {
+			if (isFolderKey(key) && dest.startsWith(key)) {
 				return NextResponse.json({ error: 'error.s3.moveIntoItself' }, { status: 400 });
 			}
 		}
 
 		const client = getS3Client();
-		for (const key of keys) {
+		for (const relativeKey of keys) {
+			const key = toAbsolute(relativeKey);
 			const folder = isFolderKey(key);
-			const name = await resolveUniqueName(client, destPrefix, lastSegment(key), folder);
+			const name = await resolveUniqueName(client, dest, lastSegment(key), folder);
 			if (folder) {
-				await copyPrefix(client, key, `${destPrefix}${name}/`);
+				await copyPrefix(client, key, `${dest}${name}/`);
 				await deletePrefix(client, key);
 			} else {
-				await copyObject(client, key, `${destPrefix}${name}`);
+				await copyObject(client, key, `${dest}${name}`);
 				await deleteKeys(client, [key]);
 			}
 		}
 
 		return NextResponse.json({ ok: true, count: keys.length });
 	} catch (err) {
-		const message = err instanceof Error ? err.message : 'error.s3.moveFailed';
-		return NextResponse.json({ error: 'error.s3.moveFailed', detail: message }, { status: 500 });
+		const detail = err instanceof Error ? err.message : 'unknown';
+		return NextResponse.json({ error: 'error.s3.moveFailed', detail }, { status: 500 });
 	}
 }

@@ -3097,8 +3097,7 @@
 			"countSelected": "{{count}} selected items",
 			"noFolders": "No folders in this location.",
 			"confirmHere": "Move here",
-			"moving_progress": "Moving...",
-			"sameLocation": "Cannot move to the same location."
+			"moving_progress": "Moving..."
 		},
 		"tree": {
 			"title": "Portfolio structure",
@@ -3138,7 +3137,12 @@
 	"error": {
 		"generic": "An unexpected error occurred.",
 		"s3": {
+			"unauthorized": "Your session has expired. Please sign in again.",
 			"invalidKey": "Invalid file key.",
+			"keyRequired": "A file key is required.",
+			"fileRequired": "No file was provided.",
+			"prefixRequired": "A folder is required.",
+			"emptyFolder": "This folder has no files to download.",
 			"invalidName": "Enter a valid name.",
 			"invalidNameChars": "The name contains invalid characters: \\ / : * ? \" < > |",
 			"nameTooLong": "The name exceeds the 255 character limit.",
@@ -3146,6 +3150,12 @@
 			"noSelection": "No item selected.",
 			"moveSameLocation": "Cannot move to the same location.",
 			"moveIntoItself": "Cannot move a folder into itself.",
+			"listFailed": "Could not load files.",
+			"uploadFailed": "Could not upload the files.",
+			"deleteFailed": "Could not delete the selected items.",
+			"createFolderFailed": "Could not create the folder.",
+			"downloadUrlFailed": "Could not prepare the download.",
+			"downloadFolderFailed": "Could not download the folder.",
 			"renameFailed": "Could not rename the item.",
 			"copyFailed": "Could not copy the items.",
 			"moveFailed": "Could not move the items.",

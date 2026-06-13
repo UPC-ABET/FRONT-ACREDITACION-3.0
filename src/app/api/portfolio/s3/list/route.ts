@@ -1,6 +1,8 @@
 import { ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { NextRequest, NextResponse } from 'next/server';
 import { BUCKET, getS3Client } from '../_lib/s3Client';
+import { requireAuth } from '../_lib/auth';
+import { toAbsolute, toRelative } from '../_lib/scope';
 
 type S3Entry = {
 	key: string;
@@ -10,9 +12,12 @@ type S3Entry = {
 	lastModified: string | null;
 };
 
-/** GET /api/portfolio/s3/list?prefix=EPE/2023/ — lists one folder level. */
 export async function GET(request: NextRequest) {
-	const prefix = request.nextUrl.searchParams.get('prefix') ?? '';
+	const denied = await requireAuth(request);
+	if (denied) return denied;
+
+	const relativePrefix = request.nextUrl.searchParams.get('prefix') ?? '';
+	const prefix = toAbsolute(relativePrefix);
 	const client = getS3Client();
 
 	const folders: S3Entry[] = [];
@@ -24,7 +29,7 @@ export async function GET(request: NextRequest) {
 			const response = await client.send(
 				new ListObjectsV2Command({
 					Bucket: BUCKET,
-					Prefix: prefix || undefined,
+					Prefix: prefix,
 					Delimiter: '/',
 					ContinuationToken: continuationToken,
 				}),
@@ -34,17 +39,17 @@ export async function GET(request: NextRequest) {
 				const key = cp.Prefix;
 				if (!key) continue;
 				const name = key.slice(prefix.length).replace(/\/$/, '');
-				if (name) folders.push({ key, name, isFolder: true, size: 0, lastModified: null });
+				if (name) {
+					folders.push({ key: toRelative(key), name, isFolder: true, size: 0, lastModified: null });
+				}
 			}
 
 			for (const obj of response.Contents ?? []) {
 				const key = obj.Key;
-				// Skip the folder placeholder object (key === prefix).
 				if (!key || key === prefix || key.endsWith('/')) continue;
-				const name = key.slice(prefix.length);
 				files.push({
-					key,
-					name,
+					key: toRelative(key),
+					name: key.slice(prefix.length),
 					isFolder: false,
 					size: obj.Size ?? 0,
 					lastModified: obj.LastModified?.toISOString() ?? null,
@@ -57,9 +62,9 @@ export async function GET(request: NextRequest) {
 		folders.sort((a, b) => a.name.localeCompare(b.name));
 		files.sort((a, b) => a.name.localeCompare(b.name));
 
-		return NextResponse.json({ prefix, folders, files });
+		return NextResponse.json({ prefix: relativePrefix, folders, files });
 	} catch (err) {
-		const message = err instanceof Error ? err.message : 'S3 list error';
-		return NextResponse.json({ error: message }, { status: 500 });
+		const detail = err instanceof Error ? err.message : 'unknown';
+		return NextResponse.json({ error: 'error.s3.listFailed', detail }, { status: 500 });
 	}
 }

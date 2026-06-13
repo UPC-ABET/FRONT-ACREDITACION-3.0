@@ -16,9 +16,9 @@ export function formatBytes(bytes: number): string {
 	return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 }
 
-export function formatDate(iso: string | null): string {
+export function formatDate(iso: string | null, locale?: string): string {
 	if (!iso) return '—';
-	return new Intl.DateTimeFormat(undefined, {
+	return new Intl.DateTimeFormat(locale, {
 		day: '2-digit',
 		month: 'short',
 		year: 'numeric',
