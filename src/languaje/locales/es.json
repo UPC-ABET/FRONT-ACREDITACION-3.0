@@ -1004,7 +1004,10 @@
 			"emailExists": "Ya existe un usuario con ese correo electrónico",
 			"createFailed": "No se pudo crear el usuario",
 			"updateFailed": "No se pudo actualizar el usuario",
-			"deleteFailed": "No se pudo eliminar el usuario"
+			"deleteFailed": "No se pudo eliminar el usuario",
+			"linkedToStaff": "No se puede eliminar: el usuario está vinculado a un docente.",
+			"linkedToStudent": "No se puede eliminar: el usuario está vinculado a un estudiante.",
+			"hasActivityHistory": "No se puede eliminar: el usuario tiene historial de actividad (cargas o notificaciones)."
 		},
 		"ifc": {
 			"notFound": "IFC no encontrado",
