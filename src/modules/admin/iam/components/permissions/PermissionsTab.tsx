@@ -120,14 +120,16 @@ export function PermissionsTab() {
 				]}
 			/>
 
-			<PermissionTypeFormDialog
-				open={isFormOpen}
-				permission={editing}
-				typeGroupId={typeGroupId}
-				onClose={() => setFormOpen(false)}
-				onSuccess={(messageKey) => showToast(messageKey, 'success')}
-				onError={(message) => showToast(message, 'error')}
-			/>
+			{isFormOpen && (
+				<PermissionTypeFormDialog
+					open
+					permission={editing}
+					typeGroupId={typeGroupId}
+					onClose={() => setFormOpen(false)}
+					onSuccess={(messageKey) => showToast(messageKey, 'success')}
+					onError={(message) => showToast(message, 'error')}
+				/>
+			)}
 
 			<ConfirmDialog
 				isOpen={pendingDelete != null}

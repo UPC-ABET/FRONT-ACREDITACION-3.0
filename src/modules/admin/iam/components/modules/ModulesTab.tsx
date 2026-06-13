@@ -138,14 +138,16 @@ export function ModulesTab() {
 				]}
 			/>
 
-			<ModuleTypeFormDialog
-				open={isFormOpen}
-				module={editing}
-				typeGroupId={typeGroupId}
-				onClose={() => setFormOpen(false)}
-				onSuccess={(messageKey) => showToast(messageKey, 'success')}
-				onError={(message) => showToast(message, 'error')}
-			/>
+			{isFormOpen && (
+				<ModuleTypeFormDialog
+					open
+					module={editing}
+					typeGroupId={typeGroupId}
+					onClose={() => setFormOpen(false)}
+					onSuccess={(messageKey) => showToast(messageKey, 'success')}
+					onError={(message) => showToast(message, 'error')}
+				/>
+			)}
 
 			<ConfirmDialog
 				isOpen={pendingDelete != null}

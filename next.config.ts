@@ -1,7 +1,9 @@
 import type { NextConfig } from 'next';
 
+const useStandalone = process.platform !== 'win32' || process.env.NEXT_FORCE_STANDALONE === 'true';
+
 const nextConfig: NextConfig = {
-	output: 'standalone',
+	output: useStandalone ? 'standalone' : undefined,
 	images: {
 		remotePatterns: [
 			{
