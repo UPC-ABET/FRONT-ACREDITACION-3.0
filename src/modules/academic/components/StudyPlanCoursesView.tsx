@@ -5,6 +5,7 @@ import {
 	ArrowLeftIcon,
 	ExclamationTriangleIcon,
 	PencilSquareIcon,
+	PlusIcon,
 	TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
@@ -29,8 +30,13 @@ import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
-import { useStudyPlanCoursesView, useStudyPlanCoursesViewMutations } from '../hooks';
-import type { CourseUpdateBody, StudyPlanCourseRow } from '../types';
+import {
+	useStudyPlanCourseLevels,
+	useStudyPlanCoursesView,
+	useStudyPlanCoursesViewMutations,
+} from '../hooks';
+import type { CourseUpdateBody, StudyPlanCourseCreate, StudyPlanCourseRow } from '../types';
+import { StudyPlanCourseCreateDialog } from './StudyPlanCourseCreateDialog';
 import { StudyPlanCourseEditDialog } from './StudyPlanCourseEditDialog';
 
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
@@ -102,6 +108,8 @@ export function StudyPlanCoursesView({
 	const { academicPeriodId } = useABET();
 	const { toast, showToast, clearToast } = useApiErrorToast();
 
+	const [creating, setCreating] = useState(false);
+	const [createError, setCreateError] = useState<string | null>(null);
 	const [editing, setEditing] = useState<StudyPlanCourseRow | null>(null);
 	const [editError, setEditError] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<StudyPlanCourseRow | null>(null);
@@ -111,7 +119,8 @@ export function StudyPlanCoursesView({
 		studyPlanId,
 		academicPeriodId,
 	);
-	const { updateCourse, removeCourseFromPlan } = useStudyPlanCoursesViewMutations();
+	const { data: levels = [], isLoading: levelsLoading } = useStudyPlanCourseLevels();
+	const { createCourse, updateCourse, removeCourseFromPlan } = useStudyPlanCoursesViewMutations();
 
 	const sortedLevels = useMemo(
 		() => [...(data?.levels ?? [])].sort((a, b) => a.level - b.level),
@@ -122,6 +131,23 @@ export function StudyPlanCoursesView({
 
 	const editLabel = t('loads.studyPlanCoursesView.actions.edit');
 	const deleteLabel = t('loads.studyPlanCoursesView.actions.delete');
+
+	const handleCreate = async (body: StudyPlanCourseCreate) => {
+		setCreateError(null);
+		try {
+			await createCourse.mutateAsync(body);
+			showToast('loads.studyPlanCoursesView.toast.created', 'success');
+			setCreating(false);
+		} catch (error) {
+			const [reason] = getApiErrorReasons(error);
+			setCreateError(
+				tryTranslate(
+					t,
+					reason ?? getErrorMessage(error, 'loads.studyPlanCoursesView.create.error'),
+				),
+			);
+		}
+	};
 
 	const handleSaveEdit = async (body: CourseUpdateBody) => {
 		if (!editing) return;
@@ -193,11 +219,25 @@ export function StudyPlanCoursesView({
 						<ArrowLeftIcon className="h-4 w-4" />
 						{t('loads.studyPlanCoursesView.back')}
 					</Button>
-					<div className="space-y-1">
-						<h2 className="text-lg font-semibold text-gray-900">
-							{t('loads.studyPlanCoursesView.title')}
-						</h2>
-						<p className="text-sm text-gray-500">{t('loads.studyPlanCoursesView.subtitle')}</p>
+					<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+						<div className="space-y-1">
+							<h2 className="text-lg font-semibold text-gray-900">
+								{t('loads.studyPlanCoursesView.title')}
+							</h2>
+							<p className="text-sm text-gray-500">{t('loads.studyPlanCoursesView.subtitle')}</p>
+						</div>
+						<Button
+							variant="primary"
+							size="sm"
+							className="w-full sm:w-auto"
+							disabled={academicPeriodId == null}
+							onClick={() => {
+								setCreateError(null);
+								setCreating(true);
+							}}>
+							<PlusIcon className="h-4 w-4" />
+							<span>{t('loads.studyPlanCoursesView.actions.new')}</span>
+						</Button>
 					</div>
 				</div>
 
@@ -250,6 +290,18 @@ export function StudyPlanCoursesView({
 					</div>
 				)}
 			</div>
+
+			{creating && (
+				<StudyPlanCourseCreateDialog
+					studyPlanId={studyPlanId}
+					levels={levels}
+					levelsLoading={levelsLoading}
+					saving={createCourse.isPending}
+					errorMessage={createError}
+					onClose={() => setCreating(false)}
+					onCreate={handleCreate}
+				/>
+			)}
 
 			{editing && (
 				<StudyPlanCourseEditDialog

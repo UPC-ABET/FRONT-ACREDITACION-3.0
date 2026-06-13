@@ -3,6 +3,7 @@ import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib';
 import {
 	ProfessorResponse,
 	ProfessorSearchResponse,
+	ProfessorMaintenanceCreate,
 	ProfessorMaintenanceItem,
 	ProfessorMaintenanceList,
 	ProfessorMaintenanceUpdate,
@@ -32,6 +33,12 @@ export const professorsService = {
 		if (params.search) query.set('search', params.search);
 		const qs = query.toString();
 		return apiGet(`/professors/maintenance${qs ? `?${qs}` : ''}`);
+	},
+
+	maintenanceCreate(
+		body: ProfessorMaintenanceCreate,
+	): Promise<ApiResponse<ProfessorMaintenanceItem>> {
+		return apiPost('/professors/maintenance', body);
 	},
 
 	maintenanceUpdate(

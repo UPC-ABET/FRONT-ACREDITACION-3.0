@@ -2,7 +2,10 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { studentSectionEnrollmentsService } from '../services';
-import type { StudentSectionEnrollmentMaintenanceUpdate } from '../types';
+import type {
+	StudentSectionEnrollmentMaintenanceCreate,
+	StudentSectionEnrollmentMaintenanceUpdate,
+} from '../types';
 
 interface MaintenanceListParams {
 	academicPeriodId: number | null;
@@ -43,6 +46,12 @@ export function useStudentSectionEnrollmentMaintenanceMutations() {
 	const invalidate = () =>
 		queryClient.invalidateQueries({ queryKey: studentSectionEnrollmentsMaintenanceKeys.all });
 
+	const create = useMutation({
+		mutationFn: (body: StudentSectionEnrollmentMaintenanceCreate) =>
+			studentSectionEnrollmentsService.maintenanceCreate(body).then((response) => response.data),
+		onSuccess: invalidate,
+	});
+
 	const update = useMutation({
 		mutationFn: ({ id, body }: { id: number; body: StudentSectionEnrollmentMaintenanceUpdate }) =>
 			studentSectionEnrollmentsService
@@ -57,5 +66,5 @@ export function useStudentSectionEnrollmentMaintenanceMutations() {
 		onSuccess: invalidate,
 	});
 
-	return { update, remove };
+	return { create, update, remove };
 }

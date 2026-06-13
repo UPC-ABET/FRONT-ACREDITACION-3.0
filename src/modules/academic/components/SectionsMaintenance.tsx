@@ -7,6 +7,7 @@ import {
 	ExclamationTriangleIcon,
 	MagnifyingGlassIcon,
 	PencilSquareIcon,
+	PlusIcon,
 	TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
@@ -37,7 +38,12 @@ import {
 	useCourseSectionsMaintenance,
 	useSectionModalityTypes,
 } from '../hooks';
-import type { CourseSectionMaintenanceItem, CourseSectionMaintenanceUpdate } from '../types';
+import type {
+	CourseSectionMaintenanceCreate,
+	CourseSectionMaintenanceItem,
+	CourseSectionMaintenanceUpdate,
+} from '../types';
+import { SectionCreateDialog } from './SectionCreateDialog';
 import { SectionEditDialog } from './SectionEditDialog';
 
 const PAGE_SIZE = 20;
@@ -84,6 +90,8 @@ export function SectionsMaintenance() {
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
 	const [page, setPage] = useState(1);
+	const [creating, setCreating] = useState(false);
+	const [createError, setCreateError] = useState<string | null>(null);
 	const [editing, setEditing] = useState<CourseSectionMaintenanceItem | null>(null);
 	const [editError, setEditError] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<CourseSectionMaintenanceItem | null>(null);
@@ -91,7 +99,7 @@ export function SectionsMaintenance() {
 
 	const { data: campuses = [] } = useCampuses();
 	const { data: modalityTypes = [] } = useSectionModalityTypes();
-	const { update, remove } = useCourseSectionMaintenanceMutations();
+	const { create, update, remove } = useCourseSectionMaintenanceMutations();
 
 	useEffect(() => {
 		const timer = setTimeout(() => setDebouncedSearch(search), 300);
@@ -115,6 +123,20 @@ export function SectionsMaintenance() {
 	const items = data?.items ?? [];
 	const total = data?.total ?? 0;
 	const totalPages = data?.totalPages ?? 1;
+
+	const handleCreate = async (body: CourseSectionMaintenanceCreate) => {
+		setCreateError(null);
+		try {
+			await create.mutateAsync(body);
+			showToast('loads.sectionsMaintenance.toast.created', 'success');
+			setCreating(false);
+		} catch (error) {
+			const [reason] = getApiErrorReasons(error);
+			setCreateError(
+				tryTranslate(t, reason ?? getErrorMessage(error, 'loads.sectionsMaintenance.create.error')),
+			);
+		}
+	};
 
 	const handleSaveEdit = async (body: CourseSectionMaintenanceUpdate) => {
 		if (!editing) return;
@@ -166,17 +188,31 @@ export function SectionsMaintenance() {
 						</h2>
 						<p className="text-sm text-gray-500">{t('loads.sectionsMaintenance.subtitle')}</p>
 					</div>
-					<div className="relative w-full sm:max-w-xs">
-						<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-						<input
-							type="search"
-							value={search}
-							onChange={(event) => handleSearchChange(event.target.value)}
-							placeholder={t('loads.sectionsMaintenance.searchPlaceholder')}
-							aria-label={t('loads.sectionsMaintenance.searchPlaceholder')}
+					<div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+						<div className="relative w-full sm:max-w-xs">
+							<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+							<input
+								type="search"
+								value={search}
+								onChange={(event) => handleSearchChange(event.target.value)}
+								placeholder={t('loads.sectionsMaintenance.searchPlaceholder')}
+								aria-label={t('loads.sectionsMaintenance.searchPlaceholder')}
+								disabled={academicPeriodId == null}
+								className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
+							/>
+						</div>
+						<Button
+							variant="primary"
+							size="sm"
+							className="w-full sm:w-auto"
 							disabled={academicPeriodId == null}
-							className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
-						/>
+							onClick={() => {
+								setCreateError(null);
+								setCreating(true);
+							}}>
+							<PlusIcon className="h-4 w-4" />
+							<span>{t('loads.sectionsMaintenance.actions.new')}</span>
+						</Button>
 					</div>
 				</div>
 
@@ -311,6 +347,17 @@ export function SectionsMaintenance() {
 					</div>
 				)}
 			</div>
+
+			{creating && (
+				<SectionCreateDialog
+					campuses={campuses}
+					modalityTypes={modalityTypes}
+					saving={create.isPending}
+					errorMessage={createError}
+					onClose={() => setCreating(false)}
+					onCreate={handleCreate}
+				/>
+			)}
 
 			{editing && (
 				<SectionEditDialog

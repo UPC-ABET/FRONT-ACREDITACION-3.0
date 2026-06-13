@@ -944,6 +944,7 @@
 		"outcome": {
 			"inUse": "No se puede eliminar el outcome porque está en uso.",
 			"outcomeCodeExists": "El código ya está asignado a otro outcome de la comisión.",
+			"programCommissionNotFound": "No existe una asociación carrera-comisión para la carrera y comisión seleccionadas en el período activo.",
 			"notFound": "Outcome no encontrado.",
 			"updateFailed": "No se pudo actualizar el outcome.",
 			"usedInCourseOutcomeMappings": "Mapeado a un curso",
@@ -957,6 +958,8 @@
 			"inUse": "No se puede eliminar el estudiante porque está en uso.",
 			"usedInStudentSectionEnrollments": "Tiene matrículas en secciones",
 			"codeExists": "El código ya está asignado a otro estudiante.",
+			"enrolledStudentExists": "El estudiante ya está matriculado en el período activo.",
+			"studyPlanPeriodNotFound": "La carrera no tiene una malla ofertada en el período activo.",
 			"notFound": "Estudiante no encontrado.",
 			"updateFailed": "No se pudo actualizar el estudiante."
 		},
@@ -973,13 +976,17 @@
 			"inUse": "No se puede eliminar la malla porque está en uso.",
 			"usedInAcademicPeriods": "Está ofertada en períodos académicos",
 			"codeExists": "El código ya está asignado a otra malla de la carrera.",
+			"programNotInModality": "La carrera no pertenece a la modalidad activa.",
 			"notFound": "Malla no encontrada.",
 			"updateFailed": "No se pudo actualizar la malla."
 		},
 		"studyPlanCourse": {
 			"inUse": "No se puede quitar el curso porque está en uso.",
 			"usedInRubrics": "Tiene rúbricas",
-			"usedInCourseOutcomeMappings": "Tiene articulación de outcomes"
+			"usedInCourseOutcomeMappings": "Tiene articulación de outcomes",
+			"studyPlanPeriodNotFound": "La malla no está ofertada en el período activo.",
+			"courseSelectionInvalid": "Selecciona un curso existente o registra uno nuevo, no ambos.",
+			"studyPlanCourseExists": "El curso ya está en esta malla para el período activo."
 		},
 		"courseSection": {
 			"inUse": "No se puede eliminar la sección porque está en uso.",
@@ -2440,6 +2447,7 @@
 				"actions": "Acciones"
 			},
 			"actions": {
+				"new": "Nuevo docente",
 				"edit": "Editar",
 				"delete": "Eliminar"
 			},
@@ -2449,6 +2457,12 @@
 			},
 			"error": {
 				"loadFailed": "No se pudieron cargar los docentes."
+			},
+			"create": {
+				"title": "Nuevo docente",
+				"subtitle": "Registra un docente con su código, nombres y apellidos.",
+				"save": "Crear",
+				"error": "No se pudo crear el docente."
 			},
 			"edit": {
 				"title": "Editar docente",
@@ -2464,6 +2478,7 @@
 				"blockedSubtitle": "Este docente está en uso en:"
 			},
 			"toast": {
+				"created": "Docente creado correctamente.",
 				"updated": "Docente actualizado correctamente.",
 				"deleted": "Docente eliminado correctamente."
 			}
@@ -2489,6 +2504,7 @@
 				"actions": "Acciones"
 			},
 			"actions": {
+				"new": "Nuevo outcome",
 				"edit": "Editar",
 				"delete": "Eliminar"
 			},
@@ -2498,6 +2514,13 @@
 			},
 			"error": {
 				"loadFailed": "No se pudieron cargar los outcomes."
+			},
+			"create": {
+				"title": "Nuevo outcome",
+				"subtitle": "Registra un outcome para una comisión de la carrera seleccionada.",
+				"save": "Crear",
+				"error": "No se pudo crear el outcome.",
+				"commissionPlaceholder": "Selecciona una comisión"
 			},
 			"edit": {
 				"title": "Editar outcome",
@@ -2513,6 +2536,7 @@
 				"blockedSubtitle": "Este outcome está en uso en:"
 			},
 			"toast": {
+				"created": "Outcome creado correctamente.",
 				"updated": "Outcome actualizado correctamente.",
 				"deleted": "Outcome eliminado correctamente."
 			}
@@ -2642,6 +2666,7 @@
 				"actions": "Acciones"
 			},
 			"actions": {
+				"new": "Nueva sección",
 				"edit": "Editar",
 				"delete": "Eliminar"
 			},
@@ -2651,6 +2676,12 @@
 			},
 			"error": {
 				"loadFailed": "No se pudieron cargar las secciones."
+			},
+			"create": {
+				"title": "Nueva sección",
+				"subtitle": "Registra una sección y sus asignaciones para el período activo.",
+				"save": "Crear",
+				"error": "No se pudo crear la sección."
 			},
 			"edit": {
 				"title": "Editar sección",
@@ -2671,6 +2702,7 @@
 				"blockedSubtitle": "Esta sección está en uso en:"
 			},
 			"toast": {
+				"created": "Sección creada correctamente.",
 				"updated": "Sección actualizada correctamente.",
 				"deleted": "Sección eliminada correctamente."
 			}
@@ -2697,6 +2729,7 @@
 				"actions": "Acciones"
 			},
 			"actions": {
+				"new": "Nuevo estudiante",
 				"edit": "Editar",
 				"delete": "Eliminar"
 			},
@@ -2706,6 +2739,12 @@
 			},
 			"error": {
 				"loadFailed": "No se pudieron cargar los estudiantes matriculados."
+			},
+			"create": {
+				"title": "Nuevo estudiante matriculado",
+				"subtitle": "Registra un estudiante y su matrícula para el período activo.",
+				"save": "Crear",
+				"error": "No se pudo crear el estudiante."
 			},
 			"edit": {
 				"title": "Editar estudiante matriculado",
@@ -2725,6 +2764,7 @@
 				"blockedSubtitle": "Este estudiante está en uso en:"
 			},
 			"toast": {
+				"created": "Estudiante creado correctamente.",
 				"updated": "Estudiante actualizado correctamente.",
 				"deleted": "Estudiante eliminado correctamente."
 			}
@@ -2750,6 +2790,7 @@
 				"actions": "Acciones"
 			},
 			"actions": {
+				"new": "Nueva matrícula",
 				"edit": "Editar",
 				"delete": "Eliminar"
 			},
@@ -2759,6 +2800,12 @@
 			},
 			"error": {
 				"loadFailed": "No se pudieron cargar las matrículas."
+			},
+			"create": {
+				"title": "Nueva matrícula",
+				"subtitle": "Matricula un estudiante en una sección para el período activo.",
+				"save": "Crear",
+				"error": "No se pudo crear la matrícula."
 			},
 			"edit": {
 				"title": "Editar matrícula",
@@ -2779,6 +2826,7 @@
 				"blockedSubtitle": "Esta matrícula está en uso en:"
 			},
 			"toast": {
+				"created": "Matrícula creada correctamente.",
 				"updated": "Matrícula actualizada correctamente.",
 				"deleted": "Matrícula eliminada correctamente."
 			}
@@ -2801,6 +2849,7 @@
 				"actions": "Acciones"
 			},
 			"actions": {
+				"new": "Nueva malla",
 				"view": "Ver cursos",
 				"edit": "Editar",
 				"delete": "Eliminar"
@@ -2811,6 +2860,13 @@
 			},
 			"error": {
 				"loadFailed": "No se pudieron cargar las mallas curriculares."
+			},
+			"create": {
+				"title": "Nueva malla curricular",
+				"subtitle": "Registra una malla con su código y carrera para la modalidad activa.",
+				"save": "Crear",
+				"error": "No se pudo crear la malla.",
+				"programPlaceholder": "Selecciona una carrera"
 			},
 			"edit": {
 				"title": "Editar malla curricular",
@@ -2828,6 +2884,7 @@
 				"blockedSubtitle": "Esta malla está en uso en:"
 			},
 			"toast": {
+				"created": "Malla creada correctamente.",
 				"updated": "Malla actualizada correctamente.",
 				"deleted": "Malla eliminada correctamente."
 			}
@@ -2846,6 +2903,7 @@
 				"actions": "Acciones"
 			},
 			"actions": {
+				"new": "Nuevo curso",
 				"edit": "Editar",
 				"delete": "Eliminar"
 			},
@@ -2855,6 +2913,21 @@
 			},
 			"error": {
 				"loadFailed": "No se pudieron cargar los cursos."
+			},
+			"create": {
+				"title": "Agregar curso a la malla",
+				"subtitle": "Vincula un curso existente o registra uno nuevo en esta malla para el período activo.",
+				"save": "Crear",
+				"error": "No se pudo agregar el curso a la malla.",
+				"course": "Curso",
+				"coursePlaceholder": "Buscar curso...",
+				"addNewCourse": "¿No está en la lista? Registrar un curso nuevo",
+				"useExistingCourse": "Usar un curso existente",
+				"newCourseTitle": "Nuevo curso",
+				"level": "Nivel",
+				"levelPlaceholder": "Selecciona un nivel",
+				"elective": "Electivo",
+				"electiveDescription": "Marca si el curso es electivo en esta malla."
 			},
 			"edit": {
 				"title": "Editar curso",
@@ -2870,6 +2943,7 @@
 				"blockedSubtitle": "Este curso de la malla está en uso en:"
 			},
 			"toast": {
+				"created": "Curso agregado a la malla correctamente.",
 				"updated": "Curso actualizado correctamente.",
 				"deleted": "Curso quitado de la malla correctamente."
 			}

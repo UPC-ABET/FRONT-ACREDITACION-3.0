@@ -1,6 +1,7 @@
 import { ApiResponse } from '@/shared';
-import { apiDelete, apiGet, apiPut } from '@/shared/lib';
+import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib';
 import type {
+	StudentSectionEnrollmentMaintenanceCreate,
 	StudentSectionEnrollmentMaintenanceItem,
 	StudentSectionEnrollmentMaintenanceList,
 	StudentSectionEnrollmentMaintenanceUpdate,
@@ -21,6 +22,12 @@ export const studentSectionEnrollmentsService = {
 		if (params.programId != null) query.set('programId', String(params.programId));
 		const qs = query.toString();
 		return apiGet(`/student-section-enrollments/maintenance${qs ? `?${qs}` : ''}`);
+	},
+
+	maintenanceCreate(
+		body: StudentSectionEnrollmentMaintenanceCreate,
+	): Promise<ApiResponse<StudentSectionEnrollmentMaintenanceItem>> {
+		return apiPost('/student-section-enrollments/maintenance', body);
 	},
 
 	maintenanceUpdate(

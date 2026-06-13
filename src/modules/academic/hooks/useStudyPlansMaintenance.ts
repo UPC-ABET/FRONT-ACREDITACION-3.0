@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { studyPlansService } from '../services';
-import type { StudyPlanMaintenanceUpdate } from '../types';
+import type { StudyPlanMaintenanceCreate, StudyPlanMaintenanceUpdate } from '../types';
 
 interface MaintenanceListParams {
 	modalityTypeId: number | null;
@@ -43,6 +43,12 @@ export function useStudyPlanMaintenanceMutations() {
 	const invalidate = () =>
 		queryClient.invalidateQueries({ queryKey: studyPlansMaintenanceKeys.all });
 
+	const create = useMutation({
+		mutationFn: (body: StudyPlanMaintenanceCreate) =>
+			studyPlansService.maintenanceCreate(body).then((response) => response.data),
+		onSuccess: invalidate,
+	});
+
 	const update = useMutation({
 		mutationFn: ({ id, body }: { id: number; body: StudyPlanMaintenanceUpdate }) =>
 			studyPlansService.maintenanceUpdate(id, body).then((response) => response.data),
@@ -55,5 +61,5 @@ export function useStudyPlanMaintenanceMutations() {
 		onSuccess: invalidate,
 	});
 
-	return { update, remove };
+	return { create, update, remove };
 }

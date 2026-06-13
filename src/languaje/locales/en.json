@@ -944,6 +944,7 @@
 		"outcome": {
 			"inUse": "This outcome cannot be deleted because it is in use.",
 			"outcomeCodeExists": "The code is already assigned to another outcome in the commission.",
+			"programCommissionNotFound": "There is no program-commission link for the selected program and commission in the active period.",
 			"notFound": "Outcome not found.",
 			"updateFailed": "Could not update the outcome.",
 			"usedInCourseOutcomeMappings": "Mapped to a course",
@@ -957,6 +958,8 @@
 			"inUse": "This student cannot be deleted because it is in use.",
 			"usedInStudentSectionEnrollments": "Has section enrollments",
 			"codeExists": "The code is already assigned to another student.",
+			"enrolledStudentExists": "The student is already enrolled in the active period.",
+			"studyPlanPeriodNotFound": "The program has no study plan offered in the active period.",
 			"notFound": "Student not found.",
 			"updateFailed": "Could not update the student."
 		},
@@ -973,13 +976,17 @@
 			"inUse": "This study plan cannot be deleted because it is in use.",
 			"usedInAcademicPeriods": "Offered in academic periods",
 			"codeExists": "The code is already assigned to another study plan in the program.",
+			"programNotInModality": "The program does not belong to the active modality.",
 			"notFound": "Study plan not found.",
 			"updateFailed": "Could not update the study plan."
 		},
 		"studyPlanCourse": {
 			"inUse": "This course cannot be removed because it is in use.",
 			"usedInRubrics": "Has rubrics",
-			"usedInCourseOutcomeMappings": "Has outcome mappings"
+			"usedInCourseOutcomeMappings": "Has outcome mappings",
+			"studyPlanPeriodNotFound": "The study plan is not offered in the active period.",
+			"courseSelectionInvalid": "Select an existing course or register a new one, not both.",
+			"studyPlanCourseExists": "The course is already in this study plan for the active period."
 		},
 		"courseSection": {
 			"inUse": "This section cannot be deleted because it is in use.",
@@ -2440,6 +2447,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New teacher",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2449,6 +2457,12 @@
 			},
 			"error": {
 				"loadFailed": "Could not load the teachers."
+			},
+			"create": {
+				"title": "New teacher",
+				"subtitle": "Register a teacher with their code, first name and last name.",
+				"save": "Create",
+				"error": "Could not create the teacher."
 			},
 			"edit": {
 				"title": "Edit teacher",
@@ -2464,6 +2478,7 @@
 				"blockedSubtitle": "This teacher is in use in:"
 			},
 			"toast": {
+				"created": "Teacher created successfully.",
 				"updated": "Teacher updated successfully.",
 				"deleted": "Teacher deleted successfully."
 			}
@@ -2489,6 +2504,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New outcome",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2498,6 +2514,13 @@
 			},
 			"error": {
 				"loadFailed": "Could not load the outcomes."
+			},
+			"create": {
+				"title": "New outcome",
+				"subtitle": "Register an outcome for a commission of the selected program.",
+				"save": "Create",
+				"error": "Could not create the outcome.",
+				"commissionPlaceholder": "Select a commission"
 			},
 			"edit": {
 				"title": "Edit outcome",
@@ -2513,6 +2536,7 @@
 				"blockedSubtitle": "This outcome is in use in:"
 			},
 			"toast": {
+				"created": "Outcome created successfully.",
 				"updated": "Outcome updated successfully.",
 				"deleted": "Outcome deleted successfully."
 			}
@@ -2642,6 +2666,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New section",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2651,6 +2676,12 @@
 			},
 			"error": {
 				"loadFailed": "Could not load the sections."
+			},
+			"create": {
+				"title": "New section",
+				"subtitle": "Register a section and its assignments for the active period.",
+				"save": "Create",
+				"error": "Could not create the section."
 			},
 			"edit": {
 				"title": "Edit section",
@@ -2671,6 +2702,7 @@
 				"blockedSubtitle": "This section is in use in:"
 			},
 			"toast": {
+				"created": "Section created successfully.",
 				"updated": "Section updated successfully.",
 				"deleted": "Section deleted successfully."
 			}
@@ -2697,6 +2729,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New student",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2706,6 +2739,12 @@
 			},
 			"error": {
 				"loadFailed": "Could not load the enrolled students."
+			},
+			"create": {
+				"title": "New enrolled student",
+				"subtitle": "Register a student and their enrollment for the active period.",
+				"save": "Create",
+				"error": "Could not create the student."
 			},
 			"edit": {
 				"title": "Edit enrolled student",
@@ -2725,6 +2764,7 @@
 				"blockedSubtitle": "This student is in use in:"
 			},
 			"toast": {
+				"created": "Student created successfully.",
 				"updated": "Student updated successfully.",
 				"deleted": "Student deleted successfully."
 			}
@@ -2750,6 +2790,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New enrollment",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2759,6 +2800,12 @@
 			},
 			"error": {
 				"loadFailed": "Could not load the enrollments."
+			},
+			"create": {
+				"title": "New enrollment",
+				"subtitle": "Enroll a student in a section for the active period.",
+				"save": "Create",
+				"error": "Could not create the enrollment."
 			},
 			"edit": {
 				"title": "Edit enrollment",
@@ -2779,6 +2826,7 @@
 				"blockedSubtitle": "This enrollment is in use in:"
 			},
 			"toast": {
+				"created": "Enrollment created successfully.",
 				"updated": "Enrollment updated successfully.",
 				"deleted": "Enrollment deleted successfully."
 			}
@@ -2801,6 +2849,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New study plan",
 				"view": "View courses",
 				"edit": "Edit",
 				"delete": "Delete"
@@ -2811,6 +2860,13 @@
 			},
 			"error": {
 				"loadFailed": "Could not load the study plans."
+			},
+			"create": {
+				"title": "New study plan",
+				"subtitle": "Register a study plan with its code and program for the active modality.",
+				"save": "Create",
+				"error": "Could not create the study plan.",
+				"programPlaceholder": "Select a program"
 			},
 			"edit": {
 				"title": "Edit study plan",
@@ -2828,6 +2884,7 @@
 				"blockedSubtitle": "This study plan is in use in:"
 			},
 			"toast": {
+				"created": "Study plan created successfully.",
 				"updated": "Study plan updated successfully.",
 				"deleted": "Study plan deleted successfully."
 			}
@@ -2846,6 +2903,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New course",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2855,6 +2913,21 @@
 			},
 			"error": {
 				"loadFailed": "Could not load the courses."
+			},
+			"create": {
+				"title": "Add course to study plan",
+				"subtitle": "Link an existing course or register a new one in this study plan for the active period.",
+				"save": "Create",
+				"error": "Could not add the course to the study plan.",
+				"course": "Course",
+				"coursePlaceholder": "Search course...",
+				"addNewCourse": "Not in the list? Register a new course",
+				"useExistingCourse": "Use an existing course",
+				"newCourseTitle": "New course",
+				"level": "Level",
+				"levelPlaceholder": "Select a level",
+				"elective": "Elective",
+				"electiveDescription": "Toggle if the course is elective in this study plan."
 			},
 			"edit": {
 				"title": "Edit course",
@@ -2870,6 +2943,7 @@
 				"blockedSubtitle": "This plan course is in use in:"
 			},
 			"toast": {
+				"created": "Course added to the study plan successfully.",
 				"updated": "Course updated successfully.",
 				"deleted": "Course removed from the plan successfully."
 			}

@@ -157,6 +157,12 @@ export type ProfessorMaintenanceUpdate = {
 	lastName?: string;
 };
 
+export type ProfessorMaintenanceCreate = {
+	code: string;
+	firstName: string;
+	lastName: string;
+};
+
 export type ProfessorResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
@@ -264,6 +270,14 @@ export type CourseSectionMaintenanceUpdate = {
 	sectionModalityTypeId?: number;
 };
 
+export type CourseSectionMaintenanceCreate = {
+	sectionCode: string;
+	courseId: number;
+	professorId: number;
+	campusId: number;
+	sectionModalityTypeId: number;
+};
+
 export type PaginatedEnvelope<T> = {
 	items: T[];
 	total: number;
@@ -293,6 +307,15 @@ export type EnrolledStudentMaintenanceUpdate = {
 	enrollementModalityTypeId?: number;
 };
 
+export type EnrolledStudentMaintenanceCreate = {
+	studentCode: string;
+	firstName: string;
+	lastName: string;
+	programId: number;
+	campusId: number;
+	enrollementModalityTypeId: number;
+};
+
 export type StudentSectionEnrollmentMaintenanceItem = {
 	id: number;
 	courseName: { es: string; en: string };
@@ -311,6 +334,11 @@ export type StudentSectionEnrollmentMaintenanceUpdate = {
 	enrolledStudentId?: number;
 };
 
+export type StudentSectionEnrollmentMaintenanceCreate = {
+	courseSectionId: number;
+	enrolledStudentId: number;
+};
+
 export type StudyPlanMaintenanceItem = {
 	id: number;
 	code: string;
@@ -322,6 +350,11 @@ export type StudyPlanMaintenanceList = PaginatedEnvelope<StudyPlanMaintenanceIte
 export type StudyPlanMaintenanceUpdate = {
 	code?: string;
 	programId?: number;
+};
+
+export type StudyPlanMaintenanceCreate = {
+	code: string;
+	programId: number;
 };
 
 export type StudyPlanCourseRow = {
@@ -342,6 +375,36 @@ export type StudyPlanLevelGroup = {
 export type StudyPlanCoursesViewData = {
 	levels: StudyPlanLevelGroup[];
 	electives: StudyPlanCourseRow[];
+};
+
+export type StudyPlanCourseLevelOption = {
+	id: number;
+	name: { es: string; en: string };
+	level: number;
+};
+
+export type StudyPlanCourseNewCourse = {
+	code: string;
+	name: { es: string; en: string };
+	learningOutcome?: { es: string; en: string };
+};
+
+export type StudyPlanCourseCreate = {
+	studyPlanId: number;
+	isElective: boolean;
+	levelTypeId: number;
+	courseId?: number;
+	newCourse?: StudyPlanCourseNewCourse;
+};
+
+export type StudyPlanCourseCreatedRow = {
+	id: number;
+	courseId: number;
+	courseCode: string;
+	courseName: { es: string; en: string };
+	learningOutcome: { es: string; en: string };
+	levelTypeId: number;
+	isElective: boolean;
 };
 
 export type CourseUpdateBody = {
