@@ -31,7 +31,7 @@ function getSpcCourseName(spc: StudyPlanCourseResponse): { en: string; es: strin
 
 export function WizardStep1({ onNext }: WizardStep1Props) {
 	const { t, locale } = useI18n();
-	const { academicPeriodId, schoolId } = useABET();
+	const { academicPeriodId } = useABET();
 
 	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
 	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
@@ -41,12 +41,12 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 
 	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
-		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId, isActive: true }],
+		queryKey: ['programs', 'filtered', { academicPeriodId, isActive: true }],
 		queryFn: () =>
 			programsService
-				.getByFilters({ schoolId: schoolId!, academicPeriodId: academicPeriodId!, isActive: true })
+				.getByFilters({ academicPeriodId: academicPeriodId!, isActive: true })
 				.then((r) => r.data),
-		enabled: !!schoolId && !!academicPeriodId,
+		enabled: !!academicPeriodId,
 	});
 
 	// Evaluable SPCs filtered by programId once a program is selected
@@ -145,9 +145,7 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 					onChange={(_, v) => {
 						const opt = Array.isArray(v) ? (v[0] ?? null) : v;
 						setSelectedCourseOpt(opt as AnyOption | null);
-						const spc = opt
-							? (spcList.find((s) => s.id === Number(opt.value)) ?? null)
-							: null;
+						const spc = opt ? (spcList.find((s) => s.id === Number(opt.value)) ?? null) : null;
 						setSelectedSpc(spc);
 					}}
 				/>

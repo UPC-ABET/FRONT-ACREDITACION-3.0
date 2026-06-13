@@ -39,20 +39,15 @@ export function ProjectsListPage() {
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
 	const { data: programs = [] } = useQuery({
-		queryKey: [
-			'programs',
-			'filtered',
-			{ schoolId: schoolId, academicPeriodId: selectedPeriodId, isActive: true },
-		],
+		queryKey: ['programs', 'filtered', { academicPeriodId: selectedPeriodId, isActive: true }],
 		queryFn: () =>
 			programsService
 				.getByFilters({
-					schoolId: schoolId!,
 					academicPeriodId: selectedPeriodId!,
 					isActive: true,
 				})
 				.then((r) => r.data),
-		enabled: !!selectedPeriodId && !!schoolId,
+		enabled: !!selectedPeriodId,
 	});
 
 	const { data: courses = [] } = useQuery({
@@ -60,7 +55,6 @@ export function ProjectsListPage() {
 			'courses',
 			'filtered',
 			{
-				schoolId: schoolId,
 				academicPeriodId: selectedPeriodId,
 				programId: selectedProgram?.value,
 				isActive: true,
@@ -69,13 +63,12 @@ export function ProjectsListPage() {
 		queryFn: () =>
 			coursesService
 				.getByFilters({
-					schoolId: schoolId!,
 					academicPeriodId: selectedPeriodId!,
 					programId: selectedProgram!.value,
 					isActive: true,
 				})
 				.then((r) => r.data),
-		enabled: !!selectedPeriodId && !!selectedProgram && !!schoolId,
+		enabled: !!selectedPeriodId && !!selectedProgram,
 	});
 
 	const {

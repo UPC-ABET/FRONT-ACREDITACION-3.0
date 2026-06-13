@@ -34,7 +34,7 @@ export function AddEvaluationCourseModal({
 	onSuccess,
 }: AddEvaluationCourseModalProps) {
 	const { t, locale } = useI18n();
-	const { academicPeriodId, schoolId } = useABET();
+	const { academicPeriodId } = useABET();
 
 	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
 	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
@@ -53,12 +53,12 @@ export function AddEvaluationCourseModal({
 	}, [open]);
 
 	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
-		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId, isActive: true }],
+		queryKey: ['programs', 'filtered', { academicPeriodId, isActive: true }],
 		queryFn: () =>
 			programsService
-				.getByFilters({ schoolId: schoolId!, academicPeriodId: academicPeriodId!, isActive: true })
+				.getByFilters({ academicPeriodId: academicPeriodId!, isActive: true })
 				.then((r) => r.data),
-		enabled: !!schoolId && !!academicPeriodId && open,
+		enabled: !!academicPeriodId && open,
 	});
 
 	const spcFilters = useMemo(

@@ -42,46 +42,44 @@ function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | nul
 
 export function RubricsListPage() {
 	const { locale, t } = useI18n();
-	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
+	const { academicPeriodId: selectedPeriodId } = useABET();
 
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
 	const { data: programs = [] } = useQuery({
-		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId: selectedPeriodId }],
+		queryKey: ['programs', 'filtered', { academicPeriodId: selectedPeriodId }],
 		queryFn: () =>
 			programsService
-				.getByFilters({ schoolId: schoolId!, academicPeriodId: selectedPeriodId!, isActive: true })
+				.getByFilters({ academicPeriodId: selectedPeriodId!, isActive: true })
 				.then((r) => r.data),
-		enabled: !!selectedPeriodId && !!schoolId,
+		enabled: !!selectedPeriodId,
 	});
 
 	const { data: courses = [] } = useQuery({
 		queryKey: [
 			'courses',
 			'filtered',
-			{ schoolId, academicPeriodId: selectedPeriodId, programId: selectedProgram?.value },
+			{ academicPeriodId: selectedPeriodId, programId: selectedProgram?.value },
 		],
 		queryFn: () =>
 			coursesService
 				.getByFilters({
-					schoolId: schoolId!,
 					academicPeriodId: selectedPeriodId!,
 					programId: selectedProgram!.value,
 					isActive: true,
 				})
 				.then((r) => r.data),
-		enabled: !!selectedPeriodId && !!selectedProgram && !!schoolId,
+		enabled: !!selectedPeriodId && !!selectedProgram,
 	});
 
 	const rubricParams = useMemo(
 		() => ({
-			...(schoolId ? { schoolId } : {}),
 			...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
 			...(selectedProgram ? { programId: selectedProgram.value } : {}),
 			...(selectedCourse ? { courseId: selectedCourse.value } : {}),
 		}),
-		[schoolId, selectedPeriodId, selectedProgram, selectedCourse],
+		[selectedPeriodId, selectedProgram, selectedCourse],
 	);
 
 	const { data, isLoading, isError, error } = useRubrics(rubricParams);
