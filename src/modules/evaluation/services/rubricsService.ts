@@ -30,9 +30,11 @@ export const rubricsService = {
 		studyPlanCourseId: number,
 		gradeTypeId: number,
 	): Promise<ApiResponse<RubricTypeResolution>> {
-		return apiGet(
-			`/rubrics/resolve-type?studyPlanCourseId=${studyPlanCourseId}&gradeTypeId=${gradeTypeId}`,
-		);
+		const qs = new URLSearchParams({
+			studyPlanCourseId: String(studyPlanCourseId),
+			gradeTypeId: String(gradeTypeId),
+		});
+		return apiGet(`/rubrics/resolve-type?${qs.toString()}`);
 	},
 
 	getById(rubricId: string | number): Promise<ApiResponse<GetRubricByIdResponse>> {

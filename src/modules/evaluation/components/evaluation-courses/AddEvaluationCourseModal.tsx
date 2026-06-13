@@ -42,6 +42,15 @@ export function AddEvaluationCourseModal({
 	const [pendingIds, setPendingIds] = useState<Set<number>>(new Set());
 	const [addError, setAddError] = useState<string | null>(null);
 
+	const [trackedPeriodId, setTrackedPeriodId] = useState(academicPeriodId);
+	if (academicPeriodId !== trackedPeriodId) {
+		setTrackedPeriodId(academicPeriodId);
+		setSelectedProgramId(null);
+		setSelectedProgramOpt(null);
+		setSearch('');
+		setPendingIds(new Set());
+	}
+
 	useEffect(() => {
 		if (!open) {
 			setSelectedProgramId(null);

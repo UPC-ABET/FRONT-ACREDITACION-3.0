@@ -42,6 +42,13 @@ export function EvaluationCoursesPage() {
 	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
 	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
 
+	const [trackedPeriodId, setTrackedPeriodId] = useState(selectedPeriodId);
+	if (selectedPeriodId !== trackedPeriodId) {
+		setTrackedPeriodId(selectedPeriodId);
+		setSelectedProgramId(null);
+		setSelectedProgramOpt(null);
+	}
+
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 	const selectedPeriodCode = periods.find((p) => p.id === selectedPeriodId)?.code ?? '';
 

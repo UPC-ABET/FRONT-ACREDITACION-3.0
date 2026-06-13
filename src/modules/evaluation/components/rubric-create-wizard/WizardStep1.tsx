@@ -38,6 +38,15 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 	const [selectedSpc, setSelectedSpc] = useState<StudyPlanCourseResponse | null>(null);
 	const [selectedCourseOpt, setSelectedCourseOpt] = useState<AnyOption | null>(null);
 
+	const [trackedPeriodId, setTrackedPeriodId] = useState(academicPeriodId);
+	if (academicPeriodId !== trackedPeriodId) {
+		setTrackedPeriodId(academicPeriodId);
+		setSelectedProgramId(null);
+		setSelectedProgramOpt(null);
+		setSelectedCourseOpt(null);
+		setSelectedSpc(null);
+	}
+
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 
 	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
