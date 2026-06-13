@@ -3036,9 +3036,15 @@
 		},
 		"toolbar": {
 			"newFolder": "New folder",
+			"newComment": "Comment",
 			"upload": "Upload",
 			"download": "Download",
 			"delete": "Delete",
+			"copy": "Copy",
+			"paste": "Paste",
+			"rename": "Rename",
+			"move": "Move",
+			"tree": "Tree",
 			"refresh": "Refresh",
 			"searchPlaceholder": "Filter by name..."
 		},
@@ -3070,17 +3076,82 @@
 			"bodyMany": "Are you sure you want to delete {{count}} items? This action cannot be undone.",
 			"confirm": "Delete"
 		},
+		"comment": {
+			"createTitle": "New comment",
+			"nameLabel": "Comment name",
+			"namePlaceholder": "e.g. Notes.txt",
+			"create": "Create",
+			"creating": "Creating...",
+			"invalid": "Enter a valid name."
+		},
+		"rename": {
+			"title": "Rename",
+			"nameLabel": "New name",
+			"save": "Save",
+			"saving": "Saving...",
+			"invalid": "Enter a valid name."
+		},
+		"move": {
+			"title": "Move to...",
+			"moving": "Moving: {{name}}",
+			"countSelected": "{{count}} selected items",
+			"noFolders": "No folders in this location.",
+			"confirmHere": "Move here",
+			"moving_progress": "Moving...",
+			"sameLocation": "Cannot move to the same location."
+		},
+		"tree": {
+			"title": "Portfolio structure",
+			"printTitle": "Portfolio structure",
+			"expandAll": "Expand all",
+			"collapseAll": "Collapse all",
+			"print": "Print",
+			"empty": "Nothing to display."
+		},
+		"guard": {
+			"downloadTooLarge": "The selection exceeds 1 GB ({{size}}). Reduce it to download.",
+			"fileTooLarge": "{{count}} file(s) exceed the 4 GB limit and were skipped."
+		},
 		"toast": {
 			"folderCreated": "Folder created successfully.",
+			"commentCreated": "Comment created successfully.",
 			"deleted": "Items deleted successfully.",
-			"uploaded": "Files uploaded successfully."
+			"uploaded": "Files uploaded successfully.",
+			"renamed": "Item renamed successfully.",
+			"moved": "Items moved successfully.",
+			"copied": "Items copied to clipboard.",
+			"pasted": "Items pasted successfully."
 		},
 		"error": {
 			"loadFailed": "Could not load files.",
 			"createFolderFailed": "Could not create the folder.",
+			"createCommentFailed": "Could not create the comment.",
 			"deleteFailed": "Could not delete the selected items.",
 			"uploadFailed": "Could not upload the files.",
-			"downloadFailed": "Could not download."
+			"downloadFailed": "Could not download.",
+			"renameFailed": "Could not rename the item.",
+			"moveFailed": "Could not move the items.",
+			"copyFailed": "Could not copy the items.",
+			"sizeFailed": "Could not compute the selection size."
+		}
+	},
+	"error": {
+		"generic": "An unexpected error occurred.",
+		"s3": {
+			"invalidKey": "Invalid file key.",
+			"invalidName": "Enter a valid name.",
+			"invalidNameChars": "The name contains invalid characters: \\ / : * ? \" < > |",
+			"nameTooLong": "The name exceeds the 255 character limit.",
+			"nameExists": "An item with that name already exists.",
+			"noSelection": "No item selected.",
+			"moveSameLocation": "Cannot move to the same location.",
+			"moveIntoItself": "Cannot move a folder into itself.",
+			"renameFailed": "Could not rename the item.",
+			"copyFailed": "Could not copy the items.",
+			"moveFailed": "Could not move the items.",
+			"createCommentFailed": "Could not create the comment.",
+			"treeFailed": "Could not load the portfolio structure.",
+			"sizeFailed": "Could not compute the selection size."
 		}
 	}
 }

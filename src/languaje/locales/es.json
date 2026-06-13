@@ -3036,9 +3036,15 @@
 		},
 		"toolbar": {
 			"newFolder": "Nueva carpeta",
+			"newComment": "Comentario",
 			"upload": "Subir",
 			"download": "Descargar",
 			"delete": "Eliminar",
+			"copy": "Copiar",
+			"paste": "Pegar",
+			"rename": "Renombrar",
+			"move": "Mover",
+			"tree": "Rutas",
 			"refresh": "Actualizar",
 			"searchPlaceholder": "Filtrar por nombre..."
 		},
@@ -3070,17 +3076,82 @@
 			"bodyMany": "¿Estás seguro de que deseas eliminar {{count}} elementos? Esta acción no se puede deshacer.",
 			"confirm": "Eliminar"
 		},
+		"comment": {
+			"createTitle": "Nuevo comentario",
+			"nameLabel": "Nombre del comentario",
+			"namePlaceholder": "ej. Observaciones.txt",
+			"create": "Crear",
+			"creating": "Creando...",
+			"invalid": "Ingresa un nombre válido."
+		},
+		"rename": {
+			"title": "Renombrar",
+			"nameLabel": "Nuevo nombre",
+			"save": "Guardar",
+			"saving": "Guardando...",
+			"invalid": "Ingresa un nombre válido."
+		},
+		"move": {
+			"title": "Mover a...",
+			"moving": "Moviendo: {{name}}",
+			"countSelected": "{{count}} elementos seleccionados",
+			"noFolders": "No hay carpetas en esta ubicación.",
+			"confirmHere": "Mover aquí",
+			"moving_progress": "Moviendo...",
+			"sameLocation": "No se puede mover a la misma ubicación."
+		},
+		"tree": {
+			"title": "Estructura del portafolio",
+			"printTitle": "Estructura del portafolio",
+			"expandAll": "Expandir todo",
+			"collapseAll": "Colapsar todo",
+			"print": "Imprimir",
+			"empty": "No hay elementos para mostrar."
+		},
+		"guard": {
+			"downloadTooLarge": "La selección supera 1 GB ({{size}}). Reduce la cantidad para poder descargar.",
+			"fileTooLarge": "{{count}} archivo(s) superan el tamaño máximo de 4 GB y se omitieron."
+		},
 		"toast": {
 			"folderCreated": "Carpeta creada correctamente.",
+			"commentCreated": "Comentario creado correctamente.",
 			"deleted": "Elementos eliminados correctamente.",
-			"uploaded": "Archivos subidos correctamente."
+			"uploaded": "Archivos subidos correctamente.",
+			"renamed": "Elemento renombrado correctamente.",
+			"moved": "Elementos movidos correctamente.",
+			"copied": "Elementos copiados al portapapeles.",
+			"pasted": "Elementos pegados correctamente."
 		},
 		"error": {
 			"loadFailed": "No se pudieron cargar los archivos.",
 			"createFolderFailed": "No se pudo crear la carpeta.",
+			"createCommentFailed": "No se pudo crear el comentario.",
 			"deleteFailed": "No se pudieron eliminar los elementos seleccionados.",
 			"uploadFailed": "No se pudieron subir los archivos.",
-			"downloadFailed": "No se pudo descargar."
+			"downloadFailed": "No se pudo descargar.",
+			"renameFailed": "No se pudo renombrar el elemento.",
+			"moveFailed": "No se pudieron mover los elementos.",
+			"copyFailed": "No se pudieron copiar los elementos.",
+			"sizeFailed": "No se pudo calcular el tamaño de la selección."
+		}
+	},
+	"error": {
+		"generic": "Ocurrió un error inesperado.",
+		"s3": {
+			"invalidKey": "Clave de archivo inválida.",
+			"invalidName": "Ingresa un nombre válido.",
+			"invalidNameChars": "El nombre contiene caracteres no válidos: \\ / : * ? \" < > |",
+			"nameTooLong": "El nombre supera el máximo de 255 caracteres.",
+			"nameExists": "Ya existe un elemento con ese nombre.",
+			"noSelection": "No se seleccionó ningún elemento.",
+			"moveSameLocation": "No se puede mover a la misma ubicación.",
+			"moveIntoItself": "No se puede mover una carpeta dentro de sí misma.",
+			"renameFailed": "No se pudo renombrar el elemento.",
+			"copyFailed": "No se pudieron copiar los elementos.",
+			"moveFailed": "No se pudieron mover los elementos.",
+			"createCommentFailed": "No se pudo crear el comentario.",
+			"treeFailed": "No se pudo cargar la estructura del portafolio.",
+			"sizeFailed": "No se pudo calcular el tamaño de la selección."
 		}
 	}
 }
