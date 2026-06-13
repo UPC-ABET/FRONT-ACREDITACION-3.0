@@ -121,11 +121,9 @@ export function AddEvaluatorModal({
 	};
 
 	const professorDisplayName = (p: ProfessorSearchResponse) => {
-		const user = p.staff?.user;
-		if (user?.firstName || user?.lastName) {
-			return `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
-		}
-		return p.staff?.staffEmail ?? `ID ${p.id}`;
+		const { firstName, lastName } = p.staff ?? {};
+		const name = `${firstName ?? ''} ${lastName ?? ''}`.trim();
+		return name || (p.staff?.staffEmail ?? `ID ${p.id}`);
 	};
 
 	const canSubmit =
@@ -175,7 +173,15 @@ export function AddEvaluatorModal({
 														isSelected ? 'bg-zinc-900 text-white' : 'hover:bg-zinc-50 text-zinc-800'
 													}`}>
 													<div className="flex flex-col gap-0.5 min-w-0">
-														<span className="font-medium truncate">{displayName}</span>
+														<div className="flex items-baseline gap-1.5 min-w-0">
+															<span className="font-medium truncate">{displayName}</span>
+															{professor.code && (
+																<span
+																	className={`text-xs font-mono shrink-0 ${isSelected ? 'text-zinc-400' : 'text-zinc-400'}`}>
+																	{professor.code}
+																</span>
+															)}
+														</div>
 														{email && displayName !== email && (
 															<span
 																className={`text-xs truncate ${isSelected ? 'text-zinc-300' : 'text-zinc-400'}`}>
