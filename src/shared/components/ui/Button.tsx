@@ -35,11 +35,34 @@ const buttonVariants = cva(
 );
 
 export type ButtonProps = ComponentPropsWithoutRef<typeof ButtonPrimitive> &
-	VariantProps<typeof buttonVariants>;
+	VariantProps<typeof buttonVariants> & {
+		/** Shows a small inline spinner after the label and disables the button. */
+		loading?: boolean;
+	};
 
-function Button({ variant = 'primary', size = 'md', className, ...props }: ButtonProps) {
+function Button({
+	variant = 'primary',
+	size = 'md',
+	className,
+	loading = false,
+	disabled,
+	children,
+	...props
+}: ButtonProps) {
 	return (
-		<ButtonPrimitive className={cn(buttonVariants({ variant, size, className }))} {...props} />
+		<ButtonPrimitive
+			className={cn(buttonVariants({ variant, size, className }))}
+			disabled={disabled || loading}
+			aria-busy={loading || undefined}
+			{...props}>
+			{children}
+			{loading && (
+				<span
+					aria-hidden="true"
+					className="inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-0.125em]"
+				/>
+			)}
+		</ButtonPrimitive>
 	);
 }
 

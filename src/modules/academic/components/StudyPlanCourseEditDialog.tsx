@@ -86,8 +86,8 @@ export function StudyPlanCourseEditDialog({ item, saving, errorMessage, onClose,
 					<Button variant="secondary" onClick={onClose} disabled={saving}>
 						{t('dialog.actions.cancel')}
 					</Button>
-					<Button variant="primary" disabled={!canSave} onClick={handleSubmit}>
-						{saving ? t('loading.default') : t('loads.studyPlanCoursesView.edit.save')}
+					<Button variant="primary" disabled={!canSave} onClick={handleSubmit} loading={saving}>
+						{t('loads.studyPlanCoursesView.edit.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

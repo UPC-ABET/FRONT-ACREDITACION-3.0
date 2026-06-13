@@ -2415,7 +2415,7 @@
 			"typePlaceholder": "Select an upload type",
 			"selectBoth": "Pick an upload type and an academic period to continue.",
 			"downloadTemplate": "Download template",
-			"downloadingTemplate": "Downloading...",
+			"downloadingTemplate": "Downloading",
 			"dropzone": "Click or drag the Excel file here",
 			"submit": "Upload file",
 			"loadedSummary": "Loaded rows",
@@ -2988,7 +2988,7 @@
 			"confirmation": "Do you want to proceed?",
 			"cancel": "Cancel",
 			"confirm": "Yes, roll back",
-			"running": "Rolling back..."
+			"running": "Rolling back"
 		}
 	},
 	"capstone": {

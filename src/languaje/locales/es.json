@@ -2415,7 +2415,7 @@
 			"typePlaceholder": "Selecciona un tipo de carga",
 			"selectBoth": "Selecciona un tipo de carga y un período académico para continuar.",
 			"downloadTemplate": "Descargar plantilla",
-			"downloadingTemplate": "Descargando...",
+			"downloadingTemplate": "Descargando",
 			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
 			"submit": "Cargar archivo",
 			"loadedSummary": "Filas cargadas",
@@ -2988,7 +2988,7 @@
 			"confirmation": "¿Deseas proceder?",
 			"cancel": "Cancelar",
 			"confirm": "Sí, revertir",
-			"running": "Revirtiendo..."
+			"running": "Revirtiendo"
 		}
 	},
 	"capstone": {

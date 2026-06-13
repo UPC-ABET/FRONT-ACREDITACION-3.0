@@ -64,7 +64,8 @@ export function OrganizationChartMaintenance() {
 	const [dialog, setDialog] = useState<DialogState | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<ChartNode | null>(null);
 	const [blockedReasons, setBlockedReasons] = useState<string[] | null>(null);
-	const [exporting, setExporting] = useState(false);
+	const [exportingKind, setExportingKind] = useState<'png' | 'pdf' | null>(null);
+	const exporting = exportingKind !== null;
 
 	const root = treeQuery.data ?? null;
 	const contextReady = academicPeriodId != null && schoolId != null;
@@ -100,7 +101,7 @@ export function OrganizationChartMaintenance() {
 
 	const handleExport = async (kind: 'png' | 'pdf') => {
 		if (!svgRef.current) return;
-		setExporting(true);
+		setExportingKind(kind);
 		await new Promise<void>((resolve) =>
 			requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
 		);
@@ -110,7 +111,7 @@ export function OrganizationChartMaintenance() {
 		} catch {
 			showToast('loads.organizationChartMaintenance.export.error', 'error');
 		} finally {
-			setExporting(false);
+			setExportingKind(null);
 		}
 	};
 
@@ -228,6 +229,7 @@ export function OrganizationChartMaintenance() {
 							variant="surface"
 							size="sm"
 							disabled={!chartReady || exporting}
+							loading={exportingKind === 'png'}
 							onClick={() => handleExport('png')}>
 							<PhotoIcon className="h-4 w-4" />
 							<span>{t('loads.organizationChartMaintenance.toolbar.exportPng')}</span>
@@ -236,6 +238,7 @@ export function OrganizationChartMaintenance() {
 							variant="surface"
 							size="sm"
 							disabled={!chartReady || exporting}
+							loading={exportingKind === 'pdf'}
 							onClick={() => handleExport('pdf')}>
 							<DocumentArrowDownIcon className="h-4 w-4" />
 							<span>{t('loads.organizationChartMaintenance.toolbar.exportPdf')}</span>

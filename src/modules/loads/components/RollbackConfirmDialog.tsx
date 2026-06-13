@@ -47,7 +47,7 @@ export default function RollbackConfirmDialog({
 						<Button variant="secondary" onClick={onClose} disabled={loading}>
 							{t('uploadHistory.rollback.cancel')}
 						</Button>
-						<Button variant="primary" onClick={() => onConfirm(log)} disabled={loading}>
+						<Button variant="primary" onClick={() => onConfirm(log)} loading={loading}>
 							{loading ? t('uploadHistory.rollback.running') : t('uploadHistory.rollback.confirm')}
 						</Button>
 					</div>

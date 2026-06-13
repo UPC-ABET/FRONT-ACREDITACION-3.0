@@ -92,8 +92,8 @@ export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
 				/>
 			</div>
 
-			<Button onClick={handleSave} disabled={saving}>
-				{saving ? t('surveys.shared.saving') : t('surveys.gra.emailTemplate.saveButton')}
+			<Button onClick={handleSave} disabled={saving} loading={saving}>
+				{t('surveys.gra.emailTemplate.saveButton')}
 			</Button>
 
 			<Toast

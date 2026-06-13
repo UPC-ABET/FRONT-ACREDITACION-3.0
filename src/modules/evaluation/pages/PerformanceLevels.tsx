@@ -414,12 +414,14 @@ export function PerformanceLevelsPage() {
 						<Button variant="secondary" onClick={handleModalClose} disabled={isMutating}>
 							{t('performanceLevels.form.cancel')}
 						</Button>
-						<Button variant="primary" onClick={handleSubmit} disabled={isMutating}>
-							{isMutating
-								? t('performanceLevels.form.saving')
-								: editingLevel
-									? t('performanceLevels.form.update')
-									: t('performanceLevels.form.create')}
+						<Button
+							variant="primary"
+							onClick={handleSubmit}
+							disabled={isMutating}
+							loading={isMutating}>
+							{editingLevel
+								? t('performanceLevels.form.update')
+								: t('performanceLevels.form.create')}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

@@ -220,8 +220,8 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 				<Button variant="secondary" onClick={onCancel}>
 					{t('dialog.actions.cancel')}
 				</Button>
-				<Button variant="primary" disabled={saving} onClick={handleSubmit}>
-					{saving ? t('loading.default') : t('dialog.actions.save')}
+				<Button variant="primary" disabled={saving} onClick={handleSubmit} loading={saving}>
+					{t('dialog.actions.save')}
 				</Button>
 			</div>
 		</div>

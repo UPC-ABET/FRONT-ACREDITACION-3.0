@@ -160,8 +160,7 @@ export function CourseOutcomeMappingGrid({
 
 	const handleExport = () => {
 		exportPdf.mutate(programCommissionId, {
-			onError: () =>
-				showToast('loads.courseOutcomeMappingMaintenance.error.exportFailed', 'error'),
+			onError: () => showToast('loads.courseOutcomeMappingMaintenance.error.exportFailed', 'error'),
 		});
 	};
 
@@ -343,7 +342,8 @@ export function CourseOutcomeMappingGrid({
 								variant="surface"
 								size="sm"
 								onClick={handleExport}
-								disabled={editMode || exportPdf.isPending}>
+								disabled={editMode}
+								loading={exportPdf.isPending}>
 								<ArrowDownTrayIcon className="h-4 w-4" />
 								<span>{t('loads.courseOutcomeMappingMaintenance.actions.exportPdf')}</span>
 							</Button>

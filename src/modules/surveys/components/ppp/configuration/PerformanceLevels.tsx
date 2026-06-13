@@ -112,8 +112,8 @@ export function PerformanceLevels({
 				))}
 			</div>
 
-			<Button onClick={handleSave} disabled={saving}>
-				{saving ? t('surveys.performanceLevels.saving') : t('surveys.performanceLevels.save')}
+			<Button onClick={handleSave} disabled={saving} loading={saving}>
+				{t('surveys.performanceLevels.save')}
 			</Button>
 
 			<Toast

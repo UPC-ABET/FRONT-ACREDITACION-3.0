@@ -217,8 +217,8 @@ export function SectionEditDialog({
 					<Button variant="secondary" onClick={onClose} disabled={saving}>
 						{t('dialog.actions.cancel')}
 					</Button>
-					<Button variant="primary" onClick={handleSubmit} disabled={!canSave}>
-						{saving ? t('loading.default') : t('loads.sectionsMaintenance.edit.save')}
+					<Button variant="primary" onClick={handleSubmit} disabled={!canSave} loading={saving}>
+						{t('loads.sectionsMaintenance.edit.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

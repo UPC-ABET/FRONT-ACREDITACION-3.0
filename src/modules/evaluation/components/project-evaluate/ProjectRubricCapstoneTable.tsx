@@ -342,9 +342,13 @@ export function ProjectRubricCapstoneTable({
 								: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
 						)}
 						onClick={handleSave}>
-						{isPending
-							? t('projects.evaluate.rubric.saving')
-							: t('projects.evaluate.rubric.saveButton')}
+						{t('projects.evaluate.rubric.saveButton')}
+						{isPending && (
+							<span
+								aria-hidden="true"
+								className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-0.125em]"
+							/>
+						)}
 					</button>
 				</div>
 			</div>

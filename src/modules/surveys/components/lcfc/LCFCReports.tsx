@@ -52,8 +52,8 @@ export function LCFCReports() {
 				isSearchable
 			/>
 
-			<Button onClick={handleGenerate} disabled={loading || !cycle}>
-				{loading ? t('surveys.shared.generating') : t('surveys.shared.generateDashboard')}
+			<Button onClick={handleGenerate} disabled={loading || !cycle} loading={loading}>
+				{t('surveys.shared.generateDashboard')}
 			</Button>
 
 			{reportData && (

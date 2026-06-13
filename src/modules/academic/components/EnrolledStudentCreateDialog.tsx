@@ -183,8 +183,8 @@ export function EnrolledStudentCreateDialog({
 					<Button variant="secondary" onClick={onClose} disabled={saving}>
 						{t('dialog.actions.cancel')}
 					</Button>
-					<Button variant="primary" onClick={handleSubmit} disabled={!canSave}>
-						{saving ? t('loading.default') : t('loads.enrolledStudentsMaintenance.create.save')}
+					<Button variant="primary" onClick={handleSubmit} disabled={!canSave} loading={saving}>
+						{t('loads.enrolledStudentsMaintenance.create.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

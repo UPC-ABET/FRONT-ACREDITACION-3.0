@@ -342,10 +342,8 @@ export function ChartNodeDialog({ open, mode, node, onClose, onSaved }: ChartNod
 					<Button variant="secondary" onClick={onClose} disabled={isPending}>
 						{t('dialog.actions.cancel')}
 					</Button>
-					<Button variant="primary" onClick={handleSubmit} disabled={isPending}>
-						{isPending
-							? t('loads.organizationChartMaintenance.form.saving')
-							: t('loads.organizationChartMaintenance.form.save')}
+					<Button variant="primary" onClick={handleSubmit} disabled={isPending} loading={isPending}>
+						{t('loads.organizationChartMaintenance.form.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

@@ -227,8 +227,9 @@ export function IfcFieldsPage() {
 									variant="primary"
 									size="lg"
 									disabled={!dirty || saving}
-									onClick={handleSave}>
-									{saving ? t('loading.default') : t('admin.params.btn.save')}
+									onClick={handleSave}
+									loading={saving}>
+									{t('admin.params.btn.save')}
 								</Button>
 							</div>
 						</div>

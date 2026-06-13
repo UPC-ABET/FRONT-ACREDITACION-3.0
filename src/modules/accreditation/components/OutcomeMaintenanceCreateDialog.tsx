@@ -132,8 +132,8 @@ export function OutcomeMaintenanceCreateDialog({
 					<Button variant="secondary" onClick={onClose} disabled={saving}>
 						{t('dialog.actions.cancel')}
 					</Button>
-					<Button variant="primary" disabled={!canSave} onClick={handleSubmit}>
-						{saving ? t('loading.default') : t('loads.outcomesMaintenance.create.save')}
+					<Button variant="primary" disabled={!canSave} loading={saving} onClick={handleSubmit}>
+						{t('loads.outcomesMaintenance.create.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

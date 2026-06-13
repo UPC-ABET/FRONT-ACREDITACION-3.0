@@ -85,6 +85,7 @@ export function OutcomeMaintenanceEditDialog({
 					<Button
 						variant="primary"
 						disabled={!canSave}
+						loading={saving}
 						onClick={() =>
 							onSave({
 								outcomeCode: code.trim(),
@@ -92,7 +93,7 @@ export function OutcomeMaintenanceEditDialog({
 								outcomeDescription: { es: description.es ?? '', en: description.en ?? '' },
 							})
 						}>
-						{saving ? t('loading.default') : t('loads.outcomesMaintenance.edit.save')}
+						{t('loads.outcomesMaintenance.edit.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

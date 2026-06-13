@@ -95,11 +95,12 @@ export function StudyPlanCreateDialog({
 					<Button
 						variant="primary"
 						disabled={!canSave}
+						loading={saving}
 						onClick={() => {
 							if (programId == null) return;
 							onCreate({ code: code.trim(), programId });
 						}}>
-						{saving ? t('loading.default') : t('loads.studyPlansMaintenance.create.save')}
+						{t('loads.studyPlansMaintenance.create.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>
