@@ -14,7 +14,6 @@ import {
 } from '@/shared/components';
 import {
 	HomeIcon,
-	Cog6ToothIcon,
 	ArrowRightStartOnRectangleIcon,
 	ClipboardDocumentListIcon,
 	DocumentChartBarIcon,
@@ -69,7 +68,7 @@ export function AppSidebar() {
 			name: t('nav.ifc.label'),
 			icon: DocumentChartBarIcon,
 			children: [
-				{ name: t('nav.ifc.dashboard'), href: '/ifcs' },
+				{ name: t('nav.ifc.overview'), href: '/ifcs' },
 				{ name: t('nav.ifc.findings'), href: '/ifc-findings' },
 			],
 		},
@@ -88,19 +87,8 @@ export function AppSidebar() {
 			name: t('nav.loads.label'),
 			icon: ArrowUpTrayIcon,
 			children: [
-				{ name: t('nav.loads.dashboard'), href: '/loads' },
+				{ name: t('nav.loads.upload'), href: '/loads' },
 				{ name: t('nav.loads.history'), href: '/loads/history' },
-			],
-		},
-
-		{
-			name: t('nav.tests.label'),
-			icon: Cog6ToothIcon,
-			children: [
-				{ name: t('nav.tests.modals'), href: '/tests/modals' },
-				{ name: t('nav.tests.charts'), href: '/tests/charts' },
-				{ name: t('nav.tests.tables'), href: '/tests/tables' },
-				{ name: t('nav.tests.public'), href: '/tests/public' },
 			],
 		},
 
@@ -111,6 +99,7 @@ export function AppSidebar() {
 				{ name: t('nav.admin.parameters'), href: '/admin/parameters' },
 				{ name: t('nav.admin.notifications'), href: '/admin/notifications' },
 				{ name: t('nav.admin.configuration'), href: '/admin/configuration' },
+				{ name: t('nav.admin.iam'), href: '/admin/iam' },
 			],
 		},
 	];

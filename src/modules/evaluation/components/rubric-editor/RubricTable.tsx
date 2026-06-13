@@ -115,7 +115,6 @@ export function RubricTable({
 								</td>
 							) : null}
 
-							{/* Question cell */}
 							<td
 								className={`align-top transition-colors duration-300 ${hoveredRow === rowIndex ? 'bg-red-50' : ''}`}>
 								<QuestionCell
@@ -129,7 +128,6 @@ export function RubricTable({
 								/>
 							</td>
 
-							{/* Criteria cells */}
 							{Array.from({ length: columnCount }).map((_, colIndex) => {
 								const cell = question.criteria[colIndex];
 								const isColHovered = hoveredCol === colIndex;

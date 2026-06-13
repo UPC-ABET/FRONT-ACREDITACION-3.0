@@ -95,13 +95,11 @@ export function GradeProjectsPage() {
 
 	return (
 		<div className="space-y-6">
-			{/* Header */}
 			<div>
 				<h1 className="text-3xl font-bold text-zinc-900">{t('projects.grade.title')}</h1>
 				<p className="mt-2 text-zinc-600">{t('projects.grade.description')}</p>
 			</div>
 
-			{/* Tabs */}
 			<Tabs
 				tabs={tabs}
 				activeTab={activeTab}
@@ -109,7 +107,6 @@ export function GradeProjectsPage() {
 				ariaLabel={t('projects.grade.tabs.ariaLabel')}
 			/>
 
-			{/* Period filter */}
 			<div className="w-full max-w-xs">
 				<AcademicPeriodSelect
 					value={selectedPeriodId}
@@ -119,7 +116,6 @@ export function GradeProjectsPage() {
 				/>
 			</div>
 
-			{/* States */}
 			{!selectedPeriodId ? (
 				<TableEmptyState message={t('projects.grade.selectPeriod')} />
 			) : isLoading ? (
@@ -154,26 +150,22 @@ export function GradeProjectsPage() {
 					<TableBody>
 						{projects.map((project) => (
 							<TableRow key={project.projectId}>
-								{/* Código */}
 								<TableCell>
 									<span className="inline-flex items-center rounded-md border border-zinc-200 bg-zinc-100 px-2 py-1 font-mono text-xs font-medium text-zinc-700">
 										{project.projectCode}
 									</span>
 								</TableCell>
 
-								{/* Nombre */}
 								<TableCell>
 									<span className="font-medium text-zinc-900">
 										{project.projectName[locale as 'es' | 'en'] ?? project.projectName.es}
 									</span>
 								</TableCell>
 
-								{/* Curso */}
 								<TableCell>
 									<span className="text-sm text-zinc-700">{project.courseName}</span>
 								</TableCell>
 
-								{/* Evaluador */}
 								<TableCell>
 									<div className="flex flex-col gap-1 text-sm text-zinc-700">
 										{project.evaluators?.length ? (
@@ -193,7 +185,6 @@ export function GradeProjectsPage() {
 									</div>
 								</TableCell>
 
-								{/* Estudiantes */}
 								<TableCell>
 									<div className="flex flex-col gap-0.5 text-sm text-zinc-700">
 										{project.students.length ? (
@@ -211,14 +202,12 @@ export function GradeProjectsPage() {
 									</div>
 								</TableCell>
 
-								{/* Fecha de evaluación */}
 								<TableCell>
 									<span className="text-sm text-zinc-600">
 										{formatDate(project.evaluationDate)}
 									</span>
 								</TableCell>
 
-								{/* Acciones */}
 								<TableCell className="text-center">
 									<Link
 										href={`/evaluation/grade-projects/${activeTab}/${project.projectId}/evaluate`}

@@ -60,23 +60,25 @@ export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 
 	return (
 		<>
-			{renderedLevels.map(({ level, levelLabel, dropdownOptions, selectedOpt, disabled, empty }) => {
-				if (empty) return null;
-				return (
-					<Fragment key={level.levelNum}>
-						<Select
-							label={levelLabel}
-							isDisabled={disabled}
-							value={selectedOpt}
-							onChange={(_, opt) => {
-								const next = (opt as { value?: number | 'ALL' } | null)?.value ?? null;
-								onSelect(level.levelNum, next);
-							}}
-							options={dropdownOptions}
-						/>
-					</Fragment>
-				);
-			})}
+			{renderedLevels.map(
+				({ level, levelLabel, dropdownOptions, selectedOpt, disabled, empty }) => {
+					if (empty) return null;
+					return (
+						<Fragment key={level.levelNum}>
+							<Select
+								label={levelLabel}
+								isDisabled={disabled}
+								value={selectedOpt}
+								onChange={(_, opt) => {
+									const next = (opt as { value?: number | 'ALL' } | null)?.value ?? null;
+									onSelect(level.levelNum, next);
+								}}
+								options={dropdownOptions}
+							/>
+						</Fragment>
+					);
+				},
+			)}
 		</>
 	);
 }

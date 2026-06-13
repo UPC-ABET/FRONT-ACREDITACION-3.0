@@ -24,7 +24,7 @@ interface AddStudentModalProps {
 	onOpenChange: (open: boolean) => void;
 	projectId: string;
 	projectNumericId: number;
-	courseId: number;
+	courseId: number | null;
 	academicPeriodId: number | null;
 	onSuccess?: () => void;
 }
@@ -49,7 +49,6 @@ export function AddStudentModal({
 	);
 	const [submitError, setSubmitError] = useState<string | null>(null);
 
-	// Reset on close
 	useEffect(() => {
 		if (!open) {
 			setSearch('');
@@ -59,9 +58,8 @@ export function AddStudentModal({
 		}
 	}, [open]);
 
-	// Fetch on open
 	useEffect(() => {
-		if (!open) return;
+		if (!open || courseId == null) return;
 		setIsLoading(true);
 		coursesService
 			.getEnrolledStudents(courseId, {
@@ -73,7 +71,6 @@ export function AddStudentModal({
 			.finally(() => setIsLoading(false));
 	}, [open]);
 
-	// Client-side filter
 	const filtered = useMemo(() => {
 		const term = search.trim().toLowerCase();
 		if (!term) return students;

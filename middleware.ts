@@ -1,29 +1,27 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')?.value
-  const { pathname } = request.nextUrl
-  const isAuthRoute = pathname.startsWith('/auth')
-  const isPublicSurvey = /^\/survey\/[^/]+\/respond(\/|$)/.test(pathname)
+	const token = request.cookies.get('accessToken')?.value;
+	const { pathname } = request.nextUrl;
+	const isAuthRoute = pathname.startsWith('/auth');
+	const isPublicSurvey = /^\/survey\/[^/]+\/respond(\/|$)/.test(pathname);
 
-  // Public survey routes are accessible without authentication
-  if (isPublicSurvey) {
-    return NextResponse.next()
-  }
+	if (isPublicSurvey) {
+		return NextResponse.next();
+	}
 
-  if (!token && !isAuthRoute) {
-    return NextResponse.redirect(new URL('/auth/login', request.url))
-  }
+	if (!token && !isAuthRoute) {
+		return NextResponse.redirect(new URL('/auth/login', request.url));
+	}
 
-  if (token && isAuthRoute) {
-    return NextResponse.redirect(new URL('/', request.url))
-  }
+	if (token && isAuthRoute) {
+		return NextResponse.redirect(new URL('/', request.url));
+	}
 
-  return NextResponse.next()
+	return NextResponse.next();
 }
 
-// Configuración para que el middleware no afecte a archivos estáticos o imágenes
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-}
+	matcher: ['/((?!api|_next/static|_next/image|favicon.ico|assets|.*\\..*).*)'],
+};

@@ -31,11 +31,19 @@ export interface UploadLog {
 }
 
 export interface UploadLogFilters {
-	uploadType?: string;
-	status?: string;
+	uploadTypeCode?: string;
+	statusCode?: string;
 	academicPeriodId?: number;
-	limit?: number;
-	offset?: number;
+	page?: number;
+	pageSize?: number;
+}
+
+export interface UploadLogPage {
+	items: UploadLog[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
 }
 
 export interface ParsedErrorRow {

@@ -23,16 +23,12 @@ import {
 } from '../services';
 import type { CompetenceFormData, LCFCConfigStatus, PerformanceLevel } from '../types';
 
-// ─── Query Keys ──────────────────────────────────────────────────────────────
-
 export const surveyQueryKeys = {
 	all: ['surveys'] as const,
 
-	// Academic
 	periods: () => ['surveys', 'periods'] as const,
 	programs: () => ['surveys', 'programs'] as const,
 
-	// GRA
 	graCompetences: (periodId: number, programId?: number) =>
 		['surveys', 'gra', 'competences', { periodId, programId }] as const,
 	graStudents: (params: {
@@ -46,13 +42,11 @@ export const surveyQueryKeys = {
 	graDashboard: (params: { academicPeriodId?: number; programId?: number; campusId?: number }) =>
 		['surveys', 'gra', 'dashboard', params] as const,
 
-	// LCFC
 	lcfcCourses: (school: string, periodId: number, programId?: number) =>
 		['surveys', 'lcfc', 'courses', { school, periodId, programId }] as const,
 	lcfcDashboard: (params: { academicPeriodId?: number; programId?: number; campusId?: number }) =>
 		['surveys', 'lcfc', 'dashboard', params] as const,
 
-	// PPP
 	pppCompetences: (periodId: number, programId?: number) =>
 		['surveys', 'ppp', 'competences', { periodId, programId }] as const,
 	pppPerformanceLevels: (periodId: number) =>
@@ -64,8 +58,6 @@ export const surveyQueryKeys = {
 		practiceNumber?: number;
 	}) => ['surveys', 'ppp', 'dashboard', params] as const,
 };
-
-// ─── Academic ────────────────────────────────────────────────────────────────
 
 export function useSurveyPeriods(options?: { enabled?: boolean }) {
 	return useQuery({
@@ -82,8 +74,6 @@ export function useSurveyPrograms(options?: { enabled?: boolean }) {
 		enabled: options?.enabled ?? true,
 	});
 }
-
-// ─── GRA ─────────────────────────────────────────────────────────────────────
 
 export function useGRACompetencesQuery(
 	periodId: number,
@@ -167,8 +157,6 @@ export function useGRADashboardQuery(
 	});
 }
 
-// ─── LCFC ────────────────────────────────────────────────────────────────────
-
 export function useLCFCCoursesQuery(
 	school: string,
 	periodId: number,
@@ -224,8 +212,6 @@ export function useLCFCDashboardQuery(
 		enabled: options?.enabled ?? false,
 	});
 }
-
-// ─── PPP ─────────────────────────────────────────────────────────────────────
 
 export function usePPPCompetencesQuery(
 	periodId: number,

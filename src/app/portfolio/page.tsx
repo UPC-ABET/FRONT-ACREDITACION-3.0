@@ -1,10 +1,10 @@
 import dynamic from 'next/dynamic';
 
-const PortfolioListPage = dynamic(() =>
-	import('@/modules/portfolio').then((m) => m.PortfolioListPage),
+const PortfolioFileManagerPage = dynamic(() =>
+	import('@/modules/portfolio').then((m) => m.PortfolioFileManagerPage),
 );
 
-export default PortfolioListPage;
+export default PortfolioFileManagerPage;
 
 export const metadata = {
 	title: 'Portafolio | ABET',

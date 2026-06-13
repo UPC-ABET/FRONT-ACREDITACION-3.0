@@ -6,6 +6,7 @@ export * from './Table';
 export * from './Card';
 export * from './Badge';
 export * from './Select';
+export * from './LazySelect';
 export * from './Button';
 export * from './Chart';
 export * from './FeedbackDialog';

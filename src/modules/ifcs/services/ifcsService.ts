@@ -48,10 +48,8 @@ export async function rejectIFC(id: number, comment: RejectIFCBody['comment']): 
 	await apiPost(`/ifcs/${id}/reject`, { comment });
 }
 
-export async function getIFCPrefill(chartId: number, periodId: number): Promise<IFCPrefill> {
-	const envelope = await apiGet<Envelope<IFCPrefill>>(
-		`/ifcs/prefill?chartId=${chartId}&periodId=${periodId}`,
-	);
+export async function getIFCPrefill(chartId: number): Promise<IFCPrefill> {
+	const envelope = await apiGet<Envelope<IFCPrefill>>(`/ifcs/prefill?chartId=${chartId}`);
 	if (!envelope?.data) throw new ApiError('ifcs.error.prefillFailed');
 	envelope.data.previousActions = previousActionsSchema.parse(
 		envelope.data.previousActions,

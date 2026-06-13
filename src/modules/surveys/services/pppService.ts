@@ -10,8 +10,6 @@ import type {
 	DashboardResponse,
 } from '../types';
 
-// ─── Internal backend shapes ───────────────────────────────────────────────
-
 interface BackendPppConfig {
 	id: number;
 	outcomeId: number;
@@ -31,8 +29,6 @@ interface BackendPppConfig {
 	userOutcomeName?: string;
 	outcomeCode?: string;
 }
-
-// ─── Adapters ──────────────────────────────────────────────────────────────
 
 function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 	const extra = raw.extra ?? {};
@@ -80,8 +76,6 @@ function buildPerformanceLevelUpdate(level: PerformanceLevel) {
 		isFinal: false,
 	};
 }
-
-// ─── Competences ───────────────────────────────────────────────────────────
 
 export async function listPPPCompetences(
 	academicPeriodId: number,
@@ -139,8 +133,6 @@ export async function clonePPPConfiguration(params: {
 	});
 }
 
-// ─── Performance levels ────────────────────────────────────────────────────
-
 export async function listPPPPerformanceLevels(
 	academicPeriodId: number,
 ): Promise<PerformanceLevel[]> {
@@ -165,8 +157,6 @@ export async function updatePPPPerformanceLevels(
 	);
 }
 
-// ─── Excel template & upload ───────────────────────────────────────────────
-
 export async function downloadPPPTemplate(_periodId: number): Promise<void> {
 	throw new ApiError('PPP template download is not available in this backend version.');
 }
@@ -190,8 +180,6 @@ export async function uploadPPPMassive(
 export async function uploadPPPMassiveLegacy(_file: File, _school?: unknown): Promise<void> {
 	throw new ApiError('PPP legacy bulk upload is not available in this backend version.');
 }
-
-// ─── Dashboard / Reports ───────────────────────────────────────────────────
 
 export async function generatePPPDashboard(params: {
 	academicPeriodId?: number;
@@ -222,8 +210,6 @@ export async function generatePPPPerceptionReport(params: {
 		programId: params.programId,
 	});
 }
-
-// ─── PPP Survey CRUD ──────────────────────────────────────────────────────
 
 export async function getPPPSurveyById(id: number) {
 	return apiPost(`ppp/survey/get-by-id/${id}`, {});

@@ -1,7 +1,5 @@
-// ─── Survey type identifiers ───────────────────────────────────────────────
 export type SurveyType = 'PPP' | 'GRA' | 'LCFC';
 
-// ─── Common pagination ─────────────────────────────────────────────────────
 export interface PageRequest {
 	pageNumber: number;
 	pageSize: number;
@@ -14,7 +12,6 @@ export interface PageInfo {
 	totalPages: number;
 }
 
-// ─── Academic entities (from academic module) ──────────────────────────────
 export interface AcademicPeriod {
 	id: number;
 	name: string;
@@ -27,14 +24,13 @@ export interface Program {
 	code?: string;
 }
 
-// ─── Competences (PPP / GRA) ───────────────────────────────────────────────
 export interface CompetenceConfig {
 	id: number;
 	outcomeId?: number;
-	generalCompetence: string; // maps to extra.name_es
-	specificCompetence: string; // maps to extra.name_en
-	description: string; // maps to extra.description_es
-	performanceLevel: number; // maps to extra.order
+	generalCompetence: string;
+	specificCompetence: string;
+	description: string;
+	performanceLevel: number;
 	isActive?: boolean;
 	programId?: number;
 	periodId?: number;
@@ -52,32 +48,28 @@ export interface CompetenceFormData {
 	school: string;
 }
 
-// ─── Performance levels ────────────────────────────────────────────────────
 export interface PerformanceLevel {
 	id?: number;
-	level: number; // maps to performance_level unique_value
-	description: string; // maps to performance_level name.es
-	range: string; // derived from min_score – max_score
+	level: number;
+	description: string;
+	range: string;
 	minScore?: number;
 	maxScore?: number;
-	color?: string; // maps to performance_level extra.color
+	color?: string;
 }
 
-// ─── File download response ────────────────────────────────────────────────
 export interface FileResource {
 	fileContents: string;
 	contentType: string;
 	fileDownloadName: string;
 }
 
-// ─── PPP ───────────────────────────────────────────────────────────────────
 export interface PPPCloneRequest {
 	sourceAcademicPeriodId: number;
 	targetAcademicPeriodId: number;
 	programId: number;
 }
 
-// ─── GRA Student Notification ─────────────────────────────────────────────
 export interface GRAStudent {
 	notificationId: number;
 	studentId: number;
@@ -117,18 +109,15 @@ export interface SendEmailResponse {
 	message?: string;
 }
 
-// ─── GRA Email Send (new backend) ─────────────────────────────────────────
 export interface GRAEmailSendRequest {
 	academicPeriodId: number;
 	programId: number;
 	surveyBaseUrl: string;
 }
 
-// ─── LCFC config status / dashboard color ─────────────────────────────────
 export type LCFCConfigStatus = 'ACTIVE' | 'INACTIVE';
 export type DashboardColor = 'RED' | 'YELLOW' | 'GREEN';
 
-// ─── LCFC ──────────────────────────────────────────────────────────────────
 export interface LCFCCourse {
 	courseId: number;
 	courseName: string;
@@ -155,7 +144,6 @@ export interface LCFCEmailParam {
 	description: string;
 }
 
-// New backend LCFC notification send request
 export interface LCFCNotificationSendRequest {
 	academicPeriodId: number;
 	programId: number;
@@ -173,7 +161,6 @@ export interface LCFCConfigItem {
 	commissions?: Array<{ commissionId: number; commissionName: string }>;
 }
 
-// ─── Student Survey (token-based access) ──────────────────────────────────
 export interface SurveyOutcome {
 	outcomeId: number;
 	commissionId: number;
@@ -244,7 +231,6 @@ export interface SurveySubmitResponse {
 	};
 }
 
-// ─── Reports / Dashboard ───────────────────────────────────────────────────
 export interface ReportFilter {
 	academicPeriodId?: number;
 	programId?: number;
@@ -285,7 +271,6 @@ export interface ReportPDFFile {
 	base64Content: string;
 }
 
-// ─── Generic API response ──────────────────────────────────────────────────
 export interface SurveyApiResponse<T = unknown> {
 	success: boolean;
 	data?: {

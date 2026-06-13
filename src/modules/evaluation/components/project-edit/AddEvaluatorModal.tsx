@@ -50,13 +50,11 @@ export function AddEvaluatorModal({
 	const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
 	const [submitError, setSubmitError] = useState<string | null>(null);
 
-	// Debounce search
 	useEffect(() => {
 		const timer = setTimeout(() => setDebouncedSearch(search), 300);
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	// Reset state when modal closes
 	useEffect(() => {
 		if (!open) {
 			setSearch('');
@@ -68,7 +66,6 @@ export function AddEvaluatorModal({
 		}
 	}, [open]);
 
-	// Fetch professors on open and on debounced search change
 	useEffect(() => {
 		if (!open) return;
 		setLoadingProfessors(true);

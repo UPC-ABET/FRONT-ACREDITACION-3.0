@@ -51,7 +51,6 @@ export function CriteriaCell({
 
 	return (
 		<div className="space-y-2 p-3">
-			{/* Description textarea */}
 			<textarea
 				ref={textareaRef}
 				value={criteriaText}
@@ -62,7 +61,6 @@ export function CriteriaCell({
 				onChange={(e) => onTextChange(e.target.value)}
 			/>
 
-			{/* Min / Max score */}
 			<div className="flex gap-2">
 				<div className="flex flex-1 flex-col gap-0.5">
 					<span className="text-xs font-medium text-zinc-500">{minScoreLabel}</span>

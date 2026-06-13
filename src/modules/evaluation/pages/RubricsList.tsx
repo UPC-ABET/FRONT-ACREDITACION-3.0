@@ -133,7 +133,6 @@ export function RubricsListPage() {
 				</Link>
 			</div>
 
-			{/* Filters */}
 			<div className="space-y-4">
 				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 					<AcademicPeriodSelect
@@ -185,7 +184,6 @@ export function RubricsListPage() {
 				)}
 			</div>
 
-			{/* Content */}
 			{!selectedPeriodId ? (
 				<TableEmptyState message={t('rubrics.list.selectPeriod')} />
 			) : isLoading ? (
@@ -269,7 +267,6 @@ export function RubricsListPage() {
 				</div>
 			)}
 
-			{/* Confirm delete modal */}
 			<Dialog
 				open={!!confirmTarget}
 				onOpenChange={(open) => {

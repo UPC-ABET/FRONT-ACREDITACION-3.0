@@ -1,2 +1,1 @@
-export * from './PortfolioListPage';
-export * from './PortfolioDetailPage';
+export { PortfolioFileManagerPage } from './PortfolioFileManagerPage';

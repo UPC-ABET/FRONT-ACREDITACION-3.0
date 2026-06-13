@@ -34,21 +34,22 @@ export function FileUploadPanel({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [validationError, setValidationError] = useState<string | null>(null);
+	const [isDraggingFile, setIsDraggingFile] = useState(false);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
 		msg: '',
 	});
 
-	function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-		const file = e.target.files?.[0];
-		if (!file) return;
+	function selectFile(file: File) {
 		setValidationError(null);
 
 		const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
 		const validExts = accept.split(',').map((a) => a.trim().toLowerCase());
 		if (!validExts.includes(ext)) {
-			setValidationError(t('surveys.shared.fileUpload.invalidFormat').replace('{{accept}}', accept));
+			setValidationError(
+				t('surveys.shared.fileUpload.invalidFormat').replace('{{accept}}', accept),
+			);
 			return;
 		}
 		if (file.size > MAX_SIZE_MB * 1024 * 1024) {
@@ -60,6 +61,37 @@ export function FileUploadPanel({
 		setSelectedFile(file);
 	}
 
+	function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const file = e.target.files?.[0];
+		if (!file) return;
+		selectFile(file);
+	}
+
+	function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+		e.preventDefault();
+		e.stopPropagation();
+		setIsDraggingFile(false);
+
+		const file = e.dataTransfer.files?.[0];
+		if (!file) return;
+		selectFile(file);
+		if (inputRef.current) inputRef.current.value = '';
+	}
+
+	function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+		e.preventDefault();
+		e.stopPropagation();
+		e.dataTransfer.dropEffect = 'copy';
+		setIsDraggingFile(true);
+	}
+
+	function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+		e.preventDefault();
+		e.stopPropagation();
+		if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+		setIsDraggingFile(false);
+	}
+
 	function handleUpload() {
 		if (!selectedFile) return;
 		onUpload(selectedFile);
@@ -67,7 +99,11 @@ export function FileUploadPanel({
 
 	React.useEffect(() => {
 		if (success) {
-			setToast({ open: true, type: 'success', msg: t('surveys.shared.fileUpload.processedSuccess') });
+			setToast({
+				open: true,
+				type: 'success',
+				msg: t('surveys.shared.fileUpload.processedSuccess'),
+			});
 			setSelectedFile(null);
 			if (inputRef.current) inputRef.current.value = '';
 		}
@@ -112,10 +148,18 @@ export function FileUploadPanel({
 				<div
 					role="button"
 					tabIndex={0}
-					className="border-2 border-dashed border-zinc-300 rounded-lg p-6 flex flex-col items-center gap-3 cursor-pointer hover:border-red-400 transition-colors"
+					className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center gap-3 cursor-pointer transition-colors ${
+						isDraggingFile ? 'border-red-500 bg-red-50' : 'border-zinc-300 hover:border-red-400'
+					}`}
 					onClick={() => inputRef.current?.click()}
+					onDrop={handleDrop}
+					onDragOver={handleDragOver}
+					onDragEnter={handleDragOver}
+					onDragLeave={handleDragLeave}
 					onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && inputRef.current?.click()}>
-					<DocumentIcon className="h-8 w-8 text-zinc-400" />
+					<DocumentIcon
+						className={`h-8 w-8 ${isDraggingFile ? 'text-red-500' : 'text-zinc-400'}`}
+					/>
 					{selectedFile ? (
 						<p className="text-sm font-medium text-zinc-700">{selectedFile.name}</p>
 					) : (

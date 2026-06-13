@@ -92,8 +92,6 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
 	);
 }
 
-// MOTOR DATA TABLE ---
-
 interface DataTableAction {
 	label: string;
 	onClick: () => void;
@@ -252,7 +250,6 @@ export function DataTable<TData, TValue>({
 				</TableBody>
 			</Table>
 
-			{/* PAGINACIÓN */}
 			{showPagination && (
 				<div className="flex items-center justify-center gap-4 py-4">
 					<Button

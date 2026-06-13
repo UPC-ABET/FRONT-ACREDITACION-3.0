@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import * as ExcelJS from 'exceljs';
 import type { ParsedErrorRow } from '../types';
 
-// Parses the annotated Excel (base64) returned by an upload service on row errors.
 // The last column is always 'MensajeError' (legacy column name from the backend file model).
 export function useParseErrorExcel() {
 	return useCallback(async (excelBase64: string): Promise<ParsedErrorRow[]> => {

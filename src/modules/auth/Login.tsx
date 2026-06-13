@@ -13,7 +13,6 @@ export default function Login() {
 			<div className="w-full px-4 py-8">
 				<div className="mx-auto w-full max-w-[360px] sm:max-w-[480px] md:max-w-[540px]">
 					<Card className="w-full px-8 py-8 flex flex-col justify-center gap-4 aspect-auto md:aspect-square">
-						{/* HEADER */}
 						<div className="text-center">
 							<img
 								className="mx-auto w-auto mb-3 h-[72px] md:h-[96px]"
@@ -26,7 +25,6 @@ export default function Login() {
 							</div>
 						</div>
 
-						{/* FORM */}
 						<LoginForm />
 					</Card>
 				</div>

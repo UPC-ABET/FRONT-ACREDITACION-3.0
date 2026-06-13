@@ -1,9 +1,3 @@
-/**
- * SHARED API CLIENT
- *
- * Cliente HTTP base compartido para toda la app.
- */
-
 import { ApiError } from './apiError';
 import { logger } from './logger';
 import { getSchoolCookie } from './authCookies';
@@ -92,6 +86,7 @@ export function buildHeaders(
 
 	return {
 		accept: '*/*',
+		'ngrok-skip-browser-warning': 'true',
 		...(isFormData ? {} : { 'Content-Type': 'application/json' }),
 		...(token ? { Authorization: `Bearer ${token}` } : {}),
 		...(schoolId === null ? {} : { [SCHOOL_HEADER]: String(schoolId) }),

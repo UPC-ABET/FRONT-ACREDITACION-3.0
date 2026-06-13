@@ -61,8 +61,6 @@ export interface FindingRow {
 	description: I18nText;
 }
 
-// ---- View payload --------------------------------------------------------
-
 export interface IFCHeader {
 	id: number;
 	information: Record<string, unknown>;
@@ -161,8 +159,6 @@ export interface RejectIFCBody {
 	comment: I18nText;
 }
 
-// ---- Form schema -----------------------------------------------------------
-
 export interface IFCField {
 	key: string;
 	label: I18nText;
@@ -177,8 +173,6 @@ export interface CriticalityOption {
 	description: I18nText;
 }
 
-// ---- Prefill ---------------------------------------------------------------
-
 export interface IFCPrefill {
 	courseName: I18nText;
 	courseLearningOutcome: I18nText;
@@ -191,8 +185,6 @@ export interface IFCPrefill {
 	outcomeCourseResult: ProgramGroup[];
 	previousActions: PreviousAction[];
 }
-
-// ---- Form state ------------------------------------------------------------
 
 export interface FormFinding {
 	tempId: string;
@@ -217,8 +209,6 @@ export interface IFCFormState {
 	previousActions: Record<number, I18nText | null>;
 }
 
-// ---- Outbound payloads -----------------------------------------------------
-
 export interface PayloadFinding {
 	tempId: string;
 	id: number | null;
@@ -240,7 +230,6 @@ export interface PayloadPreviousActionEvidence {
 
 export interface CreateIFCBody {
 	chartId: number;
-	periodId: number;
 	submit: boolean;
 	information?: Record<string, I18nText>;
 	findings: PayloadFinding[];
@@ -250,9 +239,7 @@ export interface CreateIFCBody {
 	previousActions?: PayloadPreviousActionEvidence[];
 }
 
-export type PatchIFCBody = Omit<CreateIFCBody, 'chartId' | 'periodId'>;
-
-// ---- Finding detail view ---------------------------------------------------
+export type PatchIFCBody = Omit<CreateIFCBody, 'chartId'>;
 
 export interface FindingDetail {
 	id: number;
@@ -277,8 +264,6 @@ export interface FindingDetailPayload {
 export interface PatchFindingBody {
 	description: I18nText;
 }
-
-// ---- Notify ----------------------------------------------------------------
 
 export type NotifyReason = 'noCourseChart' | 'noConfig' | 'noRecipients' | 'sendFailed';
 

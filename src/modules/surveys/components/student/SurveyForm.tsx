@@ -67,7 +67,6 @@ export function SurveyForm({
 
 	return (
 		<div className="min-h-screen bg-zinc-50">
-			{/* Header */}
 			<div className="bg-red-600 text-white py-8 px-6">
 				<div className="max-w-3xl mx-auto">
 					<div className="flex items-center gap-3 mb-4">
@@ -108,7 +107,6 @@ export function SurveyForm({
 				</div>
 			</div>
 
-			{/* Progress bar */}
 			<div className="bg-white border-b border-zinc-200 sticky top-0 z-10">
 				<div className="max-w-3xl mx-auto px-6 py-3">
 					<div className="flex items-center justify-between text-xs text-zinc-500 mb-1">
@@ -129,7 +127,6 @@ export function SurveyForm({
 				</div>
 			</div>
 
-			{/* Content */}
 			<div className="max-w-3xl mx-auto px-6 py-8 space-y-8">
 				<div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
 					<ExclamationTriangleIcon className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
@@ -145,7 +142,6 @@ export function SurveyForm({
 					</div>
 				)}
 
-				{/* Outcomes by commission */}
 				{outcomes.map((group) => (
 					<div
 						key={group.commissionId}
@@ -171,7 +167,6 @@ export function SurveyForm({
 										)}
 									</div>
 
-									{/* Score selector */}
 									<div className="flex flex-wrap gap-2">
 										{SCORE_OPTIONS.map((s) => {
 											const selected = outcome.score === s;
@@ -197,7 +192,6 @@ export function SurveyForm({
 					</div>
 				))}
 
-				{/* Comment */}
 				<div className="bg-white rounded-2xl shadow-sm border border-zinc-200 px-6 py-5">
 					<TextArea
 						label={t('surveys.student.commentLabel')}
@@ -208,7 +202,6 @@ export function SurveyForm({
 					/>
 				</div>
 
-				{/* Submit */}
 				<div className="flex justify-end pb-8">
 					<Button
 						onClick={handleSubmit}
@@ -229,7 +222,6 @@ export function SurveyForm({
 	);
 }
 
-// ─── Already answered screen ────────────────────────────────────────────────
 export function SurveyAlreadyAnswered() {
 	const { t } = useI18n();
 	return (
@@ -246,7 +238,6 @@ export function SurveyAlreadyAnswered() {
 	);
 }
 
-// ─── Success screen ─────────────────────────────────────────────────────────
 export function SurveySuccess() {
 	const { t } = useI18n();
 	return (

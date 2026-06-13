@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/shared';
-import { apiPost, apiPut, apiPatch } from '@/shared/lib';
+import { apiDelete, apiPost, apiPut, apiPatch } from '@/shared/lib';
 import { StudyPlanCourseResponse } from '../types';
 
 export type StudyPlanCourseFilters = {
@@ -27,5 +27,10 @@ export const studyPlanCoursesService = {
 		isEvaluable: boolean,
 	): Promise<ApiResponse<StudyPlanCourseResponse>> {
 		return apiPatch(`/study-plan-courses/enable-evaluation/${id}`, { isEvaluable });
+	},
+
+	// Removes the course from this study plan (does not delete the shared course).
+	maintenanceDelete(id: number): Promise<ApiResponse<{ id: number }>> {
+		return apiDelete(`/study-plan-courses/maintenance/${id}`);
 	},
 };

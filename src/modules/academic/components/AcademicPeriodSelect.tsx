@@ -62,6 +62,10 @@ export function AcademicPeriodSelect({
 	const options = useMemo(() => periods.map((p) => ({ value: p.id, label: p.code })), [periods]);
 
 	const selected = options.find((o) => o.value === value) ?? null;
+	const warningMessage =
+		!loading && selected === null && options.length > 0
+			? t('academic.period.requiredForData')
+			: undefined;
 
 	if (labelPlacement === 'inline') {
 		return (
@@ -76,6 +80,7 @@ export function AcademicPeriodSelect({
 				disabled={loading}
 				labelPlacement={compactLabelPlacement}
 				density={compactDensity}
+				warningMessage={warningMessage}
 				noOptionsMessage={t('select.noOptions')}
 				onChange={(next) => {
 					if (next !== '') onChange(Number(next));
@@ -92,6 +97,7 @@ export function AcademicPeriodSelect({
 			placeholder={loading ? t('loading.default') : undefined}
 			value={selected}
 			isClearable={isClearable}
+			error={warningMessage}
 			onChange={(_, opt) => {
 				const next = (opt as { value?: number | string } | null)?.value;
 				if (next != null) onChange(Number(next));

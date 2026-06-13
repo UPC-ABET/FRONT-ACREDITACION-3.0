@@ -46,7 +46,6 @@ export function WizardSelectEvaluatorModal({
 	const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
-	// Reset on close
 	useEffect(() => {
 		if (!open) {
 			setSearch('');
@@ -58,13 +57,11 @@ export function WizardSelectEvaluatorModal({
 		}
 	}, [open]);
 
-	// Debounce search
 	useEffect(() => {
 		const timer = setTimeout(() => setDebouncedSearch(search), 300);
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	// Fetch professors on open and on debounced search change
 	useEffect(() => {
 		if (!open) return;
 		setLoadingProfs(true);

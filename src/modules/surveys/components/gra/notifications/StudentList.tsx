@@ -48,7 +48,11 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 	function handleDelete(id: number) {
 		remove(id, () => {
 			setDeleteId(null);
-			setToast({ open: true, type: 'success', msg: t('surveys.gra.notifications.toast.studentDeleted') });
+			setToast({
+				open: true,
+				type: 'success',
+				msg: t('surveys.gra.notifications.toast.studentDeleted'),
+			});
 			load({ programId: programId, academicPeriodId: academicPeriodId });
 		});
 	}
@@ -150,7 +154,6 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 				]}
 			/>
 
-			{/* Delete confirm */}
 			<Dialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
 				<DialogContent>
 					<DialogHeader>
@@ -165,7 +168,6 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 				</DialogContent>
 			</Dialog>
 
-			{/* Send dialog */}
 			<Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
 				<DialogContent>
 					<DialogHeader>

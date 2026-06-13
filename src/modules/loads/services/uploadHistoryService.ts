@@ -1,19 +1,19 @@
 import { apiGet, getApiData } from '@/shared/lib/apiClient';
-import type { UploadLog, UploadLogFilters } from '../types';
+import type { UploadLog, UploadLogFilters, UploadLogPage } from '../types';
 
 const BASE = '/uploads/upload-logs';
 
-export async function listUploadLogs(filters: UploadLogFilters = {}): Promise<UploadLog[]> {
+export async function listUploadLogs(filters: UploadLogFilters = {}): Promise<UploadLogPage> {
 	const params = new URLSearchParams();
-	if (filters.uploadType) params.set('uploadType', filters.uploadType);
-	if (filters.status) params.set('status', filters.status);
+	if (filters.uploadTypeCode) params.set('uploadTypeCode', filters.uploadTypeCode);
+	if (filters.statusCode) params.set('statusCode', filters.statusCode);
 	if (filters.academicPeriodId !== undefined) {
 		params.set('academicPeriodId', String(filters.academicPeriodId));
 	}
-	if (filters.limit !== undefined) params.set('limit', String(filters.limit));
-	if (filters.offset !== undefined) params.set('offset', String(filters.offset));
+	if (filters.page !== undefined) params.set('page', String(filters.page));
+	if (filters.pageSize !== undefined) params.set('pageSize', String(filters.pageSize));
 	const qs = params.toString();
-	return getApiData<UploadLog[]>(await apiGet(`${BASE}${qs ? `?${qs}` : ''}`));
+	return getApiData<UploadLogPage>(await apiGet(`${BASE}${qs ? `?${qs}` : ''}`));
 }
 
 export async function findUploadLog(id: number): Promise<UploadLog> {

@@ -42,12 +42,10 @@ export function ProjectWizardStep2({
 	const { t, locale } = useI18n();
 	const loc = locale as 'es' | 'en';
 
-	// ── Project header fields ──────────────────────────────────────────────────
 	const [code, setCode] = useState('');
 	const [name, setName] = useState('');
 	const [description, setDescription] = useState('');
 
-	// ── Students ───────────────────────────────────────────────────────────────
 	const [selectedStudents, setSelectedStudents] = useState<EnrolledStudentResponse[]>([]);
 	const [studentModalOpen, setStudentModalOpen] = useState(false);
 
@@ -59,14 +57,12 @@ export function ProjectWizardStep2({
 	const removeStudent = (id: number) =>
 		setSelectedStudents((prev) => prev.filter((s) => s.studentSectionEnrollmentId !== id));
 
-	// ── Evaluators ─────────────────────────────────────────────────────────────
 	const [evaluators, setEvaluators] = useState<LocalEvaluator[]>([]);
 	const [evaluatorModalOpen, setEvaluatorModalOpen] = useState(false);
 
 	const removeEvaluator = (idx: number) =>
 		setEvaluators((prev) => prev.filter((_, i) => i !== idx));
 
-	// ── Validation ─────────────────────────────────────────────────────────────
 	const canSubmit = code.trim().length > 0 && name.trim().length > 0 && !isSubmitting;
 
 	const handleSubmit = async () => {
@@ -85,13 +81,11 @@ export function ProjectWizardStep2({
 
 	return (
 		<div className="space-y-8">
-			{/* ── Project info ──────────────────────────────────────────────── */}
 			<section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4">
 				<h2 className="text-base font-semibold text-zinc-900">
 					{t('projects.create.step2.infoTitle')}
 				</h2>
 
-				{/* Context pill */}
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm text-zinc-600">
 					<span className="font-medium text-zinc-800">{step1.periodCode}</span>
 					{' · '}
@@ -121,7 +115,6 @@ export function ProjectWizardStep2({
 				</div>
 			</section>
 
-			{/* ── Students ──────────────────────────────────────────────────── */}
 			<section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
 					<div className="flex items-center gap-3">
@@ -166,7 +159,6 @@ export function ProjectWizardStep2({
 				</div>
 			</section>
 
-			{/* ── Evaluators ────────────────────────────────────────────────── */}
 			<section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
 					<div className="flex items-center gap-3">
@@ -214,7 +206,6 @@ export function ProjectWizardStep2({
 				</div>
 			</section>
 
-			{/* ── Footer ────────────────────────────────────────────────────── */}
 			<div className="flex justify-between">
 				<Button variant="secondary" onClick={onBack} disabled={isSubmitting}>
 					{t('projects.create.step2.back')}
@@ -224,7 +215,6 @@ export function ProjectWizardStep2({
 				</Button>
 			</div>
 
-			{/* ── Modals ────────────────────────────────────────────────────── */}
 			<WizardSelectStudentsModal
 				open={studentModalOpen}
 				onOpenChange={setStudentModalOpen}

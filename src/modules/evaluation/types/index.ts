@@ -9,7 +9,6 @@ export * from './rubricListRow';
 export * from './rubricQuestion';
 export * from './capstone';
 
-// ── Request DTOs ─────────────────────────────────────────────────────────────
 export type EvaluationScorePayload = {
 	rubricQuestionCriteriaId: number;
 	score: number;
@@ -138,8 +137,6 @@ export type UpdateRubricDto = {
 	extra?: Record<string, unknown>;
 	questions?: UpdateRubricQuestionDto[];
 };
-
-// ── Response Types ───────────────────────────────────────────────────────────
 
 import { BaseEntity } from '@/shared';
 import {

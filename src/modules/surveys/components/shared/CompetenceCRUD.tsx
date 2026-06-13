@@ -178,7 +178,6 @@ export function CompetenceCRUD({
 				]}
 			/>
 
-			{/* Add / Edit modal */}
 			<Dialog open={modalOpen} onOpenChange={setModalOpen}>
 				<DialogContent className="sm:max-w-lg">
 					<DialogHeader>
@@ -242,7 +241,6 @@ export function CompetenceCRUD({
 				</DialogContent>
 			</Dialog>
 
-			{/* Delete confirm */}
 			<Dialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
 				<DialogContent>
 					<DialogHeader>

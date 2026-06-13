@@ -3,8 +3,8 @@
 import type { ReactNode } from 'react';
 import { CompactNavbarSelect, Select } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { useGlobalAcademicFilters } from '../hooks/useGlobalAcademicFilters';
-import { AcademicPeriodSelect } from './AcademicPeriodSelect';
+import { useGlobalAcademicFilters } from '@/modules';
+import { AcademicPeriodSelect } from '@/modules';
 
 type GlobalAcademicFiltersLayout = 'inline' | 'mobile' | 'tablet';
 
@@ -87,6 +87,7 @@ export function GlobalAcademicFilters({
 							disabled={filters.schoolsLoading}
 							labelPlacement={compactLabelPlacement}
 							density={compactDensity}
+							wrapOptions
 							noOptionsMessage={t('select.noOptions')}
 							onChange={filters.handleSchoolChange}
 						/>

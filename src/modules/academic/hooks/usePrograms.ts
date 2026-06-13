@@ -13,3 +13,17 @@ export function usePrograms(filters: FilterProgramRequest = {}) {
 		queryFn: () => programsService.getByFilters(filters).then((r) => r.data),
 	});
 }
+
+/**
+ * Programs of the active modality for program selectors (GET /programs/by-modality).
+ * The modality travels as the X-Modality-Type-Id header; it is part of the key so a
+ * modality switch re-fetches, and the query is disabled until a modality is selected.
+ */
+export function useProgramsByModality(modalityTypeId: number | null) {
+	return useQuery({
+		queryKey: [...programsQueryKeys.all, 'by-modality', modalityTypeId] as const,
+		queryFn: () => programsService.byModality().then((r) => r.data ?? []),
+		enabled: modalityTypeId != null,
+		staleTime: Infinity,
+	});
+}
