@@ -34,6 +34,7 @@ import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
+import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import {
 	useProgramsByModality,
 	useStudyPlanMaintenanceMutations,
@@ -47,7 +48,7 @@ import type {
 import { StudyPlanCreateDialog } from './StudyPlanCreateDialog';
 import { StudyPlanEditDialog } from './StudyPlanEditDialog';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
 	if (!text) return '';

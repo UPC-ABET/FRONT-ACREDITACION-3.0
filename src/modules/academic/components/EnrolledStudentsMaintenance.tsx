@@ -33,6 +33,7 @@ import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
+import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import {
 	useCampuses,
 	useEnrolledStudentMaintenanceMutations,
@@ -49,7 +50,7 @@ import type {
 import { EnrolledStudentCreateDialog } from './EnrolledStudentCreateDialog';
 import { EnrolledStudentMaintenanceEditDialog } from './EnrolledStudentMaintenanceEditDialog';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
 	if (!text) return '';

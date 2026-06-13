@@ -32,6 +32,7 @@ import { useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
+import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import { useProfessorMaintenanceMutations, useProfessorsMaintenance } from '../hooks';
 import type {
 	ProfessorMaintenanceCreate,
@@ -41,7 +42,7 @@ import type {
 import { ProfessorMaintenanceCreateDialog } from './ProfessorMaintenanceCreateDialog';
 import { ProfessorMaintenanceEditDialog } from './ProfessorMaintenanceEditDialog';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 function RowActions({
 	onEdit,

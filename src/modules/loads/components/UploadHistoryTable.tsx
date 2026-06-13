@@ -5,7 +5,7 @@ import { Eye, Undo2 } from 'lucide-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Button, DataTable } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
-import { TYPE_CODES } from '@/shared/constants';
+import { DEFAULT_PAGE_SIZE, TYPE_CODES } from '@/shared/constants';
 import { useUploadHistory } from '../hooks';
 import type { UploadLog, UploadLogFilters } from '../types';
 
@@ -15,7 +15,7 @@ interface UploadHistoryTableProps {
 	onViewErrors?: (log: UploadLog) => void;
 }
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 const STATUS_STYLE: Record<string, { dot: string; pill: string }> = {
 	[TYPE_CODES.UPLOAD_STATUS.COMPLETED]: {
