@@ -2538,7 +2538,8 @@
 				"view": "View",
 				"back": "Back",
 				"edit": "Edit",
-				"save": "Save"
+				"save": "Save",
+				"exportPdf": "Export PDF"
 			},
 			"grid": {
 				"studyPlanCode": "Study plan",
@@ -2554,7 +2555,8 @@
 			},
 			"error": {
 				"loadFailed": "The outcome mapping could not be loaded.",
-				"saveFailed": "The changes could not be saved."
+				"saveFailed": "The changes could not be saved.",
+				"exportFailed": "The PDF could not be exported."
 			}
 		},
 		"organizationChartMaintenance": {

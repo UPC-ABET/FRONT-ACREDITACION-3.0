@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import {
+	ArrowDownTrayIcon,
 	ArrowLeftIcon,
 	CheckIcon,
 	CubeIcon,
@@ -17,7 +18,11 @@ import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
-import { useCourseOutcomeMappingBulkSave, useCourseOutcomeMappingView } from '../hooks';
+import {
+	useCourseOutcomeMappingBulkSave,
+	useCourseOutcomeMappingExport,
+	useCourseOutcomeMappingView,
+} from '../hooks';
 import type {
 	CourseOutcomeMappingColumn,
 	CourseOutcomeMappingCourse,
@@ -105,6 +110,7 @@ export function CourseOutcomeMappingGrid({
 		refetch,
 	} = useCourseOutcomeMappingView(programCommissionId);
 	const bulkSave = useCourseOutcomeMappingBulkSave();
+	const exportPdf = useCourseOutcomeMappingExport();
 
 	const [editMode, setEditMode] = useState(false);
 	const [editState, setEditState] = useState<MappingEditState>({});
@@ -149,6 +155,13 @@ export function CourseOutcomeMappingGrid({
 			else if (current === controlType.id) courseMarks[outcomeId] = verificationType.id;
 			else delete courseMarks[outcomeId];
 			return { ...previous, [courseId]: courseMarks };
+		});
+	};
+
+	const handleExport = () => {
+		exportPdf.mutate(programCommissionId, {
+			onError: () =>
+				showToast('loads.courseOutcomeMappingMaintenance.error.exportFailed', 'error'),
 		});
 	};
 
@@ -326,6 +339,14 @@ export function CourseOutcomeMappingGrid({
 							</p>
 						</div>
 						<div className="flex items-center gap-2">
+							<Button
+								variant="surface"
+								size="sm"
+								onClick={handleExport}
+								disabled={editMode || exportPdf.isPending}>
+								<ArrowDownTrayIcon className="h-4 w-4" />
+								<span>{t('loads.courseOutcomeMappingMaintenance.actions.exportPdf')}</span>
+							</Button>
 							{editMode ? (
 								<>
 									<Button

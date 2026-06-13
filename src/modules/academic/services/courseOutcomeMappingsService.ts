@@ -1,5 +1,6 @@
 import { ApiResponse } from '@/shared';
-import { apiPost, apiPut } from '@/shared/lib';
+import { apiPost, apiPostBlobResponse, apiPut } from '@/shared/lib';
+import { parseFilename } from '@/shared/utils';
 import type {
 	CourseOutcomeMappingBulkSave,
 	CourseOutcomeMappingResponse,
@@ -28,5 +29,21 @@ export const courseOutcomeMappingMaintenanceService = {
 
 	bulkSave(body: CourseOutcomeMappingBulkSave): Promise<ApiResponse<CourseOutcomeMappingView>> {
 		return apiPut(`${MAINTENANCE_BASE}/bulk-save`, body);
+	},
+
+	async exportPdf(
+		programCommissionId: number,
+		lang: 'es' | 'en',
+	): Promise<{ blob: Blob; filename: string }> {
+		const { blob, response } = await apiPostBlobResponse(
+			`${MAINTENANCE_BASE}/export`,
+			{ programCommissionId, lang },
+			{ accept: 'application/pdf' },
+		);
+		const filename = parseFilename(
+			response.headers.get('Content-Disposition'),
+			`course-outcome-mappings-${programCommissionId}.pdf`,
+		);
+		return { blob, filename };
 	},
 };

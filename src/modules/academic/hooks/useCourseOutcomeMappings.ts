@@ -2,6 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getApiData } from '@/shared/lib';
+import { triggerBrowserDownload } from '@/shared/utils';
+import { useI18n } from '@/providers';
 import { courseOutcomeMappingFiltersService } from '../services/courseOutcomeMappingFiltersService';
 import {
 	courseOutcomeMappingMaintenanceService,
@@ -101,5 +103,15 @@ export function useCourseOutcomeMappingBulkSave() {
 				),
 			});
 		},
+	});
+}
+
+export function useCourseOutcomeMappingExport() {
+	const { locale } = useI18n();
+
+	return useMutation({
+		mutationFn: (programCommissionId: number) =>
+			courseOutcomeMappingMaintenanceService.exportPdf(programCommissionId, locale as 'es' | 'en'),
+		onSuccess: ({ blob, filename }) => triggerBrowserDownload(blob, filename),
 	});
 }

@@ -2538,7 +2538,8 @@
 				"view": "Ver",
 				"back": "Volver",
 				"edit": "Editar",
-				"save": "Guardar"
+				"save": "Guardar",
+				"exportPdf": "Exportar PDF"
 			},
 			"grid": {
 				"studyPlanCode": "Malla",
@@ -2554,7 +2555,8 @@
 			},
 			"error": {
 				"loadFailed": "No se pudo cargar el mapeo de outcomes.",
-				"saveFailed": "No se pudieron guardar los cambios."
+				"saveFailed": "No se pudieron guardar los cambios.",
+				"exportFailed": "No se pudo exportar el PDF."
 			}
 		},
 		"organizationChartMaintenance": {
