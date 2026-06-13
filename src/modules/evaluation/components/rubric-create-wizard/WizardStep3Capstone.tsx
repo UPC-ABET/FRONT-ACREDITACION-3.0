@@ -62,7 +62,7 @@ export function WizardStep3Capstone({
 	} = useOutcomes(step2.capstoneOutcomeIds);
 
 	useEffect(() => {
-		if (outcomesInitialized || !fetchedOutcomes.length) return;
+		if (outcomesInitialized || loadingOutcomes || !fetchedOutcomes.length) return;
 
 		const loaded: LocalOutcome[] = fetchedOutcomes.map((o) => {
 			const commission = o.programCommission?.commission;
@@ -82,7 +82,7 @@ export function WizardStep3Capstone({
 		setOutcomes(loaded);
 		setActiveCommissionId(loaded[0]?.commissionId ?? '');
 		setOutcomesInitialized(true);
-	}, [fetchedOutcomes, outcomesInitialized]);
+	}, [fetchedOutcomes, outcomesInitialized, loadingOutcomes]);
 
 	const commissionTabs = useMemo(() => {
 		const map = new Map<
