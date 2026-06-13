@@ -75,7 +75,6 @@ export type FilterProjectDto = Partial<{
 	extra: Record<string, unknown>;
 	academicPeriodId: number;
 	programId: number;
-	schoolId: number;
 	courseId: number;
 	studentId: number;
 	professorId: number;

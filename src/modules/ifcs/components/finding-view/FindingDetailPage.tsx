@@ -13,7 +13,11 @@ import {
 } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
-import { tryTranslate } from '@/shared/utils/tryTranslate';
+import {
+	resolveApiErrorContent,
+	tryTranslateReason,
+	type ApiErrorContent,
+} from '@/shared/utils/tryTranslate';
 import { useFindingDetail } from '../../hooks/useIfcFindings';
 import { deleteFinding, patchFinding } from '../../services/ifcFindingsService';
 import { getParameterByCode } from '@/modules/core';
@@ -35,7 +39,7 @@ export default function FindingDetailPage() {
 	const [saving, setSaving] = useState(false);
 	const [deleting, setDeleting] = useState(false);
 	const [pendingDelete, setPendingDelete] = useState(false);
-	const [actionError, setActionError] = useState<string | null>(null);
+	const [actionError, setActionError] = useState<ApiErrorContent | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -60,7 +64,7 @@ export default function FindingDetailPage() {
 			setSuccessMsg(t('ifcFindings.findingView.toast.saved'));
 			await refetch();
 		} catch (e) {
-			setActionError(getErrorMessage(e, 'ifcFindings.error.patchFailed'));
+			setActionError(resolveApiErrorContent(t, e, 'ifcFindings.error.patchFailed'));
 			throw e;
 		} finally {
 			setSaving(false);
@@ -75,7 +79,7 @@ export default function FindingDetailPage() {
 			setPendingDelete(false);
 			router.push('/ifc-findings');
 		} catch (e) {
-			setActionError(getErrorMessage(e, 'ifcFindings.error.deleteFailed'));
+			setActionError(resolveApiErrorContent(t, e, 'ifcFindings.error.deleteFailed'));
 		} finally {
 			setDeleting(false);
 		}
@@ -90,7 +94,7 @@ export default function FindingDetailPage() {
 			<ErrorDialog
 				isOpen
 				onClose={() => router.push('/ifc-findings')}
-				message={tryTranslate(t, getErrorMessage(error, 'ifcFindings.error.viewFailed'))}
+				message={tryTranslateReason(t, getErrorMessage(error, 'ifcFindings.error.viewFailed'))}
 			/>
 		);
 	}
@@ -118,7 +122,9 @@ export default function FindingDetailPage() {
 				saving={saving}
 				onSave={handleSave}
 				onDelete={() => setPendingDelete(true)}
-				onValidationError={setActionError}
+				onValidationError={(key) =>
+					setActionError({ title: tryTranslateReason(t, key), reasons: [] })
+				}
 			/>
 
 			<Card title={L.sectionActions[lang]}>
@@ -138,7 +144,8 @@ export default function FindingDetailPage() {
 					isOpen
 					type="error"
 					onClose={() => setActionError(null)}
-					message={tryTranslate(t, actionError)}
+					message={actionError.title}
+					reasons={actionError.reasons}
 				/>
 			)}
 			{successMsg && (

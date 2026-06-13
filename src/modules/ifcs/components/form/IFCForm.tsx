@@ -4,8 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
 import { Button, Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
-import { getErrorMessage } from '@/shared/lib/apiError';
-import { tryTranslate } from '@/shared/utils/tryTranslate';
+import {
+	resolveApiErrorContent,
+	tryTranslateReason,
+	type ApiErrorContent,
+} from '@/shared/utils/tryTranslate';
 import { useIFCFormState } from '../../hooks/useIFCFormState';
 import { validateIFCForm } from '../../schemas';
 import { createIFC, patchIFC } from '../../services/ifcsService';
@@ -47,14 +50,14 @@ export function IFCForm(props: Props) {
 
 	const [submitting, setSubmitting] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<ApiErrorContent | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 	const [pendingNavId, setPendingNavId] = useState<number | null>(null);
 
 	async function onSave(submit: boolean) {
-		const err = validateIFCForm(state, props.ifcFields, props.languages);
-		if (err) {
-			setError(err);
+		const validationError = validateIFCForm(state, props.ifcFields, props.languages);
+		if (validationError) {
+			setError({ title: tryTranslateReason(t, validationError), reasons: [] });
 			return;
 		}
 		setSubmitting(true);
@@ -114,7 +117,7 @@ export function IFCForm(props: Props) {
 				router.push(`/ifcs/${result.id}`);
 			}
 		} catch (e) {
-			setError(getErrorMessage(e, 'ifcs.error.saveFailed'));
+			setError(resolveApiErrorContent(t, e, 'ifcs.error.saveFailed'));
 		} finally {
 			setSubmitting(false);
 		}
@@ -211,7 +214,8 @@ export function IFCForm(props: Props) {
 					isOpen
 					type="error"
 					onClose={() => setError(null)}
-					message={tryTranslate(t, error)}
+					message={error.title}
+					reasons={error.reasons}
 				/>
 			)}
 			{successMsg && (

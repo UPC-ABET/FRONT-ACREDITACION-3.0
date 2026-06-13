@@ -33,7 +33,7 @@ function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | nul
 
 export function ProjectsListPage() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
+	const { academicPeriodId: selectedPeriodId } = useABET();
 
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
@@ -81,7 +81,6 @@ export function ProjectsListPage() {
 			'projects',
 			'filtered',
 			{
-				schoolId: schoolId,
 				academicPeriodId: selectedPeriodId,
 				programId: selectedProgram?.value,
 				courseId: selectedCourse?.value,
@@ -90,13 +89,12 @@ export function ProjectsListPage() {
 		queryFn: () =>
 			projectsService
 				.getByFilters({
-					schoolId: schoolId!,
 					...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
 					...(selectedProgram ? { programId: selectedProgram.value } : {}),
 					...(selectedCourse ? { courseId: selectedCourse.value } : {}),
 				})
 				.then((r) => r.data),
-		enabled: !!schoolId && !!selectedPeriodId,
+		enabled: !!selectedPeriodId,
 	});
 
 	const programOptions = useMemo(
