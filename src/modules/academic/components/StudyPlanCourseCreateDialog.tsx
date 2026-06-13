@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import { ArrowLeftIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
 	Dialog,
@@ -143,8 +144,9 @@ export function StudyPlanCourseCreateDialog({
 							/>
 							<button
 								type="button"
-								className="text-sm font-medium text-red-600 hover:text-red-700"
+								className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-red-300 bg-red-50/60 px-3 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:border-red-400 hover:bg-red-50 focus:ring-2 focus:ring-red-100 focus:outline-none"
 								onClick={() => setMode('new')}>
+								<PlusCircleIcon className="h-5 w-5" />
 								{t('loads.studyPlanCoursesView.create.addNewCourse')}
 							</button>
 						</div>
@@ -156,8 +158,9 @@ export function StudyPlanCourseCreateDialog({
 								</p>
 								<button
 									type="button"
-									className="text-sm font-medium text-red-600 hover:text-red-700"
+									className="inline-flex items-center gap-1 text-sm font-semibold text-red-600 underline underline-offset-2 hover:text-red-700"
 									onClick={() => setMode('existing')}>
+									<ArrowLeftIcon className="h-3.5 w-3.5" />
 									{t('loads.studyPlanCoursesView.create.useExistingCourse')}
 								</button>
 							</div>

@@ -2688,7 +2688,6 @@
 				"subtitle": "Update the section and its assignments.",
 				"save": "Save",
 				"error": "Could not save the section.",
-				"current": "Current",
 				"coursePlaceholder": "Search course...",
 				"professorPlaceholder": "Search professor...",
 				"campusPlaceholder": "Select a campus",
@@ -2751,7 +2750,6 @@
 				"subtitle": "Update the student's details and enrollment.",
 				"save": "Save",
 				"error": "Could not save the student.",
-				"current": "Current",
 				"programPlaceholder": "Select a program",
 				"campusPlaceholder": "Select a campus",
 				"modalityPlaceholder": "Select a modality"
@@ -2812,7 +2810,6 @@
 				"subtitle": "Change the section or the student of this enrollment.",
 				"save": "Save",
 				"error": "Could not save the enrollment.",
-				"current": "Current",
 				"section": "Section",
 				"sectionPlaceholder": "Search section...",
 				"student": "Student",
@@ -2873,7 +2870,6 @@
 				"subtitle": "Update the study plan code and program.",
 				"save": "Save",
 				"error": "Could not save the study plan.",
-				"current": "Current",
 				"programPlaceholder": "Select a program"
 			},
 			"delete": {

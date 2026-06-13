@@ -2688,7 +2688,6 @@
 				"subtitle": "Actualiza la sección y sus asignaciones.",
 				"save": "Guardar",
 				"error": "No se pudo guardar la sección.",
-				"current": "Actual",
 				"coursePlaceholder": "Buscar curso...",
 				"professorPlaceholder": "Buscar docente...",
 				"campusPlaceholder": "Selecciona un campus",
@@ -2751,7 +2750,6 @@
 				"subtitle": "Actualiza los datos del estudiante y su matrícula.",
 				"save": "Guardar",
 				"error": "No se pudo guardar el estudiante.",
-				"current": "Actual",
 				"programPlaceholder": "Selecciona una carrera",
 				"campusPlaceholder": "Selecciona un campus",
 				"modalityPlaceholder": "Selecciona una modalidad"
@@ -2812,7 +2810,6 @@
 				"subtitle": "Cambia la sección o el estudiante de esta matrícula.",
 				"save": "Guardar",
 				"error": "No se pudo guardar la matrícula.",
-				"current": "Actual",
 				"section": "Sección",
 				"sectionPlaceholder": "Buscar sección...",
 				"student": "Estudiante",
@@ -2873,7 +2870,6 @@
 				"subtitle": "Actualiza el código y la carrera de la malla.",
 				"save": "Guardar",
 				"error": "No se pudo guardar la malla.",
-				"current": "Actual",
 				"programPlaceholder": "Selecciona una carrera"
 			},
 			"delete": {

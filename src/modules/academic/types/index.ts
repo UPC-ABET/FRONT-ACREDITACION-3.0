@@ -247,6 +247,10 @@ export type CourseLookupItem = {
 
 export type CourseSectionMaintenanceItem = {
 	id: number;
+	courseId: number;
+	professorId: number;
+	campusId: number;
+	sectionModalityTypeId: number;
 	courseCode: string;
 	sectionCode: string;
 	professorCode: string;
@@ -288,6 +292,9 @@ export type PaginatedEnvelope<T> = {
 
 export type EnrolledStudentMaintenanceItem = {
 	id: number;
+	programId: number;
+	campusId: number;
+	modalityTypeId: number;
 	studentCode: string;
 	firstName: string;
 	lastName: string;
@@ -318,6 +325,8 @@ export type EnrolledStudentMaintenanceCreate = {
 
 export type StudentSectionEnrollmentMaintenanceItem = {
 	id: number;
+	courseSectionId: number;
+	enrolledStudentId: number;
 	courseName: { es: string; en: string };
 	courseCode: string;
 	sectionCode: string;
@@ -341,6 +350,7 @@ export type StudentSectionEnrollmentMaintenanceCreate = {
 
 export type StudyPlanMaintenanceItem = {
 	id: number;
+	programId: number;
 	code: string;
 	programName: { es: string; en: string };
 };

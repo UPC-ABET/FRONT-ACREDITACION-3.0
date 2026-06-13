@@ -33,14 +33,6 @@ type Props = {
 	onSave: (body: StudyPlanMaintenanceUpdate) => void;
 };
 
-function CurrentValue({ label, value }: { label: string; value: string }) {
-	return (
-		<p className="mt-1 text-xs text-zinc-500">
-			{label}: <span className="font-medium text-zinc-700">{value || '—'}</span>
-		</p>
-	);
-}
-
 export function StudyPlanEditDialog({
 	item,
 	programs,
@@ -51,7 +43,7 @@ export function StudyPlanEditDialog({
 }: Props) {
 	const { t, locale } = useI18n();
 	const [code, setCode] = useState(item.code);
-	const [programId, setProgramId] = useState<number | null>(null);
+	const [programId, setProgramId] = useState<number | null>(item.programId ?? null);
 
 	const programOptions = useMemo(
 		() =>
@@ -104,10 +96,6 @@ export function StudyPlanEditDialog({
 							onChange={(_name, value) =>
 								setProgramId(value && !Array.isArray(value) ? Number(value.value) : null)
 							}
-						/>
-						<CurrentValue
-							label={t('loads.studyPlansMaintenance.edit.current')}
-							value={localized(item.programName, locale)}
 						/>
 					</div>
 					{errorMessage && <p className="text-sm font-medium text-red-600">{errorMessage}</p>}

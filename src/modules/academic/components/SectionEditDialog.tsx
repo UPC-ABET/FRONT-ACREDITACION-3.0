@@ -12,6 +12,7 @@ import {
 	Input,
 	LazySelect,
 	Select,
+	type LazySelectValue,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { coursesService, professorsService } from '@/modules/academic';
@@ -41,14 +42,6 @@ type Props = {
 	onSave: (body: CourseSectionMaintenanceUpdate) => void;
 };
 
-function CurrentValue({ label, value }: { label: string; value: string }) {
-	return (
-		<p className="mt-1 text-xs text-zinc-500">
-			{label}: <span className="font-medium text-zinc-700">{value || '—'}</span>
-		</p>
-	);
-}
-
 export function SectionEditDialog({
 	item,
 	campuses,
@@ -61,10 +54,16 @@ export function SectionEditDialog({
 	const { t, locale } = useI18n();
 
 	const [sectionCode, setSectionCode] = useState(item.sectionCode);
-	const [course, setCourse] = useState<CourseLookupItem | null>(null);
-	const [professor, setProfessor] = useState<ProfessorMaintenanceItem | null>(null);
-	const [campusId, setCampusId] = useState<number | null>(null);
-	const [modalityTypeId, setModalityTypeId] = useState<number | null>(null);
+	const [course, setCourse] = useState<LazySelectValue | null>(
+		item.courseId != null ? { id: item.courseId, label: item.courseCode } : null,
+	);
+	const [professor, setProfessor] = useState<LazySelectValue | null>(
+		item.professorId != null ? { id: item.professorId, label: item.professorCode } : null,
+	);
+	const [campusId, setCampusId] = useState<number | null>(item.campusId ?? null);
+	const [modalityTypeId, setModalityTypeId] = useState<number | null>(
+		item.sectionModalityTypeId ?? null,
+	);
 
 	const loadCourses = useCallback(
 		({ search, page }: { search: string; page: number }) =>
@@ -105,15 +104,23 @@ export function SectionEditDialog({
 	const selectedModality =
 		modalityOptions.find((option) => option.value === modalityTypeId) ?? null;
 
+	const canSave =
+		sectionCode.trim() !== '' &&
+		course != null &&
+		professor != null &&
+		campusId != null &&
+		modalityTypeId != null &&
+		!saving;
+
 	const handleSubmit = () => {
-		const body: CourseSectionMaintenanceUpdate = {};
-		const trimmedSection = sectionCode.trim();
-		if (trimmedSection && trimmedSection !== item.sectionCode) body.sectionCode = trimmedSection;
-		if (course) body.courseId = course.id;
-		if (professor) body.professorId = professor.id;
-		if (campusId != null) body.campusId = campusId;
-		if (modalityTypeId != null) body.sectionModalityTypeId = modalityTypeId;
-		onSave(body);
+		if (!course || !professor || campusId == null || modalityTypeId == null) return;
+		onSave({
+			sectionCode: sectionCode.trim(),
+			courseId: course.id,
+			professorId: professor.id,
+			campusId,
+			sectionModalityTypeId: modalityTypeId,
+		});
 	};
 
 	return (
@@ -136,90 +143,71 @@ export function SectionEditDialog({
 						required
 					/>
 
-					<div>
-						<LazySelect<CourseLookupItem>
-							label={t('loads.sectionsMaintenance.col.courseCode')}
-							placeholder={t('loads.sectionsMaintenance.edit.coursePlaceholder')}
-							value={
-								course
-									? { id: course.id, label: `${course.code} — ${localized(course.name, locale)}` }
-									: null
-							}
-							onChange={setCourse}
-							loadPage={loadCourses}
-							getId={(courseItem) => courseItem.id}
-							getLabel={(courseItem) =>
-								`${courseItem.code} — ${localized(courseItem.name, locale)}`
-							}
-						/>
-						<CurrentValue
-							label={t('loads.sectionsMaintenance.edit.current')}
-							value={item.courseCode}
-						/>
-					</div>
-
-					<div>
-						<LazySelect<ProfessorMaintenanceItem>
-							label={t('loads.sectionsMaintenance.col.professorCode')}
-							placeholder={t('loads.sectionsMaintenance.edit.professorPlaceholder')}
-							value={
-								professor
+					<LazySelect<CourseLookupItem>
+						label={t('loads.sectionsMaintenance.col.courseCode')}
+						placeholder={t('loads.sectionsMaintenance.edit.coursePlaceholder')}
+						value={course}
+						onChange={(courseItem) =>
+							setCourse(
+								courseItem
 									? {
-											id: professor.id,
-											label: `${professor.code} — ${professor.firstName} ${professor.lastName}`,
+											id: courseItem.id,
+											label: `${courseItem.code} — ${localized(courseItem.name, locale)}`,
 										}
-									: null
-							}
-							onChange={setProfessor}
-							loadPage={loadProfessors}
-							getId={(professorItem) => professorItem.id}
-							getLabel={(professorItem) =>
-								`${professorItem.code} — ${professorItem.firstName} ${professorItem.lastName}`
-							}
-						/>
-						<CurrentValue
-							label={t('loads.sectionsMaintenance.edit.current')}
-							value={item.professorCode}
-						/>
-					</div>
+									: null,
+							)
+						}
+						loadPage={loadCourses}
+						getId={(courseItem) => courseItem.id}
+						getLabel={(courseItem) => `${courseItem.code} — ${localized(courseItem.name, locale)}`}
+					/>
+
+					<LazySelect<ProfessorMaintenanceItem>
+						label={t('loads.sectionsMaintenance.col.professorCode')}
+						placeholder={t('loads.sectionsMaintenance.edit.professorPlaceholder')}
+						value={professor}
+						onChange={(professorItem) =>
+							setProfessor(
+								professorItem
+									? {
+											id: professorItem.id,
+											label: `${professorItem.code} — ${professorItem.firstName} ${professorItem.lastName}`,
+										}
+									: null,
+							)
+						}
+						loadPage={loadProfessors}
+						getId={(professorItem) => professorItem.id}
+						getLabel={(professorItem) =>
+							`${professorItem.code} — ${professorItem.firstName} ${professorItem.lastName}`
+						}
+					/>
 
 					<div className="grid gap-4 sm:grid-cols-2">
-						<div>
-							<Select
-								name="campus"
-								label={t('loads.sectionsMaintenance.col.campusCode')}
-								placeholder={t('loads.sectionsMaintenance.edit.campusPlaceholder')}
-								isSearchable
-								isClearable
-								options={campusOptions}
-								value={selectedCampus}
-								onChange={(_name, value) =>
-									setCampusId(value && !Array.isArray(value) ? Number(value.value) : null)
-								}
-							/>
-							<CurrentValue
-								label={t('loads.sectionsMaintenance.edit.current')}
-								value={item.campusCode}
-							/>
-						</div>
-						<div>
-							<Select
-								name="modality"
-								label={t('loads.sectionsMaintenance.col.modality')}
-								placeholder={t('loads.sectionsMaintenance.edit.modalityPlaceholder')}
-								isSearchable
-								isClearable
-								options={modalityOptions}
-								value={selectedModality}
-								onChange={(_name, value) =>
-									setModalityTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
-								}
-							/>
-							<CurrentValue
-								label={t('loads.sectionsMaintenance.edit.current')}
-								value={localized(item.modalityTypeName, locale)}
-							/>
-						</div>
+						<Select
+							name="campus"
+							label={t('loads.sectionsMaintenance.col.campusCode')}
+							placeholder={t('loads.sectionsMaintenance.edit.campusPlaceholder')}
+							isSearchable
+							isClearable
+							options={campusOptions}
+							value={selectedCampus}
+							onChange={(_name, value) =>
+								setCampusId(value && !Array.isArray(value) ? Number(value.value) : null)
+							}
+						/>
+						<Select
+							name="modality"
+							label={t('loads.sectionsMaintenance.col.modality')}
+							placeholder={t('loads.sectionsMaintenance.edit.modalityPlaceholder')}
+							isSearchable
+							isClearable
+							options={modalityOptions}
+							value={selectedModality}
+							onChange={(_name, value) =>
+								setModalityTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
+							}
+						/>
 					</div>
 
 					{errorMessage && <p className="text-sm font-medium text-red-600">{errorMessage}</p>}
@@ -229,7 +217,7 @@ export function SectionEditDialog({
 					<Button variant="secondary" onClick={onClose} disabled={saving}>
 						{t('dialog.actions.cancel')}
 					</Button>
-					<Button variant="primary" onClick={handleSubmit} disabled={saving}>
+					<Button variant="primary" onClick={handleSubmit} disabled={!canSave}>
 						{saving ? t('loading.default') : t('loads.sectionsMaintenance.edit.save')}
 					</Button>
 				</DialogFooter>
