@@ -4,7 +4,6 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { OutcomeWithCriteria } from '../../types';
-import { TRUNC } from '../../constants';
 
 interface OutcomeCardProps {
 	outcome: OutcomeWithCriteria;
@@ -25,7 +24,6 @@ export function OutcomeCard({
 }: OutcomeCardProps) {
 	const { locale, t } = useI18n();
 	const description = outcome.outcomeDescription[locale];
-	const short = description.length > TRUNC ? `${description.slice(0, TRUNC)}…` : description;
 	const hasContent = (outcome.questions[0]?.criteria.length ?? 0) > 0;
 
 	return (
@@ -38,10 +36,7 @@ export function OutcomeCard({
 					</div>
 					<div className="m-2 h-10 w-px bg-zinc-100" />
 					<div className="min-w-0 flex-1">
-						<span className="text-sm font-semibold text-zinc-900" title={description}>
-							{short}
-						</span>
-						<p className="text-xs text-zinc-500">{description}</p>
+						<p className="text-sm text-zinc-600">{description}</p>
 					</div>
 					{canEdit && onAdd ? (
 						<Button

@@ -1356,7 +1356,7 @@
 					"title": "Criterios por outcome",
 					"subtitle": "Define los niveles de evaluación para cada outcome.",
 					"criteriaLabel": "Criterio",
-					"criteriaPlaceholder": "Descripción del nivel de desempeño",
+					"criteriaPlaceholder": "Descripción del criterio",
 					"addCriteria": "Agregar nivel",
 					"deleteCriteria": "Eliminar",
 					"commissionTooltipIncomplete": "Completa todos los criterios para marcar la comisión",

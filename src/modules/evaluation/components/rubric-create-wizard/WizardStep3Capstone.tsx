@@ -25,8 +25,8 @@ interface LocalCriteria {
 
 interface LocalOutcome {
 	outcomeId: number;
-	outcomeCode: string;
 	outcomeName: { en: string; es: string };
+	outcomeDescription: { en: string; es: string };
 	commissionId: string;
 	criteria: LocalCriteria[];
 	_commissionMeta?: { code: string; name: { en: string; es: string } };
@@ -71,8 +71,8 @@ export function WizardStep3Capstone({
 			);
 			return {
 				outcomeId: o.id,
-				outcomeCode: o.outcomeCode,
 				outcomeName: o.outcomeName,
+				outcomeDescription: o.outcomeDescription,
 				commissionId,
 				_commissionMeta: commission ? { code: commission.code, name: commission.name } : undefined,
 				criteria: [newLocalCriteria()],
@@ -112,8 +112,8 @@ export function WizardStep3Capstone({
 			),
 			outcomes: cos.map<OutcomeWithCriteria>((o) => ({
 				id: String(o.outcomeId),
-				outcomeCode: o.outcomeCode,
-				outcomeDescription: o.outcomeName,
+				outcomeCode: o.outcomeName[locale as 'es' | 'en'] ?? o.outcomeName.es,
+				outcomeDescription: o.outcomeDescription,
 				outcomeType: 'verificacion',
 				questions: [
 					{

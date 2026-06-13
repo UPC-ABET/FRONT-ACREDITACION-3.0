@@ -1356,7 +1356,7 @@
 					"title": "Criteria by outcome",
 					"subtitle": "Define performance levels for each course outcome.",
 					"criteriaLabel": "Criterion",
-					"criteriaPlaceholder": "Performance level description",
+					"criteriaPlaceholder": "Criterion description",
 					"addCriteria": "Add level",
 					"deleteCriteria": "Delete",
 					"commissionTooltipIncomplete": "Complete all criteria to mark the commission",
