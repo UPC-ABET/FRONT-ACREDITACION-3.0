@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { CheckIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
 	Dialog,
@@ -10,12 +11,12 @@ import {
 	DialogFooter,
 	DialogClose,
 	Button,
+	Select,
 } from '@/shared/components/ui';
 import { LoadingState } from '@/shared/components';
-import { useI18n } from '@/providers';
-import { getSchoolCookie } from '@/shared/lib/authCookies';
+import { useI18n, useABET } from '@/providers';
+import { programsService } from '@/modules/academic/services';
 import { useStudyPlanCourses, useEnableEvaluationCourse } from '@/modules/academic/hooks';
-import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { StudyPlanCourseResponse } from '@/modules/academic';
 
 interface AddEvaluationCourseModalProps {
@@ -24,37 +25,50 @@ interface AddEvaluationCourseModalProps {
 	onSuccess?: () => void;
 }
 
+type AnyOption = { label: string; value: string | number };
+
 export function AddEvaluationCourseModal({
 	open,
 	onOpenChange,
 	onSuccess,
 }: AddEvaluationCourseModalProps) {
 	const { t, locale } = useI18n();
-	const schoolId = getSchoolCookie()?.id as number | undefined;
+	const { academicPeriodId, schoolId } = useABET();
 
-	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
+	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
+	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
 	const [pendingIds, setPendingIds] = useState<Set<number>>(new Set());
 	const [addError, setAddError] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (!open) {
-			setSelectedPeriodId(null);
+			setSelectedProgramId(null);
+			setSelectedProgramOpt(null);
 			setPendingIds(new Set());
 			setAddError(null);
 		}
 	}, [open]);
 
+	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
+		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId, isActive: true }],
+		queryFn: () =>
+			programsService
+				.getByFilters({ schoolId: schoolId!, academicPeriodId: academicPeriodId!, isActive: true })
+				.then((r) => r.data),
+		enabled: !!schoolId && !!academicPeriodId && open,
+	});
+
 	const spcFilters = useMemo(
 		() => ({
-			academicPeriodId: selectedPeriodId ?? 0,
-			schoolId: schoolId,
+			academicPeriodId: academicPeriodId ?? 0,
+			programId: selectedProgramId ?? undefined,
 			isActive: true,
 		}),
-		[selectedPeriodId, schoolId],
+		[academicPeriodId, selectedProgramId],
 	);
 
 	const { data: spcList = [], isLoading: loadingCourses } = useStudyPlanCourses(spcFilters, {
-		enabled: !!selectedPeriodId && !!schoolId,
+		enabled: !!academicPeriodId && !!selectedProgramId,
 	});
 
 	const markedIds = useMemo(
@@ -92,6 +106,11 @@ export function AddEvaluationCourseModal({
 			? spc.course.name
 			: (spc.course?.name?.[locale] ?? String(spc.courseId));
 
+	const programOptions: AnyOption[] = programs.map((p) => ({
+		label: p.name[locale as 'es' | 'en'] ?? p.name.es,
+		value: p.id,
+	}));
+
 	const canConfirm = pendingIds.size > 0 && !enableEvaluation.isPending;
 
 	return (
@@ -102,15 +121,28 @@ export function AddEvaluationCourseModal({
 				</DialogHeader>
 
 				<div className="space-y-4">
-					<AcademicPeriodSelect
-						value={selectedPeriodId}
-						onChange={(id) => {
-							setSelectedPeriodId(id);
+					<Select
+						label={t('evaluationCourses.modal.programLabel')}
+						placeholder={
+							loadingPrograms
+								? t('evaluationCourses.modal.programLoading')
+								: programs.length === 0
+									? t('evaluationCourses.modal.programNoOptions')
+									: t('evaluationCourses.modal.programPlaceholder')
+						}
+						options={programOptions}
+						value={selectedProgramOpt}
+						isDisabled={loadingPrograms || programs.length === 0}
+						isSearchable
+						onChange={(_, v) => {
+							const opt = Array.isArray(v) ? (v[0] ?? null) : v;
+							setSelectedProgramOpt(opt as AnyOption | null);
+							setSelectedProgramId(opt ? Number(opt.value) : null);
 							setPendingIds(new Set());
 						}}
 					/>
 
-					{selectedPeriodId !== null && (
+					{selectedProgramId !== null && (
 						<div className="max-h-72 overflow-y-auto rounded-lg border border-zinc-200 bg-white">
 							{loadingCourses ? (
 								<LoadingState

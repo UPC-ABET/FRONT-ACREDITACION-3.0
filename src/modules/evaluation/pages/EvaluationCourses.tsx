@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
+	Select,
 	Table,
 	TableBody,
 	TableCell,
@@ -26,17 +28,36 @@ import {
 	useStudyPlanCourses,
 	useEnableEvaluationCourse,
 } from '@/modules/academic/hooks';
+import { programsService } from '@/modules/academic/services';
 import { AddEvaluationCourseModal } from '../components/evaluation-courses/AddEvaluationCourseModal';
 import { StudyPlanCourseResponse } from '@/modules/academic';
+
+type AnyOption = { label: string; value: string | number };
 
 export function EvaluationCoursesPage() {
 	const { t, locale } = useI18n();
 	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
 	const [modalOpen, setModalOpen] = useState(false);
 	const [confirmTarget, setConfirmTarget] = useState<StudyPlanCourseResponse | null>(null);
+	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
+	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
 
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 	const selectedPeriodCode = periods.find((p) => p.id === selectedPeriodId)?.code ?? '';
+
+	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
+		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId: selectedPeriodId, isActive: true }],
+		queryFn: () =>
+			programsService
+				.getByFilters({ schoolId: schoolId!, academicPeriodId: selectedPeriodId!, isActive: true })
+				.then((r) => r.data),
+		enabled: !!schoolId && !!selectedPeriodId,
+	});
+
+	const programOptions: AnyOption[] = useMemo(
+		() => programs.map((p) => ({ label: p.name[locale as 'es' | 'en'] ?? p.name.es, value: p.id })),
+		[programs, locale],
+	);
 
 	const {
 		data: courses = [],
@@ -47,12 +68,12 @@ export function EvaluationCoursesPage() {
 	} = useStudyPlanCourses(
 		{
 			academicPeriodId: selectedPeriodId ?? 0,
-			schoolId: schoolId ?? undefined,
+			programId: selectedProgramId ?? undefined,
 			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
 			extra: { is_evaluable: true },
 			isActive: true,
 		},
-		{ enabled: !!selectedPeriodId && !!schoolId },
+		{ enabled: !!selectedPeriodId && !!selectedProgramId },
 	);
 
 	const enableEvaluation = useEnableEvaluationCourse();
@@ -82,7 +103,31 @@ export function EvaluationCoursesPage() {
 				</Button>
 			</div>
 
-			{loadingCourses ? (
+			<div className="max-w-xs">
+				<Select
+					label={t('evaluationCourses.list.programLabel')}
+					placeholder={
+						loadingPrograms
+							? t('evaluationCourses.list.programLoading')
+							: programs.length === 0
+								? t('evaluationCourses.list.programNoOptions')
+								: t('evaluationCourses.list.programPlaceholder')
+					}
+					options={programOptions}
+					value={selectedProgramOpt}
+					isDisabled={loadingPrograms || programs.length === 0}
+					isSearchable
+					onChange={(_, v) => {
+						const opt = Array.isArray(v) ? (v[0] ?? null) : v;
+						setSelectedProgramOpt(opt as AnyOption | null);
+						setSelectedProgramId(opt ? Number(opt.value) : null);
+					}}
+				/>
+			</div>
+
+			{!selectedProgramId ? (
+				<TableEmptyState message={t('evaluationCourses.list.selectProgramFirst')} />
+			) : loadingCourses ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10">
 					<LoadingState label={t('evaluationCourses.list.loading')} />
 				</div>
