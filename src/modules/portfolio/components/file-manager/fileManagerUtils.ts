@@ -37,6 +37,60 @@ export function getFileIcon(name: string): React.ComponentType<React.SVGProps<SV
 	return DocumentIcon;
 }
 
+export type TreeNode = {
+	name: string;
+	/** Full S3 key (folders end with `/`). */
+	key: string;
+	isFolder: boolean;
+	children: TreeNode[];
+};
+
+/** Builds a nested folder/file tree from a flat list of S3 keys. */
+export function buildTree(keys: string[]): TreeNode[] {
+	const root: TreeNode[] = [];
+
+	for (const key of keys) {
+		const parts = key.split('/').filter(Boolean);
+		const endsWithSlash = key.endsWith('/');
+		let level = root;
+		let acc = '';
+
+		for (let i = 0; i < parts.length; i++) {
+			const name = parts[i];
+			const isFile = !endsWithSlash && i === parts.length - 1;
+			acc += isFile ? name : `${name}/`;
+
+			let node = level.find((n) => n.name === name && n.isFolder !== isFile);
+			if (!node) {
+				node = { name, key: acc, isFolder: !isFile, children: [] };
+				level.push(node);
+			}
+			if (isFile) break;
+			level = node.children;
+		}
+	}
+
+	const sortNodes = (nodes: TreeNode[]) => {
+		nodes.sort((a, b) => {
+			if (a.isFolder !== b.isFolder) return a.isFolder ? -1 : 1;
+			return a.name.localeCompare(b.name);
+		});
+		nodes.forEach((n) => sortNodes(n.children));
+	};
+	sortNodes(root);
+	return root;
+}
+
+/** Renders a tree as an indented monospace string (for printing). */
+export function treeToText(nodes: TreeNode[], depth = 0): string {
+	let out = '';
+	for (const node of nodes) {
+		out += `${'    '.repeat(depth)}${node.isFolder ? '📁' : '📄'} ${node.name}\n`;
+		if (node.children.length > 0) out += treeToText(node.children, depth + 1);
+	}
+	return out;
+}
+
 /** Builds breadcrumb segments from an S3 prefix (`EPE/2023/` → root, EPE, 2023). */
 export function buildBreadcrumbs(prefix: string, rootLabel: string): BreadcrumbSegment[] {
 	const segments: BreadcrumbSegment[] = [{ name: rootLabel, prefix: '' }];
