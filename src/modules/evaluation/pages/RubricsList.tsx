@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PencilSquareIcon, EyeIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
@@ -26,10 +26,8 @@ import {
 } from '@/shared/components/ui';
 import { LoadingState } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
-import { useI18n } from '@/providers';
-import { getSchoolCookie } from '@/shared/lib';
+import { useI18n, useABET } from '@/providers';
 import { programsService, coursesService } from '@/modules/academic/services';
-import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { useRubrics, useDeleteRubric } from '../hooks';
 import { mapRubricToRow } from '../utils/rubricsMappers';
 import type { RubricListRow } from '../types';
@@ -44,16 +42,10 @@ function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | nul
 
 export function RubricsListPage() {
 	const { locale, t } = useI18n();
+	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
 
-	const [schoolId, setSchoolId] = useState<number | null>(null);
-	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
-
-	useEffect(() => {
-		const school = getSchoolCookie();
-		setSchoolId(school?.id as number | null);
-	}, []);
 
 	const { data: programs = [] } = useQuery({
 		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId: selectedPeriodId }],
@@ -111,7 +103,6 @@ export function RubricsListPage() {
 	const hasFilters = selectedProgram != null || selectedCourse != null;
 
 	const handleClearFilters = () => {
-		setSelectedPeriodId(null);
 		setSelectedProgram(null);
 		setSelectedCourse(null);
 	};
@@ -135,17 +126,7 @@ export function RubricsListPage() {
 			</div>
 
 			<div className="space-y-4">
-				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-					<AcademicPeriodSelect
-						value={selectedPeriodId}
-						onChange={(id) => {
-							setSelectedPeriodId(id);
-							setSelectedProgram(null);
-							setSelectedCourse(null);
-						}}
-						isClearable
-						onClear={handleClearFilters}
-					/>
+				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<Select
 						label={t('rubrics.list.filters.program')}
 						options={programOptions}
@@ -185,9 +166,7 @@ export function RubricsListPage() {
 				)}
 			</div>
 
-			{!selectedPeriodId ? (
-				<TableEmptyState message={t('rubrics.list.selectPeriod')} />
-			) : isLoading ? (
+			{isLoading ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
 					<LoadingState label={t('rubrics.list.loading')} />
 				</div>

@@ -20,24 +20,20 @@ import {
 	DialogClose,
 } from '@/shared/components/ui';
 import { LoadingState } from '@/shared/components';
-import { useI18n } from '@/providers';
-import { getSchoolCookie } from '@/shared/lib/authCookies';
+import { useI18n, useABET } from '@/providers';
 import {
 	useAcademicPeriods,
 	useStudyPlanCourses,
 	useEnableEvaluationCourse,
 } from '@/modules/academic/hooks';
-import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { AddEvaluationCourseModal } from '../components/evaluation-courses/AddEvaluationCourseModal';
 import { StudyPlanCourseResponse } from '@/modules/academic';
 
 export function EvaluationCoursesPage() {
 	const { t, locale } = useI18n();
-	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
+	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
 	const [modalOpen, setModalOpen] = useState(false);
 	const [confirmTarget, setConfirmTarget] = useState<StudyPlanCourseResponse | null>(null);
-
-	const schoolId = getSchoolCookie()?.id as number | undefined;
 
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 	const selectedPeriodCode = periods.find((p) => p.id === selectedPeriodId)?.code ?? '';
@@ -51,7 +47,7 @@ export function EvaluationCoursesPage() {
 	} = useStudyPlanCourses(
 		{
 			academicPeriodId: selectedPeriodId ?? 0,
-			schoolId: schoolId,
+			schoolId: schoolId ?? undefined,
 			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
 			extra: { is_evaluable: true },
 			isActive: true,
@@ -86,13 +82,7 @@ export function EvaluationCoursesPage() {
 				</Button>
 			</div>
 
-			<div className="max-w-xs">
-				<AcademicPeriodSelect value={selectedPeriodId} onChange={setSelectedPeriodId} />
-			</div>
-
-			{!selectedPeriodId ? (
-				<TableEmptyState message={t('evaluationCourses.list.selectPeriodFirst')} />
-			) : loadingCourses ? (
+			{loadingCourses ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10">
 					<LoadingState label={t('evaluationCourses.list.loading')} />
 				</div>

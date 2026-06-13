@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { PencilIcon, PlusIcon } from '@heroicons/react/24/outline';
@@ -18,10 +18,8 @@ import { LoadingState } from '@/shared/components';
 import { Select } from '@/shared/components/ui/Select';
 import { buttonVariants } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
-import { useI18n } from '@/providers';
-import { getSchoolCookie } from '@/shared/lib';
+import { useI18n, useABET } from '@/providers';
 import { programsService, coursesService } from '@/modules/academic/services';
-import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { projectsService } from '../services';
 import { TrashIcon } from 'lucide-react';
 
@@ -35,15 +33,10 @@ function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | nul
 
 export function ProjectsListPage() {
 	const { t, locale } = useI18n();
-	const [schoolId, setSchoolId] = useState<number | null>(null);
-	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
+	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
+
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
-
-	useEffect(() => {
-		const school = getSchoolCookie();
-		setSchoolId(school?.id as number | null);
-	}, []);
 
 	const { data: programs = [] } = useQuery({
 		queryKey: [
@@ -133,7 +126,6 @@ export function ProjectsListPage() {
 	};
 
 	const handleClearFilters = () => {
-		setSelectedPeriodId(null);
 		setSelectedProgram(null);
 		setSelectedCourse(null);
 	};
@@ -157,21 +149,7 @@ export function ProjectsListPage() {
 			</div>
 
 			<div className="space-y-4">
-				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-					<AcademicPeriodSelect
-						value={selectedPeriodId}
-						onChange={(id) => {
-							setSelectedPeriodId(id);
-							setSelectedProgram(null);
-							setSelectedCourse(null);
-						}}
-						isClearable
-						onClear={() => {
-							setSelectedPeriodId(null);
-							setSelectedProgram(null);
-							setSelectedCourse(null);
-						}}
-					/>
+				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					<Select
 						label={t('projects.list.filters.program')}
 						options={programOptions}
@@ -190,7 +168,7 @@ export function ProjectsListPage() {
 					/>
 				</div>
 
-				{(selectedPeriodId || selectedProgram || selectedCourse) && (
+				{(selectedProgram || selectedCourse) && (
 					<div className="flex justify-end">
 						<button
 							type="button"
@@ -206,9 +184,7 @@ export function ProjectsListPage() {
 				)}
 			</div>
 
-			{!selectedPeriodId ? (
-				<TableEmptyState message={t('projects.list.selectPeriod')} />
-			) : isLoading ? (
+			{isLoading ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
 					<LoadingState label={t('projects.list.loading')} />
 				</div>
