@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, Input, Select } from '@/shared/components';
+import { Button, Input, LoadingState, Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { useDocumentTypes, useRoles, useSaveUser, useUserRoles } from '../../hooks';
@@ -204,7 +204,7 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 						<span className="text-xs text-zinc-500">{t('admin.iam.users.form.rolesHint')}</span>
 					</div>
 					{rolesLoading || (isEditing && userRolesLoading) ? (
-						<p className="text-sm text-zinc-500">{t('loading.default')}</p>
+						<LoadingState />
 					) : (
 						<UserRolesField
 							roles={roles}

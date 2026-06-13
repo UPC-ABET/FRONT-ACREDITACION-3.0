@@ -109,6 +109,7 @@ export function PermissionsTab() {
 				title={t('admin.iam.permissions.title')}
 				searchPlaceholder={t('admin.iam.permissions.search')}
 				aria-label={t('admin.iam.permissions.title')}
+				isLoading={isLoading}
 				actions={[
 					{
 						label: t('admin.iam.permissions.create'),
@@ -118,7 +119,6 @@ export function PermissionsTab() {
 					},
 				]}
 			/>
-			{isLoading && <p className="text-sm text-zinc-500">{t('loading.default')}</p>}
 
 			<PermissionTypeFormDialog
 				open={isFormOpen}

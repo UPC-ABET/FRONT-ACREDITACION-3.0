@@ -127,6 +127,7 @@ export function ModulesTab() {
 				title={t('admin.iam.modules.title')}
 				searchPlaceholder={t('admin.iam.modules.search')}
 				aria-label={t('admin.iam.modules.title')}
+				isLoading={isLoading}
 				actions={[
 					{
 						label: t('admin.iam.modules.create'),
@@ -136,7 +137,6 @@ export function ModulesTab() {
 					},
 				]}
 			/>
-			{isLoading && <p className="text-sm text-zinc-500">{t('loading.default')}</p>}
 
 			<ModuleTypeFormDialog
 				open={isFormOpen}

@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { InformationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { Toggle } from '@/shared/components/ui';
+import { Spinner } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import { performanceLevelsService } from '@/modules/academic/services';
@@ -275,9 +276,10 @@ export function ProjectRubricCapstoneTable({
 
 										<td className="px-4 py-4">
 											{isLoadingLevels ? (
-												<p className="text-xs text-zinc-400">
-													{t('projects.evaluate.capstone.loadingLevels')}
-												</p>
+												<Spinner
+													size="sm"
+													aria-label={t('projects.evaluate.capstone.loadingLevels')}
+												/>
 											) : !performanceLevels.length ? (
 												<p className="text-xs text-zinc-400">
 													{t('projects.evaluate.capstone.noLevels')}

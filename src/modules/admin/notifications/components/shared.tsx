@@ -102,8 +102,3 @@ export function StatusBadge({ active }: { active: boolean }) {
 		</Badge>
 	);
 }
-
-export function InlineLoading() {
-	const { t } = useI18n();
-	return <p className="text-sm text-zinc-500">{t('loading.default')}</p>;
-}

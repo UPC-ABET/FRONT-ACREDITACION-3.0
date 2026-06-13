@@ -13,6 +13,7 @@ import {
 } from '@/shared/components/ui/Dialog';
 import { Input } from '@/shared/components/ui/Input';
 import { Button } from '@/shared/components/ui/Button';
+import { LoadingState } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { coursesService } from '@/modules/academic/services';
 import type { EnrolledStudentResponse } from '@/modules/academic';
@@ -148,9 +149,7 @@ export function AddStudentModal({
 
 					<div className="h-45 overflow-y-auto rounded-lg border border-zinc-200 bg-white">
 						{isLoading ? (
-							<p className="px-4 py-6 text-center text-sm text-zinc-400 animate-pulse">
-								{t('projects.edit.students.modal.loading')}
-							</p>
+							<LoadingState className="py-6" label={t('projects.edit.students.modal.loading')} />
 						) : students.length === 0 ? (
 							<p className="px-4 py-6 text-center text-sm text-zinc-400">
 								{t('projects.edit.students.modal.empty')}

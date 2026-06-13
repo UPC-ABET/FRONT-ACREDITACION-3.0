@@ -11,6 +11,7 @@ import {
 	DialogClose,
 	Button,
 } from '@/shared/components/ui';
+import { LoadingState } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib/authCookies';
 import { useStudyPlanCourses, useEnableEvaluationCourse } from '@/modules/academic/hooks';
@@ -112,9 +113,10 @@ export function AddEvaluationCourseModal({
 					{selectedPeriodId !== null && (
 						<div className="max-h-72 overflow-y-auto rounded-lg border border-zinc-200 bg-white">
 							{loadingCourses ? (
-								<p className="px-4 py-6 text-center text-sm text-zinc-400 animate-pulse">
-									{t('evaluationCourses.modal.loadingCourses')}
-								</p>
+								<LoadingState
+									className="py-6"
+									label={t('evaluationCourses.modal.loadingCourses')}
+								/>
 							) : spcList.length === 0 ? (
 								<p className="px-4 py-6 text-center text-sm text-zinc-400">
 									{t('evaluationCourses.modal.empty')}

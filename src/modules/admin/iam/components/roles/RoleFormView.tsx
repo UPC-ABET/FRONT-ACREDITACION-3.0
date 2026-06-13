@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, I18nTextField, Input } from '@/shared/components';
+import { Button, I18nTextField, Input, LoadingState } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useLanguages } from '@/shared/hooks';
 import { getErrorMessage } from '@/shared/lib/apiError';
@@ -128,7 +128,7 @@ export function RoleFormView({ role, onCancel, onSuccess, onError }: Props) {
 						</span>
 					</div>
 					{axesLoading ? (
-						<p className="text-sm text-zinc-500">{t('loading.default')}</p>
+						<LoadingState />
 					) : (
 						<RolePermissionMatrix
 							modules={modules}

@@ -16,7 +16,7 @@ import {
 } from '../hooks/useEmailTemplates';
 import type { CoreType, EmailTemplate } from '../types';
 import { EmailTemplateEditor } from './EmailTemplateEditor';
-import { InlineLoading, StatusBadge, TabHeader } from './shared';
+import { StatusBadge, TabHeader } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 type View = { mode: 'list' } | { mode: 'new' } | { mode: 'edit'; template: EmailTemplate };
@@ -152,6 +152,7 @@ export function UserTemplatesTab() {
 				data={userTemplates}
 				searchPlaceholder={t('admin.notify.template.search')}
 				aria-label={t('admin.notify.user.title')}
+				isLoading={isLoading}
 				actions={[
 					{
 						label: t('admin.notify.user.create'),
@@ -161,7 +162,6 @@ export function UserTemplatesTab() {
 					},
 				]}
 			/>
-			{isLoading && <InlineLoading />}
 
 			<ConfirmDialog
 				isOpen={pendingDelete != null}

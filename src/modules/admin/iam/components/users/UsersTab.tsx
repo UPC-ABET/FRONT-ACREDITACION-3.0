@@ -8,6 +8,7 @@ import {
 	Button,
 	ConfirmDialog,
 	DataTable,
+	LoadingState,
 	TableErrorState,
 	Toast,
 } from '@/shared/components';
@@ -150,7 +151,7 @@ export function UsersTab() {
 		return (
 			<div className="space-y-4">
 				{editLoading ? (
-					<p className="text-sm text-zinc-500">{t('loading.default')}</p>
+					<LoadingState />
 				) : editNotFound ? (
 					<div className="space-y-3">
 						<Button variant="ghost" size="sm" onClick={backToList} className="self-start">
@@ -200,6 +201,7 @@ export function UsersTab() {
 				title={t('admin.iam.users.title')}
 				searchPlaceholder={t('admin.iam.users.search')}
 				aria-label={t('admin.iam.users.title')}
+				isLoading={isLoading}
 				actions={[
 					{
 						label: t('admin.iam.users.create'),
@@ -209,7 +211,6 @@ export function UsersTab() {
 					},
 				]}
 			/>
-			{isLoading && <p className="text-sm text-zinc-500">{t('loading.default')}</p>}
 
 			<ConfirmDialog
 				isOpen={pendingDelete != null}

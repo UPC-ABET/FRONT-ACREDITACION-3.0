@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Input, TextArea, Button, Badge, Toast } from '@/shared/components';
+import { Input, TextArea, Button, Badge, Toast, LoadingState } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useGRAEmail } from '../../../hooks';
 
@@ -47,11 +47,7 @@ export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
 	}
 
 	if (loading) {
-		return (
-			<div className="flex items-center justify-center h-32">
-				<span className="text-sm text-zinc-400">{t('surveys.gra.emailTemplate.loading')}</span>
-			</div>
-		);
+		return <LoadingState className="h-32" label={t('surveys.gra.emailTemplate.loading')} />;
 	}
 
 	return (

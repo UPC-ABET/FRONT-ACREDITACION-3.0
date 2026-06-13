@@ -15,7 +15,7 @@ import {
 } from '../hooks/useSurveyMessages';
 import type { CoreType, SurveyMessage } from '../types';
 import { SurveyMessageEditor } from './SurveyMessageEditor';
-import { InlineLoading, StatusBadge, TabHeader } from './shared';
+import { StatusBadge, TabHeader } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 type View = { mode: 'list' } | { mode: 'new' } | { mode: 'edit'; message: SurveyMessage };
@@ -151,6 +151,7 @@ export function SurveyMessagesTab() {
 				columns={columns}
 				data={messages}
 				aria-label={t('admin.notify.survey.title')}
+				isLoading={isLoading}
 				actions={[
 					{
 						label: t('admin.notify.survey.create'),
@@ -160,7 +161,6 @@ export function SurveyMessagesTab() {
 					},
 				]}
 			/>
-			{isLoading && <InlineLoading />}
 
 			<ConfirmDialog
 				isOpen={pendingDelete != null}

@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from 'react';
 import { Trash2 } from 'lucide-react';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
 	Button,
-	Card,
+	DataTable,
 	Dialog,
 	DialogContent,
 	DialogFooter,
@@ -39,23 +40,28 @@ export default function ProgramCommissionsTable({
 
 	const programById = useMemo(() => {
 		const map = new Map<number, { code: string; label: string }>();
-		(programs ?? []).forEach((p) =>
-			map.set(p.id, { code: p.code, label: p.name[locale] ?? p.code }),
+		(programs ?? []).forEach((program) =>
+			map.set(program.id, { code: program.code, label: program.name[locale] ?? program.code }),
 		);
 		return map;
 	}, [programs, locale]);
 
 	const commissionById = useMemo(() => {
 		const map = new Map<number, { code: string; label: string }>();
-		(commissions ?? []).forEach((c) =>
-			map.set(c.id, { code: c.code, label: c.name[locale] ?? c.code }),
+		(commissions ?? []).forEach((commission) =>
+			map.set(commission.id, {
+				code: commission.code,
+				label: commission.name[locale] ?? commission.code,
+			}),
 		);
 		return map;
 	}, [commissions, locale]);
 
 	const commissionTypeNameById = useMemo(() => {
 		const map = new Map<number, string>();
-		(commissionTypes ?? []).forEach((tp) => map.set(tp.id, tp.name[locale] ?? tp.code));
+		(commissionTypes ?? []).forEach((commissionType) =>
+			map.set(commissionType.id, commissionType.name[locale] ?? commissionType.code),
+		);
 		return map;
 	}, [commissionTypes, locale]);
 
@@ -76,99 +82,85 @@ export default function ProgramCommissionsTable({
 		});
 	};
 
-	const list = rows ?? [];
+	const columns = useMemo<ColumnDef<ProgramCommissionAssociation>[]>(
+		() => [
+			{
+				id: 'program',
+				header: t('admin.configuration.programCommissions.table.col.program'),
+				cell: ({ row }) => {
+					const program = programById.get(row.original.programId);
+					return (
+						<div className="flex flex-col leading-tight">
+							<span className="font-medium text-zinc-900">
+								{program?.label ?? `#${row.original.programId}`}
+							</span>
+							<span className="font-mono text-xs text-zinc-400">
+								{program?.code ?? `#${row.original.programId}`}
+							</span>
+						</div>
+					);
+				},
+			},
+			{
+				id: 'commission',
+				header: t('admin.configuration.programCommissions.table.col.commission'),
+				cell: ({ row }) => {
+					const commission = commissionById.get(row.original.commissionId);
+					return (
+						<div className="flex flex-col leading-tight">
+							<span className="text-zinc-700">
+								{commission?.label ?? `#${row.original.commissionId}`}
+							</span>
+							<span className="font-mono text-xs text-zinc-400">
+								{commission?.code ?? `#${row.original.commissionId}`}
+							</span>
+						</div>
+					);
+				},
+			},
+			{
+				id: 'commissionType',
+				header: t('admin.configuration.programCommissions.table.col.commissionType'),
+				cell: ({ row }) => commissionTypeNameById.get(row.original.commissionTypeId) ?? '—',
+			},
+			{
+				id: 'actions',
+				header: () => (
+					<span className="sr-only">
+						{t('admin.configuration.programCommissions.table.col.actions')}
+					</span>
+				),
+				cell: ({ row }) => (
+					<Button
+						variant="secondary"
+						size="sm"
+						onClick={() => setConfirm(row.original)}
+						aria-label={t('admin.configuration.programCommissions.table.unassociate')}>
+						<Trash2 className="h-3.5 w-3.5" />
+						<span className="hidden sm:inline">
+							{t('admin.configuration.programCommissions.table.unassociate')}
+						</span>
+					</Button>
+				),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
+			},
+		],
+		[t, programById, commissionById, commissionTypeNameById],
+	);
 
 	return (
 		<>
-			<Card
+			<DataTable<ProgramCommissionAssociation, unknown>
+				columns={columns}
+				data={rows ?? []}
 				title={t('admin.configuration.programCommissions.table.title')}
-				description={t('admin.configuration.programCommissions.table.description')}>
-				{isLoading && (
-					<p className="py-8 text-center text-sm text-gray-500">
-						{t('admin.configuration.programCommissions.table.loading')}
-					</p>
-				)}
-				{error && <p className="py-4 text-sm text-red-600">{error.message}</p>}
-				{!isLoading && !error && list.length === 0 && (
-					<p className="py-12 text-center text-sm text-gray-400">
-						{t('admin.configuration.programCommissions.table.empty')}
-					</p>
-				)}
-
-				{list.length > 0 && (
-					<div className="-mx-4 overflow-x-auto sm:-mx-6">
-						<div className="inline-block min-w-full align-middle">
-							<table className="min-w-full divide-y divide-gray-200 text-sm">
-								<thead className="bg-gray-50/60">
-									<tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-										<th scope="col" className="px-4 py-3 sm:px-6">
-											{t('admin.configuration.programCommissions.table.col.program')}
-										</th>
-										<th scope="col" className="px-4 py-3">
-											{t('admin.configuration.programCommissions.table.col.commission')}
-										</th>
-										<th scope="col" className="px-4 py-3">
-											{t('admin.configuration.programCommissions.table.col.commissionType')}
-										</th>
-										<th scope="col" className="px-4 py-3 text-right sm:px-6">
-											<span className="sr-only">
-												{t('admin.configuration.programCommissions.table.col.actions')}
-											</span>
-										</th>
-									</tr>
-								</thead>
-								<tbody className="divide-y divide-gray-100 bg-white">
-									{list.map((row) => {
-										const program = programById.get(row.programId);
-										const commission = commissionById.get(row.commissionId);
-										const commissionTypeLabel =
-											commissionTypeNameById.get(row.commissionTypeId) ?? '—';
-										return (
-											<tr key={row.id} className="transition-colors hover:bg-gray-50/60">
-												<td className="px-4 py-4 sm:px-6">
-													<div className="flex flex-col leading-tight">
-														<span className="font-medium text-gray-900">
-															{program?.label ?? `#${row.programId}`}
-														</span>
-														<span className="font-mono text-xs text-gray-400">
-															{program?.code ?? `#${row.programId}`}
-														</span>
-													</div>
-												</td>
-												<td className="px-4 py-4">
-													<div className="flex flex-col leading-tight">
-														<span className="text-gray-700">
-															{commission?.label ?? `#${row.commissionId}`}
-														</span>
-														<span className="font-mono text-xs text-gray-400">
-															{commission?.code ?? `#${row.commissionId}`}
-														</span>
-													</div>
-												</td>
-												<td className="px-4 py-4 text-gray-700">{commissionTypeLabel}</td>
-												<td className="px-4 py-4 whitespace-nowrap text-right sm:px-6">
-													<Button
-														variant="secondary"
-														size="sm"
-														onClick={() => setConfirm(row)}
-														aria-label={t(
-															'admin.configuration.programCommissions.table.unassociate',
-														)}>
-														<Trash2 className="h-3.5 w-3.5" />
-														<span className="hidden sm:inline">
-															{t('admin.configuration.programCommissions.table.unassociate')}
-														</span>
-													</Button>
-												</td>
-											</tr>
-										);
-									})}
-								</tbody>
-							</table>
-						</div>
-					</div>
-				)}
-			</Card>
+				description={t('admin.configuration.programCommissions.table.description')}
+				showSearch={false}
+				isLoading={isLoading}
+				errorMessage={error?.message}
+				emptyMessage={t('admin.configuration.programCommissions.table.empty')}
+				aria-label={t('admin.configuration.programCommissions.table.title')}
+			/>
 
 			<Dialog
 				open={confirm !== null}

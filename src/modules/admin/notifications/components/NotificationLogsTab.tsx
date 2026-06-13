@@ -8,7 +8,7 @@ import { TYPE_CODES } from '@/shared/constants';
 import { useNotificationCategories } from '../hooks/useEmailTemplates';
 import { useNotificationLogs, useNotificationStatuses } from '../hooks/useNotificationLogs';
 import type { CoreType, NotificationLog, NotificationLogFilters } from '../types';
-import { InlineLoading, TabHeader } from './shared';
+import { TabHeader } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 function statusVariant(code: string): 'success' | 'danger' | 'default' {
@@ -154,8 +154,12 @@ export function NotificationLogsTab() {
 				/>
 			</div>
 
-			<DataTable columns={columns} data={logs} aria-label={t('admin.notify.log.title')} />
-			{isLoading && <InlineLoading />}
+			<DataTable
+				columns={columns}
+				data={logs}
+				isLoading={isLoading}
+				aria-label={t('admin.notify.log.title')}
+			/>
 		</div>
 	);
 }

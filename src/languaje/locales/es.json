@@ -1119,7 +1119,8 @@
 			"previous": "Anterior",
 			"next": "Siguiente",
 			"page": "Pagina",
-			"of": "de"
+			"of": "de",
+			"results": "resultados"
 		}
 	},
 	"academic": {
