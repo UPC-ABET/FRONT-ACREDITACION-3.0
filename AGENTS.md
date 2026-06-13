@@ -295,6 +295,12 @@ Live in their module's `components/` folder. Organized into subfolders by featur
 - Never force-push to main/master.
 - Never skip hooks (`--no-verify`).
 
+### Pre-commit Hook
+
+- A Husky `pre-commit` hook runs `lint-staged` on staged files (config in `.lintstagedrc.json`): `eslint --fix` + `prettier --write` on `*.{ts,tsx}`, `prettier --write` on `*.{json,md,css}`.
+- If ESLint reports an unfixable error, the commit is aborted until it's fixed. Auto-fixable lint/format issues are applied and re-staged automatically.
+- The hook is installed via the `prepare` script on `pnpm install`. `prepare` is guarded as `husky || true` so it doesn't fail in production/Docker (e.g. `pnpm prune --prod`, where `husky` is no longer present).
+
 ---
 
 ## Commands
