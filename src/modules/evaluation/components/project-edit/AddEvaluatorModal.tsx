@@ -30,6 +30,7 @@ interface AddEvaluatorModalProps {
 	projectId: string;
 	projectNumericId: number;
 	onSuccess?: () => void;
+	existingEvaluatorTypeIds?: Set<number>;
 }
 
 export function AddEvaluatorModal({
@@ -38,6 +39,7 @@ export function AddEvaluatorModal({
 	projectId,
 	projectNumericId,
 	onSuccess,
+	existingEvaluatorTypeIds,
 }: AddEvaluatorModalProps) {
 	const { t, locale } = useI18n();
 	const queryClient = useQueryClient();
@@ -89,11 +91,13 @@ export function AddEvaluatorModal({
 
 	const roleOptions = useMemo(
 		() =>
-			evaluatorTypes.map((type) => ({
-				label: type.name[locale as 'es' | 'en'] ?? type.name.es,
-				value: type.id,
-			})),
-		[evaluatorTypes, locale],
+			evaluatorTypes
+				.filter((type) => !existingEvaluatorTypeIds?.has(type.id))
+				.map((type) => ({
+					label: type.name[locale as 'es' | 'en'] ?? type.name.es,
+					value: type.id,
+				})),
+		[evaluatorTypes, locale, existingEvaluatorTypeIds],
 	);
 
 	const createMutation = useMutation({

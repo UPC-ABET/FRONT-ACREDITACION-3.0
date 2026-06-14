@@ -29,7 +29,7 @@ export type CreateProjectFullDto = {
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
 	studentSectionEnrollmentIds?: number[];
-	evaluatorProfessorIds?: number[];
+	evaluators?: { professorId: number; evaluatorTypeId: number }[];
 };
 
 export type CreateProjectDto = {
@@ -208,6 +208,7 @@ export type ProjectByProfessorResponse = {
 		lastName: string;
 		email: string;
 		evaluatorType: { en: string; es: string };
+		evaluatorTypeCode: string;
 	}[];
 	students: {
 		id: number;
@@ -242,6 +243,7 @@ export type ProjectDetailsEvaluatorResponse = {
 	professorEmail: string;
 	evaluatorTypeId: number;
 	evaluatorTypeName: { en: string; es: string };
+	evaluatorTypeCode: string;
 };
 
 export type CriteriaScoreResponse = {

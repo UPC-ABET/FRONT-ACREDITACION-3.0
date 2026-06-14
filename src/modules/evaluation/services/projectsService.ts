@@ -21,8 +21,21 @@ export const projectsService = {
 		return apiPost('/projects/create-full', body);
 	},
 
-	getByEvaluator(evaluatorId: string | number): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
-		return apiGet(`/projects/evaluator/${evaluatorId}`);
+	getByEvaluator(
+		evaluatorId: string | number,
+		params?: {
+			academicPeriodId?: number;
+			schoolId?: number;
+			gradeTypeCode?: string;
+		},
+	): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
+		const qs = new URLSearchParams();
+		if (params?.academicPeriodId != null)
+			qs.set('academicPeriodId', String(params.academicPeriodId));
+		if (params?.schoolId != null) qs.set('schoolId', String(params.schoolId));
+		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
+		const query = qs.toString();
+		return apiGet(`/projects/evaluator/${evaluatorId}${query ? `?${query}` : ''}`);
 	},
 
 	getByProfessor(

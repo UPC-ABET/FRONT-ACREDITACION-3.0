@@ -39,6 +39,7 @@ interface ProjectRubricCapstoneTableProps {
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
 	nrNaTypeIds: Set<number>;
+	readOnly?: boolean;
 }
 
 export function ProjectRubricCapstoneTable({
@@ -51,6 +52,7 @@ export function ProjectRubricCapstoneTable({
 	projectId,
 	qualifStatuses,
 	nrNaTypeIds,
+	readOnly = false,
 }: ProjectRubricCapstoneTableProps) {
 	const { t, locale } = useI18n();
 	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
@@ -227,7 +229,11 @@ export function ProjectRubricCapstoneTable({
 										<span className="text-xs text-zinc-500">
 											{t('projects.evaluate.rubric.duplicateGrades')}
 										</span>
-										<Toggle checked={duplicateMode} onChange={setDuplicateMode} />
+										<Toggle
+											checked={duplicateMode}
+											onChange={setDuplicateMode}
+											disabled={readOnly}
+										/>
 										<span title={t('projects.evaluate.rubric.duplicateGradesInfo')}>
 											<InformationCircleIcon className="h-4 w-4 cursor-help text-zinc-400" />
 										</span>
@@ -290,6 +296,7 @@ export function ProjectRubricCapstoneTable({
 													selected={dupSelections[criteria.id] ?? null}
 													locale={locale}
 													onChange={(val) => handleDupSelect(criteria.id, val)}
+													disabled={readOnly}
 												/>
 											) : (
 												<div className="flex flex-col gap-2">
@@ -307,6 +314,7 @@ export function ProjectRubricCapstoneTable({
 																		selected={current}
 																		locale={locale}
 																		onChange={(val) => handleSelect(criteria.id, st.id, val)}
+																		disabled={readOnly}
 																	/>
 																</div>
 															);
@@ -334,15 +342,17 @@ export function ProjectRubricCapstoneTable({
 				<div className="flex justify-end">
 					<button
 						type="button"
-						disabled={!allFilled || isPending}
+						disabled={!allFilled || isPending || readOnly}
 						className={cn(
 							'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-							allFilled && !isPending
+							allFilled && !isPending && !readOnly
 								? 'bg-red-600 text-white hover:bg-red-700'
 								: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
 						)}
 						onClick={handleSave}>
-						{t('projects.evaluate.rubric.saveButton')}
+						{readOnly
+							? t('projects.evaluate.rubric.readOnly')
+							: t('projects.evaluate.rubric.saveButton')}
 						{isPending && (
 							<span
 								aria-hidden="true"
@@ -361,18 +371,21 @@ interface PLButtonProps {
 	label: string;
 	selected: boolean;
 	onClick: () => void;
+	disabled?: boolean;
 }
 
-function PLButton({ label, selected, onClick }: PLButtonProps) {
+function PLButton({ label, selected, onClick, disabled }: PLButtonProps) {
 	return (
 		<button
 			type="button"
 			onClick={onClick}
+			disabled={disabled}
 			className={cn(
 				'rounded-md border px-3 py-1 text-xs font-semibold transition-colors whitespace-nowrap',
 				selected
 					? 'border-red-600 bg-red-600 text-white'
 					: 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-400 hover:bg-zinc-50',
+				disabled && 'cursor-not-allowed opacity-50',
 			)}>
 			{label}
 		</button>
@@ -384,9 +397,10 @@ interface PLSelectorProps {
 	selected: number | null;
 	locale: string;
 	onChange: (value: number) => void;
+	disabled?: boolean;
 }
 
-function PLSelector({ levels, selected, locale, onChange }: PLSelectorProps) {
+function PLSelector({ levels, selected, locale, onChange, disabled }: PLSelectorProps) {
 	return (
 		<>
 			<div className="hidden flex-wrap gap-1.5 md:flex">
@@ -399,6 +413,7 @@ function PLSelector({ levels, selected, locale, onChange }: PLSelectorProps) {
 							label={label}
 							selected={selected === pl.uniqueValue}
 							onClick={() => onChange(pl.uniqueValue)}
+							disabled={disabled}
 						/>
 					);
 				})}
@@ -409,7 +424,13 @@ function PLSelector({ levels, selected, locale, onChange }: PLSelectorProps) {
 				onChange={(e) => {
 					if (e.target.value !== '') onChange(Number(e.target.value));
 				}}
-				className="w-full rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-red-600 md:hidden">
+				disabled={disabled}
+				className={cn(
+					'w-full rounded-md border px-2 py-1.5 text-xs outline-none md:hidden',
+					disabled
+						? 'cursor-not-allowed opacity-50 bg-zinc-50 text-zinc-500'
+						: 'border-zinc-200 bg-white text-zinc-700 focus:border-red-600',
+				)}>
 				<option value="">—</option>
 				{levels.map((pl) => {
 					const label = `${pl.uniqueValue} - ${pl.name[locale as 'es' | 'en'] ?? pl.name.es}`;

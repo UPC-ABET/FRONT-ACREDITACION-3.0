@@ -17,12 +17,10 @@ import { useI18n } from '@/providers';
 import { professorsService } from '@/modules/academic/services';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import type { LocalEvaluator } from './ProjectWizardStep2';
-import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { ProfessorSearchResponse } from '@/modules/academic';
 
 const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
-const LIMITED_CODES: readonly string[] = Object.values(TYPE_CODES.EVALUATOR_LIMITED_TYPE);
-
 interface WizardSelectEvaluatorModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -83,18 +81,11 @@ export function WizardSelectEvaluatorModal({
 		{ enabled: typeGroupId != null },
 	);
 
-	const usedLimitedCodes = useMemo(
-		() =>
-			new Set(existing.filter((e) => LIMITED_CODES.includes(e.typeCode)).map((e) => e.typeCode)),
-		[existing],
-	);
+	const usedTypeIds = useMemo(() => new Set(existing.map((e) => e.typeId)), [existing]);
 
 	const availableTypes = useMemo(
-		() =>
-			allTypes.filter((type) =>
-				LIMITED_CODES.includes(type.code) ? !usedLimitedCodes.has(type.code) : true,
-			),
-		[allTypes, usedLimitedCodes],
+		() => allTypes.filter((type) => !usedTypeIds.has(type.id)),
+		[allTypes, usedTypeIds],
 	);
 
 	const typeOptions = useMemo(

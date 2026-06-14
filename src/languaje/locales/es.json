@@ -1149,6 +1149,12 @@
 			"createCommentFailed": "No se pudo crear el comentario.",
 			"treeFailed": "No se pudo cargar la estructura del portafolio.",
 			"sizeFailed": "No se pudo calcular el tamaño de la selección."
+		},
+		"evaluation": {
+			"docCannotGrade": "El rol DOCENTE no puede calificar proyectos."
+		},
+		"projectEvaluator": {
+			"duplicateEvaluatorType": "Ya existe un evaluador con ese tipo de rol en el proyecto."
 		}
 	},
 	"table": {
@@ -1581,6 +1587,8 @@
 			"error": "No fue posible cargar el proyecto.",
 			"notFound": "Proyecto no encontrado.",
 			"backButton": "Volver",
+			"docReadOnly": "Tu rol es DOCENTE. Puedes ver el proyecto y las calificaciones, pero no puedes calificar.",
+			"notAssigned": "No estás asignado como evaluador en este proyecto.",
 			"header": {
 				"course": "Curso",
 				"rubric": "Rúbrica",
@@ -1602,6 +1610,7 @@
 				"errorRange": "Uno o más puntajes están fuera del rango permitido para su pregunta.",
 				"fillAll": "Completa todos los puntajes para guardar.",
 				"saveButton": "Guardar calificaciones",
+				"readOnly": "Solo lectura",
 				"saving": "Guardando..."
 			},
 			"capstone": {

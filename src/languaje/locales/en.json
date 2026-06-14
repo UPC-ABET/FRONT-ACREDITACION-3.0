@@ -1149,6 +1149,12 @@
 			"createCommentFailed": "Could not create the comment.",
 			"treeFailed": "Could not load the portfolio structure.",
 			"sizeFailed": "Could not compute the selection size."
+		},
+		"evaluation": {
+			"docCannotGrade": "The DOCENTE role cannot grade projects."
+		},
+		"projectEvaluator": {
+			"duplicateEvaluatorType": "An evaluator with this role type already exists in the project."
 		}
 	},
 	"table": {
@@ -1581,6 +1587,8 @@
 			"error": "Could not load the project.",
 			"notFound": "Project not found.",
 			"backButton": "Back",
+			"docReadOnly": "Your role is DOCENTE. You can view the project and its grades, but you cannot grade.",
+			"notAssigned": "You are not assigned as an evaluator for this project.",
 			"header": {
 				"course": "Course",
 				"rubric": "Rubric",
@@ -1602,6 +1610,7 @@
 				"errorRange": "One or more scores are outside the allowed range for their question.",
 				"fillAll": "Fill in all scores to save.",
 				"saveButton": "Save grades",
+				"readOnly": "Read only",
 				"saving": "Saving..."
 			},
 			"capstone": {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { ArrowLeftIcon, PencilIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import {
@@ -58,6 +58,11 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	const updateMutation = useUpdateProject(projectId);
 	const removeStudentMutation = useRemoveProjectStudent(projectId);
 	const removeEvaluatorMutation = useRemoveProjectEvaluator(projectId);
+
+	const existingEvaluatorTypeIds = useMemo(
+		() => new Set(data?.evaluators?.map((e) => e.evaluatorTypeId) ?? []),
+		[data?.evaluators],
+	);
 
 	const enterEditMode = () => {
 		if (!data) return;
@@ -373,6 +378,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				onOpenChange={setEvaluatorModalOpen}
 				projectId={projectId}
 				projectNumericId={project.id}
+				existingEvaluatorTypeIds={existingEvaluatorTypeIds}
 				onSuccess={() => showToast('success', t('projects.edit.evaluators.modal.successMessage'))}
 			/>
 
