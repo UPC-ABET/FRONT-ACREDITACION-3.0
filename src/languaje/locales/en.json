@@ -1536,7 +1536,16 @@
 				"students": "Students",
 				"actions": "Actions",
 				"view": "View",
-				"edit": "Edit"
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"deleteModal": {
+				"title": "Delete project?",
+				"body": "Are you sure you want to delete the project \"{{name}}\"? This action cannot be undone.",
+				"confirm": "Delete",
+				"deleting": "Deleting...",
+				"errorHasEvaluations": "The project cannot be deleted because it has registered evaluations.",
+				"errorGeneric": "Could not delete the project. Please try again."
 			}
 		},
 		"grade": {

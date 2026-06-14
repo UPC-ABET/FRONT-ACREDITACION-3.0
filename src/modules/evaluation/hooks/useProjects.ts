@@ -71,6 +71,16 @@ export function useRemoveProjectStudent(projectId: string | number) {
 	});
 }
 
+export function useDeleteProject() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (id: string | number) => projectsService.delete(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: projectsQueryKeys.all });
+		},
+	});
+}
+
 export function useRemoveProjectEvaluator(projectId: string | number) {
 	const queryClient = useQueryClient();
 	return useMutation({

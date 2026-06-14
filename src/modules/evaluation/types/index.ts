@@ -74,6 +74,7 @@ export type FilterProjectDto = Partial<{
 	description: { es?: string; en?: string };
 	extra: Record<string, unknown>;
 	academicPeriodId: number;
+	schoolId: number;
 	programId: number;
 	courseId: number;
 	studentId: number;
@@ -330,6 +331,7 @@ export type ProjectResponse = BaseEntity & {
 	code: string;
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
+	hasEvaluations?: boolean;
 	students?: ProjectStudentResponse[];
 	evaluators?: ProjectEvaluatorResponse[];
 };

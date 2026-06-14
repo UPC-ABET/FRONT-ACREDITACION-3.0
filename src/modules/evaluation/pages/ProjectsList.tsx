@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { PencilIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Table,
 	TableBody,
@@ -13,6 +13,13 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+	DialogClose,
+	Button,
 } from '@/shared/components/ui';
 import { LoadingState } from '@/shared/components';
 import { Select } from '@/shared/components/ui/Select';
@@ -22,7 +29,8 @@ import { useI18n, useABET } from '@/providers';
 import { programsService } from '@/modules/academic/services';
 import { useStudyPlanCourses } from '@/modules/academic/hooks';
 import { projectsService } from '../services';
-import { TrashIcon } from 'lucide-react';
+import { useDeleteProject } from '../hooks';
+import type { ProjectResponse } from '../types';
 
 type SelectOption = { label: string; value: number };
 type AnyOption = { label: string; value: string | number };
@@ -121,6 +129,10 @@ export function ProjectsListPage() {
 	const handleCourseChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
 		setSelectedCourse(toSelectOption(opt));
 	};
+
+	const [confirmTarget, setConfirmTarget] = useState<ProjectResponse | null>(null);
+	const [deleteError, setDeleteError] = useState<string | null>(null);
+	const deleteMutation = useDeleteProject();
 
 	const handleClearFilters = () => {
 		setSelectedProgram(null);
@@ -256,13 +268,24 @@ export function ProjectsListPage() {
 									</div>
 								</TableCell>
 								<TableCell className="text-center">
-									<div className="flex justify-center">
+									<div className="flex justify-center gap-1">
 										<Link
 											href={`/evaluation/projects/${project.id}/edit`}
 											className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
 											title={t('projects.list.table.edit')}>
 											<PencilIcon className="h-4 w-4" />
 										</Link>
+										<button
+											type="button"
+											onClick={() => {
+												setConfirmTarget(project);
+												setDeleteError(null);
+											}}
+											disabled={!!project.hasEvaluations}
+											className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:pointer-events-none disabled:opacity-30"
+											title={t('projects.list.table.delete')}>
+											<TrashIcon className="h-4 w-4" />
+										</button>
 									</div>
 								</TableCell>
 							</TableRow>
@@ -270,6 +293,62 @@ export function ProjectsListPage() {
 					</TableBody>
 				</Table>
 			)}
+
+			<Dialog
+				open={!!confirmTarget}
+				onOpenChange={(open) => {
+					if (!open) {
+						setConfirmTarget(null);
+						setDeleteError(null);
+					}
+				}}>
+				<DialogContent className="sm:max-w-sm">
+					<DialogHeader>
+						<DialogTitle>{t('projects.list.deleteModal.title')}</DialogTitle>
+					</DialogHeader>
+					<p className="text-sm text-zinc-600">
+						{t('projects.list.deleteModal.body').replace(
+							'{{name}}',
+							confirmTarget
+								? (confirmTarget.name[locale as 'es' | 'en'] ?? confirmTarget.name.es)
+								: '',
+						)}
+					</p>
+					{deleteError && <p className="text-xs text-red-600">{deleteError}</p>}
+					<DialogFooter>
+						<DialogClose
+							render={
+								<Button variant="secondary" disabled={deleteMutation.isPending}>
+									{t('dialog.close')}
+								</Button>
+							}
+						/>
+						<Button
+							variant="primary"
+							className="bg-red-600 hover:bg-red-700"
+							disabled={deleteMutation.isPending}
+							onClick={() => {
+								if (!confirmTarget) return;
+								setDeleteError(null);
+								deleteMutation.mutate(confirmTarget.id, {
+									onSuccess: () => setConfirmTarget(null),
+									onError: (err: unknown) => {
+										const msg = (err as { errors?: string[] })?.errors?.includes(
+											'error.project.hasEvaluations',
+										)
+											? t('projects.list.deleteModal.errorHasEvaluations')
+											: t('projects.list.deleteModal.errorGeneric');
+										setDeleteError(msg);
+									},
+								});
+							}}>
+							{deleteMutation.isPending
+								? t('projects.list.deleteModal.deleting')
+								: t('projects.list.deleteModal.confirm')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }

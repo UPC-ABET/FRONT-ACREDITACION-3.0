@@ -237,7 +237,7 @@ export function RubricsListPage() {
 												disabled={!row.canEdit}
 												onClick={() => setConfirmTarget(row)}
 												title={t('rubrics.list.actions.delete')}
-												className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30">
+												className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30">
 												<TrashIcon className="h-4 w-4" />
 											</button>
 										</div>

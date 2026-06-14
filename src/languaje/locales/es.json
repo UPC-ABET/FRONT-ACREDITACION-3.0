@@ -1536,7 +1536,16 @@
 				"students": "Estudiantes",
 				"actions": "Acciones",
 				"view": "Ver",
-				"edit": "Editar"
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"deleteModal": {
+				"title": "¿Eliminar proyecto?",
+				"body": "¿Estás seguro de que deseas eliminar el proyecto \"{{name}}\"? Esta acción no se puede deshacer.",
+				"confirm": "Eliminar",
+				"deleting": "Eliminando...",
+				"errorHasEvaluations": "No se puede eliminar el proyecto porque tiene evaluaciones registradas.",
+				"errorGeneric": "No fue posible eliminar el proyecto. Intenta de nuevo."
 			}
 		},
 		"grade": {
