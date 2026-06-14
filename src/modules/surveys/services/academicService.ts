@@ -82,9 +82,21 @@ export async function getSurveyTypeId(code: string): Promise<number> {
 				if (item && typeof item === 'object') {
 					const t = item as Record<string, unknown>;
 					const id = typeof t.id === 'number' ? t.id : Number(t.id);
-					const rawCode = String(
-						t.code ?? t.typeCode ?? t.surveyTypeCode ?? t.codigo ?? '',
-					).toUpperCase();
+					let rawCode = '';
+					const extra = t.extra;
+					if (extra) {
+						try {
+							const parsed = typeof extra === 'string' ? JSON.parse(extra) : extra;
+							rawCode = String(parsed?.code ?? '').toUpperCase();
+						} catch {
+							/* malformed extra — fall through */
+						}
+					}
+					if (!rawCode) {
+						rawCode = String(
+							t.code ?? t.typeCode ?? t.surveyTypeCode ?? t.codigo ?? '',
+						).toUpperCase();
+					}
 					if (id > 0 && rawCode) map.set(rawCode, id);
 				}
 			}
