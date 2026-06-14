@@ -1,40 +1,37 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Select, Toast } from '@/shared/components';
-import { useI18n } from '@/providers';
+import React, { useState } from 'react';
+import { Toast } from '@/shared/components';
+import { useI18n, useABET } from '@/providers';
 import { FileUploadPanel } from '../shared/FileUploadPanel';
-import { usePPPUpload, usePPPCycles } from '../../hooks';
-import { useABET } from '@/providers';
+import { usePPPUpload } from '../../hooks';
 
 export function PPPMassiveUpload() {
 	const { t } = useI18n();
-	const { modalityTypeId } = useABET();
-	const { cycles, load: loadCycles } = usePPPCycles();
+	const { academicPeriodId } = useABET();
 	const { loading, error, success, upload } = usePPPUpload();
 
-	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'error',
 		msg: '',
 	});
 
-	useEffect(() => {
-		loadCycles(modalityTypeId);
-	}, [modalityTypeId, loadCycles]);
-
-	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
-
 	async function handleDownloadTemplate() {
-		if (!selectedCycle) return;
+		if (!academicPeriodId) return;
 		try {
 			const { downloadPPPTemplate } = await import('../../services/pppService');
-			await downloadPPPTemplate(selectedCycle.value);
+			await downloadPPPTemplate(academicPeriodId);
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : t('surveys.ppp.upload.downloadError');
 			setToast({ open: true, type: 'error', msg });
 		}
+	}
+
+	if (!academicPeriodId) {
+		return (
+			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
+		);
 	}
 
 	return (
@@ -44,22 +41,13 @@ export function PPPMassiveUpload() {
 				<p className="text-sm text-zinc-500 mt-1">{t('surveys.ppp.upload.description')}</p>
 			</div>
 
-			<Select
-				label={t('surveys.shared.academicCycle')}
-				options={cycleOptions}
-				value={selectedCycle}
-				onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-				placeholder={t('surveys.shared.selectCycle')}
-				isSearchable
-			/>
-
 			<FileUploadPanel
 				title={t('surveys.ppp.upload.fileTitle')}
 				uploading={loading}
 				success={success}
 				error={error}
-				onUpload={(file) => (selectedCycle ? upload(file, selectedCycle.value) : Promise.resolve())}
-				onDownloadTemplate={selectedCycle ? handleDownloadTemplate : undefined}
+				onUpload={(file) => upload(file, academicPeriodId)}
+				onDownloadTemplate={handleDownloadTemplate}
 				downloadLabel={t('surveys.ppp.upload.downloadLabel')}
 			/>
 

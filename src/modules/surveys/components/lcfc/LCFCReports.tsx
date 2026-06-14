@@ -1,18 +1,15 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Select, Button, Toast } from '@/shared/components';
-import { useI18n } from '@/providers';
-import { useLCFCReports, useLCFCCycles } from '../../hooks';
-import { useABET } from '@/providers';
+import { Button, Toast } from '@/shared/components';
+import { useI18n, useABET } from '@/providers';
+import { useLCFCReports } from '../../hooks';
 
 export function LCFCReports() {
 	const { t } = useI18n();
-	const { modalityTypeId } = useABET();
-	const { cycles, load: loadCycles } = useLCFCCycles();
+	const { academicPeriodId } = useABET();
 	const { loading, error, reportData, generate } = useLCFCReports();
 
-	const [cycle, setCycle] = useState<{ label: string; value: number } | null>(null);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -20,21 +17,22 @@ export function LCFCReports() {
 	});
 
 	useEffect(() => {
-		loadCycles(modalityTypeId);
-	}, [modalityTypeId, loadCycles]);
-	useEffect(() => {
 		if (error) setToast({ open: true, type: 'error', msg: error });
 	}, [error]);
 
 	async function handleGenerate() {
-		if (!cycle) {
+		if (!academicPeriodId) {
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
 			return;
 		}
-		await generate({ academicPeriodId: cycle.value, school: '1' });
+		await generate({ academicPeriodId, school: '1' });
 	}
 
-	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
+	if (!academicPeriodId) {
+		return (
+			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
+		);
+	}
 
 	return (
 		<div className="max-w-lg space-y-6">
@@ -43,16 +41,7 @@ export function LCFCReports() {
 				<p className="text-sm text-zinc-500 mt-1">{t('surveys.lcfc.reports.description')}</p>
 			</div>
 
-			<Select
-				label={t('surveys.shared.academicCycle')}
-				options={cycleOptions}
-				value={cycle}
-				onChange={(_, val) => setCycle(val as { label: string; value: number } | null)}
-				placeholder={t('surveys.shared.selectCycle')}
-				isSearchable
-			/>
-
-			<Button onClick={handleGenerate} disabled={loading || !cycle} loading={loading}>
+			<Button onClick={handleGenerate} disabled={loading} loading={loading}>
 				{t('surveys.shared.generateDashboard')}
 			</Button>
 

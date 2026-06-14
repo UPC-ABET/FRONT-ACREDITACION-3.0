@@ -1,22 +1,17 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { Select, Button, Toast } from '@/shared/components';
+import React, { useEffect, useState } from 'react';
+import { Button, Toast } from '@/shared/components';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { useI18n } from '@/providers';
-import { usePPPDownload, usePPPCycles } from '../../hooks';
-import { useABET } from '@/providers';
+import { useI18n, useABET } from '@/providers';
+import { usePPPDownload } from '../../hooks';
 
 export function PPPDownloadTemplate() {
 	const { t } = useI18n();
-	const { modalityTypeId } = useABET();
-	const { cycles, load: loadCycles } = usePPPCycles();
+	const { academicPeriodId } = useABET();
 	const { loading, error, download } = usePPPDownload();
 
-	const [selectedCycle, setSelectedCycle] = React.useState<{ label: string; value: number } | null>(
-		null,
-	);
-	const [toast, setToast] = React.useState<{
+	const [toast, setToast] = useState<{
 		open: boolean;
 		type: 'success' | 'error';
 		msg: string;
@@ -27,23 +22,23 @@ export function PPPDownloadTemplate() {
 	});
 
 	useEffect(() => {
-		loadCycles(modalityTypeId);
-	}, [modalityTypeId, loadCycles]);
-
-	useEffect(() => {
 		if (error) setToast({ open: true, type: 'error', msg: error });
 	}, [error]);
 
 	async function handleDownload() {
-		if (!selectedCycle) {
+		if (!academicPeriodId) {
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
 			return;
 		}
-		await download(selectedCycle.value);
+		await download(academicPeriodId);
 		if (!error) setToast({ open: true, type: 'success', msg: t('surveys.ppp.download.success') });
 	}
 
-	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
+	if (!academicPeriodId) {
+		return (
+			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
+		);
+	}
 
 	return (
 		<div className="max-w-md space-y-6">
@@ -52,16 +47,7 @@ export function PPPDownloadTemplate() {
 				<p className="text-sm text-zinc-500 mt-1">{t('surveys.ppp.download.description')}</p>
 			</div>
 
-			<Select
-				label={t('surveys.shared.academicCycle')}
-				options={cycleOptions}
-				value={selectedCycle}
-				onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-				placeholder={t('surveys.shared.selectCycle')}
-				isSearchable
-			/>
-
-			<Button onClick={handleDownload} disabled={loading || !selectedCycle} loading={loading}>
+			<Button onClick={handleDownload} disabled={loading} loading={loading}>
 				<ArrowDownTrayIcon className="h-4 w-4 mr-2" />
 				{t('surveys.ppp.download.button')}
 			</Button>
