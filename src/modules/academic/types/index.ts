@@ -33,6 +33,7 @@ export type FilterProgramRequest = Partial<{
 	name: { es?: string; en?: string };
 	degree: { es?: string; en?: string };
 	academicPeriodId: number;
+	schoolId: number;
 }>;
 
 export type UpdateProgramRequest = {

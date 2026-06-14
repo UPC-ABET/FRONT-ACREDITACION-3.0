@@ -19,6 +19,7 @@ export type RubricTypeResolution = {
 export const rubricsService = {
 	getAll(params?: GetAllRubricsParams): Promise<ApiResponse<RubricResponse[]>> {
 		const qs = new URLSearchParams();
+		if (params?.schoolId) qs.set('schoolId', String(params.schoolId));
 		if (params?.academicPeriodId) qs.set('academicPeriodId', String(params.academicPeriodId));
 		if (params?.programId) qs.set('programId', String(params.programId));
 		if (params?.courseId) qs.set('courseId', String(params.courseId));

@@ -87,6 +87,7 @@ export type FilterRubricDto = Partial<{
 }>;
 
 export type GetAllRubricsParams = {
+	schoolId?: number;
 	academicPeriodId?: number;
 	programId?: number;
 	courseId?: number;

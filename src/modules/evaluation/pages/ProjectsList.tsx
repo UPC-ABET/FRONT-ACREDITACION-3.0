@@ -33,21 +33,26 @@ function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | nul
 
 export function ProjectsListPage() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId: selectedPeriodId } = useABET();
+	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
 
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
 	const { data: programs = [] } = useQuery({
-		queryKey: ['programs', 'filtered', { academicPeriodId: selectedPeriodId, isActive: true }],
+		queryKey: [
+			'programs',
+			'filtered',
+			{ schoolId, academicPeriodId: selectedPeriodId, isActive: true },
+		],
 		queryFn: () =>
 			programsService
 				.getByFilters({
+					schoolId: schoolId!,
 					academicPeriodId: selectedPeriodId!,
 					isActive: true,
 				})
 				.then((r) => r.data),
-		enabled: !!selectedPeriodId,
+		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
 	const { data: courses = [] } = useQuery({
@@ -55,6 +60,7 @@ export function ProjectsListPage() {
 			'courses',
 			'filtered',
 			{
+				schoolId,
 				academicPeriodId: selectedPeriodId,
 				programId: selectedProgram?.value,
 				isActive: true,
@@ -63,12 +69,13 @@ export function ProjectsListPage() {
 		queryFn: () =>
 			coursesService
 				.getByFilters({
+					schoolId: schoolId!,
 					academicPeriodId: selectedPeriodId!,
 					programId: selectedProgram!.value,
 					isActive: true,
 				})
 				.then((r) => r.data),
-		enabled: !!selectedPeriodId && !!selectedProgram,
+		enabled: !!selectedPeriodId && !!selectedProgram && !!schoolId,
 	});
 
 	const {
