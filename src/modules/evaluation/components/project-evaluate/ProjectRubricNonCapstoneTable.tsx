@@ -73,12 +73,10 @@ export function ProjectRubricNonCapstoneTable({
 			result[q.id] = {};
 
 			students.forEach((st, stIdx) => {
-				// Each student has at most one graded criteria — search across all of them
+				// Show scores from whichever evaluator saved first — any evaluator can overwrite
 				let found = '';
 				for (const c of q.criterias) {
-					const entry = c.scores?.find(
-						(s) => s.studentId === st.id && s.evaluatorId === evaluatorId,
-					);
+					const entry = c.scores?.find((s) => s.studentId === st.id);
 					if (entry != null) {
 						found = String(entry.score);
 						break;
@@ -89,7 +87,7 @@ export function ProjectRubricNonCapstoneTable({
 		}
 
 		return result;
-	}, [questions, students, evaluatorId]);
+	}, [questions, students]);
 
 	const initialDupScores = useMemo<DupScores>(() => {
 		const result: DupScores = {};

@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/shared';
-import { apiGet, apiPost, apiPatch, apiDelete } from '@/shared/lib';
+import { apiGet, apiPost, apiPatch, apiDelete, apiGetBlobResponse } from '@/shared/lib';
 import type {
 	CreateProjectDto,
 	CreateProjectFullDto,
@@ -131,5 +131,18 @@ export const projectsService = {
 		isActive: true;
 	}): Promise<ApiResponse<ProjectEvaluatorResponse>> {
 		return apiPost('/project-evaluators/create', body);
+	},
+
+	exportGrades(params: {
+		academicPeriodId: number;
+		schoolId: number;
+		gradeTypeCode: string;
+	}): Promise<Blob> {
+		const qs = new URLSearchParams({
+			academicPeriodId: String(params.academicPeriodId),
+			schoolId: String(params.schoolId),
+			gradeTypeCode: params.gradeTypeCode,
+		});
+		return apiGetBlobResponse(`/projects/export/grades?${qs.toString()}`).then((r) => r.blob);
 	},
 };

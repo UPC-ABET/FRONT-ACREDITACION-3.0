@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Table,
 	TableBody,
@@ -28,8 +28,10 @@ import { cn } from '@/shared/lib/utils';
 import { useI18n, useABET } from '@/providers';
 import { programsService } from '@/modules/academic/services';
 import { useStudyPlanCourses } from '@/modules/academic/hooks';
+import { useTypesByGroupCode } from '@/modules/core/hooks';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { projectsService } from '../services';
-import { useDeleteProject } from '../hooks';
+import { useDeleteProject, useExportProjectGrades } from '../hooks';
 import type { ProjectResponse } from '../types';
 
 type SelectOption = { label: string; value: number };
@@ -134,6 +136,27 @@ export function ProjectsListPage() {
 	const [deleteError, setDeleteError] = useState<string | null>(null);
 	const deleteMutation = useDeleteProject();
 
+	const [exportOpen, setExportOpen] = useState(false);
+	const [selectedGradeTypeId, setSelectedGradeTypeId] = useState<number | null>(null);
+	const [exportError, setExportError] = useState<string | null>(null);
+	const exportMutation = useExportProjectGrades();
+
+	const { data: gradeTypes = [], isLoading: loadingGradeTypes } = useTypesByGroupCode(
+		TYPE_GROUP_CODES.GRADE_TYPE,
+		{ enabled: exportOpen },
+	);
+
+	const gradeTypeOptions = useMemo(
+		() =>
+			gradeTypes.map((gt) => ({
+				label: gt.name[locale as 'es' | 'en'] ?? gt.name.es,
+				value: gt.id,
+			})),
+		[gradeTypes, locale],
+	);
+
+	const selectedGradeType = gradeTypes.find((gt) => gt.id === selectedGradeTypeId) ?? null;
+
 	const handleClearFilters = () => {
 		setSelectedProgram(null);
 		setSelectedCourse(null);
@@ -146,15 +169,31 @@ export function ProjectsListPage() {
 					<h1 className="text-3xl font-bold text-zinc-900">{t('projects.list.title')}</h1>
 					<p className="mt-2 text-zinc-600">{t('projects.list.description')}</p>
 				</div>
-				<Link
-					href="/evaluation/projects/new"
-					className={cn(
-						buttonVariants({ variant: 'primary', size: 'md' }),
-						'shrink-0 inline-flex items-center gap-1.5',
-					)}>
-					<PlusIcon className="h-4 w-4" />
-					{t('projects.list.addButton')}
-				</Link>
+				<div className="flex shrink-0 items-center gap-2">
+					<button
+						type="button"
+						onClick={() => {
+							setExportError(null);
+							setExportOpen(true);
+						}}
+						disabled={!selectedPeriodId || !schoolId}
+						className={cn(
+							buttonVariants({ variant: 'secondary', size: 'md' }),
+							'inline-flex items-center gap-1.5 disabled:pointer-events-none disabled:opacity-50',
+						)}>
+						<ArrowDownTrayIcon className="h-4 w-4" />
+						{t('projects.list.exportButton')}
+					</button>
+					<Link
+						href="/evaluation/projects/new"
+						className={cn(
+							buttonVariants({ variant: 'primary', size: 'md' }),
+							'inline-flex items-center gap-1.5',
+						)}>
+						<PlusIcon className="h-4 w-4" />
+						{t('projects.list.addButton')}
+					</Link>
+				</div>
 			</div>
 
 			<div className="space-y-4">
@@ -293,6 +332,71 @@ export function ProjectsListPage() {
 					</TableBody>
 				</Table>
 			)}
+
+			<Dialog
+				open={exportOpen}
+				onOpenChange={(open) => {
+					if (!open) {
+						setExportOpen(false);
+						setExportError(null);
+						setSelectedGradeTypeId(null);
+					}
+				}}>
+				<DialogContent className="sm:max-w-sm">
+					<DialogHeader>
+						<DialogTitle>{t('projects.list.exportModal.title')}</DialogTitle>
+					</DialogHeader>
+					<div className="space-y-3">
+						<Select
+							label={t('projects.list.exportModal.gradeTypeLabel')}
+							options={gradeTypeOptions}
+							value={
+								selectedGradeTypeId !== null
+									? (gradeTypeOptions.find((o) => o.value === selectedGradeTypeId) ?? null)
+									: null
+							}
+							isLoading={loadingGradeTypes}
+							onChange={(_, opt) => {
+								const single = Array.isArray(opt) ? opt[0] : opt;
+								if (single) setSelectedGradeTypeId(Number(single.value));
+							}}
+						/>
+						{exportError && <p className="text-xs text-red-600">{exportError}</p>}
+					</div>
+					<DialogFooter>
+						<DialogClose
+							render={
+								<Button variant="secondary" disabled={exportMutation.isPending}>
+									{t('dialog.close')}
+								</Button>
+							}
+						/>
+						<Button
+							variant="primary"
+							disabled={exportMutation.isPending || !selectedGradeType}
+							onClick={() => {
+								if (!selectedPeriodId || !schoolId || !selectedGradeType) return;
+								setExportError(null);
+								exportMutation.mutate(
+									{
+										academicPeriodId: selectedPeriodId,
+										schoolId,
+										gradeTypeCode: selectedGradeType.code,
+										filename: `proyectos-notas-${selectedGradeType.name[locale as 'es' | 'en'] ?? selectedGradeType.name.es}.xlsx`,
+									},
+									{
+										onSuccess: () => setExportOpen(false),
+										onError: () => setExportError(t('projects.list.exportModal.error')),
+									},
+								);
+							}}>
+							{exportMutation.isPending
+								? t('projects.list.exportModal.exporting')
+								: t('projects.list.exportModal.confirm')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 
 			<Dialog
 				open={!!confirmTarget}

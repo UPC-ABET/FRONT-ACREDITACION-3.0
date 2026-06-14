@@ -101,9 +101,7 @@ export function ProjectRubricCapstoneTable({
 			for (const c of q?.criterias ?? []) {
 				result[c.id] = {};
 				for (const st of students) {
-					const entry = c.scores.find(
-						(s) => s.studentId === st.id && s.evaluatorId === evaluatorId,
-					);
+					const entry = c.scores.find((s) => s.studentId === st.id);
 					result[c.id][st.id] = entry != null ? entry.score : null;
 				}
 			}

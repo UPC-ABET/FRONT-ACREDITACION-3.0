@@ -1524,6 +1524,14 @@
 			"title": "Proyectos Académicos",
 			"description": "Listado de proyectos académicos.",
 			"addButton": "Agregar proyecto",
+			"exportButton": "Exportar notas",
+			"exportModal": {
+				"title": "Exportar notas",
+				"gradeTypeLabel": "Tipo de nota",
+				"confirm": "Exportar",
+				"exporting": "Exportando...",
+				"error": "No fue posible exportar las notas. Intenta de nuevo."
+			},
 			"clearFilters": "Limpiar filtros",
 			"loading": "Cargando proyectos...",
 			"error": "No fue posible cargar los proyectos.",

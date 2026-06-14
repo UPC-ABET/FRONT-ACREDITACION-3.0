@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { triggerBrowserDownload } from '@/shared/utils/triggerBrowserDownload';
 import { projectsService } from '../services';
 import type { FilterProjectDto } from '../types';
 
@@ -92,6 +93,20 @@ export function useDeleteProject() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: projectsQueryKeys.all });
 		},
+	});
+}
+
+export function useExportProjectGrades() {
+	return useMutation({
+		mutationFn: (params: {
+			academicPeriodId: number;
+			schoolId: number;
+			gradeTypeCode: string;
+			filename: string;
+		}) =>
+			projectsService.exportGrades(params).then((blob) => {
+				triggerBrowserDownload(blob, params.filename);
+			}),
 	});
 }
 

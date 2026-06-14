@@ -1524,6 +1524,14 @@
 			"title": "Academic Projects",
 			"description": "List of academic projects.",
 			"addButton": "Add Project",
+			"exportButton": "Export grades",
+			"exportModal": {
+				"title": "Export grades",
+				"gradeTypeLabel": "Grade type",
+				"confirm": "Export",
+				"exporting": "Exporting...",
+				"error": "Could not export grades. Please try again."
+			},
 			"clearFilters": "Clear Filters",
 			"loading": "Loading projects...",
 			"error": "Could not load projects.",
