@@ -27,7 +27,8 @@ import {
 import { LoadingState } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
 import { useI18n, useABET } from '@/providers';
-import { programsService, coursesService } from '@/modules/academic/services';
+import { programsService } from '@/modules/academic/services';
+import { useStudyPlanCourses } from '@/modules/academic/hooks';
 import { useRubrics, useDeleteRubric } from '../hooks';
 import { mapRubricToRow } from '../utils/rubricsMappers';
 import type { RubricListRow } from '../types';
@@ -56,23 +57,17 @@ export function RubricsListPage() {
 		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
-	const { data: courses = [] } = useQuery({
-		queryKey: [
-			'courses',
-			'filtered',
-			{ schoolId, academicPeriodId: selectedPeriodId, programId: selectedProgram?.value },
-		],
-		queryFn: () =>
-			coursesService
-				.getByFilters({
-					schoolId: schoolId!,
-					academicPeriodId: selectedPeriodId!,
-					programId: selectedProgram!.value,
-					isActive: true,
-				})
-				.then((r) => r.data),
-		enabled: !!selectedPeriodId && !!selectedProgram && !!schoolId,
-	});
+	const { data: evaluableSpcList = [] } = useStudyPlanCourses(
+		{
+			schoolId: schoolId ?? undefined,
+			academicPeriodId: selectedPeriodId ?? 0,
+			programId: selectedProgram?.value,
+			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
+			extra: { is_evaluable: true },
+			isActive: true,
+		},
+		{ enabled: !!selectedPeriodId && !!selectedProgram && !!schoolId },
+	);
 
 	const rubricParams = useMemo(
 		() => ({
@@ -96,8 +91,15 @@ export function RubricsListPage() {
 	);
 
 	const courseOptions = useMemo(
-		() => courses.map((c) => ({ label: c.name[locale as 'es' | 'en'] ?? c.name.es, value: c.id })),
-		[courses, locale],
+		() =>
+			evaluableSpcList.map((spc) => {
+				const name = spc.course?.name;
+				const label =
+					(typeof name === 'string' ? name : (name?.[locale as 'es' | 'en'] ?? name?.es)) ??
+					String(spc.courseId);
+				return { label, value: spc.courseId };
+			}),
+		[evaluableSpcList, locale],
 	);
 
 	const hasFilters = selectedProgram != null || selectedCourse != null;
