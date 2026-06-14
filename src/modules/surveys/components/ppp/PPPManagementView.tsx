@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Tabs } from '@/shared/components';
+import { PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { PPPDownloadTemplate } from './PPPDownloadTemplate';
 import { PPPMassiveUpload } from './PPPMassiveUpload';
@@ -21,12 +21,10 @@ export function PPPManagementView() {
 
 	return (
 		<div className="space-y-6">
-			<div>
-				<h1 className="text-2xl font-bold text-zinc-900">
-					PPP — {t('surveys.ppp.management.title')}
-				</h1>
-				<p className="text-sm text-zinc-500 mt-1">{t('surveys.ppp.management.subtitle')}</p>
-			</div>
+			<PageHeader
+				title={`PPP — ${t('surveys.ppp.management.title')}`}
+				description={t('surveys.ppp.management.subtitle')}
+			/>
 
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 

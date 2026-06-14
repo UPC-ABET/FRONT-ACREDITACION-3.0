@@ -191,8 +191,6 @@ export default function UploadHistoryTable({
 		<DataTable<UploadLog, unknown>
 			columns={columns}
 			data={rows}
-			title={t('uploadHistory.table.title')}
-			description={t('uploadHistory.table.description')}
 			showSearch={false}
 			isLoading={!noPeriodSelected && isLoading}
 			errorMessage={!noPeriodSelected ? error?.message : undefined}

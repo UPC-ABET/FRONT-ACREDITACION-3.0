@@ -382,6 +382,10 @@
 			}
 		},
 		"parameters": {
+			"page": {
+				"title": "Parameters",
+				"subtitle": "Manage IFC codes, fields, and performance levels."
+			},
 			"tabs": {
 				"ifc": "IFC",
 				"performanceLevels": "Performance Levels"
@@ -394,6 +398,10 @@
 			}
 		},
 		"notifications": {
+			"page": {
+				"title": "Notifications",
+				"subtitle": "Configure notification templates and review delivery logs."
+			},
 			"tabs": {
 				"ifc": "IFC",
 				"survey": "Surveys",

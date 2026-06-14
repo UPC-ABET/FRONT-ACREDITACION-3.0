@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
+	Card,
+	PageHeader,
 	Select,
 	Table,
 	TableBody,
@@ -13,6 +15,7 @@ import {
 	TableErrorState,
 	TableHead,
 	TableHeader,
+	TableLoadingState,
 	TableRow,
 	Dialog,
 	DialogContent,
@@ -21,7 +24,6 @@ import {
 	DialogFooter,
 	DialogClose,
 } from '@/shared/components/ui';
-import { LoadingState } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import {
 	useAcademicPeriods,
@@ -99,46 +101,46 @@ export function EvaluationCoursesPage() {
 			: (spc.course?.name?.[locale] ?? String(spc.courseId));
 
 	return (
-		<div className="space-y-8">
-			<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-				<div>
-					<h1 className="text-3xl font-bold text-zinc-900">{t('evaluationCourses.list.title')}</h1>
-					<p className="mt-2 text-zinc-600">{t('evaluationCourses.list.description')}</p>
-				</div>
-				<Button variant="primary" className="shrink-0" onClick={() => setModalOpen(true)}>
-					<PlusIcon className="mr-1.5 h-4 w-4" />
-					{t('evaluationCourses.list.addButton')}
-				</Button>
-			</div>
+		<div className="space-y-6">
+			<PageHeader
+				title={t('evaluationCourses.list.title')}
+				description={t('evaluationCourses.list.description')}
+				action={
+					<Button variant="primary" className="shrink-0" onClick={() => setModalOpen(true)}>
+						<PlusIcon className="mr-1.5 h-4 w-4" />
+						{t('evaluationCourses.list.addButton')}
+					</Button>
+				}
+			/>
 
-			<div className="max-w-xs">
-				<Select
-					label={t('evaluationCourses.list.programLabel')}
-					placeholder={
-						loadingPrograms
-							? t('evaluationCourses.list.programLoading')
-							: programs.length === 0
-								? t('evaluationCourses.list.programNoOptions')
-								: t('evaluationCourses.list.programPlaceholder')
-					}
-					options={programOptions}
-					value={selectedProgramOpt}
-					isDisabled={loadingPrograms || programs.length === 0}
-					isSearchable
-					onChange={(_, v) => {
-						const opt = Array.isArray(v) ? (v[0] ?? null) : v;
-						setSelectedProgramOpt(opt as AnyOption | null);
-						setSelectedProgramId(opt ? Number(opt.value) : null);
-					}}
-				/>
-			</div>
+			<Card>
+				<div className="max-w-xs">
+					<Select
+						label={t('evaluationCourses.list.programLabel')}
+						placeholder={
+							loadingPrograms
+								? t('evaluationCourses.list.programLoading')
+								: programs.length === 0
+									? t('evaluationCourses.list.programNoOptions')
+									: t('evaluationCourses.list.programPlaceholder')
+						}
+						options={programOptions}
+						value={selectedProgramOpt}
+						isDisabled={loadingPrograms || programs.length === 0}
+						isSearchable
+						onChange={(_, v) => {
+							const opt = Array.isArray(v) ? (v[0] ?? null) : v;
+							setSelectedProgramOpt(opt as AnyOption | null);
+							setSelectedProgramId(opt ? Number(opt.value) : null);
+						}}
+					/>
+				</div>
+			</Card>
 
 			{!selectedProgramId ? (
 				<TableEmptyState message={t('evaluationCourses.list.selectProgramFirst')} />
 			) : loadingCourses ? (
-				<div className="rounded-xl border border-zinc-200 bg-white p-10">
-					<LoadingState label={t('evaluationCourses.list.loading')} />
-				</div>
+				<TableLoadingState label={t('evaluationCourses.list.loading')} />
 			) : isError ? (
 				<TableErrorState
 					message={error instanceof Error ? error.message : t('evaluationCourses.list.error')}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Tabs } from '@/shared/components';
+import { PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { ChartHeadsConfigPage } from '@/modules/admin/chart-heads';
 import { PeriodsTab, ProgramCommissionsTab } from '../components';
@@ -29,12 +29,10 @@ export default function AdminConfigurationPage() {
 
 	return (
 		<div className="w-full space-y-6">
-			<header className="space-y-1">
-				<h1 className="text-2xl font-semibold text-gray-900">
-					{t('admin.configuration.page.title')}
-				</h1>
-				<p className="text-sm text-gray-500">{t('admin.configuration.page.subtitle')}</p>
-			</header>
+			<PageHeader
+				title={t('admin.configuration.page.title')}
+				description={t('admin.configuration.page.subtitle')}
+			/>
 
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
 

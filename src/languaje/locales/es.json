@@ -382,6 +382,10 @@
 			}
 		},
 		"parameters": {
+			"page": {
+				"title": "Parámetros",
+				"subtitle": "Administra los códigos IFC, los campos y los niveles de desempeño."
+			},
 			"tabs": {
 				"ifc": "IFC",
 				"performanceLevels": "Niveles de Desempeño"
@@ -394,6 +398,10 @@
 			}
 		},
 		"notifications": {
+			"page": {
+				"title": "Notificaciones",
+				"subtitle": "Configura las plantillas de notificación y revisa los registros de envío."
+			},
 			"tabs": {
 				"ifc": "IFC",
 				"survey": "Encuestas",

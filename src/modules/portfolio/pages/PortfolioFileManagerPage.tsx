@@ -20,6 +20,7 @@ import {
 	Button,
 	Card,
 	ConfirmDialog,
+	PageHeader,
 	Skeleton,
 	SuccessDialog,
 	Toast,
@@ -347,124 +348,128 @@ export function PortfolioFileManagerPage() {
 	}
 
 	return (
-		<Card title={t('portfolio.title')}>
-			<div
-				className="space-y-5"
-				onDragOver={(e) => {
-					e.preventDefault();
-					if (!isDragging) setIsDragging(true);
-				}}
-				onDragLeave={(e) => {
-					e.preventDefault();
-					if (e.currentTarget === e.target) setIsDragging(false);
-				}}
-				onDrop={handleDrop}>
-				<p className="text-sm text-zinc-500">{t('portfolio.subtitle')}</p>
-
-				{/* Breadcrumbs + refresh */}
-				<div className="flex items-center justify-between gap-2 rounded-xl border border-zinc-200 bg-zinc-50/60 px-3 py-2">
-					<FileBreadcrumbs segments={breadcrumbs} onNavigate={navigateTo} />
-					<button
-						type="button"
-						onClick={() => refetch()}
-						className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
-						title={t('portfolio.toolbar.refresh')}
-						aria-label={t('portfolio.toolbar.refresh')}>
-						<ArrowPathIcon className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
-					</button>
-				</div>
-
-				{/* Toolbar */}
-				<div className="flex flex-wrap items-center gap-2">
-					<Button variant="primary" size="md" onClick={() => setShowCreateFolder(true)}>
-						<FolderPlusIcon className="h-5 w-5" />
-						{t('portfolio.toolbar.newFolder')}
-					</Button>
-					<Button variant="secondary" size="md" onClick={() => setShowCreateComment(true)}>
-						<DocumentPlusIcon className="h-5 w-5" />
-						{t('portfolio.toolbar.newComment')}
-					</Button>
-					<Button
-						variant="secondary"
-						size="md"
-						disabled={isUploading}
-						onClick={() => fileInputRef.current?.click()}>
-						<ArrowUpTrayIcon className="h-5 w-5" />
-						{isUploading
-							? `${t('portfolio.dropzone.uploading')} ${uploadProgress.done}/${uploadProgress.total}`
-							: t('portfolio.toolbar.upload')}
-					</Button>
-					<Button variant="surface" size="md" onClick={() => setShowTree(true)}>
-						<ListBulletIcon className="h-5 w-5" />
-						{t('portfolio.toolbar.tree')}
-					</Button>
-					<input
-						ref={fileInputRef}
-						type="file"
-						multiple
-						className="hidden"
-						onChange={handleInputUpload}
-					/>
-					{clipboard.length > 0 && (
-						<Button variant="surface" size="md" onClick={handlePaste}>
-							<ClipboardIcon className="h-5 w-5" />
-							{t('portfolio.toolbar.paste')} ({clipboard.length})
-						</Button>
-					)}
-					{selectedCount > 0 && (
-						<>
-							<Button variant="surface" size="md" onClick={handleCopy}>
-								<ClipboardDocumentIcon className="h-5 w-5" />
-								{t('portfolio.toolbar.copy')} ({selectedCount})
-							</Button>
-							{selectedCount === 1 && (
-								<Button
-									variant="surface"
-									size="md"
-									onClick={() => setRenameTarget(selectedEntries[0])}>
-									<PencilSquareIcon className="h-5 w-5" />
-									{t('portfolio.toolbar.rename')}
-								</Button>
-							)}
-							<Button variant="surface" size="md" onClick={() => setMoveSources(selectedEntries)}>
-								<TruckIcon className="h-5 w-5" />
-								{t('portfolio.toolbar.move')} ({selectedCount})
-							</Button>
-							<Button variant="surface" size="md" onClick={handleDownloadSelected}>
-								<ArrowDownTrayIcon className="h-5 w-5" />
-								{t('portfolio.toolbar.download')} ({selectedCount})
-							</Button>
-							<Button variant="warning" size="md" onClick={() => setConfirmDelete(selectedEntries)}>
-								<TrashIcon className="h-5 w-5" />
-								{t('portfolio.toolbar.delete')} ({selectedCount})
-							</Button>
-						</>
-					)}
-					<div className="relative ml-auto w-full sm:w-64">
-						<MagnifyingGlassIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-400" />
-						<input
-							type="text"
-							value={search}
-							onChange={(e) => setSearch(e.target.value)}
-							placeholder={t('portfolio.toolbar.searchPlaceholder')}
-							className="h-9 w-full rounded-md border border-zinc-200 bg-white pl-8 pr-3 text-sm placeholder-zinc-400 focus:border-red-400 focus:outline-none focus:ring-1 focus:ring-red-400"
-						/>
+		<div className="space-y-6">
+			<PageHeader title={t('portfolio.title')} description={t('portfolio.subtitle')} />
+			<Card>
+				<div
+					className="space-y-5"
+					onDragOver={(e) => {
+						e.preventDefault();
+						if (!isDragging) setIsDragging(true);
+					}}
+					onDragLeave={(e) => {
+						e.preventDefault();
+						if (e.currentTarget === e.target) setIsDragging(false);
+					}}
+					onDrop={handleDrop}>
+					{/* Breadcrumbs + refresh */}
+					<div className="flex items-center justify-between gap-2 rounded-xl border border-zinc-200 bg-zinc-50/60 px-3 py-2">
+						<FileBreadcrumbs segments={breadcrumbs} onNavigate={navigateTo} />
+						<button
+							type="button"
+							onClick={() => refetch()}
+							className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
+							title={t('portfolio.toolbar.refresh')}
+							aria-label={t('portfolio.toolbar.refresh')}>
+							<ArrowPathIcon className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+						</button>
 					</div>
-				</div>
 
-				{/* Dropzone hint (visible while dragging) */}
-				{isDragging && (
-					<div className="pointer-events-none flex items-center justify-center rounded-xl border-2 border-dashed border-red-400 bg-red-50/60 py-10 text-center">
-						<div>
-							<CloudArrowUpIcon className="mx-auto mb-2 h-10 w-10 text-red-400" />
-							<p className="text-sm font-semibold text-red-600">{t('portfolio.dropzone.drop')}</p>
+					{/* Toolbar */}
+					<div className="flex flex-wrap items-center gap-2">
+						<Button variant="primary" size="md" onClick={() => setShowCreateFolder(true)}>
+							<FolderPlusIcon className="h-5 w-5" />
+							{t('portfolio.toolbar.newFolder')}
+						</Button>
+						<Button variant="secondary" size="md" onClick={() => setShowCreateComment(true)}>
+							<DocumentPlusIcon className="h-5 w-5" />
+							{t('portfolio.toolbar.newComment')}
+						</Button>
+						<Button
+							variant="secondary"
+							size="md"
+							disabled={isUploading}
+							onClick={() => fileInputRef.current?.click()}>
+							<ArrowUpTrayIcon className="h-5 w-5" />
+							{isUploading
+								? `${t('portfolio.dropzone.uploading')} ${uploadProgress.done}/${uploadProgress.total}`
+								: t('portfolio.toolbar.upload')}
+						</Button>
+						<Button variant="surface" size="md" onClick={() => setShowTree(true)}>
+							<ListBulletIcon className="h-5 w-5" />
+							{t('portfolio.toolbar.tree')}
+						</Button>
+						<input
+							ref={fileInputRef}
+							type="file"
+							multiple
+							className="hidden"
+							onChange={handleInputUpload}
+						/>
+						{clipboard.length > 0 && (
+							<Button variant="surface" size="md" onClick={handlePaste}>
+								<ClipboardIcon className="h-5 w-5" />
+								{t('portfolio.toolbar.paste')} ({clipboard.length})
+							</Button>
+						)}
+						{selectedCount > 0 && (
+							<>
+								<Button variant="surface" size="md" onClick={handleCopy}>
+									<ClipboardDocumentIcon className="h-5 w-5" />
+									{t('portfolio.toolbar.copy')} ({selectedCount})
+								</Button>
+								{selectedCount === 1 && (
+									<Button
+										variant="surface"
+										size="md"
+										onClick={() => setRenameTarget(selectedEntries[0])}>
+										<PencilSquareIcon className="h-5 w-5" />
+										{t('portfolio.toolbar.rename')}
+									</Button>
+								)}
+								<Button variant="surface" size="md" onClick={() => setMoveSources(selectedEntries)}>
+									<TruckIcon className="h-5 w-5" />
+									{t('portfolio.toolbar.move')} ({selectedCount})
+								</Button>
+								<Button variant="surface" size="md" onClick={handleDownloadSelected}>
+									<ArrowDownTrayIcon className="h-5 w-5" />
+									{t('portfolio.toolbar.download')} ({selectedCount})
+								</Button>
+								<Button
+									variant="warning"
+									size="md"
+									onClick={() => setConfirmDelete(selectedEntries)}>
+									<TrashIcon className="h-5 w-5" />
+									{t('portfolio.toolbar.delete')} ({selectedCount})
+								</Button>
+							</>
+						)}
+						<div className="relative ml-auto w-full sm:w-64">
+							<MagnifyingGlassIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-400" />
+							<input
+								type="text"
+								value={search}
+								onChange={(e) => setSearch(e.target.value)}
+								placeholder={t('portfolio.toolbar.searchPlaceholder')}
+								className="h-9 w-full rounded-md border border-zinc-200 bg-white pl-8 pr-3 text-sm placeholder-zinc-400 focus:border-red-400 focus:outline-none focus:ring-1 focus:ring-red-400"
+							/>
 						</div>
 					</div>
-				)}
 
-				{/* Listing */}
-				{!isDragging && renderBody()}
-			</div>
+					{/* Dropzone hint (visible while dragging) */}
+					{isDragging && (
+						<div className="pointer-events-none flex items-center justify-center rounded-xl border-2 border-dashed border-red-400 bg-red-50/60 py-10 text-center">
+							<div>
+								<CloudArrowUpIcon className="mx-auto mb-2 h-10 w-10 text-red-400" />
+								<p className="text-sm font-semibold text-red-600">{t('portfolio.dropzone.drop')}</p>
+							</div>
+						</div>
+					)}
+
+					{/* Listing */}
+					{!isDragging && renderBody()}
+				</div>
+			</Card>
 
 			{/* Modals */}
 			<CreateFolderDialog
@@ -531,6 +536,6 @@ export function PortfolioFileManagerPage() {
 			{toastError && (
 				<Toast isOpen type="error" onClose={() => setToastError(null)} message={toastError} />
 			)}
-		</Card>
+		</div>
 	);
 }

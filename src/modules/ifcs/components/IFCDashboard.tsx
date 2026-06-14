@@ -11,6 +11,7 @@ import {
 import {
 	Button,
 	Card,
+	PageHeader,
 	Select,
 	Skeleton,
 	SuccessDialog,
@@ -259,164 +260,160 @@ export function IFCDashboard() {
 	const hasSearched = lastSearchedChartIds !== null;
 
 	return (
-		<Card title={t('ifcs.page.title')}>
-			<div className="space-y-6">
-				<div
-					className={`rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6${
-						chartIncomplete ? ' hidden' : ''
-					}`}>
-					{academicPeriodId === null ? (
-						<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>
-					) : schoolsLoading ? (
-						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-							<Skeleton className="h-10 w-full" />
-							<Skeleton className="h-10 w-full" />
-						</div>
-					) : noSchools ? (
-						<p className="text-sm italic text-zinc-500">{t('ifcs.page.noSchools')}</p>
-					) : (
-						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-							{scopeLoading && (
-								<>
-									<Skeleton className="h-10 w-full" />
-									<Skeleton className="h-10 w-full" />
-								</>
-							)}
-							{!scopeLoading && !chartIncomplete && scope && scope.levels.length > 0 && (
-								<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
-							)}
-						</div>
-					)}
+		<div className="space-y-6">
+			<PageHeader title={t('ifcs.page.title')} />
+			<Card className={chartIncomplete ? 'hidden' : ''}>
+				{academicPeriodId === null ? (
+					<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>
+				) : schoolsLoading ? (
+					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						<Skeleton className="h-10 w-full" />
+						<Skeleton className="h-10 w-full" />
+					</div>
+				) : noSchools ? (
+					<p className="text-sm italic text-zinc-500">{t('ifcs.page.noSchools')}</p>
+				) : (
+					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						{scopeLoading && (
+							<>
+								<Skeleton className="h-10 w-full" />
+								<Skeleton className="h-10 w-full" />
+							</>
+						)}
+						{!scopeLoading && !chartIncomplete && scope && scope.levels.length > 0 && (
+							<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
+						)}
+					</div>
+				)}
 
-					{!noSchools && !chartIncomplete && (
-						<div className="mt-6 flex flex-col gap-4 border-t border-zinc-200 pt-5 lg:flex-row lg:items-end lg:justify-between">
-							<div className="w-full lg:w-72">
-								<Select
-									label={t('ifcs.table.statusFilter')}
-									value={selectedStatusOpt}
-									onChange={(_, opt) => {
-										const next = (opt as { value?: IFCStatusFilter } | null)?.value;
-										setStatusFilter((next ?? 'ALL') as IFCStatusFilter);
-									}}
-									options={statusOptions}
-								/>
-							</div>
-							<div className="flex flex-wrap items-center gap-2 lg:justify-end">
-								<Button variant="primary" size="lg" disabled={!canSearch} onClick={handleSearch}>
-									<MagnifyingGlassIcon className="h-5 w-5" />
-									{t('ifcs.page.searchBtn')}
-								</Button>
+				{!noSchools && !chartIncomplete && (
+					<div className="mt-6 flex flex-col gap-4 border-t border-zinc-200 pt-5 lg:flex-row lg:items-end lg:justify-between">
+						<div className="w-full lg:w-72">
+							<Select
+								label={t('ifcs.table.statusFilter')}
+								value={selectedStatusOpt}
+								onChange={(_, opt) => {
+									const next = (opt as { value?: IFCStatusFilter } | null)?.value;
+									setStatusFilter((next ?? 'ALL') as IFCStatusFilter);
+								}}
+								options={statusOptions}
+							/>
+						</div>
+						<div className="flex flex-wrap items-center gap-2 lg:justify-end">
+							<Button variant="primary" size="lg" disabled={!canSearch} onClick={handleSearch}>
+								<MagnifyingGlassIcon className="h-5 w-5" />
+								{t('ifcs.page.searchBtn')}
+							</Button>
+							<Button
+								variant="secondary"
+								size="lg"
+								disabled={!canDownloadReport || downloadingReport}
+								onClick={() => downloadReport(lastSearchedChartIds!)}>
+								<DocumentChartBarIcon className="h-5 w-5" />
+								{downloadingReport ? t('loading.default') : t('ifcs.statusReport.btn')}
+							</Button>
+							{approvedIds.length > 1 && (
 								<Button
 									variant="secondary"
 									size="lg"
-									disabled={!canDownloadReport || downloadingReport}
-									onClick={() => downloadReport(lastSearchedChartIds!)}>
-									<DocumentChartBarIcon className="h-5 w-5" />
-									{downloadingReport ? t('loading.default') : t('ifcs.statusReport.btn')}
+									disabled={downloadingAll}
+									onClick={() => downloadMany(approvedIds)}>
+									<ArrowDownTrayIcon className="h-5 w-5" />
+									{downloadingAll
+										? t('loading.default')
+										: `${t('ifcs.pdf.downloadAll')} (${approvedIds.length})`}
 								</Button>
-								{approvedIds.length > 1 && (
-									<Button
-										variant="secondary"
-										size="lg"
-										disabled={downloadingAll}
-										onClick={() => downloadMany(approvedIds)}>
-										<ArrowDownTrayIcon className="h-5 w-5" />
-										{downloadingAll
-											? t('loading.default')
-											: `${t('ifcs.pdf.downloadAll')} (${approvedIds.length})`}
-									</Button>
-								)}
-								{notifiableChartIds.length > 0 && academicPeriodId !== null && (
-									<Button
-										variant="secondary"
-										size="lg"
-										disabled={notifyingAll}
-										onClick={handleNotifyAll}>
-										<BellAlertIcon className="h-5 w-5" />
-										{notifyingAll
-											? t('loading.default')
-											: `${t('ifcs.notify.btn.notifyAll')} (${notifiableChartIds.length})`}
-									</Button>
-								)}
-							</div>
+							)}
+							{notifiableChartIds.length > 0 && academicPeriodId !== null && (
+								<Button
+									variant="secondary"
+									size="lg"
+									disabled={notifyingAll}
+									onClick={handleNotifyAll}>
+									<BellAlertIcon className="h-5 w-5" />
+									{notifyingAll
+										? t('loading.default')
+										: `${t('ifcs.notify.btn.notifyAll')} (${notifiableChartIds.length})`}
+								</Button>
+							)}
 						</div>
-					)}
+					</div>
+				)}
+			</Card>
+
+			{chartIncomplete && (
+				<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
+					<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
+					<p>{ORG_LABELS.chartIncomplete[lang]}</p>
 				</div>
+			)}
 
-				{chartIncomplete && (
-					<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
-						<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
-						<p>{ORG_LABELS.chartIncomplete[lang]}</p>
-					</div>
-				)}
+			{!noSchools && !chartIncomplete && listLoading && (
+				<div className="space-y-3">
+					<Skeleton className="h-10 w-full" />
+					<Skeleton className="h-10 w-full" />
+					<Skeleton className="h-10 w-full" />
+					<Skeleton className="h-10 w-full" />
+					<Skeleton className="h-10 w-full" />
+				</div>
+			)}
 
-				{!noSchools && !chartIncomplete && listLoading && (
-					<div className="space-y-3">
-						<Skeleton className="h-10 w-full" />
-						<Skeleton className="h-10 w-full" />
-						<Skeleton className="h-10 w-full" />
-						<Skeleton className="h-10 w-full" />
-						<Skeleton className="h-10 w-full" />
-					</div>
-				)}
-
-				{!noSchools && !chartIncomplete && !listLoading && (
-					<div className="overflow-x-auto">
-						<IFCTable
-							rows={visibleRows}
-							periodId={academicPeriodId}
-							canNotify={scope?.canNotify ?? false}
-							notifyingChartId={notifyingChartId}
-							onNotify={handleNotifyOne}
-						/>
-						{hasSearched && !hasResults && <TableEmptyState message={t('ifcs.table.empty')} />}
-					</div>
-				)}
-
-				{scopeError && !scopeErrorDismissed && (
-					<Toast
-						isOpen
-						type="error"
-						onClose={() => setScopeErrorDismissed(true)}
-						message={tryTranslate(t, scopeError)}
+			{!noSchools && !chartIncomplete && !listLoading && (
+				<div className="overflow-x-auto">
+					<IFCTable
+						rows={visibleRows}
+						periodId={academicPeriodId}
+						canNotify={scope?.canNotify ?? false}
+						notifyingChartId={notifyingChartId}
+						onNotify={handleNotifyOne}
 					/>
-				)}
+					{hasSearched && !hasResults && <TableEmptyState message={t('ifcs.table.empty')} />}
+				</div>
+			)}
 
-				{listError && !listErrorDismissed && (
-					<Toast
-						isOpen
-						type="error"
-						onClose={() => setListErrorDismissed(true)}
-						message={tryTranslate(t, listError)}
-					/>
-				)}
+			{scopeError && !scopeErrorDismissed && (
+				<Toast
+					isOpen
+					type="error"
+					onClose={() => setScopeErrorDismissed(true)}
+					message={tryTranslate(t, scopeError)}
+				/>
+			)}
 
-				{pdfError && (
-					<Toast isOpen type="error" onClose={clearPdfError} message={tryTranslate(t, pdfError)} />
-				)}
+			{listError && !listErrorDismissed && (
+				<Toast
+					isOpen
+					type="error"
+					onClose={() => setListErrorDismissed(true)}
+					message={tryTranslate(t, listError)}
+				/>
+			)}
 
-				{reportError && (
-					<Toast
-						isOpen
-						type="error"
-						onClose={clearReportError}
-						message={tryTranslate(t, reportError)}
-					/>
-				)}
+			{pdfError && (
+				<Toast isOpen type="error" onClose={clearPdfError} message={tryTranslate(t, pdfError)} />
+			)}
 
-				{notifyError && (
-					<Toast
-						isOpen
-						type="error"
-						onClose={() => setNotifyError(null)}
-						message={tryTranslate(t, notifyError)}
-					/>
-				)}
+			{reportError && (
+				<Toast
+					isOpen
+					type="error"
+					onClose={clearReportError}
+					message={tryTranslate(t, reportError)}
+				/>
+			)}
 
-				{notifySuccess && (
-					<SuccessDialog isOpen onClose={() => setNotifySuccess(null)} message={notifySuccess} />
-				)}
-			</div>
-		</Card>
+			{notifyError && (
+				<Toast
+					isOpen
+					type="error"
+					onClose={() => setNotifyError(null)}
+					message={tryTranslate(t, notifyError)}
+				/>
+			)}
+
+			{notifySuccess && (
+				<SuccessDialog isOpen onClose={() => setNotifySuccess(null)} message={notifySuccess} />
+			)}
+		</div>
 	);
 }

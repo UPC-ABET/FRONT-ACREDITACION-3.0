@@ -5,6 +5,7 @@ import { PencilSquareIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outli
 import {
 	Button,
 	buttonVariants,
+	Card,
 	Dialog,
 	DialogContent,
 	DialogFooter,
@@ -18,9 +19,9 @@ import {
 	TableErrorState,
 	TableHead,
 	TableHeader,
+	TableLoadingState,
 	TableRow,
 } from '@/shared/components/ui';
-import { LoadingState } from '@/shared/components';
 import { Select } from '@/shared/components/ui/Select';
 import { Input } from '@/shared/components/ui/Input';
 import { cn } from '@/shared/lib/utils';
@@ -235,58 +236,54 @@ export function PerformanceLevelsPage() {
 	);
 
 	return (
-		<div className="space-y-8">
-			<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-				<div>
-					<h1 className="text-3xl font-bold text-zinc-900">{t('performanceLevels.list.title')}</h1>
-					<p className="mt-2 text-zinc-600">{t('performanceLevels.list.description')}</p>
-				</div>
+		<div className="space-y-6">
+			<div className="flex justify-end">
 				<Button variant="primary" size="md" onClick={openCreateModal}>
 					<PlusIcon className="h-4 w-4 mr-2" />
 					{t('performanceLevels.list.createButton')}
 				</Button>
 			</div>
 
-			<div className="space-y-4">
-				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<AcademicPeriodSelect
-						value={selectedPeriodId}
-						onChange={setSelectedPeriodId}
-						isClearable
-						onClear={() => setSelectedPeriodId(null)}
-					/>
-					<Select
-						label={t('performanceLevels.list.instrumentFilter')}
-						options={instrumentTypeOptions}
-						value={selectedInstrument}
-						isClearable
-						placeholder={t('performanceLevels.list.allInstruments')}
-						onChange={(_name, val) => setSelectedInstrument(val as OptionItem | null)}
-					/>
-				</div>
-
-				{hasFilters && (
-					<div className="flex justify-end">
-						<button
-							type="button"
-							onClick={handleClearFilters}
-							className={cn(
-								buttonVariants({ variant: 'warning', size: 'md' }),
-								'inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-red-100 hover:text-red-500',
-							)}>
-							<TrashIcon className="h-4 w-4" />
-							{t('performanceLevels.list.clearFilters')}
-						</button>
+			<Card>
+				<div className="space-y-4">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						<AcademicPeriodSelect
+							value={selectedPeriodId}
+							onChange={setSelectedPeriodId}
+							isClearable
+							onClear={() => setSelectedPeriodId(null)}
+						/>
+						<Select
+							label={t('performanceLevels.list.instrumentFilter')}
+							options={instrumentTypeOptions}
+							value={selectedInstrument}
+							isClearable
+							placeholder={t('performanceLevels.list.allInstruments')}
+							onChange={(_name, val) => setSelectedInstrument(val as OptionItem | null)}
+						/>
 					</div>
-				)}
-			</div>
+
+					{hasFilters && (
+						<div className="flex justify-end">
+							<button
+								type="button"
+								onClick={handleClearFilters}
+								className={cn(
+									buttonVariants({ variant: 'warning', size: 'md' }),
+									'inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-red-100 hover:text-red-500',
+								)}>
+								<TrashIcon className="h-4 w-4" />
+								{t('performanceLevels.list.clearFilters')}
+							</button>
+						</div>
+					)}
+				</div>
+			</Card>
 
 			{!hasFilters ? (
 				<TableEmptyState message={t('performanceLevels.list.selectFilter')} />
 			) : isLoading ? (
-				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
-					<LoadingState label={t('performanceLevels.list.loading')} />
-				</div>
+				<TableLoadingState label={t('performanceLevels.list.loading')} />
 			) : isError ? (
 				<TableErrorState
 					message={error instanceof Error ? error.message : t('performanceLevels.list.error')}

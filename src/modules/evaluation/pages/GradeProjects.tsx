@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 import {
+	PageHeader,
 	Table,
 	TableBody,
 	TableCell,
@@ -11,10 +12,10 @@ import {
 	TableErrorState,
 	TableHead,
 	TableHeader,
+	TableLoadingState,
 	TableRow,
 	Tabs,
 } from '@/shared/components/ui';
-import { LoadingState } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
 import { useI18n, useABET } from '@/providers';
 import { useAuth } from '@/providers';
@@ -88,10 +89,7 @@ export function GradeProjectsPage() {
 
 	return (
 		<div className="space-y-6">
-			<div>
-				<h1 className="text-3xl font-bold text-zinc-900">{t('projects.grade.title')}</h1>
-				<p className="mt-2 text-zinc-600">{t('projects.grade.description')}</p>
-			</div>
+			<PageHeader title={t('projects.grade.title')} description={t('projects.grade.description')} />
 
 			<Tabs
 				tabs={tabs}
@@ -101,15 +99,13 @@ export function GradeProjectsPage() {
 			/>
 
 			{isLoading ? (
-				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
-					<LoadingState
-						label={
-							!professorEnabled || isFetchingProfessor || isLoadingProfessor
-								? t('projects.grade.loadingProfessor')
-								: t('projects.grade.loading')
-						}
-					/>
-				</div>
+				<TableLoadingState
+					label={
+						!professorEnabled || isFetchingProfessor || isLoadingProfessor
+							? t('projects.grade.loadingProfessor')
+							: t('projects.grade.loading')
+					}
+				/>
 			) : isErrorProfessor || professorNotFound ? (
 				<TableErrorState message={t('projects.grade.errorProfessor')} />
 			) : isErrorProjects ? (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Tabs } from '@/shared/components';
+import { PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { UsersTab } from '../components/users';
 import { RolesTab } from '../components/roles';
@@ -34,12 +34,7 @@ export default function AdminIamPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="space-y-1">
-				<h1 className="text-2xl font-bold tracking-tight text-zinc-900">
-					{t('admin.iam.page.title')}
-				</h1>
-				<p className="text-sm text-zinc-500">{t('admin.iam.page.subtitle')}</p>
-			</div>
+			<PageHeader title={t('admin.iam.page.title')} description={t('admin.iam.page.subtitle')} />
 
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
 

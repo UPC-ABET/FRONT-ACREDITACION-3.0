@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Tabs } from '@/shared/components';
+import { PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { LCFCReports } from './LCFCReports';
 import { LCFCNotificationView } from './notifications/LCFCNotificationView';
@@ -19,12 +19,10 @@ export function LCFCManagementView() {
 
 	return (
 		<div className="space-y-6">
-			<div>
-				<h1 className="text-2xl font-bold text-zinc-900">
-					LCFC — {t('surveys.lcfc.management.title')}
-				</h1>
-				<p className="text-sm text-zinc-500 mt-1">{t('surveys.lcfc.management.subtitle')}</p>
-			</div>
+			<PageHeader
+				title={`LCFC — ${t('surveys.lcfc.management.title')}`}
+				description={t('surveys.lcfc.management.subtitle')}
+			/>
 
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 

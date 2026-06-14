@@ -1,6 +1,7 @@
 'use client';
 
 import { InboxIcon } from '@heroicons/react/24/outline';
+import { LoadingState } from './Spinner';
 
 interface TableEmptyStateProps {
 	message: string;
@@ -10,10 +11,22 @@ interface TableEmptyStateProps {
 
 export function TableEmptyState({ message, icon: Icon = InboxIcon, action }: TableEmptyStateProps) {
 	return (
-		<div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-white py-14 text-zinc-500">
+		<div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-zinc-200 bg-white py-14 text-zinc-500 shadow-sm">
 			<Icon className="h-10 w-10 text-zinc-400" aria-hidden="true" />
 			<p className="text-base italic">{message}</p>
 			{action}
+		</div>
+	);
+}
+
+interface TableLoadingStateProps {
+	label?: string;
+}
+
+export function TableLoadingState({ label }: TableLoadingStateProps) {
+	return (
+		<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
+			<LoadingState label={label} />
 		</div>
 	);
 }
@@ -26,7 +39,7 @@ interface TableErrorStateProps {
 
 export function TableErrorState({ message, onRetry, retryLabel }: TableErrorStateProps) {
 	return (
-		<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
+		<div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-5 text-base text-red-800 shadow-sm">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"

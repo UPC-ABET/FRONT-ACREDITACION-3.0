@@ -1,6 +1,7 @@
 export * from './Input';
 export * from './Dialog';
 export * from './EmptyState';
+export * from './PageHeader';
 export * from './Sidebar';
 export * from './Table';
 export * from './Card';

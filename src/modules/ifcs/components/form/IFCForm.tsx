@@ -167,21 +167,25 @@ export function IFCForm(props: Props) {
 				onEvidenceChange={updatePreviousActionEvidence}
 			/>
 
-			<IFCFindingsEditor
-				findings={state.findings}
-				criticalities={props.criticalities}
-				onAdd={addFinding}
-				onUpdate={updateFinding}
-				onDelete={deleteFinding}
-			/>
+			<Card>
+				<IFCFindingsEditor
+					findings={state.findings}
+					criticalities={props.criticalities}
+					onAdd={addFinding}
+					onUpdate={updateFinding}
+					onDelete={deleteFinding}
+				/>
+			</Card>
 
-			<IFCActionsEditor
-				actions={state.actions}
-				findings={state.findings}
-				onAdd={addAction}
-				onUpdate={updateAction}
-				onDelete={deleteAction}
-			/>
+			<Card>
+				<IFCActionsEditor
+					actions={state.actions}
+					findings={state.findings}
+					onAdd={addAction}
+					onUpdate={updateAction}
+					onDelete={deleteAction}
+				/>
+			</Card>
 
 			<div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap justify-end gap-3 border-t border-zinc-200 bg-white/95 px-4 py-4 backdrop-blur sm:relative sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
 				<Button variant="ghost" size="lg" onClick={() => router.back()}>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Tabs } from '@/shared/components';
+import { PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { IfcCodesPage } from '../components/IfcCodesPage';
 import { IfcFieldsPage } from '../components/IfcFieldsPage';
@@ -43,6 +43,11 @@ export default function AdminParametersPage() {
 
 	return (
 		<div className="space-y-6">
+			<PageHeader
+				title={t('admin.parameters.page.title')}
+				description={t('admin.parameters.page.subtitle')}
+			/>
+
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
 
 			{activeTab === 'ifc' && (

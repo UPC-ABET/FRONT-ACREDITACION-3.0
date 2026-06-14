@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Tabs } from '@/shared/components';
+import { PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { NotificationConfigPage } from '../components/NotificationConfigPage';
 import { SurveyMessagesTab } from '../components/SurveyMessagesTab';
@@ -32,6 +32,11 @@ export default function AdminNotificationsPage() {
 
 	return (
 		<div className="space-y-6">
+			<PageHeader
+				title={t('admin.notifications.page.title')}
+				description={t('admin.notifications.page.subtitle')}
+			/>
+
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
 			{activeTab === 'ifc' && <NotificationConfigPage />}
 			{activeTab === 'survey' && <SurveyMessagesTab />}

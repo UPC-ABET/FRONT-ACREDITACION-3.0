@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, LoadingState } from '@/shared/components';
+import { Card, LoadingState, PageHeader } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { CapstoneProjectCard, RubricEvaluationMatrix } from '../components/capstone';
 import {
@@ -33,10 +33,7 @@ export default function CapstoneConsolePage({
 
 	return (
 		<div className="space-y-6">
-			<header>
-				<h1 className="text-2xl font-semibold text-gray-900">{t('capstone.title')}</h1>
-				<p className="mt-1 text-sm text-gray-500">{t('capstone.subtitle')}</p>
-			</header>
+			<PageHeader title={t('capstone.title')} description={t('capstone.subtitle')} />
 
 			<Card title={t('capstone.projects.title')} description={t('capstone.projects.description')}>
 				{loadingProjects && (
