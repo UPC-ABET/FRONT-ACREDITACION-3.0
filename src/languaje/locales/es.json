@@ -1496,7 +1496,7 @@
 				"evaluatorsAdd": "Agregar evaluador",
 				"evaluatorsEmpty": "Aún no se han agregado evaluadores.",
 				"evaluatorsSearch": "Buscar docente",
-				"evaluatorsSearchPlaceholder": "Nombre o correo del docente...",
+				"evaluatorsSearchPlaceholder": "Buscar por nombre o código...",
 				"evaluatorsSearchPrompt": "Escribe para buscar un docente.",
 				"evaluatorsNoResults": "No se encontraron docentes.",
 				"evaluatorsRole": "Rol",

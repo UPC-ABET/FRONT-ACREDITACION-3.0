@@ -1496,7 +1496,7 @@
 				"evaluatorsAdd": "Add evaluator",
 				"evaluatorsEmpty": "No evaluators added yet.",
 				"evaluatorsSearch": "Search professor",
-				"evaluatorsSearchPlaceholder": "Name or email...",
+				"evaluatorsSearchPlaceholder": "Search by name or code...",
 				"evaluatorsSearchPrompt": "Type to search for a professor.",
 				"evaluatorsNoResults": "No professors found.",
 				"evaluatorsRole": "Role",
