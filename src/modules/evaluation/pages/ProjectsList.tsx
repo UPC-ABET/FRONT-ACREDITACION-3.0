@@ -78,6 +78,7 @@ export function ProjectsListPage() {
 			'projects',
 			'filtered',
 			{
+				schoolId,
 				academicPeriodId: selectedPeriodId,
 				programId: selectedProgram?.value,
 				courseId: selectedCourse?.value,
@@ -86,12 +87,13 @@ export function ProjectsListPage() {
 		queryFn: () =>
 			projectsService
 				.getByFilters({
+					schoolId: schoolId!,
 					...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
 					...(selectedProgram ? { programId: selectedProgram.value } : {}),
 					...(selectedCourse ? { courseId: selectedCourse.value } : {}),
 				})
 				.then((r) => r.data),
-		enabled: !!selectedPeriodId,
+		enabled: !!selectedPeriodId && !!schoolId && !!selectedProgram,
 	});
 
 	const programOptions = useMemo(
@@ -179,7 +181,9 @@ export function ProjectsListPage() {
 				)}
 			</div>
 
-			{isLoading ? (
+			{!selectedProgram ? (
+				<TableEmptyState message={t('projects.list.selectProgram')} />
+			) : isLoading ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
 					<LoadingState label={t('projects.list.loading')} />
 				</div>

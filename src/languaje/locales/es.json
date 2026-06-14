@@ -1523,6 +1523,7 @@
 			"error": "No fue posible cargar los proyectos.",
 			"empty": "No hay proyectos registrados.",
 			"selectPeriod": "Selecciona un período académico para comenzar.",
+			"selectProgram": "Selecciona una carrera para ver los proyectos.",
 			"filters": {
 				"academicPeriod": "Período Académico",
 				"program": "Carrera",

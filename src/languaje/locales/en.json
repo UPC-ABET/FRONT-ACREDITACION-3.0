@@ -1523,6 +1523,7 @@
 			"error": "Could not load projects.",
 			"empty": "No projects registered.",
 			"selectPeriod": "Select an academic period to get started.",
+			"selectProgram": "Select a major to view projects.",
 			"filters": {
 				"academicPeriod": "Academic Period",
 				"program": "Program",
