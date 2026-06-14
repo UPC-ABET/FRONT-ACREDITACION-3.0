@@ -846,7 +846,10 @@
 		"error": {
 			"required": "Todos los campos son obligatorios",
 			"generic": "Error durante el login",
-			"schoolRequired": "Selecciona una escuela antes de continuar"
+			"schoolRequired": "Selecciona una escuela antes de continuar",
+			"USER_NOT_FOUND": "No tienes un usuario en el sistema.",
+			"NO_ROLE": "No tienes un rol asignado, contacta al administrador.",
+			"LOGIN_FAILED": "No se pudo iniciar sesión, intenta de nuevo."
 		}
 	},
 	"forgotPassword": {

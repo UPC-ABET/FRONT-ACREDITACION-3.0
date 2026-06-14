@@ -846,7 +846,10 @@
 		"error": {
 			"required": "All fields are required",
 			"generic": "Error during login",
-			"schoolRequired": "Select a school before continuing"
+			"schoolRequired": "Select a school before continuing",
+			"USER_NOT_FOUND": "You don't have a user in the system.",
+			"NO_ROLE": "You don't have an assigned role, contact the administrator.",
+			"LOGIN_FAILED": "Could not sign in, please try again."
 		}
 	},
 	"forgotPassword": {

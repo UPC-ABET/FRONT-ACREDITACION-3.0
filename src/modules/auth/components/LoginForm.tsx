@@ -1,18 +1,30 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Input, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
 import type { LoginPayload } from '@/modules/auth/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
 import { safeRedirect } from '@/shared/lib';
 import { useAuth, useI18n } from '@/providers';
 
+const MICROSOFT_ERROR_CODES = ['USER_NOT_FOUND', 'NO_ROLE', 'LOGIN_FAILED'] as const;
+
+function microsoftErrorKey(code: string | null): string | null {
+	if (!code) return null;
+	return (MICROSOFT_ERROR_CODES as readonly string[]).includes(code)
+		? `login.error.${code}`
+		: 'login.error.generic';
+}
+
 export default function LoginForm() {
+	const searchParams = useSearchParams();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(() =>
+		microsoftErrorKey(searchParams.get('error')),
+	);
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [dialogMessage, setDialogMessage] = useState('');
 	const router = useRouter();
@@ -25,7 +37,7 @@ export default function LoginForm() {
 		setDialogOpen(false);
 
 		if (!email || !password) {
-			setError(t('login.error.required'));
+			setError('login.error.required');
 			return;
 		}
 
@@ -61,7 +73,7 @@ export default function LoginForm() {
 			<div className="space-y-2">
 				{error && (
 					<div role="alert" className="text-sm text-red-600">
-						{error}
+						{t(error)}
 					</div>
 				)}
 
