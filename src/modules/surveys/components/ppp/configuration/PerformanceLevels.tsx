@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Button, Input, Toast } from '@/shared/components';
+import { Button, Input, Toast, LoadingState } from '@/shared/components';
 import { useI18n } from '@/providers';
 import type { PerformanceLevel } from '../../../types';
 import { MIN_PERFORMANCE_LEVEL, MAX_PERFORMANCE_LEVEL } from '../../../constants/competence';
@@ -72,11 +72,7 @@ export function PerformanceLevels({
 	}
 
 	if (loading) {
-		return (
-			<div className="flex items-center justify-center h-32">
-				<span className="text-sm text-zinc-400">{t('surveys.performanceLevels.loading')}</span>
-			</div>
-		);
+		return <LoadingState className="h-32" label={t('surveys.performanceLevels.loading')} />;
 	}
 
 	return (
@@ -116,8 +112,8 @@ export function PerformanceLevels({
 				))}
 			</div>
 
-			<Button onClick={handleSave} disabled={saving}>
-				{saving ? t('surveys.performanceLevels.saving') : t('surveys.performanceLevels.save')}
+			<Button onClick={handleSave} disabled={saving} loading={saving}>
+				{t('surveys.performanceLevels.save')}
 			</Button>
 
 			<Toast

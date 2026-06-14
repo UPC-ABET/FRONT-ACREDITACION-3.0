@@ -7,6 +7,7 @@ import {
 	ExclamationTriangleIcon,
 	MagnifyingGlassIcon,
 	PencilSquareIcon,
+	PlusIcon,
 	TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
@@ -31,11 +32,17 @@ import { useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
+import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import { useProfessorMaintenanceMutations, useProfessorsMaintenance } from '../hooks';
-import type { ProfessorMaintenanceItem, ProfessorMaintenanceUpdate } from '../types';
+import type {
+	ProfessorMaintenanceCreate,
+	ProfessorMaintenanceItem,
+	ProfessorMaintenanceUpdate,
+} from '../types';
+import { ProfessorMaintenanceCreateDialog } from './ProfessorMaintenanceCreateDialog';
 import { ProfessorMaintenanceEditDialog } from './ProfessorMaintenanceEditDialog';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 function RowActions({
 	onEdit,
@@ -73,12 +80,14 @@ export function ProfessorsMaintenance() {
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
 	const [page, setPage] = useState(1);
+	const [creating, setCreating] = useState(false);
+	const [createError, setCreateError] = useState<string | null>(null);
 	const [editing, setEditing] = useState<ProfessorMaintenanceItem | null>(null);
 	const [editError, setEditError] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<ProfessorMaintenanceItem | null>(null);
 	const [blockedReasons, setBlockedReasons] = useState<string[] | null>(null);
 
-	const { update, remove } = useProfessorMaintenanceMutations();
+	const { create, update, remove } = useProfessorMaintenanceMutations();
 
 	useEffect(() => {
 		const timer = setTimeout(() => setDebouncedSearch(search), 300);
@@ -99,6 +108,20 @@ export function ProfessorsMaintenance() {
 	const items = data?.items ?? [];
 	const total = data?.total ?? 0;
 	const totalPages = data?.totalPages ?? 1;
+
+	const handleCreate = async (body: ProfessorMaintenanceCreate) => {
+		setCreateError(null);
+		try {
+			await create.mutateAsync(body);
+			showToast('loads.maintenance.toast.created', 'success');
+			setCreating(false);
+		} catch (error) {
+			const [reason] = getApiErrorReasons(error);
+			setCreateError(
+				tryTranslate(t, reason ?? getErrorMessage(error, 'loads.maintenance.create.error')),
+			);
+		}
+	};
 
 	const handleSaveEdit = async (body: ProfessorMaintenanceUpdate) => {
 		if (!editing) return;
@@ -148,16 +171,29 @@ export function ProfessorsMaintenance() {
 						<h2 className="text-lg font-semibold text-gray-900">{t('loads.maintenance.title')}</h2>
 						<p className="text-sm text-gray-500">{t('loads.maintenance.subtitle')}</p>
 					</div>
-					<div className="relative w-full sm:max-w-xs">
-						<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-						<input
-							type="search"
-							value={search}
-							onChange={(event) => handleSearchChange(event.target.value)}
-							placeholder={t('loads.maintenance.searchPlaceholder')}
-							aria-label={t('loads.maintenance.searchPlaceholder')}
-							className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
-						/>
+					<div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+						<div className="relative w-full sm:max-w-xs">
+							<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+							<input
+								type="search"
+								value={search}
+								onChange={(event) => handleSearchChange(event.target.value)}
+								placeholder={t('loads.maintenance.searchPlaceholder')}
+								aria-label={t('loads.maintenance.searchPlaceholder')}
+								className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+							/>
+						</div>
+						<Button
+							variant="primary"
+							size="sm"
+							className="w-full sm:w-auto"
+							onClick={() => {
+								setCreateError(null);
+								setCreating(true);
+							}}>
+							<PlusIcon className="h-4 w-4" />
+							<span>{t('loads.maintenance.actions.new')}</span>
+						</Button>
 					</div>
 				</div>
 
@@ -271,6 +307,15 @@ export function ProfessorsMaintenance() {
 					</div>
 				)}
 			</div>
+
+			{creating && (
+				<ProfessorMaintenanceCreateDialog
+					saving={create.isPending}
+					errorMessage={createError}
+					onClose={() => setCreating(false)}
+					onCreate={handleCreate}
+				/>
+			)}
 
 			{editing && (
 				<ProfessorMaintenanceEditDialog

@@ -1,23 +1,26 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import type { ABETContextType } from '@/shared/types';
 import { setActiveAcademicPeriodId, setActiveModalityTypeId } from '@/shared/lib';
 
 const ABETContext = createContext<ABETContextType | null>(null);
 
 export function ABETProvider({ children }: { children: React.ReactNode }) {
-	const [modalityTypeId, setModalityTypeId] = useState<number | null>(null);
-	const [academicPeriodId, setAcademicPeriodId] = useState<number | null>(null);
+	const [modalityTypeId, setModalityTypeIdState] = useState<number | null>(null);
+	const [academicPeriodId, setAcademicPeriodIdState] = useState<number | null>(null);
 	const [schoolId, setSchoolId] = useState<number | null>(null);
 
-	useEffect(() => {
-		setActiveModalityTypeId(modalityTypeId);
-	}, [modalityTypeId]);
+	// Sync the API client synchronously; an effect runs after refetches and lags a value behind.
+	const setModalityTypeId = useCallback((id: number | null) => {
+		setActiveModalityTypeId(id);
+		setModalityTypeIdState(id);
+	}, []);
 
-	useEffect(() => {
-		setActiveAcademicPeriodId(academicPeriodId);
-	}, [academicPeriodId]);
+	const setAcademicPeriodId = useCallback((id: number | null) => {
+		setActiveAcademicPeriodId(id);
+		setAcademicPeriodIdState(id);
+	}, []);
 
 	const value = useMemo<ABETContextType>(
 		() => ({
@@ -28,7 +31,7 @@ export function ABETProvider({ children }: { children: React.ReactNode }) {
 			schoolId,
 			setSchoolId,
 		}),
-		[modalityTypeId, academicPeriodId, schoolId],
+		[modalityTypeId, setModalityTypeId, academicPeriodId, setAcademicPeriodId, schoolId],
 	);
 
 	return <ABETContext.Provider value={value}>{children}</ABETContext.Provider>;

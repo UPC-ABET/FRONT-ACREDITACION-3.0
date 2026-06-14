@@ -80,6 +80,7 @@ export function ProfessorMaintenanceEditDialog({
 					<Button
 						variant="primary"
 						disabled={!canSave}
+						loading={saving}
 						onClick={() =>
 							onSave({
 								code: code.trim(),
@@ -87,7 +88,7 @@ export function ProfessorMaintenanceEditDialog({
 								lastName: lastName.trim(),
 							})
 						}>
-						{saving ? t('loading.default') : t('loads.maintenance.edit.save')}
+						{t('loads.maintenance.edit.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

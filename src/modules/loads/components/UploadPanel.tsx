@@ -143,7 +143,7 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 							variant="surface"
 							size="sm"
 							onClick={handleDownloadTemplate}
-							disabled={downloadTemplate.isPending}
+							loading={downloadTemplate.isPending}
 							className="w-full sm:w-auto sm:self-start">
 							<Download className="h-4 w-4" />
 							<span>

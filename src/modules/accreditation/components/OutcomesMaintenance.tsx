@@ -7,6 +7,7 @@ import {
 	ExclamationTriangleIcon,
 	MagnifyingGlassIcon,
 	PencilSquareIcon,
+	PlusIcon,
 	TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
@@ -28,16 +29,26 @@ import {
 	TableRow,
 	Toast,
 } from '@/shared/components';
-import { usePrograms, type ProgramResponse } from '@/modules/academic';
+import { useProgramsByModality, type ProgramResponse } from '@/modules/academic';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
-import { useOutcomeMaintenanceMutations, useOutcomesMaintenance } from '../hooks';
-import type { OutcomeMaintenanceItem, OutcomeMaintenanceUpdate } from '../types';
+import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
+import {
+	useOutcomeCommissionOptions,
+	useOutcomeMaintenanceMutations,
+	useOutcomesMaintenance,
+} from '../hooks';
+import type {
+	OutcomeMaintenanceCreate,
+	OutcomeMaintenanceItem,
+	OutcomeMaintenanceUpdate,
+} from '../types';
+import { OutcomeMaintenanceCreateDialog } from './OutcomeMaintenanceCreateDialog';
 import { OutcomeMaintenanceEditDialog } from './OutcomeMaintenanceEditDialog';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
 	if (!text) return '';
@@ -75,21 +86,27 @@ function RowActions({
 
 export function OutcomesMaintenance() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId } = useABET();
+	const { academicPeriodId, modalityTypeId } = useABET();
 	const { toast, showToast, clearToast } = useApiErrorToast();
 
-	const { data: programs = [] } = usePrograms();
+	const { data: programs = [] } = useProgramsByModality(modalityTypeId);
 
 	const [programId, setProgramId] = useState<number | null>(null);
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
 	const [page, setPage] = useState(1);
+	const [creating, setCreating] = useState(false);
+	const [createError, setCreateError] = useState<string | null>(null);
 	const [editing, setEditing] = useState<OutcomeMaintenanceItem | null>(null);
 	const [editError, setEditError] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<OutcomeMaintenanceItem | null>(null);
 	const [blockedReasons, setBlockedReasons] = useState<string[] | null>(null);
 
-	const { update, remove } = useOutcomeMaintenanceMutations();
+	const { create, update, remove } = useOutcomeMaintenanceMutations();
+	const { data: commissions = [], isLoading: commissionsLoading } = useOutcomeCommissionOptions(
+		programId,
+		academicPeriodId,
+	);
 
 	useEffect(() => {
 		const timer = setTimeout(() => setDebouncedSearch(search), 300);
@@ -128,6 +145,20 @@ export function OutcomesMaintenance() {
 	);
 
 	const selectedProgram = programOptions.find((option) => option.value === programId) ?? null;
+
+	const handleCreate = async (body: OutcomeMaintenanceCreate) => {
+		setCreateError(null);
+		try {
+			await create.mutateAsync(body);
+			showToast('loads.outcomesMaintenance.toast.created', 'success');
+			setCreating(false);
+		} catch (error) {
+			const [reason] = getApiErrorReasons(error);
+			setCreateError(
+				tryTranslate(t, reason ?? getErrorMessage(error, 'loads.outcomesMaintenance.create.error')),
+			);
+		}
+	};
 
 	const handleSaveEdit = async (body: OutcomeMaintenanceUpdate) => {
 		if (!editing) return;
@@ -202,17 +233,31 @@ export function OutcomesMaintenance() {
 							}
 						/>
 					</div>
-					<div className="relative w-full sm:max-w-xs">
-						<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-						<input
-							type="search"
-							value={search}
-							onChange={(event) => handleSearchChange(event.target.value)}
-							placeholder={t('loads.outcomesMaintenance.searchPlaceholder')}
-							aria-label={t('loads.outcomesMaintenance.searchPlaceholder')}
+					<div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+						<div className="relative w-full sm:max-w-xs">
+							<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+							<input
+								type="search"
+								value={search}
+								onChange={(event) => handleSearchChange(event.target.value)}
+								placeholder={t('loads.outcomesMaintenance.searchPlaceholder')}
+								aria-label={t('loads.outcomesMaintenance.searchPlaceholder')}
+								disabled={needsSelection}
+								className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
+							/>
+						</div>
+						<Button
+							variant="primary"
+							size="sm"
+							className="w-full sm:w-auto"
 							disabled={needsSelection}
-							className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
-						/>
+							onClick={() => {
+								setCreateError(null);
+								setCreating(true);
+							}}>
+							<PlusIcon className="h-4 w-4" />
+							<span>{t('loads.outcomesMaintenance.actions.new')}</span>
+						</Button>
 					</div>
 				</div>
 
@@ -348,6 +393,18 @@ export function OutcomesMaintenance() {
 					</div>
 				)}
 			</div>
+
+			{creating && programId != null && (
+				<OutcomeMaintenanceCreateDialog
+					programId={programId}
+					commissions={commissions}
+					commissionsLoading={commissionsLoading}
+					saving={create.isPending}
+					errorMessage={createError}
+					onClose={() => setCreating(false)}
+					onCreate={handleCreate}
+				/>
+			)}
 
 			{editing && (
 				<OutcomeMaintenanceEditDialog

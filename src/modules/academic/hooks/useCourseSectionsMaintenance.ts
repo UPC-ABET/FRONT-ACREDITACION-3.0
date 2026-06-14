@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getTypesByGroupCode, type TypeOption } from '@/modules/core';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { campusesService, courseSectionsService } from '../services';
-import type { CourseSectionMaintenanceUpdate } from '../types';
+import type { CourseSectionMaintenanceCreate, CourseSectionMaintenanceUpdate } from '../types';
 
 interface MaintenanceListParams {
 	academicPeriodId: number | null;
@@ -41,6 +41,12 @@ export function useCourseSectionMaintenanceMutations() {
 	const invalidate = () =>
 		queryClient.invalidateQueries({ queryKey: courseSectionsMaintenanceKeys.all });
 
+	const create = useMutation({
+		mutationFn: (body: CourseSectionMaintenanceCreate) =>
+			courseSectionsService.maintenanceCreate(body).then((response) => response.data),
+		onSuccess: invalidate,
+	});
+
 	const update = useMutation({
 		mutationFn: ({ id, body }: { id: number; body: CourseSectionMaintenanceUpdate }) =>
 			courseSectionsService.maintenanceUpdate(id, body).then((response) => response.data),
@@ -53,7 +59,7 @@ export function useCourseSectionMaintenanceMutations() {
 		onSuccess: invalidate,
 	});
 
-	return { update, remove };
+	return { create, update, remove };
 }
 
 export function useCampuses() {

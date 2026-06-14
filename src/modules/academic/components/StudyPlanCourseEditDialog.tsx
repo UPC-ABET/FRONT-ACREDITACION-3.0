@@ -52,7 +52,7 @@ export function StudyPlanCourseEditDialog({ item, saving, errorMessage, onClose,
 			onOpenChange={(open) => {
 				if (!open && !saving) onClose();
 			}}>
-			<DialogContent className="sm:max-w-2xl">
+			<DialogContent className="sm:max-w-3xl">
 				<DialogHeader>
 					<DialogTitle>{t('loads.studyPlanCoursesView.edit.title')}</DialogTitle>
 					<DialogDescription>{t('loads.studyPlanCoursesView.edit.subtitle')}</DialogDescription>
@@ -74,7 +74,7 @@ export function StudyPlanCourseEditDialog({ item, saving, errorMessage, onClose,
 					/>
 					<I18nTextField
 						layout="row"
-						rows={3}
+						rows={4}
 						label={t('loads.studyPlanCoursesView.col.learningOutcome')}
 						value={learningOutcome}
 						onChange={setLearningOutcome}
@@ -86,8 +86,8 @@ export function StudyPlanCourseEditDialog({ item, saving, errorMessage, onClose,
 					<Button variant="secondary" onClick={onClose} disabled={saving}>
 						{t('dialog.actions.cancel')}
 					</Button>
-					<Button variant="primary" disabled={!canSave} onClick={handleSubmit}>
-						{saving ? t('loading.default') : t('loads.studyPlanCoursesView.edit.save')}
+					<Button variant="primary" disabled={!canSave} onClick={handleSubmit} loading={saving}>
+						{t('loads.studyPlanCoursesView.edit.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

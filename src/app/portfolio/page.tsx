@@ -7,5 +7,5 @@ const PortfolioFileManagerPage = dynamic(() =>
 export default PortfolioFileManagerPage;
 
 export const metadata = {
-	title: 'Portafolio | ABET',
+	title: 'Portfolio | ABET',
 };

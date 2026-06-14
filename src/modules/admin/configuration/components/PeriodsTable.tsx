@@ -2,7 +2,8 @@
 
 import { useMemo } from 'react';
 import { CheckCircle2 } from 'lucide-react';
-import { Button, Card } from '@/shared/components';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Button, DataTable } from '@/shared/components';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { useApiErrorToast } from '@/shared/hooks';
@@ -34,7 +35,9 @@ export default function PeriodsTable() {
 
 	const modalityNameById = useMemo(() => {
 		const map = new Map<number, string>();
-		(modalities ?? []).forEach((m) => map.set(m.id, m.name[locale] ?? m.code));
+		(modalities ?? []).forEach((modality) =>
+			map.set(modality.id, modality.name[locale] ?? modality.code),
+		);
 		return map;
 	}, [modalities, locale]);
 
@@ -53,102 +56,83 @@ export default function PeriodsTable() {
 		});
 	};
 
-	const rows = periods ?? [];
+	const columns = useMemo<ColumnDef<ConfigurationPeriod>[]>(
+		() => [
+			{
+				id: 'code',
+				header: t('admin.configuration.periods.table.col.code'),
+				cell: ({ row }) => row.original.code,
+				meta: { cellClassName: 'font-mono text-xs text-zinc-700' },
+			},
+			{
+				id: 'modality',
+				header: t('admin.configuration.periods.table.col.modality'),
+				cell: ({ row }) => modalityNameById.get(row.original.modalityTypeId) ?? '—',
+			},
+			{
+				id: 'dates',
+				header: t('admin.configuration.periods.table.col.dates'),
+				cell: ({ row }) =>
+					`${formatDate(row.original.startDate, locale)} — ${formatDate(row.original.endDate, locale)}`,
+			},
+			{
+				id: 'status',
+				header: t('admin.configuration.periods.table.col.status'),
+				cell: ({ row }) => (
+					<span
+						className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${
+							row.original.isActive ? ACTIVE_TONE : INACTIVE_TONE
+						}`}>
+						<span
+							aria-hidden
+							className={`h-1.5 w-1.5 rounded-full ${
+								row.original.isActive ? 'bg-emerald-500' : 'bg-gray-400'
+							}`}
+						/>
+						{t(
+							row.original.isActive
+								? 'admin.configuration.periods.status.active'
+								: 'admin.configuration.periods.status.inactive',
+						)}
+					</span>
+				),
+			},
+			{
+				id: 'actions',
+				header: () => (
+					<span className="sr-only">{t('admin.configuration.periods.table.col.actions')}</span>
+				),
+				cell: ({ row }) =>
+					row.original.isActive ? null : (
+						<Button
+							variant="secondary"
+							size="sm"
+							onClick={() => handleActivate(row.original)}
+							disabled={activate.isPending}>
+							<CheckCircle2 className="h-3.5 w-3.5" />
+							<span className="hidden sm:inline">
+								{t('admin.configuration.periods.table.activate')}
+							</span>
+						</Button>
+					),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
+			},
+		],
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[t, locale, modalityNameById, activate.isPending],
+	);
 
 	return (
-		<Card
+		<DataTable<ConfigurationPeriod, unknown>
+			columns={columns}
+			data={periods ?? []}
 			title={t('admin.configuration.periods.table.title')}
-			description={t('admin.configuration.periods.table.description')}>
-			{isLoading && (
-				<p className="py-8 text-center text-sm text-gray-500">
-					{t('admin.configuration.periods.table.loading')}
-				</p>
-			)}
-			{error && <p className="py-4 text-sm text-red-600">{error.message}</p>}
-			{!isLoading && !error && rows.length === 0 && (
-				<p className="py-12 text-center text-sm text-gray-400">
-					{t('admin.configuration.periods.table.empty')}
-				</p>
-			)}
-
-			{rows.length > 0 && (
-				<div className="-mx-4 overflow-x-auto sm:-mx-6">
-					<div className="inline-block min-w-full align-middle">
-						<table className="min-w-full divide-y divide-gray-200 text-sm">
-							<thead className="bg-gray-50/60">
-								<tr className="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-									<th scope="col" className="px-4 py-3 sm:px-6">
-										{t('admin.configuration.periods.table.col.code')}
-									</th>
-									<th scope="col" className="px-4 py-3">
-										{t('admin.configuration.periods.table.col.modality')}
-									</th>
-									<th scope="col" className="px-4 py-3 whitespace-nowrap">
-										{t('admin.configuration.periods.table.col.dates')}
-									</th>
-									<th scope="col" className="px-4 py-3">
-										{t('admin.configuration.periods.table.col.status')}
-									</th>
-									<th scope="col" className="px-4 py-3 text-right sm:px-6">
-										<span className="sr-only">
-											{t('admin.configuration.periods.table.col.actions')}
-										</span>
-									</th>
-								</tr>
-							</thead>
-							<tbody className="divide-y divide-gray-100 bg-white">
-								{rows.map((period) => {
-									const modalityLabel = modalityNameById.get(period.modalityTypeId) ?? '—';
-									return (
-										<tr key={period.id} className="transition-colors hover:bg-gray-50/60">
-											<td className="px-4 py-4 font-mono text-xs whitespace-nowrap text-gray-700 sm:px-6">
-												{period.code}
-											</td>
-											<td className="px-4 py-4 text-gray-700">{modalityLabel}</td>
-											<td className="px-4 py-4 whitespace-nowrap text-gray-600">
-												{formatDate(period.startDate, locale)} —{' '}
-												{formatDate(period.endDate, locale)}
-											</td>
-											<td className="px-4 py-4">
-												<span
-													className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${
-														period.isActive ? ACTIVE_TONE : INACTIVE_TONE
-													}`}>
-													<span
-														aria-hidden
-														className={`h-1.5 w-1.5 rounded-full ${
-															period.isActive ? 'bg-emerald-500' : 'bg-gray-400'
-														}`}
-													/>
-													{t(
-														period.isActive
-															? 'admin.configuration.periods.status.active'
-															: 'admin.configuration.periods.status.inactive',
-													)}
-												</span>
-											</td>
-											<td className="px-4 py-4 whitespace-nowrap text-right sm:px-6">
-												{!period.isActive && (
-													<Button
-														variant="secondary"
-														size="sm"
-														onClick={() => handleActivate(period)}
-														disabled={activate.isPending}>
-														<CheckCircle2 className="h-3.5 w-3.5" />
-														<span className="hidden sm:inline">
-															{t('admin.configuration.periods.table.activate')}
-														</span>
-													</Button>
-												)}
-											</td>
-										</tr>
-									);
-								})}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			)}
-		</Card>
+			description={t('admin.configuration.periods.table.description')}
+			showSearch={false}
+			isLoading={isLoading}
+			errorMessage={error?.message}
+			emptyMessage={t('admin.configuration.periods.table.empty')}
+			aria-label={t('admin.configuration.periods.table.title')}
+		/>
 	);
 }

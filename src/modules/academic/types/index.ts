@@ -157,6 +157,12 @@ export type ProfessorMaintenanceUpdate = {
 	lastName?: string;
 };
 
+export type ProfessorMaintenanceCreate = {
+	code: string;
+	firstName: string;
+	lastName: string;
+};
+
 export type ProfessorResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
@@ -241,6 +247,10 @@ export type CourseLookupItem = {
 
 export type CourseSectionMaintenanceItem = {
 	id: number;
+	courseId: number;
+	professorId: number;
+	campusId: number;
+	sectionModalityTypeId: number;
 	courseCode: string;
 	sectionCode: string;
 	professorCode: string;
@@ -264,6 +274,14 @@ export type CourseSectionMaintenanceUpdate = {
 	sectionModalityTypeId?: number;
 };
 
+export type CourseSectionMaintenanceCreate = {
+	sectionCode: string;
+	courseId: number;
+	professorId: number;
+	campusId: number;
+	sectionModalityTypeId: number;
+};
+
 export type PaginatedEnvelope<T> = {
 	items: T[];
 	total: number;
@@ -274,6 +292,9 @@ export type PaginatedEnvelope<T> = {
 
 export type EnrolledStudentMaintenanceItem = {
 	id: number;
+	programId: number;
+	campusId: number;
+	modalityTypeId: number;
 	studentCode: string;
 	firstName: string;
 	lastName: string;
@@ -293,8 +314,19 @@ export type EnrolledStudentMaintenanceUpdate = {
 	enrollementModalityTypeId?: number;
 };
 
+export type EnrolledStudentMaintenanceCreate = {
+	studentCode: string;
+	firstName: string;
+	lastName: string;
+	programId: number;
+	campusId: number;
+	enrollementModalityTypeId: number;
+};
+
 export type StudentSectionEnrollmentMaintenanceItem = {
 	id: number;
+	courseSectionId: number;
+	enrolledStudentId: number;
 	courseName: { es: string; en: string };
 	courseCode: string;
 	sectionCode: string;
@@ -311,8 +343,14 @@ export type StudentSectionEnrollmentMaintenanceUpdate = {
 	enrolledStudentId?: number;
 };
 
+export type StudentSectionEnrollmentMaintenanceCreate = {
+	courseSectionId: number;
+	enrolledStudentId: number;
+};
+
 export type StudyPlanMaintenanceItem = {
 	id: number;
+	programId: number;
 	code: string;
 	programName: { es: string; en: string };
 };
@@ -322,6 +360,11 @@ export type StudyPlanMaintenanceList = PaginatedEnvelope<StudyPlanMaintenanceIte
 export type StudyPlanMaintenanceUpdate = {
 	code?: string;
 	programId?: number;
+};
+
+export type StudyPlanMaintenanceCreate = {
+	code: string;
+	programId: number;
 };
 
 export type StudyPlanCourseRow = {
@@ -344,8 +387,139 @@ export type StudyPlanCoursesViewData = {
 	electives: StudyPlanCourseRow[];
 };
 
+export type StudyPlanCourseLevelOption = {
+	id: number;
+	name: { es: string; en: string };
+	level: number;
+};
+
+export type StudyPlanCourseNewCourse = {
+	code: string;
+	name: { es: string; en: string };
+	learningOutcome?: { es: string; en: string };
+};
+
+export type StudyPlanCourseCreate = {
+	studyPlanId: number;
+	isElective: boolean;
+	levelTypeId: number;
+	courseId?: number;
+	newCourse?: StudyPlanCourseNewCourse;
+};
+
+export type StudyPlanCourseCreatedRow = {
+	id: number;
+	courseId: number;
+	courseCode: string;
+	courseName: { es: string; en: string };
+	learningOutcome: { es: string; en: string };
+	levelTypeId: number;
+	isElective: boolean;
+};
+
 export type CourseUpdateBody = {
 	code?: string;
 	name?: { es: string; en: string };
 	learningOutcome?: { es: string; en: string };
+};
+
+export type CourseOutcomeMappingFilter = Partial<{
+	accreditorId: number;
+	commissionId: number;
+	programId: number;
+}>;
+
+export type AccreditorOption = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+};
+
+export type CommissionOption = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+	accreditorId: number;
+};
+
+export type ProgramOption = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+};
+
+export type CourseOutcomeMappingFilterRow = {
+	programCommissionId: number;
+	accreditorId: number;
+	accreditorCode: string;
+	accreditorName: { es: string; en: string };
+	commissionId: number;
+	commissionCode: string;
+	commissionName: { es: string; en: string };
+	programId: number;
+	programName: { es: string; en: string };
+	academicPeriodId: number;
+	academicPeriodCode: string;
+};
+
+export type CourseOutcomeMappingOutcomeType = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+	glyph: string;
+	color: string;
+	role: string;
+};
+
+export type CourseOutcomeMappingColumn = {
+	outcomeId: number;
+	outcomeCode: string;
+	outcomeName: { es: string; en: string };
+};
+
+export type CourseOutcomeMark = {
+	outcomeId: number;
+	outcomeTypeId: number;
+};
+
+export type CourseOutcomeMappingCourse = {
+	studyPlanCourseId: number;
+	studyPlanCode: string;
+	courseCode: string;
+	courseName: { es: string; en: string };
+	isTrainingCourse: boolean;
+	mappings: CourseOutcomeMark[];
+};
+
+export type CourseOutcomeMappingLevel = {
+	levelTypeId: number;
+	levelName: { es: string; en: string };
+	level: number;
+	courses: CourseOutcomeMappingCourse[];
+};
+
+export type CourseOutcomeMappingHeader = {
+	programCommissionId: number;
+	accreditorCode: string;
+	commissionCode: string;
+	programName: { es: string; en: string };
+	academicPeriodCode: string;
+};
+
+export type CourseOutcomeMappingView = {
+	header: CourseOutcomeMappingHeader;
+	outcomeTypes: CourseOutcomeMappingOutcomeType[];
+	outcomes: CourseOutcomeMappingColumn[];
+	levels: CourseOutcomeMappingLevel[];
+	electives: CourseOutcomeMappingCourse[];
+};
+
+export type CourseOutcomeMappingBulkSaveCourse = {
+	studyPlanCourseId: number;
+	outcomes: CourseOutcomeMark[];
+};
+
+export type CourseOutcomeMappingBulkSave = {
+	programCommissionId: number;
+	courses: CourseOutcomeMappingBulkSaveCourse[];
 };

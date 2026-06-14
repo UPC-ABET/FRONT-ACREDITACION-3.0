@@ -48,7 +48,7 @@ export function OutcomeMaintenanceEditDialog({
 			onOpenChange={(open) => {
 				if (!open && !saving) onClose();
 			}}>
-			<DialogContent className="sm:max-w-2xl">
+			<DialogContent className="sm:max-w-3xl">
 				<DialogHeader>
 					<DialogTitle>{t('loads.outcomesMaintenance.edit.title')}</DialogTitle>
 					<DialogDescription>{t('loads.outcomesMaintenance.edit.subtitle')}</DialogDescription>
@@ -70,7 +70,7 @@ export function OutcomeMaintenanceEditDialog({
 					/>
 					<I18nTextField
 						layout="row"
-						rows={3}
+						rows={4}
 						label={t('loads.outcomesMaintenance.col.outcomeDescription')}
 						value={description}
 						onChange={setDescription}
@@ -85,6 +85,7 @@ export function OutcomeMaintenanceEditDialog({
 					<Button
 						variant="primary"
 						disabled={!canSave}
+						loading={saving}
 						onClick={() =>
 							onSave({
 								outcomeCode: code.trim(),
@@ -92,7 +93,7 @@ export function OutcomeMaintenanceEditDialog({
 								outcomeDescription: { es: description.es ?? '', en: description.en ?? '' },
 							})
 						}>
-						{saving ? t('loading.default') : t('loads.outcomesMaintenance.edit.save')}
+						{t('loads.outcomesMaintenance.edit.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

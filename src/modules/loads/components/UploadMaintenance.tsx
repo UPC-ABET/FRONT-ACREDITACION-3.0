@@ -1,6 +1,7 @@
 'use client';
 
 import {
+	CourseOutcomeMappingMaintenance,
 	EnrolledStudentsMaintenance,
 	ProfessorsMaintenance,
 	SectionsMaintenance,
@@ -8,6 +9,7 @@ import {
 	StudyPlansMaintenance,
 } from '@/modules/academic';
 import { OutcomesMaintenance } from '@/modules/accreditation';
+import { OrganizationChartMaintenance } from '@/modules/charts';
 import { TYPE_CODES } from '@/shared/constants';
 
 interface UploadMaintenanceProps {
@@ -21,6 +23,8 @@ const MAINTENANCE_TYPE_CODES = new Set<string>([
 	TYPE_CODES.UPLOAD_TYPE.ENROLLED_STUDENTS,
 	TYPE_CODES.UPLOAD_TYPE.STUDENT_SECTIONS,
 	TYPE_CODES.UPLOAD_TYPE.STUDY_PLANS,
+	TYPE_CODES.UPLOAD_TYPE.ARTICULATION,
+	TYPE_CODES.UPLOAD_TYPE.CHARTS,
 ]);
 
 /** Whether the given upload type has a maintenance view (editable table). */
@@ -42,6 +46,10 @@ export default function UploadMaintenance({ typeCode }: UploadMaintenanceProps) 
 			return <StudentSectionEnrollmentsMaintenance />;
 		case TYPE_CODES.UPLOAD_TYPE.STUDY_PLANS:
 			return <StudyPlansMaintenance />;
+		case TYPE_CODES.UPLOAD_TYPE.ARTICULATION:
+			return <CourseOutcomeMappingMaintenance />;
+		case TYPE_CODES.UPLOAD_TYPE.CHARTS:
+			return <OrganizationChartMaintenance />;
 		default:
 			return null;
 	}

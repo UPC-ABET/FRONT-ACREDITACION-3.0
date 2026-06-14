@@ -1,6 +1,7 @@
 import { ApiResponse } from '@/shared';
-import { apiDelete, apiGet, apiPut } from '@/shared/lib';
+import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib';
 import type {
+	OutcomeMaintenanceCreate,
 	OutcomeMaintenanceItem,
 	OutcomeMaintenanceList,
 	OutcomeMaintenanceUpdate,
@@ -26,6 +27,12 @@ export const outcomesService = {
 		if (params.pageSize != null) query.set('pageSize', String(params.pageSize));
 		if (params.search) query.set('search', params.search);
 		return apiGet(`/outcomes/maintenance?${query.toString()}`);
+	},
+
+	// Period travels as the X-Academic-Period-Id header; the server resolves the
+	// programCommission from programId + commissionId + active period.
+	maintenanceCreate(body: OutcomeMaintenanceCreate): Promise<ApiResponse<OutcomeMaintenanceItem>> {
+		return apiPost('/outcomes/maintenance', body);
 	},
 
 	maintenanceUpdate(

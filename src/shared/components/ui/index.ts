@@ -16,6 +16,7 @@ export * from './I18nTextField';
 export * from './Tabs';
 export * from './Toast';
 export * from './Skeleton';
+export * from './Spinner';
 export * from './Typography';
 export * from './Navbar';
 export * from './LoadingDialog';

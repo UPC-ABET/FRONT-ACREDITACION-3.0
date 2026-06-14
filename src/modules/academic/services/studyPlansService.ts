@@ -1,7 +1,8 @@
 import { ApiResponse } from '@/shared';
-import { apiDelete, apiGet, apiPut } from '@/shared/lib';
+import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib';
 import type {
 	StudyPlanCoursesViewData,
+	StudyPlanMaintenanceCreate,
 	StudyPlanMaintenanceItem,
 	StudyPlanMaintenanceList,
 	StudyPlanMaintenanceUpdate,
@@ -22,6 +23,12 @@ export const studyPlansService = {
 		if (params.programId != null) query.set('programId', String(params.programId));
 		const qs = query.toString();
 		return apiGet(`/study-plans/maintenance${qs ? `?${qs}` : ''}`);
+	},
+
+	maintenanceCreate(
+		body: StudyPlanMaintenanceCreate,
+	): Promise<ApiResponse<StudyPlanMaintenanceItem>> {
+		return apiPost('/study-plans/maintenance', body);
 	},
 
 	maintenanceUpdate(

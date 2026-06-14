@@ -19,6 +19,7 @@ import {
 	DialogFooter,
 	DialogClose,
 } from '@/shared/components/ui';
+import { LoadingState } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib/authCookies';
 import {
@@ -92,8 +93,8 @@ export function EvaluationCoursesPage() {
 			{!selectedPeriodId ? (
 				<TableEmptyState message={t('evaluationCourses.list.selectPeriodFirst')} />
 			) : loadingCourses ? (
-				<div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500">
-					{t('evaluationCourses.list.loading')}
+				<div className="rounded-xl border border-zinc-200 bg-white p-10">
+					<LoadingState label={t('evaluationCourses.list.loading')} />
 				</div>
 			) : isError ? (
 				<TableErrorState

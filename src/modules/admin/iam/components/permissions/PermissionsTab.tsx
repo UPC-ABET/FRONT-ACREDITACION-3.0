@@ -109,6 +109,7 @@ export function PermissionsTab() {
 				title={t('admin.iam.permissions.title')}
 				searchPlaceholder={t('admin.iam.permissions.search')}
 				aria-label={t('admin.iam.permissions.title')}
+				isLoading={isLoading}
 				actions={[
 					{
 						label: t('admin.iam.permissions.create'),
@@ -118,16 +119,17 @@ export function PermissionsTab() {
 					},
 				]}
 			/>
-			{isLoading && <p className="text-sm text-zinc-500">{t('loading.default')}</p>}
 
-			<PermissionTypeFormDialog
-				open={isFormOpen}
-				permission={editing}
-				typeGroupId={typeGroupId}
-				onClose={() => setFormOpen(false)}
-				onSuccess={(messageKey) => showToast(messageKey, 'success')}
-				onError={(message) => showToast(message, 'error')}
-			/>
+			{isFormOpen && (
+				<PermissionTypeFormDialog
+					open
+					permission={editing}
+					typeGroupId={typeGroupId}
+					onClose={() => setFormOpen(false)}
+					onSuccess={(messageKey) => showToast(messageKey, 'success')}
+					onError={(message) => showToast(message, 'error')}
+				/>
+			)}
 
 			<ConfirmDialog
 				isOpen={pendingDelete != null}

@@ -1,5 +1,6 @@
 import { ApiResponse } from '@/shared';
 import { apiDelete, apiPost, apiPut, apiPatch } from '@/shared/lib';
+import type { StudyPlanCourseCreate, StudyPlanCourseCreatedRow } from '../types';
 import { StudyPlanCourseResponse } from '../types';
 
 export type StudyPlanCourseFilters = {
@@ -27,6 +28,12 @@ export const studyPlanCoursesService = {
 		isEvaluable: boolean,
 	): Promise<ApiResponse<StudyPlanCourseResponse>> {
 		return apiPatch(`/study-plan-courses/enable-evaluation/${id}`, { isEvaluable });
+	},
+
+	// Period travels as the X-Academic-Period-Id header; the server resolves the plan-period
+	// from studyPlanId + header. Send exactly one of courseId / newCourse.
+	maintenanceCreate(body: StudyPlanCourseCreate): Promise<ApiResponse<StudyPlanCourseCreatedRow>> {
+		return apiPost('/study-plan-courses/maintenance', body);
 	},
 
 	// Removes the course from this study plan (does not delete the shared course).

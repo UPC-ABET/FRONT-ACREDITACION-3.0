@@ -8,6 +8,7 @@ import {
 	Button,
 	ConfirmDialog,
 	DataTable,
+	LoadingState,
 	TableErrorState,
 	Toast,
 } from '@/shared/components';
@@ -103,7 +104,7 @@ export function RolesTab() {
 		return (
 			<div className="space-y-4">
 				{editLoading ? (
-					<p className="text-sm text-zinc-500">{t('loading.default')}</p>
+					<LoadingState />
 				) : editNotFound ? (
 					<div className="space-y-3">
 						<Button variant="ghost" size="sm" onClick={backToList} className="self-start">
@@ -153,6 +154,7 @@ export function RolesTab() {
 				title={t('admin.iam.roles.title')}
 				searchPlaceholder={t('admin.iam.roles.search')}
 				aria-label={t('admin.iam.roles.title')}
+				isLoading={isLoading}
 				actions={[
 					{
 						label: t('admin.iam.roles.create'),
@@ -162,7 +164,6 @@ export function RolesTab() {
 					},
 				]}
 			/>
-			{isLoading && <p className="text-sm text-zinc-500">{t('loading.default')}</p>}
 
 			<ConfirmDialog
 				isOpen={pendingDelete != null}

@@ -230,8 +230,8 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 						</Button>
 					</div>
 				)}
-				<Button variant="primary" disabled={saving} onClick={handleSave}>
-					{saving ? t('loading.default') : t('admin.notify.btn.save')}
+				<Button variant="primary" disabled={saving} onClick={handleSave} loading={saving}>
+					{t('admin.notify.btn.save')}
 				</Button>
 			</EditorActions>
 		</div>

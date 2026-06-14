@@ -206,8 +206,9 @@ export function SurveyForm({
 					<Button
 						onClick={handleSubmit}
 						disabled={submitting || progress < 100 || !comment.trim()}
+						loading={submitting}
 						size="lg">
-						{submitting ? t('surveys.student.submittingButton') : t('surveys.student.submitButton')}
+						{t('surveys.student.submitButton')}
 					</Button>
 				</div>
 			</div>

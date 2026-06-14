@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card } from '@/shared/components';
+import { Card, LoadingState } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { CapstoneProjectCard, RubricEvaluationMatrix } from '../components/capstone';
 import {
@@ -40,7 +40,7 @@ export default function CapstoneConsolePage({
 
 			<Card title={t('capstone.projects.title')} description={t('capstone.projects.description')}>
 				{loadingProjects && (
-					<p className="py-4 text-sm text-gray-500">{t('capstone.projects.loading')}</p>
+					<LoadingState className="py-4" label={t('capstone.projects.loading')} />
 				)}
 				{!loadingProjects && (projects?.length ?? 0) === 0 && (
 					<p className="py-6 text-center text-sm text-gray-400">{t('capstone.projects.empty')}</p>
@@ -85,7 +85,7 @@ export default function CapstoneConsolePage({
 
 			{selectedProject && selectedStudent && (
 				<>
-					{loadingRubric && <p className="text-sm text-gray-500">{t('capstone.rubric.loading')}</p>}
+					{loadingRubric && <LoadingState className="py-4" label={t('capstone.rubric.loading')} />}
 					{rubric && (
 						<RubricEvaluationMatrix
 							rubric={rubric}

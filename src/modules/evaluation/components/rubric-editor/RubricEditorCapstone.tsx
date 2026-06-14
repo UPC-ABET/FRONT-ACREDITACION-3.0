@@ -140,8 +140,9 @@ export function RubricEditorCapstone({
 					type="button"
 					variant="primary"
 					disabled={!canEdit || !saveAllowed || isSaving}
-					onClick={() => void handleSave()}>
-					{isSaving ? t('rubrics.editor.capstone.saving') : t('rubrics.editor.capstone.saveRubric')}
+					onClick={() => void handleSave()}
+					loading={isSaving}>
+					{t('rubrics.editor.capstone.saveRubric')}
 				</Button>
 			</div>
 		</div>

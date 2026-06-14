@@ -165,10 +165,9 @@ export function RubricEditorNonCapstone({
 					disabled={
 						!canEdit || !isFilled || !continuousValid || !sumValid || !rangeValid || isSaving
 					}
-					onClick={() => void handleSave()}>
-					{isSaving
-						? t('rubrics.editor.nonCapstone.saving')
-						: t('rubrics.editor.nonCapstone.saveRubric')}
+					onClick={() => void handleSave()}
+					loading={isSaving}>
+					{t('rubrics.editor.nonCapstone.saveRubric')}
 				</Button>
 			</div>
 		</div>

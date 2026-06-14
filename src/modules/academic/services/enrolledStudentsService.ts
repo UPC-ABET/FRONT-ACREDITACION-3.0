@@ -1,6 +1,7 @@
 import { ApiResponse } from '@/shared';
-import { apiDelete, apiGet, apiPut } from '@/shared/lib';
+import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib';
 import type {
+	EnrolledStudentMaintenanceCreate,
 	EnrolledStudentMaintenanceItem,
 	EnrolledStudentMaintenanceList,
 	EnrolledStudentMaintenanceUpdate,
@@ -22,6 +23,13 @@ export const enrolledStudentsService = {
 		if (params.programId != null) query.set('programId', String(params.programId));
 		const qs = query.toString();
 		return apiGet(`/enrolled-students/maintenance${qs ? `?${qs}` : ''}`);
+	},
+
+	// Period travels as the X-Academic-Period-Id header (injected globally), not in the body.
+	maintenanceCreate(
+		body: EnrolledStudentMaintenanceCreate,
+	): Promise<ApiResponse<EnrolledStudentMaintenanceItem>> {
+		return apiPost('/enrolled-students/maintenance', body);
 	},
 
 	maintenanceUpdate(

@@ -10,6 +10,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	LazySelect,
+	type LazySelectValue,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { courseSectionsService, enrolledStudentsService } from '@/modules/academic';
@@ -30,14 +31,6 @@ type Props = {
 	onSave: (body: StudentSectionEnrollmentMaintenanceUpdate) => void;
 };
 
-function CurrentValue({ label, value }: { label: string; value: string }) {
-	return (
-		<p className="mt-1 text-xs text-zinc-500">
-			{label}: <span className="font-medium text-zinc-700">{value || '—'}</span>
-		</p>
-	);
-}
-
 function sectionLabel(section: CourseSectionMaintenanceItem): string {
 	return `${section.courseCode} — ${section.sectionCode}`;
 }
@@ -55,8 +48,19 @@ export function StudentSectionEnrollmentEditDialog({
 }: Props) {
 	const { t } = useI18n();
 
-	const [section, setSection] = useState<CourseSectionMaintenanceItem | null>(null);
-	const [student, setStudent] = useState<EnrolledStudentMaintenanceItem | null>(null);
+	const [section, setSection] = useState<LazySelectValue | null>(
+		item.courseSectionId != null
+			? { id: item.courseSectionId, label: `${item.courseCode} — ${item.sectionCode}` }
+			: null,
+	);
+	const [student, setStudent] = useState<LazySelectValue | null>(
+		item.enrolledStudentId != null
+			? {
+					id: item.enrolledStudentId,
+					label: `${item.studentCode} — ${item.studentFirstName} ${item.studentLastName}`,
+				}
+			: null,
+	);
 
 	const loadSections = useCallback(
 		({ search, page }: { search: string; page: number }) =>
@@ -80,16 +84,12 @@ export function StudentSectionEnrollmentEditDialog({
 		[],
 	);
 
-	const canSave = (section != null || student != null) && !saving;
+	const canSave = section != null && student != null && !saving;
 
 	const handleSubmit = () => {
-		const body: StudentSectionEnrollmentMaintenanceUpdate = {};
-		if (section) body.courseSectionId = section.id;
-		if (student) body.enrolledStudentId = student.id;
-		onSave(body);
+		if (!section || !student) return;
+		onSave({ courseSectionId: section.id, enrolledStudentId: student.id });
 	};
-
-	const currentLabel = t('loads.studentSectionEnrollmentsMaintenance.edit.current');
 
 	return (
 		<Dialog
@@ -106,34 +106,33 @@ export function StudentSectionEnrollmentEditDialog({
 				</DialogHeader>
 
 				<div className="space-y-4">
-					<div>
-						<LazySelect<CourseSectionMaintenanceItem>
-							label={t('loads.studentSectionEnrollmentsMaintenance.edit.section')}
-							placeholder={t('loads.studentSectionEnrollmentsMaintenance.edit.sectionPlaceholder')}
-							value={section ? { id: section.id, label: sectionLabel(section) } : null}
-							onChange={setSection}
-							loadPage={loadSections}
-							getId={(sectionItem) => sectionItem.id}
-							getLabel={sectionLabel}
-						/>
-						<CurrentValue label={currentLabel} value={`${item.courseCode} — ${item.sectionCode}`} />
-					</div>
+					<LazySelect<CourseSectionMaintenanceItem>
+						label={t('loads.studentSectionEnrollmentsMaintenance.edit.section')}
+						placeholder={t('loads.studentSectionEnrollmentsMaintenance.edit.sectionPlaceholder')}
+						value={section}
+						onChange={(sectionItem) =>
+							setSection(
+								sectionItem ? { id: sectionItem.id, label: sectionLabel(sectionItem) } : null,
+							)
+						}
+						loadPage={loadSections}
+						getId={(sectionItem) => sectionItem.id}
+						getLabel={sectionLabel}
+					/>
 
-					<div>
-						<LazySelect<EnrolledStudentMaintenanceItem>
-							label={t('loads.studentSectionEnrollmentsMaintenance.edit.student')}
-							placeholder={t('loads.studentSectionEnrollmentsMaintenance.edit.studentPlaceholder')}
-							value={student ? { id: student.id, label: studentLabel(student) } : null}
-							onChange={setStudent}
-							loadPage={loadStudents}
-							getId={(studentItem) => studentItem.id}
-							getLabel={studentLabel}
-						/>
-						<CurrentValue
-							label={currentLabel}
-							value={`${item.studentCode} — ${item.studentFirstName} ${item.studentLastName}`}
-						/>
-					</div>
+					<LazySelect<EnrolledStudentMaintenanceItem>
+						label={t('loads.studentSectionEnrollmentsMaintenance.edit.student')}
+						placeholder={t('loads.studentSectionEnrollmentsMaintenance.edit.studentPlaceholder')}
+						value={student}
+						onChange={(studentItem) =>
+							setStudent(
+								studentItem ? { id: studentItem.id, label: studentLabel(studentItem) } : null,
+							)
+						}
+						loadPage={loadStudents}
+						getId={(studentItem) => studentItem.id}
+						getLabel={studentLabel}
+					/>
 
 					{errorMessage && <p className="text-sm font-medium text-red-600">{errorMessage}</p>}
 				</div>
@@ -142,10 +141,8 @@ export function StudentSectionEnrollmentEditDialog({
 					<Button variant="secondary" onClick={onClose} disabled={saving}>
 						{t('dialog.actions.cancel')}
 					</Button>
-					<Button variant="primary" onClick={handleSubmit} disabled={!canSave}>
-						{saving
-							? t('loading.default')
-							: t('loads.studentSectionEnrollmentsMaintenance.edit.save')}
+					<Button variant="primary" onClick={handleSubmit} disabled={!canSave} loading={saving}>
+						{t('loads.studentSectionEnrollmentsMaintenance.edit.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

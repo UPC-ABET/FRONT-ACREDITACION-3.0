@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { outcomesService } from '../services';
-import type { OutcomeMaintenanceUpdate } from '../types';
+import type { OutcomeMaintenanceCreate, OutcomeMaintenanceUpdate } from '../types';
 import { accreditationQueryKeys } from './queryKeys';
 
 interface MaintenanceListParams {
@@ -45,6 +45,12 @@ export function useOutcomeMaintenanceMutations() {
 	const invalidate = () =>
 		queryClient.invalidateQueries({ queryKey: accreditationQueryKeys.outcomesMaintenance() });
 
+	const create = useMutation({
+		mutationFn: (body: OutcomeMaintenanceCreate) =>
+			outcomesService.maintenanceCreate(body).then((response) => response.data),
+		onSuccess: invalidate,
+	});
+
 	const update = useMutation({
 		mutationFn: ({ id, body }: { id: number; body: OutcomeMaintenanceUpdate }) =>
 			outcomesService.maintenanceUpdate(id, body).then((response) => response.data),
@@ -57,5 +63,5 @@ export function useOutcomeMaintenanceMutations() {
 		onSuccess: invalidate,
 	});
 
-	return { update, remove };
+	return { create, update, remove };
 }

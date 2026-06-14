@@ -1,40 +1,24 @@
-import { GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import JSZip from 'jszip';
 import { NextRequest, NextResponse } from 'next/server';
 import { BUCKET, getS3Client } from '../_lib/s3Client';
-import { requireAuth, requirePortfolioScope } from '../_lib/requireAuth';
+import { requireAuth } from '../_lib/auth';
+import { toAbsolute } from '../_lib/scope';
+import { listAllKeys } from '../_lib/s3Operations';
 
-/** GET /api/portfolio/s3/download-folder?prefix=portfolio/EPE/2023/ — streams all objects under prefix as a ZIP. */
 export async function GET(request: NextRequest) {
-	const authError = requireAuth(request);
-	if (authError) return authError;
+	const denied = await requireAuth(request);
+	if (denied) return denied;
 
-	const prefix = request.nextUrl.searchParams.get('prefix');
-	if (!prefix) {
+	const relativePrefix = request.nextUrl.searchParams.get('prefix');
+	if (!relativePrefix) {
 		return NextResponse.json({ error: 'error.s3.prefixRequired' }, { status: 400 });
-	}
-	if (!requirePortfolioScope(prefix)) {
-		return NextResponse.json({ error: 'error.s3.invalidKeyScope' }, { status: 400 });
 	}
 
 	try {
+		const prefix = toAbsolute(relativePrefix);
 		const client = getS3Client();
-
-		const keys: string[] = [];
-		let continuationToken: string | undefined;
-		do {
-			const response = await client.send(
-				new ListObjectsV2Command({
-					Bucket: BUCKET,
-					Prefix: prefix,
-					ContinuationToken: continuationToken,
-				}),
-			);
-			for (const obj of response.Contents ?? []) {
-				if (obj.Key && !obj.Key.endsWith('/')) keys.push(obj.Key);
-			}
-			continuationToken = response.IsTruncated ? response.NextContinuationToken : undefined;
-		} while (continuationToken);
+		const keys = (await listAllKeys(client, prefix)).filter((key) => !key.endsWith('/'));
 
 		if (keys.length === 0) {
 			return NextResponse.json({ error: 'error.s3.emptyFolder' }, { status: 404 });
@@ -56,7 +40,8 @@ export async function GET(request: NextRequest) {
 				'Content-Disposition': `attachment; filename="${folderName}.zip"`,
 			},
 		});
-	} catch {
-		return NextResponse.json({ error: 'error.s3.downloadFolderFailed' }, { status: 500 });
+	} catch (err) {
+		const detail = err instanceof Error ? err.message : 'unknown';
+		return NextResponse.json({ error: 'error.s3.downloadFolderFailed', detail }, { status: 500 });
 	}
 }

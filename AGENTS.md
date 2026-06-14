@@ -189,6 +189,21 @@ All modules import these from `@/modules/core`. Never duplicate type/parameter c
 
 ---
 
+## Global Academic Context (Top Bar)
+
+**School, Modality, and Academic Period are global selectors that live in the top bar.** Read them from `useABET()` (`@/providers`) — never build a per-screen dropdown for them.
+
+```ts
+const { schoolId, modalityTypeId, academicPeriodId } = useABET();
+```
+
+- These three values flow from the navbar/academic-filters bar into every screen via `AbetProvider`. The API client also forwards them as `X-School-Id`, `X-Modality-Type-Id`, and `X-Academic-Period-Id` headers automatically.
+- A feature filters by the active school/modality/period by consuming `useABET()`. When the value is `null`, show a notice telling the user to pick it in the top bar (e.g. `t('...selectPeriod')`), don't render your own picker.
+- **Only add a screen-local School / Modality / Academic Period selector when the task explicitly asks for one** (e.g. comparing two periods side by side). Otherwise it's the top bar, full stop.
+- Other cascading filters specific to the screen (program/carrera, commission, accreditor, course, …) are screen-local and live in the page — those are not in the top bar.
+
+---
+
 ## Data Fetching
 
 ### TanStack Query
@@ -279,6 +294,12 @@ Live in their module's `components/` folder. Organized into subfolders by featur
 - Prefer new commits over amending.
 - Never force-push to main/master.
 - Never skip hooks (`--no-verify`).
+
+### Pre-commit Hook
+
+- A Husky `pre-commit` hook runs `lint-staged` on staged files (config in `.lintstagedrc.json`): `eslint --fix` + `prettier --write` on `*.{ts,tsx}`, `prettier --write` on `*.{json,md,css}`.
+- If ESLint reports an unfixable error, the commit is aborted until it's fixed. Auto-fixable lint/format issues are applied and re-staged automatically.
+- The hook is installed via the `prepare` script on `pnpm install`. `prepare` is guarded as `husky || true` so it doesn't fail in production/Docker (e.g. `pnpm prune --prod`, where `husky` is no longer present).
 
 ---
 

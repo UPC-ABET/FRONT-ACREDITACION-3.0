@@ -1,0 +1,193 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+import {
+	Button,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	Input,
+	Select,
+} from '@/shared/components';
+import { useI18n } from '@/providers';
+import type { TypeOption } from '@/modules/core';
+import type { CampusResponse, EnrolledStudentMaintenanceCreate, ProgramResponse } from '../types';
+
+function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
+	if (!text) return '';
+	return text[locale as 'es' | 'en'] ?? text.es ?? text.en ?? '';
+}
+
+type Props = {
+	programs: ProgramResponse[];
+	campuses: CampusResponse[];
+	modalityTypes: TypeOption[];
+	saving: boolean;
+	errorMessage: string | null;
+	onClose: () => void;
+	onCreate: (body: EnrolledStudentMaintenanceCreate) => void;
+};
+
+export function EnrolledStudentCreateDialog({
+	programs,
+	campuses,
+	modalityTypes,
+	saving,
+	errorMessage,
+	onClose,
+	onCreate,
+}: Props) {
+	const { t, locale } = useI18n();
+
+	const [studentCode, setStudentCode] = useState('');
+	const [firstName, setFirstName] = useState('');
+	const [lastName, setLastName] = useState('');
+	const [programId, setProgramId] = useState<number | null>(null);
+	const [campusId, setCampusId] = useState<number | null>(null);
+	const [modalityTypeId, setModalityTypeId] = useState<number | null>(null);
+
+	const programOptions = useMemo(
+		() =>
+			programs.map((program) => ({
+				value: program.id,
+				label: localized(program.name, locale) || program.code,
+			})),
+		[programs, locale],
+	);
+	const campusOptions = useMemo(
+		() =>
+			campuses.map((campus) => ({
+				value: campus.id,
+				label: localized(campus.name, locale) || campus.code,
+			})),
+		[campuses, locale],
+	);
+	const modalityOptions = useMemo(
+		() =>
+			modalityTypes.map((type) => ({
+				value: type.id,
+				label: localized(type.name, locale) || type.code,
+			})),
+		[modalityTypes, locale],
+	);
+
+	const selectedProgram = programOptions.find((option) => option.value === programId) ?? null;
+	const selectedCampus = campusOptions.find((option) => option.value === campusId) ?? null;
+	const selectedModality =
+		modalityOptions.find((option) => option.value === modalityTypeId) ?? null;
+
+	const canSave =
+		studentCode.trim() !== '' &&
+		firstName.trim() !== '' &&
+		lastName.trim() !== '' &&
+		programId != null &&
+		campusId != null &&
+		modalityTypeId != null &&
+		!saving;
+
+	const handleSubmit = () => {
+		if (programId == null || campusId == null || modalityTypeId == null) return;
+		onCreate({
+			studentCode: studentCode.trim(),
+			firstName: firstName.trim(),
+			lastName: lastName.trim(),
+			programId,
+			campusId,
+			enrollementModalityTypeId: modalityTypeId,
+		});
+	};
+
+	return (
+		<Dialog
+			open
+			onOpenChange={(open) => {
+				if (!open && !saving) onClose();
+			}}>
+			<DialogContent className="sm:max-w-3xl">
+				<DialogHeader>
+					<DialogTitle>{t('loads.enrolledStudentsMaintenance.create.title')}</DialogTitle>
+					<DialogDescription>
+						{t('loads.enrolledStudentsMaintenance.create.subtitle')}
+					</DialogDescription>
+				</DialogHeader>
+
+				<div className="space-y-4">
+					<Input
+						label={t('loads.enrolledStudentsMaintenance.col.studentCode')}
+						value={studentCode}
+						onChange={(event) => setStudentCode(event.target.value)}
+						required
+					/>
+					<div className="grid gap-4 sm:grid-cols-2">
+						<Input
+							label={t('loads.enrolledStudentsMaintenance.col.firstName')}
+							value={firstName}
+							onChange={(event) => setFirstName(event.target.value)}
+							required
+						/>
+						<Input
+							label={t('loads.enrolledStudentsMaintenance.col.lastName')}
+							value={lastName}
+							onChange={(event) => setLastName(event.target.value)}
+							required
+						/>
+					</div>
+
+					<Select
+						name="program"
+						label={t('loads.enrolledStudentsMaintenance.col.program')}
+						placeholder={t('loads.enrolledStudentsMaintenance.edit.programPlaceholder')}
+						isSearchable
+						isClearable
+						options={programOptions}
+						value={selectedProgram}
+						onChange={(_name, value) =>
+							setProgramId(value && !Array.isArray(value) ? Number(value.value) : null)
+						}
+					/>
+
+					<div className="grid gap-4 sm:grid-cols-2">
+						<Select
+							name="campus"
+							label={t('loads.enrolledStudentsMaintenance.col.campus')}
+							placeholder={t('loads.enrolledStudentsMaintenance.edit.campusPlaceholder')}
+							isSearchable
+							isClearable
+							options={campusOptions}
+							value={selectedCampus}
+							onChange={(_name, value) =>
+								setCampusId(value && !Array.isArray(value) ? Number(value.value) : null)
+							}
+						/>
+						<Select
+							name="modality"
+							label={t('loads.enrolledStudentsMaintenance.col.modality')}
+							placeholder={t('loads.enrolledStudentsMaintenance.edit.modalityPlaceholder')}
+							isSearchable
+							isClearable
+							options={modalityOptions}
+							value={selectedModality}
+							onChange={(_name, value) =>
+								setModalityTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
+							}
+						/>
+					</div>
+
+					{errorMessage && <p className="text-sm font-medium text-red-600">{errorMessage}</p>}
+				</div>
+
+				<DialogFooter>
+					<Button variant="secondary" onClick={onClose} disabled={saving}>
+						{t('dialog.actions.cancel')}
+					</Button>
+					<Button variant="primary" onClick={handleSubmit} disabled={!canSave} loading={saving}>
+						{t('loads.enrolledStudentsMaintenance.create.save')}
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}

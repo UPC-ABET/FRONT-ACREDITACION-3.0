@@ -1,6 +1,7 @@
 export * from './academicPeriodsService';
 export * from './campusesService';
 export * from './courseOutcomeMappingsService';
+export * from './courseOutcomeMappingFiltersService';
 export * from './courseSectionsService';
 export * from './coursesService';
 export * from './enrolledStudentsService';

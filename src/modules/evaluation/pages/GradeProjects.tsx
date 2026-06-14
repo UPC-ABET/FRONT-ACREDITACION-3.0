@@ -14,6 +14,7 @@ import {
 	TableRow,
 	Tabs,
 } from '@/shared/components/ui';
+import { LoadingState } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import { useAuth } from '@/providers';
@@ -119,10 +120,14 @@ export function GradeProjectsPage() {
 			{!selectedPeriodId ? (
 				<TableEmptyState message={t('projects.grade.selectPeriod')} />
 			) : isLoading ? (
-				<div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500 shadow-sm">
-					{!professorEnabled || isFetchingProfessor || isLoadingProfessor
-						? t('projects.grade.loadingProfessor')
-						: t('projects.grade.loading')}
+				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
+					<LoadingState
+						label={
+							!professorEnabled || isFetchingProfessor || isLoadingProfessor
+								? t('projects.grade.loadingProfessor')
+								: t('projects.grade.loading')
+						}
+					/>
 				</div>
 			) : isErrorProfessor || professorNotFound ? (
 				<TableErrorState message={t('projects.grade.errorProfessor')} />

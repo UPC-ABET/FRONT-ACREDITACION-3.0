@@ -30,7 +30,7 @@ export function FileManagerTable({
 	onDeleteOne,
 	downloadingKey,
 }: Props) {
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const allSelected = entries.length > 0 && entries.every((e) => selectedKeys.has(e.key));
 
 	return (
@@ -87,7 +87,7 @@ export function FileManagerTable({
 									{entry.isFolder ? '—' : formatBytes(entry.size)}
 								</td>
 								<td className="hidden px-4 py-2.5 text-zinc-500 md:table-cell">
-									{formatDate(entry.lastModified)}
+									{formatDate(entry.lastModified, locale)}
 								</td>
 								<td className="px-4 py-2.5">
 									<div className="flex items-center justify-end gap-1">

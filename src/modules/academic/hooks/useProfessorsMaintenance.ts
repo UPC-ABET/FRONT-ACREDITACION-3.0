@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { professorsService } from '../services';
-import type { ProfessorMaintenanceUpdate } from '../types';
+import type { ProfessorMaintenanceCreate, ProfessorMaintenanceUpdate } from '../types';
 
 interface MaintenanceListParams {
 	page: number;
@@ -35,6 +35,12 @@ export function useProfessorMaintenanceMutations() {
 	const invalidate = () =>
 		queryClient.invalidateQueries({ queryKey: professorsMaintenanceKeys.all });
 
+	const create = useMutation({
+		mutationFn: (body: ProfessorMaintenanceCreate) =>
+			professorsService.maintenanceCreate(body).then((response) => response.data),
+		onSuccess: invalidate,
+	});
+
 	const update = useMutation({
 		mutationFn: ({ id, body }: { id: number; body: ProfessorMaintenanceUpdate }) =>
 			professorsService.maintenanceUpdate(id, body).then((response) => response.data),
@@ -47,5 +53,5 @@ export function useProfessorMaintenanceMutations() {
 		onSuccess: invalidate,
 	});
 
-	return { update, remove };
+	return { create, update, remove };
 }

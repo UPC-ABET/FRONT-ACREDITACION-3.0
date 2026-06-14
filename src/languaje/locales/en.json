@@ -1,7 +1,6 @@
 {
 	"nav": {
 		"home": "Home",
-		"portfolio": "Portfolio",
 		"ifcs": "IFCs",
 		"performanceLevels": "Performance Levels",
 		"ifc": {
@@ -35,7 +34,8 @@
 			"label": "Loads",
 			"upload": "Upload",
 			"history": "History"
-		}
+		},
+		"portfolio": "Portfolio"
 	},
 	"ifcs": {
 		"page": {
@@ -905,6 +905,23 @@
 	},
 	"error": {
 		"generic": "An unexpected error occurred",
+		"chart": {
+			"hasIfc": "A descendant course coordinator has an IFC for its course in this period.",
+			"readOnlyNode": "This node is read-only and cannot be modified.",
+			"parentNotFound": "The parent node was not found.",
+			"cannotAddUnderDean": "Children cannot be added directly under the Dean.",
+			"staffNotFound": "The selected staff member was not found.",
+			"entityTypeInvalid": "The entity type is not valid.",
+			"entityTypeReadOnly": "The entity type is read-only.",
+			"entityCodeRequired": "The entity is required for this type.",
+			"entityNotFound": "The selected entity was not found."
+		},
+		"courseOutcomeMapping": {
+			"courseOutOfScope": "The course does not belong to the selected program.",
+			"outcomeOutOfScope": "The outcome does not belong to the selected commission.",
+			"invalidOutcomeType": "Invalid mark type for the mapping.",
+			"duplicateCourseOutcome": "The course has the same outcome marked more than once."
+		},
 		"validation": "The submitted data is not valid",
 		"badRequest": "Invalid request",
 		"unauthorized": "You are not authenticated",
@@ -928,6 +945,7 @@
 		"outcome": {
 			"inUse": "This outcome cannot be deleted because it is in use.",
 			"outcomeCodeExists": "The code is already assigned to another outcome in the commission.",
+			"programCommissionNotFound": "There is no program-commission link for the selected program and commission in the active period.",
 			"notFound": "Outcome not found.",
 			"updateFailed": "Could not update the outcome.",
 			"usedInCourseOutcomeMappings": "Mapped to a course",
@@ -941,6 +959,8 @@
 			"inUse": "This student cannot be deleted because it is in use.",
 			"usedInStudentSectionEnrollments": "Has section enrollments",
 			"codeExists": "The code is already assigned to another student.",
+			"enrolledStudentExists": "The student is already enrolled in the active period.",
+			"studyPlanPeriodNotFound": "The program has no study plan offered in the active period.",
 			"notFound": "Student not found.",
 			"updateFailed": "Could not update the student."
 		},
@@ -957,13 +977,17 @@
 			"inUse": "This study plan cannot be deleted because it is in use.",
 			"usedInAcademicPeriods": "Offered in academic periods",
 			"codeExists": "The code is already assigned to another study plan in the program.",
+			"programNotInModality": "The program does not belong to the active modality.",
 			"notFound": "Study plan not found.",
 			"updateFailed": "Could not update the study plan."
 		},
 		"studyPlanCourse": {
 			"inUse": "This course cannot be removed because it is in use.",
 			"usedInRubrics": "Has rubrics",
-			"usedInCourseOutcomeMappings": "Has outcome mappings"
+			"usedInCourseOutcomeMappings": "Has outcome mappings",
+			"studyPlanPeriodNotFound": "The study plan is not offered in the active period.",
+			"courseSelectionInvalid": "Select an existing course or register a new one, not both.",
+			"studyPlanCourseExists": "The course is already in this study plan for the active period."
 		},
 		"courseSection": {
 			"inUse": "This section cannot be deleted because it is in use.",
@@ -988,7 +1012,10 @@
 			"emailExists": "A user with this email already exists",
 			"createFailed": "Could not create the user",
 			"updateFailed": "Could not update the user",
-			"deleteFailed": "Could not delete the user"
+			"deleteFailed": "Could not delete the user",
+			"linkedToStaff": "Cannot delete: the user is linked to a staff member.",
+			"linkedToStudent": "Cannot delete: the user is linked to a student.",
+			"hasActivityHistory": "Cannot delete: the user has activity history (uploads or notifications)."
 		},
 		"ifc": {
 			"notFound": "IFC not found",
@@ -1100,7 +1127,8 @@
 			"previous": "Previous",
 			"next": "Next",
 			"page": "Page",
-			"of": "of"
+			"of": "of",
+			"results": "results"
 		}
 	},
 	"academic": {
@@ -1133,12 +1161,12 @@
 	},
 	"page": {
 		"home": "Home",
-		"portfolio": "Portfolio",
 		"login": "Login",
 		"charts": "Charts",
 		"tables": "Tables",
 		"modals": "Modals",
-		"public": "Public"
+		"public": "Public",
+		"portfolio": "Portfolio"
 	},
 	"notFound": {
 		"title": "Page not found",
@@ -2389,7 +2417,7 @@
 			"typePlaceholder": "Select an upload type",
 			"selectBoth": "Pick an upload type and an academic period to continue.",
 			"downloadTemplate": "Download template",
-			"downloadingTemplate": "Downloading...",
+			"downloadingTemplate": "Downloading",
 			"dropzone": "Click or drag the Excel file here",
 			"submit": "Upload file",
 			"loadedSummary": "Loaded rows",
@@ -2421,6 +2449,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New teacher",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2430,6 +2459,12 @@
 			},
 			"error": {
 				"loadFailed": "Could not load the teachers."
+			},
+			"create": {
+				"title": "New teacher",
+				"subtitle": "Register a teacher with their code, first name and last name.",
+				"save": "Create",
+				"error": "Could not create the teacher."
 			},
 			"edit": {
 				"title": "Edit teacher",
@@ -2445,6 +2480,7 @@
 				"blockedSubtitle": "This teacher is in use in:"
 			},
 			"toast": {
+				"created": "Teacher created successfully.",
 				"updated": "Teacher updated successfully.",
 				"deleted": "Teacher deleted successfully."
 			}
@@ -2470,6 +2506,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New outcome",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2479,6 +2516,13 @@
 			},
 			"error": {
 				"loadFailed": "Could not load the outcomes."
+			},
+			"create": {
+				"title": "New outcome",
+				"subtitle": "Register an outcome for a commission of the selected program.",
+				"save": "Create",
+				"error": "Could not create the outcome.",
+				"commissionPlaceholder": "Select a commission"
 			},
 			"edit": {
 				"title": "Edit outcome",
@@ -2494,8 +2538,115 @@
 				"blockedSubtitle": "This outcome is in use in:"
 			},
 			"toast": {
+				"created": "Outcome created successfully.",
 				"updated": "Outcome updated successfully.",
 				"deleted": "Outcome deleted successfully."
+			}
+		},
+		"courseOutcomeMappingMaintenance": {
+			"title": "Course outcome mapping maintenance",
+			"subtitle": "View and edit how courses map to Student Outcomes per program.",
+			"filters": {
+				"accreditor": "Accreditor",
+				"accreditorPlaceholder": "Select an accreditor",
+				"commission": "Commission",
+				"commissionPlaceholder": "Select a commission",
+				"program": "Program",
+				"programPlaceholder": "Select a program"
+			},
+			"selectPeriod": "Select an academic period in the top bar to continue.",
+			"empty": "No records found for the current filters.",
+			"retry": "Retry",
+			"col": {
+				"accreditorCode": "Accreditor code",
+				"commissionCode": "Commission code",
+				"program": "Program",
+				"academicPeriod": "Period",
+				"actions": "Actions"
+			},
+			"actions": {
+				"view": "View",
+				"back": "Back",
+				"edit": "Edit",
+				"save": "Save",
+				"exportPdf": "Export PDF"
+			},
+			"grid": {
+				"studyPlanCode": "Study plan",
+				"courseCode": "Code",
+				"courseName": "Course",
+				"cf": "CF",
+				"studentOutcome": "Student Outcome",
+				"electives": "Electives",
+				"legend": "Legend"
+			},
+			"toast": {
+				"saved": "Changes saved successfully."
+			},
+			"error": {
+				"loadFailed": "The outcome mapping could not be loaded.",
+				"saveFailed": "The changes could not be saved.",
+				"exportFailed": "The PDF could not be exported."
+			}
+		},
+		"organizationChartMaintenance": {
+			"title": "Organization chart maintenance",
+			"subtitle": "View and edit the school's organizational structure for the active period.",
+			"selectContext": "Select a school and an academic period in the top bar to continue.",
+			"notConfigured": "This school has no organization chart configured for this period.",
+			"retry": "Retry",
+			"toolbar": {
+				"zoomIn": "Zoom in",
+				"zoomOut": "Zoom out",
+				"expandAll": "Expand all",
+				"collapseAll": "Collapse all",
+				"exportPng": "Export image",
+				"exportPdf": "Export PDF"
+			},
+			"actions": {
+				"edit": "Edit",
+				"addChild": "Add child",
+				"delete": "Delete"
+			},
+			"form": {
+				"createTitle": "Add node",
+				"editTitle": "Edit node",
+				"parentLabel": "Reports to",
+				"staff": "Staff",
+				"staffPlaceholder": "Search by name or code...",
+				"titleEs": "Role title (ES)",
+				"titleEn": "Role title (EN)",
+				"entityType": "Entity type",
+				"entityTypePlaceholder": "Select a type",
+				"entityCode": "Entity",
+				"programPlaceholder": "Select a program",
+				"coursePlaceholder": "Search a course...",
+				"save": "Save",
+				"saving": "Saving...",
+				"error": {
+					"staffRequired": "Select the staff member.",
+					"titleRequired": "Enter the role title.",
+					"entityTypeRequired": "Select an entity type.",
+					"entityCodeRequired": "Select the entity.",
+					"saveFailed": "The node could not be saved."
+				}
+			},
+			"toast": {
+				"saved": "Organization chart updated successfully.",
+				"deleted": "Node deleted successfully."
+			},
+			"delete": {
+				"title": "Delete node",
+				"message": "This will remove the node and all its descendants. Continue?",
+				"blockedTitle": "Cannot delete",
+				"blockedSubtitle": "It could not be deleted for the following reasons:"
+			},
+			"export": {
+				"error": "The organization chart could not be exported."
+			},
+			"error": {
+				"loadFailed": "The organization chart could not be loaded.",
+				"deleteFailed": "The node could not be deleted."
 			}
 		},
 		"sectionsMaintenance": {
@@ -2517,6 +2668,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New section",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2527,12 +2679,17 @@
 			"error": {
 				"loadFailed": "Could not load the sections."
 			},
+			"create": {
+				"title": "New section",
+				"subtitle": "Register a section and its assignments for the active period.",
+				"save": "Create",
+				"error": "Could not create the section."
+			},
 			"edit": {
 				"title": "Edit section",
 				"subtitle": "Update the section and its assignments.",
 				"save": "Save",
 				"error": "Could not save the section.",
-				"current": "Current",
 				"coursePlaceholder": "Search course...",
 				"professorPlaceholder": "Search professor...",
 				"campusPlaceholder": "Select a campus",
@@ -2546,6 +2703,7 @@
 				"blockedSubtitle": "This section is in use in:"
 			},
 			"toast": {
+				"created": "Section created successfully.",
 				"updated": "Section updated successfully.",
 				"deleted": "Section deleted successfully."
 			}
@@ -2572,6 +2730,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New student",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2582,12 +2741,17 @@
 			"error": {
 				"loadFailed": "Could not load the enrolled students."
 			},
+			"create": {
+				"title": "New enrolled student",
+				"subtitle": "Register a student and their enrollment for the active period.",
+				"save": "Create",
+				"error": "Could not create the student."
+			},
 			"edit": {
 				"title": "Edit enrolled student",
 				"subtitle": "Update the student's details and enrollment.",
 				"save": "Save",
 				"error": "Could not save the student.",
-				"current": "Current",
 				"programPlaceholder": "Select a program",
 				"campusPlaceholder": "Select a campus",
 				"modalityPlaceholder": "Select a modality"
@@ -2600,6 +2764,7 @@
 				"blockedSubtitle": "This student is in use in:"
 			},
 			"toast": {
+				"created": "Student created successfully.",
 				"updated": "Student updated successfully.",
 				"deleted": "Student deleted successfully."
 			}
@@ -2625,6 +2790,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New enrollment",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2635,12 +2801,17 @@
 			"error": {
 				"loadFailed": "Could not load the enrollments."
 			},
+			"create": {
+				"title": "New enrollment",
+				"subtitle": "Enroll a student in a section for the active period.",
+				"save": "Create",
+				"error": "Could not create the enrollment."
+			},
 			"edit": {
 				"title": "Edit enrollment",
 				"subtitle": "Change the section or the student of this enrollment.",
 				"save": "Save",
 				"error": "Could not save the enrollment.",
-				"current": "Current",
 				"section": "Section",
 				"sectionPlaceholder": "Search section...",
 				"student": "Student",
@@ -2654,6 +2825,7 @@
 				"blockedSubtitle": "This enrollment is in use in:"
 			},
 			"toast": {
+				"created": "Enrollment created successfully.",
 				"updated": "Enrollment updated successfully.",
 				"deleted": "Enrollment deleted successfully."
 			}
@@ -2676,6 +2848,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New study plan",
 				"view": "View courses",
 				"edit": "Edit",
 				"delete": "Delete"
@@ -2687,12 +2860,18 @@
 			"error": {
 				"loadFailed": "Could not load the study plans."
 			},
+			"create": {
+				"title": "New study plan",
+				"subtitle": "Register a study plan with its code and program for the active modality.",
+				"save": "Create",
+				"error": "Could not create the study plan.",
+				"programPlaceholder": "Select a program"
+			},
 			"edit": {
 				"title": "Edit study plan",
 				"subtitle": "Update the study plan code and program.",
 				"save": "Save",
 				"error": "Could not save the study plan.",
-				"current": "Current",
 				"programPlaceholder": "Select a program"
 			},
 			"delete": {
@@ -2703,6 +2882,7 @@
 				"blockedSubtitle": "This study plan is in use in:"
 			},
 			"toast": {
+				"created": "Study plan created successfully.",
 				"updated": "Study plan updated successfully.",
 				"deleted": "Study plan deleted successfully."
 			}
@@ -2721,6 +2901,7 @@
 				"actions": "Actions"
 			},
 			"actions": {
+				"new": "New course",
 				"edit": "Edit",
 				"delete": "Delete"
 			},
@@ -2730,6 +2911,21 @@
 			},
 			"error": {
 				"loadFailed": "Could not load the courses."
+			},
+			"create": {
+				"title": "Add course to study plan",
+				"subtitle": "Link an existing course or register a new one in this study plan for the active period.",
+				"save": "Create",
+				"error": "Could not add the course to the study plan.",
+				"course": "Course",
+				"coursePlaceholder": "Search course...",
+				"addNewCourse": "Not in the list? Register a new course",
+				"useExistingCourse": "Use an existing course",
+				"newCourseTitle": "New course",
+				"level": "Level",
+				"levelPlaceholder": "Select a level",
+				"elective": "Elective",
+				"electiveDescription": "Toggle if the course is elective in this study plan."
 			},
 			"edit": {
 				"title": "Edit course",
@@ -2745,6 +2941,7 @@
 				"blockedSubtitle": "This plan course is in use in:"
 			},
 			"toast": {
+				"created": "Course added to the study plan successfully.",
 				"updated": "Course updated successfully.",
 				"deleted": "Course removed from the plan successfully."
 			}
@@ -2793,7 +2990,7 @@
 			"confirmation": "Do you want to proceed?",
 			"cancel": "Cancel",
 			"confirm": "Yes, roll back",
-			"running": "Rolling back..."
+			"running": "Rolling back"
 		}
 	},
 	"capstone": {
@@ -2839,9 +3036,15 @@
 		},
 		"toolbar": {
 			"newFolder": "New folder",
+			"newComment": "Comment",
 			"upload": "Upload",
 			"download": "Download",
 			"delete": "Delete",
+			"copy": "Copy",
+			"paste": "Paste",
+			"rename": "Rename",
+			"move": "Move",
+			"tree": "Tree",
 			"refresh": "Refresh",
 			"searchPlaceholder": "Filter by name..."
 		},
@@ -2873,17 +3076,96 @@
 			"bodyMany": "Are you sure you want to delete {{count}} items? This action cannot be undone.",
 			"confirm": "Delete"
 		},
+		"comment": {
+			"createTitle": "New comment",
+			"nameLabel": "Comment name",
+			"namePlaceholder": "e.g. Notes.txt",
+			"create": "Create",
+			"creating": "Creating...",
+			"invalid": "Enter a valid name."
+		},
+		"rename": {
+			"title": "Rename",
+			"nameLabel": "New name",
+			"save": "Save",
+			"saving": "Saving...",
+			"invalid": "Enter a valid name."
+		},
+		"move": {
+			"title": "Move to...",
+			"moving": "Moving: {{name}}",
+			"countSelected": "{{count}} selected items",
+			"noFolders": "No folders in this location.",
+			"confirmHere": "Move here",
+			"moving_progress": "Moving..."
+		},
+		"tree": {
+			"title": "Portfolio structure",
+			"printTitle": "Portfolio structure",
+			"expandAll": "Expand all",
+			"collapseAll": "Collapse all",
+			"print": "Print",
+			"empty": "Nothing to display."
+		},
+		"guard": {
+			"downloadTooLarge": "The selection exceeds 1 GB ({{size}}). Reduce it to download.",
+			"fileTooLarge": "{{count}} file(s) exceed the 4 GB limit and were skipped."
+		},
+		"download": {
+			"selectionName": "portfolio-selection"
+		},
 		"toast": {
 			"folderCreated": "Folder created successfully.",
+			"commentCreated": "Comment created successfully.",
 			"deleted": "Items deleted successfully.",
-			"uploaded": "Files uploaded successfully."
+			"uploaded": "Files uploaded successfully.",
+			"renamed": "Item renamed successfully.",
+			"moved": "Items moved successfully.",
+			"copied": "Items copied to clipboard.",
+			"pasted": "Items pasted successfully."
 		},
 		"error": {
 			"loadFailed": "Could not load files.",
 			"createFolderFailed": "Could not create the folder.",
+			"createCommentFailed": "Could not create the comment.",
 			"deleteFailed": "Could not delete the selected items.",
 			"uploadFailed": "Could not upload the files.",
-			"downloadFailed": "Could not download."
+			"downloadFailed": "Could not download.",
+			"renameFailed": "Could not rename the item.",
+			"moveFailed": "Could not move the items.",
+			"copyFailed": "Could not copy the items.",
+			"sizeFailed": "Could not compute the selection size."
+		}
+	},
+	"error": {
+		"generic": "An unexpected error occurred.",
+		"s3": {
+			"unauthorized": "Your session has expired. Please sign in again.",
+			"invalidKey": "Invalid file key.",
+			"keyRequired": "A file key is required.",
+			"fileRequired": "No file was provided.",
+			"prefixRequired": "A folder is required.",
+			"emptyFolder": "This folder has no files to download.",
+			"invalidName": "Enter a valid name.",
+			"invalidNameChars": "The name contains invalid characters: \\ / : * ? \" < > |",
+			"nameTooLong": "The name exceeds the 255 character limit.",
+			"nameExists": "An item with that name already exists.",
+			"noSelection": "No item selected.",
+			"moveSameLocation": "Cannot move to the same location.",
+			"moveIntoItself": "Cannot move a folder into itself.",
+			"listFailed": "Could not load files.",
+			"uploadFailed": "Could not upload the files.",
+			"deleteFailed": "Could not delete the selected items.",
+			"createFolderFailed": "Could not create the folder.",
+			"downloadUrlFailed": "Could not prepare the download.",
+			"downloadFolderFailed": "Could not download the folder.",
+			"downloadFailed": "Could not download the file.",
+			"renameFailed": "Could not rename the item.",
+			"copyFailed": "Could not copy the items.",
+			"moveFailed": "Could not move the items.",
+			"createCommentFailed": "Could not create the comment.",
+			"treeFailed": "Could not load the portfolio structure.",
+			"sizeFailed": "Could not compute the selection size."
 		}
 	}
 }

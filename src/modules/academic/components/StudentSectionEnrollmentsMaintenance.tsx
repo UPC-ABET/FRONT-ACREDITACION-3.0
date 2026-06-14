@@ -7,6 +7,7 @@ import {
 	ExclamationTriangleIcon,
 	MagnifyingGlassIcon,
 	PencilSquareIcon,
+	PlusIcon,
 	TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
@@ -32,6 +33,7 @@ import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils';
+import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import {
 	useProgramsByModality,
 	useStudentSectionEnrollmentMaintenanceMutations,
@@ -39,12 +41,14 @@ import {
 } from '../hooks';
 import type {
 	ProgramResponse,
+	StudentSectionEnrollmentMaintenanceCreate,
 	StudentSectionEnrollmentMaintenanceItem,
 	StudentSectionEnrollmentMaintenanceUpdate,
 } from '../types';
+import { StudentSectionEnrollmentCreateDialog } from './StudentSectionEnrollmentCreateDialog';
 import { StudentSectionEnrollmentEditDialog } from './StudentSectionEnrollmentEditDialog';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
 	if (!text) return '';
@@ -91,13 +95,15 @@ export function StudentSectionEnrollmentsMaintenance() {
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
 	const [page, setPage] = useState(1);
+	const [creating, setCreating] = useState(false);
+	const [createError, setCreateError] = useState<string | null>(null);
 	const [editing, setEditing] = useState<StudentSectionEnrollmentMaintenanceItem | null>(null);
 	const [editError, setEditError] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] =
 		useState<StudentSectionEnrollmentMaintenanceItem | null>(null);
 	const [blockedReasons, setBlockedReasons] = useState<string[] | null>(null);
 
-	const { update, remove } = useStudentSectionEnrollmentMaintenanceMutations();
+	const { create, update, remove } = useStudentSectionEnrollmentMaintenanceMutations();
 
 	useEffect(() => {
 		const timer = setTimeout(() => setDebouncedSearch(search), 300);
@@ -141,6 +147,24 @@ export function StudentSectionEnrollmentsMaintenance() {
 		[programs, locale],
 	);
 	const selectedProgram = programOptions.find((option) => option.value === programId) ?? null;
+
+	const handleCreate = async (body: StudentSectionEnrollmentMaintenanceCreate) => {
+		setCreateError(null);
+		try {
+			await create.mutateAsync(body);
+			showToast('loads.studentSectionEnrollmentsMaintenance.toast.created', 'success');
+			setCreating(false);
+		} catch (error) {
+			const [reason] = getApiErrorReasons(error);
+			setCreateError(
+				tryTranslate(
+					t,
+					reason ??
+						getErrorMessage(error, 'loads.studentSectionEnrollmentsMaintenance.create.error'),
+				),
+			);
+		}
+	};
 
 	const handleSaveEdit = async (body: StudentSectionEnrollmentMaintenanceUpdate) => {
 		if (!editing) return;
@@ -218,17 +242,31 @@ export function StudentSectionEnrollmentsMaintenance() {
 							}
 						/>
 					</div>
-					<div className="relative w-full sm:max-w-xs">
-						<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-						<input
-							type="search"
-							value={search}
-							onChange={(event) => handleSearchChange(event.target.value)}
-							placeholder={t('loads.studentSectionEnrollmentsMaintenance.searchPlaceholder')}
-							aria-label={t('loads.studentSectionEnrollmentsMaintenance.searchPlaceholder')}
+					<div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+						<div className="relative w-full sm:max-w-xs">
+							<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+							<input
+								type="search"
+								value={search}
+								onChange={(event) => handleSearchChange(event.target.value)}
+								placeholder={t('loads.studentSectionEnrollmentsMaintenance.searchPlaceholder')}
+								aria-label={t('loads.studentSectionEnrollmentsMaintenance.searchPlaceholder')}
+								disabled={noPeriodSelected}
+								className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
+							/>
+						</div>
+						<Button
+							variant="primary"
+							size="sm"
+							className="w-full sm:w-auto"
 							disabled={noPeriodSelected}
-							className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
-						/>
+							onClick={() => {
+								setCreateError(null);
+								setCreating(true);
+							}}>
+							<PlusIcon className="h-4 w-4" />
+							<span>{t('loads.studentSectionEnrollmentsMaintenance.actions.new')}</span>
+						</Button>
 					</div>
 				</div>
 
@@ -378,6 +416,15 @@ export function StudentSectionEnrollmentsMaintenance() {
 					</div>
 				)}
 			</div>
+
+			{creating && (
+				<StudentSectionEnrollmentCreateDialog
+					saving={create.isPending}
+					errorMessage={createError}
+					onClose={() => setCreating(false)}
+					onCreate={handleCreate}
+				/>
+			)}
 
 			{editing && (
 				<StudentSectionEnrollmentEditDialog

@@ -20,6 +20,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/shared/components/ui';
+import { LoadingState } from '@/shared/components';
 import { Select } from '@/shared/components/ui/Select';
 import { Input } from '@/shared/components/ui/Input';
 import { cn } from '@/shared/lib/utils';
@@ -283,8 +284,8 @@ export function PerformanceLevelsPage() {
 			{!hasFilters ? (
 				<TableEmptyState message={t('performanceLevels.list.selectFilter')} />
 			) : isLoading ? (
-				<div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500 shadow-sm">
-					{t('performanceLevels.list.loading')}
+				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
+					<LoadingState label={t('performanceLevels.list.loading')} />
 				</div>
 			) : isError ? (
 				<TableErrorState
@@ -413,12 +414,14 @@ export function PerformanceLevelsPage() {
 						<Button variant="secondary" onClick={handleModalClose} disabled={isMutating}>
 							{t('performanceLevels.form.cancel')}
 						</Button>
-						<Button variant="primary" onClick={handleSubmit} disabled={isMutating}>
-							{isMutating
-								? t('performanceLevels.form.saving')
-								: editingLevel
-									? t('performanceLevels.form.update')
-									: t('performanceLevels.form.create')}
+						<Button
+							variant="primary"
+							onClick={handleSubmit}
+							disabled={isMutating}
+							loading={isMutating}>
+							{editingLevel
+								? t('performanceLevels.form.update')
+								: t('performanceLevels.form.create')}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

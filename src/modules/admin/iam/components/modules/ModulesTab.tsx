@@ -127,6 +127,7 @@ export function ModulesTab() {
 				title={t('admin.iam.modules.title')}
 				searchPlaceholder={t('admin.iam.modules.search')}
 				aria-label={t('admin.iam.modules.title')}
+				isLoading={isLoading}
 				actions={[
 					{
 						label: t('admin.iam.modules.create'),
@@ -136,16 +137,17 @@ export function ModulesTab() {
 					},
 				]}
 			/>
-			{isLoading && <p className="text-sm text-zinc-500">{t('loading.default')}</p>}
 
-			<ModuleTypeFormDialog
-				open={isFormOpen}
-				module={editing}
-				typeGroupId={typeGroupId}
-				onClose={() => setFormOpen(false)}
-				onSuccess={(messageKey) => showToast(messageKey, 'success')}
-				onError={(message) => showToast(message, 'error')}
-			/>
+			{isFormOpen && (
+				<ModuleTypeFormDialog
+					open
+					module={editing}
+					typeGroupId={typeGroupId}
+					onClose={() => setFormOpen(false)}
+					onSuccess={(messageKey) => showToast(messageKey, 'success')}
+					onError={(message) => showToast(message, 'error')}
+				/>
+			)}
 
 			<ConfirmDialog
 				isOpen={pendingDelete != null}

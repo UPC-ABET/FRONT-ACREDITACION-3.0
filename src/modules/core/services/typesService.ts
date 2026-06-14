@@ -7,6 +7,7 @@ export interface TypeOption {
 	code: string;
 	name: { es: string; en: string };
 	description: Record<string, string>;
+	extra?: Record<string, unknown>;
 }
 
 interface Envelope<T> {

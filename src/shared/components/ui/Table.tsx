@@ -7,13 +7,24 @@ import {
 	getCoreRowModel,
 	getFilteredRowModel,
 	getPaginationRowModel,
+	RowData,
 	useReactTable,
 } from '@tanstack/react-table';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Button } from './Button';
 import { Input } from './Input';
+import { Skeleton } from './Skeleton';
 import { useI18n } from '@/providers';
 import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
+
+declare module '@tanstack/react-table' {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	interface ColumnMeta<TData extends RowData, TValue> {
+		cellClassName?: string;
+		headerClassName?: string;
+	}
+}
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
 	return (
@@ -100,45 +111,66 @@ interface DataTableAction {
 	buttonProps?: Omit<React.ComponentProps<typeof Button>, 'onClick' | 'children'>;
 }
 
+interface ServerPagination {
+	page: number;
+	pageCount: number;
+	total: number;
+	onPageChange: (page: number) => void;
+	isFetching?: boolean;
+}
+
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	pageSize?: number;
 	title?: string;
-	dataPage?: {
-		page: number;
-		totalPages: number;
-	};
+	description?: string;
 	showSearch?: boolean;
 	searchPlaceholder?: string;
 	searchColumnId?: string;
 	actions?: DataTableAction[];
 	showPagination?: boolean;
+	serverPagination?: ServerPagination;
+	isLoading?: boolean;
+	errorMessage?: string;
+	emptyMessage?: string;
 	'aria-label'?: string;
 }
+
+const SKELETON_ROW_COUNT = 5;
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
 	pageSize = DEFAULT_PAGE_SIZE,
 	title,
+	description,
 	showSearch = true,
 	searchPlaceholder,
 	searchColumnId,
 	actions = [],
 	showPagination = true,
+	serverPagination,
+	isLoading = false,
+	errorMessage,
+	emptyMessage,
 	'aria-label': ariaLabel,
 }: DataTableProps<TData, TValue>) {
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [globalFilter, setGlobalFilter] = React.useState('');
 	const { t } = useI18n();
 
+	const isServer = serverPagination !== undefined;
+	const clientPaginated = !isServer && showPagination;
+
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: showPagination ? getPaginationRowModel() : undefined,
+		getPaginationRowModel: clientPaginated ? getPaginationRowModel() : undefined,
 		getFilteredRowModel: getFilteredRowModel(),
+		manualPagination: isServer,
+		pageCount: isServer ? serverPagination.pageCount : undefined,
 		onColumnFiltersChange: setColumnFilters,
 		onGlobalFilterChange: setGlobalFilter,
 		state: {
@@ -152,7 +184,7 @@ export function DataTable<TData, TValue>({
 				.includes(String(filterValue ?? '').toLowerCase());
 		},
 		initialState: {
-			pagination: { pageSize: showPagination ? pageSize : Math.max(data.length, 1) },
+			pagination: { pageSize: clientPaginated ? pageSize : Math.max(data.length, 1) },
 		},
 	});
 
@@ -170,10 +202,41 @@ export function DataTable<TData, TValue>({
 		setGlobalFilter(value);
 	};
 
+	const hasRows = table.getRowModel().rows.length > 0;
+	const showFooter = (clientPaginated || isServer) && hasRows && !isLoading && !errorMessage;
+
+	const currentPage = isServer ? serverPagination.page : table.getState().pagination.pageIndex + 1;
+	const pageCount = isServer ? serverPagination.pageCount : table.getPageCount();
+	const totalCount = isServer ? serverPagination.total : table.getFilteredRowModel().rows.length;
+	const isFetching = isServer ? Boolean(serverPagination.isFetching) : false;
+	const canPreviousPage = isServer ? currentPage > 1 : table.getCanPreviousPage();
+	const canNextPage = isServer ? currentPage < pageCount : table.getCanNextPage();
+
+	const goToPreviousPage = () => {
+		if (isServer) {
+			serverPagination.onPageChange(currentPage - 1);
+			return;
+		}
+		table.previousPage();
+	};
+
+	const goToNextPage = () => {
+		if (isServer) {
+			serverPagination.onPageChange(currentPage + 1);
+			return;
+		}
+		table.nextPage();
+	};
+
 	return (
 		<div className="space-y-4">
-			{title && (
-				<h3 className="text-lg font-bold text-zinc-800 px-1 uppercase tracking-tight">{title}</h3>
+			{(title || description) && (
+				<div className="space-y-1 px-1">
+					{title && (
+						<h3 className="text-lg font-bold text-zinc-800 uppercase tracking-tight">{title}</h3>
+					)}
+					{description && <p className="text-sm text-zinc-500">{description}</p>}
+				</div>
 			)}
 
 			{(showSearch || actions?.length > 0) && (
@@ -213,12 +276,17 @@ export function DataTable<TData, TValue>({
 				</div>
 			)}
 
-			<Table aria-label={ariaLabel} aria-rowcount={showPagination ? data.length : undefined}>
+			<Table
+				aria-label={ariaLabel}
+				aria-rowcount={showPagination ? data.length : undefined}
+				className={cn(isFetching && 'opacity-60 transition-opacity')}>
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (
 						<TableRow key={headerGroup.id}>
 							{headerGroup.headers.map((header) => (
-								<TableHead key={header.id}>
+								<TableHead
+									key={header.id}
+									className={header.column.columnDef.meta?.headerClassName}>
 									{header.isPlaceholder
 										? null
 										: flexRender(header.column.columnDef.header, header.getContext())}
@@ -228,11 +296,29 @@ export function DataTable<TData, TValue>({
 					))}
 				</TableHeader>
 				<TableBody>
-					{table.getRowModel().rows?.length ? (
+					{isLoading ? (
+						Array.from({ length: SKELETON_ROW_COUNT }).map((_, rowIndex) => (
+							<TableRow key={`skeleton-row-${rowIndex}`}>
+								{columns.map((_, columnIndex) => (
+									<TableCell key={`skeleton-cell-${rowIndex}-${columnIndex}`}>
+										<Skeleton className="h-4 w-[80%]" />
+									</TableCell>
+								))}
+							</TableRow>
+						))
+					) : errorMessage ? (
+						<TableRow>
+							<TableCell
+								colSpan={columns.length}
+								className="h-24 text-center font-medium text-red-600">
+								{errorMessage}
+							</TableCell>
+						</TableRow>
+					) : hasRows ? (
 						table.getRowModel().rows.map((row) => (
 							<TableRow key={row.id}>
 								{row.getVisibleCells().map((cell) => (
-									<TableCell key={cell.id}>
+									<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}
 									</TableCell>
 								))}
@@ -243,37 +329,39 @@ export function DataTable<TData, TValue>({
 							<TableCell
 								colSpan={columns.length}
 								className="h-32 text-center text-zinc-400 font-medium italic">
-								{t('table.empty')}
+								{emptyMessage ?? t('table.empty')}
 							</TableCell>
 						</TableRow>
 					)}
 				</TableBody>
 			</Table>
 
-			{showPagination && (
-				<div className="flex items-center justify-center gap-4 py-4">
-					<Button
-						variant="secondary"
-						size="sm"
-						onClick={() => table.previousPage()}
-						disabled={!table.getCanPreviousPage()}
-						className="rounded-md bg-red-50 px-4 py-2 text-sm font-bold text-red-600 border-none hover:bg-red-100 disabled:bg-zinc-100 disabled:text-zinc-400 transition-all">
-						{t('table.pagination.previous')}
-					</Button>
-
-					<div className="text-[10px] font-black uppercase text-zinc-500 tracking-widest bg-zinc-100 px-3 py-1 rounded-full">
-						{t('table.pagination.page')} {table.getState().pagination.pageIndex + 1}{' '}
-						{t('table.pagination.of')} {table.getPageCount()}
+			{showFooter && (
+				<div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+					<p className="text-xs text-zinc-500">
+						{totalCount} {t('table.pagination.results')}
+					</p>
+					<div className="flex items-center justify-center gap-3">
+						<Button
+							variant="surface"
+							size="sm"
+							onClick={goToPreviousPage}
+							disabled={!canPreviousPage || isFetching}
+							aria-label={t('table.pagination.previous')}>
+							<ChevronLeft className="h-4 w-4" />
+						</Button>
+						<span className="text-sm text-zinc-600">
+							{t('table.pagination.page')} {currentPage} / {Math.max(pageCount, 1)}
+						</span>
+						<Button
+							variant="surface"
+							size="sm"
+							onClick={goToNextPage}
+							disabled={!canNextPage || isFetching}
+							aria-label={t('table.pagination.next')}>
+							<ChevronRight className="h-4 w-4" />
+						</Button>
 					</div>
-
-					<Button
-						variant="secondary"
-						size="sm"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}
-						className="rounded-md bg-red-50 px-4 py-2 text-sm font-bold text-red-600 border-none hover:bg-red-100 disabled:bg-zinc-100 disabled:text-zinc-400 transition-all">
-						{t('table.pagination.next')}
-					</Button>
 				</div>
 			)}
 		</div>

@@ -37,14 +37,6 @@ type Props = {
 	onSave: (body: EnrolledStudentMaintenanceUpdate) => void;
 };
 
-function CurrentValue({ label, value }: { label: string; value: string }) {
-	return (
-		<p className="mt-1 text-xs text-zinc-500">
-			{label}: <span className="font-medium text-zinc-700">{value || '—'}</span>
-		</p>
-	);
-}
-
 export function EnrolledStudentMaintenanceEditDialog({
 	item,
 	programs,
@@ -60,9 +52,9 @@ export function EnrolledStudentMaintenanceEditDialog({
 	const [studentCode, setStudentCode] = useState(item.studentCode);
 	const [firstName, setFirstName] = useState(item.firstName);
 	const [lastName, setLastName] = useState(item.lastName);
-	const [programId, setProgramId] = useState<number | null>(null);
-	const [campusId, setCampusId] = useState<number | null>(null);
-	const [modalityTypeId, setModalityTypeId] = useState<number | null>(null);
+	const [programId, setProgramId] = useState<number | null>(item.programId ?? null);
+	const [campusId, setCampusId] = useState<number | null>(item.campusId ?? null);
+	const [modalityTypeId, setModalityTypeId] = useState<number | null>(item.modalityTypeId ?? null);
 
 	const programOptions = useMemo(
 		() =>
@@ -95,7 +87,13 @@ export function EnrolledStudentMaintenanceEditDialog({
 		modalityOptions.find((option) => option.value === modalityTypeId) ?? null;
 
 	const canSave =
-		studentCode.trim() !== '' && firstName.trim() !== '' && lastName.trim() !== '' && !saving;
+		studentCode.trim() !== '' &&
+		firstName.trim() !== '' &&
+		lastName.trim() !== '' &&
+		programId != null &&
+		campusId != null &&
+		modalityTypeId != null &&
+		!saving;
 
 	const handleSubmit = () => {
 		const body: EnrolledStudentMaintenanceUpdate = {};
@@ -111,15 +109,13 @@ export function EnrolledStudentMaintenanceEditDialog({
 		onSave(body);
 	};
 
-	const currentLabel = t('loads.enrolledStudentsMaintenance.edit.current');
-
 	return (
 		<Dialog
 			open
 			onOpenChange={(open) => {
 				if (!open && !saving) onClose();
 			}}>
-			<DialogContent className="sm:max-w-2xl">
+			<DialogContent className="sm:max-w-3xl">
 				<DialogHeader>
 					<DialogTitle>{t('loads.enrolledStudentsMaintenance.edit.title')}</DialogTitle>
 					<DialogDescription>
@@ -149,53 +145,44 @@ export function EnrolledStudentMaintenanceEditDialog({
 						/>
 					</div>
 
-					<div>
-						<Select
-							name="program"
-							label={t('loads.enrolledStudentsMaintenance.col.program')}
-							placeholder={t('loads.enrolledStudentsMaintenance.edit.programPlaceholder')}
-							isSearchable
-							isClearable
-							options={programOptions}
-							value={selectedProgram}
-							onChange={(_name, value) =>
-								setProgramId(value && !Array.isArray(value) ? Number(value.value) : null)
-							}
-						/>
-						<CurrentValue label={currentLabel} value={localized(item.programName, locale)} />
-					</div>
+					<Select
+						name="program"
+						label={t('loads.enrolledStudentsMaintenance.col.program')}
+						placeholder={t('loads.enrolledStudentsMaintenance.edit.programPlaceholder')}
+						isSearchable
+						isClearable
+						options={programOptions}
+						value={selectedProgram}
+						onChange={(_name, value) =>
+							setProgramId(value && !Array.isArray(value) ? Number(value.value) : null)
+						}
+					/>
 
 					<div className="grid gap-4 sm:grid-cols-2">
-						<div>
-							<Select
-								name="campus"
-								label={t('loads.enrolledStudentsMaintenance.col.campus')}
-								placeholder={t('loads.enrolledStudentsMaintenance.edit.campusPlaceholder')}
-								isSearchable
-								isClearable
-								options={campusOptions}
-								value={selectedCampus}
-								onChange={(_name, value) =>
-									setCampusId(value && !Array.isArray(value) ? Number(value.value) : null)
-								}
-							/>
-							<CurrentValue label={currentLabel} value={localized(item.campusName, locale)} />
-						</div>
-						<div>
-							<Select
-								name="modality"
-								label={t('loads.enrolledStudentsMaintenance.col.modality')}
-								placeholder={t('loads.enrolledStudentsMaintenance.edit.modalityPlaceholder')}
-								isSearchable
-								isClearable
-								options={modalityOptions}
-								value={selectedModality}
-								onChange={(_name, value) =>
-									setModalityTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
-								}
-							/>
-							<CurrentValue label={currentLabel} value={localized(item.modalityTypeName, locale)} />
-						</div>
+						<Select
+							name="campus"
+							label={t('loads.enrolledStudentsMaintenance.col.campus')}
+							placeholder={t('loads.enrolledStudentsMaintenance.edit.campusPlaceholder')}
+							isSearchable
+							isClearable
+							options={campusOptions}
+							value={selectedCampus}
+							onChange={(_name, value) =>
+								setCampusId(value && !Array.isArray(value) ? Number(value.value) : null)
+							}
+						/>
+						<Select
+							name="modality"
+							label={t('loads.enrolledStudentsMaintenance.col.modality')}
+							placeholder={t('loads.enrolledStudentsMaintenance.edit.modalityPlaceholder')}
+							isSearchable
+							isClearable
+							options={modalityOptions}
+							value={selectedModality}
+							onChange={(_name, value) =>
+								setModalityTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
+							}
+						/>
 					</div>
 
 					{errorMessage && <p className="text-sm font-medium text-red-600">{errorMessage}</p>}
@@ -205,8 +192,8 @@ export function EnrolledStudentMaintenanceEditDialog({
 					<Button variant="secondary" onClick={onClose} disabled={saving}>
 						{t('dialog.actions.cancel')}
 					</Button>
-					<Button variant="primary" onClick={handleSubmit} disabled={!canSave}>
-						{saving ? t('loading.default') : t('loads.enrolledStudentsMaintenance.edit.save')}
+					<Button variant="primary" onClick={handleSubmit} disabled={!canSave} loading={saving}>
+						{t('loads.enrolledStudentsMaintenance.edit.save')}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

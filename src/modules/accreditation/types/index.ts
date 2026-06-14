@@ -53,3 +53,18 @@ export type OutcomeMaintenanceUpdate = {
 	outcomeName?: { es: string; en: string };
 	outcomeDescription?: { es: string; en: string };
 };
+
+export type OutcomeMaintenanceCreate = {
+	outcomeCode: string;
+	outcomeName: { es: string; en: string };
+	outcomeDescription?: { es: string; en: string };
+	programId: number;
+	commissionId: number;
+};
+
+export type OutcomeCommissionOption = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+	accreditorId: number;
+};

@@ -24,6 +24,7 @@ import {
 	DialogFooter,
 	DialogClose,
 } from '@/shared/components/ui';
+import { LoadingState } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import { getSchoolCookie } from '@/shared/lib';
@@ -187,8 +188,8 @@ export function RubricsListPage() {
 			{!selectedPeriodId ? (
 				<TableEmptyState message={t('rubrics.list.selectPeriod')} />
 			) : isLoading ? (
-				<div className="rounded-xl border border-zinc-200 bg-white p-10 text-center text-sm text-zinc-500 shadow-sm">
-					{t('rubrics.list.loading')}
+				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
+					<LoadingState label={t('rubrics.list.loading')} />
 				</div>
 			) : isError ? (
 				<TableErrorState

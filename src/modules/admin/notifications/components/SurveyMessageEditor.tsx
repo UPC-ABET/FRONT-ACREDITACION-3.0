@@ -119,8 +119,8 @@ export function SurveyMessageEditor({ message, onCancel, onSuccess, onError }: P
 					<Button variant="secondary" onClick={onCancel}>
 						{t('dialog.actions.cancel')}
 					</Button>
-					<Button variant="primary" disabled={saving} onClick={handleSubmit}>
-						{saving ? t('loading.default') : t('admin.notify.btn.save')}
+					<Button variant="primary" disabled={saving} onClick={handleSubmit} loading={saving}>
+						{t('admin.notify.btn.save')}
 					</Button>
 				</EditorActions>
 			}>

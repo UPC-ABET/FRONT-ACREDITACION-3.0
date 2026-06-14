@@ -142,8 +142,8 @@ export default function RubricEvaluationMatrix({
 			</div>
 
 			<div className="mt-4 flex justify-end">
-				<Button variant="primary" onClick={handleSubmit} disabled={!canSubmit}>
-					{submitting ? t('capstone.matrix.saving') : t('capstone.matrix.save')}
+				<Button variant="primary" onClick={handleSubmit} disabled={!canSubmit} loading={submitting}>
+					{t('capstone.matrix.save')}
 				</Button>
 			</div>
 		</Card>

@@ -234,8 +234,8 @@ export function CompetenceCRUD({
 					</div>
 
 					<DialogFooter showCloseButton>
-						<Button onClick={handleSave} disabled={saving}>
-							{saving ? t('surveys.competence.modal.saving') : t('surveys.competence.modal.save')}
+						<Button onClick={handleSave} disabled={saving} loading={saving}>
+							{t('surveys.competence.modal.save')}
 						</Button>
 					</DialogFooter>
 				</DialogContent>

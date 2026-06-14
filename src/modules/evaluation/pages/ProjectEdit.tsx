@@ -189,10 +189,9 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 								variant="dark"
 								size="sm"
 								onClick={handleSaveHeader}
+								loading={updateMutation.isPending}
 								disabled={updateMutation.isPending}>
-								{updateMutation.isPending
-									? t('projects.edit.header.saving')
-									: t('projects.edit.header.saveButton')}
+								{t('projects.edit.header.saveButton')}
 							</Button>
 						</div>
 					</div>

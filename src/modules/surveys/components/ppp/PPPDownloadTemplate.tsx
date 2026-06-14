@@ -61,9 +61,9 @@ export function PPPDownloadTemplate() {
 				isSearchable
 			/>
 
-			<Button onClick={handleDownload} disabled={loading || !selectedCycle}>
+			<Button onClick={handleDownload} disabled={loading || !selectedCycle} loading={loading}>
 				<ArrowDownTrayIcon className="h-4 w-4 mr-2" />
-				{loading ? t('surveys.ppp.download.downloading') : t('surveys.ppp.download.button')}
+				{t('surveys.ppp.download.button')}
 			</Button>
 
 			<Toast
