@@ -69,11 +69,10 @@ export function AddEvaluationCourseModal({
 
 	const spcFilters = useMemo(
 		() => ({
-			academicPeriodId: academicPeriodId ?? 0,
 			programId: selectedProgramId ?? undefined,
 			isActive: true,
 		}),
-		[academicPeriodId, selectedProgramId],
+		[selectedProgramId],
 	);
 
 	const { data: spcList = [], isLoading: loadingCourses } = useStudyPlanCourses(spcFilters, {

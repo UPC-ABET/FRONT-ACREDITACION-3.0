@@ -4,7 +4,6 @@ import type { StudyPlanCourseCreate, StudyPlanCourseCreatedRow } from '../types'
 import { StudyPlanCourseResponse } from '../types';
 
 export type StudyPlanCourseFilters = {
-	academicPeriodId?: number;
 	programId?: number;
 	courseId?: number;
 	isActive?: boolean;

@@ -58,7 +58,6 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 	// Evaluable SPCs filtered by programId once a program is selected
 	const { data: spcList = [], isLoading: loadingSpc } = useStudyPlanCourses(
 		{
-			academicPeriodId: academicPeriodId ?? 0,
 			programId: selectedProgramId ?? undefined,
 			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
 			extra: { is_evaluable: true },
