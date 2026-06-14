@@ -197,7 +197,6 @@ export function PortfolioListPage() {
 	return (
 		<Card title={t('portfolio.page.title')}>
 			<div className="space-y-6">
-				{/* Filtros */}
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 space-y-4">
 					{academicPeriodId === null ? (
 						<p className="text-sm italic text-zinc-500">{t('portfolio.page.selectPeriod')}</p>
@@ -278,7 +277,6 @@ export function PortfolioListPage() {
 					)}
 				</div>
 
-				{/* Carga masiva (colapsable) */}
 				{showBulkUpload && academicPeriodId !== null && (
 					<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5">
 						<p className="mb-3 text-sm font-semibold text-zinc-700">
@@ -295,11 +293,9 @@ export function PortfolioListPage() {
 					</div>
 				)}
 
-				{/* Tabla */}
 				{renderTable()}
 			</div>
 
-			{/* Modales */}
 			<PortfolioCreateForm
 				isOpen={showCreateForm}
 				onClose={() => setShowCreateForm(false)}

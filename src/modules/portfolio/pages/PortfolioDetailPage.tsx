@@ -2,11 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import {
-	ArrowLeftIcon,
-	PencilSquareIcon,
-	UserMinusIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, UserMinusIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
 	ConfirmDialog,
@@ -90,12 +86,6 @@ export function PortfolioDetailPage({ projectId }: Props) {
 					className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800">
 					<ArrowLeftIcon className="h-4 w-4" />
 					{t('portfolio.detail.backBtn')}
-				</Link>
-				<Link
-					href={`/portfolio/${project.id}/edit`}
-					className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50">
-					<PencilSquareIcon className="h-4 w-4" />
-					{t('portfolio.detail.editBtn')}
 				</Link>
 			</div>
 

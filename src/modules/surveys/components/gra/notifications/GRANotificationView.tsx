@@ -63,7 +63,7 @@ export function GRANotificationView() {
 
 				{activeTab === 'email' && (
 					<div className="max-w-lg">
-						<EditEmailTemplate surveyId={periodId} />
+						<EditEmailTemplate />
 					</div>
 				)}
 			</div>

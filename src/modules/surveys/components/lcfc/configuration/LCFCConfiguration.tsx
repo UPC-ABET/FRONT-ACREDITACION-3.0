@@ -22,7 +22,7 @@ import type { LCFCCourse } from '../../../types';
 export function LCFCConfiguration() {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
-	// useLCFCCycles se conserva únicamente para poblar el selector de período origen en el diálogo de clonación
+	// useLCFCCycles is kept only to populate the source-period selector in the clone dialog
 	const { cycles, load: loadCycles } = useLCFCCycles();
 	const { courses, loading, error, load: loadConfig, generate, clone } = useLCFCConfiguration();
 
@@ -39,7 +39,7 @@ export function LCFCConfiguration() {
 		loadConfig('1', academicPeriodId);
 	}, [academicPeriodId, loadConfig]);
 
-	// Carga la lista de períodos solo cuando se abre el diálogo de clonación
+	// Load the period list only when the clone dialog opens
 	useEffect(() => {
 		if (cloneDialogOpen) loadCycles(null);
 	}, [cloneDialogOpen, loadCycles]);

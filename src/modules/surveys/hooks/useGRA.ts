@@ -206,7 +206,7 @@ export function useGRAStudentSearch() {
 	return { result, loading, error, search, add, reset: () => setResult(null) };
 }
 
-export function useGRAEmail(_surveyId?: number) {
+export function useGRAEmail() {
 	const { locale } = useI18n();
 	const [template, setTemplate] = useState<EmailTemplate>({ subject: '', body: '' });
 	const [loading, setLoading] = useState(false);

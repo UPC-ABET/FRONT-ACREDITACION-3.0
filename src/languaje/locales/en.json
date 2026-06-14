@@ -907,7 +907,7 @@
 		"created": "Record created successfully"
 	},
 	"error": {
-		"generic": "An unexpected error occurred",
+		"generic": "An unexpected error occurred.",
 		"chart": {
 			"hasIfc": "A descendant course coordinator has an IFC for its course in this period.",
 			"readOnlyNode": "This node is read-only and cannot be modified.",
@@ -927,7 +927,7 @@
 		},
 		"validation": "The submitted data is not valid",
 		"badRequest": "Invalid request",
-		"unauthorized": "You are not authenticated",
+		"unauthorized": "Your session has expired. Please sign in again.",
 		"forbidden": "You do not have permission to perform this action",
 		"notFound": "The requested resource was not found",
 		"conflict": "Conflict with the current state of the resource",
@@ -1155,6 +1155,14 @@
 		},
 		"projectEvaluator": {
 			"duplicateEvaluatorType": "An evaluator with this role type already exists in the project."
+		},
+		"survey": {
+			"gra": {
+				"tokenNotFound": "The survey link is invalid or has expired."
+			},
+			"lcfc": {
+				"tokenNotFound": "The survey link is invalid or has expired."
+			}
 		}
 	},
 	"table": {
@@ -3134,7 +3142,18 @@
 			"empty": "This folder is empty.",
 			"noResults": "No items match your search.",
 			"download": "Download",
-			"delete": "Delete"
+			"delete": "Delete",
+			"code": "Code",
+			"company": "Company",
+			"students": "Students",
+			"status": "Status",
+			"origin": "Origin",
+			"originUpc": "UPC",
+			"external": "External",
+			"actionView": "View",
+			"actionEdit": "Edit",
+			"actionDelete": "Delete",
+			"ariaLabel": "Portfolio projects table"
 		},
 		"folder": {
 			"createTitle": "New folder",
@@ -3148,7 +3167,8 @@
 			"title": "Delete items?",
 			"bodyOne": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
 			"bodyMany": "Are you sure you want to delete {{count}} items? This action cannot be undone.",
-			"confirm": "Delete"
+			"confirm": "Delete",
+			"body": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
 		},
 		"comment": {
 			"createTitle": "New comment",
@@ -3196,7 +3216,9 @@
 			"renamed": "Item renamed successfully.",
 			"moved": "Items moved successfully.",
 			"copied": "Items copied to clipboard.",
-			"pasted": "Items pasted successfully."
+			"pasted": "Items pasted successfully.",
+			"created": "Project created successfully.",
+			"bulkUploaded": "Bulk upload processed successfully."
 		},
 		"error": {
 			"loadFailed": "Could not load files.",
@@ -3208,47 +3230,84 @@
 			"renameFailed": "Could not rename the item.",
 			"moveFailed": "Could not move the items.",
 			"copyFailed": "Could not copy the items.",
-			"sizeFailed": "Could not compute the selection size."
-		}
-	},
-	"error": {
-		"generic": "An unexpected error occurred.",
-		"unauthorized": "Your session has expired. Please sign in again.",
-		"survey": {
-			"gra": {
-				"tokenNotFound": "The survey link is invalid or has expired."
-			},
-			"lcfc": {
-				"tokenNotFound": "The survey link is invalid or has expired."
-			}
+			"sizeFailed": "Could not compute the selection size.",
+			"createFailed": "Could not create the project.",
+			"exportFailed": "Could not export.",
+			"unassignFailed": "Could not remove the student."
 		},
-		"s3": {
-			"unauthorized": "Your session has expired. Please sign in again.",
-			"invalidKey": "Invalid file key.",
-			"keyRequired": "A file key is required.",
-			"fileRequired": "No file was provided.",
-			"prefixRequired": "A folder is required.",
-			"emptyFolder": "This folder has no files to download.",
-			"invalidName": "Enter a valid name.",
-			"invalidNameChars": "The name contains invalid characters: \\ / : * ? \" < > |",
-			"nameTooLong": "The name exceeds the 255 character limit.",
-			"nameExists": "An item with that name already exists.",
-			"noSelection": "No item selected.",
-			"moveSameLocation": "Cannot move to the same location.",
-			"moveIntoItself": "Cannot move a folder into itself.",
-			"listFailed": "Could not load files.",
-			"uploadFailed": "Could not upload the files.",
-			"deleteFailed": "Could not delete the selected items.",
-			"createFolderFailed": "Could not create the folder.",
-			"downloadUrlFailed": "Could not prepare the download.",
-			"downloadFolderFailed": "Could not download the folder.",
-			"downloadFailed": "Could not download the file.",
-			"renameFailed": "Could not rename the item.",
-			"copyFailed": "Could not copy the items.",
-			"moveFailed": "Could not move the items.",
-			"createCommentFailed": "Could not create the comment.",
-			"treeFailed": "Could not load the portfolio structure.",
-			"sizeFailed": "Could not compute the selection size."
+		"page": {
+			"title": "Project Portfolio",
+			"createBtn": "New project",
+			"exportBtn": "Export",
+			"searchBtn": "Search",
+			"clearFilters": "Clear filters",
+			"resultsCount": "results",
+			"selectPeriod": "Select an academic period.",
+			"bulkUploadTitle": "Bulk upload",
+			"showBulkUpload": "Show bulk upload",
+			"hideBulkUpload": "Hide bulk upload"
+		},
+		"filter": {
+			"status": "Status",
+			"program": "Program",
+			"origin": "Origin",
+			"originAll": "All",
+			"originUpc": "UPC",
+			"originExternal": "External"
+		},
+		"status": {
+			"all": "All",
+			"pending": "Pending",
+			"reviewed": "Reviewed",
+			"preApproved": "Pre-approved",
+			"approved": "Approved",
+			"disapproved": "Disapproved"
+		},
+		"form": {
+			"title": "New project",
+			"fieldName": "Project name",
+			"placeholderName": "e.g. Inventory management system",
+			"fieldDescription": "Description",
+			"placeholderDescription": "Briefly describe the project",
+			"fieldCompany": "Company",
+			"fieldProgram": "Program",
+			"academicPeriod": "Academic period",
+			"origin": "Origin",
+			"originUpc": "UPC",
+			"originExternal": "External",
+			"submitBtn": "Create project",
+			"submitting": "Creating...",
+			"errorRequired": "Please fill in the required fields.",
+			"errorCompanyRequired": "Please select a company."
+		},
+		"detail": {
+			"backBtn": "Back",
+			"editBtn": "Edit",
+			"company": "Company",
+			"origin": "Origin",
+			"researchLine": "Research line",
+			"problemSolved": "Problem solved",
+			"goal": "Goal",
+			"studentsTitle": "Students",
+			"noStudents": "No students assigned.",
+			"applicationsTitle": "Applications",
+			"removeStudentTitle": "Remove student?",
+			"removeStudentBody": "Are you sure you want to remove {{name}} from the project?",
+			"removeStudentConfirm": "Remove",
+			"studentRemoved": "Student removed successfully."
+		},
+		"bulkUpload": {
+			"basicTitle": "Basic template",
+			"basicDesc": "Download the template with the required columns.",
+			"filledTitle": "Filled file",
+			"filledDesc": "Upload the completed file to process the projects.",
+			"downloadTemplate": "Download template",
+			"upload": "Upload file",
+			"row": "Row",
+			"moreErrors": "and {{count}} more errors",
+			"resultInserted": "Projects inserted",
+			"errorDownload": "Could not download the template.",
+			"errorUpload": "Could not upload the file."
 		}
 	}
 }

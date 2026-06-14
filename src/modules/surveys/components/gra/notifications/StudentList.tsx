@@ -32,7 +32,7 @@ interface StudentListProps {
 export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 	const { t } = useI18n();
 	const { students, error, load, remove } = useGRAStudents();
-	const { sending, send } = useGRAEmail(0);
+	const { sending, send } = useGRAEmail();
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [sendDialogOpen, setSendDialogOpen] = useState(false);
 	const [surveyBaseUrl, setSurveyBaseUrl] = useState('');

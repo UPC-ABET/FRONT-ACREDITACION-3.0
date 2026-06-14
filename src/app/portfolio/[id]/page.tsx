@@ -10,5 +10,5 @@ export default async function Page({ params }: Params) {
 }
 
 export const metadata = {
-	title: 'Detalle de Proyecto | ABET',
+	title: 'Project Detail | ABET',
 };

@@ -16,13 +16,9 @@ const EMAIL_PARAMS = [
 	'[FECHA_ENVIO]',
 ];
 
-interface EditEmailTemplateProps {
-	readonly surveyId: number;
-}
-
-export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
+export function EditEmailTemplate() {
 	const { t } = useI18n();
-	const { template, setTemplate, loading, saving, error, load, save } = useGRAEmail(surveyId);
+	const { template, setTemplate, loading, saving, error, load, save } = useGRAEmail();
 	const [toast, setToast] = React.useState<{
 		open: boolean;
 		type: 'success' | 'error';

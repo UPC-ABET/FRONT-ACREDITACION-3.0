@@ -907,7 +907,7 @@
 		"created": "Registro creado exitosamente"
 	},
 	"error": {
-		"generic": "Ocurrió un error inesperado",
+		"generic": "Ocurrió un error inesperado.",
 		"chart": {
 			"hasIfc": "Un coordinador de curso dependiente tiene un IFC para su curso en este período.",
 			"readOnlyNode": "Este nodo es de solo lectura y no puede modificarse.",
@@ -927,7 +927,7 @@
 		},
 		"validation": "Los datos ingresados no son válidos",
 		"badRequest": "Solicitud inválida",
-		"unauthorized": "No estás autenticado",
+		"unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
 		"forbidden": "No tienes permiso para realizar esta acción",
 		"notFound": "El recurso solicitado no fue encontrado",
 		"conflict": "Conflicto con el estado actual del recurso",
@@ -1155,6 +1155,14 @@
 		},
 		"projectEvaluator": {
 			"duplicateEvaluatorType": "Ya existe un evaluador con ese tipo de rol en el proyecto."
+		},
+		"survey": {
+			"gra": {
+				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado."
+			},
+			"lcfc": {
+				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado."
+			}
 		}
 	},
 	"table": {
@@ -3135,7 +3143,18 @@
 			"empty": "Esta carpeta está vacía.",
 			"noResults": "Ningún elemento coincide con la búsqueda.",
 			"download": "Descargar",
-			"delete": "Eliminar"
+			"delete": "Eliminar",
+			"code": "Código",
+			"company": "Empresa",
+			"students": "Estudiantes",
+			"status": "Estado",
+			"origin": "Origen",
+			"originUpc": "UPC",
+			"external": "Externo",
+			"actionView": "Ver",
+			"actionEdit": "Editar",
+			"actionDelete": "Eliminar",
+			"ariaLabel": "Tabla de proyectos del portafolio"
 		},
 		"folder": {
 			"createTitle": "Nueva carpeta",
@@ -3149,7 +3168,8 @@
 			"title": "¿Eliminar elementos?",
 			"bodyOne": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
 			"bodyMany": "¿Estás seguro de que deseas eliminar {{count}} elementos? Esta acción no se puede deshacer.",
-			"confirm": "Eliminar"
+			"confirm": "Eliminar",
+			"body": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer."
 		},
 		"comment": {
 			"createTitle": "Nuevo comentario",
@@ -3197,7 +3217,9 @@
 			"renamed": "Elemento renombrado correctamente.",
 			"moved": "Elementos movidos correctamente.",
 			"copied": "Elementos copiados al portapapeles.",
-			"pasted": "Elementos pegados correctamente."
+			"pasted": "Elementos pegados correctamente.",
+			"created": "Proyecto creado correctamente.",
+			"bulkUploaded": "Carga masiva procesada correctamente."
 		},
 		"error": {
 			"loadFailed": "No se pudieron cargar los archivos.",
@@ -3209,47 +3231,84 @@
 			"renameFailed": "No se pudo renombrar el elemento.",
 			"moveFailed": "No se pudieron mover los elementos.",
 			"copyFailed": "No se pudieron copiar los elementos.",
-			"sizeFailed": "No se pudo calcular el tamaño de la selección."
-		}
-	},
-	"error": {
-		"generic": "Ocurrió un error inesperado.",
-		"unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
-		"survey": {
-			"gra": {
-				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado."
-			},
-			"lcfc": {
-				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado."
-			}
+			"sizeFailed": "No se pudo calcular el tamaño de la selección.",
+			"createFailed": "No se pudo crear el proyecto.",
+			"exportFailed": "No se pudo exportar.",
+			"unassignFailed": "No se pudo quitar al estudiante."
 		},
-		"s3": {
-			"unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
-			"invalidKey": "Clave de archivo inválida.",
-			"keyRequired": "Se requiere la clave del archivo.",
-			"fileRequired": "No se envió ningún archivo.",
-			"prefixRequired": "Se requiere una carpeta.",
-			"emptyFolder": "Esta carpeta no tiene archivos para descargar.",
-			"invalidName": "Ingresa un nombre válido.",
-			"invalidNameChars": "El nombre contiene caracteres no válidos: \\ / : * ? \" < > |",
-			"nameTooLong": "El nombre supera el máximo de 255 caracteres.",
-			"nameExists": "Ya existe un elemento con ese nombre.",
-			"noSelection": "No se seleccionó ningún elemento.",
-			"moveSameLocation": "No se puede mover a la misma ubicación.",
-			"moveIntoItself": "No se puede mover una carpeta dentro de sí misma.",
-			"listFailed": "No se pudieron cargar los archivos.",
-			"uploadFailed": "No se pudieron subir los archivos.",
-			"deleteFailed": "No se pudieron eliminar los elementos seleccionados.",
-			"createFolderFailed": "No se pudo crear la carpeta.",
-			"downloadUrlFailed": "No se pudo preparar la descarga.",
-			"downloadFolderFailed": "No se pudo descargar la carpeta.",
-			"downloadFailed": "No se pudo descargar el archivo.",
-			"renameFailed": "No se pudo renombrar el elemento.",
-			"copyFailed": "No se pudieron copiar los elementos.",
-			"moveFailed": "No se pudieron mover los elementos.",
-			"createCommentFailed": "No se pudo crear el comentario.",
-			"treeFailed": "No se pudo cargar la estructura del portafolio.",
-			"sizeFailed": "No se pudo calcular el tamaño de la selección."
+		"page": {
+			"title": "Portafolio de Proyectos",
+			"createBtn": "Nuevo proyecto",
+			"exportBtn": "Exportar",
+			"searchBtn": "Buscar",
+			"clearFilters": "Limpiar filtros",
+			"resultsCount": "resultados",
+			"selectPeriod": "Selecciona un período académico.",
+			"bulkUploadTitle": "Carga masiva",
+			"showBulkUpload": "Mostrar carga masiva",
+			"hideBulkUpload": "Ocultar carga masiva"
+		},
+		"filter": {
+			"status": "Estado",
+			"program": "Programa",
+			"origin": "Origen",
+			"originAll": "Todos",
+			"originUpc": "UPC",
+			"originExternal": "Externo"
+		},
+		"status": {
+			"all": "Todos",
+			"pending": "Pendiente",
+			"reviewed": "Revisado",
+			"preApproved": "Pre-aprobado",
+			"approved": "Aprobado",
+			"disapproved": "Desaprobado"
+		},
+		"form": {
+			"title": "Nuevo proyecto",
+			"fieldName": "Nombre del proyecto",
+			"placeholderName": "ej. Sistema de gestión de inventario",
+			"fieldDescription": "Descripción",
+			"placeholderDescription": "Describe brevemente el proyecto",
+			"fieldCompany": "Empresa",
+			"fieldProgram": "Programa",
+			"academicPeriod": "Período académico",
+			"origin": "Origen",
+			"originUpc": "UPC",
+			"originExternal": "Externo",
+			"submitBtn": "Crear proyecto",
+			"submitting": "Creando...",
+			"errorRequired": "Completa los campos requeridos.",
+			"errorCompanyRequired": "Selecciona una empresa."
+		},
+		"detail": {
+			"backBtn": "Volver",
+			"editBtn": "Editar",
+			"company": "Empresa",
+			"origin": "Origen",
+			"researchLine": "Línea de investigación",
+			"problemSolved": "Problema que resuelve",
+			"goal": "Objetivo",
+			"studentsTitle": "Estudiantes",
+			"noStudents": "No hay estudiantes asignados.",
+			"applicationsTitle": "Postulaciones",
+			"removeStudentTitle": "¿Quitar estudiante?",
+			"removeStudentBody": "¿Seguro que deseas quitar a {{name}} del proyecto?",
+			"removeStudentConfirm": "Quitar",
+			"studentRemoved": "Estudiante quitado correctamente."
+		},
+		"bulkUpload": {
+			"basicTitle": "Plantilla básica",
+			"basicDesc": "Descarga la plantilla con las columnas requeridas.",
+			"filledTitle": "Archivo con datos",
+			"filledDesc": "Sube el archivo completado para procesar los proyectos.",
+			"downloadTemplate": "Descargar plantilla",
+			"upload": "Subir archivo",
+			"row": "Fila",
+			"moreErrors": "y {{count}} errores más",
+			"resultInserted": "Proyectos insertados",
+			"errorDownload": "No se pudo descargar la plantilla.",
+			"errorUpload": "No se pudo subir el archivo."
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { EyeIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
@@ -86,13 +86,6 @@ export function PortfolioTable({ rows, onDelete }: Props) {
 								aria-label={t('portfolio.table.actionView')}
 								title={t('portfolio.table.actionView')}>
 								<EyeIcon className="h-5 w-5" />
-							</Link>
-							<Link
-								href={`/portfolio/${p.id}/edit`}
-								className={ICON_BTN}
-								aria-label={t('portfolio.table.actionEdit')}
-								title={t('portfolio.table.actionEdit')}>
-								<PencilSquareIcon className="h-5 w-5" />
 							</Link>
 							{onDelete && (
 								<button
