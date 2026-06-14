@@ -56,13 +56,7 @@ export function OrgChart({
 
 			<g transform={`translate(${CANVAS_PADDING} ${CANVAS_PADDING})`}>
 				{layout.edges.map((edge) => (
-					<path
-						key={edge.id}
-						d={`M ${edge.parentCenterX} ${edge.parentBottomY} L ${edge.parentCenterX} ${edge.midY} L ${edge.childCenterX} ${edge.midY} L ${edge.childCenterX} ${edge.childTopY}`}
-						fill="none"
-						stroke="#cbd5e1"
-						strokeWidth={1.5}
-					/>
+					<path key={edge.id} d={edge.d} fill="none" stroke="#cbd5e1" strokeWidth={1.5} />
 				))}
 
 				{layout.nodes.map((positioned) => (

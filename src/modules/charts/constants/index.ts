@@ -41,6 +41,8 @@ export const NODE_WIDTH = 268;
 export const NODE_HEIGHT = 122;
 export const NODE_HORIZONTAL_GAP = 28;
 export const NODE_VERTICAL_GAP = 60;
+export const STACK_INDENT = 32;
+export const STACK_VERTICAL_GAP = 18;
 export const CANVAS_PADDING = 36;
 
 export const MIN_ZOOM = 0.4;
