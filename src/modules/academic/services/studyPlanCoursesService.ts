@@ -5,7 +5,6 @@ import { StudyPlanCourseResponse } from '../types';
 
 export type StudyPlanCourseFilters = {
 	academicPeriodId?: number;
-	schoolId?: number;
 	programId?: number;
 	courseId?: number;
 	isActive?: boolean;

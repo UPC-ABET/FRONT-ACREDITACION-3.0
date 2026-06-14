@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { PencilIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Table,
 	TableBody,
@@ -13,15 +13,28 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+	DialogClose,
+	Button,
 } from '@/shared/components/ui';
 import { LoadingState } from '@/shared/components';
 import { Select } from '@/shared/components/ui/Select';
 import { buttonVariants } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
+import { ApiError } from '@/shared/lib';
+import { interpolate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
-import { programsService, coursesService } from '@/modules/academic/services';
+import { programsService } from '@/modules/academic/services';
+import { useStudyPlanCourses } from '@/modules/academic/hooks';
+import { useTypesByGroupCode } from '@/modules/core/hooks';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { projectsService } from '../services';
-import { TrashIcon } from 'lucide-react';
+import { useDeleteProject, useExportProjectGrades } from '../hooks';
+import type { ProjectResponse } from '../types';
 
 type SelectOption = { label: string; value: number };
 type AnyOption = { label: string; value: string | number };
@@ -33,43 +46,30 @@ function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | nul
 
 export function ProjectsListPage() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId: selectedPeriodId } = useABET();
+	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
 
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
 	const { data: programs = [] } = useQuery({
-		queryKey: ['programs', 'filtered', { academicPeriodId: selectedPeriodId, isActive: true }],
-		queryFn: () =>
-			programsService
-				.getByFilters({
-					academicPeriodId: selectedPeriodId!,
-					isActive: true,
-				})
-				.then((r) => r.data),
-		enabled: !!selectedPeriodId,
+		queryKey: [
+			'programs',
+			'filtered',
+			{ schoolId, academicPeriodId: selectedPeriodId, isActive: true },
+		],
+		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
+		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
-	const { data: courses = [] } = useQuery({
-		queryKey: [
-			'courses',
-			'filtered',
-			{
-				academicPeriodId: selectedPeriodId,
-				programId: selectedProgram?.value,
-				isActive: true,
-			},
-		],
-		queryFn: () =>
-			coursesService
-				.getByFilters({
-					academicPeriodId: selectedPeriodId!,
-					programId: selectedProgram!.value,
-					isActive: true,
-				})
-				.then((r) => r.data),
-		enabled: !!selectedPeriodId && !!selectedProgram,
-	});
+	const { data: evaluableSpcList = [] } = useStudyPlanCourses(
+		{
+			programId: selectedProgram?.value,
+			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
+			extra: { is_evaluable: true },
+			isActive: true,
+		},
+		{ enabled: !!selectedPeriodId && !!selectedProgram && !!schoolId },
+	);
 
 	const {
 		data: projects = [],
@@ -81,6 +81,7 @@ export function ProjectsListPage() {
 			'projects',
 			'filtered',
 			{
+				schoolId,
 				academicPeriodId: selectedPeriodId,
 				programId: selectedProgram?.value,
 				courseId: selectedCourse?.value,
@@ -89,12 +90,11 @@ export function ProjectsListPage() {
 		queryFn: () =>
 			projectsService
 				.getByFilters({
-					...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
 					...(selectedProgram ? { programId: selectedProgram.value } : {}),
 					...(selectedCourse ? { courseId: selectedCourse.value } : {}),
 				})
 				.then((r) => r.data),
-		enabled: !!selectedPeriodId,
+		enabled: !!selectedPeriodId && !!schoolId && !!selectedProgram,
 	});
 
 	const programOptions = useMemo(
@@ -103,8 +103,15 @@ export function ProjectsListPage() {
 	);
 
 	const courseOptions = useMemo(
-		() => courses.map((c) => ({ label: c.name[locale as 'es' | 'en'] ?? c.name.es, value: c.id })),
-		[courses, locale],
+		() =>
+			evaluableSpcList.map((spc) => {
+				const name = spc.course?.name;
+				const label =
+					(typeof name === 'string' ? name : (name?.[locale as 'es' | 'en'] ?? name?.es)) ??
+					String(spc.courseId);
+				return { label, value: spc.courseId };
+			}),
+		[evaluableSpcList, locale],
 	);
 
 	const handleProgramChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
@@ -115,6 +122,31 @@ export function ProjectsListPage() {
 	const handleCourseChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
 		setSelectedCourse(toSelectOption(opt));
 	};
+
+	const [confirmTarget, setConfirmTarget] = useState<ProjectResponse | null>(null);
+	const [deleteError, setDeleteError] = useState<string | null>(null);
+	const deleteMutation = useDeleteProject();
+
+	const [exportOpen, setExportOpen] = useState(false);
+	const [selectedGradeTypeId, setSelectedGradeTypeId] = useState<number | null>(null);
+	const [exportError, setExportError] = useState<string | null>(null);
+	const exportMutation = useExportProjectGrades();
+
+	const { data: gradeTypes = [], isLoading: loadingGradeTypes } = useTypesByGroupCode(
+		TYPE_GROUP_CODES.GRADE_TYPE,
+		{ enabled: exportOpen },
+	);
+
+	const gradeTypeOptions = useMemo(
+		() =>
+			gradeTypes.map((gt) => ({
+				label: gt.name[locale as 'es' | 'en'] ?? gt.name.es,
+				value: gt.id,
+			})),
+		[gradeTypes, locale],
+	);
+
+	const selectedGradeType = gradeTypes.find((gt) => gt.id === selectedGradeTypeId) ?? null;
 
 	const handleClearFilters = () => {
 		setSelectedProgram(null);
@@ -128,15 +160,31 @@ export function ProjectsListPage() {
 					<h1 className="text-3xl font-bold text-zinc-900">{t('projects.list.title')}</h1>
 					<p className="mt-2 text-zinc-600">{t('projects.list.description')}</p>
 				</div>
-				<Link
-					href="/evaluation/projects/new"
-					className={cn(
-						buttonVariants({ variant: 'primary', size: 'md' }),
-						'shrink-0 inline-flex items-center gap-1.5',
-					)}>
-					<PlusIcon className="h-4 w-4" />
-					{t('projects.list.addButton')}
-				</Link>
+				<div className="flex shrink-0 items-center gap-2">
+					<button
+						type="button"
+						onClick={() => {
+							setExportError(null);
+							setExportOpen(true);
+						}}
+						disabled={!selectedPeriodId || !schoolId}
+						className={cn(
+							buttonVariants({ variant: 'secondary', size: 'md' }),
+							'inline-flex items-center gap-1.5 disabled:pointer-events-none disabled:opacity-50',
+						)}>
+						<ArrowDownTrayIcon className="h-4 w-4" />
+						{t('projects.list.exportButton')}
+					</button>
+					<Link
+						href="/evaluation/projects/new"
+						className={cn(
+							buttonVariants({ variant: 'primary', size: 'md' }),
+							'inline-flex items-center gap-1.5',
+						)}>
+						<PlusIcon className="h-4 w-4" />
+						{t('projects.list.addButton')}
+					</Link>
+				</div>
 			</div>
 
 			<div className="space-y-4">
@@ -175,7 +223,9 @@ export function ProjectsListPage() {
 				)}
 			</div>
 
-			{isLoading ? (
+			{!selectedProgram ? (
+				<TableEmptyState message={t('projects.list.selectProgram')} />
+			) : isLoading ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
 					<LoadingState label={t('projects.list.loading')} />
 				</div>
@@ -248,13 +298,24 @@ export function ProjectsListPage() {
 									</div>
 								</TableCell>
 								<TableCell className="text-center">
-									<div className="flex justify-center">
+									<div className="flex justify-center gap-1">
 										<Link
 											href={`/evaluation/projects/${project.id}/edit`}
 											className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
 											title={t('projects.list.table.edit')}>
 											<PencilIcon className="h-4 w-4" />
 										</Link>
+										<button
+											type="button"
+											onClick={() => {
+												setConfirmTarget(project);
+												setDeleteError(null);
+											}}
+											disabled={!!project.hasEvaluations}
+											className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:pointer-events-none disabled:opacity-30"
+											title={t('projects.list.table.delete')}>
+											<TrashIcon className="h-4 w-4" />
+										</button>
 									</div>
 								</TableCell>
 							</TableRow>
@@ -262,6 +323,128 @@ export function ProjectsListPage() {
 					</TableBody>
 				</Table>
 			)}
+
+			<Dialog
+				open={exportOpen}
+				onOpenChange={(open) => {
+					if (!open) {
+						setExportOpen(false);
+						setExportError(null);
+						setSelectedGradeTypeId(null);
+					}
+				}}>
+				<DialogContent className="sm:max-w-sm">
+					<DialogHeader>
+						<DialogTitle>{t('projects.list.exportModal.title')}</DialogTitle>
+					</DialogHeader>
+					<div className="space-y-3">
+						<Select
+							label={t('projects.list.exportModal.gradeTypeLabel')}
+							options={gradeTypeOptions}
+							value={
+								selectedGradeTypeId !== null
+									? (gradeTypeOptions.find((o) => o.value === selectedGradeTypeId) ?? null)
+									: null
+							}
+							onChange={(_, opt) => {
+								const single = Array.isArray(opt) ? opt[0] : opt;
+								if (single) setSelectedGradeTypeId(Number(single.value));
+							}}
+						/>
+						{exportError && <p className="text-xs text-red-600">{exportError}</p>}
+					</div>
+					<DialogFooter>
+						<DialogClose
+							render={
+								<Button variant="secondary" disabled={exportMutation.isPending}>
+									{t('dialog.close')}
+								</Button>
+							}
+						/>
+						<Button
+							variant="primary"
+							disabled={exportMutation.isPending || !selectedGradeType}
+							onClick={() => {
+								if (!selectedPeriodId || !schoolId || !selectedGradeType) return;
+								setExportError(null);
+								const gradeTypeLabel =
+									selectedGradeType.name[locale as 'es' | 'en'] ?? selectedGradeType.name.es;
+								const sanitizedGradeType = gradeTypeLabel.trim().replace(/\s+/g, '-').toLowerCase();
+								const filename = `${t('projects.list.exportModal.filename')}-${sanitizedGradeType}.xlsx`;
+								exportMutation.mutate(
+									{
+										gradeTypeCode: selectedGradeType.code,
+										filename,
+									},
+									{
+										onSuccess: () => setExportOpen(false),
+										onError: () => setExportError(t('projects.list.exportModal.error')),
+									},
+								);
+							}}>
+							{exportMutation.isPending
+								? t('projects.list.exportModal.exporting')
+								: t('projects.list.exportModal.confirm')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			<Dialog
+				open={!!confirmTarget}
+				onOpenChange={(open) => {
+					if (!open) {
+						setConfirmTarget(null);
+						setDeleteError(null);
+					}
+				}}>
+				<DialogContent className="sm:max-w-sm">
+					<DialogHeader>
+						<DialogTitle>{t('projects.list.deleteModal.title')}</DialogTitle>
+					</DialogHeader>
+					<p className="text-sm text-zinc-600">
+						{interpolate(t('projects.list.deleteModal.body'), {
+							name: confirmTarget
+								? (confirmTarget.name[locale as 'es' | 'en'] ?? confirmTarget.name.es)
+								: '',
+						})}
+					</p>
+					{deleteError && <p className="text-xs text-red-600">{deleteError}</p>}
+					<DialogFooter>
+						<DialogClose
+							render={
+								<Button variant="secondary" disabled={deleteMutation.isPending}>
+									{t('dialog.close')}
+								</Button>
+							}
+						/>
+						<Button
+							variant="primary"
+							className="bg-red-600 hover:bg-red-700"
+							disabled={deleteMutation.isPending}
+							onClick={() => {
+								if (!confirmTarget) return;
+								setDeleteError(null);
+								deleteMutation.mutate(confirmTarget.id, {
+									onSuccess: () => setConfirmTarget(null),
+									onError: (err: unknown) => {
+										const hasEvaluations =
+											err instanceof ApiError && err.message === 'error.project.hasEvaluations';
+										setDeleteError(
+											hasEvaluations
+												? t('projects.list.deleteModal.errorHasEvaluations')
+												: t('projects.list.deleteModal.errorGeneric'),
+										);
+									},
+								});
+							}}>
+							{deleteMutation.isPending
+								? t('projects.list.deleteModal.deleting')
+								: t('projects.list.deleteModal.confirm')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }

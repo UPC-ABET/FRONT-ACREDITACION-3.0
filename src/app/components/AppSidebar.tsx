@@ -50,8 +50,8 @@ export function AppSidebar() {
 			name: t('nav.rubrics'),
 			icon: DocumentCheckIcon,
 			children: [
-				{ name: t('nav.rubricsList'), href: '/rubrics' },
 				{ name: t('nav.evaluationCourses'), href: '/rubrics/evaluation-courses' },
+				{ name: t('nav.rubricsList'), href: '/rubrics' },
 			],
 		},
 		{

@@ -2,9 +2,10 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, EyeIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { Skeleton, TableEmptyState } from '@/shared/components/ui';
 import { useAuth, useI18n } from '@/providers';
+import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable';
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable';
@@ -18,6 +19,9 @@ interface ProjectEvaluatePageProps {
 export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluatePageProps) {
 	const { t, locale } = useI18n();
 	const { user: authUser } = useAuth();
+
+	const { data: professor } = useProfessorByUserId(authUser?.id);
+	const professorId = professor?.id;
 
 	const { data, isLoading, isError, error } = useProjectDetails(projectId, {
 		gradeTypeCode,
@@ -34,11 +38,17 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 	}, [statusTypes]);
 
 	const evaluatorId = useMemo(() => {
-		if (!data?.evaluators?.length) return 0;
-		const myProfessorId = authUser?.id ?? 0;
-		const match = data.evaluators.find((e) => e.professorId === myProfessorId);
-		return match?.id ?? data.evaluators[0]?.id ?? 0;
-	}, [data?.evaluators, authUser?.id]);
+		if (!data?.evaluators?.length || !professorId) return 0;
+		const match = data.evaluators.find((e) => e.professorId === professorId);
+		return match?.id ?? 0;
+	}, [data?.evaluators, professorId]);
+
+	const isDocEvaluator = useMemo(() => {
+		if (!data?.evaluators?.length || !professorId) return false;
+		const match = data.evaluators.find((e) => e.professorId === professorId);
+		if (!match) return false;
+		return match.evaluatorTypeCode === TYPE_CODES.EVALUATOR_TYPE_CODE.TEACHER;
+	}, [data?.evaluators, professorId]);
 
 	const initialQualifStatuses = useMemo<Record<number, number | null>>(() => {
 		const result: Record<number, number | null> = {};
@@ -175,7 +185,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 											[student.id]: Number(e.target.value),
 										}))
 									}
-									disabled={isLoadingStatuses}
+									disabled={isLoadingStatuses || isDocEvaluator}
 									className="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-red-600 disabled:opacity-50">
 									<option value="">—</option>
 									{statusTypes.map((s) => (
@@ -206,7 +216,19 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 				</div>
 			</div>
 
-			{rubric && isCapstoneFinal ? (
+			{isDocEvaluator ? (
+				<div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+					<EyeIcon className="h-5 w-5 shrink-0 text-blue-500" />
+					<span>{t('projects.evaluate.docReadOnly')}</span>
+				</div>
+			) : null}
+
+			{!evaluatorId && !isDocEvaluator ? (
+				<div className="flex items-center gap-3 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+					<ExclamationTriangleIcon className="h-5 w-5 shrink-0 text-yellow-500" />
+					<span>{t('projects.evaluate.notAssigned')}</span>
+				</div>
+			) : rubric && isCapstoneFinal ? (
 				<ProjectRubricCapstoneTable
 					outcomes={rubric.outcomes}
 					questions={rubric.questions}
@@ -217,6 +239,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 					projectId={projectId}
 					qualifStatuses={qualifStatuses}
 					nrNaTypeIds={nrNaTypeIds}
+					readOnly={isDocEvaluator}
 				/>
 			) : rubric && rubric.questions.length > 0 ? (
 				<ProjectRubricNonCapstoneTable
@@ -227,6 +250,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 					projectId={projectId}
 					qualifStatuses={qualifStatuses}
 					nrNaTypeIds={nrNaTypeIds}
+					readOnly={isDocEvaluator}
 				/>
 			) : null}
 		</div>

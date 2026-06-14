@@ -36,7 +36,7 @@ type AnyOption = { label: string; value: string | number };
 
 export function EvaluationCoursesPage() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId: selectedPeriodId } = useABET();
+	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
 	const [modalOpen, setModalOpen] = useState(false);
 	const [confirmTarget, setConfirmTarget] = useState<StudyPlanCourseResponse | null>(null);
 	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
@@ -53,12 +53,13 @@ export function EvaluationCoursesPage() {
 	const selectedPeriodCode = periods.find((p) => p.id === selectedPeriodId)?.code ?? '';
 
 	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
-		queryKey: ['programs', 'filtered', { academicPeriodId: selectedPeriodId, isActive: true }],
-		queryFn: () =>
-			programsService
-				.getByFilters({ academicPeriodId: selectedPeriodId!, isActive: true })
-				.then((r) => r.data),
-		enabled: !!selectedPeriodId,
+		queryKey: [
+			'programs',
+			'filtered',
+			{ schoolId, academicPeriodId: selectedPeriodId, isActive: true },
+		],
+		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
+		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
 	const programOptions: AnyOption[] = useMemo(

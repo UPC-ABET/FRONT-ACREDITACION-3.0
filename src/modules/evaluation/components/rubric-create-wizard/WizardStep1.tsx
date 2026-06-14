@@ -31,7 +31,7 @@ function getSpcCourseName(spc: StudyPlanCourseResponse): { en: string; es: strin
 
 export function WizardStep1({ onNext }: WizardStep1Props) {
 	const { t, locale } = useI18n();
-	const { academicPeriodId } = useABET();
+	const { academicPeriodId, schoolId } = useABET();
 
 	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
 	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
@@ -50,12 +50,9 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 
 	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
-		queryKey: ['programs', 'filtered', { academicPeriodId, isActive: true }],
-		queryFn: () =>
-			programsService
-				.getByFilters({ academicPeriodId: academicPeriodId!, isActive: true })
-				.then((r) => r.data),
-		enabled: !!academicPeriodId,
+		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId, isActive: true }],
+		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
+		enabled: !!schoolId && !!academicPeriodId,
 	});
 
 	// Evaluable SPCs filtered by programId once a program is selected

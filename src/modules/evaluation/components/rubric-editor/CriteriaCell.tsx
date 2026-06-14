@@ -47,7 +47,7 @@ export function CriteriaCell({
 		maxValue !== '' &&
 		typeof minValue === 'number' &&
 		typeof maxValue === 'number' &&
-		minValue >= maxValue;
+		minValue > maxValue;
 
 	return (
 		<div className="space-y-2 p-3">

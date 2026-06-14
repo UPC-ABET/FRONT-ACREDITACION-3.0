@@ -1149,6 +1149,12 @@
 			"createCommentFailed": "No se pudo crear el comentario.",
 			"treeFailed": "No se pudo cargar la estructura del portafolio.",
 			"sizeFailed": "No se pudo calcular el tamaño de la selección."
+		},
+		"evaluation": {
+			"docCannotGrade": "El rol DOCENTE no puede calificar proyectos."
+		},
+		"projectEvaluator": {
+			"duplicateEvaluatorType": "Ya existe un evaluador con ese tipo de rol en el proyecto."
 		}
 	},
 	"table": {
@@ -1283,7 +1289,7 @@
 					"validationComplete": "Rúbrica validada correctamente. Puede guardar los cambios.",
 					"allFieldsRequired": "Todos los campos son obligatorios.",
 					"totalMustBe20": "La suma total de puntos debe ser 20.",
-					"minMustBeLessThanMax": "El puntaje mínimo debe ser menor que el máximo para cada criterio.",
+					"minMustBeLessThanMax": "El puntaje mínimo no puede ser mayor que el máximo para cada criterio.",
 					"continuityRequired": "Los rangos de puntaje deben ser continuos entre criterios."
 				},
 				"question": {
@@ -1496,7 +1502,7 @@
 				"evaluatorsAdd": "Agregar evaluador",
 				"evaluatorsEmpty": "Aún no se han agregado evaluadores.",
 				"evaluatorsSearch": "Buscar docente",
-				"evaluatorsSearchPlaceholder": "Nombre o correo del docente...",
+				"evaluatorsSearchPlaceholder": "Buscar por nombre o código...",
 				"evaluatorsSearchPrompt": "Escribe para buscar un docente.",
 				"evaluatorsNoResults": "No se encontraron docentes.",
 				"evaluatorsRole": "Rol",
@@ -1518,11 +1524,21 @@
 			"title": "Proyectos Académicos",
 			"description": "Listado de proyectos académicos.",
 			"addButton": "Agregar proyecto",
+			"exportButton": "Exportar notas",
+			"exportModal": {
+				"title": "Exportar notas",
+				"gradeTypeLabel": "Tipo de nota",
+				"filename": "proyectos-notas",
+				"confirm": "Exportar",
+				"exporting": "Exportando...",
+				"error": "No fue posible exportar las notas. Intenta de nuevo."
+			},
 			"clearFilters": "Limpiar filtros",
 			"loading": "Cargando proyectos...",
 			"error": "No fue posible cargar los proyectos.",
 			"empty": "No hay proyectos registrados.",
 			"selectPeriod": "Selecciona un período académico para comenzar.",
+			"selectProgram": "Selecciona una carrera para ver los proyectos.",
 			"filters": {
 				"academicPeriod": "Período Académico",
 				"program": "Carrera",
@@ -1535,7 +1551,16 @@
 				"students": "Estudiantes",
 				"actions": "Acciones",
 				"view": "Ver",
-				"edit": "Editar"
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"deleteModal": {
+				"title": "¿Eliminar proyecto?",
+				"body": "¿Estás seguro de que deseas eliminar el proyecto \"{{name}}\"? Esta acción no se puede deshacer.",
+				"confirm": "Eliminar",
+				"deleting": "Eliminando...",
+				"errorHasEvaluations": "No se puede eliminar el proyecto porque tiene evaluaciones registradas.",
+				"errorGeneric": "No fue posible eliminar el proyecto. Intenta de nuevo."
 			}
 		},
 		"grade": {
@@ -1571,6 +1596,8 @@
 			"error": "No fue posible cargar el proyecto.",
 			"notFound": "Proyecto no encontrado.",
 			"backButton": "Volver",
+			"docReadOnly": "Tu rol es DOCENTE. Puedes ver el proyecto y las calificaciones, pero no puedes calificar.",
+			"notAssigned": "No estás asignado como evaluador en este proyecto.",
 			"header": {
 				"course": "Curso",
 				"rubric": "Rúbrica",
@@ -1592,6 +1619,7 @@
 				"errorRange": "Uno o más puntajes están fuera del rango permitido para su pregunta.",
 				"fillAll": "Completa todos los puntajes para guardar.",
 				"saveButton": "Guardar calificaciones",
+				"readOnly": "Solo lectura",
 				"saving": "Guardando..."
 			},
 			"capstone": {

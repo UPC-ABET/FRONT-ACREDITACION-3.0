@@ -75,4 +75,7 @@ export const TYPE_CODES = {
 		CLIENT: 'TG403-T004',
 		CO_AUTHOR: 'TG403-T005',
 	},
+	EVALUATOR_TYPE_CODE: {
+		TEACHER: 'DOC',
+	},
 } as const;

@@ -1149,6 +1149,12 @@
 			"createCommentFailed": "Could not create the comment.",
 			"treeFailed": "Could not load the portfolio structure.",
 			"sizeFailed": "Could not compute the selection size."
+		},
+		"evaluation": {
+			"docCannotGrade": "The DOCENTE role cannot grade projects."
+		},
+		"projectEvaluator": {
+			"duplicateEvaluatorType": "An evaluator with this role type already exists in the project."
 		}
 	},
 	"table": {
@@ -1283,7 +1289,7 @@
 					"validationComplete": "Rubric validated successfully. You can save the changes.",
 					"allFieldsRequired": "All fields are required.",
 					"totalMustBe20": "The total sum of points must be 20.",
-					"minMustBeLessThanMax": "The minimum score must be less than the maximum for each criterion.",
+					"minMustBeLessThanMax": "The minimum score cannot be greater than the maximum for each criterion.",
 					"continuityRequired": "Score ranges must be continuous between criteria."
 				},
 				"question": {
@@ -1496,7 +1502,7 @@
 				"evaluatorsAdd": "Add evaluator",
 				"evaluatorsEmpty": "No evaluators added yet.",
 				"evaluatorsSearch": "Search professor",
-				"evaluatorsSearchPlaceholder": "Name or email...",
+				"evaluatorsSearchPlaceholder": "Search by name or code...",
 				"evaluatorsSearchPrompt": "Type to search for a professor.",
 				"evaluatorsNoResults": "No professors found.",
 				"evaluatorsRole": "Role",
@@ -1518,11 +1524,21 @@
 			"title": "Academic Projects",
 			"description": "List of academic projects.",
 			"addButton": "Add Project",
+			"exportButton": "Export grades",
+			"exportModal": {
+				"title": "Export grades",
+				"gradeTypeLabel": "Grade type",
+				"filename": "project-grades",
+				"confirm": "Export",
+				"exporting": "Exporting...",
+				"error": "Could not export grades. Please try again."
+			},
 			"clearFilters": "Clear Filters",
 			"loading": "Loading projects...",
 			"error": "Could not load projects.",
 			"empty": "No projects registered.",
 			"selectPeriod": "Select an academic period to get started.",
+			"selectProgram": "Select a major to view projects.",
 			"filters": {
 				"academicPeriod": "Academic Period",
 				"program": "Program",
@@ -1535,7 +1551,16 @@
 				"students": "Students",
 				"actions": "Actions",
 				"view": "View",
-				"edit": "Edit"
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"deleteModal": {
+				"title": "Delete project?",
+				"body": "Are you sure you want to delete the project \"{{name}}\"? This action cannot be undone.",
+				"confirm": "Delete",
+				"deleting": "Deleting...",
+				"errorHasEvaluations": "The project cannot be deleted because it has registered evaluations.",
+				"errorGeneric": "Could not delete the project. Please try again."
 			}
 		},
 		"grade": {
@@ -1571,6 +1596,8 @@
 			"error": "Could not load the project.",
 			"notFound": "Project not found.",
 			"backButton": "Back",
+			"docReadOnly": "Your role is DOCENTE. You can view the project and its grades, but you cannot grade.",
+			"notAssigned": "You are not assigned as an evaluator for this project.",
 			"header": {
 				"course": "Course",
 				"rubric": "Rubric",
@@ -1592,6 +1619,7 @@
 				"errorRange": "One or more scores are outside the allowed range for their question.",
 				"fillAll": "Fill in all scores to save.",
 				"saveButton": "Save grades",
+				"readOnly": "Read only",
 				"saving": "Saving..."
 			},
 			"capstone": {

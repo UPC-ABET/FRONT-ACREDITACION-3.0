@@ -27,7 +27,8 @@ import {
 import { LoadingState } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
 import { useI18n, useABET } from '@/providers';
-import { programsService, coursesService } from '@/modules/academic/services';
+import { programsService } from '@/modules/academic/services';
+import { useStudyPlanCourses } from '@/modules/academic/hooks';
 import { useRubrics, useDeleteRubric } from '../hooks';
 import { mapRubricToRow } from '../utils/rubricsMappers';
 import type { RubricListRow } from '../types';
@@ -42,44 +43,35 @@ function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | nul
 
 export function RubricsListPage() {
 	const { locale, t } = useI18n();
-	const { academicPeriodId: selectedPeriodId } = useABET();
+	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
 
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
 	const { data: programs = [] } = useQuery({
-		queryKey: ['programs', 'filtered', { academicPeriodId: selectedPeriodId }],
-		queryFn: () =>
-			programsService
-				.getByFilters({ academicPeriodId: selectedPeriodId!, isActive: true })
-				.then((r) => r.data),
-		enabled: !!selectedPeriodId,
+		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId: selectedPeriodId }],
+		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
+		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
-	const { data: courses = [] } = useQuery({
-		queryKey: [
-			'courses',
-			'filtered',
-			{ academicPeriodId: selectedPeriodId, programId: selectedProgram?.value },
-		],
-		queryFn: () =>
-			coursesService
-				.getByFilters({
-					academicPeriodId: selectedPeriodId!,
-					programId: selectedProgram!.value,
-					isActive: true,
-				})
-				.then((r) => r.data),
-		enabled: !!selectedPeriodId && !!selectedProgram,
-	});
+	const { data: evaluableSpcList = [] } = useStudyPlanCourses(
+		{
+			programId: selectedProgram?.value,
+			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
+			extra: { is_evaluable: true },
+			isActive: true,
+		},
+		{ enabled: !!selectedPeriodId && !!selectedProgram && !!schoolId },
+	);
 
 	const rubricParams = useMemo(
 		() => ({
+			...(schoolId ? { schoolId } : {}),
 			...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
 			...(selectedProgram ? { programId: selectedProgram.value } : {}),
 			...(selectedCourse ? { courseId: selectedCourse.value } : {}),
 		}),
-		[selectedPeriodId, selectedProgram, selectedCourse],
+		[schoolId, selectedPeriodId, selectedProgram, selectedCourse],
 	);
 
 	const { data, isLoading, isError, error } = useRubrics(rubricParams);
@@ -94,8 +86,15 @@ export function RubricsListPage() {
 	);
 
 	const courseOptions = useMemo(
-		() => courses.map((c) => ({ label: c.name[locale as 'es' | 'en'] ?? c.name.es, value: c.id })),
-		[courses, locale],
+		() =>
+			evaluableSpcList.map((spc) => {
+				const name = spc.course?.name;
+				const label =
+					(typeof name === 'string' ? name : (name?.[locale as 'es' | 'en'] ?? name?.es)) ??
+					String(spc.courseId);
+				return { label, value: spc.courseId };
+			}),
+		[evaluableSpcList, locale],
 	);
 
 	const hasFilters = selectedProgram != null || selectedCourse != null;
@@ -233,7 +232,7 @@ export function RubricsListPage() {
 												disabled={!row.canEdit}
 												onClick={() => setConfirmTarget(row)}
 												title={t('rubrics.list.actions.delete')}
-												className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30">
+												className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30">
 												<TrashIcon className="h-4 w-4" />
 											</button>
 										</div>
