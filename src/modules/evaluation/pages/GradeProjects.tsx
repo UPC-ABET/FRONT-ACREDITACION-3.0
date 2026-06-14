@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 import {
@@ -16,11 +16,9 @@ import {
 } from '@/shared/components/ui';
 import { LoadingState } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
-import { useI18n } from '@/providers';
+import { useI18n, useABET } from '@/providers';
 import { useAuth } from '@/providers';
-import { getSchoolCookie } from '@/shared/lib/authCookies';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
-import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { useProjectsByProfessor } from '../hooks';
 import { TYPE_CODES } from '@/shared/constants';
 
@@ -34,17 +32,11 @@ const GRADE_TYPE_CODE: Record<RubricTab, string> = {
 export function GradeProjectsPage() {
 	const { t, locale } = useI18n();
 	const { user: authUser } = useAuth();
+	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
 
-	const [schoolId, setSchoolId] = useState<number | null>(null);
 	const [activeTab, setActiveTab] = useState<RubricTab>('partial');
-	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 
 	const userId = authUser?.id ?? null;
-
-	useEffect(() => {
-		const school = getSchoolCookie();
-		setSchoolId(school?.id as number | null);
-	}, []);
 
 	const professorEnabled = userId != null;
 
@@ -108,18 +100,7 @@ export function GradeProjectsPage() {
 				ariaLabel={t('projects.grade.tabs.ariaLabel')}
 			/>
 
-			<div className="w-full max-w-xs">
-				<AcademicPeriodSelect
-					value={selectedPeriodId}
-					onChange={setSelectedPeriodId}
-					isClearable
-					onClear={() => setSelectedPeriodId(null)}
-				/>
-			</div>
-
-			{!selectedPeriodId ? (
-				<TableEmptyState message={t('projects.grade.selectPeriod')} />
-			) : isLoading ? (
+			{isLoading ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
 					<LoadingState
 						label={

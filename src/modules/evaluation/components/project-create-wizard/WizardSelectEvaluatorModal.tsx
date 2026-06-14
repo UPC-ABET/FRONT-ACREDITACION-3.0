@@ -17,12 +17,10 @@ import { useI18n } from '@/providers';
 import { professorsService } from '@/modules/academic/services';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import type { LocalEvaluator } from './ProjectWizardStep2';
-import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { ProfessorSearchResponse } from '@/modules/academic';
 
 const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
-const LIMITED_CODES: readonly string[] = Object.values(TYPE_CODES.EVALUATOR_LIMITED_TYPE);
-
 interface WizardSelectEvaluatorModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -83,18 +81,11 @@ export function WizardSelectEvaluatorModal({
 		{ enabled: typeGroupId != null },
 	);
 
-	const usedLimitedCodes = useMemo(
-		() =>
-			new Set(existing.filter((e) => LIMITED_CODES.includes(e.typeCode)).map((e) => e.typeCode)),
-		[existing],
-	);
+	const usedTypeIds = useMemo(() => new Set(existing.map((e) => e.typeId)), [existing]);
 
 	const availableTypes = useMemo(
-		() =>
-			allTypes.filter((type) =>
-				LIMITED_CODES.includes(type.code) ? !usedLimitedCodes.has(type.code) : true,
-			),
-		[allTypes, usedLimitedCodes],
+		() => allTypes.filter((type) => !usedTypeIds.has(type.id)),
+		[allTypes, usedTypeIds],
 	);
 
 	const typeOptions = useMemo(
@@ -107,10 +98,9 @@ export function WizardSelectEvaluatorModal({
 	);
 
 	const profDisplayName = (p: ProfessorSearchResponse) => {
-		const user = p.staff?.user;
-		if (user?.firstName || user?.lastName)
-			return `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
-		return p.staff?.staffEmail ?? `ID ${p.id}`;
+		const { firstName, lastName } = p.staff ?? {};
+		const name = `${firstName ?? ''} ${lastName ?? ''}`.trim();
+		return name || (p.staff?.staffEmail ?? `ID ${p.id}`);
 	};
 
 	const handleConfirm = () => {
@@ -172,7 +162,15 @@ export function WizardSelectEvaluatorModal({
 														isSelected ? 'bg-zinc-900 text-white' : 'hover:bg-zinc-50 text-zinc-800'
 													}`}>
 													<div className="flex flex-col gap-0.5 min-w-0">
-														<span className="font-medium truncate">{profDisplayName(p)}</span>
+														<div className="flex items-baseline gap-1.5 min-w-0">
+															<span className="font-medium truncate">{profDisplayName(p)}</span>
+															{p.code && (
+																<span
+																	className={`text-xs font-mono shrink-0 ${isSelected ? 'text-zinc-400' : 'text-zinc-400'}`}>
+																	{p.code}
+																</span>
+															)}
+														</div>
 														{p.staff?.staffEmail && (
 															<span
 																className={`text-xs truncate ${isSelected ? 'text-zinc-300' : 'text-zinc-400'}`}>

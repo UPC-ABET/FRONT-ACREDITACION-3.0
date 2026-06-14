@@ -846,7 +846,10 @@
 		"error": {
 			"required": "Todos los campos son obligatorios",
 			"generic": "Error durante el login",
-			"schoolRequired": "Selecciona una escuela antes de continuar"
+			"schoolRequired": "Selecciona una escuela antes de continuar",
+			"USER_NOT_FOUND": "No tienes un usuario en el sistema.",
+			"NO_ROLE": "No tienes un rol asignado, contacta al administrador.",
+			"LOGIN_FAILED": "No se pudo iniciar sesión, intenta de nuevo."
 		}
 	},
 	"forgotPassword": {
@@ -910,7 +913,7 @@
 			"readOnlyNode": "Este nodo es de solo lectura y no puede modificarse.",
 			"parentNotFound": "No se encontró el nodo padre.",
 			"cannotAddUnderDean": "No se pueden agregar dependientes directamente bajo el Decano.",
-			"staffNotFound": "No se encontró al personal seleccionado.",
+			"staffNotFound": "No se encontró al docente seleccionado.",
 			"entityTypeInvalid": "El tipo de entidad no es válido.",
 			"entityTypeReadOnly": "El tipo de entidad es de solo lectura.",
 			"entityCodeRequired": "La entidad es obligatoria para este tipo.",
@@ -940,7 +943,7 @@
 			"usedInCharts": "Aparece en un organigrama",
 			"usedInFindings": "Vinculado a hallazgos de mejora",
 			"usedInIfcStatuses": "Vinculado a registros de estado IFC",
-			"sharedStaff": "Otro docente comparte esta identidad de personal"
+			"sharedStaff": "Otro docente comparte esta identidad de docente"
 		},
 		"outcome": {
 			"inUse": "No se puede eliminar el outcome porque está en uso.",
@@ -1021,8 +1024,8 @@
 			"notFound": "IFC no encontrado",
 			"ifcExists": "Ya existe un IFC con estos datos",
 			"invalidTransition": "Transición de estado no permitida",
-			"staffRequired": "No hay personal vinculado al solicitante",
-			"ownCoordinatorForbidden": "El coordinador no puede aprobar su propio IFC",
+			"staffRequired": "No hay docente vinculado al solicitante",
+			"higherLevelRequired": "Se requiere la aprobación de un nivel jerárquico superior",
 			"notInChain": "El solicitante no pertenece a la cadena del organigrama",
 			"chartNotFound": "Organigrama no encontrado",
 			"alreadyExists": "Ya existe un IFC para este curso y período",
@@ -1033,6 +1036,7 @@
 			"ifcInstrumentMissing": "El instrumento del IFC no está configurado",
 			"pdfRequiresApproved": "El PDF solo está disponible para IFCs aprobados",
 			"previousActionNotEligible": "La acción previa no puede ser reutilizada",
+			"criticalityNotFound": "El código de criticidad {{code}} no existe",
 			"createFailed": "No se pudo crear el IFC",
 			"updateFailed": "No se pudo actualizar el IFC",
 			"deleteFailed": "No se pudo eliminar el IFC",
@@ -1100,10 +1104,11 @@
 			"uploadLogNotFound": "No se encontró la carga indicada.",
 			"rollbackAlreadyDone": "Esta carga ya fue revertida.",
 			"typeCodeNotFound": "El tipo de carga no existe.",
+			"schoolChartNotConfigured": "El organigrama de la escuela no está configurado.",
 			"rollbackBlockedSections": "No se puede revertir: existen secciones que dependen de esta carga.",
 			"rollbackBlockedOutcomes": "No se puede revertir: existen outcomes que dependen de esta carga.",
 			"rollbackBlockedProfessors": "No se puede revertir: existen docentes que dependen de esta carga.",
-			"rollbackBlockedStaff": "No se puede revertir: existe personal que depende de esta carga.",
+			"rollbackBlockedStaff": "No se puede revertir: existe un docente que depende de esta carga.",
 			"rollbackBlockedNewerUpload": "No se puede revertir: existe una carga posterior basada en esta.",
 			"rollbackBlockedOutcomeRefs": "No se puede revertir: hay datos que dependen de estos outcomes (articulación, hallazgos, encuestas o notas). Elimínelos primero.",
 			"rollbackBlockedSectionRefs": "No se puede revertir: hay matrículas o encuestas asociadas a estas secciones. Elimínelas primero.",
@@ -1116,6 +1121,40 @@
 			"schoolNotFound": "La escuela seleccionada no existe.",
 			"userNotFound": "El usuario seleccionado no existe.",
 			"duplicateSchoolInPayload": "No se puede asignar la misma escuela a dos directores."
+		},
+		"s3": {
+			"unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
+			"invalidKey": "Clave de archivo inválida.",
+			"keyRequired": "Se requiere la clave del archivo.",
+			"fileRequired": "No se envió ningún archivo.",
+			"prefixRequired": "Se requiere una carpeta.",
+			"emptyFolder": "Esta carpeta no tiene archivos para descargar.",
+			"invalidName": "Ingresa un nombre válido.",
+			"invalidNameChars": "El nombre contiene caracteres no válidos: \\ / : * ? \" < > |",
+			"nameTooLong": "El nombre supera el máximo de 255 caracteres.",
+			"nameExists": "Ya existe un elemento con ese nombre.",
+			"noSelection": "No se seleccionó ningún elemento.",
+			"moveSameLocation": "No se puede mover a la misma ubicación.",
+			"moveIntoItself": "No se puede mover una carpeta dentro de sí misma.",
+			"listFailed": "No se pudieron cargar los archivos.",
+			"uploadFailed": "No se pudieron subir los archivos.",
+			"deleteFailed": "No se pudieron eliminar los elementos seleccionados.",
+			"createFolderFailed": "No se pudo crear la carpeta.",
+			"downloadUrlFailed": "No se pudo preparar la descarga.",
+			"downloadFolderFailed": "No se pudo descargar la carpeta.",
+			"downloadFailed": "No se pudo descargar el archivo.",
+			"renameFailed": "No se pudo renombrar el elemento.",
+			"copyFailed": "No se pudieron copiar los elementos.",
+			"moveFailed": "No se pudieron mover los elementos.",
+			"createCommentFailed": "No se pudo crear el comentario.",
+			"treeFailed": "No se pudo cargar la estructura del portafolio.",
+			"sizeFailed": "No se pudo calcular el tamaño de la selección."
+		},
+		"evaluation": {
+			"docCannotGrade": "El rol DOCENTE no puede calificar proyectos."
+		},
+		"projectEvaluator": {
+			"duplicateEvaluatorType": "Ya existe un evaluador con ese tipo de rol en el proyecto."
 		}
 	},
 	"table": {
@@ -1250,7 +1289,7 @@
 					"validationComplete": "Rúbrica validada correctamente. Puede guardar los cambios.",
 					"allFieldsRequired": "Todos los campos son obligatorios.",
 					"totalMustBe20": "La suma total de puntos debe ser 20.",
-					"minMustBeLessThanMax": "El puntaje mínimo debe ser menor que el máximo para cada criterio.",
+					"minMustBeLessThanMax": "El puntaje mínimo no puede ser mayor que el máximo para cada criterio.",
 					"continuityRequired": "Los rangos de puntaje deben ser continuos entre criterios."
 				},
 				"question": {
@@ -1312,19 +1351,21 @@
 			},
 			"step1": {
 				"title": "Seleccionar curso",
-				"subtitle": "Elige el periodo académico y el curso.",
-				"periodLabel": "Periodo académico",
-				"periodPlaceholder": "Selecciona un periodo",
-				"periodLoading": "Cargando periodos...",
+				"subtitle": "Elige la carrera y el curso.",
+				"selectPeriodFirst": "Selecciona un periodo en la barra superior primero",
+				"programLabel": "Carrera",
+				"programPlaceholder": "Selecciona una carrera",
+				"programLoading": "Cargando carreras...",
+				"programNoOptions": "Sin carreras disponibles",
 				"courseLabel": "Curso",
 				"coursePlaceholder": "Selecciona un curso",
 				"courseLoading": "Cargando cursos...",
 				"courseNoOptions": "Sin cursos disponibles",
-				"courseSelectPeriodFirst": "Selecciona un periodo primero",
+				"courseSelectProgramFirst": "Selecciona una carrera primero",
 				"next": "Siguiente",
 				"verifying": "Verificando...",
 				"error": {
-					"loadPeriods": "No se pudieron cargar los periodos académicos.",
+					"loadPrograms": "No se pudieron cargar las carreras.",
 					"loadCourses": "No se pudieron cargar los cursos.",
 					"noSchool": "No se pudo obtener la escuela del usuario.",
 					"noStudyPlan": "No se encontró una malla curricular para este curso y periodo.",
@@ -1354,7 +1395,7 @@
 					"title": "Criterios por outcome",
 					"subtitle": "Define los niveles de evaluación para cada outcome.",
 					"criteriaLabel": "Criterio",
-					"criteriaPlaceholder": "Descripción del nivel de desempeño",
+					"criteriaPlaceholder": "Descripción del criterio",
 					"addCriteria": "Agregar nivel",
 					"deleteCriteria": "Eliminar",
 					"commissionTooltipIncomplete": "Completa todos los criterios para marcar la comisión",
@@ -1461,7 +1502,7 @@
 				"evaluatorsAdd": "Agregar evaluador",
 				"evaluatorsEmpty": "Aún no se han agregado evaluadores.",
 				"evaluatorsSearch": "Buscar docente",
-				"evaluatorsSearchPlaceholder": "Nombre o correo del docente...",
+				"evaluatorsSearchPlaceholder": "Buscar por nombre o código...",
 				"evaluatorsSearchPrompt": "Escribe para buscar un docente.",
 				"evaluatorsNoResults": "No se encontraron docentes.",
 				"evaluatorsRole": "Rol",
@@ -1483,11 +1524,21 @@
 			"title": "Proyectos Académicos",
 			"description": "Listado de proyectos académicos.",
 			"addButton": "Agregar proyecto",
+			"exportButton": "Exportar notas",
+			"exportModal": {
+				"title": "Exportar notas",
+				"gradeTypeLabel": "Tipo de nota",
+				"filename": "proyectos-notas",
+				"confirm": "Exportar",
+				"exporting": "Exportando...",
+				"error": "No fue posible exportar las notas. Intenta de nuevo."
+			},
 			"clearFilters": "Limpiar filtros",
 			"loading": "Cargando proyectos...",
 			"error": "No fue posible cargar los proyectos.",
 			"empty": "No hay proyectos registrados.",
 			"selectPeriod": "Selecciona un período académico para comenzar.",
+			"selectProgram": "Selecciona una carrera para ver los proyectos.",
 			"filters": {
 				"academicPeriod": "Período Académico",
 				"program": "Carrera",
@@ -1500,7 +1551,16 @@
 				"students": "Estudiantes",
 				"actions": "Acciones",
 				"view": "Ver",
-				"edit": "Editar"
+				"edit": "Editar",
+				"delete": "Eliminar"
+			},
+			"deleteModal": {
+				"title": "¿Eliminar proyecto?",
+				"body": "¿Estás seguro de que deseas eliminar el proyecto \"{{name}}\"? Esta acción no se puede deshacer.",
+				"confirm": "Eliminar",
+				"deleting": "Eliminando...",
+				"errorHasEvaluations": "No se puede eliminar el proyecto porque tiene evaluaciones registradas.",
+				"errorGeneric": "No fue posible eliminar el proyecto. Intenta de nuevo."
 			}
 		},
 		"grade": {
@@ -1536,6 +1596,8 @@
 			"error": "No fue posible cargar el proyecto.",
 			"notFound": "Proyecto no encontrado.",
 			"backButton": "Volver",
+			"docReadOnly": "Tu rol es DOCENTE. Puedes ver el proyecto y las calificaciones, pero no puedes calificar.",
+			"notAssigned": "No estás asignado como evaluador en este proyecto.",
 			"header": {
 				"course": "Curso",
 				"rubric": "Rúbrica",
@@ -1557,6 +1619,7 @@
 				"errorRange": "Uno o más puntajes están fuera del rango permitido para su pregunta.",
 				"fillAll": "Completa todos los puntajes para guardar.",
 				"saveButton": "Guardar calificaciones",
+				"readOnly": "Solo lectura",
 				"saving": "Guardando..."
 			},
 			"capstone": {
@@ -1933,13 +1996,14 @@
 			"title": "Cursos a Calificar",
 			"description": "Cursos habilitados para la creación de rúbricas y proyectos.",
 			"addButton": "Agregar curso",
-			"periodLabel": "Periodo académico",
-			"periodPlaceholder": "Selecciona un periodo",
-			"periodLoading": "Cargando periodos...",
-			"selectPeriodFirst": "Selecciona un periodo académico para ver los cursos.",
+			"programLabel": "Carrera",
+			"programPlaceholder": "Selecciona una carrera",
+			"programLoading": "Cargando carreras...",
+			"programNoOptions": "Sin carreras disponibles",
+			"selectProgramFirst": "Selecciona una carrera para ver los cursos.",
 			"loading": "Cargando cursos...",
 			"error": "No se pudieron cargar los cursos.",
-			"empty": "No hay cursos habilitados para este periodo.",
+			"empty": "No hay cursos habilitados para esta carrera.",
 			"removeButton": "Quitar curso",
 			"columns": {
 				"course": "Curso",
@@ -1955,11 +2019,14 @@
 		},
 		"modal": {
 			"title": "Agregar curso a calificar",
-			"periodLabel": "Periodo académico",
-			"periodPlaceholder": "Selecciona un periodo",
-			"periodLoading": "Cargando periodos...",
+			"programLabel": "Carrera",
+			"programPlaceholder": "Selecciona una carrera",
+			"programLoading": "Cargando carreras...",
+			"programNoOptions": "Sin carreras disponibles",
+			"searchPlaceholder": "Buscar curso...",
+			"searchNoResults": "No se encontraron cursos.",
 			"loadingCourses": "Cargando cursos...",
-			"empty": "No hay cursos disponibles para este periodo.",
+			"empty": "No hay cursos disponibles para esta carrera.",
 			"select": "Seleccionar",
 			"deselect": "Deseleccionar",
 			"alreadyAdded": "Ya habilitado",
@@ -2620,7 +2687,7 @@
 				"createTitle": "Agregar nodo",
 				"editTitle": "Editar nodo",
 				"parentLabel": "Depende de",
-				"staff": "Personal",
+				"staff": "Docente",
 				"staffPlaceholder": "Busca por nombre o código...",
 				"titleEs": "Cargo o rol (ES)",
 				"titleEn": "Cargo o rol (EN)",
@@ -2632,7 +2699,7 @@
 				"save": "Guardar",
 				"saving": "Guardando...",
 				"error": {
-					"staffRequired": "Selecciona al personal.",
+					"staffRequired": "Selecciona al docente.",
 					"titleRequired": "Ingresa el cargo o rol.",
 					"entityTypeRequired": "Selecciona un tipo de entidad.",
 					"entityCodeRequired": "Selecciona la entidad.",

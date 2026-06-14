@@ -45,6 +45,7 @@ interface ProjectRubricNonCapstoneTableProps {
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
 	nrNaTypeIds: Set<number>;
+	readOnly?: boolean;
 }
 
 export function ProjectRubricNonCapstoneTable({
@@ -55,6 +56,7 @@ export function ProjectRubricNonCapstoneTable({
 	projectId,
 	qualifStatuses,
 	nrNaTypeIds,
+	readOnly = false,
 }: ProjectRubricNonCapstoneTableProps) {
 	const { t, locale } = useI18n();
 	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
@@ -71,12 +73,10 @@ export function ProjectRubricNonCapstoneTable({
 			result[q.id] = {};
 
 			students.forEach((st, stIdx) => {
-				// Each student has at most one graded criteria — search across all of them
+				// Show scores from whichever evaluator saved first — any evaluator can overwrite
 				let found = '';
 				for (const c of q.criterias) {
-					const entry = c.scores?.find(
-						(s) => s.studentId === st.id && s.evaluatorId === evaluatorId,
-					);
+					const entry = c.scores?.find((s) => s.studentId === st.id);
 					if (entry != null) {
 						found = String(entry.score);
 						break;
@@ -87,7 +87,7 @@ export function ProjectRubricNonCapstoneTable({
 		}
 
 		return result;
-	}, [questions, students, evaluatorId]);
+	}, [questions, students]);
 
 	const initialDupScores = useMemo<DupScores>(() => {
 		const result: DupScores = {};
@@ -260,7 +260,11 @@ export function ProjectRubricNonCapstoneTable({
 										<span className="text-xs text-zinc-500">
 											{t('projects.evaluate.rubric.duplicateGrades')}
 										</span>
-										<Toggle checked={duplicateMode} onChange={setDuplicateMode} />
+										<Toggle
+											checked={duplicateMode}
+											onChange={setDuplicateMode}
+											disabled={readOnly}
+										/>
 										<span title={t('projects.evaluate.rubric.duplicateGradesInfo')}>
 											<InformationCircleIcon className="h-4 w-4 cursor-help text-zinc-400" />
 										</span>
@@ -310,6 +314,7 @@ export function ProjectRubricNonCapstoneTable({
 													max={range.max}
 													error={validateScore(dupScores[q.id] ?? '', range, msgNaN, msgRange)}
 													onChange={(val) => handleDupScore(q.id, val)}
+													disabled={readOnly}
 												/>
 											</div>
 										) : (
@@ -330,6 +335,7 @@ export function ProjectRubricNonCapstoneTable({
 																	max={range.max}
 																	error={validateScore(val, range, msgNaN, msgRange)}
 																	onChange={(v) => handleScore(q.id, stIdx, v)}
+																	disabled={readOnly}
 																/>
 															</div>
 														);
@@ -358,15 +364,17 @@ export function ProjectRubricNonCapstoneTable({
 				<div className="flex justify-end">
 					<button
 						type="button"
-						disabled={!canSave || isPending}
+						disabled={!canSave || isPending || readOnly}
 						onClick={handleSave}
 						className={cn(
 							'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-							canSave && !isPending
+							canSave && !isPending && !readOnly
 								? 'bg-red-600 text-white hover:bg-red-700'
 								: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
 						)}>
-						{t('projects.evaluate.rubric.saveButton')}
+						{readOnly
+							? t('projects.evaluate.rubric.readOnly')
+							: t('projects.evaluate.rubric.saveButton')}
 						{isPending && (
 							<span
 								aria-hidden="true"
@@ -386,9 +394,10 @@ interface ScoreInputProps {
 	max: number;
 	error: string | undefined;
 	onChange: (val: string) => void;
+	disabled?: boolean;
 }
 
-function ScoreInput({ value, min, max, error, onChange }: ScoreInputProps): JSX.Element {
+function ScoreInput({ value, min, max, error, onChange, disabled }: ScoreInputProps): JSX.Element {
 	return (
 		<input
 			type="number"
@@ -399,9 +408,11 @@ function ScoreInput({ value, min, max, error, onChange }: ScoreInputProps): JSX.
 			value={value}
 			onChange={(e) => onChange(e.target.value)}
 			placeholder="—"
+			disabled={disabled}
 			className={cn(
 				'w-16 rounded-md border px-2 py-1.5 text-center text-sm tabular-nums outline-none transition-all',
 				'bg-white text-zinc-900 placeholder:text-zinc-300',
+				disabled && 'cursor-not-allowed opacity-50 bg-zinc-50',
 				error
 					? 'border-red-400 ring-1 ring-red-400/30 focus:border-red-500'
 					: 'border-zinc-200 focus:border-red-600 focus:ring-1 focus:ring-red-600/20',

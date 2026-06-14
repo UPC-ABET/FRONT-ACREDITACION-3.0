@@ -5,7 +5,12 @@ import { CompactNavbarSelect, Select } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
 import { academicPeriodsService } from '../services';
 
-type AcademicPeriodOption = { id: number; code: string };
+type AcademicPeriodOption = {
+	id: number;
+	code: string;
+	startDate: string;
+	endDate: string;
+};
 
 type Props = {
 	value: number | null;
@@ -16,6 +21,21 @@ type Props = {
 	compactLabelPlacement?: 'inline' | 'stacked';
 	compactDensity?: 'normal' | 'compact';
 };
+
+function dateValue(value: string) {
+	const time = new Date(value).getTime();
+	return Number.isNaN(time) ? 0 : time;
+}
+
+function compareAcademicPeriods(a: AcademicPeriodOption, b: AcademicPeriodOption) {
+	const endDateDiff = dateValue(b.endDate) - dateValue(a.endDate);
+	if (endDateDiff !== 0) return endDateDiff;
+
+	const startDateDiff = dateValue(b.startDate) - dateValue(a.startDate);
+	if (startDateDiff !== 0) return startDateDiff;
+
+	return b.code.localeCompare(a.code);
+}
 
 export function AcademicPeriodSelect({
 	value,
@@ -44,8 +64,13 @@ export function AcademicPeriodSelect({
 			.then((envelope) => {
 				if (!active) return;
 				const rows = (envelope?.data ?? [])
-					.map((r) => ({ id: r.id, code: r.code }))
-					.sort((a, b) => b.code.localeCompare(a.code));
+					.map((r) => ({
+						id: r.id,
+						code: r.code,
+						startDate: r.startDate,
+						endDate: r.endDate,
+					}))
+					.sort(compareAcademicPeriods);
 				setPeriods(rows);
 			})
 			.catch(() => {
@@ -62,10 +87,11 @@ export function AcademicPeriodSelect({
 	const options = useMemo(() => periods.map((p) => ({ value: p.id, label: p.code })), [periods]);
 
 	const selected = options.find((o) => o.value === value) ?? null;
-	const warningMessage =
-		!loading && selected === null && options.length > 0
-			? t('academic.period.requiredForData')
-			: undefined;
+
+	useEffect(() => {
+		if (loading || selected !== null || options.length === 0) return;
+		onChange(Number(options[0].value));
+	}, [loading, onChange, options, selected]);
 
 	if (labelPlacement === 'inline') {
 		return (
@@ -80,7 +106,6 @@ export function AcademicPeriodSelect({
 				disabled={loading}
 				labelPlacement={compactLabelPlacement}
 				density={compactDensity}
-				warningMessage={warningMessage}
 				noOptionsMessage={t('select.noOptions')}
 				onChange={(next) => {
 					if (next !== '') onChange(Number(next));
@@ -97,7 +122,6 @@ export function AcademicPeriodSelect({
 			placeholder={loading ? t('loading.default') : undefined}
 			value={selected}
 			isClearable={isClearable}
-			error={warningMessage}
 			onChange={(_, opt) => {
 				const next = (opt as { value?: number | string } | null)?.value;
 				if (next != null) onChange(Number(next));

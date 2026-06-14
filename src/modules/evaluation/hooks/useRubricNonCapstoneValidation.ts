@@ -59,7 +59,7 @@ export function useRubricNonCapstoneValidation(questions: RubricQuestion[]) {
 						c.maxValue === '' ||
 						(typeof c.minValue === 'number' &&
 							typeof c.maxValue === 'number' &&
-							c.minValue < c.maxValue),
+							c.minValue <= c.maxValue),
 				),
 			),
 		[questions],

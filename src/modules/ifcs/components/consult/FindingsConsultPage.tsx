@@ -13,7 +13,7 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useABET, useI18n, useSchoolSourceData, useSchoolSourceOverride } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/apiError';
+import { resolveApiErrorContent, type ApiErrorContent } from '@/shared/utils/tryTranslate';
 import { TYPE_CODES } from '@/shared/constants';
 import { useFindingsList, useOrgScope } from '../../hooks';
 import { deleteFinding } from '../../services/ifcFindingsService';
@@ -63,7 +63,7 @@ export function FindingsConsultPage() {
 
 	const [deleteTarget, setDeleteTarget] = useState<FindingRow | null>(null);
 	const [submitting, setSubmitting] = useState(false);
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [errorMsg, setErrorMsg] = useState<ApiErrorContent | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 	const [hasSearched, setHasSearched] = useState(false);
 
@@ -125,7 +125,7 @@ export function FindingsConsultPage() {
 			setDeleteTarget(null);
 			await refetch();
 		} catch (e) {
-			setErrorMsg(getErrorMessage(e, 'ifcFindings.error.deleteFailed'));
+			setErrorMsg(resolveApiErrorContent(t, e, 'ifcFindings.error.deleteFailed'));
 		} finally {
 			setSubmitting(false);
 		}
@@ -196,7 +196,13 @@ export function FindingsConsultPage() {
 
 			{submitting && <LoadingDialog isOpen label={t('loading.default')} />}
 			{errorMsg && (
-				<Toast isOpen type="error" onClose={() => setErrorMsg(null)} message={t(errorMsg)} />
+				<Toast
+					isOpen
+					type="error"
+					onClose={() => setErrorMsg(null)}
+					message={errorMsg.title}
+					reasons={errorMsg.reasons}
+				/>
 			)}
 			{successMsg && (
 				<SuccessDialog isOpen onClose={() => setSuccessMsg(null)} message={successMsg} />

@@ -846,7 +846,10 @@
 		"error": {
 			"required": "All fields are required",
 			"generic": "Error during login",
-			"schoolRequired": "Select a school before continuing"
+			"schoolRequired": "Select a school before continuing",
+			"USER_NOT_FOUND": "You don't have a user in the system.",
+			"NO_ROLE": "You don't have an assigned role, contact the administrator.",
+			"LOGIN_FAILED": "Could not sign in, please try again."
 		}
 	},
 	"forgotPassword": {
@@ -1022,7 +1025,7 @@
 			"ifcExists": "An IFC with this data already exists",
 			"invalidTransition": "Invalid status transition",
 			"staffRequired": "No staff linked to the requester",
-			"ownCoordinatorForbidden": "The coordinator cannot approve their own IFC",
+			"higherLevelRequired": "Approval from a higher hierarchical level is required",
 			"notInChain": "The requester is not in the org chart chain",
 			"chartNotFound": "Org chart not found",
 			"alreadyExists": "An IFC already exists for this course and period",
@@ -1033,6 +1036,7 @@
 			"ifcInstrumentMissing": "IFC instrument is not configured",
 			"pdfRequiresApproved": "PDF is only available for approved IFCs",
 			"previousActionNotEligible": "The previous action cannot be reused",
+			"criticalityNotFound": "Criticality code {{code}} does not exist",
 			"createFailed": "Could not create the IFC",
 			"updateFailed": "Could not update the IFC",
 			"deleteFailed": "Could not delete the IFC",
@@ -1100,6 +1104,7 @@
 			"uploadLogNotFound": "Upload not found.",
 			"rollbackAlreadyDone": "This upload has already been rolled back.",
 			"typeCodeNotFound": "The upload type does not exist.",
+			"schoolChartNotConfigured": "The school's org chart is not configured.",
 			"rollbackBlockedSections": "Cannot roll back: sections depend on this upload.",
 			"rollbackBlockedOutcomes": "Cannot roll back: outcomes depend on this upload.",
 			"rollbackBlockedProfessors": "Cannot roll back: professors depend on this upload.",
@@ -1116,6 +1121,40 @@
 			"schoolNotFound": "The selected school does not exist.",
 			"userNotFound": "The selected user does not exist.",
 			"duplicateSchoolInPayload": "The same school cannot be assigned to two directors."
+		},
+		"s3": {
+			"unauthorized": "Your session has expired. Please sign in again.",
+			"invalidKey": "Invalid file key.",
+			"keyRequired": "A file key is required.",
+			"fileRequired": "No file was provided.",
+			"prefixRequired": "A folder is required.",
+			"emptyFolder": "This folder has no files to download.",
+			"invalidName": "Enter a valid name.",
+			"invalidNameChars": "The name contains invalid characters: \\ / : * ? \" < > |",
+			"nameTooLong": "The name exceeds the 255 character limit.",
+			"nameExists": "An item with that name already exists.",
+			"noSelection": "No item selected.",
+			"moveSameLocation": "Cannot move to the same location.",
+			"moveIntoItself": "Cannot move a folder into itself.",
+			"listFailed": "Could not load files.",
+			"uploadFailed": "Could not upload the files.",
+			"deleteFailed": "Could not delete the selected items.",
+			"createFolderFailed": "Could not create the folder.",
+			"downloadUrlFailed": "Could not prepare the download.",
+			"downloadFolderFailed": "Could not download the folder.",
+			"downloadFailed": "Could not download the file.",
+			"renameFailed": "Could not rename the item.",
+			"copyFailed": "Could not copy the items.",
+			"moveFailed": "Could not move the items.",
+			"createCommentFailed": "Could not create the comment.",
+			"treeFailed": "Could not load the portfolio structure.",
+			"sizeFailed": "Could not compute the selection size."
+		},
+		"evaluation": {
+			"docCannotGrade": "The DOCENTE role cannot grade projects."
+		},
+		"projectEvaluator": {
+			"duplicateEvaluatorType": "An evaluator with this role type already exists in the project."
 		}
 	},
 	"table": {
@@ -1250,7 +1289,7 @@
 					"validationComplete": "Rubric validated successfully. You can save the changes.",
 					"allFieldsRequired": "All fields are required.",
 					"totalMustBe20": "The total sum of points must be 20.",
-					"minMustBeLessThanMax": "The minimum score must be less than the maximum for each criterion.",
+					"minMustBeLessThanMax": "The minimum score cannot be greater than the maximum for each criterion.",
 					"continuityRequired": "Score ranges must be continuous between criteria."
 				},
 				"question": {
@@ -1312,19 +1351,21 @@
 			},
 			"step1": {
 				"title": "Select course",
-				"subtitle": "Choose the academic period and course.",
-				"periodLabel": "Academic period",
-				"periodPlaceholder": "Select a period",
-				"periodLoading": "Loading periods...",
+				"subtitle": "Choose the major and course.",
+				"selectPeriodFirst": "Select a period in the top bar first",
+				"programLabel": "Major",
+				"programPlaceholder": "Select a major",
+				"programLoading": "Loading majors...",
+				"programNoOptions": "No majors available",
 				"courseLabel": "Course",
 				"coursePlaceholder": "Select a course",
 				"courseLoading": "Loading courses...",
 				"courseNoOptions": "No courses available",
-				"courseSelectPeriodFirst": "Select a period first",
+				"courseSelectProgramFirst": "Select a major first",
 				"next": "Next",
 				"verifying": "Verifying...",
 				"error": {
-					"loadPeriods": "Could not load academic periods.",
+					"loadPrograms": "Could not load majors.",
 					"loadCourses": "Could not load courses.",
 					"noSchool": "Could not retrieve school from user session.",
 					"noStudyPlan": "No study plan found for this course and period.",
@@ -1354,7 +1395,7 @@
 					"title": "Criteria by outcome",
 					"subtitle": "Define performance levels for each course outcome.",
 					"criteriaLabel": "Criterion",
-					"criteriaPlaceholder": "Performance level description",
+					"criteriaPlaceholder": "Criterion description",
 					"addCriteria": "Add level",
 					"deleteCriteria": "Delete",
 					"commissionTooltipIncomplete": "Complete all criteria to mark the commission",
@@ -1461,7 +1502,7 @@
 				"evaluatorsAdd": "Add evaluator",
 				"evaluatorsEmpty": "No evaluators added yet.",
 				"evaluatorsSearch": "Search professor",
-				"evaluatorsSearchPlaceholder": "Name or email...",
+				"evaluatorsSearchPlaceholder": "Search by name or code...",
 				"evaluatorsSearchPrompt": "Type to search for a professor.",
 				"evaluatorsNoResults": "No professors found.",
 				"evaluatorsRole": "Role",
@@ -1483,11 +1524,21 @@
 			"title": "Academic Projects",
 			"description": "List of academic projects.",
 			"addButton": "Add Project",
+			"exportButton": "Export grades",
+			"exportModal": {
+				"title": "Export grades",
+				"gradeTypeLabel": "Grade type",
+				"filename": "project-grades",
+				"confirm": "Export",
+				"exporting": "Exporting...",
+				"error": "Could not export grades. Please try again."
+			},
 			"clearFilters": "Clear Filters",
 			"loading": "Loading projects...",
 			"error": "Could not load projects.",
 			"empty": "No projects registered.",
 			"selectPeriod": "Select an academic period to get started.",
+			"selectProgram": "Select a major to view projects.",
 			"filters": {
 				"academicPeriod": "Academic Period",
 				"program": "Program",
@@ -1500,7 +1551,16 @@
 				"students": "Students",
 				"actions": "Actions",
 				"view": "View",
-				"edit": "Edit"
+				"edit": "Edit",
+				"delete": "Delete"
+			},
+			"deleteModal": {
+				"title": "Delete project?",
+				"body": "Are you sure you want to delete the project \"{{name}}\"? This action cannot be undone.",
+				"confirm": "Delete",
+				"deleting": "Deleting...",
+				"errorHasEvaluations": "The project cannot be deleted because it has registered evaluations.",
+				"errorGeneric": "Could not delete the project. Please try again."
 			}
 		},
 		"grade": {
@@ -1536,6 +1596,8 @@
 			"error": "Could not load the project.",
 			"notFound": "Project not found.",
 			"backButton": "Back",
+			"docReadOnly": "Your role is DOCENTE. You can view the project and its grades, but you cannot grade.",
+			"notAssigned": "You are not assigned as an evaluator for this project.",
 			"header": {
 				"course": "Course",
 				"rubric": "Rubric",
@@ -1557,6 +1619,7 @@
 				"errorRange": "One or more scores are outside the allowed range for their question.",
 				"fillAll": "Fill in all scores to save.",
 				"saveButton": "Save grades",
+				"readOnly": "Read only",
 				"saving": "Saving..."
 			},
 			"capstone": {
@@ -1932,13 +1995,14 @@
 			"title": "Courses to Grade",
 			"description": "Courses enabled for rubrics and projects creation.",
 			"addButton": "Add course",
-			"periodLabel": "Academic period",
-			"periodPlaceholder": "Select a period",
-			"periodLoading": "Loading periods...",
-			"selectPeriodFirst": "Select an academic period to view courses.",
+			"programLabel": "Major",
+			"programPlaceholder": "Select a major",
+			"programLoading": "Loading majors...",
+			"programNoOptions": "No majors available",
+			"selectProgramFirst": "Select a major to view courses.",
 			"loading": "Loading courses...",
 			"error": "Could not load courses.",
-			"empty": "No courses enabled for this period.",
+			"empty": "No courses enabled for this major.",
 			"removeButton": "Remove course",
 			"columns": {
 				"course": "Course",
@@ -1954,11 +2018,14 @@
 		},
 		"modal": {
 			"title": "Add course to grade",
-			"periodLabel": "Academic period",
-			"periodPlaceholder": "Select a period",
-			"periodLoading": "Loading periods...",
+			"programLabel": "Major",
+			"programPlaceholder": "Select a major",
+			"programLoading": "Loading majors...",
+			"programNoOptions": "No majors available",
+			"searchPlaceholder": "Search course...",
+			"searchNoResults": "No courses found.",
 			"loadingCourses": "Loading courses...",
-			"empty": "No courses available for this period.",
+			"empty": "No courses available for this major.",
 			"select": "Select",
 			"deselect": "Deselect",
 			"alreadyAdded": "Already enabled",

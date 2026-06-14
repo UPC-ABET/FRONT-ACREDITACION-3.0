@@ -1,23 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Input, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
 import type { LoginPayload } from '@/modules/auth/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
 import { safeRedirect } from '@/shared/lib';
 import { useAuth, useI18n } from '@/providers';
 
+const MICROSOFT_ERROR_CODES = ['USER_NOT_FOUND', 'NO_ROLE', 'LOGIN_FAILED'] as const;
+
+function microsoftErrorKey(code: string | null): string | null {
+	if (!code) return null;
+	return (MICROSOFT_ERROR_CODES as readonly string[]).includes(code)
+		? `login.error.${code}`
+		: 'login.error.generic';
+}
+
 export default function LoginForm() {
+	const searchParams = useSearchParams();
+	const initialMicrosoftErrorKey = microsoftErrorKey(searchParams.get('error'));
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [dialogOpen, setDialogOpen] = useState(false);
-	const [dialogMessage, setDialogMessage] = useState('');
+	const [dialogOpen, setDialogOpen] = useState(initialMicrosoftErrorKey != null);
+	const [dialogMessage, setDialogMessage] = useState(initialMicrosoftErrorKey ?? '');
 	const router = useRouter();
 	const { t } = useI18n();
 	const { refreshUser } = useAuth();
+
+	useEffect(() => {
+		if (!initialMicrosoftErrorKey) return;
+		window.history.replaceState(null, '', '/auth/login');
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount; the error code is already captured in state
+	}, []);
 
 	const handleSubmit = async (e?: React.FormEvent) => {
 		e?.preventDefault();
@@ -25,7 +42,7 @@ export default function LoginForm() {
 		setDialogOpen(false);
 
 		if (!email || !password) {
-			setError(t('login.error.required'));
+			setError('login.error.required');
 			return;
 		}
 
@@ -61,7 +78,7 @@ export default function LoginForm() {
 			<div className="space-y-2">
 				{error && (
 					<div role="alert" className="text-sm text-red-600">
-						{error}
+						{t(error)}
 					</div>
 				)}
 
@@ -111,7 +128,7 @@ export default function LoginForm() {
 					<button
 						type="button"
 						onClick={() => router.push('/auth/forgot-password')}
-						className="text-sm text-red-600 hover:text-red-500 transition-colors">
+						className="inline-flex cursor-pointer items-center justify-center text-sm font-medium text-red-600 transition-colors hover:text-red-500">
 						{t('login.forgot')}
 					</button>
 				</div>
@@ -121,7 +138,7 @@ export default function LoginForm() {
 			<ErrorDialog
 				isOpen={dialogOpen}
 				onClose={() => setDialogOpen(false)}
-				message={dialogMessage}
+				message={dialogMessage ? t(dialogMessage) : dialogMessage}
 			/>
 		</form>
 	);

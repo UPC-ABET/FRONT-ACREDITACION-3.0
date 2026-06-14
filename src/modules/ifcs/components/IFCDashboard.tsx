@@ -17,13 +17,7 @@ import {
 	TableEmptyState,
 	Toast,
 } from '@/shared/components';
-import {
-	useABET,
-	useAuth,
-	useI18n,
-	useSchoolSourceData,
-	useSchoolSourceOverride,
-} from '@/providers';
+import { useABET, useI18n, useSchoolSourceData, useSchoolSourceOverride } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { TYPE_CODES } from '@/shared/constants';
@@ -92,8 +86,6 @@ export function IFCDashboard() {
 	const { data: statusTypes = [] } = useStatusTypes();
 	const { notifyOne, notifyMany, notifyingChartId, notifyingAll } = useIfcNotify();
 
-	const { user: authUser } = useAuth();
-	const currentUserId = authUser?.id ?? null;
 	const { academicPeriodId, schoolId } = useABET();
 
 	useSchoolSourceOverride({
@@ -211,22 +203,16 @@ export function IFCDashboard() {
 	);
 
 	const notifiableChartIds = useMemo<number[]>(() => {
+		if (!scope?.canNotify) return [];
 		return visibleRows
 			.filter((r) => {
 				const status = effectiveStatus(r);
-				const coordinatorId = r.coordinatorUserId;
-				const isOwn =
-					currentUserId != null &&
-					coordinatorId != null &&
-					Number(coordinatorId) === Number(currentUserId);
 				return (
-					!isOwn &&
-					status !== TYPE_CODES.IFC_STATUS.APPROVED &&
-					status !== TYPE_CODES.IFC_STATUS.SUBMITTED
+					status !== TYPE_CODES.IFC_STATUS.APPROVED && status !== TYPE_CODES.IFC_STATUS.SUBMITTED
 				);
 			})
 			.map((r) => Number(r.chartId));
-	}, [visibleRows, currentUserId]);
+	}, [visibleRows, scope]);
 
 	async function handleNotifyOne(chartId: number) {
 		if (academicPeriodId === null) return;
@@ -379,7 +365,7 @@ export function IFCDashboard() {
 						<IFCTable
 							rows={visibleRows}
 							periodId={academicPeriodId}
-							currentUserId={currentUserId}
+							canNotify={scope?.canNotify ?? false}
 							notifyingChartId={notifyingChartId}
 							onNotify={handleNotifyOne}
 						/>

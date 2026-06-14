@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/shared';
-import { apiGet, apiPost, apiPatch, apiDelete } from '@/shared/lib';
+import { apiGet, apiPost, apiPatch, apiDelete, apiGetBlobResponse } from '@/shared/lib';
 import type {
 	CreateProjectDto,
 	CreateProjectFullDto,
@@ -21,8 +21,14 @@ export const projectsService = {
 		return apiPost('/projects/create-full', body);
 	},
 
-	getByEvaluator(evaluatorId: string | number): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
-		return apiGet(`/projects/evaluator/${evaluatorId}`);
+	getByEvaluator(
+		evaluatorId: string | number,
+		params?: { gradeTypeCode?: string },
+	): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
+		const qs = new URLSearchParams();
+		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
+		const query = qs.toString();
+		return apiGet(`/projects/evaluator/${evaluatorId}${query ? `?${query}` : ''}`);
 	},
 
 	getByProfessor(
@@ -118,5 +124,10 @@ export const projectsService = {
 		isActive: true;
 	}): Promise<ApiResponse<ProjectEvaluatorResponse>> {
 		return apiPost('/project-evaluators/create', body);
+	},
+
+	exportGrades(params: { gradeTypeCode: string }): Promise<Blob> {
+		const qs = new URLSearchParams({ gradeTypeCode: params.gradeTypeCode });
+		return apiGetBlobResponse(`/projects/export/grades?${qs.toString()}`).then((r) => r.blob);
 	},
 };

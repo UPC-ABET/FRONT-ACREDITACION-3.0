@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
+	Select,
 	Table,
 	TableBody,
 	TableCell,
@@ -20,27 +22,50 @@ import {
 	DialogClose,
 } from '@/shared/components/ui';
 import { LoadingState } from '@/shared/components';
-import { useI18n } from '@/providers';
-import { getSchoolCookie } from '@/shared/lib/authCookies';
+import { useI18n, useABET } from '@/providers';
 import {
 	useAcademicPeriods,
 	useStudyPlanCourses,
 	useEnableEvaluationCourse,
 } from '@/modules/academic/hooks';
-import { AcademicPeriodSelect } from '@/modules/academic/components';
+import { programsService } from '@/modules/academic/services';
 import { AddEvaluationCourseModal } from '../components/evaluation-courses/AddEvaluationCourseModal';
 import { StudyPlanCourseResponse } from '@/modules/academic';
 
+type AnyOption = { label: string; value: string | number };
+
 export function EvaluationCoursesPage() {
 	const { t, locale } = useI18n();
-	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
+	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
 	const [modalOpen, setModalOpen] = useState(false);
 	const [confirmTarget, setConfirmTarget] = useState<StudyPlanCourseResponse | null>(null);
+	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
+	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
 
-	const schoolId = getSchoolCookie()?.id as number | undefined;
+	const [trackedPeriodId, setTrackedPeriodId] = useState(selectedPeriodId);
+	if (selectedPeriodId !== trackedPeriodId) {
+		setTrackedPeriodId(selectedPeriodId);
+		setSelectedProgramId(null);
+		setSelectedProgramOpt(null);
+	}
 
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 	const selectedPeriodCode = periods.find((p) => p.id === selectedPeriodId)?.code ?? '';
+
+	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
+		queryKey: [
+			'programs',
+			'filtered',
+			{ schoolId, academicPeriodId: selectedPeriodId, isActive: true },
+		],
+		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
+		enabled: !!selectedPeriodId && !!schoolId,
+	});
+
+	const programOptions: AnyOption[] = useMemo(
+		() => programs.map((p) => ({ label: p.name[locale as 'es' | 'en'] ?? p.name.es, value: p.id })),
+		[programs, locale],
+	);
 
 	const {
 		data: courses = [],
@@ -50,13 +75,12 @@ export function EvaluationCoursesPage() {
 		refetch,
 	} = useStudyPlanCourses(
 		{
-			academicPeriodId: selectedPeriodId ?? 0,
-			schoolId: schoolId,
+			programId: selectedProgramId ?? undefined,
 			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
 			extra: { is_evaluable: true },
 			isActive: true,
 		},
-		{ enabled: !!selectedPeriodId && !!schoolId },
+		{ enabled: !!selectedPeriodId && !!selectedProgramId },
 	);
 
 	const enableEvaluation = useEnableEvaluationCourse();
@@ -87,11 +111,29 @@ export function EvaluationCoursesPage() {
 			</div>
 
 			<div className="max-w-xs">
-				<AcademicPeriodSelect value={selectedPeriodId} onChange={setSelectedPeriodId} />
+				<Select
+					label={t('evaluationCourses.list.programLabel')}
+					placeholder={
+						loadingPrograms
+							? t('evaluationCourses.list.programLoading')
+							: programs.length === 0
+								? t('evaluationCourses.list.programNoOptions')
+								: t('evaluationCourses.list.programPlaceholder')
+					}
+					options={programOptions}
+					value={selectedProgramOpt}
+					isDisabled={loadingPrograms || programs.length === 0}
+					isSearchable
+					onChange={(_, v) => {
+						const opt = Array.isArray(v) ? (v[0] ?? null) : v;
+						setSelectedProgramOpt(opt as AnyOption | null);
+						setSelectedProgramId(opt ? Number(opt.value) : null);
+					}}
+				/>
 			</div>
 
-			{!selectedPeriodId ? (
-				<TableEmptyState message={t('evaluationCourses.list.selectPeriodFirst')} />
+			{!selectedProgramId ? (
+				<TableEmptyState message={t('evaluationCourses.list.selectProgramFirst')} />
 			) : loadingCourses ? (
 				<div className="rounded-xl border border-zinc-200 bg-white p-10">
 					<LoadingState label={t('evaluationCourses.list.loading')} />

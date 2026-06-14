@@ -20,6 +20,7 @@ export interface ScopeLevel {
 
 export interface ScopeTree {
 	highestLevel: number | null;
+	canNotify: boolean;
 	levels: ScopeLevel[];
 }
 
@@ -87,6 +88,7 @@ export interface IFCHeader {
 		by: string | null;
 	} | null;
 	requesterInChain: boolean;
+	requesterHasHigherLevel: boolean;
 }
 
 export interface OutcomeItem {

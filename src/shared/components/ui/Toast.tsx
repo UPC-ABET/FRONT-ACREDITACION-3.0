@@ -16,6 +16,7 @@ interface ToastProps {
 	type?: ToastType;
 	message?: string;
 	title?: string;
+	reasons?: string[];
 }
 
 const toastConfig = {
@@ -45,7 +46,7 @@ const toastConfig = {
 	},
 };
 
-function Toast({ isOpen, onClose, type = 'success', message, title }: ToastProps) {
+function Toast({ isOpen, onClose, type = 'success', message, title, reasons }: ToastProps) {
 	const { t } = useI18n();
 
 	if (!isOpen) return null;
@@ -53,6 +54,7 @@ function Toast({ isOpen, onClose, type = 'success', message, title }: ToastProps
 	const { icon: Icon, iconColor, titleKey, messageKey } = toastConfig[type];
 	const resolvedTitle = title !== undefined ? title : t(titleKey);
 	const resolvedMessage = message !== undefined ? message : t(messageKey);
+	const hasReasons = reasons !== undefined && reasons.length > 0;
 
 	return (
 		<div className="fixed bottom-5 right-5 z-[200] animate-in slide-in-from-right duration-300">
@@ -64,6 +66,13 @@ function Toast({ isOpen, onClose, type = 'success', message, title }: ToastProps
 						{resolvedTitle}
 					</p>
 					<p className="text-sm font-medium">{resolvedMessage}</p>
+					{hasReasons && (
+						<ul className="mt-1 list-disc space-y-0.5 pl-4 text-xs text-zinc-300">
+							{reasons.map((reason) => (
+								<li key={reason}>{reason}</li>
+							))}
+						</ul>
+					)}
 				</div>
 
 				<button

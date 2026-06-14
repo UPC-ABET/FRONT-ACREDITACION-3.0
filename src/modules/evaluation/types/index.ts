@@ -29,7 +29,7 @@ export type CreateProjectFullDto = {
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
 	studentSectionEnrollmentIds?: number[];
-	evaluatorProfessorIds?: number[];
+	evaluators?: { professorId: number; evaluatorTypeId: number }[];
 };
 
 export type CreateProjectDto = {
@@ -75,7 +75,6 @@ export type FilterProjectDto = Partial<{
 	extra: Record<string, unknown>;
 	academicPeriodId: number;
 	programId: number;
-	schoolId: number;
 	courseId: number;
 	studentId: number;
 	professorId: number;
@@ -208,6 +207,7 @@ export type ProjectByProfessorResponse = {
 		lastName: string;
 		email: string;
 		evaluatorType: { en: string; es: string };
+		evaluatorTypeCode: string;
 	}[];
 	students: {
 		id: number;
@@ -242,6 +242,7 @@ export type ProjectDetailsEvaluatorResponse = {
 	professorEmail: string;
 	evaluatorTypeId: number;
 	evaluatorTypeName: { en: string; es: string };
+	evaluatorTypeCode: string;
 };
 
 export type CriteriaScoreResponse = {
@@ -331,6 +332,7 @@ export type ProjectResponse = BaseEntity & {
 	code: string;
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
+	hasEvaluations?: boolean;
 	students?: ProjectStudentResponse[];
 	evaluators?: ProjectEvaluatorResponse[];
 };

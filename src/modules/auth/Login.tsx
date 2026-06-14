@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import LoginForm from './components/LoginForm';
 import { Card } from '@/shared/components/ui/Card';
-import { Title } from '@/shared/components';
+import { LanguageSwitcher, Title } from '@/shared/components';
 import { useI18n } from '@/providers';
 export default function Login() {
 	const { t } = useI18n();
@@ -13,6 +13,9 @@ export default function Login() {
 			<div className="w-full px-4 py-8">
 				<div className="mx-auto w-full max-w-[360px] sm:max-w-[480px] md:max-w-[540px]">
 					<Card className="w-full px-8 py-8 flex flex-col justify-center gap-4 aspect-auto md:aspect-square">
+						<div className="flex justify-end">
+							<LanguageSwitcher />
+						</div>
 						<div className="text-center">
 							<img
 								className="mx-auto w-auto mb-3 h-[72px] md:h-[96px]"
@@ -25,7 +28,9 @@ export default function Login() {
 							</div>
 						</div>
 
-						<LoginForm />
+						<Suspense fallback={null}>
+							<LoginForm />
+						</Suspense>
 					</Card>
 				</div>
 			</div>

@@ -2,11 +2,10 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { validateEnv } from '@/configs/env.config';
 
 // No NEXT_PUBLIC_ prefix keeps these credentials out of the browser bundle.
-const env = validateEnv();
-
-export const BUCKET = env.AWS_BUCKET_NAME;
+export const BUCKET = process.env.AWS_BUCKET_NAME ?? '';
 
 export function getS3Client(): S3Client {
+	const env = validateEnv();
 	return new S3Client({
 		region: env.AWS_REGION,
 		credentials: {
