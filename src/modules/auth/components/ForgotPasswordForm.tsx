@@ -78,7 +78,7 @@ export default function ForgotPasswordForm() {
 				</Button>
 				<Link
 					href="/auth/login"
-					className="block w-full text-center text-sm text-zinc-700 transition-colors hover:text-red-600">
+					className="block w-full cursor-pointer text-center text-sm font-medium text-red-600 transition-colors hover:text-red-500">
 					{t('forgotPassword.form.backToLogin')}
 				</Link>
 			</div>

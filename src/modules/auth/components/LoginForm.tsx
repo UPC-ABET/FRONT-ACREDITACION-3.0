@@ -111,7 +111,7 @@ export default function LoginForm() {
 					<button
 						type="button"
 						onClick={() => router.push('/auth/forgot-password')}
-						className="text-sm text-red-600 hover:text-red-500 transition-colors">
+						className="inline-flex cursor-pointer items-center justify-center text-sm font-medium text-red-600 transition-colors hover:text-red-500">
 						{t('login.forgot')}
 					</button>
 				</div>
