@@ -19,14 +19,13 @@ function microsoftErrorKey(code: string | null): string | null {
 
 export default function LoginForm() {
 	const searchParams = useSearchParams();
+	const initialMicrosoftErrorKey = microsoftErrorKey(searchParams.get('error'));
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(() =>
-		microsoftErrorKey(searchParams.get('error')),
-	);
-	const [dialogOpen, setDialogOpen] = useState(false);
-	const [dialogMessage, setDialogMessage] = useState('');
+	const [error, setError] = useState<string | null>(null);
+	const [dialogOpen, setDialogOpen] = useState(initialMicrosoftErrorKey != null);
+	const [dialogMessage, setDialogMessage] = useState(initialMicrosoftErrorKey ?? '');
 	const router = useRouter();
 	const { t } = useI18n();
 	const { refreshUser } = useAuth();
@@ -133,7 +132,7 @@ export default function LoginForm() {
 			<ErrorDialog
 				isOpen={dialogOpen}
 				onClose={() => setDialogOpen(false)}
-				message={dialogMessage}
+				message={dialogMessage ? t(dialogMessage) : dialogMessage}
 			/>
 		</form>
 	);
