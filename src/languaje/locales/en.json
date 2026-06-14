@@ -1283,7 +1283,7 @@
 					"validationComplete": "Rubric validated successfully. You can save the changes.",
 					"allFieldsRequired": "All fields are required.",
 					"totalMustBe20": "The total sum of points must be 20.",
-					"minMustBeLessThanMax": "The minimum score must be less than the maximum for each criterion.",
+					"minMustBeLessThanMax": "The minimum score cannot be greater than the maximum for each criterion.",
 					"continuityRequired": "Score ranges must be continuous between criteria."
 				},
 				"question": {

@@ -1283,7 +1283,7 @@
 					"validationComplete": "Rúbrica validada correctamente. Puede guardar los cambios.",
 					"allFieldsRequired": "Todos los campos son obligatorios.",
 					"totalMustBe20": "La suma total de puntos debe ser 20.",
-					"minMustBeLessThanMax": "El puntaje mínimo debe ser menor que el máximo para cada criterio.",
+					"minMustBeLessThanMax": "El puntaje mínimo no puede ser mayor que el máximo para cada criterio.",
 					"continuityRequired": "Los rangos de puntaje deben ser continuos entre criterios."
 				},
 				"question": {
