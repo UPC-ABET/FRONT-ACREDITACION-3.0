@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, Input, LoadingState, Select } from '@/shared/components';
+import { Button, Input, LoadingState, Select, Toggle } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { useDocumentTypes, useRoles, useSaveUser, useUserRoles } from '../../hooks';
@@ -49,6 +49,7 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 	const [linkedTeacher, setLinkedTeacher] = useState<TeacherOption | null>(() =>
 		teacherFromUser(user),
 	);
+	const [isActive, setIsActive] = useState(user?.isActive ?? true);
 	const [roleIds, setRoleIds] = useState<number[]>([]);
 	const [errors, setErrors] = useState<UserFormErrors>({});
 
@@ -105,6 +106,7 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 			firstName: firstName.trim(),
 			lastName: lastName.trim(),
 			email: email.trim(),
+			isActive,
 			staffId: linkedTeacher?.staffId ?? null,
 			...(phone.trim() ? { phone: phone.trim() } : {}),
 			...(documentTypeId != null ? { documentTypeId } : {}),
@@ -193,6 +195,15 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 						label={t('admin.iam.users.form.documentCode')}
 						value={documentCode}
 						onChange={(event) => setDocumentCode(event.target.value)}
+					/>
+				</div>
+
+				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-4">
+					<Toggle
+						label={t('admin.iam.users.form.isActive')}
+						checked={isActive}
+						onChange={setIsActive}
+						disabled={saving}
 					/>
 				</div>
 
