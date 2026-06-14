@@ -1022,7 +1022,7 @@
 			"ifcExists": "An IFC with this data already exists",
 			"invalidTransition": "Invalid status transition",
 			"staffRequired": "No staff linked to the requester",
-			"ownCoordinatorForbidden": "The coordinator cannot approve their own IFC",
+			"higherLevelRequired": "Approval from a higher hierarchical level is required",
 			"notInChain": "The requester is not in the org chart chain",
 			"chartNotFound": "Org chart not found",
 			"alreadyExists": "An IFC already exists for this course and period",

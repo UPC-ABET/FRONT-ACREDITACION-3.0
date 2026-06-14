@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ErrorDialog, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
-import { useAuth, useI18n } from '@/providers';
+import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useIFCView } from '../../hooks/useIfcs';
@@ -32,9 +32,6 @@ export default function IFCViewPage() {
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 	const [submitModalOpen, setSubmitModalOpen] = useState(false);
 
-	const { user: authUser } = useAuth();
-	const currentUserId = authUser?.id ?? null;
-
 	if (isLoading) {
 		return <LoadingDialog isOpen label={t('loading.default')} />;
 	}
@@ -50,7 +47,7 @@ export default function IFCViewPage() {
 	}
 
 	const ifc = data.ifc;
-	const flags = computeActionFlags(ifc, currentUserId);
+	const flags = computeActionFlags(ifc);
 
 	async function runAction(fn: () => Promise<void>, successKey: string) {
 		setSubmitting(true);

@@ -10,8 +10,8 @@ const S = TYPE_CODES.IFC_STATUS;
 
 export type ActionFlags = {
 	status: string;
-	isOwn: boolean;
 	inChain: boolean;
+	hasHigherLevel: boolean;
 	showSubmit: boolean;
 	showEdit: boolean;
 	showApprove: boolean;
@@ -20,23 +20,20 @@ export type ActionFlags = {
 	showBack: boolean;
 };
 
-export function computeActionFlags(ifc: IFCHeader, currentUserId: number | null): ActionFlags {
+export function computeActionFlags(ifc: IFCHeader): ActionFlags {
 	const status = ifc.status?.code ?? S.UNREGISTERED;
-	const isOwn =
-		currentUserId != null &&
-		ifc.coordinator.userId != null &&
-		Number(ifc.coordinator.userId) === Number(currentUserId);
 	const inChain = ifc.requesterInChain;
+	const hasHigherLevel = ifc.requesterHasHigherLevel;
 
 	return {
 		status,
-		isOwn,
 		inChain,
+		hasHigherLevel,
 		showSubmit: (status === S.UNREGISTERED || status === S.SAVED) && inChain,
 		showEdit: (status === S.SAVED || status === S.OBSERVED) && inChain,
-		showApprove: status === S.SUBMITTED && !isOwn,
-		showReject: status === S.SUBMITTED && !isOwn,
-		showObservation: status === S.SUBMITTED && !isOwn,
+		showApprove: status === S.SUBMITTED && hasHigherLevel,
+		showReject: status === S.SUBMITTED && hasHigherLevel,
+		showObservation: status === S.SUBMITTED && hasHigherLevel,
 		showBack: true,
 	};
 }

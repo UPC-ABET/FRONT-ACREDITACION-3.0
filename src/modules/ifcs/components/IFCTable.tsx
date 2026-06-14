@@ -20,7 +20,7 @@ import type { IFCRow } from '../types';
 type Props = {
 	rows: IFCRow[];
 	periodId: number | null;
-	currentUserId: number | null;
+	canNotify: boolean;
 	notifyingChartId: number | null;
 	onNotify: (chartId: number) => void;
 };
@@ -30,7 +30,7 @@ const UNREG_LABEL: Record<string, string> = { en: 'Unregistered', es: 'Sin Regis
 const ICON_BTN =
 	'inline-flex h-10 w-10 items-center justify-center rounded-md text-red-700 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50';
 
-export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNotify }: Props) {
+export function IFCTable({ rows, periodId, canNotify, notifyingChartId, onNotify }: Props) {
 	const { t, locale: lang } = useI18n();
 	const { downloadOne, downloadingId, error: pdfError, clearError } = usePdfDownload();
 
@@ -69,13 +69,8 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 				cell: ({ row }) => {
 					const r = row.original;
 					const status = effectiveStatus(r);
-					const coordinatorId = r.coordinatorUserId;
-					const isOwn =
-						currentUserId != null &&
-						coordinatorId != null &&
-						Number(coordinatorId) === Number(currentUserId);
-					const canNotify =
-						!isOwn &&
+					const showNotify =
+						canNotify &&
 						status !== TYPE_CODES.IFC_STATUS.APPROVED &&
 						status !== TYPE_CODES.IFC_STATUS.SUBMITTED;
 
@@ -102,7 +97,7 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 										<ArrowDownTrayIcon className="h-5 w-5" />
 									</button>
 								)}
-								{canNotify && periodId !== null && (
+								{showNotify && periodId !== null && (
 									<button
 										type="button"
 										disabled={notifyingChartId === Number(r.chartId)}
@@ -126,7 +121,7 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 									title={t('ifcs.table.actionRegister')}>
 									<PencilSquareIcon className="h-5 w-5" />
 								</Link>
-								{canNotify && (
+								{showNotify && (
 									<button
 										type="button"
 										disabled={notifyingChartId === Number(r.chartId)}
@@ -144,7 +139,7 @@ export function IFCTable({ rows, periodId, currentUserId, notifyingChartId, onNo
 				},
 			},
 		],
-		[t, lang, periodId, downloadOne, downloadingId, currentUserId, notifyingChartId, onNotify],
+		[t, lang, periodId, canNotify, downloadOne, downloadingId, notifyingChartId, onNotify],
 	);
 
 	return (
