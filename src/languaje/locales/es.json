@@ -1101,6 +1101,7 @@
 			"uploadLogNotFound": "No se encontró la carga indicada.",
 			"rollbackAlreadyDone": "Esta carga ya fue revertida.",
 			"typeCodeNotFound": "El tipo de carga no existe.",
+			"schoolChartNotConfigured": "El organigrama de la escuela no está configurado.",
 			"rollbackBlockedSections": "No se puede revertir: existen secciones que dependen de esta carga.",
 			"rollbackBlockedOutcomes": "No se puede revertir: existen outcomes que dependen de esta carga.",
 			"rollbackBlockedProfessors": "No se puede revertir: existen docentes que dependen de esta carga.",

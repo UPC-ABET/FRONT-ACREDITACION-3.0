@@ -1101,6 +1101,7 @@
 			"uploadLogNotFound": "Upload not found.",
 			"rollbackAlreadyDone": "This upload has already been rolled back.",
 			"typeCodeNotFound": "The upload type does not exist.",
+			"schoolChartNotConfigured": "The school's org chart is not configured.",
 			"rollbackBlockedSections": "Cannot roll back: sections depend on this upload.",
 			"rollbackBlockedOutcomes": "Cannot roll back: outcomes depend on this upload.",
 			"rollbackBlockedProfessors": "Cannot roll back: professors depend on this upload.",
