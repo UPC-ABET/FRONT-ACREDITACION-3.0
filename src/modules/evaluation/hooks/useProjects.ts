@@ -20,8 +20,6 @@ export const projectsQueryKeys = {
 	filtered: (filters: FilterProjectDto) => ['projects', 'filtered', filters] as const,
 	byProfessor: (professorId: string | number, params?: ByProfessorParams) =>
 		['projects', 'by-professor', professorId, params ?? {}] as const,
-	byEvaluator: (professorId: string | number, params?: ByProfessorParams) =>
-		['projects', 'by-evaluator', professorId, params ?? {}] as const,
 	details: (projectId: string | number, params?: DetailsParams) =>
 		['projects', 'details', projectId, params ?? {}] as const,
 };
@@ -41,18 +39,6 @@ export function useProjectsByProfessor(
 	return useQuery({
 		queryKey: projectsQueryKeys.byProfessor(professorId!, params),
 		queryFn: () => projectsService.getByProfessor(professorId!, params).then((r) => r.data),
-		enabled: professorId != null && options?.enabled !== false,
-	});
-}
-
-export function useProjectsByEvaluator(
-	professorId: string | number | undefined,
-	params?: ByProfessorParams,
-	options?: { enabled?: boolean },
-) {
-	return useQuery({
-		queryKey: projectsQueryKeys.byEvaluator(professorId!, params),
-		queryFn: () => projectsService.getByEvaluator(professorId!, params).then((r) => r.data),
 		enabled: professorId != null && options?.enabled !== false,
 	});
 }
@@ -98,12 +84,7 @@ export function useDeleteProject() {
 
 export function useExportProjectGrades() {
 	return useMutation({
-		mutationFn: (params: {
-			academicPeriodId: number;
-			schoolId: number;
-			gradeTypeCode: string;
-			filename: string;
-		}) =>
+		mutationFn: (params: { gradeTypeCode: string; filename: string }) =>
 			projectsService.exportGrades(params).then((blob) => {
 				triggerBrowserDownload(blob, params.filename);
 			}),

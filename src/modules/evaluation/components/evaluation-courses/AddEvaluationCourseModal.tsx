@@ -63,10 +63,7 @@ export function AddEvaluationCourseModal({
 
 	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
 		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId, isActive: true }],
-		queryFn: () =>
-			programsService
-				.getByFilters({ schoolId: schoolId!, academicPeriodId: academicPeriodId!, isActive: true })
-				.then((r) => r.data),
+		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
 		enabled: !!schoolId && !!academicPeriodId && open,
 	});
 

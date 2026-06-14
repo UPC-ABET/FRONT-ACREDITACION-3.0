@@ -23,16 +23,9 @@ export const projectsService = {
 
 	getByEvaluator(
 		evaluatorId: string | number,
-		params?: {
-			academicPeriodId?: number;
-			schoolId?: number;
-			gradeTypeCode?: string;
-		},
+		params?: { gradeTypeCode?: string },
 	): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
 		const qs = new URLSearchParams();
-		if (params?.academicPeriodId != null)
-			qs.set('academicPeriodId', String(params.academicPeriodId));
-		if (params?.schoolId != null) qs.set('schoolId', String(params.schoolId));
 		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
 		const query = qs.toString();
 		return apiGet(`/projects/evaluator/${evaluatorId}${query ? `?${query}` : ''}`);
@@ -133,16 +126,8 @@ export const projectsService = {
 		return apiPost('/project-evaluators/create', body);
 	},
 
-	exportGrades(params: {
-		academicPeriodId: number;
-		schoolId: number;
-		gradeTypeCode: string;
-	}): Promise<Blob> {
-		const qs = new URLSearchParams({
-			academicPeriodId: String(params.academicPeriodId),
-			schoolId: String(params.schoolId),
-			gradeTypeCode: params.gradeTypeCode,
-		});
+	exportGrades(params: { gradeTypeCode: string }): Promise<Blob> {
+		const qs = new URLSearchParams({ gradeTypeCode: params.gradeTypeCode });
 		return apiGetBlobResponse(`/projects/export/grades?${qs.toString()}`).then((r) => r.blob);
 	},
 };

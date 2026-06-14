@@ -50,17 +50,12 @@ export function RubricsListPage() {
 
 	const { data: programs = [] } = useQuery({
 		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId: selectedPeriodId }],
-		queryFn: () =>
-			programsService
-				.getByFilters({ schoolId: schoolId!, academicPeriodId: selectedPeriodId!, isActive: true })
-				.then((r) => r.data),
+		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
 		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
 	const { data: evaluableSpcList = [] } = useStudyPlanCourses(
 		{
-			schoolId: schoolId ?? undefined,
-			academicPeriodId: selectedPeriodId ?? 0,
 			programId: selectedProgram?.value,
 			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
 			extra: { is_evaluable: true },

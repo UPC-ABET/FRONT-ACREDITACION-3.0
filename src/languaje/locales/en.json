@@ -1528,6 +1528,7 @@
 			"exportModal": {
 				"title": "Export grades",
 				"gradeTypeLabel": "Grade type",
+				"filename": "project-grades",
 				"confirm": "Export",
 				"exporting": "Exporting...",
 				"error": "Could not export grades. Please try again."

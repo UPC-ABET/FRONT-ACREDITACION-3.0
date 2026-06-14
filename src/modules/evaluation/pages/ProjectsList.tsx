@@ -25,6 +25,8 @@ import { LoadingState } from '@/shared/components';
 import { Select } from '@/shared/components/ui/Select';
 import { buttonVariants } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
+import { ApiError } from '@/shared/lib';
+import { interpolate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import { programsService } from '@/modules/academic/services';
 import { useStudyPlanCourses } from '@/modules/academic/hooks';
@@ -55,21 +57,12 @@ export function ProjectsListPage() {
 			'filtered',
 			{ schoolId, academicPeriodId: selectedPeriodId, isActive: true },
 		],
-		queryFn: () =>
-			programsService
-				.getByFilters({
-					schoolId: schoolId!,
-					academicPeriodId: selectedPeriodId!,
-					isActive: true,
-				})
-				.then((r) => r.data),
+		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
 		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
 	const { data: evaluableSpcList = [] } = useStudyPlanCourses(
 		{
-			schoolId: schoolId ?? undefined,
-			academicPeriodId: selectedPeriodId ?? 0,
 			programId: selectedProgram?.value,
 			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
 			extra: { is_evaluable: true },
@@ -97,8 +90,6 @@ export function ProjectsListPage() {
 		queryFn: () =>
 			projectsService
 				.getByFilters({
-					schoolId: schoolId!,
-					...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
 					...(selectedProgram ? { programId: selectedProgram.value } : {}),
 					...(selectedCourse ? { courseId: selectedCourse.value } : {}),
 				})
@@ -355,7 +346,6 @@ export function ProjectsListPage() {
 									? (gradeTypeOptions.find((o) => o.value === selectedGradeTypeId) ?? null)
 									: null
 							}
-							isLoading={loadingGradeTypes}
 							onChange={(_, opt) => {
 								const single = Array.isArray(opt) ? opt[0] : opt;
 								if (single) setSelectedGradeTypeId(Number(single.value));
@@ -377,12 +367,14 @@ export function ProjectsListPage() {
 							onClick={() => {
 								if (!selectedPeriodId || !schoolId || !selectedGradeType) return;
 								setExportError(null);
+								const gradeTypeLabel =
+									selectedGradeType.name[locale as 'es' | 'en'] ?? selectedGradeType.name.es;
+								const sanitizedGradeType = gradeTypeLabel.trim().replace(/\s+/g, '-').toLowerCase();
+								const filename = `${t('projects.list.exportModal.filename')}-${sanitizedGradeType}.xlsx`;
 								exportMutation.mutate(
 									{
-										academicPeriodId: selectedPeriodId,
-										schoolId,
 										gradeTypeCode: selectedGradeType.code,
-										filename: `proyectos-notas-${selectedGradeType.name[locale as 'es' | 'en'] ?? selectedGradeType.name.es}.xlsx`,
+										filename,
 									},
 									{
 										onSuccess: () => setExportOpen(false),
@@ -411,12 +403,11 @@ export function ProjectsListPage() {
 						<DialogTitle>{t('projects.list.deleteModal.title')}</DialogTitle>
 					</DialogHeader>
 					<p className="text-sm text-zinc-600">
-						{t('projects.list.deleteModal.body').replace(
-							'{{name}}',
-							confirmTarget
+						{interpolate(t('projects.list.deleteModal.body'), {
+							name: confirmTarget
 								? (confirmTarget.name[locale as 'es' | 'en'] ?? confirmTarget.name.es)
 								: '',
-						)}
+						})}
 					</p>
 					{deleteError && <p className="text-xs text-red-600">{deleteError}</p>}
 					<DialogFooter>
@@ -437,12 +428,13 @@ export function ProjectsListPage() {
 								deleteMutation.mutate(confirmTarget.id, {
 									onSuccess: () => setConfirmTarget(null),
 									onError: (err: unknown) => {
-										const msg = (err as { errors?: string[] })?.errors?.includes(
-											'error.project.hasEvaluations',
-										)
-											? t('projects.list.deleteModal.errorHasEvaluations')
-											: t('projects.list.deleteModal.errorGeneric');
-										setDeleteError(msg);
+										const hasEvaluations =
+											err instanceof ApiError && err.message === 'error.project.hasEvaluations';
+										setDeleteError(
+											hasEvaluations
+												? t('projects.list.deleteModal.errorHasEvaluations')
+												: t('projects.list.deleteModal.errorGeneric'),
+										);
 									},
 								});
 							}}>

@@ -1528,6 +1528,7 @@
 			"exportModal": {
 				"title": "Exportar notas",
 				"gradeTypeLabel": "Tipo de nota",
+				"filename": "proyectos-notas",
 				"confirm": "Exportar",
 				"exporting": "Exportando...",
 				"error": "No fue posible exportar las notas. Intenta de nuevo."

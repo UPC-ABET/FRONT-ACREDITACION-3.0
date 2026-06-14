@@ -47,7 +47,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 		if (!data?.evaluators?.length || !professorId) return false;
 		const match = data.evaluators.find((e) => e.professorId === professorId);
 		if (!match) return false;
-		return match.evaluatorTypeCode === 'DOC';
+		return match.evaluatorTypeCode === TYPE_CODES.EVALUATOR_TYPE_CODE.TEACHER;
 	}, [data?.evaluators, professorId]);
 
 	const initialQualifStatuses = useMemo<Record<number, number | null>>(() => {
