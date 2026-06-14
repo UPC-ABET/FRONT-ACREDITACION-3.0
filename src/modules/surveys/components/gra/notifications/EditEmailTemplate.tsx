@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Input, TextArea, Button, Badge, Toast, LoadingState } from '@/shared/components';
+import { Input, TextArea, Button, Toast, LoadingState } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import { useGRAEmail } from '../../../hooks';
 
 const EMAIL_PARAMS = [
@@ -16,7 +17,7 @@ const EMAIL_PARAMS = [
 ];
 
 interface EditEmailTemplateProps {
-	surveyId: number;
+	readonly surveyId: number;
 }
 
 export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
@@ -57,7 +58,11 @@ export function EditEmailTemplate({ surveyId }: EditEmailTemplateProps) {
 				<p className="text-xs text-zinc-500 mt-1">{t('surveys.gra.emailTemplate.description')}</p>
 			</div>
 
-			{error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+			{error && (
+				<p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">
+					{tryTranslate(t, error)}
+				</p>
+			)}
 
 			<Input
 				label={t('surveys.gra.emailTemplate.subjectLabel')}

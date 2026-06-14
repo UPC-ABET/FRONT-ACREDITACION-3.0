@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Button, TextArea, Toast } from '@/shared/components';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import type { SurveyCommissionGroup, SurveyTokenVerification } from '../../types';
 
 interface SurveyFormProps {
@@ -138,7 +139,7 @@ export function SurveyForm({
 
 				{error && (
 					<div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
-						{error}
+						{tryTranslate(t, error)}
 					</div>
 				)}
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { getSchoolCookie } from '@/shared/lib';
+import { useI18n } from '@/providers';
 import type {
 	AcademicPeriod,
 	DashboardResponse,
@@ -18,8 +18,6 @@ import {
 	changeLCFCConfigStatus,
 	getLCFCEmailParams,
 	sendLCFCNotification,
-	downloadLCFCTemplate,
-	uploadLCFCMassive,
 	generateLCFCPerceptionReport,
 } from '../services';
 
@@ -118,6 +116,7 @@ export function useLCFCConfiguration() {
 }
 
 export function useLCFCNotification() {
+	const { locale } = useI18n();
 	const [params, setParams] = useState<LCFCEmailParam[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [sending, setSending] = useState(false);
@@ -134,52 +133,23 @@ export function useLCFCNotification() {
 		}
 	}, []);
 
-	const send = useCallback(async (request: LCFCNotificationSendRequest, onSuccess?: () => void) => {
-		setSending(true);
-		setError(null);
-		try {
-			await sendLCFCNotification(request);
-			onSuccess?.();
-		} catch (e) {
-			setError((e as Error).message);
-		} finally {
-			setSending(false);
-		}
-	}, []);
+	const send = useCallback(
+		async (request: LCFCNotificationSendRequest, onSuccess?: () => void) => {
+			setSending(true);
+			setError(null);
+			try {
+				await sendLCFCNotification(request, locale);
+				onSuccess?.();
+			} catch (e) {
+				setError((e as Error).message);
+			} finally {
+				setSending(false);
+			}
+		},
+		[locale],
+	);
 
 	return { params, loading, sending, error, loadParams, send };
-}
-
-export function useLCFCUpload() {
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [success, setSuccess] = useState(false);
-
-	const downloadTemplate = useCallback(async (periodId: number) => {
-		setError(null);
-		try {
-			await downloadLCFCTemplate(periodId);
-		} catch (e) {
-			setError((e as Error).message);
-		}
-	}, []);
-
-	const upload = useCallback(async (file: File) => {
-		setLoading(true);
-		setError(null);
-		setSuccess(false);
-		try {
-			const school = getSchoolCookie();
-			await uploadLCFCMassive(file, school ?? undefined);
-			setSuccess(true);
-		} catch (e) {
-			setError((e as Error).message);
-		} finally {
-			setLoading(false);
-		}
-	}, []);
-
-	return { loading, error, success, downloadTemplate, upload };
 }
 
 export function useLCFCReports() {

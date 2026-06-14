@@ -4,12 +4,13 @@ import React, { useState } from 'react';
 import { Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { FileUploadPanel } from '../shared/FileUploadPanel';
+import { UploadResultSummary } from '../shared/UploadResultSummary';
 import { usePPPUpload } from '../../hooks';
 
 export function PPPMassiveUpload() {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
-	const { loading, error, success, upload } = usePPPUpload();
+	const { loading, error, success, result, upload } = usePPPUpload();
 
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
@@ -29,9 +30,7 @@ export function PPPMassiveUpload() {
 	}
 
 	if (!academicPeriodId) {
-		return (
-			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
-		);
+		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
 
 	return (
@@ -50,6 +49,8 @@ export function PPPMassiveUpload() {
 				onDownloadTemplate={handleDownloadTemplate}
 				downloadLabel={t('surveys.ppp.upload.downloadLabel')}
 			/>
+
+			{result && <UploadResultSummary result={result} />}
 
 			<Toast
 				isOpen={toast.open}

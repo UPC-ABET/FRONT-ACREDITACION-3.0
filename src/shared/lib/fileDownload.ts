@@ -17,6 +17,12 @@ export function triggerBlobDownload(blob: Blob, fileName: string): void {
 	URL.revokeObjectURL(url);
 }
 
+export function resolveDownloadFileName(response: Response, fallback: string): string {
+	const disposition = response.headers.get('content-disposition') ?? '';
+	const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition);
+	return match ? decodeURIComponent(match[1]) : fallback;
+}
+
 export async function fileToBase64(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();

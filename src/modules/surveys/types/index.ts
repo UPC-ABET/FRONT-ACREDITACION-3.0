@@ -93,10 +93,19 @@ export interface StudentSearchResult {
 
 export interface EmailTemplate {
 	surveyId?: number;
+	code?: string;
+	name?: string;
 	subject: string;
 	body: string;
 	htmlContent?: string;
 	templateLanguage?: string;
+}
+
+export interface MassiveUploadResult {
+	total: number;
+	success: number;
+	failed: number;
+	errors: Array<{ row?: number; code?: string; reason: string }>;
 }
 
 export interface SendEmailResponse {
@@ -163,6 +172,7 @@ export interface LCFCConfigItem {
 
 export interface SurveyOutcome {
 	outcomeId: number;
+	outcomeConfigId?: number;
 	commissionId: number;
 	generalCompetence?: string;
 	specificCompetence: string;

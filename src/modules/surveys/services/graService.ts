@@ -1,10 +1,13 @@
 import {
+	apiGet,
 	apiPost,
+	apiPut,
 	apiDelete,
-	apiPostBlob,
+	apiGetBlobResponse,
+	getApiData,
 	triggerBlobDownload,
+	resolveDownloadFileName,
 	fileToBase64,
-	ApiError,
 } from '@/shared/lib';
 import { getSurveyTypeId } from './academicService';
 import { performanceLevelsService } from '@/modules/academic/services/performanceLevelsService';
@@ -17,9 +20,9 @@ import type {
 	EmailTemplate,
 	GRAEmailSendRequest,
 	SendEmailResponse,
-	SurveyApiResponse,
 	DashboardResponse,
 	PerformanceLevel,
+	MassiveUploadResult,
 } from '../types';
 
 interface BackendGraConfig {
@@ -48,37 +51,42 @@ interface BackendGraStudent {
 	programId?: number;
 	campusId?: number;
 	status: string;
+	sendDate?: string;
+	responseStatus?: string;
+	responseDate?: string;
 	maxRegisterDate?: string;
 	surveyId?: number;
 }
 
-interface BackendStudentSearchRequest {
-	codigoEstudiante: string;
-	idCarrera: number;
-}
-
-interface BackendStudentSearchResponse {
-	idEstudiante: number;
-	codigo: string;
-	nombre: string;
-	email: string;
-	carrera: string;
-	ciclo?: string;
+interface BackendStudent {
+	id: number;
+	code?: string;
+	studentCode?: string;
+	name?: string | { es?: string; en?: string };
+	fullName?: string;
+	email?: string;
+	programName?: string;
+	programId?: number;
 }
 
 interface BackendEmailTemplate {
-	asunto: string;
-	cuerpo: string;
+	code?: string;
+	name?: string | { es?: string; en?: string };
+	subject?: string | { es?: string; en?: string };
+	body?: string | { es?: string; en?: string };
 }
 
-interface BackendGetEmailTemplateRequest {
-	idEncuesta: number;
+interface BackendUploadResult {
+	total?: number;
+	success?: number;
+	failed?: number;
+	errors?: Array<{ row?: number; code?: string; reason?: string; message?: string }>;
 }
 
-interface BackendSaveEmailTemplateRequest {
-	idEncuesta: number | undefined;
-	asunto: string;
-	cuerpo: string;
+function localized(value: string | { es?: string; en?: string } | undefined, lang = 'es'): string {
+	if (value == null) return '';
+	if (typeof value === 'string') return value;
+	return value[lang as 'es' | 'en'] ?? value.es ?? value.en ?? '';
 }
 
 function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
@@ -104,7 +112,9 @@ function adaptGraStudent(raw: BackendGraStudent): GRAStudent {
 		studentName: raw.studentName,
 		studentEmail: raw.studentEmail ?? '',
 		sendStatus: raw.status,
-		sendDate: undefined,
+		sendDate: raw.sendDate,
+		responseStatus: raw.responseStatus,
+		responseDate: raw.responseDate,
 	};
 }
 
@@ -122,44 +132,49 @@ function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): Pe
 	};
 }
 
+function adaptUploadResult(raw: BackendUploadResult): MassiveUploadResult {
+	return {
+		total: raw.total ?? 0,
+		success: raw.success ?? 0,
+		failed: raw.failed ?? 0,
+		errors: (raw.errors ?? []).map((e) => ({
+			row: e.row,
+			code: e.code,
+			reason: e.reason ?? e.message ?? '',
+		})),
+	};
+}
+
 export async function listGRACompetences(
 	academicPeriodId: number,
 	programId = 0,
 ): Promise<CompetenceConfig[]> {
-	const res = await apiPost<BackendGraConfig[] | { data?: BackendGraConfig[] }>(
-		'gra/config/get-by-filters',
-		{ programId: programId || undefined, academicPeriodId, isActive: true },
-	);
-	const obj = res as { data?: BackendGraConfig[] };
-	const list = Array.isArray(res) ? res : (obj.data ?? []);
+	const res = await apiPost('gra/config/get-by-filters', {
+		programId: programId || undefined,
+		academicPeriodId,
+		isActive: true,
+	});
+	const list = getApiData<BackendGraConfig[]>(res) ?? [];
 	return list.map((c) => adaptGraConfig(c));
 }
 
 export async function saveGRACompetence(data: CompetenceFormData) {
-	const isNew = !data.id || data.id === 0;
-
-	if (isNew) {
-		return apiPost('gra/config/create', {
-			outcomeId: data.outcomeId ?? 1,
-			nameEs: data.generalCompetence,
-			nameEn: data.specificCompetence || data.generalCompetence,
-			descriptionEs: data.description,
-			descriptionEn: data.description,
-			order: data.performanceLevel,
-			programId: data.programId ?? 0,
-			academicPeriodId: data.academicPeriodId,
-			isVisible: true,
-		});
-	}
-
-	return apiPost(`gra/config/update/${data.id}`, {
+	const payload = {
+		outcomeId: data.outcomeId ?? 1,
 		nameEs: data.generalCompetence,
 		nameEn: data.specificCompetence || data.generalCompetence,
 		descriptionEs: data.description,
 		descriptionEn: data.description,
 		order: data.performanceLevel,
+		programId: data.programId ?? 0,
+		academicPeriodId: data.academicPeriodId,
 		isVisible: true,
-	});
+	};
+
+	if (!data.id || data.id === 0) {
+		return apiPost('gra/config/create', payload);
+	}
+	return apiPut(`gra/config/update/${data.id}`, { ...payload, isActive: true });
 }
 
 export async function deleteGRACompetence(id: number) {
@@ -180,13 +195,16 @@ export async function cloneGRAConfiguration(params: {
 }
 
 export async function listGRAOutcomes(params: { programId: number; academicPeriodId: number }) {
-	return apiPost<
-		Array<{
-			commissionId: number;
-			commissionName: string;
-			outcomes: Array<{ outcomeId: number; outcomeCode: string; outcomeName: string }>;
-		}>
-	>('gra/outcomes/list', params);
+	const res = await apiPost('gra/outcomes/list', params);
+	return (
+		getApiData<
+			Array<{
+				commissionId: number;
+				commissionName: string;
+				outcomes: Array<{ outcomeId: number; outcomeCode: string; outcomeName: string }>;
+			}>
+		>(res) ?? []
+	);
 }
 
 export async function listGRAPerformanceLevels(
@@ -205,23 +223,21 @@ export async function listGRAPerformanceLevels(
 export async function searchStudentByCode(
 	studentCode: string,
 	programId: number,
-): Promise<StudentSearchResult> {
-	const payload: BackendStudentSearchRequest = {
-		codigoEstudiante: studentCode,
-		idCarrera: programId,
-	};
-	const res = await apiPost<SurveyApiResponse<BackendStudentSearchResponse>>(
-		'email/findStudentCode-career-GRA',
-		payload,
-	);
-	const raw = res.data?.resource;
+): Promise<StudentSearchResult | null> {
+	const res = await apiPost('students/get-by-filters', {
+		extra: { code: studentCode },
+		programId: programId || undefined,
+		isActive: true,
+	});
+	const list = getApiData<BackendStudent[]>(res) ?? [];
+	const match = list.find((s) => (s.code ?? s.studentCode) === studentCode) ?? list[0] ?? null;
+	if (!match) return null;
 	return {
-		studentId: raw?.idEstudiante ?? 0,
-		code: raw?.codigo ?? '',
-		name: raw?.nombre ?? '',
-		email: raw?.email ?? '',
-		career: raw?.carrera ?? '',
-		cycle: raw?.ciclo,
+		studentId: match.id,
+		code: match.code ?? match.studentCode ?? studentCode,
+		name: match.fullName ?? localized(match.name),
+		email: match.email ?? '',
+		career: match.programName ?? '',
 	};
 }
 
@@ -252,63 +268,64 @@ export async function listGRAStudents(params: {
 	campusId?: number;
 	studentCode?: string;
 }): Promise<{ students: GRAStudent[] }> {
-	const res = await apiPost<BackendGraStudent[] | { data?: BackendGraStudent[] }>(
-		'gra/notification/list-students',
-		params,
-	);
-	const obj = res as { data?: BackendGraStudent[] };
-	const list = Array.isArray(res) ? res : (obj.data ?? []);
+	const res = await apiPost('gra/notification/list-students', params);
+	const list = getApiData<BackendGraStudent[]>(res) ?? [];
 	return { students: list.map((s) => adaptGraStudent(s)) };
 }
 
-interface BackendSendEmailResponse {
-	success: boolean;
-	enviados?: number;
-	fallidos?: number;
+export async function sendGRAEmail(
+	request: GRAEmailSendRequest,
+	lang = 'es',
+): Promise<SendEmailResponse> {
+	const res = await apiPost('gra/email/send', { ...request, lang });
+	const data = getApiData<{ sent?: number; failed?: number }>(res);
+	return { success: true, data: { sent: data?.sent ?? 0, failed: data?.failed ?? 0 } };
 }
 
-export async function sendGRAEmail(request: GRAEmailSendRequest): Promise<SendEmailResponse> {
-	const res = await apiPost<BackendSendEmailResponse>('gra/email/send', request);
+export async function getGRAEmailTemplate(lang = 'es'): Promise<EmailTemplate> {
+	const res = await apiGet('gra/email/template');
+	const raw = getApiData<BackendEmailTemplate>(res) ?? {};
 	return {
-		success: res.success,
-		data: { sent: res.enviados ?? 0, failed: res.fallidos ?? 0 },
+		code: raw.code,
+		name: localized(raw.name, lang),
+		subject: localized(raw.subject, lang),
+		body: localized(raw.body, lang),
 	};
 }
 
-export async function getGRAEmailTemplate(surveyId: number): Promise<EmailTemplate> {
-	const req: BackendGetEmailTemplateRequest = { idEncuesta: surveyId };
-	const res = await apiPost<SurveyApiResponse<BackendEmailTemplate>>(
-		'email/getConfigurationNotification-GRA',
-		req,
-	);
-	const raw = res.data?.resource ?? { asunto: '', cuerpo: '' };
-	return { subject: raw.asunto, body: raw.cuerpo };
-}
-
-export async function saveGRAEmailTemplate(template: {
-	surveyId?: number;
-	subject: string;
-	body: string;
-}) {
-	const req: BackendSaveEmailTemplateRequest = {
-		idEncuesta: template.surveyId,
-		asunto: template.subject,
-		cuerpo: template.body,
-	};
-	return apiPost('email/saveConfirmationNotif-GRA', req);
-}
-
-export async function downloadGRATemplate(_periodId: number): Promise<void> {
-	throw new ApiError('GRA template download is not available in this backend version.');
-}
-
-export async function uploadGRAMassive(file: File, _school?: unknown): Promise<void> {
-	const fileBase64 = await fileToBase64(file);
-	const blob = await apiPostBlob('excel/uploadNotificationEncuesta-GRA', {
-		archivoBase64: fileBase64,
-		nombreArchivo: file.name,
+export async function saveGRAEmailTemplate(template: { subject: string; body: string }) {
+	return apiPut('gra/email/template', {
+		subjectEs: template.subject,
+		subjectEn: template.subject,
+		bodyEs: template.body,
+		bodyEn: template.body,
 	});
-	triggerBlobDownload(blob, `GRA_Upload_Report_${Date.now()}.xlsx`);
+}
+
+export async function downloadGRATemplate(): Promise<void> {
+	const { blob, response } = await apiGetBlobResponse('gra/notification/template');
+	triggerBlobDownload(blob, resolveDownloadFileName(response, 'GRA_Notification_Template.xlsx'));
+}
+
+export async function uploadGRAMassive(
+	file: File,
+	params: {
+		programId: number;
+		academicPeriodId: number;
+		campusId?: number;
+		maxRegisterDate?: string;
+	},
+): Promise<MassiveUploadResult> {
+	const fileBase64 = await fileToBase64(file);
+	const res = await apiPost('gra/notification/upload-excel', {
+		fileBase64,
+		programId: params.programId,
+		academicPeriodId: params.academicPeriodId,
+		campusId: params.campusId ?? 0,
+		maxRegisterDate:
+			params.maxRegisterDate ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+	});
+	return adaptUploadResult(getApiData<BackendUploadResult>(res) ?? {});
 }
 
 export async function generateGRADashboard(params: {
@@ -316,7 +333,8 @@ export async function generateGRADashboard(params: {
 	programId?: number;
 	campusId?: number;
 }): Promise<DashboardResponse> {
-	return apiPost<DashboardResponse>('gra/dashboard', params);
+	const res = await apiPost('gra/dashboard', params);
+	return getApiData<DashboardResponse>(res);
 }
 
 export async function generateGRAPerceptionReport(params: {
@@ -328,9 +346,4 @@ export async function generateGRAPerceptionReport(params: {
 		academicPeriodId: params.academicPeriodId,
 		programId: params.programId,
 	});
-}
-
-// Backend requires POST for token validation (GET is not exposed on this route).
-export async function validateGRAToken(token: string) {
-	return apiPost(`gra/token/validate/${encodeURIComponent(token)}`, {});
 }

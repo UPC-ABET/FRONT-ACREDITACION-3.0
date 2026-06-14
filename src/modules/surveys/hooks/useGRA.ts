@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { getSchoolCookie } from '@/shared/lib';
+import { useI18n } from '@/providers';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
@@ -11,6 +11,7 @@ import type {
 	StudentSearchResult,
 	EmailTemplate,
 	GRAEmailSendRequest,
+	MassiveUploadResult,
 } from '../types';
 import {
 	getAcademicPeriods,
@@ -167,7 +168,12 @@ export function useGRAStudentSearch() {
 		setError(null);
 		setResult(null);
 		try {
-			setResult(await searchStudentByCode(code, programId));
+			const found = await searchStudentByCode(code, programId);
+			if (found) {
+				setResult(found);
+			} else {
+				setError('surveys.gra.notifications.studentNotFound');
+			}
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -200,7 +206,8 @@ export function useGRAStudentSearch() {
 	return { result, loading, error, search, add, reset: () => setResult(null) };
 }
 
-export function useGRAEmail(surveyId: number) {
+export function useGRAEmail(_surveyId?: number) {
+	const { locale } = useI18n();
 	const [template, setTemplate] = useState<EmailTemplate>({ subject: '', body: '' });
 	const [loading, setLoading] = useState(false);
 	const [saving, setSaving] = useState(false);
@@ -211,65 +218,74 @@ export function useGRAEmail(surveyId: number) {
 		setLoading(true);
 		setError(null);
 		try {
-			setTemplate(await getGRAEmailTemplate(surveyId));
+			setTemplate(await getGRAEmailTemplate(locale));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
 			setLoading(false);
 		}
-	}, [surveyId]);
+	}, [locale]);
 
-	const save = useCallback(
-		async (tmpl: EmailTemplate, onSuccess?: () => void) => {
-			setSaving(true);
-			try {
-				await saveGRAEmailTemplate({ ...tmpl, surveyId });
-				onSuccess?.();
-			} catch (e) {
-				setError((e as Error).message);
-			} finally {
-				setSaving(false);
-			}
-		},
-		[surveyId],
-	);
-
-	const send = useCallback(async (req: GRAEmailSendRequest, onSuccess?: () => void) => {
-		setSending(true);
+	const save = useCallback(async (tmpl: EmailTemplate, onSuccess?: () => void) => {
+		setSaving(true);
 		try {
-			await sendGRAEmail(req);
+			await saveGRAEmailTemplate({ subject: tmpl.subject, body: tmpl.body });
 			onSuccess?.();
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
-			setSending(false);
+			setSaving(false);
 		}
 	}, []);
 
+	const send = useCallback(
+		async (req: GRAEmailSendRequest, onSuccess?: () => void) => {
+			setSending(true);
+			try {
+				await sendGRAEmail(req, locale);
+				onSuccess?.();
+			} catch (e) {
+				setError((e as Error).message);
+			} finally {
+				setSending(false);
+			}
+		},
+		[locale],
+	);
+
 	return { template, setTemplate, loading, saving, sending, error, load, save, send };
+}
+
+interface GRAUploadParams {
+	programId: number;
+	academicPeriodId: number;
+	campusId?: number;
+	maxRegisterDate?: string;
 }
 
 export function useGRAUpload() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
+	const [result, setResult] = useState<MassiveUploadResult | null>(null);
 
-	const downloadTemplate = useCallback(async (periodId: number) => {
+	const downloadTemplate = useCallback(async () => {
 		setError(null);
 		try {
-			await downloadGRATemplate(periodId);
+			await downloadGRATemplate();
 		} catch (e) {
 			setError((e as Error).message);
 		}
 	}, []);
 
-	const upload = useCallback(async (file: File) => {
+	const upload = useCallback(async (file: File, params: GRAUploadParams) => {
 		setLoading(true);
 		setError(null);
 		setSuccess(false);
+		setResult(null);
 		try {
-			const school = getSchoolCookie();
-			await uploadGRAMassive(file, school ?? undefined);
+			const uploadResult = await uploadGRAMassive(file, params);
+			setResult(uploadResult);
 			setSuccess(true);
 		} catch (e) {
 			setError((e as Error).message);
@@ -278,7 +294,18 @@ export function useGRAUpload() {
 		}
 	}, []);
 
-	return { loading, error, success, downloadTemplate, upload, reset: () => setSuccess(false) };
+	return {
+		loading,
+		error,
+		success,
+		result,
+		downloadTemplate,
+		upload,
+		reset: () => {
+			setSuccess(false);
+			setResult(null);
+		},
+	};
 }
 
 export function useGRAReports() {
