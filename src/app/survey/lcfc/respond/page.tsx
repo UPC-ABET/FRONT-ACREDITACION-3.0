@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useSurvey } from '@/modules/surveys/hooks';
 import { SurveyForm, SurveyAlreadyAnswered, SurveySuccess } from '@/modules/surveys/components';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 
 export default function LCFCSurveyRespondPage() {
 	const { t } = useI18n();
@@ -62,7 +63,7 @@ export default function LCFCSurveyRespondPage() {
 					<h2 className="text-lg font-bold text-zinc-900">
 						{t('surveys.student.accessError.title')}
 					</h2>
-					<p className="text-sm text-zinc-500">{error}</p>
+					<p className="text-sm text-zinc-500">{tryTranslate(t, error)}</p>
 				</div>
 			</div>
 		);
