@@ -17,7 +17,7 @@ export const Title = ({ title, icon = null, className = '' }: TitleProps) => {
 	return (
 		<div className={`flex items-center ${className}`}>
 			{icon}
-			<h2 className="text-2xl font-semibold text-gray-900 py-3">{title}</h2>
+			<h2 className="text-2xl font-semibold text-gray-900">{title}</h2>
 		</div>
 	);
 };
@@ -26,7 +26,7 @@ export const SubTitle = ({ name, icon = null, className = '' }: SubTitleProps) =
 	return (
 		<div className={`flex items-center ${className}`}>
 			{icon}
-			<h3 className="text-xl font-semibold text-gray-900">{name}</h3>
+			<h3 className="text-xl font-semibold text-gray-500">{name}</h3>
 		</div>
 	);
 };

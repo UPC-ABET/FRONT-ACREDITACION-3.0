@@ -746,6 +746,9 @@
 		}
 	},
 	"welcome": "Welcome to the ABET.",
+	"home": {
+		"subtitle": "UPC accreditation system"
+	},
 	"navbar": {
 		"user": {
 			"name": "Administrator",

@@ -73,7 +73,7 @@ function Sidebar({
 							: 'w-64 -translate-x-full'
 						: open
 							? 'w-64'
-							: 'w-[68px]',
+							: 'w-20',
 					className,
 				].join(' ')}
 				style={{

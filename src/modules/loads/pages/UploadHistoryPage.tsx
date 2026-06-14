@@ -41,7 +41,7 @@ export default function UploadHistoryPage() {
 	};
 
 	return (
-		<div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6">
+		<div className="w-full space-y-6">
 			<header className="space-y-1">
 				<h1 className="text-2xl font-semibold text-gray-900">{t('uploadHistory.title')}</h1>
 				<p className="text-sm text-gray-500">{t('uploadHistory.subtitle')}</p>

@@ -44,7 +44,7 @@ export default function LoadsPage() {
 	const canUpload = selectedType && academicPeriodId !== null;
 
 	return (
-		<div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6">
+		<div className="w-full space-y-6">
 			<header className="space-y-1">
 				<h1 className="text-2xl font-semibold text-gray-900">{t('loads.page.title')}</h1>
 				<p className="text-sm text-gray-500">{t('loads.page.subtitle')}</p>
@@ -70,7 +70,7 @@ export default function LoadsPage() {
 					{effectiveTab === 'maintenance' ? (
 						<UploadMaintenance typeCode={selectedType.code} />
 					) : (
-						<div className="mx-auto max-w-3xl">
+						<div className="w-full">
 							{canUpload ? (
 								<UploadPanel
 									key={selectedType.code}

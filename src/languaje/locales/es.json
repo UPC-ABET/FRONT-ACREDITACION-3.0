@@ -746,6 +746,9 @@
 		}
 	},
 	"welcome": "Bienvenido a ABET.",
+	"home": {
+		"subtitle": "Sistema de acreditaci\u00f3n UPC"
+	},
 	"navbar": {
 		"user": {
 			"name": "Administrador",

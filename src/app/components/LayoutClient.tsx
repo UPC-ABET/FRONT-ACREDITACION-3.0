@@ -33,8 +33,8 @@ export default function LayoutClient({ children }: LayoutClientProps) {
 								<Navbar />
 							</div>
 
-							<main className="flex-1 p-8 overflow-y-auto bg-white">
-								<div className="max-w-7xl mx-auto">{children}</div>
+							<main className="flex-1 overflow-y-auto bg-white px-4 py-6 lg:px-6">
+								<div className="w-full">{children}</div>
 							</main>
 						</div>
 					</div>
