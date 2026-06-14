@@ -42,14 +42,10 @@ export async function listLCFCCourses(
 	_school: string,
 	academicPeriodId: number,
 	programId?: number,
-	page = 0,
-	pageSize = -1,
 ): Promise<{ courses: LCFCCourse[]; pageInfo?: PageInfo }> {
 	const res = await apiPost('lcfc/config/get-by-filters', {
 		academicPeriodId,
 		programId: programId || undefined,
-		pageNumber: page,
-		pageSize,
 	});
 	const data = getApiData<BackendLcfcConfig[] | BackendLcfcConfigPage>(res);
 	if (Array.isArray(data)) {
