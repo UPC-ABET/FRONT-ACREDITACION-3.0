@@ -77,9 +77,9 @@ export function AppSidebar() {
 			name: t('nav.surveys.label'),
 			icon: ClipboardDocumentListIcon,
 			children: [
-				{ name: t('nav.surveys.ppp'), href: '/survey/ppp' },
-				{ name: t('nav.surveys.gra'), href: '/survey/gra' },
-				{ name: t('nav.surveys.lcfc'), href: '/survey/lcfc' },
+				{ name: t('nav.surveys.ppp'), href: '/surveys/ppp' },
+				{ name: t('nav.surveys.gra'), href: '/surveys/gra' },
+				{ name: t('nav.surveys.lcfc'), href: '/surveys/lcfc' },
 			],
 		},
 
