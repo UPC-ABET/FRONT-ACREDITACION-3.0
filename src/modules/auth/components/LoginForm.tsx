@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
 import type { LoginPayload } from '@/modules/auth/types';
@@ -29,6 +29,12 @@ export default function LoginForm() {
 	const router = useRouter();
 	const { t } = useI18n();
 	const { refreshUser } = useAuth();
+
+	useEffect(() => {
+		if (!initialMicrosoftErrorKey) return;
+		window.history.replaceState(null, '', '/auth/login');
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount; the error code is already captured in state
+	}, []);
 
 	const handleSubmit = async (e?: React.FormEvent) => {
 		e?.preventDefault();
