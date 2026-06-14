@@ -50,7 +50,8 @@ export function RubricsListPage() {
 
 	const { data: programs = [] } = useQuery({
 		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId: selectedPeriodId }],
-		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
+		queryFn: () =>
+			programsService.getByFilters({ isActive: true, schoolFilter: true }).then((r) => r.data),
 		enabled: !!selectedPeriodId && !!schoolId,
 	});
 

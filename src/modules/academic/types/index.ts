@@ -28,6 +28,7 @@ export type FilterCourseRequest = Partial<{
 export type FilterProgramRequest = Partial<{
 	extra: Record<string, unknown>;
 	isActive: boolean;
+	schoolFilter: boolean;
 	modalityTypeId: number;
 	code: string;
 	name: { es?: string; en?: string };

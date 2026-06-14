@@ -58,7 +58,8 @@ export function EvaluationCoursesPage() {
 			'filtered',
 			{ schoolId, academicPeriodId: selectedPeriodId, isActive: true },
 		],
-		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
+		queryFn: () =>
+			programsService.getByFilters({ isActive: true, schoolFilter: true }).then((r) => r.data),
 		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
