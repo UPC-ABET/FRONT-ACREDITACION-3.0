@@ -1779,6 +1779,7 @@
 				"uploadTitle": "Carga masiva de estudiantes GRA",
 				"uploadDesc": "Sube un archivo Excel con los datos de los estudiantes a notificar.",
 				"addStudentTitle": "Agregar Estudiante Individual",
+				"studentNotFound": "El estudiante no se encontró para el código ingresado.",
 				"studentCodePlaceholder": "Código del estudiante (ej: 2020001)",
 				"searchStudent": "Buscar estudiante",
 				"studentName": "Nombre",
@@ -1858,6 +1859,13 @@
 			"noConfigurationHint": "No existe configuración para el ciclo seleccionado. Puedes crear una nueva o clonar desde otro ciclo.",
 			"cloneConfiguration": "Clonar configuración",
 			"cloneToastHint": "Función de clonado: selecciona un ciclo de origen en el modal.",
+			"upload": {
+				"resultTitle": "Resultado de la carga",
+				"total": "Total",
+				"success": "Exitosos",
+				"failed": "Fallidos",
+				"rowError": "Fila {{row}}: {{reason}}"
+			},
 			"fileUpload": {
 				"invalidFormat": "Formato inválido. Use: {{accept}}",
 				"fileTooLarge": "Archivo muy grande. Máximo {{mb}}MB.",
@@ -3139,6 +3147,15 @@
 	},
 	"error": {
 		"generic": "Ocurrió un error inesperado.",
+		"unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
+		"survey": {
+			"gra": {
+				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado."
+			},
+			"lcfc": {
+				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado."
+			}
+		},
 		"s3": {
 			"unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
 			"invalidKey": "Clave de archivo inválida.",
