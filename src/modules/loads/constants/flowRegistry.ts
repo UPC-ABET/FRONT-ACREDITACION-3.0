@@ -11,6 +11,7 @@ const flowsList: UploadFlow[] = [
 	{ typeCode: 'TG1101-T008', slug: 'grades-rc' },
 	{ typeCode: 'TG1101-T009', slug: 'articulation' },
 	{ typeCode: 'TG1101-T010', slug: 'student-sections' },
+	{ typeCode: 'TG1101-T011', slug: 'projects' },
 ].map(({ typeCode, slug }) => ({
 	typeCode,
 	slug,
