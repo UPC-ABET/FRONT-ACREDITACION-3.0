@@ -1957,7 +1957,11 @@
 				"uploadButton": "Upload File"
 			},
 			"programLabel": "Program",
-			"selectProgram": "Select a program"
+			"selectProgram": "Select a program",
+			"generateConfig": "Generate configuration",
+			"generateConfigHint": "Generate the configuration from the selected program's outcomes.",
+			"configGenerated": "Configuration generated: {{created}} of {{total}} outcomes.",
+			"noOutcomesForProgram": "The selected program has no outcomes for this period. Register them first in Outcomes Maintenance."
 		},
 		"student": {
 			"loading": "Loading survey...",

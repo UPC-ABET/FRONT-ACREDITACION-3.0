@@ -118,6 +118,74 @@ export async function listPPPCompetences(
 	return list.map((c) => adaptPppConfig(c));
 }
 
+type I18nOrString = string | { es?: string; en?: string } | null | undefined;
+
+export interface ProgramOutcome {
+	outcomeId: number;
+	outcomeCode: string;
+	outcomeName: I18nOrString;
+	outcomeDescription?: I18nOrString;
+}
+
+// The outcomes endpoint returns the raw jsonb name/description ({ es, en }); fall
+// back to a plain string in case a caller already flattened it.
+function pickEs(value: I18nOrString): string {
+	if (typeof value === 'string') return value;
+	if (value && typeof value === 'object') return value.es ?? value.en ?? '';
+	return '';
+}
+
+/**
+ * Real outcomes of a program for a period (accreditation.outcomes), grouped by
+ * commission on the backend and flattened here. PPP/GRA/LCFC all measure these
+ * same outcomes, so this list is the source of truth for building survey configs.
+ */
+export async function listProgramOutcomes(
+	programId: number,
+	academicPeriodId: number,
+): Promise<ProgramOutcome[]> {
+	const res = await apiPost('gra/outcomes/list', { programId, academicPeriodId });
+	const groups = getApiData<Array<{ outcomes?: ProgramOutcome[] }>>(res) ?? [];
+	return groups.flatMap((g) => g.outcomes ?? []);
+}
+
+/**
+ * Build the PPP outcome configurations for a program + period from its real
+ * outcomes (one config per outcome). This is what the template/upload require;
+ * it replaces creating competences by hand with a hardcoded outcomeId.
+ * Outcomes that already have a config are skipped (the backend rejects dupes).
+ */
+export async function generatePPPConfigFromOutcomes(
+	programId: number,
+	academicPeriodId: number,
+): Promise<{ created: number; skipped: number; total: number }> {
+	const outcomes = await listProgramOutcomes(programId, academicPeriodId);
+	let created = 0;
+	let skipped = 0;
+	for (let i = 0; i < outcomes.length; i++) {
+		const o = outcomes[i];
+		try {
+			const name = pickEs(o.outcomeName) || o.outcomeCode;
+			await savePPPCompetence({
+				id: 0,
+				outcomeId: o.outcomeId,
+				generalCompetence: name,
+				specificCompetence: name,
+				description: pickEs(o.outcomeDescription),
+				performanceLevel: i + 1,
+				academicPeriodId,
+				programId,
+				school: '1',
+			});
+			created++;
+		} catch {
+			// A config for this outcome+program+period already exists — leave it as is.
+			skipped++;
+		}
+	}
+	return { created, skipped, total: outcomes.length };
+}
+
 export async function savePPPCompetence(data: CompetenceFormData) {
 	const payload = {
 		outcomeId: data.outcomeId ?? 1,

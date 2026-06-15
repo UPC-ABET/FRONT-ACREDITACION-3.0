@@ -15,6 +15,7 @@ import {
 	savePPPCompetence,
 	deletePPPCompetence,
 	clonePPPConfiguration,
+	generatePPPConfigFromOutcomes,
 	listPPPPerformanceLevels,
 	updatePPPPerformanceLevels,
 	downloadPPPTemplate,
@@ -109,7 +110,27 @@ export function usePPPCompetences() {
 		[],
 	);
 
-	return { competences, loading, error, load, save, remove, clone, setError };
+	const generate = useCallback(
+		async (
+			programId: number,
+			academicPeriodId: number,
+			onSuccess?: (result: { created: number; skipped: number; total: number }) => void,
+		) => {
+			setLoading(true);
+			setError(null);
+			try {
+				const result = await generatePPPConfigFromOutcomes(programId, academicPeriodId);
+				onSuccess?.(result);
+			} catch (e) {
+				setError((e as Error).message);
+			} finally {
+				setLoading(false);
+			}
+		},
+		[],
+	);
+
+	return { competences, loading, error, load, save, remove, clone, generate, setError };
 }
 
 export function usePPPPerformanceLevels() {

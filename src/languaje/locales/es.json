@@ -1958,7 +1958,11 @@
 				"uploadButton": "Subir Archivo"
 			},
 			"programLabel": "Programa",
-			"selectProgram": "Selecciona un programa"
+			"selectProgram": "Selecciona un programa",
+			"generateConfig": "Generar configuración",
+			"generateConfigHint": "Genera la configuración a partir de los outcomes del programa seleccionado.",
+			"configGenerated": "Configuración generada: {{created}} de {{total}} outcomes.",
+			"noOutcomesForProgram": "El programa seleccionado no tiene outcomes en este período. Regístralos primero en Mantenimiento de Outcomes."
 		},
 		"student": {
 			"loading": "Cargando encuesta...",
