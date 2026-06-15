@@ -3,6 +3,7 @@ import type {
 	AuthSessionState,
 	BannerSessionStatus,
 	ScrapeRun,
+	ScrapeRunSummary,
 	StartAuthSessionResponse,
 	StartScrapeRequest,
 	StartScrapeResponse,
@@ -13,9 +14,15 @@ export async function getBannerSessionStatus(): Promise<BannerSessionStatus> {
 	return getApiData<BannerSessionStatus>(res);
 }
 
-export async function startBannerScrape(payload: StartScrapeRequest): Promise<StartScrapeResponse> {
+export async function refreshBannerSession(): Promise<BannerSessionStatus> {
+	const res = await apiPost('/banner/session/refresh');
+	return getApiData<BannerSessionStatus>(res);
+}
+
+export async function startBannerScrape(
+	payload: StartScrapeRequest = {},
+): Promise<StartScrapeResponse> {
 	const body: StartScrapeRequest = {
-		periodo: payload.periodo,
 		...(payload.nivel ? { nivel: payload.nivel } : {}),
 		...(payload.departamentos && payload.departamentos.length > 0
 			? { departamentos: payload.departamentos }
@@ -23,6 +30,11 @@ export async function startBannerScrape(payload: StartScrapeRequest): Promise<St
 	};
 	const res = await apiPost('/banner/scrape', body);
 	return getApiData<StartScrapeResponse>(res);
+}
+
+export async function listBannerScrapeRuns(): Promise<ScrapeRunSummary[]> {
+	const res = await apiGet('/banner/scrape');
+	return getApiData<ScrapeRunSummary[]>(res) ?? [];
 }
 
 export async function getBannerScrapeRun(runId: string): Promise<ScrapeRun> {

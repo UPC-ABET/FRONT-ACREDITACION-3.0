@@ -43,35 +43,54 @@
 		"subtitle": "Estado de la sesión de Banner y ejecución de la extracción de datos académicos.",
 		"session": {
 			"title": "Sesión de Banner",
-			"subtitle": "Salud del token usado para conectarse a Banner.",
-			"loading": "Consultando estado de la sesión...",
-			"loadError": "No se pudo obtener el estado de la sesión.",
-			"tokenExp": "Vence",
-			"refresh": "Actualizar",
+			"subtitle": "Estado de la sesión y del token usados para conectarse a Banner.",
+			"loading": "Consultando estado...",
+			"loadError": "No se pudo obtener el estado.",
+			"sessionLabel": "Sesión de Banner",
+			"tokenLabel": "Token de Banner",
+			"alive": "Activa",
+			"dead": "Requiere inicio de sesión",
+			"tokenExp": "Vence:",
+			"noToken": "Sin token activo",
+			"refresh": "Intentar actualizar",
 			"status": {
-				"active": "Activa",
+				"active": "Activo",
 				"expiring": "Por vencer",
-				"expired": "Vencida"
+				"expired": "Vencido"
 			},
 			"hint": {
 				"active": "El token es válido. La extracción puede ejecutarse.",
-				"expiring": "El token está por vencer y se renovará automáticamente.",
-				"expired": "No hay sesión válida. Un operador debe regenerar el archivo de sesión antes de extraer."
+				"expiring": "El token está por vencer; se renovará automáticamente.",
+				"expired": "No hay sesión válida. Intenta actualizar o inicia sesión en Banner."
 			}
 		},
 		"scrape": {
 			"title": "Ejecutar extracción",
-			"subtitle": "Inicia una extracción de Banner para un período académico.",
-			"periodo": "Período",
-			"periodoRequired": "El período es obligatorio.",
-			"nivel": "Nivel",
-			"nivelHelper": "Por defecto UG.",
-			"departamentos": "Departamentos",
-			"departamentosPlaceholder": "Todos los departamentos activos",
-			"departamentosHelper": "Déjalo vacío para extraer todos los departamentos activos.",
-			"submit": "Iniciar extracción",
+			"subtitle": "Se extraerá el período seleccionado en la barra superior.",
+			"start": "Iniciar extracción",
+			"ready": "Listo para extraer el período seleccionado.",
+			"alreadyRunning": "Ya hay una extracción en curso.",
+			"selectPeriod": "Selecciona un período académico en la barra superior para iniciar.",
 			"started": "Extracción iniciada correctamente.",
 			"startFailed": "No se pudo iniciar la extracción."
+		},
+		"history": {
+			"title": "Historial de extracciones",
+			"empty": "Aún no hay extracciones para este período.",
+			"selectPeriod": "Selecciona un período académico en la barra superior para ver el historial.",
+			"error": "No se pudo cargar el historial.",
+			"view": "Ver",
+			"none": "—",
+			"col": {
+				"status": "Estado",
+				"nivel": "Nivel",
+				"departments": "Departamentos",
+				"counts": "Conteos (H/M/A)",
+				"started": "Inicio",
+				"finished": "Fin",
+				"triggeredBy": "Ejecutado por",
+				"actions": "Opciones"
+			}
 		},
 		"run": {
 			"title": "Progreso de la extracción",
@@ -1025,6 +1044,7 @@
 		"banner": {
 			"scrapeInProgress": "Ya hay una extracción en curso. Espera a que termine.",
 			"noDepartments": "No hay departamentos para extraer.",
+			"periodNotFound": "El período académico seleccionado no existe.",
 			"runNotFound": "No se encontró la ejecución solicitada.",
 			"authSessionInProgress": "Ya hay una sesión de login activa.",
 			"authSessionNotFound": "No se encontró la sesión de login.",

@@ -3,19 +3,12 @@
 import { Badge, Card, Spinner } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useBannerScrapeRun, isTerminalScrapeStatus } from '../hooks';
-import type { ScrapeRunStats, ScrapeRunStatus } from '../types';
+import { SCRAPE_STATUS_COLORS } from '../constants';
+import type { ScrapeRunStats } from '../types';
 
 interface ScrapeRunProgressProps {
 	runId: string;
 }
-
-const STATUS_COLORS: Record<ScrapeRunStatus, string> = {
-	running: '#2563eb',
-	completed: '#059669',
-	partial: '#d97706',
-	failed: '#dc2626',
-	expired: '#dc2626',
-};
 
 function CountTile({ label, value }: { label: string; value: number }) {
 	return (
@@ -109,7 +102,7 @@ export function ScrapeRunProgress({ runId }: ScrapeRunProgressProps) {
 			) : (
 				<div className="space-y-5">
 					<div className="flex items-center gap-3">
-						<Badge color={STATUS_COLORS[data.status]}>
+						<Badge color={SCRAPE_STATUS_COLORS[data.status]}>
 							{t(`banner.run.status.${data.status}`)}
 						</Badge>
 						{isRunning && (

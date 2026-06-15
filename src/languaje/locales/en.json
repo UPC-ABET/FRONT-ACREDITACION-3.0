@@ -43,11 +43,16 @@
 		"subtitle": "Banner session health and academic data scraping runs.",
 		"session": {
 			"title": "Banner session",
-			"subtitle": "Health of the token used to connect to Banner.",
-			"loading": "Checking session status...",
-			"loadError": "Could not load the session status.",
-			"tokenExp": "Expires",
-			"refresh": "Refresh",
+			"subtitle": "Status of the session and token used to connect to Banner.",
+			"loading": "Checking status...",
+			"loadError": "Could not load the status.",
+			"sessionLabel": "Banner session",
+			"tokenLabel": "Banner token",
+			"alive": "Active",
+			"dead": "Needs login",
+			"tokenExp": "Expires:",
+			"noToken": "No active token",
+			"refresh": "Try to refresh",
 			"status": {
 				"active": "Active",
 				"expiring": "Expiring",
@@ -55,23 +60,37 @@
 			},
 			"hint": {
 				"active": "The token is valid. Scraping can run.",
-				"expiring": "The token is about to expire and will refresh automatically.",
-				"expired": "No valid session. An operator must regenerate the session file before scraping."
+				"expiring": "The token is about to expire; it will refresh automatically.",
+				"expired": "No valid session. Try to refresh or log in to Banner."
 			}
 		},
 		"scrape": {
-			"title": "Run scraping",
-			"subtitle": "Start a Banner scrape for an academic period.",
-			"periodo": "Period",
-			"periodoRequired": "Period is required.",
-			"nivel": "Level",
-			"nivelHelper": "Defaults to UG.",
-			"departamentos": "Departments",
-			"departamentosPlaceholder": "All active departments",
-			"departamentosHelper": "Leave empty to scrape all active departments.",
-			"submit": "Start scraping",
+			"title": "Run extraction",
+			"subtitle": "The period selected in the top bar will be scraped.",
+			"start": "Start extraction",
+			"ready": "Ready to scrape the selected period.",
+			"alreadyRunning": "A scrape is already running.",
+			"selectPeriod": "Select an academic period in the top bar to start.",
 			"started": "Scrape started successfully.",
 			"startFailed": "Could not start the scrape."
+		},
+		"history": {
+			"title": "Scrape history",
+			"empty": "No scrapes yet for this period.",
+			"selectPeriod": "Select an academic period in the top bar to see history.",
+			"error": "Could not load the history.",
+			"view": "View",
+			"none": "—",
+			"col": {
+				"status": "Status",
+				"nivel": "Level",
+				"departments": "Departments",
+				"counts": "Counts (S/E/St)",
+				"started": "Started",
+				"finished": "Finished",
+				"triggeredBy": "Triggered by",
+				"actions": "Actions"
+			}
 		},
 		"run": {
 			"title": "Scrape progress",
@@ -1025,6 +1044,7 @@
 		"banner": {
 			"scrapeInProgress": "A scrape is already in progress. Wait for it to finish.",
 			"noDepartments": "There are no departments to scrape.",
+			"periodNotFound": "Selected academic period not found.",
 			"runNotFound": "The requested run was not found.",
 			"authSessionInProgress": "A login session is already active.",
 			"authSessionNotFound": "The login session was not found.",

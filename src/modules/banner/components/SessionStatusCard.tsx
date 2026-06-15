@@ -4,11 +4,11 @@ import { useCallback, useState } from 'react';
 import { ArrowPathIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 import { Badge, Button, Card, Spinner } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { useBannerSessionStatus } from '../hooks';
+import { useBannerSessionStatus, useRefreshBannerSession } from '../hooks';
 import type { BannerSessionStatusValue } from '../types';
 import { BannerLoginDialog } from './BannerLoginDialog';
 
-const STATUS_COLORS: Record<BannerSessionStatusValue, string> = {
+const TOKEN_COLORS: Record<BannerSessionStatusValue, string> = {
 	active: '#059669',
 	expiring: '#d97706',
 	expired: '#dc2626',
@@ -16,13 +16,17 @@ const STATUS_COLORS: Record<BannerSessionStatusValue, string> = {
 
 export function SessionStatusCard() {
 	const { t, locale } = useI18n();
-	const { data, isLoading, isError, isFetching, refetch } = useBannerSessionStatus();
+	const { data, isLoading, isError } = useBannerSessionStatus();
+	const refreshSession = useRefreshBannerSession();
 	const [loginOpen, setLoginOpen] = useState(false);
 
-	const handleLoginCompleted = useCallback(() => {
-		refetch();
-		setLoginOpen(false);
-	}, [refetch]);
+	const handleLoginCompleted = useCallback(() => setLoginOpen(false), []);
+
+	const status = data?.status;
+	const sessionAlive = status !== undefined && status !== 'expired';
+	const formattedExp = data?.tokenExp
+		? new Date(data.tokenExp).toLocaleString(locale === 'en' ? 'en-US' : 'es-PE')
+		: null;
 
 	const renderBody = () => {
 		if (isLoading) {
@@ -34,25 +38,37 @@ export function SessionStatusCard() {
 			);
 		}
 
-		if (isError || !data) {
+		if (isError || !data || status === undefined) {
 			return <p className="italic text-red-600">{t('banner.session.loadError')}</p>;
 		}
 
-		const status = data.status;
-		const formattedExp = data.tokenExp
-			? new Date(data.tokenExp).toLocaleString(locale === 'en' ? 'en-US' : 'es-PE')
-			: null;
-
 		return (
 			<div className="space-y-3">
-				<div className="flex items-center gap-3">
-					<Badge color={STATUS_COLORS[status]}>{t(`banner.session.status.${status}`)}</Badge>
-					{formattedExp && (
-						<span className="text-sm text-zinc-500">
-							{t('banner.session.tokenExp')}: {formattedExp}
+				<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-8">
+					<div className="flex items-center gap-2">
+						<span className="text-sm font-semibold text-zinc-700">
+							{t('banner.session.sessionLabel')}:
 						</span>
-					)}
+						<Badge variant={sessionAlive ? 'success' : 'danger'}>
+							{t(sessionAlive ? 'banner.session.alive' : 'banner.session.dead')}
+						</Badge>
+					</div>
+
+					<div className="flex items-center gap-2">
+						<span className="text-sm font-semibold text-zinc-700">
+							{t('banner.session.tokenLabel')}:
+						</span>
+						<Badge color={TOKEN_COLORS[status]}>{t(`banner.session.status.${status}`)}</Badge>
+						{formattedExp ? (
+							<span className="text-sm text-zinc-500">
+								{t('banner.session.tokenExp')} {formattedExp}
+							</span>
+						) : (
+							<span className="text-sm italic text-zinc-500">{t('banner.session.noToken')}</span>
+						)}
+					</div>
 				</div>
+
 				<p className="text-sm text-zinc-600">{t(`banner.session.hint.${status}`)}</p>
 			</div>
 		);
@@ -64,22 +80,24 @@ export function SessionStatusCard() {
 				title={t('banner.session.title')}
 				description={t('banner.session.subtitle')}
 				className="overflow-visible">
-				<div className="flex items-start justify-between gap-4">
+				<div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
 					<div className="flex-1">{renderBody()}</div>
 					<div className="flex shrink-0 items-center gap-2">
 						<Button
 							variant="surface"
 							size="sm"
-							onClick={() => refetch()}
-							loading={isFetching}
+							onClick={() => refreshSession.mutate()}
+							loading={refreshSession.isPending}
 							disabled={isLoading}>
 							<ArrowPathIcon className="h-4 w-4" />
 							{t('banner.session.refresh')}
 						</Button>
-						<Button variant="primary" size="sm" onClick={() => setLoginOpen(true)}>
-							<ArrowRightOnRectangleIcon className="h-4 w-4" />
-							{t('banner.login.button')}
-						</Button>
+						{status === 'expired' && (
+							<Button variant="primary" size="sm" onClick={() => setLoginOpen(true)}>
+								<ArrowRightOnRectangleIcon className="h-4 w-4" />
+								{t('banner.login.button')}
+							</Button>
+						)}
 					</div>
 				</div>
 			</Card>
