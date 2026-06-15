@@ -1,16 +1,15 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Select, Tabs, Toast } from '@/shared/components';
+import { Tabs, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
-import { useGRACompetences, useGRACycles, usePPPPerformanceLevels } from '../../../hooks';
+import { useGRACompetences, usePPPPerformanceLevels } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
 import { PerformanceLevels } from '../../ppp/configuration/PerformanceLevels';
 
 export function GRAConfiguration() {
 	const { t } = useI18n();
-	const { modalityTypeId } = useABET();
-	const { cycles, load: loadCycles } = useGRACycles();
+	const { academicPeriodId } = useABET();
 	const {
 		competences,
 		loading: compLoading,
@@ -22,7 +21,6 @@ export function GRAConfiguration() {
 	} = useGRACompetences();
 	const levelsHook = usePPPPerformanceLevels();
 
-	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
 	const [activeTab, setActiveTab] = useState('competences');
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
@@ -36,62 +34,47 @@ export function GRAConfiguration() {
 	];
 
 	useEffect(() => {
-		loadCycles(modalityTypeId);
-	}, [modalityTypeId, loadCycles]);
+		if (!academicPeriodId) return;
+		loadComp(academicPeriodId);
+		levelsHook.load(academicPeriodId);
+	}, [academicPeriodId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-	useEffect(() => {
-		if (!selectedCycle) return;
-		loadComp(selectedCycle.value);
-		levelsHook.load(selectedCycle.value);
-	}, [selectedCycle]); // eslint-disable-line react-hooks/exhaustive-deps
-
-	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
+	if (!academicPeriodId) {
+		return (
+			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
+		);
+	}
 
 	return (
 		<div className="space-y-6">
-			<div className="max-w-sm">
-				<Select
-					label={t('surveys.shared.academicCycle')}
-					options={cycleOptions}
-					value={selectedCycle}
-					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-					placeholder={t('surveys.shared.selectCycle')}
-					isSearchable
-				/>
+			<Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+
+			<div className="pt-2">
+				{activeTab === 'competences' && (
+					<CompetenceCRUD
+						cycleId={academicPeriodId}
+						competences={competences}
+						loading={compLoading}
+						error={compError}
+						onLoad={loadComp}
+						onSave={saveComp}
+						onDelete={removeComp}
+						onClone={cloneComp}
+					/>
+				)}
+
+				{activeTab === 'levels' && (
+					<PerformanceLevels
+						cycleId={academicPeriodId}
+						levels={levelsHook.levels}
+						setLevels={levelsHook.setLevels}
+						loading={levelsHook.loading}
+						error={levelsHook.error}
+						onLoad={levelsHook.load}
+						onSave={levelsHook.save}
+					/>
+				)}
 			</div>
-
-			{selectedCycle && (
-				<>
-					<Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-
-					<div className="pt-2">
-						{activeTab === 'competences' && (
-							<CompetenceCRUD
-								cycleId={selectedCycle.value}
-								competences={competences}
-								loading={compLoading}
-								error={compError}
-								onLoad={loadComp}
-								onSave={saveComp}
-								onDelete={removeComp}
-								onClone={cloneComp}
-							/>
-						)}
-
-						{activeTab === 'levels' && (
-							<PerformanceLevels
-								cycleId={selectedCycle.value}
-								levels={levelsHook.levels}
-								setLevels={levelsHook.setLevels}
-								loading={levelsHook.loading}
-								error={levelsHook.error}
-								onLoad={levelsHook.load}
-								onSave={levelsHook.save}
-							/>
-						)}
-					</div>
-				</>
-			)}
 
 			<Toast
 				isOpen={toast.open}

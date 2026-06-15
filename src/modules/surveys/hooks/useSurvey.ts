@@ -69,7 +69,7 @@ export function useSurvey() {
 
 			const allAnswered = outcomes.every((g) => g.outcomes.every((o) => o.score !== null));
 			if (!allAnswered || !comment.trim()) {
-				setError('Please complete all survey outcomes before submitting.');
+				setError('surveys.student.error.incomplete');
 				return;
 			}
 
@@ -179,7 +179,7 @@ export function useGRASurvey() {
 
 			const allAnswered = outcomes.every((g) => g.outcomes.every((o) => o.score !== null));
 			if (!allAnswered || !comment.trim()) {
-				setError('Please complete all survey outcomes before submitting.');
+				setError('surveys.student.error.incomplete');
 				return;
 			}
 
@@ -188,7 +188,7 @@ export function useGRASurvey() {
 
 			const scores = outcomes.flatMap((g) =>
 				g.outcomes.map((o) => ({
-					outcomeConfigId: o.outcomeId,
+					outcomeConfigId: o.outcomeConfigId ?? o.outcomeId,
 					score: o.score as number,
 				})),
 			);

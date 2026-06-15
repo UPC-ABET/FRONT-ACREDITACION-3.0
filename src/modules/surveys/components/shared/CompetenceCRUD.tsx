@@ -16,16 +16,18 @@ import {
 } from '@/shared/components';
 import { PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import type { CompetenceConfig, CompetenceFormData } from '../../types';
 import { competenceSchema } from '../../schemas/competenceSchema';
 import { MIN_PERFORMANCE_LEVEL, MAX_PERFORMANCE_LEVEL } from '../../constants/competence';
 
 interface CompetenceCRUDProps {
 	cycleId: number;
+	programId?: number;
 	competences: CompetenceConfig[];
 	loading: boolean;
 	error: string | null;
-	onLoad: (cycleId: number) => void;
+	onLoad: (cycleId: number, programId?: number) => void;
 	onSave: (data: CompetenceFormData, onSuccess: () => void) => void;
 	onDelete: (id: number, onSuccess: () => void) => void;
 	onClone?: (
@@ -50,6 +52,7 @@ const EMPTY_FORM: Omit<CompetenceFormData, 'academicPeriodId' | 'school'> = {
 
 export function CompetenceCRUD({
 	cycleId,
+	programId,
 	competences,
 	loading,
 	error,
@@ -69,8 +72,8 @@ export function CompetenceCRUD({
 	});
 
 	useEffect(() => {
-		if (cycleId) onLoad(cycleId);
-	}, [cycleId, onLoad]);
+		if (cycleId) onLoad(cycleId, programId);
+	}, [cycleId, programId, onLoad]);
 
 	function openAdd() {
 		setForm(EMPTY_FORM);
@@ -95,7 +98,7 @@ export function CompetenceCRUD({
 			return;
 		}
 		setSaving(true);
-		onSave({ ...form, academicPeriodId: cycleId, school: '1' }, () => {
+		onSave({ ...form, academicPeriodId: cycleId, school: '1', programId }, () => {
 			setSaving(false);
 			setModalOpen(false);
 			setToast({ open: true, type: 'success', msg: t('surveys.competence.toast.saved') });
@@ -163,7 +166,11 @@ export function CompetenceCRUD({
 
 	return (
 		<div className="space-y-4">
-			{error && <p className="text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg">{error}</p>}
+			{error && (
+				<p className="text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg">
+					{tryTranslate(t, error)}
+				</p>
+			)}
 
 			<DataTable
 				columns={columns}

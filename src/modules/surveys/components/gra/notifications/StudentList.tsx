@@ -16,6 +16,7 @@ import {
 } from '@/shared/components';
 import { TrashIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import { useGRAStudents, useGRAEmail } from '../../../hooks';
 import type { GRAStudent, GRAEmailSendRequest } from '../../../types';
 import {
@@ -31,7 +32,7 @@ interface StudentListProps {
 export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 	const { t } = useI18n();
 	const { students, error, load, remove } = useGRAStudents();
-	const { sending, send } = useGRAEmail(0);
+	const { sending, send } = useGRAEmail();
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [sendDialogOpen, setSendDialogOpen] = useState(false);
 	const [surveyBaseUrl, setSurveyBaseUrl] = useState('');
@@ -139,7 +140,11 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 
 	return (
 		<div className="space-y-4">
-			{error && <p className="text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg">{error}</p>}
+			{error && (
+				<p className="text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg">
+					{tryTranslate(t, error)}
+				</p>
+			)}
 
 			<DataTable
 				columns={columns}

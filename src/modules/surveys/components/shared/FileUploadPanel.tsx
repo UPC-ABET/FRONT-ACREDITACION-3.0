@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Button, SubTitle, Title, Toast } from '@/shared/components';
+import { Button, Toast } from '@/shared/components';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon, DocumentIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 
 interface FileUploadPanelProps {
 	readonly title: string;
@@ -110,19 +111,14 @@ export function FileUploadPanel({
 	}, [success, t]);
 
 	React.useEffect(() => {
-		if (error) setToast({ open: true, type: 'error', msg: error });
-	}, [error]);
+		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
+	}, [error, t]);
 
 	return (
 		<div className="space-y-6">
 			<div>
-				<Title title={title} className="[&_h2]:text-base [&_h2]:font-bold [&_h2]:text-zinc-800" />
-				{description && (
-					<SubTitle
-						name={description}
-						className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
-					/>
-				)}
+				<h3 className="text-base font-bold text-zinc-800">{title}</h3>
+				{description && <p className="text-sm text-zinc-500 mt-1">{description}</p>}
 			</div>
 
 			{onDownloadTemplate && (

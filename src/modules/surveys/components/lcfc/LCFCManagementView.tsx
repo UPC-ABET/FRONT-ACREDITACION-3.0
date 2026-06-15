@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { PageHeader, Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { SurveyProgramSelect } from '../shared/SurveyProgramSelect';
 import { LCFCReports } from './LCFCReports';
 import { LCFCNotificationView } from './notifications/LCFCNotificationView';
 import { LCFCConfiguration } from './configuration/LCFCConfiguration';
@@ -10,6 +11,7 @@ import { LCFCConfiguration } from './configuration/LCFCConfiguration';
 export function LCFCManagementView() {
 	const { t } = useI18n();
 	const [activeTab, setActiveTab] = useState('reports');
+	const [programId, setProgramId] = useState(0);
 
 	const TABS = [
 		{ id: 'reports', label: t('surveys.lcfc.management.tabReports') },
@@ -18,7 +20,7 @@ export function LCFCManagementView() {
 	];
 
 	return (
-		<div className="space-y-6">
+		<div className="w-full space-y-6">
 			<PageHeader
 				title={`LCFC — ${t('surveys.lcfc.management.title')}`}
 				description={t('surveys.lcfc.management.subtitle')}
@@ -26,11 +28,15 @@ export function LCFCManagementView() {
 
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-			<div className="pt-2">
-				{activeTab === 'reports' && <LCFCReports />}
-				{activeTab === 'notifications' && <LCFCNotificationView />}
-				{activeTab === 'config' && <LCFCConfiguration />}
-			</div>
+			<Card className="overflow-visible">
+				<div className="space-y-6">
+					<SurveyProgramSelect value={programId} onChange={setProgramId} />
+
+					{activeTab === 'reports' && <LCFCReports programId={programId} />}
+					{activeTab === 'notifications' && <LCFCNotificationView />}
+					{activeTab === 'config' && <LCFCConfiguration programId={programId} />}
+				</div>
+			</Card>
 		</div>
 	);
 }

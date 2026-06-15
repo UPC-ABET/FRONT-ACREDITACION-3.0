@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useSurvey } from '@/modules/surveys/hooks';
 import { SurveyForm, SurveyAlreadyAnswered, SurveySuccess } from '@/modules/surveys/components';
 import { useI18n } from '@/providers';
-import { Title } from '@/shared/components';
+import { tryTranslate } from '@/shared/utils';
 
 export default function LCFCSurveyRespondPage() {
 	const { t } = useI18n();
@@ -46,10 +46,9 @@ export default function LCFCSurveyRespondPage() {
 			<div className="min-h-screen bg-zinc-50 flex items-center justify-center p-6">
 				<div className="bg-white rounded-2xl shadow-sm border border-zinc-200 p-8 max-w-md text-center space-y-3">
 					<p className="text-2xl">⚠️</p>
-					<Title
-						title={t('surveys.student.invalidLink.title')}
-						className="justify-center [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-zinc-900"
-					/>
+					<h2 className="text-lg font-bold text-zinc-900">
+						{t('surveys.student.invalidLink.title')}
+					</h2>
 					<p className="text-sm text-zinc-500">{t('surveys.student.invalidLink.message')}</p>
 				</div>
 			</div>
@@ -61,11 +60,10 @@ export default function LCFCSurveyRespondPage() {
 			<div className="min-h-screen bg-zinc-50 flex items-center justify-center p-6">
 				<div className="bg-white rounded-2xl shadow-sm border border-red-200 p-8 max-w-md text-center space-y-3">
 					<p className="text-2xl">❌</p>
-					<Title
-						title={t('surveys.student.accessError.title')}
-						className="justify-center [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-zinc-900"
-					/>
-					<p className="text-sm text-zinc-500">{error}</p>
+					<h2 className="text-lg font-bold text-zinc-900">
+						{t('surveys.student.accessError.title')}
+					</h2>
+					<p className="text-sm text-zinc-500">{tryTranslate(t, error)}</p>
 				</div>
 			</div>
 		);

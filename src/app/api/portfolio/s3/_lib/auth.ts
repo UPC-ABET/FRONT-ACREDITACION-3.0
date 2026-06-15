@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { TYPE_CODES } from '@/shared/constants';
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? '').replace(/\/$/, '');
+
+// The backend `/users/me` requires a modalityCode query param; the gate only
+// authenticates the session, so it sends the default modality like AuthProvider.
+const SESSION_CHECK_MODALITY = TYPE_CODES.PROGRAM_MODALITY.REGULAR;
 
 /**
  * Gate for the S3 route handlers. Validates the caller's session by forwarding
@@ -15,10 +20,13 @@ export async function requireAuth(request: NextRequest): Promise<NextResponse | 
 	if (!cookie) return unauthorized();
 
 	try {
-		const res = await fetch(`${API_URL}/users/me`, {
-			headers: { cookie, accept: 'application/json' },
-			cache: 'no-store',
-		});
+		const res = await fetch(
+			`${API_URL}/users/me?modalityCode=${encodeURIComponent(SESSION_CHECK_MODALITY)}`,
+			{
+				headers: { cookie, accept: 'application/json' },
+				cache: 'no-store',
+			},
+		);
 		return res.ok ? null : unauthorized();
 	} catch {
 		return unauthorized();

@@ -1,4 +1,13 @@
-import { apiPost, apiDelete, fileToBase64, ApiError } from '@/shared/lib';
+import {
+	apiPost,
+	apiPut,
+	apiDelete,
+	apiGetBlobResponse,
+	getApiData,
+	triggerBlobDownload,
+	resolveDownloadFileName,
+	fileToBase64,
+} from '@/shared/lib';
 import { logger } from '@/shared/lib/logger';
 import { getSurveyTypeId } from './academicService';
 import { performanceLevelsService } from '@/modules/academic/services/performanceLevelsService';
@@ -8,13 +17,13 @@ import type {
 	CompetenceFormData,
 	PerformanceLevel,
 	DashboardResponse,
+	MassiveUploadResult,
 } from '../types';
 
 interface BackendPppConfig {
 	id: number;
 	outcomeId: number;
 	isActive: boolean;
-	isVisible?: boolean;
 	extra?: {
 		surveyType?: string;
 		nameEs?: string;
@@ -24,10 +33,16 @@ interface BackendPppConfig {
 		order?: number;
 		programId?: number;
 		academicPeriodId?: number;
-		isVisible?: boolean;
 	};
 	userOutcomeName?: string;
 	outcomeCode?: string;
+}
+
+interface BackendUploadResult {
+	total?: number;
+	success?: number;
+	failed?: number;
+	errors?: Array<{ row?: number; code?: string; reason?: string; message?: string }>;
 }
 
 function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
@@ -59,6 +74,19 @@ function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): Pe
 	};
 }
 
+function adaptUploadResult(raw: BackendUploadResult): MassiveUploadResult {
+	return {
+		total: raw.total ?? 0,
+		success: raw.success ?? 0,
+		failed: raw.failed ?? 0,
+		errors: (raw.errors ?? []).map((e) => ({
+			row: e.row,
+			code: e.code,
+			reason: e.reason ?? e.message ?? '',
+		})),
+	};
+}
+
 const RANGE_RE = /([\d.]+)\s*[–-]\s*([\d.]+)/;
 
 function buildPerformanceLevelUpdate(level: PerformanceLevel) {
@@ -68,8 +96,8 @@ function buildPerformanceLevelUpdate(level: PerformanceLevel) {
 	const maxScore = level.maxScore ?? (rangeMatch ? Number.parseFloat(rangeMatch[2]) : level.level);
 	return {
 		id: level.id,
-		minScore: minScore,
-		maxScore: maxScore,
+		minScore,
+		maxScore,
 		name: { es: level.description, en: level.description },
 		color: level.color ?? '#888888',
 		order: level.level,
@@ -81,39 +109,100 @@ export async function listPPPCompetences(
 	academicPeriodId: number,
 	programId = 0,
 ): Promise<CompetenceConfig[]> {
-	const res = await apiPost<BackendPppConfig[] | { data?: BackendPppConfig[] }>(
-		'ppp/config/get-by-filters',
-		{ programId: programId || undefined, academicPeriodId, isActive: true },
-	);
-	const list = Array.isArray(res) ? res : (res.data ?? []);
+	const res = await apiPost('ppp/config/get-by-filters', {
+		programId: programId || undefined,
+		academicPeriodId,
+		isActive: true,
+	});
+	const list = getApiData<BackendPppConfig[]>(res) ?? [];
 	return list.map((c) => adaptPppConfig(c));
 }
 
-export async function savePPPCompetence(data: CompetenceFormData) {
-	const isNew = !data.id || data.id === 0;
+type I18nOrString = string | { es?: string; en?: string } | null | undefined;
 
-	if (isNew) {
-		return apiPost('ppp/config/create', {
-			outcomeId: data.outcomeId ?? 1,
-			nameEs: data.generalCompetence,
-			nameEn: data.specificCompetence || data.generalCompetence,
-			descriptionEs: data.description,
-			descriptionEn: data.description,
-			order: data.performanceLevel,
-			programId: data.programId ?? 0,
-			academicPeriodId: data.academicPeriodId,
-			isVisible: true,
-		});
+export interface ProgramOutcome {
+	outcomeId: number;
+	outcomeCode: string;
+	outcomeName: I18nOrString;
+	outcomeDescription?: I18nOrString;
+}
+
+// The outcomes endpoint returns the raw jsonb name/description ({ es, en }); fall
+// back to a plain string in case a caller already flattened it.
+function pickEs(value: I18nOrString): string {
+	if (typeof value === 'string') return value;
+	if (value && typeof value === 'object') return value.es ?? value.en ?? '';
+	return '';
+}
+
+/**
+ * Real outcomes of a program for a period (accreditation.outcomes), grouped by
+ * commission on the backend and flattened here. PPP/GRA/LCFC all measure these
+ * same outcomes, so this list is the source of truth for building survey configs.
+ */
+export async function listProgramOutcomes(
+	programId: number,
+	academicPeriodId: number,
+): Promise<ProgramOutcome[]> {
+	const res = await apiPost('gra/outcomes/list', { programId, academicPeriodId });
+	const groups = getApiData<Array<{ outcomes?: ProgramOutcome[] }>>(res) ?? [];
+	return groups.flatMap((g) => g.outcomes ?? []);
+}
+
+/**
+ * Build the PPP outcome configurations for a program + period from its real
+ * outcomes (one config per outcome). This is what the template/upload require;
+ * it replaces creating competences by hand with a hardcoded outcomeId.
+ * Outcomes that already have a config are skipped (the backend rejects dupes).
+ */
+export async function generatePPPConfigFromOutcomes(
+	programId: number,
+	academicPeriodId: number,
+): Promise<{ created: number; skipped: number; total: number }> {
+	const outcomes = await listProgramOutcomes(programId, academicPeriodId);
+	let created = 0;
+	let skipped = 0;
+	for (let i = 0; i < outcomes.length; i++) {
+		const o = outcomes[i];
+		try {
+			const name = pickEs(o.outcomeName) || o.outcomeCode;
+			await savePPPCompetence({
+				id: 0,
+				outcomeId: o.outcomeId,
+				generalCompetence: name,
+				specificCompetence: name,
+				description: pickEs(o.outcomeDescription),
+				performanceLevel: i + 1,
+				academicPeriodId,
+				programId,
+				school: '1',
+			});
+			created++;
+		} catch {
+			// A config for this outcome+program+period already exists — leave it as is.
+			skipped++;
+		}
 	}
+	return { created, skipped, total: outcomes.length };
+}
 
-	return apiPost(`ppp/config/update/${data.id}`, {
+export async function savePPPCompetence(data: CompetenceFormData) {
+	const payload = {
+		outcomeId: data.outcomeId ?? 1,
 		nameEs: data.generalCompetence,
 		nameEn: data.specificCompetence || data.generalCompetence,
 		descriptionEs: data.description,
 		descriptionEn: data.description,
 		order: data.performanceLevel,
+		programId: data.programId ?? 0,
+		academicPeriodId: data.academicPeriodId,
 		isVisible: true,
-	});
+	};
+
+	if (!data.id || data.id === 0) {
+		return apiPost('ppp/config/create', payload);
+	}
+	return apiPut(`ppp/config/update/${data.id}`, { ...payload, isActive: true });
 }
 
 export async function deletePPPCompetence(id: number) {
@@ -157,8 +246,11 @@ export async function updatePPPPerformanceLevels(
 	);
 }
 
-export async function downloadPPPTemplate(_periodId: number): Promise<void> {
-	throw new ApiError('PPP template download is not available in this backend version.');
+export async function downloadPPPTemplate(academicPeriodId: number, programId = 0): Promise<void> {
+	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId) });
+	if (programId) params.set('programId', String(programId));
+	const { blob, response } = await apiGetBlobResponse(`ppp/survey/template?${params.toString()}`);
+	triggerBlobDownload(blob, resolveDownloadFileName(response, 'PPP_Survey_Template.xlsx'));
 }
 
 export async function uploadPPPMassive(
@@ -166,19 +258,19 @@ export async function uploadPPPMassive(
 	academicPeriodId: number,
 	programId = 0,
 	campusId = 0,
-): Promise<void> {
+): Promise<MassiveUploadResult> {
 	const fileBase64 = await fileToBase64(file);
-	const res = await apiPost<{ total: number; success: number; failed: number; errors?: unknown[] }>(
-		'ppp/survey/upload-excel',
-		{ fileBase64, academicPeriodId, programId, campusId },
-	);
-	if (res.failed && res.failed > 0) {
-		logger.warn(`PPP upload: ${res.failed} failed rows out of ${res.total}`);
+	const res = await apiPost('ppp/survey/upload-excel', {
+		fileBase64,
+		academicPeriodId,
+		programId,
+		campusId,
+	});
+	const result = adaptUploadResult(getApiData<BackendUploadResult>(res) ?? {});
+	if (result.failed > 0) {
+		logger.warn(`PPP upload: ${result.failed} failed rows out of ${result.total}`);
 	}
-}
-
-export async function uploadPPPMassiveLegacy(_file: File, _school?: unknown): Promise<void> {
-	throw new ApiError('PPP legacy bulk upload is not available in this backend version.');
+	return result;
 }
 
 export async function generatePPPDashboard(params: {
@@ -187,8 +279,8 @@ export async function generatePPPDashboard(params: {
 	campusId?: number;
 	practiceNumber?: number;
 }): Promise<DashboardResponse> {
-	const res = await apiPost<DashboardResponse>('ppp/survey/dashboard', params);
-	return res;
+	const res = await apiPost('ppp/survey/dashboard', params);
+	return getApiData<DashboardResponse>(res);
 }
 
 export async function generatePPPFindings(params: {
@@ -211,10 +303,6 @@ export async function generatePPPPerceptionReport(params: {
 	});
 }
 
-export async function getPPPSurveyById(id: number) {
-	return apiPost(`ppp/survey/get-by-id/${id}`, {});
-}
-
 export async function getPPPSurveysByFilters(params: {
 	programId?: number;
 	academicPeriodId?: number;
@@ -222,5 +310,6 @@ export async function getPPPSurveysByFilters(params: {
 	studentId?: number;
 	practiceNumber?: number;
 }) {
-	return apiPost('ppp/survey/get-by-filters', params);
+	const res = await apiPost('ppp/survey/get-by-filters', params);
+	return getApiData(res);
 }

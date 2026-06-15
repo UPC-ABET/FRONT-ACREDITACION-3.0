@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Input, Button, Toast } from '@/shared/components';
 import { MagnifyingGlassIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import { useGRAStudentSearch } from '../../../hooks';
 
 interface AddStudentPanelProps {
@@ -77,7 +78,11 @@ export function AddStudentPanel({
 				</Button>
 			</div>
 
-			{error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+			{error && (
+				<p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">
+					{tryTranslate(t, error)}
+				</p>
+			)}
 
 			{result && (
 				<div className="p-4 bg-zinc-50 rounded-xl border border-zinc-200 space-y-3">

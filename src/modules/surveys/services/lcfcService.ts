@@ -1,11 +1,10 @@
-import { apiPost, apiGet, ApiError } from '@/shared/lib';
+import { apiPost, apiGet, getApiData } from '@/shared/lib';
 import type {
 	LCFCCourse,
 	LCFCConfigStatus,
 	LCFCNotificationSendRequest,
 	LCFCEmailParam,
 	DashboardResponse,
-	SurveyApiResponse,
 	PageInfo,
 } from '../types';
 
@@ -20,6 +19,13 @@ interface BackendLcfcConfig {
 	courseName?: string;
 	courseCode?: string;
 	courseSectionId?: number;
+	commissions?: Array<{ commissionId: number; commissionName: string }>;
+}
+
+interface BackendLcfcConfigPage {
+	resource?: BackendLcfcConfig[];
+	items?: BackendLcfcConfig[];
+	pageInfo?: PageInfo;
 }
 
 function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
@@ -28,7 +34,7 @@ function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 		courseName: raw.courseName ?? `Course ${raw.id}`,
 		code: raw.courseCode ?? '',
 		isActive: raw.isActive,
-		commissions: [],
+		commissions: raw.commissions ?? [],
 	};
 }
 
@@ -36,28 +42,17 @@ export async function listLCFCCourses(
 	_school: string,
 	academicPeriodId: number,
 	programId?: number,
-	page = 0,
-	pageSize = -1,
 ): Promise<{ courses: LCFCCourse[]; pageInfo?: PageInfo }> {
-	const res = await apiPost<BackendLcfcConfig[] | SurveyApiResponse<BackendLcfcConfig[]>>(
-		'lcfc/config/get-by-filters',
-		{
-			academicPeriodId,
-			programId: programId || undefined,
-			isActive: undefined,
-			pageNumber: page,
-			pageSize,
-		},
-	);
-
-	if (Array.isArray(res)) {
-		return { courses: res.map((c) => adaptLcfcConfig(c)) };
+	const res = await apiPost('lcfc/config/get-by-filters', {
+		academicPeriodId,
+		programId: programId || undefined,
+	});
+	const data = getApiData<BackendLcfcConfig[] | BackendLcfcConfigPage>(res);
+	if (Array.isArray(data)) {
+		return { courses: data.map((c) => adaptLcfcConfig(c)) };
 	}
-	const list = res.data?.resource ?? [];
-	return {
-		courses: list.map((c) => adaptLcfcConfig(c)),
-		pageInfo: res.data?.pageInfo,
-	};
+	const list = data?.resource ?? data?.items ?? [];
+	return { courses: list.map((c) => adaptLcfcConfig(c)), pageInfo: data?.pageInfo };
 }
 
 export async function generateLCFCConfiguration(
@@ -74,10 +69,17 @@ export async function generateLCFCConfiguration(
 }
 
 export async function cloneLCFCConfiguration(
-	_sourcePeriodId: number,
-	_targetPeriodId: number,
-): Promise<void> {
-	throw new ApiError('LCFC configuration cloning is not available in this backend version.');
+	sourcePeriodId: number,
+	targetPeriodId: number,
+	programId = 0,
+	campusId = 0,
+) {
+	return apiPost('lcfc/config/clone', {
+		sourceAcademicPeriodId: sourcePeriodId,
+		targetAcademicPeriodId: targetPeriodId,
+		programId,
+		campusId,
+	});
 }
 
 export async function changeLCFCConfigStatus(configId: number, newStatus: LCFCConfigStatus) {
@@ -86,20 +88,12 @@ export async function changeLCFCConfigStatus(configId: number, newStatus: LCFCCo
 	});
 }
 
-export async function sendLCFCNotification(request: LCFCNotificationSendRequest) {
-	return apiPost('lcfc/notification/send', request);
+export async function sendLCFCNotification(request: LCFCNotificationSendRequest, lang = 'es') {
+	return apiPost('lcfc/notification/send', { ...request, lang });
 }
 
 export async function getLCFCEmailParams(): Promise<LCFCEmailParam[]> {
 	return [];
-}
-
-export async function downloadLCFCTemplate(_periodId: number): Promise<void> {
-	throw new ApiError('LCFC template download is not available in this backend version.');
-}
-
-export async function uploadLCFCMassive(_file: File, _school?: unknown): Promise<void> {
-	throw new ApiError('LCFC bulk upload is not available in this backend version.');
 }
 
 export async function generateLCFCDashboard(params: {
@@ -107,7 +101,8 @@ export async function generateLCFCDashboard(params: {
 	programId?: number;
 	campusId?: number;
 }): Promise<DashboardResponse> {
-	return apiPost<DashboardResponse>('lcfc/dashboard', params);
+	const res = await apiPost('lcfc/dashboard', params);
+	return getApiData<DashboardResponse>(res);
 }
 
 export async function generateLCFCPerceptionReport(params: {

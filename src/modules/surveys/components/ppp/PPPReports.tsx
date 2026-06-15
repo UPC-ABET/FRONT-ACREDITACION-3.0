@@ -1,18 +1,20 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Select, Button, SubTitle, Title, Toast } from '@/shared';
-import { useI18n } from '@/providers';
-import { usePPPReports, usePPPCycles } from '../../hooks';
-import { useABET } from '@/providers';
+import { Button, Toast } from '@/shared/components';
+import { useI18n, useABET } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
+import { usePPPReports } from '../../hooks';
 
-export function PPPReports() {
+interface PPPReportsProps {
+	readonly programId: number;
+}
+
+export function PPPReports({ programId }: PPPReportsProps) {
 	const { t } = useI18n();
-	const { modalityTypeId } = useABET();
-	const { cycles, load: loadCycles } = usePPPCycles();
+	const { academicPeriodId } = useABET();
 	const { loading, error, reportData, generate } = usePPPReports();
 
-	const [cycle, setCycle] = useState<{ label: string; value: number } | null>(null);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -20,46 +22,32 @@ export function PPPReports() {
 	});
 
 	useEffect(() => {
-		loadCycles(modalityTypeId);
-	}, [modalityTypeId, loadCycles]);
-	useEffect(() => {
-		if (error) setToast({ open: true, type: 'error', msg: error });
-	}, [error]);
+		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
+	}, [error, t]);
 
 	async function handleGenerate() {
-		if (!cycle) {
+		if (!academicPeriodId) {
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
 			return;
 		}
-		await generate({ academicPeriodId: cycle.value });
+		await generate({ academicPeriodId, programId: programId || undefined });
 	}
 
-	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
+	if (!academicPeriodId) {
+		return (
+			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
+		);
+	}
 
 	return (
 		<div className="max-w-lg space-y-6">
 			<div>
-				<Title
-					title={t('surveys.ppp.reports.title')}
-					className="[&_h2]:text-base [&_h2]:font-bold [&_h2]:text-zinc-800"
-				/>
-				<SubTitle
-					name={t('surveys.ppp.reports.description')}
-					className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
-				/>
+				<h3 className="text-base font-bold text-zinc-800">{t('surveys.ppp.reports.title')}</h3>
+				<p className="text-sm text-zinc-500 mt-1">{t('surveys.ppp.reports.description')}</p>
 			</div>
 
 			<div className="space-y-4">
-				<Select
-					label={t('surveys.shared.academicCycle')}
-					options={cycleOptions}
-					value={cycle}
-					onChange={(_, val) => setCycle(val as { label: string; value: number } | null)}
-					placeholder={t('surveys.shared.selectCycle')}
-					isSearchable
-				/>
-
-				<Button onClick={handleGenerate} disabled={loading || !cycle} loading={loading}>
+				<Button onClick={handleGenerate} disabled={loading} loading={loading}>
 					{t('surveys.shared.generateDashboard')}
 				</Button>
 			</div>

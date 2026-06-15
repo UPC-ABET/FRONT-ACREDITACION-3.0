@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, SubTitle, TextArea, Title, Toast } from '@/shared/components';
+import { Button, TextArea, Toast } from '@/shared/components';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import type { SurveyCommissionGroup, SurveyTokenVerification } from '../../types';
 
 interface SurveyFormProps {
@@ -72,14 +73,8 @@ export function SurveyForm({
 					<div className="flex items-center gap-3 mb-4">
 						<img src="/assets/ABETLogo.png" alt="ABET" className="h-10 w-auto" />
 						<div>
-							<Title
-								title={t('surveys.student.title')}
-								className="[&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-white"
-							/>
-							<SubTitle
-								name={t('surveys.student.subtitle')}
-								className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-red-200"
-							/>
+							<h1 className="text-xl font-bold">{t('surveys.student.title')}</h1>
+							<p className="text-red-200 text-sm">{t('surveys.student.subtitle')}</p>
 						</div>
 					</div>
 					<div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
@@ -144,7 +139,7 @@ export function SurveyForm({
 
 				{error && (
 					<div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
-						{error}
+						{tryTranslate(t, error)}
 					</div>
 				)}
 
@@ -153,10 +148,7 @@ export function SurveyForm({
 						key={group.commissionId}
 						className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden">
 						<div className="bg-red-600 px-6 py-3">
-							<Title
-								title={group.commissionName}
-								className="[&_h2]:text-sm [&_h2]:font-bold [&_h2]:text-white"
-							/>
+							<h2 className="text-white font-bold text-sm">{group.commissionName}</h2>
 						</div>
 
 						<div className="divide-y divide-zinc-100">
@@ -238,14 +230,10 @@ export function SurveyAlreadyAnswered() {
 		<div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-6">
 			<div className="bg-white rounded-2xl shadow-sm border border-zinc-200 p-8 max-w-md w-full text-center space-y-4">
 				<CheckCircleIcon className="h-16 w-16 text-emerald-500 mx-auto" />
-				<Title
-					title={t('surveys.student.alreadyAnswered.title')}
-					className="justify-center [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-zinc-900"
-				/>
-				<SubTitle
-					name={t('surveys.student.alreadyAnswered.message')}
-					className="justify-center [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
-				/>
+				<h2 className="text-xl font-bold text-zinc-900">
+					{t('surveys.student.alreadyAnswered.title')}
+				</h2>
+				<p className="text-sm text-zinc-500">{t('surveys.student.alreadyAnswered.message')}</p>
 				<p className="text-xs text-zinc-400">{t('surveys.student.alreadyAnswered.thanks')}</p>
 			</div>
 		</div>
@@ -258,14 +246,8 @@ export function SurveySuccess() {
 		<div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-6">
 			<div className="bg-white rounded-2xl shadow-sm border border-zinc-200 p-8 max-w-md w-full text-center space-y-4">
 				<CheckCircleIcon className="h-16 w-16 text-emerald-500 mx-auto" />
-				<Title
-					title={t('surveys.student.success.title')}
-					className="justify-center [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-zinc-900"
-				/>
-				<SubTitle
-					name={t('surveys.student.success.message')}
-					className="justify-center [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
-				/>
+				<h2 className="text-xl font-bold text-zinc-900">{t('surveys.student.success.title')}</h2>
+				<p className="text-sm text-zinc-500">{t('surveys.student.success.message')}</p>
 				<p className="text-xs text-zinc-400 mt-2">{t('surveys.student.success.hint')}</p>
 			</div>
 		</div>

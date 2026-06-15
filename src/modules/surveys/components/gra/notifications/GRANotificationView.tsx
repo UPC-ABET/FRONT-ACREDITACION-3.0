@@ -1,21 +1,20 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Select, Tabs } from '@/shared/components';
+import React, { useState } from 'react';
+import { Tabs } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { AddStudentPanel } from './AddStudentPanel';
 import { StudentList } from './StudentList';
 import { EditEmailTemplate } from './EditEmailTemplate';
 import { FileUploadPanel } from '../../shared/FileUploadPanel';
-import { useGRAUpload, useGRACycles } from '../../../hooks';
+import { UploadResultSummary } from '../../shared/UploadResultSummary';
+import { useGRAUpload } from '../../../hooks';
 
 export function GRANotificationView() {
 	const { t } = useI18n();
-	const { modalityTypeId } = useABET();
-	const { cycles, load: loadCycles } = useGRACycles();
+	const { academicPeriodId } = useABET();
 	const [activeTab, setActiveTab] = useState('list');
-	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
-	const { loading, error, success, downloadTemplate, upload } = useGRAUpload();
+	const { loading, error, success, result, downloadTemplate, upload } = useGRAUpload();
 
 	const NOTIFICATION_TABS = [
 		{ id: 'list', label: t('surveys.gra.notifications.tabs.list') },
@@ -24,67 +23,50 @@ export function GRANotificationView() {
 		{ id: 'email', label: t('surveys.gra.notifications.tabs.email') },
 	];
 
-	useEffect(() => {
-		loadCycles(modalityTypeId);
-	}, [modalityTypeId, loadCycles]);
-
-	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
-	const academicPeriodId = selectedCycle?.value ?? 0;
+	const periodId = academicPeriodId ?? 0;
 	const programId = 0;
+
+	if (!academicPeriodId) {
+		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
+	}
 
 	return (
 		<div className="space-y-6">
-			<div className="max-w-sm">
-				<Select
-					label={t('surveys.gra.notifications.periodLabel')}
-					options={cycleOptions}
-					value={selectedCycle}
-					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-					placeholder={t('surveys.gra.notifications.periodPlaceholder')}
-					isSearchable
-				/>
-			</div>
+			<Tabs tabs={NOTIFICATION_TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-			{selectedCycle && (
-				<>
-					<Tabs tabs={NOTIFICATION_TABS} activeTab={activeTab} onChange={setActiveTab} />
+			<div className="pt-2">
+				{activeTab === 'list' && <StudentList programId={programId} academicPeriodId={periodId} />}
 
-					<div className="pt-2">
-						{activeTab === 'list' && (
-							<StudentList programId={programId} academicPeriodId={academicPeriodId} />
-						)}
+				{activeTab === 'add' && (
+					<AddStudentPanel
+						programId={programId}
+						academicPeriodId={periodId}
+						onStudentAdded={() => setActiveTab('list')}
+					/>
+				)}
 
-						{activeTab === 'add' && (
-							<AddStudentPanel
-								programId={programId}
-								academicPeriodId={academicPeriodId}
-								onStudentAdded={() => setActiveTab('list')}
-							/>
-						)}
-
-						{activeTab === 'upload' && (
-							<div className="max-w-lg">
-								<FileUploadPanel
-									title={t('surveys.gra.notifications.uploadTitle')}
-									description={t('surveys.gra.notifications.uploadDesc')}
-									uploading={loading}
-									success={success}
-									error={error}
-									onUpload={upload}
-									onDownloadTemplate={() => downloadTemplate(academicPeriodId)}
-									downloadLabel={t('surveys.gra.notifications.downloadLabel')}
-								/>
-							</div>
-						)}
-
-						{activeTab === 'email' && (
-							<div className="max-w-lg">
-								<EditEmailTemplate surveyId={academicPeriodId} />
-							</div>
-						)}
+				{activeTab === 'upload' && (
+					<div className="max-w-lg space-y-4">
+						<FileUploadPanel
+							title={t('surveys.gra.notifications.uploadTitle')}
+							description={t('surveys.gra.notifications.uploadDesc')}
+							uploading={loading}
+							success={success}
+							error={error}
+							onUpload={(file) => upload(file, { programId, academicPeriodId: periodId })}
+							onDownloadTemplate={() => downloadTemplate()}
+							downloadLabel={t('surveys.gra.notifications.downloadLabel')}
+						/>
+						{result && <UploadResultSummary result={result} />}
 					</div>
-				</>
-			)}
+				)}
+
+				{activeTab === 'email' && (
+					<div className="max-w-lg">
+						<EditEmailTemplate />
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }

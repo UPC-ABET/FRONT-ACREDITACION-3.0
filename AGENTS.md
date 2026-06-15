@@ -223,6 +223,7 @@ const { schoolId, modalityTypeId, academicPeriodId } = useABET();
 
 - All API calls go through `src/shared/lib/apiClient.ts` (`apiGet`, `apiPost`, `apiPut`, `apiPatch`, `apiDelete`, `apiPostBlob`).
 - Never use raw `fetch()` outside the API client.
+  - **Exception — internal Next.js route handlers (BFF).** `apiClient` targets the external backend (`NEXT_PUBLIC_API_URL`), so it cannot call our own `/api/*` route handlers. Code that talks to a local route handler (e.g. `src/modules/portfolio/services/portfolioS3Service.ts` → `/api/portfolio/s3/*`) uses raw `fetch()` by necessity. Likewise, a route handler calling the backend server-to-server (e.g. the S3 auth gate hitting `/users/me`) uses raw `fetch()`. These are the only sanctioned `fetch()` sites.
 - Requests use `credentials: 'include'` to send the `HttpOnly` cookie.
 - Non-OK responses throw `ApiError` with the backend's `message` field (an i18n key like `error.ifc.notFound`).
 

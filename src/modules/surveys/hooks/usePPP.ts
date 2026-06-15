@@ -7,6 +7,7 @@ import type {
 	PerformanceLevel,
 	CompetenceFormData,
 	DashboardResponse,
+	MassiveUploadResult,
 } from '../types';
 import {
 	getAcademicPeriods,
@@ -14,6 +15,7 @@ import {
 	savePPPCompetence,
 	deletePPPCompetence,
 	clonePPPConfiguration,
+	generatePPPConfigFromOutcomes,
 	listPPPPerformanceLevels,
 	updatePPPPerformanceLevels,
 	downloadPPPTemplate,
@@ -108,7 +110,27 @@ export function usePPPCompetences() {
 		[],
 	);
 
-	return { competences, loading, error, load, save, remove, clone, setError };
+	const generate = useCallback(
+		async (
+			programId: number,
+			academicPeriodId: number,
+			onSuccess?: (result: { created: number; skipped: number; total: number }) => void,
+		) => {
+			setLoading(true);
+			setError(null);
+			try {
+				const result = await generatePPPConfigFromOutcomes(programId, academicPeriodId);
+				onSuccess?.(result);
+			} catch (e) {
+				setError((e as Error).message);
+			} finally {
+				setLoading(false);
+			}
+		},
+		[],
+	);
+
+	return { competences, loading, error, load, save, remove, clone, generate, setError };
 }
 
 export function usePPPPerformanceLevels() {
@@ -147,11 +169,11 @@ export function usePPPDownload() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const download = useCallback(async (periodId: number) => {
+	const download = useCallback(async (academicPeriodId: number, programId = 0) => {
 		setLoading(true);
 		setError(null);
 		try {
-			await downloadPPPTemplate(periodId);
+			await downloadPPPTemplate(academicPeriodId, programId);
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {
@@ -166,14 +188,17 @@ export function usePPPUpload() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
+	const [result, setResult] = useState<MassiveUploadResult | null>(null);
 
 	const upload = useCallback(
 		async (file: File, academicPeriodId: number, programId = 0, campusId = 0) => {
 			setLoading(true);
 			setError(null);
 			setSuccess(false);
+			setResult(null);
 			try {
-				await uploadPPPMassive(file, academicPeriodId, programId, campusId);
+				const uploadResult = await uploadPPPMassive(file, academicPeriodId, programId, campusId);
+				setResult(uploadResult);
 				setSuccess(true);
 			} catch (e) {
 				setError((e as Error).message);
@@ -184,7 +209,17 @@ export function usePPPUpload() {
 		[],
 	);
 
-	return { loading, error, success, upload, reset: () => setSuccess(false) };
+	return {
+		loading,
+		error,
+		success,
+		result,
+		upload,
+		reset: () => {
+			setSuccess(false);
+			setResult(null);
+		},
+	};
 }
 
 export function usePPPReports() {

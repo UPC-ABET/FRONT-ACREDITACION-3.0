@@ -918,7 +918,7 @@
 		"created": "Registro creado exitosamente"
 	},
 	"error": {
-		"generic": "Ocurrió un error inesperado",
+		"generic": "Ocurrió un error inesperado.",
 		"chart": {
 			"hasIfc": "Un coordinador de curso dependiente tiene un IFC para su curso en este período.",
 			"readOnlyNode": "Este nodo es de solo lectura y no puede modificarse.",
@@ -938,7 +938,7 @@
 		},
 		"validation": "Los datos ingresados no son válidos",
 		"badRequest": "Solicitud inválida",
-		"unauthorized": "No estás autenticado",
+		"unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
 		"forbidden": "No tienes permiso para realizar esta acción",
 		"notFound": "El recurso solicitado no fue encontrado",
 		"conflict": "Conflicto con el estado actual del recurso",
@@ -1167,6 +1167,39 @@
 		},
 		"projectEvaluator": {
 			"duplicateEvaluatorType": "Ya existe un evaluador con ese tipo de rol en el proyecto."
+		},
+		"survey": {
+			"gra": {
+				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado.",
+				"invalidExcelFile": "El archivo proporcionado no es un Excel válido.",
+				"excelNoSheets": "El archivo Excel no contiene hojas.",
+				"excelEmpty": "El archivo Excel está vacío o no tiene datos en la primera hoja.",
+				"defaultCourseSectionMissing": "No se encontró una sección de curso por defecto. Contacte al administrador.",
+				"emptyStudentCode": "Código de alumno vacío.",
+				"studentNotFound": "No se encontró un alumno con ese código.",
+				"alreadyInList": "El alumno ya está en la lista de GRA."
+			},
+			"lcfc": {
+				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado.",
+				"noCourseSections": "No se encontraron secciones de curso para el programa y período seleccionados.",
+				"noProgramOutcomes": "El programa seleccionado no tiene outcomes registrados. Regístralos primero en Mantenimiento de Outcomes.",
+				"configNotFound": "No se encontró la configuración LCFC indicada."
+			},
+			"ppp": {
+				"noActiveConfig": "No hay configuración PPP para el programa y período seleccionados. Ve a la pestaña Configuración y genera la configuración a partir de los outcomes del programa.",
+				"invalidExcelFile": "El archivo proporcionado no es un Excel válido.",
+				"excelNoSheets": "El archivo Excel no contiene hojas.",
+				"excelEmpty": "El archivo Excel está vacío o no tiene datos en la primera hoja.",
+				"configExists": "Ya existe una configuración PPP para este outcome en el programa y período seleccionados.",
+				"configNotFound": "No se encontró la configuración PPP indicada.",
+				"surveyNotFound": "No se encontró la encuesta PPP indicada.",
+				"surveyTypeMissing": "No se encontró el tipo de encuesta PPP. Contacte al administrador.",
+				"surveyStatusMissing": "No se encontró el estado de encuesta. Contacte al administrador.",
+				"invalidPracticeNumber": "El número de práctica debe ser 1 (Práctica I) o 2 (Práctica II).",
+				"noScores": "Debe proporcionar al menos un puntaje de outcome.",
+				"invalidScore": "Puntaje inválido: debe estar entre 1.0 y 5.0.",
+				"invalidRuc": "El RUC debe tener exactamente 11 dígitos numéricos."
+			}
 		}
 	},
 	"table": {
@@ -1854,6 +1887,7 @@
 				"uploadTitle": "Carga masiva de estudiantes GRA",
 				"uploadDesc": "Sube un archivo Excel con los datos de los estudiantes a notificar.",
 				"addStudentTitle": "Agregar Estudiante Individual",
+				"studentNotFound": "El estudiante no se encontró para el código ingresado.",
 				"studentCodePlaceholder": "Código del estudiante (ej: 2020001)",
 				"searchStudent": "Buscar estudiante",
 				"studentName": "Nombre",
@@ -1933,6 +1967,13 @@
 			"noConfigurationHint": "No existe configuración para el ciclo seleccionado. Puedes crear una nueva o clonar desde otro ciclo.",
 			"cloneConfiguration": "Clonar configuración",
 			"cloneToastHint": "Función de clonado: selecciona un ciclo de origen en el modal.",
+			"upload": {
+				"resultTitle": "Resultado de la carga",
+				"total": "Total",
+				"success": "Exitosos",
+				"failed": "Fallidos",
+				"rowError": "Fila {{row}}: {{reason}}"
+			},
 			"fileUpload": {
 				"invalidFormat": "Formato inválido. Use: {{accept}}",
 				"fileTooLarge": "Archivo muy grande. Máximo {{mb}}MB.",
@@ -1945,7 +1986,13 @@
 				"formats": "Formatos aceptados: {{accept}} · Máx. {{mb}}MB",
 				"uploading": "Subiendo...",
 				"uploadButton": "Subir Archivo"
-			}
+			},
+			"programLabel": "Programa",
+			"selectProgram": "Selecciona un programa",
+			"generateConfig": "Generar configuración",
+			"generateConfigHint": "Genera la configuración a partir de los outcomes del programa seleccionado.",
+			"configGenerated": "Configuración generada: {{created}} de {{total}} outcomes.",
+			"noOutcomesForProgram": "El programa seleccionado no tiene outcomes en este período. Regístralos primero en Mantenimiento de Outcomes."
 		},
 		"student": {
 			"loading": "Cargando encuesta...",
@@ -3139,7 +3186,18 @@
 			"empty": "Esta carpeta está vacía.",
 			"noResults": "Ningún elemento coincide con la búsqueda.",
 			"download": "Descargar",
-			"delete": "Eliminar"
+			"delete": "Eliminar",
+			"code": "Código",
+			"company": "Empresa",
+			"students": "Estudiantes",
+			"status": "Estado",
+			"origin": "Origen",
+			"originUpc": "UPC",
+			"external": "Externo",
+			"actionView": "Ver",
+			"actionEdit": "Editar",
+			"actionDelete": "Eliminar",
+			"ariaLabel": "Tabla de proyectos del portafolio"
 		},
 		"folder": {
 			"createTitle": "Nueva carpeta",
@@ -3153,7 +3211,8 @@
 			"title": "¿Eliminar elementos?",
 			"bodyOne": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
 			"bodyMany": "¿Estás seguro de que deseas eliminar {{count}} elementos? Esta acción no se puede deshacer.",
-			"confirm": "Eliminar"
+			"confirm": "Eliminar",
+			"body": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer."
 		},
 		"comment": {
 			"createTitle": "Nuevo comentario",
@@ -3201,7 +3260,9 @@
 			"renamed": "Elemento renombrado correctamente.",
 			"moved": "Elementos movidos correctamente.",
 			"copied": "Elementos copiados al portapapeles.",
-			"pasted": "Elementos pegados correctamente."
+			"pasted": "Elementos pegados correctamente.",
+			"created": "Proyecto creado correctamente.",
+			"bulkUploaded": "Carga masiva procesada correctamente."
 		},
 		"error": {
 			"loadFailed": "No se pudieron cargar los archivos.",
@@ -3213,7 +3274,84 @@
 			"renameFailed": "No se pudo renombrar el elemento.",
 			"moveFailed": "No se pudieron mover los elementos.",
 			"copyFailed": "No se pudieron copiar los elementos.",
-			"sizeFailed": "No se pudo calcular el tamaño de la selección."
+			"sizeFailed": "No se pudo calcular el tamaño de la selección.",
+			"createFailed": "No se pudo crear el proyecto.",
+			"exportFailed": "No se pudo exportar.",
+			"unassignFailed": "No se pudo quitar al estudiante."
+		},
+		"page": {
+			"title": "Portafolio de Proyectos",
+			"createBtn": "Nuevo proyecto",
+			"exportBtn": "Exportar",
+			"searchBtn": "Buscar",
+			"clearFilters": "Limpiar filtros",
+			"resultsCount": "resultados",
+			"selectPeriod": "Selecciona un período académico.",
+			"bulkUploadTitle": "Carga masiva",
+			"showBulkUpload": "Mostrar carga masiva",
+			"hideBulkUpload": "Ocultar carga masiva"
+		},
+		"filter": {
+			"status": "Estado",
+			"program": "Programa",
+			"origin": "Origen",
+			"originAll": "Todos",
+			"originUpc": "UPC",
+			"originExternal": "Externo"
+		},
+		"status": {
+			"all": "Todos",
+			"pending": "Pendiente",
+			"reviewed": "Revisado",
+			"preApproved": "Pre-aprobado",
+			"approved": "Aprobado",
+			"disapproved": "Desaprobado"
+		},
+		"form": {
+			"title": "Nuevo proyecto",
+			"fieldName": "Nombre del proyecto",
+			"placeholderName": "ej. Sistema de gestión de inventario",
+			"fieldDescription": "Descripción",
+			"placeholderDescription": "Describe brevemente el proyecto",
+			"fieldCompany": "Empresa",
+			"fieldProgram": "Programa",
+			"academicPeriod": "Período académico",
+			"origin": "Origen",
+			"originUpc": "UPC",
+			"originExternal": "Externo",
+			"submitBtn": "Crear proyecto",
+			"submitting": "Creando...",
+			"errorRequired": "Completa los campos requeridos.",
+			"errorCompanyRequired": "Selecciona una empresa."
+		},
+		"detail": {
+			"backBtn": "Volver",
+			"editBtn": "Editar",
+			"company": "Empresa",
+			"origin": "Origen",
+			"researchLine": "Línea de investigación",
+			"problemSolved": "Problema que resuelve",
+			"goal": "Objetivo",
+			"studentsTitle": "Estudiantes",
+			"noStudents": "No hay estudiantes asignados.",
+			"applicationsTitle": "Postulaciones",
+			"removeStudentTitle": "¿Quitar estudiante?",
+			"removeStudentBody": "¿Seguro que deseas quitar a {{name}} del proyecto?",
+			"removeStudentConfirm": "Quitar",
+			"studentRemoved": "Estudiante quitado correctamente."
+		},
+		"bulkUpload": {
+			"basicTitle": "Plantilla básica",
+			"basicDesc": "Descarga la plantilla con las columnas requeridas.",
+			"filledTitle": "Archivo con datos",
+			"filledDesc": "Sube el archivo completado para procesar los proyectos.",
+			"downloadTemplate": "Descargar plantilla",
+			"upload": "Subir archivo",
+			"row": "Fila",
+			"moreErrors": "y {{count}} errores más",
+			"resultInserted": "Proyectos insertados",
+			"errorDownload": "No se pudo descargar la plantilla.",
+			"errorUpload": "No se pudo subir el archivo."
 		}
 	}
 }

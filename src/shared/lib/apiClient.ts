@@ -4,7 +4,12 @@ import { getSchoolCookie } from './authCookies';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
-export { triggerFileDownload, triggerBlobDownload, fileToBase64 } from '@/shared/lib/fileDownload';
+export {
+	triggerFileDownload,
+	triggerBlobDownload,
+	fileToBase64,
+	resolveDownloadFileName,
+} from '@/shared/lib/fileDownload';
 
 export type ApiEnvelope<T> = {
 	data?: T;

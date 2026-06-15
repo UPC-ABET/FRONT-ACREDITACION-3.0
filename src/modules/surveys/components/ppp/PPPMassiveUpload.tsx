@@ -1,73 +1,67 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Select, SubTitle, Title, Toast } from '@/shared/components';
-import { useI18n } from '@/providers';
+import React, { useState } from 'react';
+import { Toast } from '@/shared/components';
+import { useI18n, useABET } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import { FileUploadPanel } from '../shared/FileUploadPanel';
-import { usePPPUpload, usePPPCycles } from '../../hooks';
-import { useABET } from '@/providers';
+import { UploadResultSummary } from '../shared/UploadResultSummary';
+import { usePPPUpload } from '../../hooks';
 
-export function PPPMassiveUpload() {
+interface PPPMassiveUploadProps {
+	readonly programId: number;
+}
+
+export function PPPMassiveUpload({ programId }: PPPMassiveUploadProps) {
 	const { t } = useI18n();
-	const { modalityTypeId } = useABET();
-	const { cycles, load: loadCycles } = usePPPCycles();
-	const { loading, error, success, upload } = usePPPUpload();
+	const { academicPeriodId } = useABET();
+	const { loading, error, success, result, upload } = usePPPUpload();
 
-	const [selectedCycle, setSelectedCycle] = useState<{ label: string; value: number } | null>(null);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'error',
 		msg: '',
 	});
 
-	useEffect(() => {
-		loadCycles(modalityTypeId);
-	}, [modalityTypeId, loadCycles]);
-
-	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
-
 	async function handleDownloadTemplate() {
-		if (!selectedCycle) return;
+		if (!academicPeriodId) return;
 		try {
 			const { downloadPPPTemplate } = await import('../../services/pppService');
-			await downloadPPPTemplate(selectedCycle.value);
+			await downloadPPPTemplate(academicPeriodId, programId);
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : t('surveys.ppp.upload.downloadError');
-			setToast({ open: true, type: 'error', msg });
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, msg) });
 		}
+	}
+
+	if (!academicPeriodId) {
+		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
 
 	return (
 		<div className="max-w-lg space-y-5">
 			<div>
-				<Title
-					title={t('surveys.ppp.upload.title')}
-					className="[&_h2]:text-base [&_h2]:font-bold [&_h2]:text-zinc-800"
-				/>
-				<SubTitle
-					name={t('surveys.ppp.upload.description')}
-					className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
-				/>
+				<h3 className="text-base font-bold text-zinc-800">{t('surveys.ppp.upload.title')}</h3>
+				<p className="text-sm text-zinc-500 mt-1">{t('surveys.ppp.upload.description')}</p>
 			</div>
-
-			<Select
-				label={t('surveys.shared.academicCycle')}
-				options={cycleOptions}
-				value={selectedCycle}
-				onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-				placeholder={t('surveys.shared.selectCycle')}
-				isSearchable
-			/>
 
 			<FileUploadPanel
 				title={t('surveys.ppp.upload.fileTitle')}
 				uploading={loading}
 				success={success}
 				error={error}
-				onUpload={(file) => (selectedCycle ? upload(file, selectedCycle.value) : Promise.resolve())}
-				onDownloadTemplate={selectedCycle ? handleDownloadTemplate : undefined}
+				onUpload={(file) => {
+					if (!programId) {
+						setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
+						return;
+					}
+					upload(file, academicPeriodId, programId);
+				}}
+				onDownloadTemplate={handleDownloadTemplate}
 				downloadLabel={t('surveys.ppp.upload.downloadLabel')}
 			/>
+
+			{result && <UploadResultSummary result={result} />}
 
 			<Toast
 				isOpen={toast.open}

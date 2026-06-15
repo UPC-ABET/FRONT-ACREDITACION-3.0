@@ -1,36 +1,32 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Select, Button, Input, SubTitle, Title, Toast } from '@/shared';
+import React, { useState } from 'react';
+import { Button, Input, Toast } from '@/shared/components';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
-import { useI18n } from '@/providers';
-import { useLCFCNotification, useLCFCCycles, useLCFCNotificationForm } from '../../../hooks';
-import { useABET } from '@/providers';
+import { useI18n, useABET } from '@/providers';
+import { useLCFCNotification } from '../../../hooks';
 
 export function LCFCNotificationView() {
 	const { t } = useI18n();
-	const { modalityTypeId } = useABET();
-	const { cycles, load: loadCycles } = useLCFCCycles();
+	const { academicPeriodId } = useABET();
 	const { sending, error: sendError, send } = useLCFCNotification();
-	const { form, isValid, setSelectedCycle, setSurveyBaseUrl, setMaxRegisterDate } =
-		useLCFCNotificationForm();
 
+	const [surveyBaseUrl, setSurveyBaseUrl] = useState('');
+	const [maxRegisterDate, setMaxRegisterDate] = useState('');
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
 		msg: '',
 	});
 
-	useEffect(() => {
-		loadCycles(modalityTypeId);
-	}, [modalityTypeId, loadCycles]);
+	const isValid = !!academicPeriodId && surveyBaseUrl.trim() !== '' && maxRegisterDate !== '';
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (sendError) setToast({ open: true, type: 'error', msg: sendError });
 	}, [sendError]);
 
 	function handleSend() {
-		if (!isValid) {
+		if (!isValid || !academicPeriodId) {
 			setToast({
 				open: true,
 				type: 'error',
@@ -40,10 +36,10 @@ export function LCFCNotificationView() {
 		}
 		send(
 			{
-				academicPeriodId: form.selectedCycle!.value,
+				academicPeriodId,
 				programId: 0,
-				maxRegisterDate: new Date(form.maxRegisterDate).toISOString(),
-				surveyBaseUrl: form.surveyBaseUrl.trim(),
+				maxRegisterDate: new Date(maxRegisterDate).toISOString(),
+				surveyBaseUrl: surveyBaseUrl.trim(),
 			},
 			() =>
 				setToast({
@@ -54,34 +50,25 @@ export function LCFCNotificationView() {
 		);
 	}
 
-	const cycleOptions = cycles.map((c) => ({ label: c.name, value: c.id }));
+	if (!academicPeriodId) {
+		return (
+			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
+		);
+	}
 
 	return (
 		<div className="max-w-lg space-y-6">
 			<div>
-				<Title
-					title={t('surveys.lcfc.notifications.title')}
-					className="[&_h2]:text-base [&_h2]:font-bold [&_h2]:text-zinc-800"
-				/>
-				<SubTitle
-					name={t('surveys.lcfc.notifications.description')}
-					className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
-				/>
+				<h3 className="text-base font-bold text-zinc-800">
+					{t('surveys.lcfc.notifications.title')}
+				</h3>
+				<p className="text-sm text-zinc-500 mt-1">{t('surveys.lcfc.notifications.description')}</p>
 			</div>
 
 			<div className="space-y-4">
-				<Select
-					label={t('surveys.lcfc.notifications.cycleLabel')}
-					options={cycleOptions}
-					value={form.selectedCycle}
-					onChange={(_, val) => setSelectedCycle(val as { label: string; value: number } | null)}
-					placeholder={t('surveys.lcfc.notifications.cyclePlaceholder')}
-					isSearchable
-				/>
-
 				<Input
 					label={t('surveys.lcfc.notifications.urlLabel')}
-					value={form.surveyBaseUrl}
+					value={surveyBaseUrl}
 					onChange={(e) => setSurveyBaseUrl(e.target.value)}
 					placeholder={t('surveys.lcfc.notifications.urlPlaceholder')}
 					type="url"
@@ -89,7 +76,7 @@ export function LCFCNotificationView() {
 
 				<Input
 					label={t('surveys.lcfc.notifications.dateLabel')}
-					value={form.maxRegisterDate}
+					value={maxRegisterDate}
 					onChange={(e) => setMaxRegisterDate(e.target.value)}
 					type="date"
 				/>
