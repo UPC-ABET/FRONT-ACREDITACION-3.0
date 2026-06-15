@@ -12,6 +12,8 @@ import {
 	DialogFooter,
 	Input,
 	TextArea,
+	Select,
+	Toggle,
 	Toast,
 } from '@/shared/components';
 import { PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -20,6 +22,14 @@ import { tryTranslate } from '@/shared/utils';
 import type { CompetenceConfig, CompetenceFormData } from '../../types';
 import { competenceSchema } from '../../schemas/competenceSchema';
 import { MIN_PERFORMANCE_LEVEL, MAX_PERFORMANCE_LEVEL } from '../../constants/competence';
+import { listGRAOutcomes } from '../../services/graService';
+
+interface ProgramOutcomeOption {
+	value: number;
+	label: string;
+	commissionId: number;
+	commissionName: string;
+}
 
 interface CompetenceCRUDProps {
 	cycleId: number;
@@ -44,10 +54,13 @@ interface CompetenceCRUDProps {
 
 const EMPTY_FORM: Omit<CompetenceFormData, 'academicPeriodId' | 'school'> = {
 	id: 0,
+	outcomeId: undefined,
 	generalCompetence: '',
 	specificCompetence: '',
 	description: '',
-	performanceLevel: 3,
+	descriptionEn: '',
+	performanceLevel: 1,
+	isVisible: true,
 };
 
 export function CompetenceCRUD({
@@ -65,6 +78,7 @@ export function CompetenceCRUD({
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [form, setForm] = useState(EMPTY_FORM);
 	const [saving, setSaving] = useState(false);
+	const [outcomeOptions, setOutcomeOptions] = useState<ProgramOutcomeOption[]>([]);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -75,6 +89,26 @@ export function CompetenceCRUD({
 		if (cycleId) onLoad(cycleId, programId);
 	}, [cycleId, programId, onLoad]);
 
+	useEffect(() => {
+		if (!programId || !cycleId) {
+			setOutcomeOptions([]);
+			return;
+		}
+		listGRAOutcomes({ programId, academicPeriodId: cycleId })
+			.then((groups) => {
+				const options: ProgramOutcomeOption[] = groups.flatMap((group) =>
+					(group.outcomes ?? []).map((o) => ({
+						value: o.outcomeId,
+						label: `${group.commissionName} — ${o.outcomeCode}`,
+						commissionId: group.commissionId,
+						commissionName: group.commissionName,
+					})),
+				);
+				setOutcomeOptions(options);
+			})
+			.catch(() => setOutcomeOptions([]));
+	}, [programId, cycleId]);
+
 	function openAdd() {
 		setForm(EMPTY_FORM);
 		setModalOpen(true);
@@ -83,10 +117,13 @@ export function CompetenceCRUD({
 	function openEdit(row: CompetenceConfig) {
 		setForm({
 			id: row.id,
+			outcomeId: row.outcomeId,
 			generalCompetence: row.generalCompetence,
 			specificCompetence: row.specificCompetence,
 			description: row.description,
+			descriptionEn: row.descriptionEn ?? '',
 			performanceLevel: row.performanceLevel,
+			isVisible: row.isVisible ?? true,
 		});
 		setModalOpen(true);
 	}
@@ -115,14 +152,41 @@ export function CompetenceCRUD({
 		});
 	}
 
+	const isSpecific = (item: CompetenceConfig) => item.outcomeId != null && item.outcomeId !== 1;
+
+	const selectedOutcome = outcomeOptions.find((o) => o.value === form.outcomeId) ?? null;
+
 	const columns: ColumnDef<CompetenceConfig>[] = [
 		{
+			accessorKey: 'performanceLevel',
+			header: t('surveys.competence.table.order'),
+			cell: ({ getValue }) => (
+				<span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-zinc-100 text-zinc-700 text-xs font-bold">
+					{getValue() as number}
+				</span>
+			),
+		},
+		{
+			id: 'type',
+			header: t('surveys.competence.table.type'),
+			cell: ({ row }) => (
+				<span
+					className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+						isSpecific(row.original) ? 'bg-red-50 text-red-700' : 'bg-zinc-100 text-zinc-600'
+					}`}>
+					{isSpecific(row.original)
+						? t('surveys.competence.type.specific')
+						: t('surveys.competence.type.general')}
+				</span>
+			),
+		},
+		{
 			accessorKey: 'generalCompetence',
-			header: t('surveys.competence.table.general'),
+			header: t('surveys.competence.table.nameEs'),
 		},
 		{
 			accessorKey: 'specificCompetence',
-			header: t('surveys.competence.table.specific'),
+			header: t('surveys.competence.table.nameEn'),
 		},
 		{
 			accessorKey: 'description',
@@ -132,11 +196,18 @@ export function CompetenceCRUD({
 			),
 		},
 		{
-			accessorKey: 'performanceLevel',
-			header: t('surveys.competence.table.level'),
-			cell: ({ getValue }) => (
-				<span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-red-100 text-red-700 text-xs font-bold">
-					{getValue() as number}
+			id: 'visible',
+			header: t('surveys.competence.table.visible'),
+			cell: ({ row }) => (
+				<span
+					className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+						row.original.isVisible !== false
+							? 'bg-green-50 text-green-700'
+							: 'bg-zinc-100 text-zinc-500'
+					}`}>
+					{row.original.isVisible !== false
+						? t('surveys.competence.visible.yes')
+						: t('surveys.competence.visible.no')}
 				</span>
 			),
 		},
@@ -164,6 +235,16 @@ export function CompetenceCRUD({
 		},
 	];
 
+	const isEditingSpecific = form.outcomeId != null && form.outcomeId !== 1;
+	const modalTitle =
+		form.id === 0
+			? isEditingSpecific
+				? t('surveys.competence.modal.addSpecificTitle')
+				: t('surveys.competence.modal.addTitle')
+			: isEditingSpecific
+				? t('surveys.competence.modal.editSpecificTitle')
+				: t('surveys.competence.modal.editTitle');
+
 	return (
 		<div className="space-y-4">
 			{error && (
@@ -186,58 +267,96 @@ export function CompetenceCRUD({
 			/>
 
 			<Dialog open={modalOpen} onOpenChange={setModalOpen}>
-				<DialogContent className="sm:max-w-lg">
+				<DialogContent className="sm:max-w-xl">
 					<DialogHeader>
-						<DialogTitle>
-							{form.id === 0
-								? t('surveys.competence.modal.addTitle')
-								: t('surveys.competence.modal.editTitle')}
-						</DialogTitle>
+						<DialogTitle>{modalTitle}</DialogTitle>
 					</DialogHeader>
 
-					<div className="space-y-3 py-2">
+					<div className="space-y-4 py-2">
+						{/* Orden + Visibilidad */}
+						<div className="flex items-end gap-4">
+							<div className="w-28">
+								<label className="font-medium text-xs mb-1.5 text-zinc-700 block">
+									{t('surveys.competence.modal.orderLabel')}
+								</label>
+								<input
+									type="number"
+									min={MIN_PERFORMANCE_LEVEL}
+									max={MAX_PERFORMANCE_LEVEL}
+									value={form.performanceLevel}
+									onChange={(e) =>
+										setForm({
+											...form,
+											performanceLevel: Math.min(
+												MAX_PERFORMANCE_LEVEL,
+												Math.max(MIN_PERFORMANCE_LEVEL, Number(e.target.value)),
+											),
+										})
+									}
+									className="w-full h-9 rounded-md border border-zinc-200 px-3 text-sm focus:outline-none focus:border-red-500"
+								/>
+							</div>
+							<div className="flex-1 pb-0.5">
+								<Toggle
+									label={t('surveys.competence.modal.visibleLabel')}
+									checked={form.isVisible ?? true}
+									onChange={(checked) => setForm({ ...form, isVisible: checked })}
+								/>
+							</div>
+						</div>
+
+						{/* Nombre en español */}
 						<Input
-							label={t('surveys.competence.modal.generalLabel')}
+							label={t('surveys.competence.modal.nameEsLabel')}
 							value={form.generalCompetence}
 							onChange={(e) => setForm({ ...form, generalCompetence: e.target.value })}
-							placeholder={t('surveys.competence.modal.generalPlaceholder')}
+							placeholder={t('surveys.competence.modal.nameEsPlaceholder')}
 						/>
-						<Input
-							label={t('surveys.competence.modal.specificLabel')}
-							value={form.specificCompetence}
-							onChange={(e) => setForm({ ...form, specificCompetence: e.target.value })}
-							placeholder={t('surveys.competence.modal.specificPlaceholder')}
-						/>
+
+						{/* Descripción en español */}
 						<TextArea
-							label={t('surveys.competence.modal.descriptionLabel')}
+							label={t('surveys.competence.modal.descriptionEsLabel')}
 							value={form.description}
 							onChange={(e) => setForm({ ...form, description: e.target.value })}
-							placeholder={t('surveys.competence.modal.descriptionPlaceholder')}
-							rows={3}
+							placeholder={t('surveys.competence.modal.descriptionEsPlaceholder')}
+							rows={2}
 						/>
-						<div>
-							<label className="font-medium text-xs mb-2 text-zinc-700 block">
-								{t('surveys.competence.modal.levelLabel')
-									.replace('{{min}}', String(MIN_PERFORMANCE_LEVEL))
-									.replace('{{max}}', String(MAX_PERFORMANCE_LEVEL))}
-							</label>
-							<input
-								type="number"
-								min={MIN_PERFORMANCE_LEVEL}
-								max={MAX_PERFORMANCE_LEVEL}
-								value={form.performanceLevel}
-								onChange={(e) =>
+
+						{/* Nombre en inglés */}
+						<Input
+							label={t('surveys.competence.modal.nameEnLabel')}
+							value={form.specificCompetence}
+							onChange={(e) => setForm({ ...form, specificCompetence: e.target.value })}
+							placeholder={t('surveys.competence.modal.nameEnPlaceholder')}
+						/>
+
+						{/* Descripción en inglés */}
+						<TextArea
+							label={t('surveys.competence.modal.descriptionEnLabel')}
+							value={form.descriptionEn ?? ''}
+							onChange={(e) => setForm({ ...form, descriptionEn: e.target.value })}
+							placeholder={t('surveys.competence.modal.descriptionEnPlaceholder')}
+							rows={2}
+						/>
+
+						{/* Outcome (competencia específica) */}
+						{outcomeOptions.length > 0 && (
+							<Select
+								name="outcomeId"
+								label={t('surveys.competence.modal.outcomeLabel')}
+								placeholder={t('surveys.competence.modal.outcomePlaceholder')}
+								isSearchable
+								isClearable
+								options={outcomeOptions}
+								value={selectedOutcome}
+								onChange={(_name, value) =>
 									setForm({
 										...form,
-										performanceLevel: Math.min(
-											MAX_PERFORMANCE_LEVEL,
-											Math.max(MIN_PERFORMANCE_LEVEL, Number(e.target.value)),
-										),
+										outcomeId: value && !Array.isArray(value) ? Number(value.value) : undefined,
 									})
 								}
-								className="w-24 h-9 rounded-md border border-zinc-200 px-3 text-sm focus:outline-none focus:border-red-500"
 							/>
-						</div>
+						)}
 					</div>
 
 					<DialogFooter showCloseButton>

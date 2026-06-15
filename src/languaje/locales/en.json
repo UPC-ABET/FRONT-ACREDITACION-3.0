@@ -1952,22 +1952,39 @@
 		"competence": {
 			"table": {
 				"title": "Competences",
-				"general": "General Competence",
-				"specific": "Specific Competence",
+				"order": "Order",
+				"type": "Type",
+				"nameEs": "Name (ES)",
+				"nameEn": "Name (EN)",
 				"description": "Description",
-				"level": "Level",
+				"visible": "Visible",
 				"actions": "Actions"
 			},
+			"type": {
+				"general": "General",
+				"specific": "Specific"
+			},
+			"visible": {
+				"yes": "Yes",
+				"no": "No"
+			},
 			"modal": {
-				"addTitle": "Add Competence",
-				"editTitle": "Edit Competence",
-				"generalLabel": "General Competence",
-				"generalPlaceholder": "e.g. Critical Thinking",
-				"specificLabel": "Specific Competence",
-				"specificPlaceholder": "e.g. Problem Analysis",
-				"descriptionLabel": "Description",
-				"descriptionPlaceholder": "Describe the competence...",
-				"levelLabel": "Performance Level ({{min}}–{{max}})",
+				"addTitle": "Add General Competence",
+				"editTitle": "Edit General Competence",
+				"addSpecificTitle": "Add Specific Competence",
+				"editSpecificTitle": "Edit Specific Competence",
+				"orderLabel": "Order",
+				"visibleLabel": "Is it visible in the survey?",
+				"nameEsLabel": "Name in Spanish",
+				"nameEsPlaceholder": "e.g. Pensamiento Crítico",
+				"nameEnLabel": "Name in English",
+				"nameEnPlaceholder": "e.g. Critical Thinking",
+				"descriptionEsLabel": "Description in Spanish",
+				"descriptionEsPlaceholder": "Describe la competencia...",
+				"descriptionEnLabel": "Description in English",
+				"descriptionEnPlaceholder": "Describe the competence...",
+				"outcomeLabel": "Outcome (specific competence)",
+				"outcomePlaceholder": "Select an outcome to link",
 				"save": "Save",
 				"saving": "Saving...",
 				"delete": "Delete",
@@ -1975,7 +1992,7 @@
 				"deleteBody": "Are you sure you want to delete this competence? This action cannot be undone."
 			},
 			"toast": {
-				"required": "Competence and description are required.",
+				"required": "Spanish name and description are required.",
 				"saved": "Competence saved successfully.",
 				"deleted": "Competence deleted."
 			},

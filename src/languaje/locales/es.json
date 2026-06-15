@@ -1952,22 +1952,39 @@
 		"competence": {
 			"table": {
 				"title": "Competencias",
-				"general": "Competencia General",
-				"specific": "Competencia Específica",
+				"order": "Orden",
+				"type": "Tipo",
+				"nameEs": "Nombre (ES)",
+				"nameEn": "Nombre (EN)",
 				"description": "Descripción",
-				"level": "Nivel",
+				"visible": "Visible",
 				"actions": "Acciones"
 			},
+			"type": {
+				"general": "General",
+				"specific": "Específica"
+			},
+			"visible": {
+				"yes": "Sí",
+				"no": "No"
+			},
 			"modal": {
-				"addTitle": "Agregar Competencia",
-				"editTitle": "Editar Competencia",
-				"generalLabel": "Competencia General",
-				"generalPlaceholder": "Ej: Pensamiento Crítico",
-				"specificLabel": "Competencia Específica",
-				"specificPlaceholder": "Ej: Análisis de Problemas",
-				"descriptionLabel": "Descripción",
-				"descriptionPlaceholder": "Describe la competencia...",
-				"levelLabel": "Nivel de Desempeño ({{min}}–{{max}})",
+				"addTitle": "Agregar Competencia General",
+				"editTitle": "Editar Competencia General",
+				"addSpecificTitle": "Agregar Competencia Específica",
+				"editSpecificTitle": "Editar Competencia Específica",
+				"orderLabel": "Orden",
+				"visibleLabel": "¿Es visible en la encuesta?",
+				"nameEsLabel": "Nombre en español",
+				"nameEsPlaceholder": "Ej: Pensamiento Crítico",
+				"nameEnLabel": "Nombre en inglés",
+				"nameEnPlaceholder": "e.g. Critical Thinking",
+				"descriptionEsLabel": "Descripción en español",
+				"descriptionEsPlaceholder": "Describe la competencia...",
+				"descriptionEnLabel": "Descripción en inglés",
+				"descriptionEnPlaceholder": "Describe the competence...",
+				"outcomeLabel": "Outcome (competencia específica)",
+				"outcomePlaceholder": "Seleccione un outcome para vincular",
 				"save": "Guardar",
 				"saving": "Guardando...",
 				"delete": "Eliminar",
@@ -1975,7 +1992,7 @@
 				"deleteBody": "¿Estás seguro de que deseas eliminar esta competencia? Esta acción no se puede deshacer."
 			},
 			"toast": {
-				"required": "Competencia y descripción son obligatorios.",
+				"required": "Nombre y descripción en español son obligatorios.",
 				"saved": "Competencia guardada exitosamente.",
 				"deleted": "Competencia eliminada."
 			},

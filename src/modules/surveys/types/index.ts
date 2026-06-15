@@ -30,8 +30,10 @@ export interface CompetenceConfig {
 	generalCompetence: string;
 	specificCompetence: string;
 	description: string;
+	descriptionEn?: string;
 	performanceLevel: number;
 	isActive?: boolean;
+	isVisible?: boolean;
 	programId?: number;
 	periodId?: number;
 }
@@ -42,7 +44,9 @@ export interface CompetenceFormData {
 	generalCompetence: string;
 	specificCompetence: string;
 	description: string;
+	descriptionEn?: string;
 	performanceLevel: number;
+	isVisible?: boolean;
 	academicPeriodId: number;
 	programId?: number;
 	school: string;
