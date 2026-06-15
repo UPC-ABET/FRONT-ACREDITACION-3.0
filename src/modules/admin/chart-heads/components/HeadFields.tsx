@@ -1,10 +1,11 @@
 'use client';
 
 import { useMemo } from 'react';
-import { I18nTextField, Input, Select } from '@/shared/components';
+import { I18nTextField, Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
-import type { HeadFormErrors, HeadFormValue, UserOption } from '../types';
+import type { HeadFormErrors, HeadFormValue, LinkedUserRef, UserOption } from '../types';
+import { LinkedTeacherSelect } from './LinkedTeacherSelect';
 
 interface Props {
 	value: HeadFormValue;
@@ -13,6 +14,11 @@ interface Props {
 	userOptions: UserOption[];
 	usersLoading: boolean;
 	disabled?: boolean;
+}
+
+function linkedUserLabel(user: LinkedUserRef): string {
+	const fullName = `${user.firstName} ${user.lastName}`.trim();
+	return fullName && user.email ? `${fullName} — ${user.email}` : fullName || user.email || '';
 }
 
 export function HeadFields({
@@ -25,47 +31,75 @@ export function HeadFields({
 }: Props) {
 	const { t } = useI18n();
 
-	const selectOptions = useMemo(
+	const lockedUser = value.teacher?.user ?? null;
+	const userLocked = lockedUser !== null;
+
+	const userSelectOptions = useMemo(
 		() => userOptions.map((user) => ({ value: user.id, label: user.label })),
 		[userOptions],
 	);
 
-	const selectedUser = selectOptions.find((option) => option.value === value.userId) ?? null;
+	const userValue = userLocked
+		? { value: lockedUser.id, label: linkedUserLabel(lockedUser) }
+		: value.user
+			? { value: value.user.id, label: value.user.label }
+			: null;
 
 	return (
 		<div className="space-y-4">
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<Input
-					label={t('admin.chartHeads.field.firstName')}
-					required
-					value={value.firstName}
-					disabled={disabled}
-					error={errors?.firstName ? tryTranslate(t, errors.firstName) : undefined}
-					onChange={(event) => onChange({ ...value, firstName: event.target.value })}
-				/>
-				<Input
-					label={t('admin.chartHeads.field.lastName')}
-					required
-					value={value.lastName}
-					disabled={disabled}
-					error={errors?.lastName ? tryTranslate(t, errors.lastName) : undefined}
-					onChange={(event) => onChange({ ...value, lastName: event.target.value })}
-				/>
-			</div>
+			<LinkedTeacherSelect
+				value={value.teacher}
+				disabled={disabled}
+				error={errors?.teacher ? tryTranslate(t, errors.teacher) : undefined}
+				onChange={(teacher) =>
+					onChange({ ...value, teacher, user: teacher?.user ? null : value.user })
+				}
+			/>
 
 			<Select
 				label={t('admin.chartHeads.field.user')}
 				placeholder={
-					usersLoading ? t('loading.default') : t('admin.chartHeads.field.userPlaceholder')
+					userLocked
+						? t('admin.chartHeads.field.userLockedPlaceholder')
+						: usersLoading
+							? t('loading.default')
+							: t('admin.chartHeads.field.userPlaceholder')
 				}
-				isDisabled={disabled || usersLoading}
+				isDisabled={disabled || usersLoading || userLocked}
 				isSearchable
 				isClearable
-				value={selectedUser}
-				options={selectOptions}
+				value={userValue}
+				options={userSelectOptions}
 				onChange={(_, option) => {
-					const next = (option as { value?: number } | null)?.value;
-					onChange({ ...value, userId: next != null ? Number(next) : null });
+					const picked = (option as { value?: number } | null)?.value;
+					if (picked == null) {
+						onChange({ ...value, user: null });
+						return;
+					}
+					const selected = userOptions.find((user) => user.id === Number(picked));
+					if (!selected) {
+						onChange({ ...value, user: null });
+						return;
+					}
+					const teacherFromUser = selected.staff
+						? {
+								staffId: selected.staff.id,
+								code: selected.staff.code,
+								firstName: selected.staff.firstName,
+								lastName: selected.staff.lastName,
+								user: {
+									id: selected.id,
+									firstName: selected.firstName,
+									lastName: selected.lastName,
+									email: selected.email,
+								},
+							}
+						: null;
+					onChange({
+						...value,
+						teacher: teacherFromUser ?? value.teacher,
+						user: teacherFromUser ? null : { id: selected.id, label: selected.label },
+					});
 				}}
 			/>
 
