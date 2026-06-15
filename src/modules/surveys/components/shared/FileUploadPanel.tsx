@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react';
 import { Button, Toast } from '@/shared/components';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon, DocumentIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 
 interface FileUploadPanelProps {
 	readonly title: string;
@@ -110,8 +111,8 @@ export function FileUploadPanel({
 	}, [success, t]);
 
 	React.useEffect(() => {
-		if (error) setToast({ open: true, type: 'error', msg: error });
-	}, [error]);
+		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
+	}, [error, t]);
 
 	return (
 		<div className="space-y-6">

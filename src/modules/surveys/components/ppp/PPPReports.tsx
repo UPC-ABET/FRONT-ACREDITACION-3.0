@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import { usePPPReports } from '../../hooks';
 
 interface PPPReportsProps {
@@ -21,8 +22,8 @@ export function PPPReports({ programId }: PPPReportsProps) {
 	});
 
 	useEffect(() => {
-		if (error) setToast({ open: true, type: 'error', msg: error });
-	}, [error]);
+		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
+	}, [error, t]);
 
 	async function handleGenerate() {
 		if (!academicPeriodId) {

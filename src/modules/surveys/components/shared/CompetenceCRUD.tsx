@@ -16,6 +16,7 @@ import {
 } from '@/shared/components';
 import { PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import type { CompetenceConfig, CompetenceFormData } from '../../types';
 import { competenceSchema } from '../../schemas/competenceSchema';
 import { MIN_PERFORMANCE_LEVEL, MAX_PERFORMANCE_LEVEL } from '../../constants/competence';
@@ -165,7 +166,11 @@ export function CompetenceCRUD({
 
 	return (
 		<div className="space-y-4">
-			{error && <p className="text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg">{error}</p>}
+			{error && (
+				<p className="text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg">
+					{tryTranslate(t, error)}
+				</p>
+			)}
 
 			<DataTable
 				columns={columns}

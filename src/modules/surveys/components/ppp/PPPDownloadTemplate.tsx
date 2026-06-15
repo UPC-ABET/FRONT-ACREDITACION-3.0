@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Toast } from '@/shared/components';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import { usePPPDownload } from '../../hooks';
 
 interface PPPDownloadTemplateProps {
@@ -26,8 +27,8 @@ export function PPPDownloadTemplate({ programId }: PPPDownloadTemplateProps) {
 	});
 
 	useEffect(() => {
-		if (error) setToast({ open: true, type: 'error', msg: error });
-	}, [error]);
+		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
+	}, [error, t]);
 
 	async function handleDownload() {
 		if (!academicPeriodId) {

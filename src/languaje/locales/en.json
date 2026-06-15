@@ -1168,7 +1168,25 @@
 				"alreadyInList": "The student is already in the GRA list."
 			},
 			"lcfc": {
-				"tokenNotFound": "The survey link is invalid or has expired."
+				"tokenNotFound": "The survey link is invalid or has expired.",
+				"noCourseSections": "No course sections found for the selected program and period.",
+				"noProgramOutcomes": "The selected program has no registered outcomes. Register them first in Outcomes Maintenance.",
+				"configNotFound": "The requested LCFC configuration was not found."
+			},
+			"ppp": {
+				"noActiveConfig": "There is no PPP configuration for the selected program and period. Go to the Configuration tab and generate it from the program outcomes.",
+				"invalidExcelFile": "The provided file is not a valid Excel file.",
+				"excelNoSheets": "The Excel file contains no sheets.",
+				"excelEmpty": "The Excel file is empty or has no data on the first sheet.",
+				"configExists": "A PPP configuration already exists for this outcome in the selected program and period.",
+				"configNotFound": "The requested PPP configuration was not found.",
+				"surveyNotFound": "The requested PPP survey was not found.",
+				"surveyTypeMissing": "The PPP survey type was not found. Contact the administrator.",
+				"surveyStatusMissing": "The survey status was not found. Contact the administrator.",
+				"invalidPracticeNumber": "Practice number must be 1 (Practice I) or 2 (Practice II).",
+				"noScores": "At least one outcome score must be provided.",
+				"invalidScore": "Invalid score: must be between 1.0 and 5.0.",
+				"invalidRuc": "RUC must be exactly 11 numeric digits."
 			}
 		}
 	},

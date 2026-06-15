@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import { FileUploadPanel } from '../shared/FileUploadPanel';
 import { UploadResultSummary } from '../shared/UploadResultSummary';
 import { usePPPUpload } from '../../hooks';
@@ -29,7 +30,7 @@ export function PPPMassiveUpload({ programId }: PPPMassiveUploadProps) {
 			await downloadPPPTemplate(academicPeriodId, programId);
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : t('surveys.ppp.upload.downloadError');
-			setToast({ open: true, type: 'error', msg });
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, msg) });
 		}
 	}
 

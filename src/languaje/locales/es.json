@@ -1168,7 +1168,25 @@
 				"alreadyInList": "El alumno ya está en la lista de GRA."
 			},
 			"lcfc": {
-				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado."
+				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado.",
+				"noCourseSections": "No se encontraron secciones de curso para el programa y período seleccionados.",
+				"noProgramOutcomes": "El programa seleccionado no tiene outcomes registrados. Regístralos primero en Mantenimiento de Outcomes.",
+				"configNotFound": "No se encontró la configuración LCFC indicada."
+			},
+			"ppp": {
+				"noActiveConfig": "No hay configuración PPP para el programa y período seleccionados. Ve a la pestaña Configuración y genera la configuración a partir de los outcomes del programa.",
+				"invalidExcelFile": "El archivo proporcionado no es un Excel válido.",
+				"excelNoSheets": "El archivo Excel no contiene hojas.",
+				"excelEmpty": "El archivo Excel está vacío o no tiene datos en la primera hoja.",
+				"configExists": "Ya existe una configuración PPP para este outcome en el programa y período seleccionados.",
+				"configNotFound": "No se encontró la configuración PPP indicada.",
+				"surveyNotFound": "No se encontró la encuesta PPP indicada.",
+				"surveyTypeMissing": "No se encontró el tipo de encuesta PPP. Contacte al administrador.",
+				"surveyStatusMissing": "No se encontró el estado de encuesta. Contacte al administrador.",
+				"invalidPracticeNumber": "El número de práctica debe ser 1 (Práctica I) o 2 (Práctica II).",
+				"noScores": "Debe proporcionar al menos un puntaje de outcome.",
+				"invalidScore": "Puntaje inválido: debe estar entre 1.0 y 5.0.",
+				"invalidRuc": "El RUC debe tener exactamente 11 dígitos numéricos."
 			}
 		}
 	},

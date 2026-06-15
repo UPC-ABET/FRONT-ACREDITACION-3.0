@@ -16,6 +16,7 @@ import {
 } from '@/shared/components';
 import { SparklesIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 import { useLCFCConfiguration, useLCFCCycles } from '../../../hooks';
 import type { LCFCCourse } from '../../../types';
 
@@ -49,8 +50,8 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 	}, [cloneDialogOpen, loadCycles]);
 
 	useEffect(() => {
-		if (error) setToast({ open: true, type: 'error', msg: error });
-	}, [error]);
+		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
+	}, [error, t]);
 
 	function handleGenerate() {
 		if (!academicPeriodId) return;
