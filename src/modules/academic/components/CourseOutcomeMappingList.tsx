@@ -6,12 +6,14 @@ import {
 	Button,
 	Card,
 	Select,
+	SubTitle,
 	Table,
 	TableBody,
 	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
+	Title,
 } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
 import {
@@ -119,12 +121,14 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 		<Card>
 			<div className="space-y-5">
 				<div className="space-y-1">
-					<h2 className="text-lg font-semibold text-gray-900">
-						{t('loads.courseOutcomeMappingMaintenance.title')}
-					</h2>
-					<p className="text-sm text-gray-500">
-						{t('loads.courseOutcomeMappingMaintenance.subtitle')}
-					</p>
+					<Title
+						title={t('loads.courseOutcomeMappingMaintenance.title')}
+						className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+					/>
+					<SubTitle
+						name={t('loads.courseOutcomeMappingMaintenance.subtitle')}
+						className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+					/>
 				</div>
 
 				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -214,8 +218,12 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 								<TableBody>
 									{tableRows.map((row) => (
 										<TableRow key={row.programCommissionId}>
-											<TableCell className="font-mono text-zinc-700">{row.accreditorCode}</TableCell>
-											<TableCell className="font-mono text-zinc-700">{row.commissionCode}</TableCell>
+											<TableCell className="font-mono text-zinc-700">
+												{row.accreditorCode}
+											</TableCell>
+											<TableCell className="font-mono text-zinc-700">
+												{row.commissionCode}
+											</TableCell>
 											<TableCell className="text-zinc-800">
 												{localized(row.programName, locale)}
 											</TableCell>

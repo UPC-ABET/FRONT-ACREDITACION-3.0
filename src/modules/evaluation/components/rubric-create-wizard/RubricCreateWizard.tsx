@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Toast } from '@/shared/components/ui/Toast';
+import { SubTitle, Title } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useCreateRubricFull } from '../../hooks';
 import type { CreateRubricFullDto } from '../../types';
@@ -78,8 +79,14 @@ export function RubricCreateWizard() {
 	return (
 		<div className="space-y-8">
 			<div>
-				<h1 className="text-3xl font-bold text-zinc-900">{t('rubrics.wizard.title')}</h1>
-				<p className="mt-2 text-zinc-600">{t('rubrics.wizard.subtitle')}</p>
+				<Title
+					title={t('rubrics.wizard.title')}
+					className="[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-zinc-900"
+				/>
+				<SubTitle
+					name={t('rubrics.wizard.subtitle')}
+					className="mt-2 [&_h3]:text-base [&_h3]:font-normal [&_h3]:text-zinc-600"
+				/>
 			</div>
 
 			<WizardStepIndicator steps={steps} currentStep={currentStep} />

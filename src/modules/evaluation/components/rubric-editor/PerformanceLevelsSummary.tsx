@@ -1,6 +1,7 @@
 'use client';
 
 import { useI18n } from '@/providers';
+import { SubTitle, Title } from '@/shared/components';
 import { PerformanceLevel } from '../../types';
 
 interface PerformanceLevelsSummaryProps {
@@ -23,10 +24,14 @@ export function PerformanceLevelsSummary({ levels }: PerformanceLevelsSummaryPro
 	return (
 		<section className="rounded-xl border border-zinc-200 bg-white p-5">
 			<div className="mb-4">
-				<h3 className="text-sm font-semibold text-zinc-900">
-					{t('rubrics.editor.performanceLevels.title')}
-				</h3>
-				<p className="mt-1 text-xs text-zinc-500">{t('rubrics.editor.performanceLevels.helper')}</p>
+				<Title
+					title={t('rubrics.editor.performanceLevels.title')}
+					className="[&_h2]:text-sm [&_h2]:font-semibold [&_h2]:text-zinc-900"
+				/>
+				<SubTitle
+					name={t('rubrics.editor.performanceLevels.helper')}
+					className="mt-1 [&_h3]:text-xs [&_h3]:font-normal [&_h3]:text-zinc-500"
+				/>
 			</div>
 
 			{!levels.length ? (

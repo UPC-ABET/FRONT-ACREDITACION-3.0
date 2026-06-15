@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Select, Button, Toast } from '@/shared/components';
+import { Select, Button, SubTitle, Title, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useLCFCReports, useLCFCCycles } from '../../hooks';
 import { useABET } from '@/providers';
@@ -39,8 +39,14 @@ export function LCFCReports() {
 	return (
 		<div className="max-w-lg space-y-6">
 			<div>
-				<h3 className="text-base font-bold text-zinc-800">{t('surveys.lcfc.reports.title')}</h3>
-				<p className="text-sm text-zinc-500 mt-1">{t('surveys.lcfc.reports.description')}</p>
+				<Title
+					title={t('surveys.lcfc.reports.title')}
+					className="[&_h2]:text-base [&_h2]:font-bold [&_h2]:text-zinc-800"
+				/>
+				<SubTitle
+					name={t('surveys.lcfc.reports.description')}
+					className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
+				/>
 			</div>
 
 			<Select

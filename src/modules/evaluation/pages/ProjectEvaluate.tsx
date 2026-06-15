@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeftIcon, EyeIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { Skeleton, TableEmptyState } from '@/shared/components/ui';
+import { Skeleton, TableEmptyState, Title } from '@/shared/components/ui';
 import { useAuth, useI18n } from '@/providers';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
@@ -121,7 +121,10 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 				<div className="flex flex-col gap-4">
 					<div className="flex flex-wrap items-start justify-between gap-3">
 						<div className="space-y-1">
-							<h1 className="text-3xl font-bold tracking-tight text-zinc-900">{projectName}</h1>
+							<Title
+								title={projectName}
+								className="[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-zinc-900"
+							/>
 							<span className="inline-flex items-center rounded-md border border-zinc-200 bg-zinc-100 px-2.5 py-1 font-mono text-xs font-medium text-zinc-600">
 								{project.code}
 							</span>
@@ -155,9 +158,10 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 
 			<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 				<div className="border-b border-zinc-100 px-6 py-4">
-					<h2 className="text-base font-semibold text-zinc-900">
-						{t('projects.evaluate.students.title')}
-					</h2>
+					<Title
+						title={t('projects.evaluate.students.title')}
+						className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+					/>
 				</div>
 
 				<div className="divide-y divide-zinc-100">

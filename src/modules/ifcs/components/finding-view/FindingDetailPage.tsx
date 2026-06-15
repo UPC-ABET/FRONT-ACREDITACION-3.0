@@ -9,6 +9,7 @@ import {
 	ErrorDialog,
 	LoadingDialog,
 	SuccessDialog,
+	Title,
 	Toast,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
@@ -106,9 +107,10 @@ export default function FindingDetailPage() {
 					<p className="text-sm font-semibold uppercase tracking-wider text-red-700">
 						{L.pageTitle[lang]}
 					</p>
-					<h1 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
-						{data.finding.findingCode}
-					</h1>
+					<Title
+						title={data.finding.findingCode}
+						className="[&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-zinc-900 sm:[&_h2]:text-3xl"
+					/>
 				</div>
 				<Button variant="ghost" size="lg" onClick={() => router.push('/ifc-findings')}>
 					<ArrowLeftIcon className="h-5 w-5" />

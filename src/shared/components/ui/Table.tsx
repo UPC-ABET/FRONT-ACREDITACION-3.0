@@ -17,6 +17,7 @@ import { Input } from './Input';
 import { Skeleton } from './Skeleton';
 import { useI18n } from '@/providers';
 import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
+import { SubTitle, Title } from './Typography';
 
 declare module '@tanstack/react-table' {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -233,9 +234,17 @@ export function DataTable<TData, TValue>({
 			{(title || description) && (
 				<div className="space-y-1 px-1">
 					{title && (
-						<h3 className="text-lg font-bold text-zinc-800 uppercase tracking-tight">{title}</h3>
+						<Title
+							title={title}
+							className="[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-zinc-800 [&_h2]:uppercase"
+						/>
 					)}
-					{description && <p className="text-sm text-zinc-500">{description}</p>}
+					{description && (
+						<SubTitle
+							name={description}
+							className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
+						/>
+					)}
 				</div>
 			)}
 

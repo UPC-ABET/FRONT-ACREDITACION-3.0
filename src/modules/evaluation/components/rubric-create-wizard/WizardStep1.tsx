@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Select, Button } from '@/shared/components/ui';
+import { Select, Button, SubTitle, Title } from '@/shared/components/ui';
 import { useI18n, useABET } from '@/providers';
 import { useAcademicPeriods, useStudyPlanCourses } from '@/modules/academic/hooks';
 import { programsService } from '@/modules/academic/services';
@@ -104,8 +104,14 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 	return (
 		<div className="space-y-6">
 			<div>
-				<h2 className="text-lg font-semibold text-zinc-900">{t('rubrics.wizard.step1.title')}</h2>
-				<p className="mt-1 text-sm text-zinc-500">{t('rubrics.wizard.step1.subtitle')}</p>
+				<Title
+					title={t('rubrics.wizard.step1.title')}
+					className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-zinc-900"
+				/>
+				<SubTitle
+					name={t('rubrics.wizard.step1.subtitle')}
+					className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
+				/>
 			</div>
 
 			<div className="grid gap-6 sm:grid-cols-2">

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Button, Toast } from '@/shared/components';
+import { Button, SubTitle, Title, Toast } from '@/shared/components';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon, DocumentIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 
@@ -116,8 +116,13 @@ export function FileUploadPanel({
 	return (
 		<div className="space-y-6">
 			<div>
-				<h3 className="text-base font-bold text-zinc-800">{title}</h3>
-				{description && <p className="text-sm text-zinc-500 mt-1">{description}</p>}
+				<Title title={title} className="[&_h2]:text-base [&_h2]:font-bold [&_h2]:text-zinc-800" />
+				{description && (
+					<SubTitle
+						name={description}
+						className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
+					/>
+				)}
 			</div>
 
 			{onDownloadTemplate && (

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Select, Button, Input, Toast } from '@/shared/components';
+import { Select, Button, Input, SubTitle, Title, Toast } from '@/shared/components';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { useLCFCNotification, useLCFCCycles, useLCFCNotificationForm } from '../../../hooks';
@@ -59,10 +59,14 @@ export function LCFCNotificationView() {
 	return (
 		<div className="max-w-lg space-y-6">
 			<div>
-				<h3 className="text-base font-bold text-zinc-800">
-					{t('surveys.lcfc.notifications.title')}
-				</h3>
-				<p className="text-sm text-zinc-500 mt-1">{t('surveys.lcfc.notifications.description')}</p>
+				<Title
+					title={t('surveys.lcfc.notifications.title')}
+					className="[&_h2]:text-base [&_h2]:font-bold [&_h2]:text-zinc-800"
+				/>
+				<SubTitle
+					name={t('surveys.lcfc.notifications.description')}
+					className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
+				/>
 			</div>
 
 			<div className="space-y-4">

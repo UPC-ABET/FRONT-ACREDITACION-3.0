@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { PageHeader, Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { NotificationConfigPage } from '../components/NotificationConfigPage';
 import { SurveyMessagesTab } from '../components/SurveyMessagesTab';
@@ -38,10 +38,12 @@ export default function AdminNotificationsPage() {
 			/>
 
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
-			{activeTab === 'ifc' && <NotificationConfigPage />}
-			{activeTab === 'survey' && <SurveyMessagesTab />}
-			{activeTab === 'user' && <UserTemplatesTab />}
-			{activeTab === 'logs' && <NotificationLogsTab />}
+			<Card className="overflow-visible">
+				{activeTab === 'ifc' && <NotificationConfigPage />}
+				{activeTab === 'survey' && <SurveyMessagesTab />}
+				{activeTab === 'user' && <UserTemplatesTab />}
+				{activeTab === 'logs' && <NotificationLogsTab />}
+			</Card>
 		</div>
 	);
 }

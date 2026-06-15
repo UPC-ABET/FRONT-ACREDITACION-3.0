@@ -27,6 +27,8 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	SubTitle,
+	Title,
 	Toast,
 } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
@@ -218,12 +220,14 @@ export function StudentSectionEnrollmentsMaintenance() {
 		<Card>
 			<div className="space-y-5">
 				<div className="space-y-1">
-					<h2 className="text-lg font-semibold text-gray-900">
-						{t('loads.studentSectionEnrollmentsMaintenance.title')}
-					</h2>
-					<p className="text-sm text-gray-500">
-						{t('loads.studentSectionEnrollmentsMaintenance.subtitle')}
-					</p>
+					<Title
+						title={t('loads.studentSectionEnrollmentsMaintenance.title')}
+						className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+					/>
+					<SubTitle
+						name={t('loads.studentSectionEnrollmentsMaintenance.subtitle')}
+						className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+					/>
 				</div>
 
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">

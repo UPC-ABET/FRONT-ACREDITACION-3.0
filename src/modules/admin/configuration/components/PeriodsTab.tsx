@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { Button, Toast } from '@/shared/components';
+import { Button, SubTitle, Title, Toast } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
 import { useI18n } from '@/providers';
 import OpenPeriodDialog from './OpenPeriodDialog';
@@ -17,10 +17,14 @@ export default function PeriodsTab() {
 		<section className="space-y-6">
 			<header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
 				<div className="space-y-1">
-					<h2 className="text-lg font-semibold text-gray-900">
-						{t('admin.configuration.periods.title')}
-					</h2>
-					<p className="text-sm text-gray-500">{t('admin.configuration.periods.subtitle')}</p>
+					<Title
+						title={t('admin.configuration.periods.title')}
+						className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+					/>
+					<SubTitle
+						name={t('admin.configuration.periods.subtitle')}
+						className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+					/>
 				</div>
 				<Button
 					variant="primary"

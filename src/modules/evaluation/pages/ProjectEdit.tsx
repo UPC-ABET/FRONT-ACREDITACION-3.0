@@ -9,6 +9,7 @@ import {
 	Skeleton,
 	TableEmptyState,
 	TextArea,
+	Title,
 	Toast,
 	buttonVariants,
 } from '@/shared/components/ui';
@@ -204,7 +205,10 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-wrap items-start justify-between gap-3">
 							<div className="space-y-1">
-								<h1 className="text-3xl font-bold tracking-tight text-zinc-900">{projectName}</h1>
+								<Title
+									title={projectName}
+									className="[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-zinc-900"
+								/>
 								<span className="inline-flex items-center rounded-md border border-zinc-200 bg-zinc-100 px-2.5 py-1 font-mono text-xs font-medium text-zinc-600">
 									{project.code}
 								</span>
@@ -246,9 +250,10 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 			<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
 					<div className="flex items-center gap-3">
-						<h2 className="text-base font-semibold text-zinc-900">
-							{t('projects.edit.students.title')}
-						</h2>
+						<Title
+							title={t('projects.edit.students.title')}
+							className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+						/>
 						<span className="text-xs text-zinc-400">{students.length}</span>
 					</div>
 					<Button variant="primary" size="sm" onClick={() => setStudentModalOpen(true)}>
@@ -305,9 +310,10 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 			<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
 					<div className="flex items-center gap-3">
-						<h2 className="text-base font-semibold text-zinc-900">
-							{t('projects.edit.evaluators.title')}
-						</h2>
+						<Title
+							title={t('projects.edit.evaluators.title')}
+							className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+						/>
 						<span className="text-xs text-zinc-400">{evaluators?.length ?? 0}</span>
 					</div>
 					<Button variant="primary" size="sm" onClick={() => setEvaluatorModalOpen(true)}>

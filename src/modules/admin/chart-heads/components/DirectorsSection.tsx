@@ -7,7 +7,7 @@ import {
 	TrashIcon,
 	UserGroupIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Select } from '@/shared/components';
+import { Button, Select, Title } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import type { ChartHeadsFormErrors, DirectorFormValue, SchoolOption, UserOption } from '../types';
@@ -54,9 +54,10 @@ export function DirectorsSection({
 			<header className="flex flex-wrap items-center justify-between gap-3">
 				<div className="flex items-center gap-2">
 					<UserGroupIcon className="h-5 w-5 text-red-700" />
-					<h3 className="text-lg font-bold uppercase tracking-wider text-zinc-900">
-						{t('admin.chartHeads.directors.title')}
-					</h3>
+					<Title
+						title={t('admin.chartHeads.directors.title')}
+						className="[&_h2]:text-lg [&_h2]:font-bold [&_h2]:uppercase [&_h2]:tracking-wider [&_h2]:text-zinc-900"
+					/>
 				</div>
 				<Button variant="secondary" size="md" disabled={disabled} onClick={onAdd}>
 					<PlusIcon className="h-5 w-5" />

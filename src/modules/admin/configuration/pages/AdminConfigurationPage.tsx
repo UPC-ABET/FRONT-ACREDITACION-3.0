@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { PageHeader, Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { ChartHeadsConfigPage } from '@/modules/admin/chart-heads';
 import { PeriodsTab, ProgramCommissionsTab } from '../components';
@@ -36,9 +36,14 @@ export default function AdminConfigurationPage() {
 
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
 
-			{activeTab === 'periods' && <PeriodsTab />}
-			{activeTab === 'program-commissions' && <ProgramCommissionsTab />}
-			{activeTab === 'chart-heads' && <ChartHeadsConfigPage />}
+			{activeTab === 'chart-heads' ? (
+				<ChartHeadsConfigPage />
+			) : (
+				<Card className="overflow-visible">
+					{activeTab === 'periods' && <PeriodsTab />}
+					{activeTab === 'program-commissions' && <ProgramCommissionsTab />}
+				</Card>
+			)}
 		</div>
 	);
 }

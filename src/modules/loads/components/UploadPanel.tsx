@@ -8,7 +8,9 @@ import {
 	Card,
 	ErrorDialog,
 	LoadingDialog,
+	SubTitle,
 	SuccessDialog,
+	Title,
 	Toast,
 } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
@@ -136,8 +138,16 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 				<div className="space-y-5">
 					<header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
 						<div className="space-y-1">
-							<h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-							{subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
+							<Title
+								title={title}
+								className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+							/>
+							{subtitle && (
+								<SubTitle
+									name={subtitle}
+									className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+								/>
+							)}
 						</div>
 						<Button
 							variant="surface"

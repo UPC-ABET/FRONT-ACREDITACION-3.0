@@ -2,14 +2,22 @@
 
 import type { ReactNode } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Badge, Button, Toggle } from '@/shared/components';
+import { Badge, Button, SubTitle, Title, Toggle } from '@/shared/components';
 import { useI18n } from '@/providers';
 
 export function TabHeader({ title, description }: { title: string; description?: string }) {
 	return (
 		<div className="space-y-1">
-			<h2 className="text-xl font-bold tracking-tight text-zinc-900">{title}</h2>
-			{description && <p className="text-sm text-zinc-500">{description}</p>}
+			<Title
+				title={title}
+				className="[&_h2]:text-xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-zinc-900"
+			/>
+			{description && (
+				<SubTitle
+					name={description}
+					className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
+				/>
+			)}
 		</div>
 	);
 }
@@ -26,8 +34,16 @@ export function FormSection({
 	return (
 		<section className="space-y-3">
 			<div className="space-y-1">
-				<h3 className="text-sm font-bold uppercase tracking-wider text-zinc-700">{title}</h3>
-				{hint && <p className="text-xs text-zinc-500">{hint}</p>}
+				<Title
+					title={title}
+					className="[&_h2]:text-sm [&_h2]:font-bold [&_h2]:uppercase [&_h2]:tracking-wider [&_h2]:text-zinc-700"
+				/>
+				{hint && (
+					<SubTitle
+						name={hint}
+						className="[&_h3]:text-xs [&_h3]:font-normal [&_h3]:text-zinc-500"
+					/>
+				)}
 			</div>
 			{children}
 		</section>
@@ -37,7 +53,9 @@ export function FormSection({
 export function EditorCard({ title, children }: { title?: string; children: ReactNode }) {
 	return (
 		<div className="space-y-8 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-			{title && <h3 className="text-lg font-bold text-zinc-900">{title}</h3>}
+			{title && (
+				<Title title={title} className="[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-zinc-900" />
+			)}
 			{children}
 		</div>
 	);

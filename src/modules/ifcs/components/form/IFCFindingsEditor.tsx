@@ -2,7 +2,7 @@
 
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { Button, I18nTextField, Select } from '@/shared/components';
+import { Button, I18nTextField, Select, Title } from '@/shared/components';
 import type { CriticalityOption, FormFinding } from '../../types';
 import { FORM_LABELS } from './formLabels';
 
@@ -20,9 +20,10 @@ export function IFCFindingsEditor({ findings, criticalities, onAdd, onUpdate, on
 	return (
 		<section className="space-y-5">
 			<div className="flex flex-wrap items-center justify-between gap-3">
-				<h2 className="text-lg font-bold uppercase tracking-wide text-zinc-900">
-					{FORM_LABELS.sectionFindings[lang]}
-				</h2>
+				<Title
+					title={FORM_LABELS.sectionFindings[lang]}
+					className="[&_h2]:text-lg [&_h2]:font-bold [&_h2]:uppercase [&_h2]:tracking-wide [&_h2]:text-zinc-900"
+				/>
 				<Button variant="secondary" size="lg" onClick={onAdd}>
 					<PlusIcon className="h-5 w-5" />
 					{FORM_LABELS.btnAddFinding[lang]}

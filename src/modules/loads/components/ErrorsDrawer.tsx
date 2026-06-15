@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/shared/components';
+import { Button, SubTitle, Title } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useParseErrorExcel } from '../hooks';
 import type { ParsedErrorRow } from '../types';
@@ -61,12 +61,14 @@ export default function ErrorsDrawer({
 			<aside className="flex w-full max-w-xl flex-col overflow-y-auto border-l border-gray-200 bg-white p-6 shadow-xl">
 				<header className="mb-4 flex items-center justify-between">
 					<div>
-						<h3 className="text-lg font-semibold text-gray-900">
-							{t('uploadHistory.drawer.title')}
-						</h3>
-						<p className="text-xs text-gray-500">
-							{rows.length} {t('uploadHistory.drawer.rowsWithErrors')}
-						</p>
+						<Title
+							title={t('uploadHistory.drawer.title')}
+							className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+						/>
+						<SubTitle
+							name={`${rows.length} ${t('uploadHistory.drawer.rowsWithErrors')}`}
+							className="[&_h3]:text-xs [&_h3]:font-normal [&_h3]:text-gray-500"
+						/>
 					</div>
 					<button
 						type="button"

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { PageHeader, Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { UsersTab } from '../components/users';
 import { RolesTab } from '../components/roles';
@@ -38,10 +38,12 @@ export default function AdminIamPage() {
 
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
 
-			{activeTab === 'users' && <UsersTab />}
-			{activeTab === 'roles' && <RolesTab />}
-			{activeTab === 'modules' && <ModulesTab />}
-			{activeTab === 'permissions' && <PermissionsTab />}
+			<Card className="overflow-visible">
+				{activeTab === 'users' && <UsersTab />}
+				{activeTab === 'roles' && <RolesTab />}
+				{activeTab === 'modules' && <ModulesTab />}
+				{activeTab === 'permissions' && <PermissionsTab />}
+			</Card>
 		</div>
 	);
 }
