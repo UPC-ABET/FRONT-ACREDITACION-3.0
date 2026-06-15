@@ -2,13 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Select, Button, Badge, SubTitle, Title } from '@/shared/components/ui';
+import { Select, Button, Badge, SubTitle, Title, TYPE_GROUP_CODES, TYPE_CODES } from '@/shared';
 import { useI18n } from '@/providers';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { useCourseOutcomeMappings } from '@/modules/academic/hooks';
-import { rubricsService } from '../../services';
+import { rubricsService } from '@/modules';
 import type { Step1Data } from './WizardStep1';
-import { TYPE_GROUP_CODES, TYPE_CODES } from '@/shared/constants';
 
 const GRADE_TYPE_GROUP = TYPE_GROUP_CODES.GRADE_TYPE;
 const CAPSTONE_RUBRIC_CODE = TYPE_CODES.RUBRIC_TYPE.CAPSTONE;

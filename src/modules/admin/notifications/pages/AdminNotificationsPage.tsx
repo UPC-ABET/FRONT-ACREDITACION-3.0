@@ -3,10 +3,10 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { NotificationConfigPage } from '../components/NotificationConfigPage';
-import { SurveyMessagesTab } from '../components/SurveyMessagesTab';
-import { UserTemplatesTab } from '../components/UserTemplatesTab';
-import { NotificationLogsTab } from '../components/NotificationLogsTab';
+import { NotificationConfigPage } from '@/modules/admin/notifications';
+import { SurveyMessagesTab } from '@/modules/admin/notifications';
+import { UserTemplatesTab } from '@/modules/admin/notifications';
+import { NotificationLogsTab } from '@/modules/admin/notifications';
 
 const DEFAULT_TAB = 'ifc';
 

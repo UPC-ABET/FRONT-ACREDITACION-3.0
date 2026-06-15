@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
-import { Toast } from '@/shared/components/ui/Toast';
-import { SubTitle, Title } from '@/shared/components';
-import { projectsService } from '../../services';
+import { Toast, SubTitle, Title } from '@/shared';
+import { projectsService } from '@/modules';
 import { WizardStepIndicator } from '../rubric-create-wizard/WizardStepIndicator';
 import { WizardStep1, type Step1Data } from '../rubric-create-wizard/WizardStep1';
 import { ProjectWizardStep2, type ProjectFormData } from './ProjectWizardStep2';

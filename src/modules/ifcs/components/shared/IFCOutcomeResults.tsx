@@ -2,8 +2,8 @@
 
 import { useI18n } from '@/providers';
 import { Card, Title } from '@/shared/components';
-import { IFC_SHARED_LABELS } from './ifc.labels';
-import type { ProgramGroup } from '../../types';
+import { IFC_SHARED_LABELS } from '@/modules';
+import type { ProgramGroup } from '@/modules';
 
 type Props = { outcomeResult: ProgramGroup[] };
 

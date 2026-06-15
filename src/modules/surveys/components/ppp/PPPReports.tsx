@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Select, Button, SubTitle, Title, Toast } from '@/shared/components';
+import { Select, Button, SubTitle, Title, Toast } from '@/shared';
 import { useI18n } from '@/providers';
 import { usePPPReports, usePPPCycles } from '../../hooks';
 import { useABET } from '@/providers';

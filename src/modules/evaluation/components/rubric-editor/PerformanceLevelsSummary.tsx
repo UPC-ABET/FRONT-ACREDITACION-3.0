@@ -2,7 +2,7 @@
 
 import { useI18n } from '@/providers';
 import { SubTitle, Title } from '@/shared/components';
-import { PerformanceLevel } from '../../types';
+import { PerformanceLevel } from '@/modules';
 
 interface PerformanceLevelsSummaryProps {
 	levels: PerformanceLevel[];

@@ -2,12 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Button, Input, TextArea, Title } from '@/shared/components/ui';
+import { Button, Input, TextArea, Title } from '@/shared';
 import { useI18n } from '@/providers';
 import type { EnrolledStudentResponse } from '@/modules/academic';
 import type { Step1Data } from '../rubric-create-wizard/WizardStep1';
-import { WizardSelectStudentsModal } from './WizardSelectStudentsModal';
-import { WizardSelectEvaluatorModal } from './WizardSelectEvaluatorModal';
+import { WizardSelectStudentsModal, WizardSelectEvaluatorModal } from '@/modules';
 
 export interface ProjectFormData {
 	code: string;

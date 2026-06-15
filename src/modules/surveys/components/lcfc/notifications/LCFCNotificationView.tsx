@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Select, Button, Input, SubTitle, Title, Toast } from '@/shared/components';
+import { Select, Button, Input, SubTitle, Title, Toast } from '@/shared';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { useLCFCNotification, useLCFCCycles, useLCFCNotificationForm } from '../../../hooks';

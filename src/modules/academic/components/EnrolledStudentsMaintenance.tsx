@@ -33,7 +33,7 @@ import {
 } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
+import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import {
@@ -49,8 +49,7 @@ import type {
 	EnrolledStudentMaintenanceUpdate,
 	ProgramResponse,
 } from '../types';
-import { EnrolledStudentCreateDialog } from './EnrolledStudentCreateDialog';
-import { EnrolledStudentMaintenanceEditDialog } from './EnrolledStudentMaintenanceEditDialog';
+import { EnrolledStudentCreateDialog, EnrolledStudentMaintenanceEditDialog } from '@/modules';
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 

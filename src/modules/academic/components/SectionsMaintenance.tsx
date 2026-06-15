@@ -29,10 +29,10 @@ import {
 	SubTitle,
 	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
+import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import {
@@ -46,8 +46,7 @@ import type {
 	CourseSectionMaintenanceItem,
 	CourseSectionMaintenanceUpdate,
 } from '../types';
-import { SectionCreateDialog } from './SectionCreateDialog';
-import { SectionEditDialog } from './SectionEditDialog';
+import { SectionCreateDialog, SectionEditDialog } from '@/modules';
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 

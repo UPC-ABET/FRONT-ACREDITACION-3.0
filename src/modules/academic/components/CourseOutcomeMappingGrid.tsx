@@ -12,10 +12,10 @@ import {
 	PlusIcon,
 	XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Card, SubTitle, Title, Toast } from '@/shared/components';
-import { TYPE_CODES } from '@/shared/constants';
-import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons } from '@/shared/lib/apiError';
+import { Button, Card, SubTitle, Title, Toast } from '@/shared';
+import { TYPE_CODES } from '@/shared';
+import { useApiErrorToast } from '@/shared';
+import { getApiErrorReasons } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import {
@@ -29,7 +29,7 @@ import type {
 	CourseOutcomeMappingOutcomeType,
 	CourseOutcomeMappingView,
 } from '../types';
-import { CourseOutcomeMappingGlyph } from './CourseOutcomeMappingGlyph';
+import { CourseOutcomeMappingGlyph } from '@/modules';
 
 interface CourseOutcomeMappingGridProps {
 	programCommissionId: number;

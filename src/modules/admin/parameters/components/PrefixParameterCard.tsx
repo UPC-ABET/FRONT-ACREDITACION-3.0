@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { CheckCircleIcon, HashtagIcon } from '@heroicons/react/24/outline';
-import { Button, Input, SubTitle, Title } from '@/shared/components';
+import { Button, Input, SubTitle, Title } from '@/shared';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/apiError';
+import { getErrorMessage } from '@/shared/lib';
 import { validatePrefixValue } from '../schemas';
-import { updateParameter } from '../services/parametersAdminService';
+import { updateParameter } from '@/modules/admin/parameters';
 import type { ParameterRow } from '../types';
 
 type Props = {

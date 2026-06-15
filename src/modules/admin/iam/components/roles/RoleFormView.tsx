@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, I18nTextField, Input, LoadingState, Title } from '@/shared/components';
+import { Button, I18nTextField, Input, LoadingState, Title } from '@/shared';
 import { useI18n } from '@/providers';
 import { useLanguages } from '@/shared/hooks';
 import { getErrorMessage } from '@/shared/lib/apiError';
@@ -10,7 +10,7 @@ import type { I18nText } from '@/shared/types';
 import { useModules, usePermissions, useRoleModulePermissions, useSaveRole } from '../../hooks';
 import { hasRoleErrors, validateRoleForm } from '../../schemas';
 import type { AdminRole, MatrixCell, RoleFormErrors, RoleModulePermission } from '../../types';
-import { RolePermissionMatrix } from './RolePermissionMatrix';
+import { RolePermissionMatrix } from '@/modules/admin/iam';
 
 const NO_PERMISSION_LINKS: RoleModulePermission[] = [];
 

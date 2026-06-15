@@ -27,10 +27,10 @@ import {
 	SubTitle,
 	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
+import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import {
 	useStudyPlanCourseLevels,
@@ -38,8 +38,7 @@ import {
 	useStudyPlanCoursesViewMutations,
 } from '../hooks';
 import type { CourseUpdateBody, StudyPlanCourseCreate, StudyPlanCourseRow } from '../types';
-import { StudyPlanCourseCreateDialog } from './StudyPlanCourseCreateDialog';
-import { StudyPlanCourseEditDialog } from './StudyPlanCourseEditDialog';
+import { StudyPlanCourseCreateDialog, StudyPlanCourseEditDialog } from '@/modules';
 
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
 	if (!text) return '';

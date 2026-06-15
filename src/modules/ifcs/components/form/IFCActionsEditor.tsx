@@ -2,9 +2,9 @@
 
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { Button, I18nTextField, Select, Title } from '@/shared/components';
-import type { FormAction, FormFinding } from '../../types';
-import { FORM_LABELS } from './formLabels';
+import { Button, I18nTextField, Select, Title } from '@/shared';
+import type { FormAction, FormFinding } from '@/modules';
+import { FORM_LABELS } from '@/modules';
 
 type Props = {
 	actions: FormAction[];

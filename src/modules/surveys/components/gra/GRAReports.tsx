@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Select, Button, SubTitle, Title, Toast } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { Select, Button, SubTitle, Title, Toast } from '@/shared';
+import { useI18n, useABET } from '@/providers';
 import { useGRAReports, useGRACycles } from '../../hooks';
-import { useABET } from '@/providers';
 
 export function GRAReports() {
 	const { t } = useI18n();

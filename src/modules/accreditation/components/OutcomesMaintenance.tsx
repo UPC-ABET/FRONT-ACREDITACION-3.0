@@ -30,11 +30,11 @@ import {
 	SubTitle,
 	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useProgramsByModality, type ProgramResponse } from '@/modules/academic';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
+import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import {
@@ -47,8 +47,7 @@ import type {
 	OutcomeMaintenanceItem,
 	OutcomeMaintenanceUpdate,
 } from '../types';
-import { OutcomeMaintenanceCreateDialog } from './OutcomeMaintenanceCreateDialog';
-import { OutcomeMaintenanceEditDialog } from './OutcomeMaintenanceEditDialog';
+import { OutcomeMaintenanceCreateDialog, OutcomeMaintenanceEditDialog } from '@/modules';
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 

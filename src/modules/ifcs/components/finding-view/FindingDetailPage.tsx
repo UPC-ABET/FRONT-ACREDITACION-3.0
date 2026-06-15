@@ -13,20 +13,19 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/apiError';
+import { getErrorMessage } from '@/shared/lib';
+import { resolveApiErrorContent, tryTranslateReason, type ApiErrorContent } from '@/shared/utils';
 import {
-	resolveApiErrorContent,
-	tryTranslateReason,
-	type ApiErrorContent,
-} from '@/shared/utils/tryTranslate';
-import { useFindingDetail } from '../../hooks/useIfcFindings';
-import { deleteFinding, patchFinding } from '../../services/ifcFindingsService';
+	deleteFinding,
+	patchFinding,
+	useFindingDetail,
+	DeleteFindingModal,
+	FindingActionsTable,
+	FindingGeneralInfo,
+} from '@/modules';
 import { getParameterByCode } from '@/modules/core';
-import { PARAMETER_CODES } from '@/shared/constants';
-import type { I18nText } from '../../types';
-import { DeleteFindingModal } from '../shared/DeleteFindingModal';
-import { FindingActionsTable } from './FindingActionsTable';
-import { FindingGeneralInfo } from './FindingGeneralInfo';
+import { PARAMETER_CODES } from '@/shared';
+import type { I18nText } from '@/shared';
 import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
 
 export default function FindingDetailPage() {

@@ -13,12 +13,12 @@ import {
 	TableErrorState,
 	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/apiError';
-import { tryTranslate } from '@/shared/utils/tryTranslate';
+import { getErrorMessage } from '@/shared/lib';
+import { tryTranslate } from '@/shared/utils';
 import { useParameter } from '../hooks/useParameter';
-import { updateParameter } from '../services/parametersAdminService';
+import { updateParameter } from '@/modules/admin/parameters';
 import { PARAMETER_CODES } from '@/shared/constants';
 import { validateIFCFields, hasValidationErrors } from '../schemas';
 import type { IFCFieldDescriptor } from '../types';

@@ -1,12 +1,11 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, PageHeader, Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs } from '@/shared';
 import { useI18n } from '@/providers';
 import { UsersTab } from '../components/users';
 import { RolesTab } from '../components/roles';
-import { ModulesTab } from '../components/modules';
-import { PermissionsTab } from '../components/permissions';
+import { ModulesTab, PermissionsTab } from '@/modules/admin/iam';
 
 const DEFAULT_TAB = 'users';
 

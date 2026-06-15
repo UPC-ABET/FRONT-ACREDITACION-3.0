@@ -47,8 +47,7 @@ import type {
 	StudyPlanMaintenanceItem,
 	StudyPlanMaintenanceUpdate,
 } from '../types';
-import { StudyPlanCreateDialog } from './StudyPlanCreateDialog';
-import { StudyPlanEditDialog } from './StudyPlanEditDialog';
+import { StudyPlanCreateDialog, StudyPlanEditDialog } from '@/modules';
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 

@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { SubTitle, Title } from './Typography';
+import { SubTitle, Title } from '@/shared';
 
 interface CardProps {
 	title?: string;

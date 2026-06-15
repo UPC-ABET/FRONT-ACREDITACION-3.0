@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Toast } from '@/shared/components/ui/Toast';
 import { SubTitle, Title } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { useCreateRubricFull } from '../../hooks';
-import type { CreateRubricFullDto } from '../../types';
+import { useCreateRubricFull } from '@/modules';
+import type { CreateRubricFullDto } from '@/modules';
 import { WizardStepIndicator } from './WizardStepIndicator';
 import { WizardStep1, type Step1Data } from './WizardStep1';
 import { WizardStep2, type Step2Data } from './WizardStep2';
 import { WizardStep3NonCapstone, type NonCapstonePayloadQuestion } from './WizardStep3NonCapstone';
 import { WizardStep3Capstone, type CapstonePayloadQuestion } from './WizardStep3Capstone';
-import { TYPE_CODES } from '@/shared/constants';
+import { TYPE_CODES } from '@/shared';
 
 export function RubricCreateWizard() {
 	const router = useRouter();

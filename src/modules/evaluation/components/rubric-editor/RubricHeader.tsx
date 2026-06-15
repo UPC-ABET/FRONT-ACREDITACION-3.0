@@ -2,7 +2,7 @@
 
 import { useI18n } from '@/providers';
 import { Badge, SubTitle, Title } from '@/shared/components/ui';
-import { RubricDetail } from '../../types';
+import { RubricDetail } from '@/modules';
 
 interface RubricHeaderProps {
 	rubric: RubricDetail;

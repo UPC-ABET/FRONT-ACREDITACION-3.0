@@ -23,9 +23,9 @@ import {
 	SubTitle,
 	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons } from '@/shared/lib/apiError';
+import { getApiErrorReasons } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { useABET, useI18n } from '@/providers';
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../constants';
@@ -33,7 +33,7 @@ import { useChartMutations, useChartTree } from '../hooks';
 import type { ChartNode } from '../types';
 import { collectNodeIdsWithChildren } from '../utils/layout';
 import { exportSvgAsPdf, exportSvgAsPng } from '../utils/exportChart';
-import { ChartNodeDialog } from './ChartNodeDialog';
+import { ChartNodeDialog } from '@/modules/charts';
 import { ChartNodeMenu } from './ChartNodeMenu';
 import { OrgChart } from './OrgChart';
 

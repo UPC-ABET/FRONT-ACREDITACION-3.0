@@ -21,7 +21,7 @@ import {
 	useRemoveProjectStudent,
 	useRemoveProjectEvaluator,
 } from '../hooks';
-import { AddEvaluatorModal, AddStudentModal } from '../components/project-edit';
+import { AddEvaluatorModal, AddStudentModal } from '@/modules';
 
 interface ProjectEditPageProps {
 	projectId: string;

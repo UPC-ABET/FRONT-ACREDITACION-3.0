@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { cn } from '@/shared/lib/utils';
-import { SubTitle, Title } from './Typography';
+import { SubTitle, Title } from '@/shared';
 
 interface PageHeaderProps {
 	title: string;

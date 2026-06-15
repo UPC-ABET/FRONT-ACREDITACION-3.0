@@ -11,13 +11,9 @@ import {
 	useReactTable,
 } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/shared/lib/utils';
-import { Button } from './Button';
-import { Input } from './Input';
-import { Skeleton } from './Skeleton';
+import { cn } from '@/shared/lib';
+import { Skeleton, SubTitle, Title, Button, Input, DEFAULT_PAGE_SIZE } from '@/shared';
 import { useI18n } from '@/providers';
-import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
-import { SubTitle, Title } from './Typography';
 
 declare module '@tanstack/react-table' {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
