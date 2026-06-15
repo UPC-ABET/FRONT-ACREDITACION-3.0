@@ -153,6 +153,17 @@ export type ProfessorMaintenanceList = {
 	totalPages: number;
 };
 
+export type ProfessorLookupItem = {
+	id: number;
+	staffId: number;
+	code: string | null;
+	firstName: string;
+	lastName: string;
+	user: ProfessorStaffUserResponse | null;
+};
+
+export type ProfessorLookupList = PaginatedEnvelope<ProfessorLookupItem>;
+
 export type ProfessorMaintenanceUpdate = {
 	code?: string;
 	firstName?: string;

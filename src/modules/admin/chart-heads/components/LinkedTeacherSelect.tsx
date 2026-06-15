@@ -1,29 +1,30 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { Select } from '@/shared/components';
-import { professorsService, type ProfessorSearchResponse } from '@/modules/academic';
+import { useCallback } from 'react';
+import { LazySelect, type LazyPageResult } from '@/shared/components';
+import { professorsService, type ProfessorLookupItem } from '@/modules/academic';
 import { useI18n } from '@/providers';
 import type { TeacherOption } from '../types';
+
+const PAGE_SIZE = 20;
 
 export function teacherLabel(teacher: TeacherOption): string {
 	const fullName = `${teacher.firstName} ${teacher.lastName}`.trim();
 	return teacher.code ? `${teacher.code} — ${fullName}` : fullName;
 }
 
-function toTeacherOption(professor: ProfessorSearchResponse): TeacherOption {
-	const { staff } = professor;
+function toTeacherOption(professor: ProfessorLookupItem): TeacherOption {
 	return {
 		staffId: professor.staffId,
 		code: professor.code ?? null,
-		firstName: staff.firstName ?? '',
-		lastName: staff.lastName ?? '',
-		user: staff.user
+		firstName: professor.firstName ?? '',
+		lastName: professor.lastName ?? '',
+		user: professor.user
 			? {
-					id: staff.user.id,
-					firstName: staff.user.firstName,
-					lastName: staff.user.lastName,
-					email: staff.user.email,
+					id: professor.user.id,
+					firstName: professor.user.firstName,
+					lastName: professor.user.lastName,
+					email: professor.user.email,
 				}
 			: null,
 	};
@@ -38,65 +39,33 @@ interface Props {
 
 export function LinkedTeacherSelect({ value, onChange, error, disabled }: Props) {
 	const { t } = useI18n();
-	const [search, setSearch] = useState('');
-	const [debouncedSearch, setDebouncedSearch] = useState('');
-	const [results, setResults] = useState<ProfessorSearchResponse[]>([]);
 
-	useEffect(() => {
-		const timer = setTimeout(() => setDebouncedSearch(search), 300);
-		return () => clearTimeout(timer);
-	}, [search]);
-
-	useEffect(() => {
-		let active = true;
-		professorsService
-			.getByFilters({ search: debouncedSearch.trim() || undefined })
-			.then((response) => {
-				if (active) setResults(response.data ?? []);
-			})
-			.catch(() => {
-				if (active) setResults([]);
-			});
-		return () => {
-			active = false;
-		};
-	}, [debouncedSearch]);
-
-	const teachers = useMemo<TeacherOption[]>(() => {
-		const mapped = results.map(toTeacherOption);
-		if (value && !mapped.some((teacher) => teacher.staffId === value.staffId)) {
-			return [value, ...mapped];
-		}
-		return mapped;
-	}, [results, value]);
-
-	const options = useMemo(
-		() => teachers.map((teacher) => ({ value: teacher.staffId, label: teacherLabel(teacher) })),
-		[teachers],
+	const loadPage = useCallback(
+		({
+			search,
+			page,
+		}: {
+			search: string;
+			page: number;
+		}): Promise<LazyPageResult<ProfessorLookupItem>> =>
+			professorsService.lookup({ search, page, pageSize: PAGE_SIZE }).then((response) => ({
+				items: response.data.items,
+				totalPages: response.data.totalPages,
+			})),
+		[],
 	);
 
-	const selectedValue = value ? { value: value.staffId, label: teacherLabel(value) } : null;
-
 	return (
-		<Select
-			name="linkedTeacher"
+		<LazySelect<ProfessorLookupItem>
 			label={t('admin.chartHeads.field.teacher')}
 			placeholder={t('admin.chartHeads.field.teacherPlaceholder')}
-			isClearable
-			isSearchable
+			value={value ? { id: value.staffId, label: teacherLabel(value) } : null}
+			onChange={(professor) => onChange(professor ? toTeacherOption(professor) : null)}
+			loadPage={loadPage}
+			getId={(professor) => professor.staffId}
+			getLabel={(professor) => teacherLabel(toTeacherOption(professor))}
 			isDisabled={disabled}
-			options={options}
-			value={selectedValue}
 			error={error}
-			onChange={(_name, option) => {
-				const picked = (option as { value?: number } | null)?.value;
-				if (picked == null) {
-					onChange(null);
-					return;
-				}
-				onChange(teachers.find((teacher) => teacher.staffId === Number(picked)) ?? null);
-			}}
-			onInputChange={setSearch}
 		/>
 	);
 }

@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { Select } from '@/shared/components';
-import { professorsService, type ProfessorSearchResponse } from '@/modules/academic';
+import { useCallback } from 'react';
+import { LazySelect, type LazyPageResult } from '@/shared/components';
+import { professorsService, type ProfessorLookupItem } from '@/modules/academic';
 import { useI18n } from '@/providers';
+
+const PAGE_SIZE = 20;
 
 export type TeacherOption = {
 	staffId: number;
@@ -17,12 +19,12 @@ export function teacherLabel(teacher: TeacherOption): string {
 	return teacher.code ? `${teacher.code} — ${fullName}` : fullName;
 }
 
-function toTeacher(professor: ProfessorSearchResponse): TeacherOption {
+function toTeacher(professor: ProfessorLookupItem): TeacherOption {
 	return {
-		staffId: professor.staff.id,
+		staffId: professor.staffId,
 		code: professor.code ?? null,
-		firstName: professor.staff.firstName ?? '',
-		lastName: professor.staff.lastName ?? '',
+		firstName: professor.firstName ?? '',
+		lastName: professor.lastName ?? '',
 	};
 }
 
@@ -34,65 +36,34 @@ type Props = {
 
 export function LinkedTeacherField({ selected, onChange, disabled }: Props) {
 	const { t } = useI18n();
-	const [search, setSearch] = useState('');
-	const [debouncedSearch, setDebouncedSearch] = useState('');
-	const [results, setResults] = useState<ProfessorSearchResponse[]>([]);
 
-	useEffect(() => {
-		const timer = setTimeout(() => setDebouncedSearch(search), 300);
-		return () => clearTimeout(timer);
-	}, [search]);
-
-	useEffect(() => {
-		let active = true;
-		professorsService
-			.getByFilters({ unassigned: true, search: debouncedSearch.trim() || undefined })
-			.then((response) => {
-				if (active) setResults(response.data ?? []);
-			})
-			.catch(() => {
-				if (active) setResults([]);
-			});
-		return () => {
-			active = false;
-		};
-	}, [debouncedSearch]);
-
-	// Keep the currently linked teacher visible even when it is not in the
-	// unassigned search results (an already-linked teacher is "assigned").
-	const teachers = useMemo<TeacherOption[]>(() => {
-		const mapped = results.map(toTeacher);
-		if (selected && !mapped.some((teacher) => teacher.staffId === selected.staffId)) {
-			return [selected, ...mapped];
-		}
-		return mapped;
-	}, [results, selected]);
-
-	const options = useMemo(
-		() => teachers.map((teacher) => ({ value: teacher.staffId, label: teacherLabel(teacher) })),
-		[teachers],
+	const loadPage = useCallback(
+		({
+			search,
+			page,
+		}: {
+			search: string;
+			page: number;
+		}): Promise<LazyPageResult<ProfessorLookupItem>> =>
+			professorsService
+				.lookup({ search, page, pageSize: PAGE_SIZE, unassigned: true })
+				.then((response) => ({
+					items: response.data.items,
+					totalPages: response.data.totalPages,
+				})),
+		[],
 	);
 
-	const value = selected ? { value: selected.staffId, label: teacherLabel(selected) } : null;
-
 	return (
-		<Select
-			name="linkedTeacher"
+		<LazySelect<ProfessorLookupItem>
 			label={t('admin.iam.users.form.linkedTeacher')}
 			placeholder={t('admin.iam.users.form.linkedTeacherPlaceholder')}
-			isClearable
-			isSearchable
+			value={selected ? { id: selected.staffId, label: teacherLabel(selected) } : null}
+			onChange={(professor) => onChange(professor ? toTeacher(professor) : null)}
+			loadPage={loadPage}
+			getId={(professor) => professor.staffId}
+			getLabel={(professor) => teacherLabel(toTeacher(professor))}
 			isDisabled={disabled}
-			options={options}
-			value={value}
-			onChange={(_name, option) => {
-				if (!option || Array.isArray(option)) {
-					onChange(null);
-					return;
-				}
-				onChange(teachers.find((teacher) => teacher.staffId === option.value) ?? null);
-			}}
-			onInputChange={setSearch}
 		/>
 	);
 }
