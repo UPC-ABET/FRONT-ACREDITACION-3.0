@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowDownTrayIcon, PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
+	Card,
+	PageHeader,
 	Table,
 	TableBody,
 	TableCell,
@@ -12,6 +14,7 @@ import {
 	TableErrorState,
 	TableHead,
 	TableHeader,
+	TableLoadingState,
 	TableRow,
 	Dialog,
 	DialogContent,
@@ -21,7 +24,6 @@ import {
 	DialogClose,
 	Button,
 } from '@/shared/components/ui';
-import { LoadingState } from '@/shared/components';
 import { Select } from '@/shared/components/ui/Select';
 import { buttonVariants } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
@@ -57,7 +59,8 @@ export function ProjectsListPage() {
 			'filtered',
 			{ schoolId, academicPeriodId: selectedPeriodId, isActive: true },
 		],
-		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data),
+		queryFn: () =>
+			programsService.getByFilters({ isActive: true, schoolFilter: true }).then((r) => r.data),
 		enabled: !!selectedPeriodId && !!schoolId,
 	});
 
@@ -155,80 +158,80 @@ export function ProjectsListPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-				<div>
-					<h1 className="text-3xl font-bold text-zinc-900">{t('projects.list.title')}</h1>
-					<p className="mt-2 text-zinc-600">{t('projects.list.description')}</p>
-				</div>
-				<div className="flex shrink-0 items-center gap-2">
-					<button
-						type="button"
-						onClick={() => {
-							setExportError(null);
-							setExportOpen(true);
-						}}
-						disabled={!selectedPeriodId || !schoolId}
-						className={cn(
-							buttonVariants({ variant: 'secondary', size: 'md' }),
-							'inline-flex items-center gap-1.5 disabled:pointer-events-none disabled:opacity-50',
-						)}>
-						<ArrowDownTrayIcon className="h-4 w-4" />
-						{t('projects.list.exportButton')}
-					</button>
-					<Link
-						href="/evaluation/projects/new"
-						className={cn(
-							buttonVariants({ variant: 'primary', size: 'md' }),
-							'inline-flex items-center gap-1.5',
-						)}>
-						<PlusIcon className="h-4 w-4" />
-						{t('projects.list.addButton')}
-					</Link>
-				</div>
-			</div>
-
-			<div className="space-y-4">
-				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					<Select
-						label={t('projects.list.filters.program')}
-						options={programOptions}
-						value={selectedProgram}
-						isClearable
-						isDisabled={!selectedPeriodId}
-						onChange={handleProgramChange}
-					/>
-					<Select
-						label={t('projects.list.filters.course')}
-						options={courseOptions}
-						value={selectedCourse}
-						isClearable
-						isDisabled={!selectedProgram}
-						onChange={handleCourseChange}
-					/>
-				</div>
-
-				{(selectedProgram || selectedCourse) && (
-					<div className="flex justify-end">
+			<PageHeader
+				title={t('projects.list.title')}
+				description={t('projects.list.description')}
+				action={
+					<>
 						<button
 							type="button"
-							onClick={handleClearFilters}
+							onClick={() => {
+								setExportError(null);
+								setExportOpen(true);
+							}}
+							disabled={!selectedPeriodId || !schoolId}
 							className={cn(
-								buttonVariants({ variant: 'warning', size: 'md' }),
-								'inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-red-100 hover:text-red-500',
+								buttonVariants({ variant: 'secondary', size: 'md' }),
+								'inline-flex items-center gap-1.5 disabled:pointer-events-none disabled:opacity-50',
 							)}>
-							<TrashIcon className="h-4 w-4" />
-							{t('projects.list.clearFilters')}
+							<ArrowDownTrayIcon className="h-4 w-4" />
+							{t('projects.list.exportButton')}
 						</button>
+						<Link
+							href="/evaluation/projects/new"
+							className={cn(
+								buttonVariants({ variant: 'primary', size: 'md' }),
+								'inline-flex items-center gap-1.5',
+							)}>
+							<PlusIcon className="h-4 w-4" />
+							{t('projects.list.addButton')}
+						</Link>
+					</>
+				}
+			/>
+
+			<Card>
+				<div className="space-y-4">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						<Select
+							label={t('projects.list.filters.program')}
+							options={programOptions}
+							value={selectedProgram}
+							isClearable
+							isDisabled={!selectedPeriodId}
+							onChange={handleProgramChange}
+						/>
+						<Select
+							label={t('projects.list.filters.course')}
+							options={courseOptions}
+							value={selectedCourse}
+							isClearable
+							isDisabled={!selectedProgram}
+							onChange={handleCourseChange}
+						/>
 					</div>
-				)}
-			</div>
+
+					{(selectedProgram || selectedCourse) && (
+						<div className="flex justify-end">
+							<button
+								type="button"
+								onClick={handleClearFilters}
+								className={cn(
+									buttonVariants({ variant: 'warning', size: 'md' }),
+									'inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-red-100 hover:text-red-500',
+								)}>
+								<TrashIcon className="h-4 w-4" />
+								{t('projects.list.clearFilters')}
+							</button>
+						</div>
+					)}
+				</div>
+			</Card>
 
 			{!selectedProgram ? (
 				<TableEmptyState message={t('projects.list.selectProgram')} />
 			) : isLoading ? (
-				<div className="rounded-xl border border-zinc-200 bg-white p-10 shadow-sm">
-					<LoadingState label={t('projects.list.loading')} />
-				</div>
+				<TableLoadingState label={t('projects.list.loading')} />
 			) : isError ? (
 				<TableErrorState
 					message={error instanceof Error ? error.message : t('projects.list.error')}

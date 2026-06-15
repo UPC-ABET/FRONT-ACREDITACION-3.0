@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { CheckCircleIcon, HashtagIcon } from '@heroicons/react/24/outline';
-import { Button, Input } from '@/shared/components';
+import { Button, Input, SubTitle, Title } from '@/shared';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/apiError';
+import { getErrorMessage } from '@/shared/lib';
 import { validatePrefixValue } from '../schemas';
-import { updateParameter } from '../services/parametersAdminService';
+import { updateParameter } from '@/modules/admin/parameters';
 import type { ParameterRow } from '../types';
 
 type Props = {
@@ -58,13 +58,19 @@ export function PrefixParameterCard({ parameter, onSaved, onError, onSuccess }: 
 				</div>
 				<div className="flex-1">
 					<div className="flex flex-wrap items-center gap-2">
-						<h3 className="text-base font-bold text-zinc-900">{name}</h3>
+						<Title
+							title={name}
+							className="[&_h2]:text-base [&_h2]:font-bold [&_h2]:text-zinc-900"
+						/>
 						<code className="rounded bg-zinc-100 px-2 py-0.5 text-xs font-mono text-zinc-600">
 							{parameter.code}
 						</code>
 					</div>
 					{description && (
-						<p className="mt-1 text-sm text-zinc-500 leading-relaxed">{description}</p>
+						<SubTitle
+							name={description}
+							className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:leading-relaxed [&_h3]:text-zinc-500"
+						/>
 					)}
 				</div>
 			</div>

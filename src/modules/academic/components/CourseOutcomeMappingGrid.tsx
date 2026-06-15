@@ -12,10 +12,10 @@ import {
 	PlusIcon,
 	XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { Button, Card, Toast } from '@/shared/components';
-import { TYPE_CODES } from '@/shared/constants';
-import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons } from '@/shared/lib/apiError';
+import { Button, Card, SubTitle, Title, Toast } from '@/shared';
+import { TYPE_CODES } from '@/shared';
+import { useApiErrorToast } from '@/shared';
+import { getApiErrorReasons } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import {
@@ -29,7 +29,7 @@ import type {
 	CourseOutcomeMappingOutcomeType,
 	CourseOutcomeMappingView,
 } from '../types';
-import { CourseOutcomeMappingGlyph } from './CourseOutcomeMappingGlyph';
+import { CourseOutcomeMappingGlyph } from '@/modules';
 
 interface CourseOutcomeMappingGridProps {
 	programCommissionId: number;
@@ -328,14 +328,14 @@ export function CourseOutcomeMappingGrid({
 								<ArrowLeftIcon className="h-4 w-4" />
 								<span>{t('loads.courseOutcomeMappingMaintenance.actions.back')}</span>
 							</Button>
-							<h2 className="text-lg font-semibold text-gray-900">
-								{localized(header.programName, locale)}
-							</h2>
-							<p className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-gray-500">
-								<span className="font-mono">{header.accreditorCode}</span>
-								<span className="font-mono">{header.commissionCode}</span>
-								<span className="font-mono">{header.academicPeriodCode}</span>
-							</p>
+							<Title
+								title={localized(header.programName, locale)}
+								className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+							/>
+							<SubTitle
+								name={`${header.accreditorCode} ${header.commissionCode} ${header.academicPeriodCode}`}
+								className="[&_h3]:text-sm [&_h3]:font-mono [&_h3]:text-gray-500"
+							/>
 						</div>
 						<div className="flex items-center gap-2">
 							<Button

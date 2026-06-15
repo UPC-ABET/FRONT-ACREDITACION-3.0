@@ -1,8 +1,8 @@
 'use client';
 
 import { useI18n } from '@/providers';
-import { Badge } from '@/shared/components/ui';
-import { RubricDetail } from '../../types';
+import { Badge, SubTitle, Title } from '@/shared/components/ui';
+import { RubricDetail } from '@/modules';
 
 interface RubricHeaderProps {
 	rubric: RubricDetail;
@@ -15,13 +15,20 @@ export function RubricHeader({ rubric }: RubricHeaderProps) {
 		<div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
 			<div className="flex flex-col gap-5">
 				<div className="space-y-1">
-					<h1 className="text-3xl font-bold tracking-tight text-zinc-900">
-						{rubric.gradeType[locale]}
-					</h1>
+					<Title
+						title={rubric.gradeType[locale]}
+						className="[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-zinc-900"
+					/>
 
-					<p className="text-base font-medium text-zinc-700">{rubric.course.name[locale]}</p>
+					<SubTitle
+						name={rubric.course.name[locale]}
+						className="[&_h3]:text-base [&_h3]:font-medium [&_h3]:text-zinc-700"
+					/>
 
-					<p className="text-sm text-zinc-500">{rubric.program.name[locale]}</p>
+					<SubTitle
+						name={rubric.program.name[locale]}
+						className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
+					/>
 				</div>
 
 				<div className="flex flex-wrap items-center gap-3 text-sm text-zinc-600">

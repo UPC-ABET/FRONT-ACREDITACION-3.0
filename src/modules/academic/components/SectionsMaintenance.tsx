@@ -26,11 +26,13 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	SubTitle,
+	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
+import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import {
@@ -44,8 +46,7 @@ import type {
 	CourseSectionMaintenanceItem,
 	CourseSectionMaintenanceUpdate,
 } from '../types';
-import { SectionCreateDialog } from './SectionCreateDialog';
-import { SectionEditDialog } from './SectionEditDialog';
+import { SectionCreateDialog, SectionEditDialog } from '@/modules';
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
@@ -184,10 +185,14 @@ export function SectionsMaintenance() {
 			<div className="space-y-5">
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
 					<div className="space-y-1">
-						<h2 className="text-lg font-semibold text-gray-900">
-							{t('loads.sectionsMaintenance.title')}
-						</h2>
-						<p className="text-sm text-gray-500">{t('loads.sectionsMaintenance.subtitle')}</p>
+						<Title
+							title={t('loads.sectionsMaintenance.title')}
+							className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+						/>
+						<SubTitle
+							name={t('loads.sectionsMaintenance.subtitle')}
+							className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+						/>
 					</div>
 					<div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
 						<div className="relative w-full sm:max-w-xs">

@@ -7,6 +7,7 @@ import {
 	Button,
 	Card,
 	LoadingDialog,
+	PageHeader,
 	Skeleton,
 	SuccessDialog,
 	TableEmptyState,
@@ -132,60 +133,56 @@ export function FindingsConsultPage() {
 	}
 
 	return (
-		<Card title={t('ifcFindings.page.title')}>
-			<div className="space-y-6">
-				<div
-					className={`rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6${
-						chartIncomplete ? ' hidden' : ''
-					}`}>
-					{academicPeriodId === null ? (
-						<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>
-					) : schoolsLoading ? (
-						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-							<Skeleton className="h-10 w-full" />
-							<Skeleton className="h-10 w-full" />
-						</div>
-					) : noSchools ? (
-						<p className="text-sm italic text-zinc-500">{t('ifcs.page.noSchools')}</p>
-					) : (
-						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-							{!chartIncomplete && scope && scope.levels.length > 0 && (
-								<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
-							)}
-						</div>
-					)}
+		<div className="space-y-6">
+			<PageHeader title={t('ifcFindings.page.title')} />
+			<Card className={chartIncomplete ? 'hidden' : ''}>
+				{academicPeriodId === null ? (
+					<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>
+				) : schoolsLoading ? (
+					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						<Skeleton className="h-10 w-full" />
+						<Skeleton className="h-10 w-full" />
+					</div>
+				) : noSchools ? (
+					<p className="text-sm italic text-zinc-500">{t('ifcs.page.noSchools')}</p>
+				) : (
+					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						{!chartIncomplete && scope && scope.levels.length > 0 && (
+							<ScopeDropdowns scope={scope} selections={selections} onSelect={handleSelect} />
+						)}
+					</div>
+				)}
 
-					{!noSchools && !chartIncomplete && (
-						<div className="mt-6 flex justify-end border-t border-zinc-200 pt-5">
-							<Button variant="primary" size="lg" disabled={!canSearch} onClick={handleSearch}>
-								<MagnifyingGlassIcon className="h-5 w-5" />
-								{t('ifcs.page.searchBtn')}
-							</Button>
-						</div>
-					)}
+				{!noSchools && !chartIncomplete && (
+					<div className="mt-6 flex justify-end border-t border-zinc-200 pt-5">
+						<Button variant="primary" size="lg" disabled={!canSearch} onClick={handleSearch}>
+							<MagnifyingGlassIcon className="h-5 w-5" />
+							{t('ifcs.page.searchBtn')}
+						</Button>
+					</div>
+				)}
+			</Card>
+
+			{chartIncomplete && (
+				<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
+					<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
+					<p>{CONSULT_LABELS.chartIncomplete[lang]}</p>
 				</div>
+			)}
 
-				{chartIncomplete && (
-					<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
-						<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
-						<p>{CONSULT_LABELS.chartIncomplete[lang]}</p>
-					</div>
-				)}
+			{!noSchools && !chartIncomplete && hasSearched && rows.length === 0 && !submitting && (
+				<TableEmptyState message={CONSULT_LABELS.empty[lang]} />
+			)}
 
-				{!noSchools && !chartIncomplete && hasSearched && rows.length === 0 && !submitting && (
-					<TableEmptyState message={CONSULT_LABELS.empty[lang]} />
-				)}
-
-				{!noSchools && !chartIncomplete && rows.length > 0 && (
-					<div className="overflow-x-auto">
-						<FindingsTable
-							rows={rows}
-							onView={(findingId) => router.push(`/ifc-findings/${findingId}`)}
-							onDelete={(row) => setDeleteTarget(row)}
-						/>
-					</div>
-				)}
-			</div>
+			{!noSchools && !chartIncomplete && rows.length > 0 && (
+				<div className="overflow-x-auto">
+					<FindingsTable
+						rows={rows}
+						onView={(findingId) => router.push(`/ifc-findings/${findingId}`)}
+						onDelete={(row) => setDeleteTarget(row)}
+					/>
+				</div>
+			)}
 
 			<DeleteFindingModal
 				target={deleteTarget}
@@ -207,6 +204,6 @@ export function FindingsConsultPage() {
 			{successMsg && (
 				<SuccessDialog isOpen onClose={() => setSuccessMsg(null)} message={successMsg} />
 			)}
-		</Card>
+		</div>
 	);
 }

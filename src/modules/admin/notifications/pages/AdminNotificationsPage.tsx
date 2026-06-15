@@ -1,12 +1,12 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { NotificationConfigPage } from '../components/NotificationConfigPage';
-import { SurveyMessagesTab } from '../components/SurveyMessagesTab';
-import { UserTemplatesTab } from '../components/UserTemplatesTab';
-import { NotificationLogsTab } from '../components/NotificationLogsTab';
+import { NotificationConfigPage } from '@/modules/admin/notifications';
+import { SurveyMessagesTab } from '@/modules/admin/notifications';
+import { UserTemplatesTab } from '@/modules/admin/notifications';
+import { NotificationLogsTab } from '@/modules/admin/notifications';
 
 const DEFAULT_TAB = 'ifc';
 
@@ -32,11 +32,18 @@ export default function AdminNotificationsPage() {
 
 	return (
 		<div className="space-y-6">
+			<PageHeader
+				title={t('admin.notifications.page.title')}
+				description={t('admin.notifications.page.subtitle')}
+			/>
+
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
-			{activeTab === 'ifc' && <NotificationConfigPage />}
-			{activeTab === 'survey' && <SurveyMessagesTab />}
-			{activeTab === 'user' && <UserTemplatesTab />}
-			{activeTab === 'logs' && <NotificationLogsTab />}
+			<Card className="overflow-visible">
+				{activeTab === 'ifc' && <NotificationConfigPage />}
+				{activeTab === 'survey' && <SurveyMessagesTab />}
+				{activeTab === 'user' && <UserTemplatesTab />}
+				{activeTab === 'logs' && <NotificationLogsTab />}
+			</Card>
 		</div>
 	);
 }

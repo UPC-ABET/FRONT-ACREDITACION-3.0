@@ -3,15 +3,16 @@ import type {
 	ChartHeadsFormErrors,
 	ChartHeadsFormValue,
 	ConfigureChartHeadsPayload,
-	DeanConfig,
 	DirectorConfig,
+	DirectorPayload,
+	HeadConfig,
 	HeadFormErrors,
 	HeadFormValue,
+	HeadPayload,
 } from '../types';
 
 const VALIDATION_KEYS = {
-	firstNameRequired: 'admin.chartHeads.error.firstNameRequired',
-	lastNameRequired: 'admin.chartHeads.error.lastNameRequired',
+	teacherRequired: 'admin.chartHeads.error.teacherRequired',
 	titleRequired: 'admin.chartHeads.error.titleRequired',
 	schoolRequired: 'admin.chartHeads.error.schoolRequired',
 	duplicateSchool: 'admin.chartHeads.error.duplicateSchool',
@@ -24,11 +25,16 @@ function emptyTitle(languages: string[]): Record<string, string> {
 	}, {});
 }
 
-function headToFormValue(head: DeanConfig | DirectorConfig, languages: string[]): HeadFormValue {
+function headToFormValue(head: HeadConfig | DirectorConfig, languages: string[]): HeadFormValue {
 	return {
-		lastName: head.lastName,
-		firstName: head.firstName,
-		userId: head.userId,
+		teacher: {
+			staffId: head.staffId,
+			code: head.code,
+			firstName: head.firstName,
+			lastName: head.lastName,
+			user: head.user,
+		},
+		user: null,
 		title: { ...emptyTitle(languages), ...head.title },
 	};
 }
@@ -40,7 +46,7 @@ export function configToFormValue(
 	return {
 		dean: config?.dean
 			? headToFormValue(config.dean, languages)
-			: { lastName: '', firstName: '', userId: null, title: emptyTitle(languages) },
+			: { teacher: null, user: null, title: emptyTitle(languages) },
 		directors: (config?.directors ?? []).map((director) => ({
 			key: `chart-${director.chartId}`,
 			schoolId: director.schoolId,
@@ -56,9 +62,8 @@ export function emptyDirector(
 	return {
 		key,
 		schoolId: null,
-		lastName: '',
-		firstName: '',
-		userId: null,
+		teacher: null,
+		user: null,
 		title: emptyTitle(languages),
 	};
 }
@@ -69,8 +74,7 @@ function isTitleComplete(title: Record<string, string>, languages: string[]): bo
 
 function validateHead(head: HeadFormValue, languages: string[]): HeadFormErrors {
 	const errors: HeadFormErrors = {};
-	if (head.firstName.trim().length === 0) errors.firstName = VALIDATION_KEYS.firstNameRequired;
-	if (head.lastName.trim().length === 0) errors.lastName = VALIDATION_KEYS.lastNameRequired;
+	if (!head.teacher) errors.teacher = VALIDATION_KEYS.teacherRequired;
 	if (!isTitleComplete(head.title, languages)) errors.title = VALIDATION_KEYS.titleRequired;
 	return errors;
 }
@@ -120,24 +124,29 @@ export function validateChartHeadsForm(
 	};
 }
 
+function resolveUserId(head: HeadFormValue): number | null {
+	if (head.teacher?.user) return head.teacher.user.id;
+	return head.user?.id ?? null;
+}
+
+function headToPayload(head: HeadFormValue): HeadPayload {
+	return {
+		staffId: head.teacher!.staffId,
+		userId: resolveUserId(head),
+		title: head.title,
+	};
+}
+
 export function formToPayload(
 	academicPeriodId: number,
 	form: ChartHeadsFormValue,
 ): ConfigureChartHeadsPayload {
 	return {
 		academicPeriodId,
-		dean: {
-			lastName: form.dean.lastName.trim(),
-			firstName: form.dean.firstName.trim(),
-			userId: form.dean.userId,
-			title: form.dean.title,
-		},
-		directors: form.directors.map((director) => ({
+		dean: headToPayload(form.dean),
+		directors: form.directors.map<DirectorPayload>((director) => ({
+			...headToPayload(director),
 			schoolId: director.schoolId as number,
-			lastName: director.lastName.trim(),
-			firstName: director.firstName.trim(),
-			userId: director.userId,
-			title: director.title,
 		})),
 	};
 }

@@ -2,13 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Select, Button, Badge } from '@/shared/components/ui';
+import { Select, Button, Badge, SubTitle, Title, TYPE_GROUP_CODES, TYPE_CODES } from '@/shared';
 import { useI18n } from '@/providers';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { useCourseOutcomeMappings } from '@/modules/academic/hooks';
-import { rubricsService } from '../../services';
+import { rubricsService } from '@/modules';
 import type { Step1Data } from './WizardStep1';
-import { TYPE_GROUP_CODES, TYPE_CODES } from '@/shared/constants';
 
 const GRADE_TYPE_GROUP = TYPE_GROUP_CODES.GRADE_TYPE;
 const CAPSTONE_RUBRIC_CODE = TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
@@ -87,8 +86,14 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 	return (
 		<div className="space-y-6">
 			<div>
-				<h2 className="text-lg font-semibold text-zinc-900">{t('rubrics.wizard.step2.title')}</h2>
-				<p className="mt-1 text-sm text-zinc-500">{t('rubrics.wizard.step2.subtitle')}</p>
+				<Title
+					title={t('rubrics.wizard.step2.title')}
+					className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-zinc-900"
+				/>
+				<SubTitle
+					name={t('rubrics.wizard.step2.subtitle')}
+					className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
+				/>
 			</div>
 
 			<div className="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-600">

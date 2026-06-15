@@ -1,9 +1,9 @@
 'use client';
 
 import { useI18n } from '@/providers';
-import { Card } from '@/shared/components';
-import { IFC_SHARED_LABELS } from './ifc.labels';
-import type { ProgramGroup } from '../../types';
+import { Card, Title } from '@/shared/components';
+import { IFC_SHARED_LABELS } from '@/modules';
+import type { ProgramGroup } from '@/modules';
 
 type Props = { outcomeResult: ProgramGroup[] };
 
@@ -16,9 +16,10 @@ export function IFCOutcomeResults({ outcomeResult }: Props) {
 			<div className="space-y-6">
 				{outcomeResult.map((program) => (
 					<div key={program.programCode} className="space-y-3">
-						<h3 className="text-sm font-bold uppercase tracking-wider text-red-700">
-							{program.programName?.[lang] ?? program.programName?.es ?? ''}
-						</h3>
+						<Title
+							title={program.programName?.[lang] ?? program.programName?.es ?? ''}
+							className="[&_h2]:text-sm [&_h2]:font-bold [&_h2]:uppercase [&_h2]:tracking-wider [&_h2]:text-red-700"
+						/>
 
 						<div className="space-y-4 border-l-2 border-zinc-200 pl-4">
 							{program.commissions.map((commission) => (

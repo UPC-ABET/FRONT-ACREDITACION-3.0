@@ -2,12 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Button, Input, TextArea } from '@/shared/components/ui';
+import { Button, Input, TextArea, Title } from '@/shared';
 import { useI18n } from '@/providers';
 import type { EnrolledStudentResponse } from '@/modules/academic';
 import type { Step1Data } from '../rubric-create-wizard/WizardStep1';
-import { WizardSelectStudentsModal } from './WizardSelectStudentsModal';
-import { WizardSelectEvaluatorModal } from './WizardSelectEvaluatorModal';
+import { WizardSelectStudentsModal, WizardSelectEvaluatorModal } from '@/modules';
 
 export interface ProjectFormData {
 	code: string;
@@ -82,9 +81,10 @@ export function ProjectWizardStep2({
 	return (
 		<div className="space-y-8">
 			<section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4">
-				<h2 className="text-base font-semibold text-zinc-900">
-					{t('projects.create.step2.infoTitle')}
-				</h2>
+				<Title
+					title={t('projects.create.step2.infoTitle')}
+					className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+				/>
 
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm text-zinc-600">
 					<span className="font-medium text-zinc-800">{step1.periodCode}</span>
@@ -118,9 +118,10 @@ export function ProjectWizardStep2({
 			<section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
 					<div className="flex items-center gap-3">
-						<h2 className="text-base font-semibold text-zinc-900">
-							{t('projects.create.step2.studentsTitle')}
-						</h2>
+						<Title
+							title={t('projects.create.step2.studentsTitle')}
+							className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+						/>
 						{selectedStudents.length > 0 && (
 							<span className="text-xs text-zinc-400">{selectedStudents.length}</span>
 						)}
@@ -162,9 +163,10 @@ export function ProjectWizardStep2({
 			<section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
 				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
 					<div className="flex items-center gap-3">
-						<h2 className="text-base font-semibold text-zinc-900">
-							{t('projects.create.step2.evaluatorsTitle')}
-						</h2>
+						<Title
+							title={t('projects.create.step2.evaluatorsTitle')}
+							className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+						/>
 						{evaluators.length > 0 && (
 							<span className="text-xs text-zinc-400">{evaluators.length}</span>
 						)}

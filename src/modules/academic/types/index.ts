@@ -28,6 +28,7 @@ export type FilterCourseRequest = Partial<{
 export type FilterProgramRequest = Partial<{
 	extra: Record<string, unknown>;
 	isActive: boolean;
+	schoolFilter: boolean;
 	modalityTypeId: number;
 	code: string;
 	name: { es?: string; en?: string };
@@ -112,8 +113,10 @@ export type PerformanceLevelResponse = {
 };
 
 export type ProfessorStaffUserResponse = {
+	id: number;
 	firstName: string;
 	lastName: string;
+	email?: string;
 };
 
 export type ProfessorStaffResponse = {
@@ -149,6 +152,17 @@ export type ProfessorMaintenanceList = {
 	pageSize: number;
 	totalPages: number;
 };
+
+export type ProfessorLookupItem = {
+	id: number;
+	staffId: number;
+	code: string | null;
+	firstName: string;
+	lastName: string;
+	user: ProfessorStaffUserResponse | null;
+};
+
+export type ProfessorLookupList = PaginatedEnvelope<ProfessorLookupItem>;
 
 export type ProfessorMaintenanceUpdate = {
 	code?: string;

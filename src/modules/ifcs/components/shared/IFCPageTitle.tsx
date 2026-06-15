@@ -1,7 +1,8 @@
 'use client';
 
 import { useI18n } from '@/providers';
-import type { I18nText } from '../../types';
+import { SubTitle, Title } from '@/shared/components';
+import type { I18nText } from '@/shared';
 
 type Props = {
 	area: I18nText;
@@ -18,10 +19,16 @@ export function IFCPageTitle({ area, subarea, course, period }: Props) {
 	return (
 		<div className="space-y-1.5">
 			<p className="text-sm font-semibold uppercase tracking-wider text-red-700">IFC</p>
-			<h1 className="text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl">
-				{courseName || '—'}
-			</h1>
-			{crumbs.length > 0 && <p className="text-base text-zinc-600">{crumbs.join(' · ')}</p>}
+			<Title
+				title={courseName || '-'}
+				className="[&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-zinc-900 sm:[&_h2]:text-3xl"
+			/>
+			{crumbs.length > 0 && (
+				<SubTitle
+					name={crumbs.join(' - ')}
+					className="[&_h3]:text-base [&_h3]:font-normal [&_h3]:text-zinc-600"
+				/>
+			)}
 		</div>
 	);
 }

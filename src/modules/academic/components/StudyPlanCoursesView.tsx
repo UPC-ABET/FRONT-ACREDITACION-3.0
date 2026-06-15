@@ -24,11 +24,13 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	SubTitle,
+	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
+import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import {
 	useStudyPlanCourseLevels,
@@ -36,8 +38,7 @@ import {
 	useStudyPlanCoursesViewMutations,
 } from '../hooks';
 import type { CourseUpdateBody, StudyPlanCourseCreate, StudyPlanCourseRow } from '../types';
-import { StudyPlanCourseCreateDialog } from './StudyPlanCourseCreateDialog';
-import { StudyPlanCourseEditDialog } from './StudyPlanCourseEditDialog';
+import { StudyPlanCourseCreateDialog, StudyPlanCourseEditDialog } from '@/modules';
 
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
 	if (!text) return '';
@@ -221,10 +222,14 @@ export function StudyPlanCoursesView({
 					</Button>
 					<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
 						<div className="space-y-1">
-							<h2 className="text-lg font-semibold text-gray-900">
-								{t('loads.studyPlanCoursesView.title')}
-							</h2>
-							<p className="text-sm text-gray-500">{t('loads.studyPlanCoursesView.subtitle')}</p>
+							<Title
+								title={t('loads.studyPlanCoursesView.title')}
+								className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+							/>
+							<SubTitle
+								name={t('loads.studyPlanCoursesView.subtitle')}
+								className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+							/>
 						</div>
 						<Button
 							variant="primary"
@@ -273,17 +278,19 @@ export function StudyPlanCoursesView({
 					<div className="space-y-8">
 						{sortedLevels.map((group) => (
 							<section key={group.levelTypeId} className="space-y-3">
-								<h3 className="text-sm font-semibold tracking-wide text-zinc-700 uppercase">
-									{localized(group.levelName, locale)}
-								</h3>
+								<Title
+									title={localized(group.levelName, locale)}
+									className="[&_h2]:text-sm [&_h2]:font-semibold [&_h2]:uppercase [&_h2]:tracking-wide [&_h2]:text-zinc-700"
+								/>
 								{renderCoursesTable(group.courses)}
 							</section>
 						))}
 						{electives.length > 0 && (
 							<section className="space-y-3">
-								<h3 className="text-sm font-semibold tracking-wide text-zinc-700 uppercase">
-									{t('loads.studyPlanCoursesView.electives')}
-								</h3>
+								<Title
+									title={t('loads.studyPlanCoursesView.electives')}
+									className="[&_h2]:text-sm [&_h2]:font-semibold [&_h2]:uppercase [&_h2]:tracking-wide [&_h2]:text-zinc-700"
+								/>
 								{renderCoursesTable(electives)}
 							</section>
 						)}

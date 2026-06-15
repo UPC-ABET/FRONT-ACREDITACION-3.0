@@ -382,6 +382,10 @@
 			}
 		},
 		"parameters": {
+			"page": {
+				"title": "Parámetros",
+				"subtitle": "Administra los códigos IFC, los campos y los niveles de desempeño."
+			},
 			"tabs": {
 				"ifc": "IFC",
 				"performanceLevels": "Niveles de Desempeño"
@@ -394,6 +398,10 @@
 			}
 		},
 		"notifications": {
+			"page": {
+				"title": "Notificaciones",
+				"subtitle": "Configura las plantillas de notificación y revisa los registros de envío."
+			},
 			"tabs": {
 				"ifc": "IFC",
 				"survey": "Encuestas",
@@ -418,10 +426,11 @@
 				"rowLabel": "Director {number}"
 			},
 			"field": {
-				"firstName": "Nombres",
-				"lastName": "Apellidos",
+				"teacher": "Docente vinculado",
+				"teacherPlaceholder": "Busca por nombre o código…",
 				"user": "Usuario vinculado",
 				"userPlaceholder": "Sin usuario vinculado",
+				"userLockedPlaceholder": "Definido por el docente vinculado",
 				"title": "Cargo",
 				"school": "Escuela",
 				"schoolPlaceholder": "Selecciona una escuela"
@@ -435,8 +444,7 @@
 			"error": {
 				"loadFailed": "No se pudo cargar la configuración.",
 				"saveFailed": "No se pudo guardar la configuración.",
-				"firstNameRequired": "Los nombres son obligatorios.",
-				"lastNameRequired": "Los apellidos son obligatorios.",
+				"teacherRequired": "Selecciona un docente.",
 				"titleRequired": "El cargo es obligatorio en todos los idiomas.",
 				"schoolRequired": "Selecciona una escuela.",
 				"duplicateSchool": "Esta escuela ya fue asignada a otro director."
@@ -746,6 +754,9 @@
 		}
 	},
 	"welcome": "Bienvenido a ABET.",
+	"home": {
+		"subtitle": "Sistema de acreditaci\u00f3n UPC"
+	},
 	"navbar": {
 		"user": {
 			"name": "Administrador",
@@ -1119,6 +1130,7 @@
 			"configureFailed": "No se pudo guardar la configuración del organigrama.",
 			"periodNotFound": "El período académico no existe.",
 			"schoolNotFound": "La escuela seleccionada no existe.",
+			"staffNotFound": "El docente seleccionado no existe.",
 			"userNotFound": "El usuario seleccionado no existe.",
 			"duplicateSchoolInPayload": "No se puede asignar la misma escuela a dos directores."
 		},

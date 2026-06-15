@@ -3,15 +3,16 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Toast } from '@/shared/components/ui/Toast';
+import { SubTitle, Title } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { useCreateRubricFull } from '../../hooks';
-import type { CreateRubricFullDto } from '../../types';
+import { useCreateRubricFull } from '@/modules';
+import type { CreateRubricFullDto } from '@/modules';
 import { WizardStepIndicator } from './WizardStepIndicator';
 import { WizardStep1, type Step1Data } from './WizardStep1';
 import { WizardStep2, type Step2Data } from './WizardStep2';
 import { WizardStep3NonCapstone, type NonCapstonePayloadQuestion } from './WizardStep3NonCapstone';
 import { WizardStep3Capstone, type CapstonePayloadQuestion } from './WizardStep3Capstone';
-import { TYPE_CODES } from '@/shared/constants';
+import { TYPE_CODES } from '@/shared';
 
 export function RubricCreateWizard() {
 	const router = useRouter();
@@ -78,8 +79,14 @@ export function RubricCreateWizard() {
 	return (
 		<div className="space-y-8">
 			<div>
-				<h1 className="text-3xl font-bold text-zinc-900">{t('rubrics.wizard.title')}</h1>
-				<p className="mt-2 text-zinc-600">{t('rubrics.wizard.subtitle')}</p>
+				<Title
+					title={t('rubrics.wizard.title')}
+					className="[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-zinc-900"
+				/>
+				<SubTitle
+					name={t('rubrics.wizard.subtitle')}
+					className="mt-2 [&_h3]:text-base [&_h3]:font-normal [&_h3]:text-zinc-600"
+				/>
 			</div>
 
 			<WizardStepIndicator steps={steps} currentStep={currentStep} />

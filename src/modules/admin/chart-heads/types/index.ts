@@ -1,48 +1,54 @@
 import type { I18nText } from '@/shared/types';
 
-export interface DeanConfig {
+export interface LinkedUserRef {
+	id: number;
+	firstName: string;
+	lastName: string;
+	email?: string;
+}
+
+export interface TeacherOption {
+	staffId: number;
+	code: string | null;
+	firstName: string;
+	lastName: string;
+	user: LinkedUserRef | null;
+}
+
+export interface HeadConfig {
 	chartId: number;
 	staffId: number;
-	lastName: string;
+	code: string | null;
 	firstName: string;
+	lastName: string;
 	userId: number | null;
+	user: LinkedUserRef | null;
 	title: I18nText;
 }
 
-export interface DirectorConfig {
-	chartId: number;
-	staffId: number;
+export interface DirectorConfig extends HeadConfig {
 	schoolId: number;
 	schoolCode: string;
-	lastName: string;
-	firstName: string;
-	userId: number | null;
-	title: I18nText;
 }
 
 export interface ChartHeadsConfig {
-	dean: DeanConfig | null;
+	dean: HeadConfig | null;
 	directors: DirectorConfig[];
 }
 
-export interface DeanPayload {
-	lastName: string;
-	firstName: string;
-	userId?: number | null;
+export interface HeadPayload {
+	staffId: number;
+	userId: number | null;
 	title: I18nText;
 }
 
-export interface DirectorPayload {
+export interface DirectorPayload extends HeadPayload {
 	schoolId: number;
-	lastName: string;
-	firstName: string;
-	userId?: number | null;
-	title: I18nText;
 }
 
 export interface ConfigureChartHeadsPayload {
 	academicPeriodId: number;
-	dean: DeanPayload;
+	dean: HeadPayload;
 	directors: DirectorPayload[];
 }
 
@@ -52,15 +58,30 @@ export interface SchoolOption {
 	name: string;
 }
 
+export interface LinkedStaffRef {
+	id: number;
+	code: string | null;
+	firstName: string;
+	lastName: string;
+}
+
 export interface UserOption {
+	id: number;
+	firstName: string;
+	lastName: string;
+	email?: string;
+	staff: LinkedStaffRef | null;
+	label: string;
+}
+
+export interface SelectedUser {
 	id: number;
 	label: string;
 }
 
 export interface HeadFormValue {
-	lastName: string;
-	firstName: string;
-	userId: number | null;
+	teacher: TeacherOption | null;
+	user: SelectedUser | null;
 	title: I18nText;
 }
 
@@ -75,8 +96,7 @@ export interface ChartHeadsFormValue {
 }
 
 export interface HeadFormErrors {
-	firstName?: string;
-	lastName?: string;
+	teacher?: string;
 	title?: string;
 }
 

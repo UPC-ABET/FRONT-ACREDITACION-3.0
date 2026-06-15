@@ -4,37 +4,40 @@ import { useCallback } from 'react';
 import { LazySelect, type LazyPageResult } from '@/shared/components';
 import { professorsService, type ProfessorLookupItem } from '@/modules/academic';
 import { useI18n } from '@/providers';
+import type { TeacherOption } from '../types';
 
 const PAGE_SIZE = 20;
-
-export type TeacherOption = {
-	staffId: number;
-	code: string | null;
-	firstName: string;
-	lastName: string;
-};
 
 export function teacherLabel(teacher: TeacherOption): string {
 	const fullName = `${teacher.firstName} ${teacher.lastName}`.trim();
 	return teacher.code ? `${teacher.code} — ${fullName}` : fullName;
 }
 
-function toTeacher(professor: ProfessorLookupItem): TeacherOption {
+function toTeacherOption(professor: ProfessorLookupItem): TeacherOption {
 	return {
 		staffId: professor.staffId,
 		code: professor.code ?? null,
 		firstName: professor.firstName ?? '',
 		lastName: professor.lastName ?? '',
+		user: professor.user
+			? {
+					id: professor.user.id,
+					firstName: professor.user.firstName,
+					lastName: professor.user.lastName,
+					email: professor.user.email,
+				}
+			: null,
 	};
 }
 
-type Props = {
-	selected: TeacherOption | null;
+interface Props {
+	value: TeacherOption | null;
 	onChange: (teacher: TeacherOption | null) => void;
+	error?: string;
 	disabled?: boolean;
-};
+}
 
-export function LinkedTeacherField({ selected, onChange, disabled }: Props) {
+export function LinkedTeacherSelect({ value, onChange, error, disabled }: Props) {
 	const { t } = useI18n();
 
 	const loadPage = useCallback(
@@ -45,25 +48,24 @@ export function LinkedTeacherField({ selected, onChange, disabled }: Props) {
 			search: string;
 			page: number;
 		}): Promise<LazyPageResult<ProfessorLookupItem>> =>
-			professorsService
-				.lookup({ search, page, pageSize: PAGE_SIZE, unassigned: true })
-				.then((response) => ({
-					items: response.data.items,
-					totalPages: response.data.totalPages,
-				})),
+			professorsService.lookup({ search, page, pageSize: PAGE_SIZE }).then((response) => ({
+				items: response.data.items,
+				totalPages: response.data.totalPages,
+			})),
 		[],
 	);
 
 	return (
 		<LazySelect<ProfessorLookupItem>
-			label={t('admin.iam.users.form.linkedTeacher')}
-			placeholder={t('admin.iam.users.form.linkedTeacherPlaceholder')}
-			value={selected ? { id: selected.staffId, label: teacherLabel(selected) } : null}
-			onChange={(professor) => onChange(professor ? toTeacher(professor) : null)}
+			label={t('admin.chartHeads.field.teacher')}
+			placeholder={t('admin.chartHeads.field.teacherPlaceholder')}
+			value={value ? { id: value.staffId, label: teacherLabel(value) } : null}
+			onChange={(professor) => onChange(professor ? toTeacherOption(professor) : null)}
 			loadPage={loadPage}
 			getId={(professor) => professor.staffId}
-			getLabel={(professor) => teacherLabel(toTeacher(professor))}
+			getLabel={(professor) => teacherLabel(toTeacherOption(professor))}
 			isDisabled={disabled}
+			error={error}
 		/>
 	);
 }

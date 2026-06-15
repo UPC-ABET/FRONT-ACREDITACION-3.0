@@ -20,10 +20,12 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
+	SubTitle,
+	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons } from '@/shared/lib/apiError';
+import { getApiErrorReasons } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { useABET, useI18n } from '@/providers';
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../constants';
@@ -31,7 +33,7 @@ import { useChartMutations, useChartTree } from '../hooks';
 import type { ChartNode } from '../types';
 import { collectNodeIdsWithChildren } from '../utils/layout';
 import { exportSvgAsPdf, exportSvgAsPng } from '../utils/exportChart';
-import { ChartNodeDialog } from './ChartNodeDialog';
+import { ChartNodeDialog } from '@/modules/charts';
 import { ChartNodeMenu } from './ChartNodeMenu';
 import { OrgChart } from './OrgChart';
 
@@ -183,12 +185,14 @@ export function OrganizationChartMaintenance() {
 			<div className="space-y-5">
 				<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 					<div className="space-y-1">
-						<h2 className="text-lg font-semibold text-gray-900">
-							{t('loads.organizationChartMaintenance.title')}
-						</h2>
-						<p className="text-sm text-gray-500">
-							{t('loads.organizationChartMaintenance.subtitle')}
-						</p>
+						<Title
+							title={t('loads.organizationChartMaintenance.title')}
+							className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+						/>
+						<SubTitle
+							name={t('loads.organizationChartMaintenance.subtitle')}
+							className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+						/>
 					</div>
 
 					<div className="flex flex-wrap items-center gap-2">

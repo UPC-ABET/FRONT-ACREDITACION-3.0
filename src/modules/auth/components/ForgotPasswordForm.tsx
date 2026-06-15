@@ -2,7 +2,15 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Button, Input, LoadingDialog, ErrorDialog, SuccessDialog } from '@/shared/components';
+import {
+	Button,
+	Input,
+	LoadingDialog,
+	ErrorDialog,
+	SubTitle,
+	SuccessDialog,
+	Title,
+} from '@/shared/components';
 import { requestForgotPassword } from '@/modules/auth/services';
 import { useI18n } from '@/providers';
 
@@ -52,8 +60,14 @@ export default function ForgotPasswordForm() {
 		<form onSubmit={handleSubmit} className="space-y-6">
 			<div className="space-y-3">
 				<div className="space-y-2 text-center">
-					<h2 className="text-xl font-semibold text-zinc-900">{t('forgotPassword.title')}</h2>
-					<p className="text-sm text-zinc-600">{t('forgotPassword.subtitle')}</p>
+					<Title
+						title={t('forgotPassword.title')}
+						className="justify-center [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-zinc-900"
+					/>
+					<SubTitle
+						name={t('forgotPassword.subtitle')}
+						className="justify-center [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-600"
+					/>
 				</div>
 			</div>
 

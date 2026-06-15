@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, Input, LoadingState, Select, Toggle } from '@/shared/components';
+import { Button, Input, LoadingState, Select, Title, Toggle } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { useDocumentTypes, useRoles, useSaveUser, useUserRoles } from '../../hooks';
@@ -136,9 +136,12 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 			</Button>
 
 			<div className="space-y-5 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-				<h2 className="text-lg font-bold text-zinc-900">
-					{t(isEditing ? 'admin.iam.users.form.editTitle' : 'admin.iam.users.form.createTitle')}
-				</h2>
+				<Title
+					title={t(
+						isEditing ? 'admin.iam.users.form.editTitle' : 'admin.iam.users.form.createTitle',
+					)}
+					className="[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-zinc-900"
+				/>
 
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-4">
 					<LinkedTeacherField

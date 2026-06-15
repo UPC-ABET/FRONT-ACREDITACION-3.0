@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@/providers';
-import { Toast } from '@/shared/components';
+import { PageHeader, Toast } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
 import { tryTranslate } from '@/shared/utils';
 import { ErrorsDrawer, RollbackConfirmDialog, UploadHistoryTable } from '../components';
@@ -41,11 +41,8 @@ export default function UploadHistoryPage() {
 	};
 
 	return (
-		<div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6">
-			<header className="space-y-1">
-				<h1 className="text-2xl font-semibold text-gray-900">{t('uploadHistory.title')}</h1>
-				<p className="text-sm text-gray-500">{t('uploadHistory.subtitle')}</p>
-			</header>
+		<div className="w-full space-y-6">
+			<PageHeader title={t('uploadHistory.title')} description={t('uploadHistory.subtitle')} />
 
 			<UploadHistoryTable
 				onRollback={(log) => setConfirmLog(log)}

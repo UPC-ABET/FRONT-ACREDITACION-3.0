@@ -26,14 +26,15 @@ interface LazySelectProps<T> {
 	getId: (item: T) => number;
 	getLabel: (item: T) => string;
 	isDisabled?: boolean;
+	error?: string;
 }
 
-const selectStyles = {
+const buildStyles = (hasError: boolean) => ({
 	control: (base: CSSObjectWithLabel, state: { isFocused: boolean }) => ({
 		...base,
 		minHeight: 40,
 		borderRadius: 6,
-		borderColor: state.isFocused ? '#dc2626' : '#e4e4e7',
+		borderColor: hasError ? '#ef4444' : state.isFocused ? '#dc2626' : '#e4e4e7',
 		boxShadow: 'none',
 		fontSize: 14,
 		':hover': { borderColor: state.isFocused ? '#dc2626' : '#d4d4d8' },
@@ -44,7 +45,7 @@ const selectStyles = {
 		backgroundColor: state.isSelected ? '#dc2626' : state.isFocused ? '#fee2e2' : 'white',
 		color: state.isSelected ? 'white' : '#111827',
 	}),
-};
+});
 
 export function LazySelect<T>({
 	label,
@@ -55,6 +56,7 @@ export function LazySelect<T>({
 	getId,
 	getLabel,
 	isDisabled,
+	error,
 }: LazySelectProps<T>) {
 	const { t } = useI18n();
 	const [options, setOptions] = useState<LazyOption<T>[]>([]);
@@ -143,7 +145,7 @@ export function LazySelect<T>({
 				filterOption={null}
 				menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
 				menuPosition="fixed"
-				styles={selectStyles}
+				styles={buildStyles(Boolean(error))}
 				onMenuOpen={handleMenuOpen}
 				onMenuScrollToBottom={handleScrollToBottom}
 				onInputChange={(input, meta) => {
@@ -154,6 +156,9 @@ export function LazySelect<T>({
 				loadingMessage={() => t('loading.default')}
 				noOptionsMessage={() => t('select.noOptions')}
 			/>
+			{error && (
+				<p className="mt-2 text-xs leading-none font-medium text-red-500 italic">{error}</p>
+			)}
 		</div>
 	);
 }

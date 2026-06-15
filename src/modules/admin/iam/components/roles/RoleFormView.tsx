@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Button, I18nTextField, Input, LoadingState } from '@/shared/components';
+import { Button, I18nTextField, Input, LoadingState, Title } from '@/shared';
 import { useI18n } from '@/providers';
 import { useLanguages } from '@/shared/hooks';
 import { getErrorMessage } from '@/shared/lib/apiError';
@@ -10,7 +10,7 @@ import type { I18nText } from '@/shared/types';
 import { useModules, usePermissions, useRoleModulePermissions, useSaveRole } from '../../hooks';
 import { hasRoleErrors, validateRoleForm } from '../../schemas';
 import type { AdminRole, MatrixCell, RoleFormErrors, RoleModulePermission } from '../../types';
-import { RolePermissionMatrix } from './RolePermissionMatrix';
+import { RolePermissionMatrix } from '@/modules/admin/iam';
 
 const NO_PERMISSION_LINKS: RoleModulePermission[] = [];
 
@@ -88,9 +88,12 @@ export function RoleFormView({ role, onCancel, onSuccess, onError }: Props) {
 			</Button>
 
 			<div className="space-y-5 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-				<h2 className="text-lg font-bold text-zinc-900">
-					{t(isEditing ? 'admin.iam.roles.form.editTitle' : 'admin.iam.roles.form.createTitle')}
-				</h2>
+				<Title
+					title={t(
+						isEditing ? 'admin.iam.roles.form.editTitle' : 'admin.iam.roles.form.createTitle',
+					)}
+					className="[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-zinc-900"
+				/>
 
 				<Input
 					label={t('admin.iam.roles.form.code')}

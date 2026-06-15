@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { ChartHeadsConfigPage } from '@/modules/admin/chart-heads';
 import { PeriodsTab, ProgramCommissionsTab } from '../components';
@@ -28,19 +28,22 @@ export default function AdminConfigurationPage() {
 	};
 
 	return (
-		<div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6">
-			<header className="space-y-1">
-				<h1 className="text-2xl font-semibold text-gray-900">
-					{t('admin.configuration.page.title')}
-				</h1>
-				<p className="text-sm text-gray-500">{t('admin.configuration.page.subtitle')}</p>
-			</header>
+		<div className="w-full space-y-6">
+			<PageHeader
+				title={t('admin.configuration.page.title')}
+				description={t('admin.configuration.page.subtitle')}
+			/>
 
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
 
-			{activeTab === 'periods' && <PeriodsTab />}
-			{activeTab === 'program-commissions' && <ProgramCommissionsTab />}
-			{activeTab === 'chart-heads' && <ChartHeadsConfigPage />}
+			{activeTab === 'chart-heads' ? (
+				<ChartHeadsConfigPage />
+			) : (
+				<Card className="overflow-visible">
+					{activeTab === 'periods' && <PeriodsTab />}
+					{activeTab === 'program-commissions' && <ProgramCommissionsTab />}
+				</Card>
+			)}
 		</div>
 	);
 }

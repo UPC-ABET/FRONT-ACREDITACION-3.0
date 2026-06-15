@@ -27,12 +27,14 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	SubTitle,
+	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useProgramsByModality, type ProgramResponse } from '@/modules/academic';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
+import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import {
@@ -45,8 +47,7 @@ import type {
 	OutcomeMaintenanceItem,
 	OutcomeMaintenanceUpdate,
 } from '../types';
-import { OutcomeMaintenanceCreateDialog } from './OutcomeMaintenanceCreateDialog';
-import { OutcomeMaintenanceEditDialog } from './OutcomeMaintenanceEditDialog';
+import { OutcomeMaintenanceCreateDialog, OutcomeMaintenanceEditDialog } from '@/modules';
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
@@ -212,10 +213,14 @@ export function OutcomesMaintenance() {
 		<Card>
 			<div className="space-y-5">
 				<div className="space-y-1">
-					<h2 className="text-lg font-semibold text-gray-900">
-						{t('loads.outcomesMaintenance.title')}
-					</h2>
-					<p className="text-sm text-gray-500">{t('loads.outcomesMaintenance.subtitle')}</p>
+					<Title
+						title={t('loads.outcomesMaintenance.title')}
+						className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+					/>
+					<SubTitle
+						name={t('loads.outcomesMaintenance.subtitle')}
+						className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+					/>
 				</div>
 
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">

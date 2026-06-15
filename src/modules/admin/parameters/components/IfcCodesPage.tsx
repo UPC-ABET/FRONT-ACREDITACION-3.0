@@ -1,7 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, LoadingDialog, SuccessDialog, TableErrorState, Toast } from '@/shared/components';
+import {
+	Card,
+	LoadingDialog,
+	SubTitle,
+	SuccessDialog,
+	TableErrorState,
+	Title,
+	Toast,
+} from '@/shared/components';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useParameter } from '../hooks/useParameter';
@@ -32,12 +40,14 @@ export function IfcCodesPage() {
 		<Card title={t('admin.params.codes.page.title')}>
 			<div className="space-y-6">
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6">
-					<h2 className="text-sm font-bold uppercase tracking-wider text-zinc-700">
-						{t('admin.params.codes.page.subtitle')}
-					</h2>
-					<p className="mt-1 max-w-3xl text-sm text-zinc-500 leading-relaxed">
-						{t('admin.params.codes.page.intro')}
-					</p>
+					<Title
+						title={t('admin.params.codes.page.subtitle')}
+						className="[&_h2]:text-sm [&_h2]:font-bold [&_h2]:uppercase [&_h2]:tracking-wider [&_h2]:text-zinc-700"
+					/>
+					<SubTitle
+						name={t('admin.params.codes.page.intro')}
+						className="mt-1 max-w-3xl [&_h3]:text-sm [&_h3]:font-normal [&_h3]:leading-relaxed [&_h3]:text-zinc-500"
+					/>
 				</div>
 
 				{loading && <LoadingDialog isOpen label={t('loading.default')} />}

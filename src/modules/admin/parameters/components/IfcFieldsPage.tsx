@@ -7,16 +7,18 @@ import {
 	Card,
 	ConfirmDialog,
 	LoadingDialog,
+	SubTitle,
 	SuccessDialog,
 	TableEmptyState,
 	TableErrorState,
+	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useI18n } from '@/providers';
-import { getErrorMessage } from '@/shared/lib/apiError';
-import { tryTranslate } from '@/shared/utils/tryTranslate';
+import { getErrorMessage } from '@/shared/lib';
+import { tryTranslate } from '@/shared/utils';
 import { useParameter } from '../hooks/useParameter';
-import { updateParameter } from '../services/parametersAdminService';
+import { updateParameter } from '@/modules/admin/parameters';
 import { PARAMETER_CODES } from '@/shared/constants';
 import { validateIFCFields, hasValidationErrors } from '../schemas';
 import type { IFCFieldDescriptor } from '../types';
@@ -71,7 +73,7 @@ export function IfcFieldsPage() {
 		if (!data) return;
 		const value = Array.isArray(data.value) ? data.value : [];
 		const sorted = cloneFields(value).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: sync local form with loaded data
+
 		setFields(sorted);
 		setOriginal(sorted);
 		setShowValidation(false);
@@ -151,12 +153,14 @@ export function IfcFieldsPage() {
 		<Card title={t('admin.params.fields.page.title')}>
 			<div className="space-y-6">
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:p-6">
-					<h2 className="text-sm font-bold uppercase tracking-wider text-zinc-700">
-						{t('admin.params.fields.page.subtitle')}
-					</h2>
-					<p className="mt-1 max-w-3xl text-sm text-zinc-500 leading-relaxed">
-						{t('admin.params.fields.page.intro')}
-					</p>
+					<Title
+						title={t('admin.params.fields.page.subtitle')}
+						className="[&_h2]:text-sm [&_h2]:font-bold [&_h2]:uppercase [&_h2]:tracking-wider [&_h2]:text-zinc-700"
+					/>
+					<SubTitle
+						name={t('admin.params.fields.page.intro')}
+						className="mt-1 max-w-3xl [&_h3]:text-sm [&_h3]:font-normal [&_h3]:leading-relaxed [&_h3]:text-zinc-500"
+					/>
 				</div>
 
 				{loading && <LoadingDialog isOpen label={t('loading.default')} />}

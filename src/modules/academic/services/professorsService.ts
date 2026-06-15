@@ -3,6 +3,7 @@ import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib';
 import {
 	ProfessorResponse,
 	ProfessorSearchResponse,
+	ProfessorLookupList,
 	ProfessorMaintenanceCreate,
 	ProfessorMaintenanceItem,
 	ProfessorMaintenanceList,
@@ -20,6 +21,21 @@ export const professorsService = {
 		unassigned?: boolean;
 	}): Promise<ApiResponse<ProfessorSearchResponse[]>> {
 		return apiPost('/professors/get-by-filters', { isActive: true, ...filters });
+	},
+
+	lookup(params: {
+		search?: string;
+		page?: number;
+		pageSize?: number;
+		unassigned?: boolean;
+	}): Promise<ApiResponse<ProfessorLookupList>> {
+		const query = new URLSearchParams();
+		if (params.search) query.set('search', params.search);
+		if (params.page != null) query.set('page', String(params.page));
+		if (params.pageSize != null) query.set('pageSize', String(params.pageSize));
+		if (params.unassigned != null) query.set('unassigned', String(params.unassigned));
+		const qs = query.toString();
+		return apiGet(`/professors/lookup${qs ? `?${qs}` : ''}`);
 	},
 
 	maintenanceList(params: {

@@ -26,21 +26,22 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	SubTitle,
+	Title,
 	Toast,
-} from '@/shared/components';
+	DEFAULT_PAGE_SIZE,
+	tryTranslate,
+	useApiErrorToast,
+} from '@/shared';
 import { useI18n } from '@/providers';
-import { useApiErrorToast } from '@/shared/hooks';
-import { getApiErrorReasons, getErrorMessage } from '@/shared/lib/apiError';
-import { tryTranslate } from '@/shared/utils';
-import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
+import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { useProfessorMaintenanceMutations, useProfessorsMaintenance } from '../hooks';
 import type {
 	ProfessorMaintenanceCreate,
 	ProfessorMaintenanceItem,
 	ProfessorMaintenanceUpdate,
 } from '../types';
-import { ProfessorMaintenanceCreateDialog } from './ProfessorMaintenanceCreateDialog';
-import { ProfessorMaintenanceEditDialog } from './ProfessorMaintenanceEditDialog';
+import { ProfessorMaintenanceCreateDialog, ProfessorMaintenanceEditDialog } from '@/modules';
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
@@ -168,8 +169,14 @@ export function ProfessorsMaintenance() {
 			<div className="space-y-5">
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
 					<div className="space-y-1">
-						<h2 className="text-lg font-semibold text-gray-900">{t('loads.maintenance.title')}</h2>
-						<p className="text-sm text-gray-500">{t('loads.maintenance.subtitle')}</p>
+						<Title
+							title={t('loads.maintenance.title')}
+							className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+						/>
+						<SubTitle
+							name={t('loads.maintenance.subtitle')}
+							className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+						/>
 					</div>
 					<div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
 						<div className="relative w-full sm:max-w-xs">

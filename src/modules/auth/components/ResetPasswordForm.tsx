@@ -11,6 +11,8 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
+	SubTitle,
+	Title,
 } from '@/shared/components';
 import { requestResetPassword } from '@/modules/auth/services';
 import { useI18n } from '@/providers';
@@ -62,8 +64,14 @@ export default function ResetPasswordForm() {
 	return (
 		<form onSubmit={handleSubmit} className="space-y-6">
 			<div className="space-y-2 text-center">
-				<h2 className="text-xl font-semibold text-zinc-900">{t('resetPassword.title')}</h2>
-				<p className="text-sm text-zinc-600">{t('resetPassword.subtitle')}</p>
+				<Title
+					title={t('resetPassword.title')}
+					className="justify-center [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-zinc-900"
+				/>
+				<SubTitle
+					name={t('resetPassword.subtitle')}
+					className="justify-center [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-600"
+				/>
 			</div>
 
 			<div className="space-y-3">

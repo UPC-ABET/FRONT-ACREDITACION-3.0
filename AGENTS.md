@@ -268,6 +268,18 @@ Shared, domain-agnostic components: `Button`, `Card`, `Select`, `Input`, `Toast`
 
 Live in their module's `components/` folder. Organized into subfolders by feature when they grow (e.g., `ifcs/components/form/`, `ifcs/components/view/`).
 
+### Page Layout
+
+Top-level pages follow one consistent shell so card usage is uniform across the app:
+
+- **Page shell**: `<div className="space-y-6">` wrapping a `<PageHeader>` then the content. Never wrap the whole page (including its title) in a single `<Card>` — the page title is a real `h1`, not a card header.
+- **`PageHeader`** (`@/shared/components/ui`): renders the `h1` (`text-3xl`) + optional `description` + optional `action` slot (buttons/links on the right). Use it for every page title. Every top-level page (one route) has **exactly one** `PageHeader` — title then subtitle.
+- **Tabs go directly under the `PageHeader`, before any card.** Order is always title → subtitle → `Tabs` → card content. Never put a card above the tabs.
+- **Tab content carries no page header.** A component rendered as tab content (or otherwise nested inside a page that already has a `PageHeader`) must not add its own `PageHeader` — the page header plus the active tab label already name it. A second page-level title is the double-title bug. If the tab content needs an action (e.g. a "New" button), put it in a right-aligned action row, not a header. (A `DataTable`'s `title`/`description` props count as a title — omit them when the page header already covers it.)
+- **Filters in a `<Card>`**: filter bars (selects + clear button) go inside a `<Card>`, not bare. `Select` menus portal to `document.body`, so the Card's `overflow-hidden` does not clip them.
+- **Results region is one box**: the `Table`/`DataTable` primitive already renders its own bordered box, so it needs no extra wrapper. For the non-table states use the shared placeholders so every state shares the same box shape: `TableLoadingState`, `TableEmptyState`, `TableErrorState`. Never hand-roll a `rounded-xl border ... bg-white shadow-sm` loading div.
+- **Embedded widgets** (maintenance views rendered inside a tab page) are the exception: they are self-contained `<Card>` sections with their own `h2` header, not top-level pages.
+
 ---
 
 ## TypeScript

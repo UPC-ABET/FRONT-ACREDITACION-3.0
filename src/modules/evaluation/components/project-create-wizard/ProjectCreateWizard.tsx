@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
-import { Toast } from '@/shared/components/ui/Toast';
-import { projectsService } from '../../services';
+import { Toast, SubTitle, Title } from '@/shared';
+import { projectsService } from '@/modules';
 import { WizardStepIndicator } from '../rubric-create-wizard/WizardStepIndicator';
 import { WizardStep1, type Step1Data } from '../rubric-create-wizard/WizardStep1';
 import { ProjectWizardStep2, type ProjectFormData } from './ProjectWizardStep2';
@@ -64,8 +64,14 @@ export function ProjectCreateWizard() {
 	return (
 		<div className="space-y-8">
 			<div>
-				<h1 className="text-3xl font-bold text-zinc-900">{t('projects.create.title')}</h1>
-				<p className="mt-2 text-zinc-600">{t('projects.create.subtitle')}</p>
+				<Title
+					title={t('projects.create.title')}
+					className="[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-zinc-900"
+				/>
+				<SubTitle
+					name={t('projects.create.subtitle')}
+					className="mt-2 [&_h3]:text-base [&_h3]:font-normal [&_h3]:text-zinc-600"
+				/>
 			</div>
 
 			<WizardStepIndicator steps={steps} currentStep={currentStep} />
