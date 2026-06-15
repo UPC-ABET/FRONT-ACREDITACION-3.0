@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { GRAReports } from './GRAReports';
 import { GRANotificationView } from './notifications/GRANotificationView';
@@ -18,21 +18,19 @@ export function GRAManagementView() {
 	];
 
 	return (
-		<div className="space-y-6">
-			<div>
-				<h1 className="text-2xl font-bold text-zinc-900">
-					GRA — {t('surveys.gra.management.title')}
-				</h1>
-				<p className="text-sm text-zinc-500 mt-1">{t('surveys.gra.management.subtitle')}</p>
-			</div>
+		<div className="w-full space-y-6">
+			<PageHeader
+				title={`GRA — ${t('surveys.gra.management.title')}`}
+				description={t('surveys.gra.management.subtitle')}
+			/>
 
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-			<div className="pt-2">
+			<Card className="overflow-visible">
 				{activeTab === 'reports' && <GRAReports />}
 				{activeTab === 'notifications' && <GRANotificationView />}
 				{activeTab === 'config' && <GRAConfiguration />}
-			</div>
+			</Card>
 		</div>
 	);
 }
