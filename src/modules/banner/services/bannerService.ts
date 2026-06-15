@@ -46,7 +46,9 @@ export async function cancelBannerAuthSession(sessionId: string): Promise<AuthSe
 }
 
 export function buildBannerStreamUrl(wsUrl: string): string {
-	const origin = new URL(API_URL).origin;
-	const wsOrigin = origin.replace(/^http/, 'ws');
-	return `${wsOrigin}${wsUrl}`;
+	if (/^wss?:\/\//i.test(wsUrl)) return wsUrl;
+	if (/^https?:\/\//i.test(wsUrl)) return wsUrl.replace(/^http/i, 'ws');
+
+	const wsOrigin = new URL(API_URL).origin.replace(/^http/i, 'ws');
+	return `${wsOrigin}${wsUrl.startsWith('/') ? '' : '/'}${wsUrl}`;
 }
