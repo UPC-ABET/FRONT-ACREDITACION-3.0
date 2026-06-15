@@ -22,6 +22,7 @@ import {
 	ArrowUpTrayIcon,
 	AcademicCapIcon,
 	BriefcaseIcon,
+	CircleStackIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth, useI18n } from '@/providers';
 import { useLogout } from '@/modules/auth/hooks';
@@ -91,6 +92,8 @@ export function AppSidebar() {
 				{ name: t('nav.loads.history'), href: '/loads/history' },
 			],
 		},
+
+		{ name: t('nav.banner'), href: '/scrapping', icon: CircleStackIcon },
 
 		{
 			name: t('nav.admin.label'),

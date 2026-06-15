@@ -35,7 +35,88 @@
 			"upload": "Carga",
 			"history": "Historial"
 		},
-		"portfolio": "Portafolio"
+		"portfolio": "Portafolio",
+		"banner": "Banner / Scraping"
+	},
+	"banner": {
+		"title": "Banner — Extracción de datos",
+		"subtitle": "Estado de la sesión de Banner y ejecución de la extracción de datos académicos.",
+		"session": {
+			"title": "Sesión de Banner",
+			"subtitle": "Salud del token usado para conectarse a Banner.",
+			"loading": "Consultando estado de la sesión...",
+			"loadError": "No se pudo obtener el estado de la sesión.",
+			"tokenExp": "Vence",
+			"refresh": "Actualizar",
+			"status": {
+				"active": "Activa",
+				"expiring": "Por vencer",
+				"expired": "Vencida"
+			},
+			"hint": {
+				"active": "El token es válido. La extracción puede ejecutarse.",
+				"expiring": "El token está por vencer y se renovará automáticamente.",
+				"expired": "No hay sesión válida. Un operador debe regenerar el archivo de sesión antes de extraer."
+			}
+		},
+		"scrape": {
+			"title": "Ejecutar extracción",
+			"subtitle": "Inicia una extracción de Banner para un período académico.",
+			"periodo": "Período",
+			"periodoRequired": "El período es obligatorio.",
+			"nivel": "Nivel",
+			"nivelHelper": "Por defecto UG.",
+			"departamentos": "Departamentos",
+			"departamentosPlaceholder": "Todos los departamentos activos",
+			"departamentosHelper": "Déjalo vacío para extraer todos los departamentos activos.",
+			"submit": "Iniciar extracción",
+			"started": "Extracción iniciada correctamente.",
+			"startFailed": "No se pudo iniciar la extracción."
+		},
+		"run": {
+			"title": "Progreso de la extracción",
+			"runId": "ID de ejecución",
+			"loading": "Cargando estado de la ejecución...",
+			"loadError": "No se pudo obtener el estado de la ejecución.",
+			"polling": "Actualizando...",
+			"noStatsYet": "Aún no hay estadísticas disponibles.",
+			"fatal": "Error fatal",
+			"errors": "Errores",
+			"status": {
+				"running": "En ejecución",
+				"completed": "Completada",
+				"partial": "Parcial",
+				"failed": "Fallida",
+				"expired": "Sesión vencida"
+			},
+			"counts": {
+				"horario": "Horarios",
+				"matricula": "Matrículas",
+				"alumno": "Alumnos",
+				"uniqueStudents": "Alumnos únicos"
+			},
+			"departments": {
+				"requested": "Solicitados",
+				"succeeded": "Exitosos",
+				"failed": "Fallidos"
+			}
+		},
+		"login": {
+			"button": "Iniciar sesión en Banner",
+			"title": "Iniciar sesión en Banner",
+			"subtitle": "Completa el inicio de sesión de Microsoft/UPC dentro del navegador remoto.",
+			"starting": "Iniciando sesión remota...",
+			"startFailed": "No se pudo iniciar la sesión de login.",
+			"connecting": "Conectando con el navegador remoto...",
+			"completed": "Sesión iniciada correctamente. Ya puedes ejecutar la extracción.",
+			"done": "Listo",
+			"cancel": "Cancelar",
+			"retry": "Reintentar",
+			"status": {
+				"failed": "El inicio de sesión no se completó. Intenta nuevamente.",
+				"expired": "La sesión de login expiró. Intenta nuevamente."
+			}
+		}
 	},
 	"ifcs": {
 		"page": {
@@ -941,6 +1022,14 @@
 		"unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
 		"forbidden": "No tienes permiso para realizar esta acción",
 		"notFound": "El recurso solicitado no fue encontrado",
+		"banner": {
+			"scrapeInProgress": "Ya hay una extracción en curso. Espera a que termine.",
+			"noDepartments": "No hay departamentos para extraer.",
+			"runNotFound": "No se encontró la ejecución solicitada.",
+			"authSessionInProgress": "Ya hay una sesión de login activa.",
+			"authSessionNotFound": "No se encontró la sesión de login.",
+			"browserAuthUnavailable": "No se pudo iniciar el navegador de autenticación. Intenta más tarde."
+		},
 		"conflict": "Conflicto con el estado actual del recurso",
 		"internalServer": "Error interno del servidor",
 		"professor": {

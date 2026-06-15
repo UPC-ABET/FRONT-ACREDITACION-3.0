@@ -35,7 +35,88 @@
 			"upload": "Upload",
 			"history": "History"
 		},
-		"portfolio": "Portfolio"
+		"portfolio": "Portfolio",
+		"banner": "Banner / Scraping"
+	},
+	"banner": {
+		"title": "Banner — Data extraction",
+		"subtitle": "Banner session health and academic data scraping runs.",
+		"session": {
+			"title": "Banner session",
+			"subtitle": "Health of the token used to connect to Banner.",
+			"loading": "Checking session status...",
+			"loadError": "Could not load the session status.",
+			"tokenExp": "Expires",
+			"refresh": "Refresh",
+			"status": {
+				"active": "Active",
+				"expiring": "Expiring",
+				"expired": "Expired"
+			},
+			"hint": {
+				"active": "The token is valid. Scraping can run.",
+				"expiring": "The token is about to expire and will refresh automatically.",
+				"expired": "No valid session. An operator must regenerate the session file before scraping."
+			}
+		},
+		"scrape": {
+			"title": "Run scraping",
+			"subtitle": "Start a Banner scrape for an academic period.",
+			"periodo": "Period",
+			"periodoRequired": "Period is required.",
+			"nivel": "Level",
+			"nivelHelper": "Defaults to UG.",
+			"departamentos": "Departments",
+			"departamentosPlaceholder": "All active departments",
+			"departamentosHelper": "Leave empty to scrape all active departments.",
+			"submit": "Start scraping",
+			"started": "Scrape started successfully.",
+			"startFailed": "Could not start the scrape."
+		},
+		"run": {
+			"title": "Scrape progress",
+			"runId": "Run ID",
+			"loading": "Loading run status...",
+			"loadError": "Could not load the run status.",
+			"polling": "Refreshing...",
+			"noStatsYet": "No stats available yet.",
+			"fatal": "Fatal error",
+			"errors": "Errors",
+			"status": {
+				"running": "Running",
+				"completed": "Completed",
+				"partial": "Partial",
+				"failed": "Failed",
+				"expired": "Session expired"
+			},
+			"counts": {
+				"horario": "Schedules",
+				"matricula": "Enrollments",
+				"alumno": "Students",
+				"uniqueStudents": "Unique students"
+			},
+			"departments": {
+				"requested": "Requested",
+				"succeeded": "Succeeded",
+				"failed": "Failed"
+			}
+		},
+		"login": {
+			"button": "Login to Banner",
+			"title": "Login to Banner",
+			"subtitle": "Complete the Microsoft/UPC sign-in inside the remote browser.",
+			"starting": "Starting remote session...",
+			"startFailed": "Could not start the login session.",
+			"connecting": "Connecting to the remote browser...",
+			"completed": "Session started successfully. You can now run a scrape.",
+			"done": "Done",
+			"cancel": "Cancel",
+			"retry": "Retry",
+			"status": {
+				"failed": "The login did not complete. Please try again.",
+				"expired": "The login session expired. Please try again."
+			}
+		}
 	},
 	"ifcs": {
 		"page": {
@@ -941,6 +1022,14 @@
 		"unauthorized": "Your session has expired. Please sign in again.",
 		"forbidden": "You do not have permission to perform this action",
 		"notFound": "The requested resource was not found",
+		"banner": {
+			"scrapeInProgress": "A scrape is already in progress. Wait for it to finish.",
+			"noDepartments": "There are no departments to scrape.",
+			"runNotFound": "The requested run was not found.",
+			"authSessionInProgress": "A login session is already active.",
+			"authSessionNotFound": "The login session was not found.",
+			"browserAuthUnavailable": "Could not start the authentication browser. Try again later."
+		},
 		"conflict": "Conflict with the current state of the resource",
 		"internalServer": "Internal server error",
 		"professor": {
