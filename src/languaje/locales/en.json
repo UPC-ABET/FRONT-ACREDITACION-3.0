@@ -426,10 +426,11 @@
 				"rowLabel": "Director {number}"
 			},
 			"field": {
-				"firstName": "First name",
-				"lastName": "Last name",
+				"teacher": "Linked teacher",
+				"teacherPlaceholder": "Search by name or code…",
 				"user": "Linked user",
 				"userPlaceholder": "No linked user",
+				"userLockedPlaceholder": "Defined by the linked teacher",
 				"title": "Title",
 				"school": "School",
 				"schoolPlaceholder": "Select a school"
@@ -443,8 +444,7 @@
 			"error": {
 				"loadFailed": "Could not load the configuration.",
 				"saveFailed": "Could not save the configuration.",
-				"firstNameRequired": "First name is required.",
-				"lastNameRequired": "Last name is required.",
+				"teacherRequired": "Select a teacher.",
 				"titleRequired": "Title is required in every language.",
 				"schoolRequired": "Select a school.",
 				"duplicateSchool": "This school is already assigned to another director."
@@ -1130,6 +1130,7 @@
 			"configureFailed": "Could not save the org chart configuration.",
 			"periodNotFound": "The academic period does not exist.",
 			"schoolNotFound": "The selected school does not exist.",
+			"staffNotFound": "The selected teacher does not exist.",
 			"userNotFound": "The selected user does not exist.",
 			"duplicateSchoolInPayload": "The same school cannot be assigned to two directors."
 		},

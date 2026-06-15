@@ -43,6 +43,7 @@ export function useConfigureChartHeads() {
 			queryClient.invalidateQueries({
 				queryKey: chartHeadsKeys.config(variables.academicPeriodId),
 			});
+			queryClient.invalidateQueries({ queryKey: chartHeadsKeys.users() });
 		},
 	});
 }

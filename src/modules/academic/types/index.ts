@@ -113,8 +113,10 @@ export type PerformanceLevelResponse = {
 };
 
 export type ProfessorStaffUserResponse = {
+	id: number;
 	firstName: string;
 	lastName: string;
+	email?: string;
 };
 
 export type ProfessorStaffResponse = {
