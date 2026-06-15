@@ -22,10 +22,11 @@ import { MIN_PERFORMANCE_LEVEL, MAX_PERFORMANCE_LEVEL } from '../../constants/co
 
 interface CompetenceCRUDProps {
 	cycleId: number;
+	programId?: number;
 	competences: CompetenceConfig[];
 	loading: boolean;
 	error: string | null;
-	onLoad: (cycleId: number) => void;
+	onLoad: (cycleId: number, programId?: number) => void;
 	onSave: (data: CompetenceFormData, onSuccess: () => void) => void;
 	onDelete: (id: number, onSuccess: () => void) => void;
 	onClone?: (
@@ -50,6 +51,7 @@ const EMPTY_FORM: Omit<CompetenceFormData, 'academicPeriodId' | 'school'> = {
 
 export function CompetenceCRUD({
 	cycleId,
+	programId,
 	competences,
 	loading,
 	error,
@@ -69,8 +71,8 @@ export function CompetenceCRUD({
 	});
 
 	useEffect(() => {
-		if (cycleId) onLoad(cycleId);
-	}, [cycleId, onLoad]);
+		if (cycleId) onLoad(cycleId, programId);
+	}, [cycleId, programId, onLoad]);
 
 	function openAdd() {
 		setForm(EMPTY_FORM);
@@ -95,7 +97,7 @@ export function CompetenceCRUD({
 			return;
 		}
 		setSaving(true);
-		onSave({ ...form, academicPeriodId: cycleId, school: '1' }, () => {
+		onSave({ ...form, academicPeriodId: cycleId, school: '1', programId }, () => {
 			setSaving(false);
 			setModalOpen(false);
 			setToast({ open: true, type: 'success', msg: t('surveys.competence.toast.saved') });

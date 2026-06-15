@@ -19,7 +19,11 @@ import { useI18n, useABET } from '@/providers';
 import { useLCFCConfiguration, useLCFCCycles } from '../../../hooks';
 import type { LCFCCourse } from '../../../types';
 
-export function LCFCConfiguration() {
+interface LCFCConfigurationProps {
+	readonly programId: number;
+}
+
+export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	// useLCFCCycles is kept only to populate the source-period selector in the clone dialog
@@ -36,8 +40,8 @@ export function LCFCConfiguration() {
 
 	useEffect(() => {
 		if (!academicPeriodId) return;
-		loadConfig('1', academicPeriodId);
-	}, [academicPeriodId, loadConfig]);
+		loadConfig('1', academicPeriodId, programId);
+	}, [academicPeriodId, programId, loadConfig]);
 
 	// Load the period list only when the clone dialog opens
 	useEffect(() => {
@@ -50,18 +54,22 @@ export function LCFCConfiguration() {
 
 	function handleGenerate() {
 		if (!academicPeriodId) return;
-		generate('1', academicPeriodId, undefined, undefined, () => {
+		if (!programId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
+			return;
+		}
+		generate('1', academicPeriodId, programId, undefined, () => {
 			setToast({ open: true, type: 'success', msg: t('surveys.lcfc.config.toastGenerated') });
-			loadConfig('1', academicPeriodId);
+			loadConfig('1', academicPeriodId, programId);
 		});
 	}
 
 	function handleClone() {
 		if (!academicPeriodId || !originCycle) return;
-		clone(originCycle.value, academicPeriodId, () => {
+		clone(originCycle.value, academicPeriodId, programId, () => {
 			setCloneDialogOpen(false);
 			setToast({ open: true, type: 'success', msg: t('surveys.lcfc.config.toastCloned') });
-			loadConfig('1', academicPeriodId);
+			loadConfig('1', academicPeriodId, programId);
 		});
 	}
 

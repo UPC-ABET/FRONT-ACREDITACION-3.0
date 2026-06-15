@@ -1158,7 +1158,14 @@
 		},
 		"survey": {
 			"gra": {
-				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado."
+				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado.",
+				"invalidExcelFile": "El archivo proporcionado no es un Excel válido.",
+				"excelNoSheets": "El archivo Excel no contiene hojas.",
+				"excelEmpty": "El archivo Excel está vacío o no tiene datos en la primera hoja.",
+				"defaultCourseSectionMissing": "No se encontró una sección de curso por defecto. Contacte al administrador.",
+				"emptyStudentCode": "Código de alumno vacío.",
+				"studentNotFound": "No se encontró un alumno con ese código.",
+				"alreadyInList": "El alumno ya está en la lista de GRA."
 			},
 			"lcfc": {
 				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado."
@@ -1949,7 +1956,9 @@
 				"formats": "Formatos aceptados: {{accept}} · Máx. {{mb}}MB",
 				"uploading": "Subiendo...",
 				"uploadButton": "Subir Archivo"
-			}
+			},
+			"programLabel": "Programa",
+			"selectProgram": "Selecciona un programa"
 		},
 		"student": {
 			"loading": "Cargando encuesta...",

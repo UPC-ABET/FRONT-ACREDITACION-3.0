@@ -89,9 +89,14 @@ export function useLCFCConfiguration() {
 	);
 
 	const clone = useCallback(
-		async (sourcePeriodId: number, targetPeriodId: number, onSuccess?: () => void) => {
+		async (
+			sourcePeriodId: number,
+			targetPeriodId: number,
+			programId?: number,
+			onSuccess?: () => void,
+		) => {
 			try {
-				await cloneLCFCConfiguration(sourcePeriodId, targetPeriodId);
+				await cloneLCFCConfiguration(sourcePeriodId, targetPeriodId, programId ?? 0);
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);

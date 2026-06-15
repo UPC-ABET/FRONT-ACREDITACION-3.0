@@ -6,7 +6,11 @@ import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
 import { usePPPDownload } from '../../hooks';
 
-export function PPPDownloadTemplate() {
+interface PPPDownloadTemplateProps {
+	readonly programId: number;
+}
+
+export function PPPDownloadTemplate({ programId }: PPPDownloadTemplateProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const { loading, error, download } = usePPPDownload();
@@ -30,7 +34,7 @@ export function PPPDownloadTemplate() {
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
 			return;
 		}
-		await download(academicPeriodId);
+		await download(academicPeriodId, programId);
 		if (!error) setToast({ open: true, type: 'success', msg: t('surveys.ppp.download.success') });
 	}
 

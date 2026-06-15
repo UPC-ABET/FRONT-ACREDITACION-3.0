@@ -7,7 +7,11 @@ import { FileUploadPanel } from '../shared/FileUploadPanel';
 import { UploadResultSummary } from '../shared/UploadResultSummary';
 import { usePPPUpload } from '../../hooks';
 
-export function PPPMassiveUpload() {
+interface PPPMassiveUploadProps {
+	readonly programId: number;
+}
+
+export function PPPMassiveUpload({ programId }: PPPMassiveUploadProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const { loading, error, success, result, upload } = usePPPUpload();
@@ -22,7 +26,7 @@ export function PPPMassiveUpload() {
 		if (!academicPeriodId) return;
 		try {
 			const { downloadPPPTemplate } = await import('../../services/pppService');
-			await downloadPPPTemplate(academicPeriodId);
+			await downloadPPPTemplate(academicPeriodId, programId);
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : t('surveys.ppp.upload.downloadError');
 			setToast({ open: true, type: 'error', msg });
@@ -45,7 +49,13 @@ export function PPPMassiveUpload() {
 				uploading={loading}
 				success={success}
 				error={error}
-				onUpload={(file) => upload(file, academicPeriodId)}
+				onUpload={(file) => {
+					if (!programId) {
+						setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
+						return;
+					}
+					upload(file, academicPeriodId, programId);
+				}}
 				onDownloadTemplate={handleDownloadTemplate}
 				downloadLabel={t('surveys.ppp.upload.downloadLabel')}
 			/>

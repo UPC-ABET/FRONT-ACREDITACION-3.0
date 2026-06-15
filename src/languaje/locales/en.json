@@ -1158,7 +1158,14 @@
 		},
 		"survey": {
 			"gra": {
-				"tokenNotFound": "The survey link is invalid or has expired."
+				"tokenNotFound": "The survey link is invalid or has expired.",
+				"invalidExcelFile": "The provided file is not a valid Excel file.",
+				"excelNoSheets": "The Excel file contains no sheets.",
+				"excelEmpty": "The Excel file is empty or has no data on the first sheet.",
+				"defaultCourseSectionMissing": "No default course section was found. Contact the administrator.",
+				"emptyStudentCode": "Empty student code.",
+				"studentNotFound": "No student found with that code.",
+				"alreadyInList": "The student is already in the GRA list."
 			},
 			"lcfc": {
 				"tokenNotFound": "The survey link is invalid or has expired."
@@ -1948,7 +1955,9 @@
 				"formats": "Accepted formats: {{accept}} · Max. {{mb}}MB",
 				"uploading": "Uploading...",
 				"uploadButton": "Upload File"
-			}
+			},
+			"programLabel": "Program",
+			"selectProgram": "Select a program"
 		},
 		"student": {
 			"loading": "Loading survey...",

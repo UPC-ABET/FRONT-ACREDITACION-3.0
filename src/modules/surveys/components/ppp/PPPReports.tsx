@@ -5,7 +5,11 @@ import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { usePPPReports } from '../../hooks';
 
-export function PPPReports() {
+interface PPPReportsProps {
+	readonly programId: number;
+}
+
+export function PPPReports({ programId }: PPPReportsProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const { loading, error, reportData, generate } = usePPPReports();
@@ -25,7 +29,7 @@ export function PPPReports() {
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
 			return;
 		}
-		await generate({ academicPeriodId });
+		await generate({ academicPeriodId, programId: programId || undefined });
 	}
 
 	if (!academicPeriodId) {

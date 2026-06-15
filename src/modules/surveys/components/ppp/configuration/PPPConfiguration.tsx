@@ -7,7 +7,11 @@ import { usePPPCompetences, usePPPPerformanceLevels } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
 import { PerformanceLevels } from './PerformanceLevels';
 
-export function PPPConfiguration() {
+interface PPPConfigurationProps {
+	readonly programId: number;
+}
+
+export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const {
@@ -40,9 +44,9 @@ export function PPPConfiguration() {
 
 	useEffect(() => {
 		if (!academicPeriodId) return;
-		loadComp(academicPeriodId);
+		loadComp(academicPeriodId, programId);
 		levelsHook.load(academicPeriodId);
-	}, [academicPeriodId]); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [academicPeriodId, programId]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		if (academicPeriodId && competences.length === 0 && !compLoading) {
@@ -89,6 +93,7 @@ export function PPPConfiguration() {
 				{activeTab === 'competences' && (
 					<CompetenceCRUD
 						cycleId={academicPeriodId}
+						programId={programId}
 						competences={competences}
 						loading={compLoading}
 						error={compError}

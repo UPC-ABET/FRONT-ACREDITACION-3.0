@@ -5,7 +5,11 @@ import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { useLCFCReports } from '../../hooks';
 
-export function LCFCReports() {
+interface LCFCReportsProps {
+	readonly programId: number;
+}
+
+export function LCFCReports({ programId }: LCFCReportsProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const { loading, error, reportData, generate } = useLCFCReports();
@@ -25,7 +29,7 @@ export function LCFCReports() {
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
 			return;
 		}
-		await generate({ academicPeriodId, school: '1' });
+		await generate({ academicPeriodId, school: '1', programId: programId || undefined });
 	}
 
 	if (!academicPeriodId) {
