@@ -19,7 +19,7 @@ interface BackendLcfcConfig {
 		surveyType?: string;
 		courseSectionId?: number;
 		courseId?: number;
-		courseName?: string;
+		courseName?: string | I18nText;
 		sectionCode?: string;
 		academicPeriodId?: number;
 		programId?: number;
@@ -37,10 +37,13 @@ function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 	const extra = raw.extra ?? {};
 	const name = toI18nText(raw.userOutcomeName);
 	const description = toI18nText(raw.userOutcomeDescription);
+	const courseNameI18n = toI18nText(extra.courseName);
+	const resolvedCourseName =
+		courseNameI18n.es || courseNameI18n.en || name.es || name.en || `Course ${raw.id}`;
 	return {
 		id: raw.id,
 		outcomeId: raw.outcomeId,
-		courseName: extra.courseName ?? name.es ?? name.en ?? `Course ${raw.id}`,
+		courseName: resolvedCourseName,
 		code: extra.sectionCode ?? '',
 		isActive: raw.isActive,
 		name,
