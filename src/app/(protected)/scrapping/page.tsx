@@ -1,13 +1,13 @@
 import dynamic from 'next/dynamic';
 
-const BannerManagementView = dynamic(() =>
-	import('@/modules/banner').then((m) => m.BannerManagementView),
+const ScrapingTabsView = dynamic(() =>
+	import('./ScrapingTabsView').then((m) => m.ScrapingTabsView),
 );
 
-export default function BannerPage() {
-	return <BannerManagementView />;
+export default function ScrapingPage() {
+	return <ScrapingTabsView />;
 }
 
 export const metadata = {
-	title: 'Banner — Scraping | ABET',
+	title: 'Scraping | ABET',
 };
