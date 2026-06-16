@@ -2062,7 +2062,25 @@
 				"cloneDialogBody": "Selecciona el período de origen para clonar su configuración al período actual ({{period}}).",
 				"originLabel": "Período de origen",
 				"originPlaceholder": "Selecciona un período de origen",
-				"cloneConfirm": "Clonar"
+				"cloneConfirm": "Clonar",
+				"colStatus": "Estado",
+				"colActions": "Acciones",
+				"statusActive": "Activo",
+				"statusInactive": "Inactivo",
+				"actionEdit": "Editar",
+				"actionDelete": "Eliminar",
+				"editDialogTitle": "Editar configuración",
+				"activeLabel": "Activo",
+				"nameEsLabel": "Nombre (Español)",
+				"nameEnLabel": "Nombre (Inglés)",
+				"descriptionEsLabel": "Descripción (Español)",
+				"descriptionEnLabel": "Descripción (Inglés)",
+				"save": "Guardar",
+				"deleteDialogTitle": "Eliminar configuración",
+				"deleteDialogBody": "¿Estás seguro de eliminar esta configuración? Esta acción no se puede deshacer.",
+				"deleteConfirm": "Eliminar",
+				"toastUpdated": "Configuración actualizada exitosamente.",
+				"toastDeleted": "Configuración eliminada exitosamente."
 			}
 		},
 		"gra": {

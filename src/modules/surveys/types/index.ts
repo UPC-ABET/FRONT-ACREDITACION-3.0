@@ -1,3 +1,5 @@
+import type { I18nText } from '@/shared/types';
+
 export type SurveyType = 'PPP' | 'GRA' | 'LCFC';
 
 export interface PageRequest {
@@ -135,15 +137,21 @@ export type LCFCConfigStatus = 'ACTIVE' | 'INACTIVE';
 export type DashboardColor = 'RED' | 'YELLOW' | 'GREEN';
 
 export interface LCFCCourse {
-	courseId: number;
+	id: number;
+	outcomeId: number;
 	courseName: string;
 	code: string;
+	isActive: boolean;
+	name: I18nText;
+	description: I18nText;
+	programId?: number;
+	academicPeriodId?: number;
+}
+
+export interface LCFCConfigUpdateRequest {
+	userOutcomeName?: I18nText;
+	userOutcomeDescription?: I18nText;
 	isActive?: boolean;
-	commissions: Array<{
-		commissionId: number;
-		commissionName: string;
-		professor?: string;
-	}>;
 }
 
 export interface LCFCStudent {

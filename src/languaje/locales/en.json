@@ -2062,7 +2062,25 @@
 				"cloneDialogBody": "Select the source period to clone its configuration to the current period ({{period}}).",
 				"originLabel": "Source period",
 				"originPlaceholder": "Select a source period",
-				"cloneConfirm": "Clone"
+				"cloneConfirm": "Clone",
+				"colStatus": "Status",
+				"colActions": "Actions",
+				"statusActive": "Active",
+				"statusInactive": "Inactive",
+				"actionEdit": "Edit",
+				"actionDelete": "Delete",
+				"editDialogTitle": "Edit configuration",
+				"activeLabel": "Active",
+				"nameEsLabel": "Name (Spanish)",
+				"nameEnLabel": "Name (English)",
+				"descriptionEsLabel": "Description (Spanish)",
+				"descriptionEnLabel": "Description (English)",
+				"save": "Save",
+				"deleteDialogTitle": "Delete configuration",
+				"deleteDialogBody": "Are you sure you want to delete this configuration? This action cannot be undone.",
+				"deleteConfirm": "Delete",
+				"toastUpdated": "Configuration updated successfully.",
+				"toastDeleted": "Configuration deleted successfully."
 			}
 		},
 		"gra": {
