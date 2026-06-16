@@ -6,10 +6,12 @@ import { useI18n } from '@/providers';
 import { GRAReports } from './GRAReports';
 import { GRANotificationView } from './notifications/GRANotificationView';
 import { GRAConfiguration } from './configuration/GRAConfiguration';
+import { SurveyProgramSelect } from '../shared/SurveyProgramSelect';
 
 export function GRAManagementView() {
 	const { t } = useI18n();
 	const [activeTab, setActiveTab] = useState('reports');
+	const [programId, setProgramId] = useState(0);
 
 	const TABS = [
 		{ id: 'reports', label: t('surveys.gra.management.tabReports') },
@@ -24,12 +26,16 @@ export function GRAManagementView() {
 				description={t('surveys.gra.management.subtitle')}
 			/>
 
+			<SurveyProgramSelect value={programId} onChange={setProgramId} />
+
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
 			<Card className="overflow-visible">
 				{activeTab === 'reports' && <GRAReports />}
-				{activeTab === 'notifications' && <GRANotificationView />}
-				{activeTab === 'config' && <GRAConfiguration />}
+				{activeTab === 'notifications' && (
+					<GRANotificationView programId={programId || undefined} />
+				)}
+				{activeTab === 'config' && <GRAConfiguration programId={programId || undefined} />}
 			</Card>
 		</div>
 	);

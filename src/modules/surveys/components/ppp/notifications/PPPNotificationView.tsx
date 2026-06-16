@@ -4,17 +4,17 @@ import React, { useState } from 'react';
 import { Button, Input, Toast } from '@/shared/components';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
-import { useLCFCNotification } from '../../../hooks';
+import { usePPPNotification } from '../../../hooks';
 import { SurveyTemplateSelect } from '../../shared/SurveyTemplateSelect';
 
-interface LCFCNotificationViewProps {
-	programId?: number;
+interface PPPNotificationViewProps {
+	programId: number;
 }
 
-export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
+export function PPPNotificationView({ programId }: PPPNotificationViewProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
-	const { sending, error: sendError, send } = useLCFCNotification();
+	const { sending, error: sendError, send } = usePPPNotification();
 
 	const [notificationMessageId, setNotificationMessageId] = useState<number | null>(null);
 	const [surveyBaseUrl, setSurveyBaseUrl] = useState('');
@@ -25,7 +25,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		msg: '',
 	});
 
-	const isValid = !!academicPeriodId && surveyBaseUrl.trim() !== '' && maxRegisterDate !== '';
+	const isValid = !!academicPeriodId && surveyBaseUrl.trim() !== '';
 
 	React.useEffect(() => {
 		if (sendError) setToast({ open: true, type: 'error', msg: sendError });
@@ -36,7 +36,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 			setToast({
 				open: true,
 				type: 'error',
-				msg: t('surveys.lcfc.notifications.toast.required'),
+				msg: t('surveys.ppp.notifications.toast.required'),
 			});
 			return;
 		}
@@ -44,15 +44,15 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 			{
 				academicPeriodId,
 				programId: programId ?? 0,
-				maxRegisterDate: new Date(maxRegisterDate).toISOString(),
 				surveyBaseUrl: surveyBaseUrl.trim(),
+				...(maxRegisterDate ? { maxRegisterDate: new Date(maxRegisterDate).toISOString() } : {}),
 				...(notificationMessageId ? { notificationMessageId } : {}),
 			},
 			() =>
 				setToast({
 					open: true,
 					type: 'success',
-					msg: t('surveys.lcfc.notifications.toast.sent'),
+					msg: t('surveys.ppp.notifications.toast.sent'),
 				}),
 		);
 	}
@@ -65,29 +65,29 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		<div className="max-w-lg space-y-6">
 			<div>
 				<h3 className="text-base font-bold text-zinc-800">
-					{t('surveys.lcfc.notifications.title')}
+					{t('surveys.ppp.notifications.title')}
 				</h3>
-				<p className="text-sm text-zinc-500 mt-1">{t('surveys.lcfc.notifications.description')}</p>
+				<p className="text-sm text-zinc-500 mt-1">{t('surveys.ppp.notifications.description')}</p>
 			</div>
 
 			<div className="space-y-4">
 				<SurveyTemplateSelect
-					surveyTypeCode="LCFC"
-					programId={programId}
+					surveyTypeCode="PPP"
+					programId={programId || undefined}
 					value={notificationMessageId}
 					onChange={setNotificationMessageId}
 				/>
 
 				<Input
-					label={t('surveys.lcfc.notifications.urlLabel')}
+					label={t('surveys.ppp.notifications.urlLabel')}
 					value={surveyBaseUrl}
 					onChange={(e) => setSurveyBaseUrl(e.target.value)}
-					placeholder={t('surveys.lcfc.notifications.urlPlaceholder')}
+					placeholder={t('surveys.ppp.notifications.urlPlaceholder')}
 					type="url"
 				/>
 
 				<Input
-					label={t('surveys.lcfc.notifications.dateLabel')}
+					label={t('surveys.ppp.notifications.dateLabel')}
 					value={maxRegisterDate}
 					onChange={(e) => setMaxRegisterDate(e.target.value)}
 					type="date"
@@ -96,7 +96,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 
 			<Button onClick={handleSend} disabled={!isValid || sending}>
 				<PaperAirplaneIcon className="h-4 w-4 mr-2" />
-				{sending ? t('surveys.lcfc.notifications.sending') : t('surveys.lcfc.notifications.send')}
+				{sending ? t('surveys.ppp.notifications.sending') : t('surveys.ppp.notifications.send')}
 			</Button>
 
 			<Toast

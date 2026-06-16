@@ -7,6 +7,7 @@ import type {
 	DashboardResponse,
 	LCFCCourse,
 	LCFCConfigStatus,
+	LCFCConfigUpdateRequest,
 	LCFCEmailParam,
 	LCFCNotificationSendRequest,
 } from '../types';
@@ -16,6 +17,8 @@ import {
 	generateLCFCConfiguration,
 	cloneLCFCConfiguration,
 	changeLCFCConfigStatus,
+	updateLCFCConfig,
+	deleteLCFCConfig,
 	getLCFCEmailParams,
 	sendLCFCNotification,
 	generateLCFCPerceptionReport,
@@ -57,11 +60,11 @@ export function useLCFCConfiguration() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (school: string, periodId: number, programId?: number) => {
+	const load = useCallback(async (periodId: number, programId?: number) => {
 		setLoading(true);
 		setError(null);
 		try {
-			const { courses } = await listLCFCCourses(school, periodId, programId);
+			const { courses } = await listLCFCCourses(periodId, programId);
 			setCourses(courses);
 		} catch (e) {
 			setError((e as Error).message);
@@ -72,14 +75,13 @@ export function useLCFCConfiguration() {
 
 	const generate = useCallback(
 		async (
-			school: string,
+			modalityTypeId: number,
 			academicPeriodId: number,
-			programId?: number,
-			campusId?: number,
+			programId: number,
 			onSuccess?: () => void,
 		) => {
 			try {
-				await generateLCFCConfiguration(school, academicPeriodId, programId, campusId);
+				await generateLCFCConfiguration(modalityTypeId, academicPeriodId, programId);
 				onSuccess?.();
 			} catch (e) {
 				setError((e as Error).message);
@@ -117,7 +119,28 @@ export function useLCFCConfiguration() {
 		[],
 	);
 
-	return { courses, loading, error, load, generate, clone, changeStatus };
+	const update = useCallback(
+		async (id: number, data: LCFCConfigUpdateRequest, onSuccess?: () => void) => {
+			try {
+				await updateLCFCConfig(id, data);
+				onSuccess?.();
+			} catch (e) {
+				setError((e as Error).message);
+			}
+		},
+		[],
+	);
+
+	const remove = useCallback(async (id: number, onSuccess?: () => void) => {
+		try {
+			await deleteLCFCConfig(id);
+			onSuccess?.();
+		} catch (e) {
+			setError((e as Error).message);
+		}
+	}, []);
+
+	return { courses, loading, error, load, generate, clone, changeStatus, update, remove };
 }
 
 export function useLCFCNotification() {

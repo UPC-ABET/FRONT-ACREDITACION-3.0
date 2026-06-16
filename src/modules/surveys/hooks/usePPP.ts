@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useI18n } from '@/providers';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
-	PerformanceLevel,
 	CompetenceFormData,
 	DashboardResponse,
 	MassiveUploadResult,
+	PPPNotificationSendRequest,
 } from '../types';
 import {
 	getAcademicPeriods,
@@ -16,11 +17,10 @@ import {
 	deletePPPCompetence,
 	clonePPPConfiguration,
 	generatePPPConfigFromOutcomes,
-	listPPPPerformanceLevels,
-	updatePPPPerformanceLevels,
 	downloadPPPTemplate,
 	uploadPPPMassive,
 	generatePPPPerceptionReport,
+	sendPPPNotification,
 } from '../services';
 
 // Backward-compat alias: components that import usePPPCycles still work.
@@ -133,38 +133,6 @@ export function usePPPCompetences() {
 	return { competences, loading, error, load, save, remove, clone, generate, setError };
 }
 
-export function usePPPPerformanceLevels() {
-	const [levels, setLevels] = useState<PerformanceLevel[]>([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-
-	const load = useCallback(async (periodId: number) => {
-		setLoading(true);
-		setError(null);
-		try {
-			setLevels(await listPPPPerformanceLevels(periodId));
-		} catch (e) {
-			setError((e as Error).message);
-		} finally {
-			setLoading(false);
-		}
-	}, []);
-
-	const save = useCallback(
-		async (periodId: number, levels: PerformanceLevel[], onSuccess?: () => void) => {
-			try {
-				await updatePPPPerformanceLevels(periodId, levels);
-				onSuccess?.();
-			} catch (e) {
-				setError((e as Error).message);
-			}
-		},
-		[],
-	);
-
-	return { levels, setLevels, loading, error, load, save };
-}
-
 export function usePPPDownload() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -243,4 +211,28 @@ export function usePPPReports() {
 	);
 
 	return { loading, error, reportData, generate };
+}
+
+export function usePPPNotification() {
+	const { locale } = useI18n();
+	const [sending, setSending] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const send = useCallback(
+		async (request: PPPNotificationSendRequest, onSuccess?: () => void) => {
+			setSending(true);
+			setError(null);
+			try {
+				await sendPPPNotification(request, locale);
+				onSuccess?.();
+			} catch (e) {
+				setError((e as Error).message);
+			} finally {
+				setSending(false);
+			}
+		},
+		[locale],
+	);
+
+	return { sending, error, send };
 }

@@ -18,12 +18,14 @@ import type {
 	PerformanceLevel,
 	DashboardResponse,
 	MassiveUploadResult,
+	PPPNotificationSendRequest,
 } from '../types';
 
 interface BackendPppConfig {
 	id: number;
 	outcomeId: number;
 	isActive: boolean;
+	isVisible?: boolean;
 	extra?: {
 		surveyType?: string;
 		nameEs?: string;
@@ -33,6 +35,7 @@ interface BackendPppConfig {
 		order?: number;
 		programId?: number;
 		academicPeriodId?: number;
+		isExternal?: boolean;
 	};
 	userOutcomeName?: string;
 	outcomeCode?: string;
@@ -53,8 +56,11 @@ function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 		generalCompetence: extra.nameEs ?? raw.userOutcomeName ?? '',
 		specificCompetence: extra.nameEn ?? extra.nameEs ?? '',
 		description: extra.descriptionEs ?? '',
+		descriptionEn: extra.descriptionEn ?? '',
 		performanceLevel: extra.order ?? 3,
 		isActive: raw.isActive,
+		isVisible: raw.isVisible ?? raw.isActive,
+		isExternal: extra.isExternal ?? false,
 		programId: extra.programId,
 		periodId: extra.academicPeriodId,
 	};
@@ -192,11 +198,12 @@ export async function savePPPCompetence(data: CompetenceFormData) {
 		nameEs: data.generalCompetence,
 		nameEn: data.specificCompetence || data.generalCompetence,
 		descriptionEs: data.description,
-		descriptionEn: data.description,
+		descriptionEn: data.descriptionEn || data.description,
 		order: data.performanceLevel,
 		programId: data.programId ?? 0,
 		academicPeriodId: data.academicPeriodId,
-		isVisible: true,
+		isVisible: data.isVisible ?? true,
+		isExternal: data.isExternal ?? false,
 	};
 
 	if (!data.id || data.id === 0) {
@@ -312,4 +319,8 @@ export async function getPPPSurveysByFilters(params: {
 }) {
 	const res = await apiPost('ppp/survey/get-by-filters', params);
 	return getApiData(res);
+}
+
+export async function sendPPPNotification(request: PPPNotificationSendRequest, lang = 'es') {
+	return apiPost('ppp/notification/send', { ...request, lang });
 }

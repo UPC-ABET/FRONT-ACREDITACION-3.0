@@ -1,71 +1,85 @@
-import { apiPost, apiGet, getApiData } from '@/shared/lib';
+import { apiPost, apiGet, apiPut, apiDelete, getApiData } from '@/shared/lib';
 import type {
 	LCFCCourse,
 	LCFCConfigStatus,
+	LCFCConfigUpdateRequest,
 	LCFCNotificationSendRequest,
 	LCFCEmailParam,
 	DashboardResponse,
-	PageInfo,
 } from '../types';
+import type { I18nText } from '@/shared/types';
 
 interface BackendLcfcConfig {
 	id: number;
+	outcomeId: number;
+	userOutcomeName?: string | I18nText;
+	userOutcomeDescription?: string | I18nText;
 	isActive: boolean;
 	extra?: {
+		surveyType?: string;
 		courseSectionId?: number;
-		programId?: number;
+		courseId?: number;
+		courseName?: string;
+		sectionCode?: string;
 		academicPeriodId?: number;
+		programId?: number;
+		campusId?: number;
 	};
-	courseName?: string;
-	courseCode?: string;
-	courseSectionId?: number;
-	commissions?: Array<{ commissionId: number; commissionName: string }>;
 }
 
-interface BackendLcfcConfigPage {
-	resource?: BackendLcfcConfig[];
-	items?: BackendLcfcConfig[];
-	pageInfo?: PageInfo;
+function toI18nText(value: string | I18nText | undefined): I18nText {
+	if (value == null) return { es: '', en: '' };
+	if (typeof value === 'string') return { es: value, en: value };
+	return value;
 }
 
 function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
+	const extra = raw.extra ?? {};
+	const name = toI18nText(raw.userOutcomeName);
+	const description = toI18nText(raw.userOutcomeDescription);
 	return {
-		courseId: raw.courseSectionId ?? raw.extra?.courseSectionId ?? raw.id,
-		courseName: raw.courseName ?? `Course ${raw.id}`,
-		code: raw.courseCode ?? '',
+		id: raw.id,
+		outcomeId: raw.outcomeId,
+		courseName: extra.courseName ?? name.es ?? name.en ?? `Course ${raw.id}`,
+		code: extra.sectionCode ?? '',
 		isActive: raw.isActive,
-		commissions: raw.commissions ?? [],
+		name,
+		description,
+		programId: extra.programId,
+		academicPeriodId: extra.academicPeriodId,
 	};
 }
 
 export async function listLCFCCourses(
-	_school: string,
 	academicPeriodId: number,
 	programId?: number,
-): Promise<{ courses: LCFCCourse[]; pageInfo?: PageInfo }> {
+): Promise<{ courses: LCFCCourse[] }> {
 	const res = await apiPost('lcfc/config/get-by-filters', {
 		academicPeriodId,
 		programId: programId || undefined,
 	});
-	const data = getApiData<BackendLcfcConfig[] | BackendLcfcConfigPage>(res);
-	if (Array.isArray(data)) {
-		return { courses: data.map((c) => adaptLcfcConfig(c)) };
-	}
-	const list = data?.resource ?? data?.items ?? [];
-	return { courses: list.map((c) => adaptLcfcConfig(c)), pageInfo: data?.pageInfo };
+	const list = getApiData<BackendLcfcConfig[]>(res) ?? [];
+	return { courses: list.map((c) => adaptLcfcConfig(c)) };
 }
 
 export async function generateLCFCConfiguration(
-	_school: string,
+	modalityTypeId: number,
 	academicPeriodId: number,
-	programId?: number,
-	campusId?: number,
+	programId: number,
 ) {
 	return apiPost('lcfc/config/generate', {
+		modalityTypeId,
 		academicPeriodId,
-		programId: programId ?? 0,
-		campusId: campusId ?? 0,
+		programId,
 	});
+}
+
+export async function updateLCFCConfig(id: number, data: LCFCConfigUpdateRequest) {
+	return apiPut(`lcfc/config/update/${id}`, data);
+}
+
+export async function deleteLCFCConfig(id: number) {
+	return apiDelete(`lcfc/config/delete/${id}`);
 }
 
 export async function cloneLCFCConfiguration(

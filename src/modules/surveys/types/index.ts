@@ -1,3 +1,5 @@
+import type { I18nText } from '@/shared/types';
+
 export type SurveyType = 'PPP' | 'GRA' | 'LCFC';
 
 export interface PageRequest {
@@ -30,8 +32,11 @@ export interface CompetenceConfig {
 	generalCompetence: string;
 	specificCompetence: string;
 	description: string;
+	descriptionEn?: string;
 	performanceLevel: number;
 	isActive?: boolean;
+	isVisible?: boolean;
+	isExternal?: boolean;
 	programId?: number;
 	periodId?: number;
 }
@@ -42,7 +47,10 @@ export interface CompetenceFormData {
 	generalCompetence: string;
 	specificCompetence: string;
 	description: string;
+	descriptionEn?: string;
 	performanceLevel: number;
+	isVisible?: boolean;
+	isExternal?: boolean;
 	academicPeriodId: number;
 	programId?: number;
 	school: string;
@@ -122,21 +130,28 @@ export interface GRAEmailSendRequest {
 	academicPeriodId: number;
 	programId: number;
 	surveyBaseUrl: string;
+	notificationMessageId?: number;
 }
 
 export type LCFCConfigStatus = 'ACTIVE' | 'INACTIVE';
 export type DashboardColor = 'RED' | 'YELLOW' | 'GREEN';
 
 export interface LCFCCourse {
-	courseId: number;
+	id: number;
+	outcomeId: number;
 	courseName: string;
 	code: string;
+	isActive: boolean;
+	name: I18nText;
+	description: I18nText;
+	programId?: number;
+	academicPeriodId?: number;
+}
+
+export interface LCFCConfigUpdateRequest {
+	userOutcomeName?: I18nText;
+	userOutcomeDescription?: I18nText;
 	isActive?: boolean;
-	commissions: Array<{
-		commissionId: number;
-		commissionName: string;
-		professor?: string;
-	}>;
 }
 
 export interface LCFCStudent {
@@ -160,6 +175,15 @@ export interface LCFCNotificationSendRequest {
 	courseSectionId?: number;
 	maxRegisterDate: string;
 	surveyBaseUrl: string;
+	notificationMessageId?: number;
+}
+
+export interface PPPNotificationSendRequest {
+	academicPeriodId: number;
+	programId: number;
+	surveyBaseUrl: string;
+	maxRegisterDate?: string;
+	notificationMessageId?: number;
 }
 
 export interface LCFCConfigItem {

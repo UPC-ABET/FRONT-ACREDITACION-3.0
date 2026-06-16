@@ -5,12 +5,15 @@ import { Tabs } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { AddStudentPanel } from './AddStudentPanel';
 import { StudentList } from './StudentList';
-import { EditEmailTemplate } from './EditEmailTemplate';
 import { FileUploadPanel } from '../../shared/FileUploadPanel';
 import { UploadResultSummary } from '../../shared/UploadResultSummary';
 import { useGRAUpload } from '../../../hooks';
 
-export function GRANotificationView() {
+interface GRANotificationViewProps {
+	programId?: number;
+}
+
+export function GRANotificationView({ programId }: GRANotificationViewProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const [activeTab, setActiveTab] = useState('list');
@@ -20,11 +23,10 @@ export function GRANotificationView() {
 		{ id: 'list', label: t('surveys.gra.notifications.tabs.list') },
 		{ id: 'add', label: t('surveys.gra.notifications.tabs.add') },
 		{ id: 'upload', label: t('surveys.gra.notifications.tabs.upload') },
-		{ id: 'email', label: t('surveys.gra.notifications.tabs.email') },
 	];
 
 	const periodId = academicPeriodId ?? 0;
-	const programId = 0;
+	const resolvedProgramId = programId ?? 0;
 
 	if (!academicPeriodId) {
 		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
@@ -35,11 +37,17 @@ export function GRANotificationView() {
 			<Tabs tabs={NOTIFICATION_TABS} activeTab={activeTab} onChange={setActiveTab} />
 
 			<div className="pt-2">
-				{activeTab === 'list' && <StudentList programId={programId} academicPeriodId={periodId} />}
+				{activeTab === 'list' && (
+					<StudentList
+						programId={resolvedProgramId}
+						academicPeriodId={periodId}
+						surveyProgramId={programId}
+					/>
+				)}
 
 				{activeTab === 'add' && (
 					<AddStudentPanel
-						programId={programId}
+						programId={resolvedProgramId}
 						academicPeriodId={periodId}
 						onStudentAdded={() => setActiveTab('list')}
 					/>
@@ -53,17 +61,13 @@ export function GRANotificationView() {
 							uploading={loading}
 							success={success}
 							error={error}
-							onUpload={(file) => upload(file, { programId, academicPeriodId: periodId })}
+							onUpload={(file) =>
+								upload(file, { programId: resolvedProgramId, academicPeriodId: periodId })
+							}
 							onDownloadTemplate={() => downloadTemplate()}
 							downloadLabel={t('surveys.gra.notifications.downloadLabel')}
 						/>
 						{result && <UploadResultSummary result={result} />}
-					</div>
-				)}
-
-				{activeTab === 'email' && (
-					<div className="max-w-lg">
-						<EditEmailTemplate />
 					</div>
 				)}
 			</div>

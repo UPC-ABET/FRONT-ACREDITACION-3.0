@@ -940,7 +940,7 @@
 	},
 	"welcome": "Bienvenido a ABET.",
 	"home": {
-		"subtitle": "Sistema de acreditaci\u00f3n UPC"
+		"subtitle": "Sistema de acreditación UPC"
 	},
 	"navbar": {
 		"user": {
@@ -1952,22 +1952,37 @@
 		"competence": {
 			"table": {
 				"title": "Competencias",
-				"general": "Competencia General",
-				"specific": "Competencia Específica",
+				"titleGeneral": "Competencias Generales",
+				"titleSpecific": "Competencias Específicas",
+				"order": "Orden",
+				"nameEs": "Nombre (ES)",
+				"nameEn": "Nombre (EN)",
 				"description": "Descripción",
-				"level": "Nivel",
+				"visible": "Visible",
 				"actions": "Acciones"
 			},
+			"visible": {
+				"yes": "Sí",
+				"no": "No"
+			},
 			"modal": {
-				"addTitle": "Agregar Competencia",
-				"editTitle": "Editar Competencia",
-				"generalLabel": "Competencia General",
-				"generalPlaceholder": "Ej: Pensamiento Crítico",
-				"specificLabel": "Competencia Específica",
-				"specificPlaceholder": "Ej: Análisis de Problemas",
-				"descriptionLabel": "Descripción",
-				"descriptionPlaceholder": "Describe la competencia...",
-				"levelLabel": "Nivel de Desempeño ({{min}}–{{max}})",
+				"addTitle": "Añadir Competencia General",
+				"editTitle": "Editar Competencia General",
+				"addSpecificTitle": "Añadir Competencia Específica",
+				"editSpecificTitle": "Editar Competencia Específica",
+				"orderLabel": "Orden",
+				"visibleLabel": "¿Es visible en la encuesta?",
+				"nameEsLabel": "Nombre en español",
+				"nameEsPlaceholder": "Ej: Pensamiento Crítico",
+				"nameEnLabel": "Nombre en inglés",
+				"nameEnPlaceholder": "e.g. Critical Thinking",
+				"descriptionEsLabel": "Descripción en español",
+				"descriptionEsPlaceholder": "Describe la competencia...",
+				"descriptionEnLabel": "Descripción en inglés",
+				"descriptionEnPlaceholder": "Describe the competence...",
+				"externalLabel": "¿Este outcome es para una carrera ajena a esta escuela?",
+				"outcomesSection": "Outcomes por comisión",
+				"outcomePlaceholder": "Seleccione un outcome",
 				"save": "Guardar",
 				"saving": "Guardando...",
 				"delete": "Eliminar",
@@ -1975,11 +1990,15 @@
 				"deleteBody": "¿Estás seguro de que deseas eliminar esta competencia? Esta acción no se puede deshacer."
 			},
 			"toast": {
-				"required": "Competencia y descripción son obligatorios.",
+				"required": "Nombre y descripción son obligatorios.",
+				"requiredEs": "El nombre en español es obligatorio.",
+				"requiredEn": "El nombre en inglés es obligatorio.",
+				"requiredDescEs": "La descripción en español es obligatoria.",
+				"requiredDescEn": "La descripción en inglés es obligatoria.",
 				"saved": "Competencia guardada exitosamente.",
 				"deleted": "Competencia eliminada."
 			},
-			"add": "Agregar Competencia",
+			"add": "Añadir Competencia",
 			"actions": {
 				"edit": "Editar competencia",
 				"delete": "Eliminar competencia"
@@ -2043,7 +2062,25 @@
 				"cloneDialogBody": "Selecciona el período de origen para clonar su configuración al período actual ({{period}}).",
 				"originLabel": "Período de origen",
 				"originPlaceholder": "Selecciona un período de origen",
-				"cloneConfirm": "Clonar"
+				"cloneConfirm": "Clonar",
+				"colStatus": "Estado",
+				"colActions": "Acciones",
+				"statusActive": "Activo",
+				"statusInactive": "Inactivo",
+				"actionEdit": "Editar",
+				"actionDelete": "Eliminar",
+				"editDialogTitle": "Editar configuración",
+				"activeLabel": "Activo",
+				"nameEsLabel": "Nombre (Español)",
+				"nameEnLabel": "Nombre (Inglés)",
+				"descriptionEsLabel": "Descripción (Español)",
+				"descriptionEnLabel": "Descripción (Inglés)",
+				"save": "Guardar",
+				"deleteDialogTitle": "Eliminar configuración",
+				"deleteDialogBody": "¿Estás seguro de eliminar esta configuración? Esta acción no se puede deshacer.",
+				"deleteConfirm": "Eliminar",
+				"toastUpdated": "Configuración actualizada exitosamente.",
+				"toastDeleted": "Configuración eliminada exitosamente."
 			}
 		},
 		"gra": {
@@ -2076,7 +2113,8 @@
 					"urlLabel": "URL base de la encuesta",
 					"urlPlaceholder": "https://tu-dominio.com/encuesta/gra",
 					"confirm": "Confirmar envío",
-					"sending": "Enviando..."
+					"sending": "Enviando...",
+					"templateLabel": "Plantilla de correo"
 				},
 				"status": {
 					"sent": "Enviado",
@@ -2133,7 +2171,8 @@
 				"tabDownload": "Descargar Plantilla",
 				"tabUpload": "Carga Masiva",
 				"tabReports": "Reportes",
-				"tabConfig": "Configuración"
+				"tabConfig": "Configuración",
+				"tabNotifications": "Notificaciones"
 			},
 			"download": {
 				"title": "Descargar Plantilla PPP",
@@ -2152,6 +2191,19 @@
 			"reports": {
 				"title": "Dashboard PPP",
 				"description": "Genera el resumen de percepción promedio por ciclo académico."
+			},
+			"notifications": {
+				"title": "Envío de Notificaciones PPP",
+				"description": "Selecciona la plantilla de correo y configura los parámetros para enviar las notificaciones a los estudiantes.",
+				"urlLabel": "URL base de la encuesta",
+				"urlPlaceholder": "https://tu-dominio.com/encuesta/ppp",
+				"dateLabel": "Fecha límite de registro",
+				"send": "Enviar Notificaciones",
+				"sending": "Enviando...",
+				"toast": {
+					"required": "Selecciona una plantilla y completa todos los campos.",
+					"sent": "Notificaciones enviadas exitosamente."
+				}
 			}
 		},
 		"shared": {
@@ -2241,6 +2293,12 @@
 				"message": "Tus respuestas han sido registradas correctamente. Gracias por completar la encuesta de Logro de Fin de Ciclo.",
 				"hint": "Puedes cerrar esta ventana."
 			}
+		},
+		"notifications": {
+			"templateLabel": "Plantilla de notificación",
+			"templatePlaceholder": "Seleccione una plantilla",
+			"templateLoading": "Cargando plantillas...",
+			"templateNone": "No hay plantillas disponibles"
 		}
 	},
 	"evaluationCourses": {

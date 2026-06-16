@@ -29,15 +29,18 @@ interface BackendGraConfig {
 	id: number;
 	outcomeId: number;
 	isActive: boolean;
+	isVisible?: boolean;
 	extra?: {
 		surveyType?: string;
 		nameEs?: string;
 		nameEn?: string;
 		descriptionEs?: string;
+		descriptionEn?: string;
 		order?: number;
 		programId?: number;
 		academicPeriodId?: number;
 		commissionId?: number;
+		isExternal?: boolean;
 	};
 	userOutcomeName?: string;
 }
@@ -97,8 +100,11 @@ function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
 		generalCompetence: extra.nameEs ?? raw.userOutcomeName ?? '',
 		specificCompetence: extra.nameEn ?? extra.nameEs ?? '',
 		description: extra.descriptionEs ?? '',
+		descriptionEn: extra.descriptionEn ?? '',
 		performanceLevel: extra.order ?? 3,
 		isActive: raw.isActive,
+		isVisible: raw.isVisible ?? raw.isActive,
+		isExternal: extra.isExternal ?? false,
 		programId: extra.programId,
 		periodId: extra.academicPeriodId,
 	};
@@ -164,11 +170,12 @@ export async function saveGRACompetence(data: CompetenceFormData) {
 		nameEs: data.generalCompetence,
 		nameEn: data.specificCompetence || data.generalCompetence,
 		descriptionEs: data.description,
-		descriptionEn: data.description,
+		descriptionEn: data.descriptionEn || data.description,
 		order: data.performanceLevel,
 		programId: data.programId ?? 0,
 		academicPeriodId: data.academicPeriodId,
-		isVisible: true,
+		isVisible: data.isVisible ?? true,
+		isExternal: data.isExternal ?? false,
 	};
 
 	if (!data.id || data.id === 0) {
