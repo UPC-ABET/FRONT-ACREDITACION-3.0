@@ -36,19 +36,19 @@
 			"history": "Historial"
 		},
 		"portfolio": "Portafolio",
-		"banner": "Banner / Scraping"
+		"banner": "Scraping"
 	},
 	"scraping": {
+		"title": "Scraping — Extracción de datos",
+		"subtitle": "Extracción de datos académicos desde Banner y Planner.",
 		"tabs": {
 			"banner": "Banner",
 			"planner": "Planner"
 		}
 	},
 	"planner": {
-		"title": "Planner — Extracción de datos",
-		"subtitle": "Estado del token de Planner (u-planner) para la extracción de evaluaciones y notas.",
 		"session": {
-			"title": "Sesión de Planner",
+			"title": "Token de Planner",
 			"subtitle": "Estado del token usado para conectarse a Planner (u-planner).",
 			"loading": "Consultando estado...",
 			"loadError": "No se pudo obtener el estado.",
@@ -124,17 +124,12 @@
 		}
 	},
 	"banner": {
-		"title": "Banner — Extracción de datos",
-		"subtitle": "Estado de la sesión de Banner y ejecución de la extracción de datos académicos.",
 		"session": {
-			"title": "Sesión de Banner",
-			"subtitle": "Estado de la sesión y del token usados para conectarse a Banner.",
+			"title": "Token de Banner",
+			"subtitle": "Estado del token usado para conectarse a Banner.",
 			"loading": "Consultando estado...",
 			"loadError": "No se pudo obtener el estado.",
-			"sessionLabel": "Sesión de Banner",
 			"tokenLabel": "Token de Banner",
-			"alive": "Activa",
-			"dead": "Requiere inicio de sesión",
 			"tokenExp": "Vence:",
 			"noToken": "Sin token activo",
 			"refresh": "Intentar actualizar",

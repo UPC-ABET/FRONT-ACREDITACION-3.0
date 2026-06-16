@@ -23,7 +23,6 @@ export function SessionStatusCard() {
 	const handleLoginCompleted = useCallback(() => setLoginOpen(false), []);
 
 	const status = data?.status;
-	const sessionAlive = status !== undefined && status !== 'expired';
 	const formattedExp = data?.tokenExp
 		? new Date(data.tokenExp).toLocaleString(locale === 'en' ? 'en-US' : 'es-PE')
 		: null;
@@ -44,29 +43,18 @@ export function SessionStatusCard() {
 
 		return (
 			<div className="space-y-3">
-				<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-8">
-					<div className="flex items-center gap-2">
-						<span className="text-sm font-semibold text-zinc-700">
-							{t('banner.session.sessionLabel')}:
+				<div className="flex items-center gap-2">
+					<span className="text-sm font-semibold text-zinc-700">
+						{t('banner.session.tokenLabel')}:
+					</span>
+					<Badge color={TOKEN_COLORS[status]}>{t(`banner.session.status.${status}`)}</Badge>
+					{formattedExp ? (
+						<span className="text-sm text-zinc-500">
+							{t('banner.session.tokenExp')} {formattedExp}
 						</span>
-						<Badge variant={sessionAlive ? 'success' : 'danger'}>
-							{t(sessionAlive ? 'banner.session.alive' : 'banner.session.dead')}
-						</Badge>
-					</div>
-
-					<div className="flex items-center gap-2">
-						<span className="text-sm font-semibold text-zinc-700">
-							{t('banner.session.tokenLabel')}:
-						</span>
-						<Badge color={TOKEN_COLORS[status]}>{t(`banner.session.status.${status}`)}</Badge>
-						{formattedExp ? (
-							<span className="text-sm text-zinc-500">
-								{t('banner.session.tokenExp')} {formattedExp}
-							</span>
-						) : (
-							<span className="text-sm italic text-zinc-500">{t('banner.session.noToken')}</span>
-						)}
-					</div>
+					) : (
+						<span className="text-sm italic text-zinc-500">{t('banner.session.noToken')}</span>
+					)}
 				</div>
 
 				<p className="text-sm text-zinc-600">{t(`banner.session.hint.${status}`)}</p>

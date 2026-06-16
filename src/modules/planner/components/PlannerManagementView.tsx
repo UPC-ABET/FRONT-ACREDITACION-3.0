@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { PageHeader, Toast } from '@/shared/components';
+import { Toast } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
 import { useABET, useI18n } from '@/providers';
 import { PlannerSessionStatusCard } from './PlannerSessionStatusCard';
@@ -37,8 +37,6 @@ export function PlannerManagementView() {
 
 	return (
 		<div className="w-full space-y-6">
-			<PageHeader title={t('planner.title')} description={t('planner.subtitle')} />
-
 			<PlannerSessionStatusCard />
 
 			<PlannerStartScrapePanel

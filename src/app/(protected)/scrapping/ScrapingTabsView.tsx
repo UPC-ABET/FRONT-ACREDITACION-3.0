@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Tabs } from '@/shared/components';
+import { PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { BannerManagementView } from '@/modules/banner';
 import { PlannerManagementView } from '@/modules/planner';
@@ -21,6 +21,7 @@ export function ScrapingTabsView() {
 
 	return (
 		<div className="w-full space-y-6">
+			<PageHeader title={t('scraping.title')} description={t('scraping.subtitle')} />
 			<Tabs tabs={tabs} activeTab={tab} onChange={(id) => setTab(id as ScrapingTab)} />
 			{tab === 'banner' ? <BannerManagementView /> : <PlannerManagementView />}
 		</div>
