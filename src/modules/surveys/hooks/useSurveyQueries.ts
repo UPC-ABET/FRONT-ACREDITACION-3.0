@@ -8,6 +8,9 @@ import {
 	cloneGRAConfiguration,
 	listGRAStudents,
 	generateGRADashboard,
+	listLCFCCourses,
+	generateLCFCConfiguration,
+	changeLCFCConfigStatus,
 	generateLCFCDashboard,
 	listPPPCompetences,
 	savePPPCompetence,
@@ -15,7 +18,7 @@ import {
 	clonePPPConfiguration,
 	generatePPPDashboard,
 } from '../services';
-import type { CompetenceFormData } from '../types';
+import type { CompetenceFormData, LCFCConfigStatus } from '../types';
 
 export const surveyQueryKeys = {
 	all: ['surveys'] as const,
@@ -34,6 +37,8 @@ export const surveyQueryKeys = {
 	graDashboard: (params: { academicPeriodId?: number; programId?: number; campusId?: number }) =>
 		['surveys', 'gra', 'dashboard', params] as const,
 
+	lcfcCourses: (school: string, periodId: number, programId?: number) =>
+		['surveys', 'lcfc', 'courses', { school, periodId, programId }] as const,
 	lcfcDashboard: (params: { academicPeriodId?: number; programId?: number; campusId?: number }) =>
 		['surveys', 'lcfc', 'dashboard', params] as const,
 
@@ -134,6 +139,51 @@ export function useGRADashboardQuery(
 		queryKey: surveyQueryKeys.graDashboard(params),
 		queryFn: () => generateGRADashboard(params),
 		enabled: options?.enabled ?? false,
+	});
+}
+
+export function useLCFCCoursesQuery(
+	school: string,
+	periodId: number,
+	programId?: number,
+	options?: { enabled?: boolean },
+) {
+	return useQuery({
+		queryKey: surveyQueryKeys.lcfcCourses(school, periodId, programId),
+		queryFn: () => listLCFCCourses(school, periodId, programId),
+		enabled: (options?.enabled ?? true) && periodId > 0,
+	});
+}
+
+export function useGenerateLCFCConfiguration() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (params: {
+			school: string;
+			academicPeriodId: number;
+			programId?: number;
+			campusId?: number;
+		}) =>
+			generateLCFCConfiguration(
+				params.school,
+				params.academicPeriodId,
+				params.programId,
+				params.campusId,
+			),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['surveys', 'lcfc', 'courses'] });
+		},
+	});
+}
+
+export function useChangeLCFCConfigStatus() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (params: { configId: number; newStatus: LCFCConfigStatus }) =>
+			changeLCFCConfigStatus(params.configId, params.newStatus),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['surveys', 'lcfc', 'courses'] });
+		},
 	});
 }
 
