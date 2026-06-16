@@ -38,6 +38,91 @@
 		"portfolio": "Portafolio",
 		"banner": "Banner / Scraping"
 	},
+	"scraping": {
+		"tabs": {
+			"banner": "Banner",
+			"planner": "Planner"
+		}
+	},
+	"planner": {
+		"title": "Planner — Extracción de datos",
+		"subtitle": "Estado del token de Planner (u-planner) para la extracción de evaluaciones y notas.",
+		"session": {
+			"title": "Sesión de Planner",
+			"subtitle": "Estado del token usado para conectarse a Planner (u-planner).",
+			"loading": "Consultando estado...",
+			"loadError": "No se pudo obtener el estado.",
+			"tokenLabel": "Token de Planner",
+			"tokenExp": "Vence:",
+			"noToken": "Sin token activo",
+			"refresh": "Intentar actualizar",
+			"status": {
+				"active": "Activo",
+				"expiring": "Por vencer",
+				"expired": "Vencido"
+			},
+			"hint": {
+				"active": "El token es válido. La extracción puede ejecutarse.",
+				"expiring": "El token está por vencer; se renovará automáticamente.",
+				"expired": "No hay token válido. Verifica las credenciales de Planner o intenta actualizar."
+			}
+		},
+		"scrape": {
+			"title": "Ejecutar extracción",
+			"subtitle": "Se extraerán las evaluaciones y notas del período seleccionado en la barra superior.",
+			"start": "Iniciar extracción",
+			"ready": "Listo para extraer el período seleccionado.",
+			"alreadyRunning": "Ya hay una extracción en curso.",
+			"selectPeriod": "Selecciona un período académico en la barra superior para iniciar.",
+			"started": "Extracción iniciada correctamente.",
+			"startFailed": "No se pudo iniciar la extracción."
+		},
+		"run": {
+			"title": "Progreso de la extracción",
+			"runId": "ID de ejecución",
+			"loading": "Cargando estado de la ejecución...",
+			"loadError": "No se pudo obtener el estado de la ejecución.",
+			"polling": "Actualizando...",
+			"noStatsYet": "Aún no hay estadísticas disponibles.",
+			"fatal": "Error fatal",
+			"errors": "Errores",
+			"status": {
+				"running": "En ejecución",
+				"completed": "Completada",
+				"partial": "Parcial",
+				"failed": "Fallida",
+				"expired": "Sesión vencida"
+			},
+			"counts": {
+				"seccion": "Secciones",
+				"evaluacion": "Evaluaciones",
+				"nota": "Notas",
+				"uniqueSections": "Secciones únicas"
+			},
+			"courses": {
+				"requested": "Solicitados",
+				"succeeded": "Exitosos",
+				"failed": "Fallidos"
+			}
+		},
+		"history": {
+			"title": "Historial de extracciones",
+			"empty": "Aún no hay extracciones para este período.",
+			"selectPeriod": "Selecciona un período académico en la barra superior para ver el historial.",
+			"error": "No se pudo cargar el historial.",
+			"view": "Ver",
+			"none": "—",
+			"col": {
+				"status": "Estado",
+				"periodo": "Período",
+				"counts": "Conteos (S/E/N)",
+				"started": "Inicio",
+				"finished": "Fin",
+				"triggeredBy": "Ejecutado por",
+				"actions": "Opciones"
+			}
+		}
+	},
 	"banner": {
 		"title": "Banner — Extracción de datos",
 		"subtitle": "Estado de la sesión de Banner y ejecución de la extracción de datos académicos.",
@@ -1049,6 +1134,13 @@
 			"authSessionInProgress": "Ya hay una sesión de login activa.",
 			"authSessionNotFound": "No se encontró la sesión de login.",
 			"browserAuthUnavailable": "No se pudo iniciar el navegador de autenticación. Intenta más tarde."
+		},
+		"planner": {
+			"scrapeInProgress": "Ya hay una extracción de Planner en curso. Espera a que termine.",
+			"noCourses": "No hay cursos para extraer.",
+			"periodNotFound": "El período académico seleccionado no existe.",
+			"periodNotInPlanner": "El período no está disponible en Planner.",
+			"runNotFound": "No se encontró la ejecución solicitada."
 		},
 		"conflict": "Conflicto con el estado actual del recurso",
 		"internalServer": "Error interno del servidor",
