@@ -7,7 +7,6 @@ import {
 	deleteGRACompetence,
 	cloneGRAConfiguration,
 	listGRAStudents,
-	listGRAPerformanceLevels,
 	generateGRADashboard,
 	listLCFCCourses,
 	generateLCFCConfiguration,
@@ -17,11 +16,9 @@ import {
 	savePPPCompetence,
 	deletePPPCompetence,
 	clonePPPConfiguration,
-	listPPPPerformanceLevels,
-	updatePPPPerformanceLevels,
 	generatePPPDashboard,
 } from '../services';
-import type { CompetenceFormData, LCFCConfigStatus, PerformanceLevel } from '../types';
+import type { CompetenceFormData, LCFCConfigStatus } from '../types';
 
 export const surveyQueryKeys = {
 	all: ['surveys'] as const,
@@ -37,8 +34,6 @@ export const surveyQueryKeys = {
 		campusId?: number;
 		studentCode?: string;
 	}) => ['surveys', 'gra', 'students', params] as const,
-	graPerformanceLevels: (periodId: number) =>
-		['surveys', 'gra', 'performance-levels', periodId] as const,
 	graDashboard: (params: { academicPeriodId?: number; programId?: number; campusId?: number }) =>
 		['surveys', 'gra', 'dashboard', params] as const,
 
@@ -49,8 +44,6 @@ export const surveyQueryKeys = {
 
 	pppCompetences: (periodId: number, programId?: number) =>
 		['surveys', 'ppp', 'competences', { periodId, programId }] as const,
-	pppPerformanceLevels: (periodId: number) =>
-		['surveys', 'ppp', 'performance-levels', periodId] as const,
 	pppDashboard: (params: {
 		academicPeriodId?: number;
 		programId?: number;
@@ -135,14 +128,6 @@ export function useGRAStudentsQuery(
 		queryKey: surveyQueryKeys.graStudents(params),
 		queryFn: () => listGRAStudents(params),
 		enabled: options?.enabled ?? true,
-	});
-}
-
-export function useGRAPerformanceLevelsQuery(periodId: number, options?: { enabled?: boolean }) {
-	return useQuery({
-		queryKey: surveyQueryKeys.graPerformanceLevels(periodId),
-		queryFn: () => listGRAPerformanceLevels(periodId),
-		enabled: (options?.enabled ?? true) && periodId > 0,
 	});
 }
 
@@ -256,25 +241,6 @@ export function useClonePPPConfiguration() {
 		}) => clonePPPConfiguration(params),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['surveys', 'ppp', 'competences'] });
-		},
-	});
-}
-
-export function usePPPPerformanceLevelsQuery(periodId: number, options?: { enabled?: boolean }) {
-	return useQuery({
-		queryKey: surveyQueryKeys.pppPerformanceLevels(periodId),
-		queryFn: () => listPPPPerformanceLevels(periodId),
-		enabled: (options?.enabled ?? true) && periodId > 0,
-	});
-}
-
-export function useUpdatePPPPerformanceLevels() {
-	const queryClient = useQueryClient();
-	return useMutation({
-		mutationFn: (params: { academicPeriodId: number; levels: PerformanceLevel[] }) =>
-			updatePPPPerformanceLevels(params.academicPeriodId, params.levels),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['surveys', 'ppp', 'performance-levels'] });
 		},
 	});
 }

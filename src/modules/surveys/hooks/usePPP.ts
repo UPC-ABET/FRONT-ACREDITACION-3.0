@@ -4,7 +4,6 @@ import { useState, useCallback } from 'react';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
-	PerformanceLevel,
 	CompetenceFormData,
 	DashboardResponse,
 	MassiveUploadResult,
@@ -16,8 +15,6 @@ import {
 	deletePPPCompetence,
 	clonePPPConfiguration,
 	generatePPPConfigFromOutcomes,
-	listPPPPerformanceLevels,
-	updatePPPPerformanceLevels,
 	downloadPPPTemplate,
 	uploadPPPMassive,
 	generatePPPPerceptionReport,
@@ -131,38 +128,6 @@ export function usePPPCompetences() {
 	);
 
 	return { competences, loading, error, load, save, remove, clone, generate, setError };
-}
-
-export function usePPPPerformanceLevels() {
-	const [levels, setLevels] = useState<PerformanceLevel[]>([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-
-	const load = useCallback(async (periodId: number) => {
-		setLoading(true);
-		setError(null);
-		try {
-			setLevels(await listPPPPerformanceLevels(periodId));
-		} catch (e) {
-			setError((e as Error).message);
-		} finally {
-			setLoading(false);
-		}
-	}, []);
-
-	const save = useCallback(
-		async (periodId: number, levels: PerformanceLevel[], onSuccess?: () => void) => {
-			try {
-				await updatePPPPerformanceLevels(periodId, levels);
-				onSuccess?.();
-			} catch (e) {
-				setError((e as Error).message);
-			}
-		},
-		[],
-	);
-
-	return { levels, setLevels, loading, error, load, save };
 }
 
 export function usePPPDownload() {

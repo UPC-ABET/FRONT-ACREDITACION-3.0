@@ -2,11 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { SparklesIcon } from '@heroicons/react/24/outline';
-import { Button, Tabs, Toast } from '@/shared/components';
+import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
-import { usePPPCompetences, usePPPPerformanceLevels } from '../../../hooks';
+import { usePPPCompetences } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
-import { PerformanceLevels } from './PerformanceLevels';
 
 interface PPPConfigurationProps {
 	readonly programId: number;
@@ -24,9 +23,7 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 		remove: removeComp,
 		generate: generateComp,
 	} = usePPPCompetences();
-	const levelsHook = usePPPPerformanceLevels();
 
-	const [activeTab, setActiveTab] = useState('competences');
 	const [toast, setToast] = useState<{
 		open: boolean;
 		type: 'success' | 'error' | 'info';
@@ -37,15 +34,9 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 		msg: '',
 	});
 
-	const tabs = [
-		{ id: 'competences', label: t('surveys.tabs.competences') },
-		{ id: 'levels', label: t('surveys.tabs.levels') },
-	];
-
 	useEffect(() => {
 		if (!academicPeriodId) return;
 		loadComp(academicPeriodId, programId);
-		levelsHook.load(academicPeriodId);
 	}, [academicPeriodId, programId]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	function handleGenerate() {
@@ -84,52 +75,34 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 				</Button>
 			</div>
 
-			<Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+			<div className="space-y-8">
+				{/* Competencias Específicas */}
+				<CompetenceCRUD
+					cycleId={academicPeriodId}
+					programId={programId}
+					competenceType="specific"
+					showExternalToggle
+					competences={competences}
+					loading={compLoading}
+					error={compError}
+					onLoad={loadComp}
+					onSave={saveComp}
+					onDelete={removeComp}
+				/>
 
-			<div className="pt-2 space-y-8">
-				{activeTab === 'competences' && (
-					<>
-						{/* Competencias Específicas */}
-						<CompetenceCRUD
-							cycleId={academicPeriodId}
-							programId={programId}
-							competenceType="specific"
-							showExternalToggle
-							competences={competences}
-							loading={compLoading}
-							error={compError}
-							onLoad={loadComp}
-							onSave={saveComp}
-							onDelete={removeComp}
-						/>
-
-						{/* Competencias Generales */}
-						<CompetenceCRUD
-							cycleId={academicPeriodId}
-							programId={programId}
-							competenceType="general"
-							showExternalToggle
-							competences={competences}
-							loading={compLoading}
-							error={compError}
-							onLoad={loadComp}
-							onSave={saveComp}
-							onDelete={removeComp}
-						/>
-					</>
-				)}
-
-				{activeTab === 'levels' && (
-					<PerformanceLevels
-						cycleId={academicPeriodId}
-						levels={levelsHook.levels}
-						setLevels={levelsHook.setLevels}
-						loading={levelsHook.loading}
-						error={levelsHook.error}
-						onLoad={levelsHook.load}
-						onSave={levelsHook.save}
-					/>
-				)}
+				{/* Competencias Generales */}
+				<CompetenceCRUD
+					cycleId={academicPeriodId}
+					programId={programId}
+					competenceType="general"
+					showExternalToggle
+					competences={competences}
+					loading={compLoading}
+					error={compError}
+					onLoad={loadComp}
+					onSave={saveComp}
+					onDelete={removeComp}
+				/>
 			</div>
 
 			<Toast
