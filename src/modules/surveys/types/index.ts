@@ -128,6 +128,7 @@ export interface GRAEmailSendRequest {
 	academicPeriodId: number;
 	programId: number;
 	surveyBaseUrl: string;
+	notificationMessageId?: number;
 }
 
 export type LCFCConfigStatus = 'ACTIVE' | 'INACTIVE';
@@ -166,6 +167,15 @@ export interface LCFCNotificationSendRequest {
 	courseSectionId?: number;
 	maxRegisterDate: string;
 	surveyBaseUrl: string;
+	notificationMessageId?: number;
+}
+
+export interface PPPNotificationSendRequest {
+	academicPeriodId: number;
+	programId: number;
+	surveyBaseUrl: string;
+	maxRegisterDate?: string;
+	notificationMessageId?: number;
 }
 
 export interface LCFCConfigItem {

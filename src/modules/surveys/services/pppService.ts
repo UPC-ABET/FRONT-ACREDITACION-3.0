@@ -18,6 +18,7 @@ import type {
 	PerformanceLevel,
 	DashboardResponse,
 	MassiveUploadResult,
+	PPPNotificationSendRequest,
 } from '../types';
 
 interface BackendPppConfig {
@@ -318,4 +319,8 @@ export async function getPPPSurveysByFilters(params: {
 }) {
 	const res = await apiPost('ppp/survey/get-by-filters', params);
 	return getApiData(res);
+}
+
+export async function sendPPPNotification(request: PPPNotificationSendRequest, lang = 'es') {
+	return apiPost('ppp/notification/send', { ...request, lang });
 }

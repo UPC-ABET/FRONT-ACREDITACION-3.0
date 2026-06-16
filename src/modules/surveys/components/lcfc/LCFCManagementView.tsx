@@ -33,7 +33,9 @@ export function LCFCManagementView() {
 					<SurveyProgramSelect value={programId} onChange={setProgramId} />
 
 					{activeTab === 'reports' && <LCFCReports programId={programId} />}
-					{activeTab === 'notifications' && <LCFCNotificationView />}
+					{activeTab === 'notifications' && (
+						<LCFCNotificationView programId={programId || undefined} />
+					)}
 					{activeTab === 'config' && <LCFCConfiguration programId={programId} />}
 				</div>
 			</Card>

@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useI18n } from '@/providers';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
 	CompetenceFormData,
 	DashboardResponse,
 	MassiveUploadResult,
+	PPPNotificationSendRequest,
 } from '../types';
 import {
 	getAcademicPeriods,
@@ -18,6 +20,7 @@ import {
 	downloadPPPTemplate,
 	uploadPPPMassive,
 	generatePPPPerceptionReport,
+	sendPPPNotification,
 } from '../services';
 
 // Backward-compat alias: components that import usePPPCycles still work.
@@ -208,4 +211,28 @@ export function usePPPReports() {
 	);
 
 	return { loading, error, reportData, generate };
+}
+
+export function usePPPNotification() {
+	const { locale } = useI18n();
+	const [sending, setSending] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const send = useCallback(
+		async (request: PPPNotificationSendRequest, onSuccess?: () => void) => {
+			setSending(true);
+			setError(null);
+			try {
+				await sendPPPNotification(request, locale);
+				onSuccess?.();
+			} catch (e) {
+				setError((e as Error).message);
+			} finally {
+				setSending(false);
+			}
+		},
+		[locale],
+	);
+
+	return { sending, error, send };
 }

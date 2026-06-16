@@ -18,6 +18,7 @@ import { TrashIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { useGRAStudents, useGRAEmail } from '../../../hooks';
+import { SurveyTemplateSelect } from '../../shared/SurveyTemplateSelect';
 import type { GRAStudent, GRAEmailSendRequest } from '../../../types';
 import {
 	NOTIFICATION_STATUS,
@@ -27,15 +28,18 @@ import {
 interface StudentListProps {
 	readonly programId: number;
 	readonly academicPeriodId: number;
+	/** Original (unresolved) programId for template filtering */
+	readonly surveyProgramId?: number;
 }
 
-export function StudentList({ programId, academicPeriodId }: StudentListProps) {
+export function StudentList({ programId, academicPeriodId, surveyProgramId }: StudentListProps) {
 	const { t } = useI18n();
 	const { students, error, load, remove } = useGRAStudents();
 	const { sending, send } = useGRAEmail();
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [sendDialogOpen, setSendDialogOpen] = useState(false);
 	const [surveyBaseUrl, setSurveyBaseUrl] = useState('');
+	const [notificationMessageId, setNotificationMessageId] = useState<number | null>(null);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -63,6 +67,7 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 			academicPeriodId: academicPeriodId,
 			programId: programId,
 			surveyBaseUrl: surveyBaseUrl.trim(),
+			...(notificationMessageId ? { notificationMessageId } : {}),
 		};
 		send(req, () => {
 			setSendDialogOpen(false);
@@ -184,6 +189,12 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 							<strong>{t('surveys.gra.notifications.sendDialog.bodyEmphasis')}</strong>
 							{t('surveys.gra.notifications.sendDialog.bodyAfter')}
 						</p>
+						<SurveyTemplateSelect
+							surveyTypeCode="GRA"
+							programId={surveyProgramId}
+							value={notificationMessageId}
+							onChange={setNotificationMessageId}
+						/>
 						<Input
 							label={t('surveys.gra.notifications.sendDialog.urlLabel')}
 							value={surveyBaseUrl}

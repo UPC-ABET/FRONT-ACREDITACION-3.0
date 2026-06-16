@@ -32,7 +32,9 @@ export function GRAManagementView() {
 
 			<Card className="overflow-visible">
 				{activeTab === 'reports' && <GRAReports />}
-				{activeTab === 'notifications' && <GRANotificationView />}
+				{activeTab === 'notifications' && (
+					<GRANotificationView programId={programId || undefined} />
+				)}
 				{activeTab === 'config' && <GRAConfiguration programId={programId || undefined} />}
 			</Card>
 		</div>

@@ -2095,7 +2095,8 @@
 					"urlLabel": "Survey base URL",
 					"urlPlaceholder": "https://your-domain.com/survey/gra",
 					"confirm": "Confirm send",
-					"sending": "Sending..."
+					"sending": "Sending...",
+					"templateLabel": "Email template"
 				},
 				"status": {
 					"sent": "Sent",
@@ -2151,7 +2152,8 @@
 				"tabDownload": "Download Template",
 				"tabUpload": "Bulk Upload",
 				"tabReports": "Reports",
-				"tabConfig": "Configuration"
+				"tabConfig": "Configuration",
+				"tabNotifications": "Notifications"
 			},
 			"download": {
 				"title": "Download PPP Template",
@@ -2170,6 +2172,19 @@
 			"reports": {
 				"title": "Dashboard PPP",
 				"description": "Generate the average perception summary by academic cycle."
+			},
+			"notifications": {
+				"title": "PPP Notification Sending",
+				"description": "Select the email template and configure the parameters to send notifications to students.",
+				"urlLabel": "Survey base URL",
+				"urlPlaceholder": "https://your-domain.com/survey/ppp",
+				"dateLabel": "Registration deadline",
+				"send": "Send Notifications",
+				"sending": "Sending...",
+				"toast": {
+					"required": "Please select a template and fill in all fields.",
+					"sent": "Notifications sent successfully."
+				}
 			}
 		},
 		"shared": {
@@ -2259,6 +2274,12 @@
 				"message": "Your responses have been recorded. Thank you for completing the End of Cycle Achievement survey.",
 				"hint": "You can close this window."
 			}
+		},
+		"notifications": {
+			"templateLabel": "Notification template",
+			"templatePlaceholder": "Select a template",
+			"templateLoading": "Loading templates...",
+			"templateNone": "No templates available"
 		}
 	},
 	"evaluationCourses": {

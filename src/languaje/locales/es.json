@@ -940,7 +940,7 @@
 	},
 	"welcome": "Bienvenido a ABET.",
 	"home": {
-		"subtitle": "Sistema de acreditaci\u00f3n UPC"
+		"subtitle": "Sistema de acreditación UPC"
 	},
 	"navbar": {
 		"user": {
@@ -2095,7 +2095,8 @@
 					"urlLabel": "URL base de la encuesta",
 					"urlPlaceholder": "https://tu-dominio.com/encuesta/gra",
 					"confirm": "Confirmar envío",
-					"sending": "Enviando..."
+					"sending": "Enviando...",
+					"templateLabel": "Plantilla de correo"
 				},
 				"status": {
 					"sent": "Enviado",
@@ -2152,7 +2153,8 @@
 				"tabDownload": "Descargar Plantilla",
 				"tabUpload": "Carga Masiva",
 				"tabReports": "Reportes",
-				"tabConfig": "Configuración"
+				"tabConfig": "Configuración",
+				"tabNotifications": "Notificaciones"
 			},
 			"download": {
 				"title": "Descargar Plantilla PPP",
@@ -2171,6 +2173,19 @@
 			"reports": {
 				"title": "Dashboard PPP",
 				"description": "Genera el resumen de percepción promedio por ciclo académico."
+			},
+			"notifications": {
+				"title": "Envío de Notificaciones PPP",
+				"description": "Selecciona la plantilla de correo y configura los parámetros para enviar las notificaciones a los estudiantes.",
+				"urlLabel": "URL base de la encuesta",
+				"urlPlaceholder": "https://tu-dominio.com/encuesta/ppp",
+				"dateLabel": "Fecha límite de registro",
+				"send": "Enviar Notificaciones",
+				"sending": "Enviando...",
+				"toast": {
+					"required": "Selecciona una plantilla y completa todos los campos.",
+					"sent": "Notificaciones enviadas exitosamente."
+				}
 			}
 		},
 		"shared": {
@@ -2260,6 +2275,12 @@
 				"message": "Tus respuestas han sido registradas correctamente. Gracias por completar la encuesta de Logro de Fin de Ciclo.",
 				"hint": "Puedes cerrar esta ventana."
 			}
+		},
+		"notifications": {
+			"templateLabel": "Plantilla de notificación",
+			"templatePlaceholder": "Seleccione una plantilla",
+			"templateLoading": "Cargando plantillas...",
+			"templateNone": "No hay plantillas disponibles"
 		}
 	},
 	"evaluationCourses": {
