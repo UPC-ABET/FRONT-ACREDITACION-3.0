@@ -1850,6 +1850,9 @@
 				"noGrade": "No grade",
 				"empty": "No students in this project."
 			},
+			"tabs": {
+				"unsavedChanges": "Unsaved changes"
+			},
 			"rubric": {
 				"question": "Question",
 				"criteria": "Criteria",
@@ -1861,7 +1864,9 @@
 				"fillAll": "Fill in all scores to save.",
 				"saveButton": "Save grades",
 				"readOnly": "Read only",
-				"saving": "Saving..."
+				"saving": "Saving...",
+				"noRubric": "No rubric configured for this career.",
+				"missingStatus": "Select the attendance status for all students to continue."
 			},
 			"capstone": {
 				"outcome": "Outcome",

@@ -1850,6 +1850,9 @@
 				"noGrade": "Sin nota",
 				"empty": "No hay estudiantes en este proyecto."
 			},
+			"tabs": {
+				"unsavedChanges": "Cambios sin guardar"
+			},
 			"rubric": {
 				"question": "Pregunta",
 				"criteria": "Criterios",
@@ -1861,7 +1864,9 @@
 				"fillAll": "Completa todos los puntajes para guardar.",
 				"saveButton": "Guardar calificaciones",
 				"readOnly": "Solo lectura",
-				"saving": "Guardando..."
+				"saving": "Guardando...",
+				"noRubric": "No hay rúbrica configurada para esta carrera.",
+				"missingStatus": "Selecciona la asistencia de todos los estudiantes para continuar."
 			},
 			"capstone": {
 				"outcome": "Outcome",

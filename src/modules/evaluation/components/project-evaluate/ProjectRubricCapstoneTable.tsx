@@ -40,6 +40,8 @@ interface ProjectRubricCapstoneTableProps {
 	qualifStatuses: Record<number, number | null>;
 	nrNaTypeIds: Set<number>;
 	readOnly?: boolean;
+	disableDuplicate?: boolean;
+	onDirtyChange?: (isDirty: boolean) => void;
 }
 
 export function ProjectRubricCapstoneTable({
@@ -53,9 +55,19 @@ export function ProjectRubricCapstoneTable({
 	qualifStatuses,
 	nrNaTypeIds,
 	readOnly = false,
+	disableDuplicate = false,
+	onDirtyChange,
 }: ProjectRubricCapstoneTableProps) {
 	const { t, locale } = useI18n();
 	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
+	const [isDirty, setIsDirty] = useState(false);
+
+	const markDirty = () => {
+		if (!isDirty) {
+			setIsDirty(true);
+			onDirtyChange?.(true);
+		}
+	};
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 
@@ -126,11 +138,14 @@ export function ProjectRubricCapstoneTable({
 		setDupSelections(initialDupSelections);
 	}, [initialDupSelections]);
 
+	const hasMissingStatus = useMemo(
+		() => students.some((st) => qualifStatuses[st.id] == null),
+		[students, qualifStatuses],
+	);
+
 	const allFilled = useMemo(() => {
 		if (!allCriteriaIds.length || !students.length) return false;
-		for (const st of students) {
-			if (qualifStatuses[st.id] == null) return false;
-		}
+		if (hasMissingStatus) return false;
 		const gradedStudents = students.filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1));
 		for (const cId of allCriteriaIds) {
 			if (duplicateMode) {
@@ -152,7 +167,8 @@ export function ProjectRubricCapstoneTable({
 		nrNaTypeIds,
 	]);
 
-	const handleSelect = (criteriaId: number, projectStudentId: number, value: number) =>
+	const handleSelect = (criteriaId: number, projectStudentId: number, value: number) => {
+		markDirty();
 		setSelections((prev) => ({
 			...prev,
 			[criteriaId]: {
@@ -160,12 +176,15 @@ export function ProjectRubricCapstoneTable({
 				[projectStudentId]: prev[criteriaId]?.[projectStudentId] === value ? null : value,
 			},
 		}));
+	};
 
-	const handleDupSelect = (criteriaId: number, value: number) =>
+	const handleDupSelect = (criteriaId: number, value: number) => {
+		markDirty();
 		setDupSelections((prev) => ({
 			...prev,
 			[criteriaId]: prev[criteriaId] === value ? null : value,
 		}));
+	};
 
 	const handleSave = () => {
 		const studentScores = new Map<
@@ -194,15 +213,29 @@ export function ProjectRubricCapstoneTable({
 			}
 		}
 
-		for (const [projectStudentId, scores] of studentScores.entries()) {
-			submitEvaluation({
-				projectStudentId: projectStudentId,
-				projectEvaluatorId: evaluatorId,
-				rubricId: rubricId,
-				observation: { es: '', en: '' },
-				scores,
-				qualificationStatusTypeId: qualifStatuses[projectStudentId],
-			});
+		const entries = [...studentScores.entries()];
+		let remaining = entries.length;
+
+		for (const [projectStudentId, scores] of entries) {
+			submitEvaluation(
+				{
+					projectStudentId: projectStudentId,
+					projectEvaluatorId: evaluatorId,
+					rubricId: rubricId,
+					observation: { es: '', en: '' },
+					scores,
+					qualificationStatusTypeId: qualifStatuses[projectStudentId],
+				},
+				{
+					onSuccess: () => {
+						remaining -= 1;
+						if (remaining === 0) {
+							setIsDirty(false);
+							onDirtyChange?.(false);
+						}
+					},
+				},
+			);
 		}
 	};
 
@@ -223,19 +256,21 @@ export function ProjectRubricCapstoneTable({
 									<span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
 										{t('projects.evaluate.capstone.score')}
 									</span>
-									<div className="flex items-center gap-2 shrink-0">
-										<span className="text-xs text-zinc-500">
-											{t('projects.evaluate.rubric.duplicateGrades')}
-										</span>
-										<Toggle
-											checked={duplicateMode}
-											onChange={setDuplicateMode}
-											disabled={readOnly}
-										/>
-										<span title={t('projects.evaluate.rubric.duplicateGradesInfo')}>
-											<InformationCircleIcon className="h-4 w-4 cursor-help text-zinc-400" />
-										</span>
-									</div>
+									{!disableDuplicate && (
+										<div className="flex items-center gap-2 shrink-0">
+											<span className="text-xs text-zinc-500">
+												{t('projects.evaluate.rubric.duplicateGrades')}
+											</span>
+											<Toggle
+												checked={duplicateMode}
+												onChange={setDuplicateMode}
+												disabled={readOnly}
+											/>
+											<span title={t('projects.evaluate.rubric.duplicateGradesInfo')}>
+												<InformationCircleIcon className="h-4 w-4 cursor-help text-zinc-400" />
+											</span>
+										</div>
+									)}
 								</div>
 							</th>
 						</tr>
@@ -329,12 +364,20 @@ export function ProjectRubricCapstoneTable({
 			</div>
 
 			<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
-				{!allFilled && (
+				{(hasMissingStatus || !allFilled) && (
 					<ul className="space-y-1 text-sm">
-						<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
-							<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
-							{t('projects.evaluate.capstone.fillAll')}
-						</li>
+						{hasMissingStatus && (
+							<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
+								<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
+								{t('projects.evaluate.rubric.missingStatus')}
+							</li>
+						)}
+						{!allFilled && !hasMissingStatus && (
+							<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
+								<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
+								{t('projects.evaluate.capstone.fillAll')}
+							</li>
+						)}
 					</ul>
 				)}
 				<div className="flex justify-end">
