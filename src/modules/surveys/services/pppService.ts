@@ -34,6 +34,7 @@ interface BackendPppConfig {
 		order?: number;
 		programId?: number;
 		academicPeriodId?: number;
+		isExternal?: boolean;
 	};
 	userOutcomeName?: string;
 	outcomeCode?: string;
@@ -58,6 +59,7 @@ function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 		performanceLevel: extra.order ?? 3,
 		isActive: raw.isActive,
 		isVisible: raw.isVisible ?? raw.isActive,
+		isExternal: extra.isExternal ?? false,
 		programId: extra.programId,
 		periodId: extra.academicPeriodId,
 	};
@@ -200,6 +202,7 @@ export async function savePPPCompetence(data: CompetenceFormData) {
 		programId: data.programId ?? 0,
 		academicPeriodId: data.academicPeriodId,
 		isVisible: data.isVisible ?? true,
+		isExternal: data.isExternal ?? false,
 	};
 
 	if (!data.id || data.id === 0) {

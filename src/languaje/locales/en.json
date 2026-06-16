@@ -1952,17 +1952,14 @@
 		"competence": {
 			"table": {
 				"title": "Competences",
+				"titleGeneral": "General Competences",
+				"titleSpecific": "Specific Competences",
 				"order": "Order",
-				"type": "Type",
 				"nameEs": "Name (ES)",
 				"nameEn": "Name (EN)",
 				"description": "Description",
 				"visible": "Visible",
 				"actions": "Actions"
-			},
-			"type": {
-				"general": "General",
-				"specific": "Specific"
 			},
 			"visible": {
 				"yes": "Yes",
@@ -1983,8 +1980,9 @@
 				"descriptionEsPlaceholder": "Describe la competencia...",
 				"descriptionEnLabel": "Description in English",
 				"descriptionEnPlaceholder": "Describe the competence...",
-				"outcomeLabel": "Outcome (specific competence)",
-				"outcomePlaceholder": "Select an outcome to link",
+				"externalLabel": "Is this outcome for a career outside this school?",
+				"outcomesSection": "Outcomes by commission",
+				"outcomePlaceholder": "Select an outcome",
 				"save": "Save",
 				"saving": "Saving...",
 				"delete": "Delete",
@@ -1992,7 +1990,11 @@
 				"deleteBody": "Are you sure you want to delete this competence? This action cannot be undone."
 			},
 			"toast": {
-				"required": "Spanish name and description are required.",
+				"required": "Name and description are required.",
+				"requiredEs": "Spanish name is required.",
+				"requiredEn": "English name is required.",
+				"requiredDescEs": "Spanish description is required.",
+				"requiredDescEn": "English description is required.",
 				"saved": "Competence saved successfully.",
 				"deleted": "Competence deleted."
 			},

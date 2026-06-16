@@ -1952,26 +1952,23 @@
 		"competence": {
 			"table": {
 				"title": "Competencias",
+				"titleGeneral": "Competencias Generales",
+				"titleSpecific": "Competencias Específicas",
 				"order": "Orden",
-				"type": "Tipo",
 				"nameEs": "Nombre (ES)",
 				"nameEn": "Nombre (EN)",
 				"description": "Descripción",
 				"visible": "Visible",
 				"actions": "Acciones"
 			},
-			"type": {
-				"general": "General",
-				"specific": "Específica"
-			},
 			"visible": {
 				"yes": "Sí",
 				"no": "No"
 			},
 			"modal": {
-				"addTitle": "Agregar Competencia General",
+				"addTitle": "Añadir Competencia General",
 				"editTitle": "Editar Competencia General",
-				"addSpecificTitle": "Agregar Competencia Específica",
+				"addSpecificTitle": "Añadir Competencia Específica",
 				"editSpecificTitle": "Editar Competencia Específica",
 				"orderLabel": "Orden",
 				"visibleLabel": "¿Es visible en la encuesta?",
@@ -1983,8 +1980,9 @@
 				"descriptionEsPlaceholder": "Describe la competencia...",
 				"descriptionEnLabel": "Descripción en inglés",
 				"descriptionEnPlaceholder": "Describe the competence...",
-				"outcomeLabel": "Outcome (competencia específica)",
-				"outcomePlaceholder": "Seleccione un outcome para vincular",
+				"externalLabel": "¿Este outcome es para una carrera ajena a esta escuela?",
+				"outcomesSection": "Outcomes por comisión",
+				"outcomePlaceholder": "Seleccione un outcome",
 				"save": "Guardar",
 				"saving": "Guardando...",
 				"delete": "Eliminar",
@@ -1992,11 +1990,15 @@
 				"deleteBody": "¿Estás seguro de que deseas eliminar esta competencia? Esta acción no se puede deshacer."
 			},
 			"toast": {
-				"required": "Nombre y descripción en español son obligatorios.",
+				"required": "Nombre y descripción son obligatorios.",
+				"requiredEs": "El nombre en español es obligatorio.",
+				"requiredEn": "El nombre en inglés es obligatorio.",
+				"requiredDescEs": "La descripción en español es obligatoria.",
+				"requiredDescEn": "La descripción en inglés es obligatoria.",
 				"saved": "Competencia guardada exitosamente.",
 				"deleted": "Competencia eliminada."
 			},
-			"add": "Agregar Competencia",
+			"add": "Añadir Competencia",
 			"actions": {
 				"edit": "Editar competencia",
 				"delete": "Eliminar competencia"

@@ -7,7 +7,11 @@ import { useGRACompetences, usePPPPerformanceLevels } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
 import { PerformanceLevels } from '../../ppp/configuration/PerformanceLevels';
 
-export function GRAConfiguration() {
+interface GRAConfigurationProps {
+	programId?: number;
+}
+
+export function GRAConfiguration({ programId }: GRAConfigurationProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const {
@@ -17,7 +21,6 @@ export function GRAConfiguration() {
 		load: loadComp,
 		save: saveComp,
 		remove: removeComp,
-		clone: cloneComp,
 	} = useGRACompetences();
 	const levelsHook = usePPPPerformanceLevels();
 
@@ -35,32 +38,47 @@ export function GRAConfiguration() {
 
 	useEffect(() => {
 		if (!academicPeriodId) return;
-		loadComp(academicPeriodId);
+		loadComp(academicPeriodId, programId);
 		levelsHook.load(academicPeriodId);
-	}, [academicPeriodId]); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [academicPeriodId, programId]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	if (!academicPeriodId) {
-		return (
-			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
-		);
+		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
 
 	return (
 		<div className="space-y-6">
 			<Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
-			<div className="pt-2">
+			<div className="pt-2 space-y-8">
 				{activeTab === 'competences' && (
-					<CompetenceCRUD
-						cycleId={academicPeriodId}
-						competences={competences}
-						loading={compLoading}
-						error={compError}
-						onLoad={loadComp}
-						onSave={saveComp}
-						onDelete={removeComp}
-						onClone={cloneComp}
-					/>
+					<>
+						{/* Competencias Específicas */}
+						<CompetenceCRUD
+							cycleId={academicPeriodId}
+							programId={programId}
+							competenceType="specific"
+							competences={competences}
+							loading={compLoading}
+							error={compError}
+							onLoad={loadComp}
+							onSave={saveComp}
+							onDelete={removeComp}
+						/>
+
+						{/* Competencias Generales */}
+						<CompetenceCRUD
+							cycleId={academicPeriodId}
+							programId={programId}
+							competenceType="general"
+							competences={competences}
+							loading={compLoading}
+							error={compError}
+							onLoad={loadComp}
+							onSave={saveComp}
+							onDelete={removeComp}
+						/>
+					</>
 				)}
 
 				{activeTab === 'levels' && (

@@ -22,13 +22,11 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 		load: loadComp,
 		save: saveComp,
 		remove: removeComp,
-		clone: cloneComp,
 		generate: generateComp,
 	} = usePPPCompetences();
 	const levelsHook = usePPPPerformanceLevels();
 
 	const [activeTab, setActiveTab] = useState('competences');
-	const [showClone, setShowClone] = useState(false);
 	const [toast, setToast] = useState<{
 		open: boolean;
 		type: 'success' | 'error' | 'info';
@@ -49,14 +47,6 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 		loadComp(academicPeriodId, programId);
 		levelsHook.load(academicPeriodId);
 	}, [academicPeriodId, programId]); // eslint-disable-line react-hooks/exhaustive-deps
-
-	useEffect(() => {
-		if (academicPeriodId && competences.length === 0 && !compLoading) {
-			setShowClone(true);
-		} else {
-			setShowClone(false);
-		}
-	}, [competences, compLoading, academicPeriodId]);
 
 	function handleGenerate() {
 		if (!academicPeriodId) return;
@@ -81,9 +71,7 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 	}
 
 	if (!academicPeriodId) {
-		return (
-			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
-		);
+		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
 
 	return (
@@ -96,45 +84,39 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 				</Button>
 			</div>
 
-			{showClone && (
-				<div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
-					<div className="flex-1">
-						<p className="text-sm font-bold text-amber-800">
-							{t('surveys.shared.noConfiguration')}
-						</p>
-						<p className="text-xs text-amber-700 mt-1">{t('surveys.shared.noConfigurationHint')}</p>
-					</div>
-					<Button
-						size="sm"
-						variant="warning"
-						onClick={() => {
-							setToast({
-								open: true,
-								type: 'info',
-								msg: t('surveys.shared.cloneToastHint'),
-							});
-						}}>
-						{t('surveys.shared.cloneConfiguration')}
-					</Button>
-				</div>
-			)}
-
 			<Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
-			<div className="pt-2">
+			<div className="pt-2 space-y-8">
 				{activeTab === 'competences' && (
-					<CompetenceCRUD
-						cycleId={academicPeriodId}
-						programId={programId}
-						competences={competences}
-						loading={compLoading}
-						error={compError}
-						onLoad={loadComp}
-						onSave={saveComp}
-						onDelete={removeComp}
-						onClone={cloneComp}
-						showCloneOption={showClone}
-					/>
+					<>
+						{/* Competencias Específicas */}
+						<CompetenceCRUD
+							cycleId={academicPeriodId}
+							programId={programId}
+							competenceType="specific"
+							showExternalToggle
+							competences={competences}
+							loading={compLoading}
+							error={compError}
+							onLoad={loadComp}
+							onSave={saveComp}
+							onDelete={removeComp}
+						/>
+
+						{/* Competencias Generales */}
+						<CompetenceCRUD
+							cycleId={academicPeriodId}
+							programId={programId}
+							competenceType="general"
+							showExternalToggle
+							competences={competences}
+							loading={compLoading}
+							error={compError}
+							onLoad={loadComp}
+							onSave={saveComp}
+							onDelete={removeComp}
+						/>
+					</>
 				)}
 
 				{activeTab === 'levels' && (
