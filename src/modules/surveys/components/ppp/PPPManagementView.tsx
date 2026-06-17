@@ -8,17 +8,16 @@ import { PPPDownloadTemplate } from './PPPDownloadTemplate';
 import { PPPMassiveUpload } from './PPPMassiveUpload';
 import { PPPReports } from './PPPReports';
 import { PPPConfiguration } from './configuration/PPPConfiguration';
-import { PPPNotificationView } from './notifications/PPPNotificationView';
 
 export function PPPManagementView() {
 	const { t } = useI18n();
 	const [activeTab, setActiveTab] = useState('download');
 	const [programId, setProgramId] = useState(0);
 
+	// PPP does not send survey notifications — only GRA and LCFC do.
 	const TABS = [
 		{ id: 'download', label: t('surveys.ppp.management.tabDownload') },
 		{ id: 'upload', label: t('surveys.ppp.management.tabUpload') },
-		{ id: 'notifications', label: t('surveys.ppp.management.tabNotifications') },
 		{ id: 'reports', label: t('surveys.ppp.management.tabReports') },
 		{ id: 'config', label: t('surveys.ppp.management.tabConfig') },
 	];
@@ -38,7 +37,6 @@ export function PPPManagementView() {
 
 					{activeTab === 'download' && <PPPDownloadTemplate programId={programId} />}
 					{activeTab === 'upload' && <PPPMassiveUpload programId={programId} />}
-					{activeTab === 'notifications' && <PPPNotificationView programId={programId} />}
 					{activeTab === 'reports' && <PPPReports programId={programId} />}
 					{activeTab === 'config' && <PPPConfiguration programId={programId} />}
 				</div>

@@ -34,9 +34,7 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 	}
 
 	if (!academicPeriodId) {
-		return (
-			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
-		);
+		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
 
 	return (
@@ -60,6 +58,18 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 							</span>
 							<span className="font-semibold">{reportData.summary?.totalSurveys ?? '—'}</span>
 						</div>
+						{reportData.summary?.completed !== undefined && (
+							<div>
+								<span className="text-xs text-zinc-500 block">{t('surveys.shared.completed')}</span>
+								<span className="font-semibold text-green-700">{reportData.summary.completed}</span>
+							</div>
+						)}
+						{reportData.summary?.pending !== undefined && (
+							<div>
+								<span className="text-xs text-zinc-500 block">{t('surveys.shared.pending')}</span>
+								<span className="font-semibold text-amber-700">{reportData.summary.pending}</span>
+							</div>
+						)}
 						{reportData.summary?.completionRatePct !== undefined && (
 							<div>
 								<span className="text-xs text-zinc-500 block">
