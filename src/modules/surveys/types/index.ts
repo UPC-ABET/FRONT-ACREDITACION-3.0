@@ -134,6 +134,14 @@ export interface GRAEmailSendRequest {
 }
 
 export type LCFCConfigStatus = 'ACTIVE' | 'INACTIVE';
+
+export interface AvailableSection {
+	courseSectionId: number;
+	courseId: number;
+	courseName: string;
+	sectionCode: string;
+	campusId: number;
+}
 export type DashboardColor = 'RED' | 'YELLOW' | 'GREEN';
 
 export interface LCFCCourse {
