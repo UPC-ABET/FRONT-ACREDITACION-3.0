@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Toast } from '@/shared/components/ui/Toast';
 import { SubTitle, Title } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { tryTranslateReason } from '@/shared/utils/tryTranslate';
 import { useCreateRubricFull } from '@/modules';
 import type { CreateRubricFullDto } from '@/modules';
 import { WizardStepIndicator } from './WizardStepIndicator';
@@ -54,7 +55,8 @@ export function RubricCreateWizard() {
 			const rubricId = rubric?.id;
 			router.push(rubricId ? `/rubrics/${rubricId}/edit` : '/rubrics');
 		} catch (err) {
-			showError(err instanceof Error ? err.message : t('rubrics.wizard.error.createRubric'));
+			const key = err instanceof Error ? err.message : 'rubrics.wizard.error.createRubric';
+			showError(tryTranslateReason(t, key));
 		}
 	};
 

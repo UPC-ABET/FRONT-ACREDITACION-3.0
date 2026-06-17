@@ -1359,7 +1359,42 @@
 			"sizeFailed": "Could not compute the selection size."
 		},
 		"evaluation": {
-			"docCannotGrade": "The DOCENTE role cannot grade projects."
+			"docCannotGrade": "The DOCENTE role cannot grade projects.",
+			"evaluationExists": "An evaluation with that ID already exists.",
+			"notFound": "Evaluation not found.",
+			"evaluatorOrStudentNotFound": "The evaluator or student does not belong to this project.",
+			"notSameProject": "The evaluator and student do not belong to the same project.",
+			"projectNotFound": "Project not found when finalizing evaluation.",
+			"noRubricForProject": "The project has no active rubric associated.",
+			"rubricNotFound": "Rubric not found.",
+			"criteriaNotFound": "Criteria not found.",
+			"invalidScore": "The entered score is not valid.",
+			"invalidScoreCapstone": "The capstone score is not valid.",
+			"allCriteriaRequired": "All criteria must be completed.",
+			"oneCriteriaPerQuestion": "Only one criteria per question is allowed.",
+			"statusTypeNotFound": "Qualification status type not found.",
+			"gradeAllStudents": "All students must be graded before finalizing.",
+			"observationRequired": "An observation is required to save the evaluation."
+		},
+		"project": {
+			"codeExists": "A project with that code already exists.",
+			"notFound": "Project not found.",
+			"notEvaluateRubric": "The course is not marked as evaluable.",
+			"noAcademicPeriod": "The course has no associated academic period.",
+			"duplicateCode": "A project with that code already exists in this period.",
+			"duplicateName": "A project with that name already exists in this period.",
+			"noStudents": "At least one student must be added to the project.",
+			"enrollmentNotFound": "One or more enrollments were not found.",
+			"studentWithdrawn": "One or more students are inactive.",
+			"studentNotInCourse": "One or more students are not enrolled in this course.",
+			"studentAlreadyInProject": "One or more students already have an active project in this period.",
+			"noEvaluators": "At least one evaluator must be added to the project.",
+			"evaluatorLimit": "There cannot be more than one evaluator of the same type.",
+			"noStudentsWithCourse": "No student has a valid course section.",
+			"invalidGradeTypeCode": "The grade type does not exist.",
+			"hasEvaluations": "The project cannot be deleted because it already has evaluations.",
+			"activeRubricNotFound": "No active rubric found for the project.",
+			"rubricContextError": "Error resolving the project rubric context."
 		},
 		"projectEvaluator": {
 			"duplicateEvaluatorType": "An evaluator with this role type already exists in the project."
@@ -1396,6 +1431,20 @@
 				"invalidScore": "Invalid score: must be between 1.0 and 5.0.",
 				"invalidRuc": "RUC must be exactly 11 numeric digits."
 			}
+		},
+		"rubric": {
+			"rubricExists": "A rubric with that ID already exists.",
+			"notFound": "Rubric not found.",
+			"activeRubricExists": "An active rubric already exists for this grade type and course.",
+			"invalidOutcomeMapping": "One or more outcomes do not belong to the selected course.",
+			"capstoneRequiresOutcome": "Capstone rubric questions must have an associated outcome.",
+			"studyPlanCourseNotFound": "The selected study plan course does not exist.",
+			"noRubricForCourse": "The course has no active rubric for this grade type.",
+			"gradeTypeNotFound": "The grade type does not exist.",
+			"rubricTypesNotConfigured": "Rubric types are not configured in the system.",
+			"criteriaOverlap": "Two or more criteria have overlapping score ranges.",
+			"criteriaInvalidRange": "The minimum score cannot be greater than the maximum in a criteria.",
+			"criteriaTotalNot20": "The sum of maximum criteria scores must equal 20."
 		}
 	},
 	"table": {

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
 import { Toast, SubTitle, Title } from '@/shared';
+import { tryTranslateReason } from '@/shared/utils/tryTranslate';
 import { projectsService } from '@/modules';
 import { WizardStepIndicator } from '../rubric-create-wizard/WizardStepIndicator';
 import { WizardStep1, type Step1Data } from '../rubric-create-wizard/WizardStep1';
@@ -45,7 +46,8 @@ export function ProjectCreateWizard() {
 			const projectId = res.data?.id;
 			router.push(projectId ? `/evaluation/projects/${projectId}/edit` : '/evaluation/projects');
 		} catch (err) {
-			showError(err instanceof Error ? err.message : t('projects.create.error.create'));
+			const key = err instanceof Error ? err.message : 'projects.create.error.create';
+			showError(tryTranslateReason(t, key));
 			setIsSubmitting(false);
 		}
 	};
