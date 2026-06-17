@@ -183,7 +183,6 @@ export interface LCFCNotificationSendRequest {
 	courseSectionId?: number;
 	maxRegisterDate: string;
 	surveyBaseUrl: string;
-	notificationMessageId?: number;
 }
 
 export interface PPPNotificationSendRequest {
