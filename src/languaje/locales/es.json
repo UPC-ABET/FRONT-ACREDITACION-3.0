@@ -978,7 +978,8 @@
 			"accept": "Aceptar",
 			"decline": "Rechazar",
 			"cancel": "Cancelar",
-			"save": "Guardar"
+			"save": "Guardar",
+			"delete": "Eliminar"
 		},
 		"title": {
 			"form": "Nuevo Registro",

@@ -7,10 +7,11 @@ export const programsQueryKeys = {
 	filtered: (filters: FilterProgramRequest) => ['programs', 'filtered', filters] as const,
 };
 
-export function usePrograms(filters: FilterProgramRequest = {}) {
+export function usePrograms(filters: FilterProgramRequest = {}, options?: { enabled?: boolean }) {
 	return useQuery({
 		queryKey: programsQueryKeys.filtered(filters),
 		queryFn: () => programsService.getByFilters(filters).then((r) => r.data),
+		enabled: options?.enabled ?? true,
 	});
 }
 

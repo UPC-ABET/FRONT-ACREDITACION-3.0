@@ -30,8 +30,7 @@ import { cn } from '@/shared/lib/utils';
 import { ApiError } from '@/shared/lib';
 import { interpolate, tryTranslateReason } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
-import { programsService } from '@/modules/academic/services';
-import { useStudyPlanCourses } from '@/modules/academic/hooks';
+import { usePrograms, useStudyPlanCourses } from '@/modules/academic/hooks';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { projectsService } from '../services';
@@ -53,16 +52,10 @@ export function ProjectsListPage() {
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
-	const { data: programs = [] } = useQuery({
-		queryKey: [
-			'programs',
-			'filtered',
-			{ schoolId, academicPeriodId: selectedPeriodId, isActive: true },
-		],
-		queryFn: () =>
-			programsService.getByFilters({ isActive: true, schoolFilter: true }).then((r) => r.data),
-		enabled: !!selectedPeriodId && !!schoolId,
-	});
+	const { data: programs = [] } = usePrograms(
+		{ isActive: true, schoolFilter: true },
+		{ enabled: !!selectedPeriodId && !!schoolId },
+	);
 
 	const { data: evaluableSpcList = [] } = useStudyPlanCourses(
 		{

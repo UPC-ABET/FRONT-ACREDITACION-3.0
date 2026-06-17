@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PlusIcon, TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
@@ -18,11 +17,15 @@ import {
 import { cn } from '@/shared/lib/utils';
 import { Toggle } from '@/shared/components/ui/Toggle';
 import { useI18n } from '@/providers';
-import { typesService, TypeOption } from '@/modules/core/services/typesService';
-import { useTypeGroups } from '@/modules/core/hooks';
+import { TypeOption } from '@/modules/core/services/typesService';
+import {
+	useTypeGroups,
+	useTypesByGroupCode,
+	useSetCanEvaluate,
+	useCreateType,
+	useDeleteType,
+} from '@/modules/core/hooks';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
-
-const QUERY_KEY = ['evaluator-types'];
 
 interface EditState {
 	id: number;
@@ -33,7 +36,6 @@ interface EditState {
 export function EvaluatorTypesPage() {
 	const { t, locale } = useI18n();
 	const loc = locale as 'es' | 'en';
-	const queryClient = useQueryClient();
 
 	const { data: typeGroups = [] } = useTypeGroups({ code: TYPE_GROUP_CODES.EVALUATOR_ROLE });
 	const typeGroupId = typeGroups[0]?.id ?? null;
@@ -42,11 +44,7 @@ export function EvaluatorTypesPage() {
 		data: types = [],
 		isLoading,
 		isError,
-	} = useQuery({
-		queryKey: QUERY_KEY,
-		queryFn: () =>
-			typesService.getByGroupCode(TYPE_GROUP_CODES.EVALUATOR_ROLE).then((r) => r.data ?? []),
-	});
+	} = useTypesByGroupCode(TYPE_GROUP_CODES.EVALUATOR_ROLE);
 
 	// ── Edit modal ──────────────────────────────────────────────────────────
 	const [editState, setEditState] = useState<EditState | null>(null);
@@ -62,29 +60,29 @@ export function EvaluatorTypesPage() {
 		setEditError(null);
 	};
 
-	const editMutation = useMutation({
-		mutationFn: () =>
-			typesService.setCanEvaluate(editState!.id, {
-				canEvaluate: editState!.canEvaluate,
-				maxEvaluators:
-					editState!.maxEvaluators !== '' ? Number(editState!.maxEvaluators) : undefined,
-			}),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-			setEditState(null);
-			setEditError(null);
-		},
-		onError: () => setEditError(t('academicProjects.evaluators.editError')),
-	});
-
+	const setCanEvaluateMutation = useSetCanEvaluate(TYPE_GROUP_CODES.EVALUATOR_ROLE);
 	const handleEditSave = () => {
 		const max = editState!.maxEvaluators;
 		if (max !== '' && (isNaN(Number(max)) || Number(max) < 1)) {
 			setEditError(t('academicProjects.evaluators.maxInvalid'));
 			return;
 		}
-		setEditError(null);
-		editMutation.mutate();
+		setCanEvaluateMutation.mutate(
+			{
+				id: editState!.id,
+				body: {
+					canEvaluate: editState!.canEvaluate,
+					maxEvaluators: max !== '' ? Number(max) : undefined,
+				},
+			},
+			{
+				onSuccess: () => {
+					setEditState(null);
+					setEditError(null);
+				},
+				onError: () => setEditError(t('academicProjects.evaluators.editError')),
+			},
+		);
 	};
 
 	// ── Create modal ─────────────────────────────────────────────────────────
@@ -102,21 +100,7 @@ export function EvaluatorTypesPage() {
 		setCreateOpen(true);
 	};
 
-	const createMutation = useMutation({
-		mutationFn: () =>
-			typesService.create({
-				typeGroupId: typeGroupId!,
-				name: nameValue,
-				canEvaluate: createCanEvaluate,
-				maxEvaluators: createMaxEvaluators !== '' ? Number(createMaxEvaluators) : undefined,
-			}),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-			setCreateOpen(false);
-		},
-		onError: () => setCreateError(t('academicProjects.evaluators.createError')),
-	});
-
+	const createTypeMutation = useCreateType(TYPE_GROUP_CODES.EVALUATOR_ROLE);
 	const handleCreate = () => {
 		const hasName = Object.values(nameValue).some((v) => v.trim().length > 0);
 		if (!hasName) {
@@ -129,22 +113,38 @@ export function EvaluatorTypesPage() {
 			return;
 		}
 		setCreateError(null);
-		createMutation.mutate();
+		createTypeMutation.mutate(
+			{
+				typeGroupId: typeGroupId!,
+				name: nameValue,
+				// NOTE: Backend expects snake_case inside extra, do NOT convert to camelCase
+				extra: {
+					can_evaluate: createCanEvaluate,
+					...(max !== '' ? { max_evaluators: Number(max) } : {}),
+				},
+			},
+			{
+				onSuccess: () => setCreateOpen(false),
+				onError: () => setCreateError(t('academicProjects.evaluators.createError')),
+			},
+		);
 	};
 
 	// ── Delete modal ─────────────────────────────────────────────────────────
 	const [deleteTarget, setDeleteTarget] = useState<{ id: number; label: string } | null>(null);
 	const [deleteError, setDeleteError] = useState<string | null>(null);
 
-	const deleteMutation = useMutation({
-		mutationFn: (id: number) => typesService.delete(id),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-			setDeleteTarget(null);
-			setDeleteError(null);
-		},
-		onError: () => setDeleteError(t('academicProjects.evaluators.deleteError')),
-	});
+	const deleteTypeMutation = useDeleteType(TYPE_GROUP_CODES.EVALUATOR_ROLE);
+	const handleDelete = () => {
+		if (!deleteTarget) return;
+		deleteTypeMutation.mutate(deleteTarget.id, {
+			onSuccess: () => {
+				setDeleteTarget(null);
+				setDeleteError(null);
+			},
+			onError: () => setDeleteError(t('academicProjects.evaluators.deleteError')),
+		});
+	};
 
 	return (
 		<div className="space-y-6">
@@ -272,7 +272,7 @@ export function EvaluatorTypesPage() {
 					<DialogFooter>
 						<DialogClose
 							render={
-								<Button variant="secondary" disabled={editMutation.isPending}>
+								<Button variant="secondary" disabled={setCanEvaluateMutation.isPending}>
 									{t('dialog.actions.cancel')}
 								</Button>
 							}
@@ -280,8 +280,8 @@ export function EvaluatorTypesPage() {
 						<Button
 							variant="primary"
 							onClick={handleEditSave}
-							disabled={editMutation.isPending}
-							loading={editMutation.isPending}>
+							disabled={setCanEvaluateMutation.isPending}
+							loading={setCanEvaluateMutation.isPending}>
 							{t('dialog.actions.save')}
 						</Button>
 					</DialogFooter>
@@ -331,7 +331,7 @@ export function EvaluatorTypesPage() {
 					<DialogFooter>
 						<DialogClose
 							render={
-								<Button variant="secondary" disabled={createMutation.isPending}>
+								<Button variant="secondary" disabled={createTypeMutation.isPending}>
 									{t('dialog.actions.cancel')}
 								</Button>
 							}
@@ -339,8 +339,8 @@ export function EvaluatorTypesPage() {
 						<Button
 							variant="primary"
 							onClick={handleCreate}
-							disabled={createMutation.isPending}
-							loading={createMutation.isPending}>
+							disabled={createTypeMutation.isPending}
+							loading={createTypeMutation.isPending}>
 							{t('dialog.actions.save')}
 						</Button>
 					</DialogFooter>
@@ -358,13 +358,16 @@ export function EvaluatorTypesPage() {
 						<DialogTitle>{t('academicProjects.evaluators.deleteTitle')}</DialogTitle>
 					</DialogHeader>
 					<p className="text-sm text-zinc-600">
-						{t('academicProjects.evaluators.deleteConfirm', { name: deleteTarget?.label ?? '' })}
+						{t('academicProjects.evaluators.deleteConfirm').replace(
+							'{{name}}',
+							deleteTarget?.label ?? '',
+						)}
 					</p>
 					{deleteError && <p className="text-xs text-red-600">{deleteError}</p>}
 					<DialogFooter>
 						<DialogClose
 							render={
-								<Button variant="secondary" disabled={deleteMutation.isPending}>
+								<Button variant="secondary" disabled={deleteTypeMutation.isPending}>
 									{t('dialog.actions.cancel')}
 								</Button>
 							}
@@ -372,9 +375,9 @@ export function EvaluatorTypesPage() {
 						<Button
 							variant="primary"
 							className="bg-red-600 hover:bg-red-700"
-							onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
-							disabled={deleteMutation.isPending}
-							loading={deleteMutation.isPending}>
+							onClick={handleDelete}
+							disabled={deleteTypeMutation.isPending}
+							loading={deleteTypeMutation.isPending}>
 							{t('dialog.actions.delete')}
 						</Button>
 					</DialogFooter>

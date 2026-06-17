@@ -43,8 +43,7 @@ export const typesService = {
 	create(body: {
 		typeGroupId: number;
 		name: Record<string, string>;
-		canEvaluate?: boolean;
-		maxEvaluators?: number;
+		extra?: Record<string, unknown>;
 	}): Promise<ApiResponse<TypeOption>> {
 		return apiPost('/types/create', body);
 	},
