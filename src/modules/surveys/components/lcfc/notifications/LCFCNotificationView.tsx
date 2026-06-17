@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Input, Toast } from '@/shared/components';
+import { Button, Input, Toast, Toggle } from '@/shared/components';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
 import { useLCFCNotification } from '../../../hooks';
@@ -17,6 +17,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 
 	const [surveyBaseUrl, setSurveyBaseUrl] = useState('');
 	const [maxRegisterDate, setMaxRegisterDate] = useState('');
+	const [resend, setResend] = useState(false);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -48,6 +49,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 				// makes the token "expired" for the entire day.
 				maxRegisterDate: new Date(`${maxRegisterDate}T23:59:59`).toISOString(),
 				surveyBaseUrl: surveyBaseUrl.trim(),
+				resend,
 			},
 			() =>
 				setToast({
@@ -86,6 +88,15 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 					onChange={(e) => setMaxRegisterDate(e.target.value)}
 					type="date"
 				/>
+
+				<div>
+					<Toggle
+						label={t('surveys.lcfc.notifications.resendLabel')}
+						checked={resend}
+						onChange={setResend}
+					/>
+					<p className="text-xs text-zinc-500 mt-1">{t('surveys.lcfc.notifications.resendHint')}</p>
+				</div>
 			</div>
 
 			<Button onClick={handleSend} disabled={!isValid || sending}>
