@@ -2299,6 +2299,7 @@
 			},
 			"programLabel": "Program",
 			"selectProgram": "Select a program",
+			"noProgramsForSchool": "No programs configured for this school",
 			"generateConfig": "Generate configuration",
 			"generateConfigHint": "Generate the configuration from the selected program's outcomes.",
 			"configGenerated": "Configuration generated: {{created}} of {{total}} outcomes.",
