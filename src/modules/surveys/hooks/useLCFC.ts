@@ -24,6 +24,7 @@ import {
 	sendLCFCNotification,
 	generateLCFCPerceptionReport,
 	type GenerateConfigResult,
+	type CloneConfigResult,
 } from '../services';
 import type { AvailableSection } from '../types';
 
@@ -101,14 +102,14 @@ export function useLCFCConfiguration() {
 
 	const clone = useCallback(
 		async (
-			sourcePeriodId: number,
 			targetPeriodId: number,
-			programId?: number,
-			onSuccess?: () => void,
+			programId: number,
+			onSuccess?: (result: CloneConfigResult) => void,
+			sourcePeriodId?: number,
 		) => {
 			try {
-				await cloneLCFCConfiguration(sourcePeriodId, targetPeriodId, programId ?? 0);
-				onSuccess?.();
+				const result = await cloneLCFCConfiguration(targetPeriodId, programId, sourcePeriodId);
+				onSuccess?.(result);
 			} catch (e) {
 				setError((e as Error).message);
 			}

@@ -3,7 +3,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
-	Select,
 	Button,
 	Badge,
 	DataTable,
@@ -27,7 +26,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
-import { useLCFCConfiguration, useLCFCCycles, useLCFCAvailableSections } from '../../../hooks';
+import { useLCFCConfiguration, useLCFCAvailableSections } from '../../../hooks';
 import type { AvailableSection, LCFCCourse } from '../../../types';
 
 interface LCFCConfigurationProps {
@@ -62,7 +61,6 @@ function toStr(value: unknown, fallback = ''): string {
 export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 	const { t } = useI18n();
 	const { academicPeriodId, modalityTypeId } = useABET();
-	const { cycles, load: loadCycles } = useLCFCCycles();
 	const {
 		courses,
 		loading,
@@ -79,7 +77,6 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 		load: loadSections,
 	} = useLCFCAvailableSections();
 
-	const [originCycle, setOriginCycle] = useState<{ label: string; value: number } | null>(null);
 	const [cloneDialogOpen, setCloneDialogOpen] = useState(false);
 	const [generateDialogOpen, setGenerateDialogOpen] = useState(false);
 	const [generating, setGenerating] = useState(false);
@@ -104,10 +101,6 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 		if (!academicPeriodId) return;
 		loadConfig(academicPeriodId, programId);
 	}, [academicPeriodId, programId, loadConfig]);
-
-	useEffect(() => {
-		if (cloneDialogOpen) loadCycles(null);
-	}, [cloneDialogOpen, loadCycles]);
 
 	useEffect(() => {
 		if (generateDialogOpen && academicPeriodId && programId) {
@@ -198,10 +191,14 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 	}
 
 	function handleClone() {
-		if (!academicPeriodId || !originCycle) return;
-		clone(originCycle.value, academicPeriodId, programId, () => {
+		if (!academicPeriodId || !programId) return;
+		clone(academicPeriodId, programId, (result) => {
 			setCloneDialogOpen(false);
-			setToast({ open: true, type: 'success', msg: t('surveys.lcfc.config.toastCloned') });
+			const msg = t('surveys.lcfc.config.toastClonedCounts')
+				.replace('{{generated}}', String(result.generated))
+				.replace('{{skipped}}', String(result.skipped))
+				.replace('{{statusCopied}}', String(result.statusCopied));
+			setToast({ open: true, type: 'success', msg });
 			loadConfig(academicPeriodId, programId);
 		});
 	}
@@ -246,10 +243,6 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 			if (academicPeriodId) loadConfig(academicPeriodId, programId);
 		});
 	}
-
-	const originCycleOptions = cycles
-		.map((c) => ({ label: toStr(c.name, String(c.id)), value: c.id }))
-		.filter((c) => c.value !== academicPeriodId);
 
 	const columns: ColumnDef<LCFCCourse>[] = [
 		{ accessorKey: 'code', header: t('surveys.lcfc.config.colCode') },
@@ -406,26 +399,15 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 				</DialogContent>
 			</Dialog>
 
-			{/* Clone dialog */}
+			{/* Clone dialog — auto-resolves previous period, no selection needed */}
 			<Dialog open={cloneDialogOpen} onOpenChange={setCloneDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>{t('surveys.lcfc.config.cloneDialogTitle')}</DialogTitle>
 					</DialogHeader>
-					<div className="space-y-4 py-2">
-						<p className="text-sm text-zinc-600">{t('surveys.lcfc.config.cloneDialogBody')}</p>
-						<Select
-							label={t('surveys.lcfc.config.originLabel')}
-							options={originCycleOptions}
-							value={originCycle}
-							onChange={(_, val) => setOriginCycle(val as { label: string; value: number } | null)}
-							placeholder={t('surveys.lcfc.config.originPlaceholder')}
-						/>
-					</div>
+					<p className="text-sm text-zinc-600 py-2">{t('surveys.lcfc.config.cloneDialogBody')}</p>
 					<DialogFooter showCloseButton>
-						<Button onClick={handleClone} disabled={!originCycle}>
-							{t('surveys.lcfc.config.cloneConfirm')}
-						</Button>
+						<Button onClick={handleClone}>{t('surveys.lcfc.config.cloneConfirm')}</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>

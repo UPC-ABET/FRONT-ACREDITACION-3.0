@@ -39,6 +39,13 @@ export interface GenerateConfigResult {
 	skipped: number;
 }
 
+export interface CloneConfigResult {
+	generated: number;
+	skipped: number;
+	statusCopied: number;
+	sourcePeriodId: number;
+}
+
 function toI18nText(value: string | I18nText | undefined): I18nText {
 	if (value == null) return { es: '', en: '' };
 	if (typeof value === 'string') return { es: value, en: value };
@@ -111,17 +118,20 @@ export async function deleteLCFCConfig(id: number) {
 }
 
 export async function cloneLCFCConfiguration(
-	sourcePeriodId: number,
 	targetPeriodId: number,
-	programId = 0,
-	campusId = 0,
-) {
-	return apiPost('lcfc/config/clone', {
-		sourceAcademicPeriodId: sourcePeriodId,
-		targetAcademicPeriodId: targetPeriodId,
-		programId,
-		campusId,
-	});
+	programId: number,
+	sourcePeriodId?: number,
+): Promise<CloneConfigResult> {
+	const body: Record<string, unknown> = { targetAcademicPeriodId: targetPeriodId, programId };
+	if (sourcePeriodId != null) body.sourceAcademicPeriodId = sourcePeriodId;
+	const res = await apiPost('lcfc/config/clone', body);
+	const data = getApiData<CloneConfigResult>(res);
+	return {
+		generated: data?.generated ?? 0,
+		skipped: data?.skipped ?? 0,
+		statusCopied: data?.statusCopied ?? 0,
+		sourcePeriodId: data?.sourcePeriodId ?? 0,
+	};
 }
 
 export async function changeLCFCConfigStatus(configId: number, newStatus: LCFCConfigStatus) {
