@@ -69,6 +69,8 @@ function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 		description,
 		programId: extra.programId,
 		academicPeriodId: extra.academicPeriodId,
+		courseSectionId: extra.courseSectionId,
+		sectionCode: extra.sectionCode,
 	};
 }
 
@@ -154,7 +156,30 @@ export async function generateLCFCDashboard(params: {
 	campusId?: number;
 }): Promise<DashboardResponse> {
 	const res = await apiPost('lcfc/dashboard', params);
-	return getApiData<DashboardResponse>(res);
+	const data = getApiData<{
+		summary?: {
+			total?: number;
+			totalSurveys?: number;
+			completed?: number;
+			pending?: number;
+			completionRatePct?: number;
+		};
+		byCourse?: unknown[];
+		filters?: unknown;
+	}>(res);
+	const s = data?.summary ?? {};
+	// Backend returns { total, completed, pending, completionRatePct }; map to the
+	// DashboardResponse shape the UI expects (it reads totalSurveys).
+	return {
+		summary: {
+			totalSurveys: s.total ?? s.totalSurveys ?? 0,
+			completed: s.completed,
+			pending: s.pending,
+			completionRatePct: s.completionRatePct,
+		},
+		byCourse: data?.byCourse ?? [],
+		filters: data?.filters,
+	};
 }
 
 export async function generateLCFCPerceptionReport(params: {

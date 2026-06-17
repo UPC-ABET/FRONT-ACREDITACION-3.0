@@ -51,6 +51,7 @@ interface BackendOutcome {
 	outcomeId?: number;
 	commissionId?: number;
 	commissionName?: string;
+	code?: string;
 	name?: string;
 	specificCompetence?: string;
 	generalCompetence?: string;
@@ -118,6 +119,7 @@ function adaptOutcomes(
 			outcomeId: outcome.outcomeId ?? outcome.outcomeConfigId ?? 0,
 			outcomeConfigId: outcome.outcomeConfigId ?? outcome.outcomeId,
 			commissionId,
+			code: toText(outcome.code) || undefined,
 			specificCompetence:
 				toText(outcome.specificCompetence) ||
 				toText(outcome.name) ||

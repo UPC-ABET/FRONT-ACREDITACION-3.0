@@ -154,6 +154,8 @@ export interface LCFCCourse {
 	description: I18nText;
 	programId?: number;
 	academicPeriodId?: number;
+	courseSectionId?: number;
+	sectionCode?: string;
 }
 
 export interface LCFCConfigUpdateRequest {
@@ -206,6 +208,7 @@ export interface SurveyOutcome {
 	outcomeId: number;
 	outcomeConfigId?: number;
 	commissionId: number;
+	code?: string;
 	generalCompetence?: string;
 	specificCompetence: string;
 	description: string;
