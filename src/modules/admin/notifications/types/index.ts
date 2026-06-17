@@ -46,7 +46,7 @@ export interface UpsertConfigBody {
 export interface SurveyMessage {
 	id: number;
 	surveyTypeId: number;
-	programId: number;
+	programId: number | null;
 	emailTemplateId: number | null;
 	name: I18nText;
 	subject: I18nText;
@@ -57,7 +57,7 @@ export interface SurveyMessage {
 
 export interface SurveyMessageBody {
 	surveyTypeId: number;
-	programId: number;
+	programId?: number | null;
 	name: I18nText;
 	subject: I18nText;
 	body: I18nText;

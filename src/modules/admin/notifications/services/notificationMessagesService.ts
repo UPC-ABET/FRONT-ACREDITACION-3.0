@@ -6,7 +6,7 @@ function normalizeMessage(message: SurveyMessage): SurveyMessage {
 		...message,
 		id: Number(message.id),
 		surveyTypeId: Number(message.surveyTypeId),
-		programId: Number(message.programId),
+		programId: message.programId == null ? null : Number(message.programId),
 		emailTemplateId: message.emailTemplateId == null ? null : Number(message.emailTemplateId),
 		isActive: Boolean(message.isActive),
 	};

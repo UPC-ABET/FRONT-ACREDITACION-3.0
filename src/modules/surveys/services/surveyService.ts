@@ -9,6 +9,22 @@ import type {
 
 const LANG = 'es-PE';
 
+/**
+ * Some backend fields (outcome name/description, etc.) come through as I18nText
+ * objects ({ es, en }) even though the typings call them strings. Rendering one
+ * of those directly crashes React ("Objects are not valid as a React child").
+ * Coerce any value to a plain display string, preferring Spanish.
+ */
+function toText(value: unknown): string {
+	if (typeof value === 'string') return value;
+	if (value && typeof value === 'object') {
+		const obj = value as Record<string, unknown>;
+		const picked = obj.es ?? obj.en;
+		if (typeof picked === 'string') return picked;
+	}
+	return '';
+}
+
 interface BackendTokenValidation {
 	surveyId?: number;
 	surveyStatus?: string;
@@ -62,13 +78,13 @@ function adaptTokenVerification(
 ): SurveyTokenVerification {
 	return {
 		token,
-		school: raw.school ?? raw.schoolName ?? 'UPC',
-		schoolName: raw.schoolName,
-		programName: raw.programName ?? '',
-		period: raw.academicPeriod ?? raw.period ?? '',
+		school: toText(raw.school) || toText(raw.schoolName) || 'UPC',
+		schoolName: toText(raw.schoolName) || undefined,
+		programName: toText(raw.programName),
+		period: toText(raw.academicPeriod) || toText(raw.period),
 		studentCode: raw.studentCode,
-		studentName: raw.studentName,
-		courseName: raw.courseName,
+		studentName: toText(raw.studentName) || undefined,
+		courseName: toText(raw.courseName) || undefined,
 		courseCode: raw.courseCode,
 		answered: raw.isCompleted ?? raw.completed ?? false,
 		studentId: raw.studentId ?? 0,
@@ -93,7 +109,7 @@ function adaptOutcomes(
 
 	for (const outcome of list) {
 		const commissionId = outcome.commissionId ?? 0;
-		const commissionName = outcome.commissionName ?? 'General';
+		const commissionName = toText(outcome.commissionName) || 'General';
 		const key = String(commissionId);
 
 		groups[key] ??= { commissionId, commissionName, outcomes: [] };
@@ -103,9 +119,11 @@ function adaptOutcomes(
 			outcomeConfigId: outcome.outcomeConfigId ?? outcome.outcomeId,
 			commissionId,
 			specificCompetence:
-				outcome.specificCompetence ?? outcome.name ?? `Outcome ${outcome.outcomeId ?? ''}`,
-			generalCompetence: outcome.generalCompetence,
-			description: outcome.description ?? '',
+				toText(outcome.specificCompetence) ||
+				toText(outcome.name) ||
+				`Outcome ${outcome.outcomeId ?? ''}`,
+			generalCompetence: toText(outcome.generalCompetence) || undefined,
+			description: toText(outcome.description),
 			score: null,
 		});
 	}
