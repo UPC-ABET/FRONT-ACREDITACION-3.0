@@ -42,7 +42,11 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 			{
 				academicPeriodId,
 				programId: programId ?? 0,
-				maxRegisterDate: new Date(maxRegisterDate).toISOString(),
+				// The date input yields "YYYY-MM-DD"; anchor the deadline to the end of that
+				// day in the user's timezone (23:59:59) so the survey stays open the whole
+				// selected day. Using `new Date("YYYY-MM-DD")` would be UTC midnight, which
+				// makes the token "expired" for the entire day.
+				maxRegisterDate: new Date(`${maxRegisterDate}T23:59:59`).toISOString(),
 				surveyBaseUrl: surveyBaseUrl.trim(),
 			},
 			() =>
