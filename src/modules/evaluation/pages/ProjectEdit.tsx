@@ -132,7 +132,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 		);
 	}
 
-	const { project, students, evaluators, rubric, course } = data;
+	const { project, students, evaluators, course } = data;
 
 	const projectName = project.name[locale as 'es' | 'en'] ?? project.name.es;
 	const courseName = course?.name[locale as 'es' | 'en'] ?? course?.name.es ?? '—';
