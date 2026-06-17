@@ -1887,6 +1887,7 @@
 			"notFound": "Proyecto no encontrado.",
 			"backButton": "Volver",
 			"docReadOnly": "Tu rol es DOCENTE. Puedes ver el proyecto y las calificaciones, pero no puedes calificar.",
+			"nonCommitteeReadOnly": "Solo los evaluadores con rol de Comité pueden calificar este proyecto. Estás en modo lectura.",
 			"notAssigned": "No estás asignado como evaluador en este proyecto.",
 			"header": {
 				"course": "Curso",

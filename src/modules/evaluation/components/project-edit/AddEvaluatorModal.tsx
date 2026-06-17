@@ -20,7 +20,7 @@ import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
 import type { ProfessorSearchResponse } from '@/modules/academic';
-import { TYPE_GROUP_CODES } from '@/shared/constants';
+import { TYPE_GROUP_CODES, EVALUATOR_GRADING_ROLES } from '@/shared/constants';
 
 const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
 
@@ -92,7 +92,10 @@ export function AddEvaluatorModal({
 	const roleOptions = useMemo(
 		() =>
 			evaluatorTypes
-				.filter((type) => !existingEvaluatorTypeIds?.has(type.id))
+				.filter((type) => {
+					if (EVALUATOR_GRADING_ROLES.has(type.code)) return true;
+					return !existingEvaluatorTypeIds?.has(type.id);
+				})
 				.map((type) => ({
 					label: type.name[locale as 'es' | 'en'] ?? type.name.es,
 					value: type.id,

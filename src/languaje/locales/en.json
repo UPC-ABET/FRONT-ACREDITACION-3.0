@@ -1887,6 +1887,7 @@
 			"notFound": "Project not found.",
 			"backButton": "Back",
 			"docReadOnly": "Your role is DOCENTE. You can view the project and its grades, but you cannot grade.",
+			"nonCommitteeReadOnly": "Only evaluators with the Committee role can grade this project. You are in read-only mode.",
 			"notAssigned": "You are not assigned as an evaluator for this project.",
 			"header": {
 				"course": "Course",
