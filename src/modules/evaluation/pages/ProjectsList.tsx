@@ -28,7 +28,7 @@ import { Select } from '@/shared/components/ui/Select';
 import { buttonVariants } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
 import { ApiError } from '@/shared/lib';
-import { interpolate } from '@/shared/utils';
+import { interpolate, tryTranslateReason } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import { programsService } from '@/modules/academic/services';
 import { useStudyPlanCourses } from '@/modules/academic/hooks';
@@ -234,7 +234,10 @@ export function ProjectsListPage() {
 				<TableLoadingState label={t('projects.list.loading')} />
 			) : isError ? (
 				<TableErrorState
-					message={error instanceof Error ? error.message : t('projects.list.error')}
+					message={tryTranslateReason(
+						t,
+						error instanceof Error ? error.message : 'projects.list.error',
+					)}
 				/>
 			) : !projects.length ? (
 				<TableEmptyState message={t('projects.list.empty')} />

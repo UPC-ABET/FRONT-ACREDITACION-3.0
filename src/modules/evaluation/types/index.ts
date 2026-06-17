@@ -230,6 +230,7 @@ export type ProjectDetailsStudentResponse = {
 	lastName: string;
 	email: string;
 	studentCode: string;
+	studyPlanCourseId: number | null;
 	totalGrade: number | null;
 	evaluations: StudentEvaluationResponse[] | undefined;
 };
@@ -287,12 +288,25 @@ export type ProjectDetailsResponse = {
 	} | null;
 	students: ProjectDetailsStudentResponse[];
 	evaluators?: ProjectDetailsEvaluatorResponse[];
-	rubric: null | {
-		rubric: {
+	rubrics: Array<{
+		studyPlanCourseId: number;
+		programName?: { es: string; en: string };
+		rubric: null | {
 			id: number;
+			rubricTypeId: number;
+			gradeTypeId: number;
+			studyPlanCourseId: number;
+			isActive: boolean;
+			createdAt: string;
 			rubricType: { id: number; code: string; name: { en: string; es: string } };
 			gradeType: { id: number; code: string; name: { en: string; es: string } };
 		};
+		commissions: Array<{
+			id: number;
+			code: string;
+			name: { es: string; en: string };
+			outcomeIds: number[];
+		}>;
 		outcomes: {
 			id: number;
 			code: string;
@@ -301,7 +315,7 @@ export type ProjectDetailsResponse = {
 			questionIds: number[];
 		}[];
 		questions: RubricQuestionDetailsResponse[];
-	};
+	}>;
 };
 
 export type ProjectEvaluatorInfoResponse = {

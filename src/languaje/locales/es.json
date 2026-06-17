@@ -1359,7 +1359,42 @@
 			"sizeFailed": "No se pudo calcular el tamaño de la selección."
 		},
 		"evaluation": {
-			"docCannotGrade": "El rol DOCENTE no puede calificar proyectos."
+			"docCannotGrade": "El rol DOCENTE no puede calificar proyectos.",
+			"evaluationExists": "Ya existe una evaluación con ese ID.",
+			"notFound": "Evaluación no encontrada.",
+			"evaluatorOrStudentNotFound": "El evaluador o el alumno no pertenece a este proyecto.",
+			"notSameProject": "El evaluador y el alumno no pertenecen al mismo proyecto.",
+			"projectNotFound": "Proyecto no encontrado al finalizar la evaluación.",
+			"noRubricForProject": "El proyecto no tiene rúbrica activa asociada.",
+			"rubricNotFound": "Rúbrica no encontrada.",
+			"criteriaNotFound": "Criterio no encontrado.",
+			"invalidScore": "El puntaje ingresado no es válido.",
+			"invalidScoreCapstone": "El puntaje capstone no es válido.",
+			"allCriteriaRequired": "Debes completar todos los criterios.",
+			"oneCriteriaPerQuestion": "Solo se permite un criterio por pregunta.",
+			"statusTypeNotFound": "Tipo de estado de calificación no encontrado.",
+			"gradeAllStudents": "Debes calificar a todos los estudiantes antes de finalizar.",
+			"observationRequired": "La observación es obligatoria para guardar la evaluación."
+		},
+		"project": {
+			"codeExists": "Ya existe un proyecto con ese código.",
+			"notFound": "Proyecto no encontrado.",
+			"notEvaluateRubric": "El curso no está marcado como evaluable.",
+			"noAcademicPeriod": "El curso no tiene período académico asociado.",
+			"duplicateCode": "Ya existe un proyecto con ese código en este período.",
+			"duplicateName": "Ya existe un proyecto con ese nombre en este período.",
+			"noStudents": "Debes agregar al menos un estudiante al proyecto.",
+			"enrollmentNotFound": "Una o más matrículas no fueron encontradas.",
+			"studentWithdrawn": "Uno o más estudiantes están inactivos.",
+			"studentNotInCourse": "Uno o más estudiantes no están matriculados en este curso.",
+			"studentAlreadyInProject": "Uno o más estudiantes ya tienen un proyecto activo en este período.",
+			"noEvaluators": "Debes agregar al menos un evaluador al proyecto.",
+			"evaluatorLimit": "No puede haber más de un evaluador del mismo tipo.",
+			"noStudentsWithCourse": "Ningún estudiante tiene sección con curso válido.",
+			"invalidGradeTypeCode": "El tipo de nota no existe.",
+			"hasEvaluations": "No se puede eliminar el proyecto porque ya tiene evaluaciones registradas.",
+			"activeRubricNotFound": "No se encontró rúbrica activa para el proyecto.",
+			"rubricContextError": "Error al resolver el contexto de rúbrica del proyecto."
 		},
 		"projectEvaluator": {
 			"duplicateEvaluatorType": "Ya existe un evaluador con ese tipo de rol en el proyecto."
@@ -1396,6 +1431,20 @@
 				"invalidScore": "Puntaje inválido: debe estar entre 1.0 y 5.0.",
 				"invalidRuc": "El RUC debe tener exactamente 11 dígitos numéricos."
 			}
+		},
+		"rubric": {
+			"rubricExists": "Ya existe una rúbrica con ese ID.",
+			"notFound": "Rúbrica no encontrada.",
+			"activeRubricExists": "Ya existe una rúbrica activa para esta nota y curso.",
+			"invalidOutcomeMapping": "Uno o más outcomes no pertenecen al curso seleccionado.",
+			"capstoneRequiresOutcome": "Las preguntas de rúbrica capstone deben tener un outcome asociado.",
+			"studyPlanCourseNotFound": "El curso de malla seleccionado no existe.",
+			"noRubricForCourse": "El curso no tiene rúbrica activa para este tipo de nota.",
+			"gradeTypeNotFound": "El tipo de nota no existe.",
+			"rubricTypesNotConfigured": "Los tipos de rúbrica no están configurados en el sistema.",
+			"criteriaOverlap": "Dos o más criterios tienen rangos de puntaje solapados.",
+			"criteriaInvalidRange": "El puntaje mínimo no puede ser mayor al máximo en un criterio.",
+			"criteriaTotalNot20": "La suma de los puntajes máximos de los criterios debe ser 20."
 		}
 	},
 	"table": {
@@ -1850,6 +1899,9 @@
 				"noGrade": "Sin nota",
 				"empty": "No hay estudiantes en este proyecto."
 			},
+			"tabs": {
+				"unsavedChanges": "Cambios sin guardar"
+			},
 			"rubric": {
 				"question": "Pregunta",
 				"criteria": "Criterios",
@@ -1861,7 +1913,9 @@
 				"fillAll": "Completa todos los puntajes para guardar.",
 				"saveButton": "Guardar calificaciones",
 				"readOnly": "Solo lectura",
-				"saving": "Guardando..."
+				"saving": "Guardando...",
+				"noRubric": "No hay rúbrica configurada para esta carrera.",
+				"missingStatus": "Selecciona la asistencia de todos los estudiantes para continuar."
 			},
 			"capstone": {
 				"outcome": "Outcome",

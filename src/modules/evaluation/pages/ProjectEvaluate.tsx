@@ -65,6 +65,33 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 		setQualifStatuses(initialQualifStatuses);
 	}, [initialQualifStatuses]);
 
+	const [activeStudyPlanCourseId, setActiveStudyPlanCourseId] = useState<number | null>(null);
+	const [dirtyTabs, setDirtyTabs] = useState<Set<number>>(new Set());
+
+	const handleDirtyChange = (studyPlanCourseId: number, isDirty: boolean) => {
+		setDirtyTabs((prev) => {
+			const next = new Set(prev);
+			isDirty ? next.add(studyPlanCourseId) : next.delete(studyPlanCourseId);
+			return next;
+		});
+	};
+
+	const careerIds = useMemo(
+		() => [
+			...new Set(
+				(data?.students ?? [])
+					.map((s) => s.studyPlanCourseId)
+					.filter((id): id is number => id != null),
+			),
+		],
+		[data?.students],
+	);
+
+	const activeStudents = useMemo(() => {
+		const effectiveSpcId = activeStudyPlanCourseId ?? careerIds[0] ?? null;
+		return (data?.students ?? []).filter((s) => s.studyPlanCourseId === effectiveSpcId);
+	}, [data?.students, activeStudyPlanCourseId, careerIds]);
+
 	if (isLoading) {
 		return (
 			<div className="space-y-6">
@@ -91,22 +118,29 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 		);
 	}
 
-	const { project, students, rubric, course } = data;
+	const { project, students, rubrics, course } = data;
+
+	const firstRubric = rubrics.find((r) => r.rubric != null) ?? rubrics[0] ?? null;
 
 	const projectName = project.name[locale as 'es' | 'en'] ?? project.name.es;
 	const courseName = course?.name[locale as 'es' | 'en'] ?? course?.name.es ?? '—';
 	const rubricTypeName =
-		rubric?.rubric?.rubricType?.name[locale as 'es' | 'en'] ??
-		rubric?.rubric?.rubricType?.name.es ??
+		firstRubric?.rubric?.rubricType?.name[locale as 'es' | 'en'] ??
+		firstRubric?.rubric?.rubricType?.name.es ??
 		'—';
 	const gradeTypeName =
-		rubric?.rubric?.gradeType?.name[locale as 'es' | 'en'] ??
-		rubric?.rubric?.gradeType?.name.es ??
+		firstRubric?.rubric?.gradeType?.name[locale as 'es' | 'en'] ??
+		firstRubric?.rubric?.gradeType?.name.es ??
 		'—';
 
-	const isCapstone = rubric?.rubric?.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
+	const isCapstone = firstRubric?.rubric?.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 	const isFinal = gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
 	const isCapstoneFinal = isCapstone && isFinal;
+
+	const effectiveStudyPlanCourseId =
+		activeStudyPlanCourseId ?? careerIds[0] ?? firstRubric?.studyPlanCourseId ?? null;
+	const activeRubric =
+		rubrics.find((r) => r.studyPlanCourseId === effectiveStudyPlanCourseId) ?? null;
 
 	return (
 		<div className="space-y-6">
@@ -232,30 +266,78 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 					<ExclamationTriangleIcon className="h-5 w-5 shrink-0 text-yellow-500" />
 					<span>{t('projects.evaluate.notAssigned')}</span>
 				</div>
-			) : rubric && isCapstoneFinal ? (
-				<ProjectRubricCapstoneTable
-					outcomes={rubric.outcomes}
-					questions={rubric.questions}
-					students={students}
-					academicPeriodId={data.academicPeriod?.id ?? null}
-					evaluatorId={evaluatorId}
-					rubricId={rubric.rubric.id}
-					projectId={projectId}
-					qualifStatuses={qualifStatuses}
-					nrNaTypeIds={nrNaTypeIds}
-					readOnly={isDocEvaluator}
-				/>
-			) : rubric && rubric.questions.length > 0 ? (
-				<ProjectRubricNonCapstoneTable
-					questions={rubric.questions}
-					students={students}
-					evaluatorId={evaluatorId}
-					rubricId={rubric.rubric.id}
-					projectId={projectId}
-					qualifStatuses={qualifStatuses}
-					nrNaTypeIds={nrNaTypeIds}
-					readOnly={isDocEvaluator}
-				/>
+			) : rubrics.length > 0 || careerIds.length > 0 ? (
+				<div className="space-y-4">
+					{careerIds.length > 1 && (
+						<div className="border-b border-zinc-200">
+							<nav className="-mb-px flex space-x-8">
+								{careerIds.map((id) => {
+									const rubricEntry = rubrics.find((r) => r.studyPlanCourseId === id);
+									const label =
+										rubricEntry?.programName?.[locale as 'es' | 'en'] ??
+										rubricEntry?.programName?.es ??
+										String(id);
+									const isActive = id === effectiveStudyPlanCourseId;
+									const dirty = dirtyTabs.has(id);
+									return (
+										<button
+											key={id}
+											onClick={() => setActiveStudyPlanCourseId(id)}
+											className={[
+												'flex items-center gap-1.5 whitespace-nowrap border-b-2 px-1 py-4 text-xs font-bold uppercase tracking-wider transition-all',
+												isActive
+													? 'border-red-600 text-red-600'
+													: 'border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700',
+											].join(' ')}>
+											{dirty && (
+												<ExclamationTriangleIcon
+													className="h-4 w-4 shrink-0 text-amber-500"
+													aria-label={t('projects.evaluate.tabs.unsavedChanges')}
+												/>
+											)}
+											{label}
+										</button>
+									);
+								})}
+							</nav>
+						</div>
+					)}
+
+					{!activeRubric?.rubric ? (
+						<div className="rounded-xl border border-zinc-200 bg-zinc-50 px-6 py-10 text-center text-sm text-zinc-500">
+							{t('projects.evaluate.rubric.noRubric')}
+						</div>
+					) : activeRubric?.rubric && isCapstoneFinal ? (
+						<ProjectRubricCapstoneTable
+							outcomes={activeRubric.outcomes}
+							questions={activeRubric.questions}
+							students={activeStudents}
+							academicPeriodId={data.academicPeriod?.id ?? null}
+							evaluatorId={evaluatorId}
+							rubricId={activeRubric.rubric.id}
+							projectId={projectId}
+							qualifStatuses={qualifStatuses}
+							nrNaTypeIds={nrNaTypeIds}
+							readOnly={isDocEvaluator}
+							disableDuplicate={careerIds.length > 1}
+							onDirtyChange={(dirty) => handleDirtyChange(effectiveStudyPlanCourseId!, dirty)}
+							commissions={activeRubric.commissions}
+						/>
+					) : activeRubric?.rubric && activeRubric.questions.length > 0 ? (
+						<ProjectRubricNonCapstoneTable
+							questions={activeRubric.questions}
+							students={activeStudents}
+							evaluatorId={evaluatorId}
+							rubricId={activeRubric.rubric.id}
+							projectId={projectId}
+							qualifStatuses={qualifStatuses}
+							nrNaTypeIds={nrNaTypeIds}
+							readOnly={isDocEvaluator}
+							disableDuplicate={careerIds.length > 1}
+							onDirtyChange={(dirty) => handleDirtyChange(effectiveStudyPlanCourseId!, dirty)}
+						/>
+					) : null}
+				</div>
 			) : null}
 		</div>
 	);
