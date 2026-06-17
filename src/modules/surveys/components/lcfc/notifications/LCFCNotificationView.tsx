@@ -5,7 +5,6 @@ import { Button, Input, Toast } from '@/shared/components';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
 import { useLCFCNotification } from '../../../hooks';
-import { SurveyTemplateSelect } from '../../shared/SurveyTemplateSelect';
 
 interface LCFCNotificationViewProps {
 	programId?: number;
@@ -16,7 +15,6 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	const { academicPeriodId } = useABET();
 	const { sending, error: sendError, send } = useLCFCNotification();
 
-	const [notificationMessageId, setNotificationMessageId] = useState<number | null>(null);
 	const [surveyBaseUrl, setSurveyBaseUrl] = useState('');
 	const [maxRegisterDate, setMaxRegisterDate] = useState('');
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
@@ -46,7 +44,6 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 				programId: programId ?? 0,
 				maxRegisterDate: new Date(maxRegisterDate).toISOString(),
 				surveyBaseUrl: surveyBaseUrl.trim(),
-				...(notificationMessageId ? { notificationMessageId } : {}),
 			},
 			() =>
 				setToast({
@@ -71,13 +68,6 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 			</div>
 
 			<div className="space-y-4">
-				<SurveyTemplateSelect
-					surveyTypeCode="LCFC"
-					programId={programId}
-					value={notificationMessageId}
-					onChange={setNotificationMessageId}
-				/>
-
 				<Input
 					label={t('surveys.lcfc.notifications.urlLabel')}
 					value={surveyBaseUrl}
