@@ -1,11 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Select, Button, SubTitle, Title } from '@/shared/components/ui';
 import { useI18n, useABET } from '@/providers';
-import { useAcademicPeriods, useStudyPlanCourses } from '@/modules/academic/hooks';
-import { programsService } from '@/modules/academic/services';
+import { useAcademicPeriods, useStudyPlanCourses, usePrograms } from '@/modules/academic/hooks';
 import { StudyPlanCourseResponse } from '@/modules/academic';
 
 export interface Step1Data {
@@ -49,12 +47,10 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 
-	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
-		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId, isActive: true }],
-		queryFn: () =>
-			programsService.getByFilters({ isActive: true, schoolFilter: true }).then((r) => r.data),
-		enabled: !!schoolId && !!academicPeriodId,
-	});
+	const { data: programs = [], isLoading: loadingPrograms } = usePrograms(
+		{ isActive: true, schoolFilter: true },
+		{ enabled: !!schoolId && !!academicPeriodId },
+	);
 
 	// Evaluable SPCs filtered by programId once a program is selected
 	const { data: spcList = [], isLoading: loadingSpc } = useStudyPlanCourses(
