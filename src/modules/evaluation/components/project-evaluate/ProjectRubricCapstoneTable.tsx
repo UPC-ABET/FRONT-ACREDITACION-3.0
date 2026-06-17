@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { InformationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { Toggle } from '@/shared/components/ui';
 import { Spinner } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
@@ -16,6 +17,13 @@ type OutcomeRow = {
 	code: string;
 	name: { en: string; es: string };
 	description: { en: string; es: string };
+};
+
+type CommissionRow = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+	outcomeIds: number[];
 };
 
 type PerformanceLevel = {
@@ -42,6 +50,7 @@ interface ProjectRubricCapstoneTableProps {
 	readOnly?: boolean;
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
+	commissions?: CommissionRow[];
 }
 
 export function ProjectRubricCapstoneTable({
@@ -57,10 +66,18 @@ export function ProjectRubricCapstoneTable({
 	readOnly = false,
 	disableDuplicate = false,
 	onDirtyChange,
+	commissions = [],
 }: ProjectRubricCapstoneTableProps) {
 	const { t, locale } = useI18n();
 	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
+
+	const [activeCommissionId, setActiveCommissionId] = useState<number | null>(
+		() => commissions[0]?.id ?? null,
+	);
+	useEffect(() => {
+		setActiveCommissionId(commissions[0]?.id ?? null);
+	}, [rubricId]);
 
 	const markDirty = () => {
 		if (!isDirty) {
@@ -96,6 +113,14 @@ export function ProjectRubricCapstoneTable({
 		}
 		return map;
 	}, [questions]);
+
+	const visibleOutcomes = useMemo(() => {
+		if (commissions.length === 0) return outcomes;
+		const activeCommission = commissions.find((c) => c.id === activeCommissionId);
+		if (!activeCommission) return outcomes;
+		const ids = new Set(activeCommission.outcomeIds);
+		return outcomes.filter((o) => ids.has(o.id));
+	}, [outcomes, commissions, activeCommissionId]);
 
 	const allCriteriaIds = useMemo(() => {
 		const ids: number[] = [];
@@ -142,6 +167,32 @@ export function ProjectRubricCapstoneTable({
 		() => students.some((st) => qualifStatuses[st.id] == null),
 		[students, qualifStatuses],
 	);
+
+	// Per-commission fill status for tab indicators
+	const commissionFillStatus = useMemo((): Record<number, 'complete' | 'partial' | 'empty'> => {
+		if (commissions.length === 0) return {};
+		const gradedStudents = students.filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1));
+		const result: Record<number, 'complete' | 'partial' | 'empty'> = {};
+		for (const commission of commissions) {
+			const commOutcomes = outcomes.filter((o) => commission.outcomeIds.includes(o.id));
+			const criteriaIds: number[] = [];
+			for (const o of commOutcomes) {
+				const q = questionByOutcome.get(o.id);
+				for (const c of q?.criterias ?? []) criteriaIds.push(c.id);
+			}
+			let filled = 0;
+			let total = 0;
+			for (const cId of criteriaIds) {
+				for (const st of gradedStudents) {
+					total++;
+					if ((selections[cId]?.[st.id] ?? null) != null) filled++;
+				}
+			}
+			result[commission.id] =
+				total === 0 ? 'empty' : filled === total ? 'complete' : filled > 0 ? 'partial' : 'empty';
+		}
+		return result;
+	}, [commissions, outcomes, questionByOutcome, selections, students, qualifStatuses, nrNaTypeIds]);
 
 	const allFilled = useMemo(() => {
 		if (!allCriteriaIds.length || !students.length) return false;
@@ -240,7 +291,41 @@ export function ProjectRubricCapstoneTable({
 	};
 
 	return (
-		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+			{commissions.length > 0 && (
+				<div className="border-b border-zinc-200 rounded-xl ">
+					<nav className="-mb-px flex flex-wrap gap-1" aria-label="Commissions">
+						{commissions.map((commission) => {
+							const status = commissionFillStatus[commission.id] ?? 'empty';
+							const isActive = commission.id === activeCommissionId;
+							return (
+								<button
+									key={commission.id}
+									type="button"
+									onClick={() => setActiveCommissionId(commission.id)}
+									className={cn(
+										'flex items-center gap-1.5 rounded-t-lg border-b-2 px-4 py-3 text-sm font-medium transition-colors',
+										isActive
+											? 'border-zinc-300 bg-zinc-100 text-zinc-900'
+											: 'border-transparent text-zinc-600 hover:border-zinc-200 hover:bg-zinc-50 hover:text-zinc-800',
+									)}>
+									{status === 'complete' ? (
+										<CheckCircleIcon className="h-4 w-4 shrink-0 text-emerald-500" />
+									) : status === 'partial' ? (
+										<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
+									) : (
+										<span
+											className="inline-block h-4 w-4 shrink-0 rounded-full bg-zinc-200"
+											aria-hidden
+										/>
+									)}
+									<span className="font-semibold">{commission.code}</span>
+								</button>
+							);
+						})}
+					</nav>
+				</div>
+			)}
 			<div className="w-full overflow-x-auto">
 				<table className="w-full table-auto border-collapse text-sm">
 					<thead>
@@ -251,7 +336,7 @@ export function ProjectRubricCapstoneTable({
 							<th className="w-52 min-w-[16rem] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
 								{t('projects.evaluate.capstone.criteria')}
 							</th>
-							<th className="min-w-[12rem] px-4 py-3 text-left md:min-w-[26rem]">
+							<th className="min-w-[12rem] px-4 py-3 text-left md:min-w-[14rem]">
 								<div className="flex items-center justify-between gap-4">
 									<span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
 										{t('projects.evaluate.capstone.score')}
@@ -277,7 +362,7 @@ export function ProjectRubricCapstoneTable({
 					</thead>
 
 					<tbody>
-						{outcomes.flatMap((outcome) => {
+						{visibleOutcomes.flatMap((outcome) => {
 							const q = questionByOutcome.get(outcome.id);
 							const criterias = q?.criterias ?? [];
 							const outcomeName = outcome.name[locale as 'es' | 'en'] ?? outcome.name.es;
@@ -298,11 +383,9 @@ export function ProjectRubricCapstoneTable({
 												rowSpan={criterias.length}
 												className="border-b border-zinc-200 px-4 py-4 align-middle">
 												<p className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-													Outcome {outcome.code}
+													Outcome
 												</p>
-												<p className="mt-1 text-sm font-semibold leading-snug text-zinc-800">
-													{outcomeName}
-												</p>
+												<p className="text-sm font-semibold">{outcome.code}</p>
 												<p className="mt-1 text-xs leading-snug text-zinc-500">{outcomeDesc}</p>
 											</td>
 										)}

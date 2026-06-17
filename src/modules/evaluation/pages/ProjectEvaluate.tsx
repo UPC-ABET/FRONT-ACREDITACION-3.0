@@ -321,6 +321,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 							readOnly={isDocEvaluator}
 							disableDuplicate={careerIds.length > 1}
 							onDirtyChange={(dirty) => handleDirtyChange(effectiveStudyPlanCourseId!, dirty)}
+							commissions={activeRubric.commissions}
 						/>
 					) : activeRubric?.rubric && activeRubric.questions.length > 0 ? (
 						<ProjectRubricNonCapstoneTable

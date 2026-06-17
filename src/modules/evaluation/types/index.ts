@@ -301,6 +301,12 @@ export type ProjectDetailsResponse = {
 			rubricType: { id: number; code: string; name: { en: string; es: string } };
 			gradeType: { id: number; code: string; name: { en: string; es: string } };
 		};
+		commissions: Array<{
+			id: number;
+			code: string;
+			name: { es: string; en: string };
+			outcomeIds: number[];
+		}>;
 		outcomes: {
 			id: number;
 			code: string;

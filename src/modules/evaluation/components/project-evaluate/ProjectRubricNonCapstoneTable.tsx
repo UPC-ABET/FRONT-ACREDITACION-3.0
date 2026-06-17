@@ -271,7 +271,7 @@ export function ProjectRubricNonCapstoneTable({
 	};
 
 	return (
-		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
+		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
 			<div className="w-full overflow-x-auto">
 				<table className="w-full table-auto border-collapse text-sm">
 					<thead>
