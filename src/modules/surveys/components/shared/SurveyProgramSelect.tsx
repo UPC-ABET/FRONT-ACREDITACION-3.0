@@ -48,6 +48,18 @@ export function SurveyProgramSelect({ value, onChange }: Props) {
 	);
 	const selected = options.find((o) => o.value === value) ?? null;
 
+	// A school is selected but the org chart links no programs to it: the dropdown
+	// would otherwise sit disabled with no explanation.
+	const noProgramsForSchool = !isLoading && schoolId != null && options.length === 0;
+	let placeholder: string;
+	if (isLoading) {
+		placeholder = t('loading.default');
+	} else if (noProgramsForSchool) {
+		placeholder = t('surveys.shared.noProgramsForSchool');
+	} else {
+		placeholder = t('surveys.shared.selectProgram');
+	}
+
 	return (
 		<div className="max-w-xs">
 			<Select
@@ -58,7 +70,7 @@ export function SurveyProgramSelect({ value, onChange }: Props) {
 				isSearchable
 				isClearable
 				isDisabled={isLoading || options.length === 0}
-				placeholder={isLoading ? t('loading.default') : t('surveys.shared.selectProgram')}
+				placeholder={placeholder}
 				onChange={(_, sel) => {
 					if (!sel || Array.isArray(sel)) {
 						onChange(0);
