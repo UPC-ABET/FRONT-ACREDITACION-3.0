@@ -155,7 +155,16 @@ export function SurveyForm({
 							{group.outcomes.map((outcome) => (
 								<div key={outcome.outcomeId} className="px-6 py-5">
 									<div className="mb-3">
-										<p className="text-sm font-bold text-zinc-800">{outcome.specificCompetence}</p>
+										<p className="text-sm font-bold text-zinc-800">
+											{outcome.code ? (
+												<>
+													<span className="text-red-600">{outcome.code}</span>
+													{outcome.specificCompetence ? ` — ${outcome.specificCompetence}` : ''}
+												</>
+											) : (
+												outcome.specificCompetence
+											)}
+										</p>
 										{outcome.generalCompetence && (
 											<p className="text-xs text-zinc-500 mt-0.5">
 												{t('surveys.student.generalPrefix')} {outcome.generalCompetence}

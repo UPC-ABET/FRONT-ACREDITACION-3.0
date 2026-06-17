@@ -25,6 +25,17 @@ import type {
 	MassiveUploadResult,
 } from '../types';
 
+/** Coerce an I18nText ({ es, en }) or plain string to a display string (prefers Spanish). */
+function toText(value: unknown): string {
+	if (typeof value === 'string') return value;
+	if (value && typeof value === 'object') {
+		const obj = value as Record<string, unknown>;
+		const picked = obj.es ?? obj.en;
+		if (typeof picked === 'string') return picked;
+	}
+	return '';
+}
+
 interface BackendGraConfig {
 	id: number;
 	outcomeId: number;
@@ -203,15 +214,25 @@ export async function cloneGRAConfiguration(params: {
 
 export async function listGRAOutcomes(params: { programId: number; academicPeriodId: number }) {
 	const res = await apiPost('gra/outcomes/list', params);
-	return (
+	const raw =
 		getApiData<
 			Array<{
 				commissionId: number;
-				commissionName: string;
-				outcomes: Array<{ outcomeId: number; outcomeCode: string; outcomeName: string }>;
+				commissionName: unknown;
+				outcomes: Array<{ outcomeId: number; outcomeCode: unknown; outcomeName: unknown }>;
 			}>
-		>(res) ?? []
-	);
+		>(res) ?? [];
+	// outcomeCode/outcomeName arrive as I18nText objects; coerce so labels don't render
+	// as "[object Object]".
+	return raw.map((group) => ({
+		commissionId: group.commissionId,
+		commissionName: toText(group.commissionName),
+		outcomes: (group.outcomes ?? []).map((o) => ({
+			outcomeId: o.outcomeId,
+			outcomeCode: toText(o.outcomeCode),
+			outcomeName: toText(o.outcomeName),
+		})),
+	}));
 }
 
 export async function listGRAPerformanceLevels(
@@ -341,7 +362,30 @@ export async function generateGRADashboard(params: {
 	campusId?: number;
 }): Promise<DashboardResponse> {
 	const res = await apiPost('gra/dashboard', params);
-	return getApiData<DashboardResponse>(res);
+	const data = getApiData<{
+		summary?: {
+			total?: number;
+			totalSurveys?: number;
+			completed?: number;
+			pending?: number;
+			completionRatePct?: number;
+		};
+		byProgram?: unknown[];
+		filters?: unknown;
+	}>(res);
+	const s = data?.summary ?? {};
+	// Backend returns { total, completed, pending, completionRatePct }; map to the
+	// DashboardResponse shape the UI expects (it reads totalSurveys).
+	return {
+		summary: {
+			totalSurveys: s.total ?? s.totalSurveys ?? 0,
+			completed: s.completed,
+			pending: s.pending,
+			completionRatePct: s.completionRatePct,
+		},
+		byProgram: data?.byProgram ?? [],
+		filters: data?.filters,
+	};
 }
 
 export async function generateGRAPerceptionReport(params: {

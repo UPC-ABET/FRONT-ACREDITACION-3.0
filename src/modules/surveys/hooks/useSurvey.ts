@@ -42,7 +42,14 @@ export function useSurvey() {
 			setSurveyData(data);
 			setOutcomes(data.items);
 		} catch (e) {
-			setError((e as Error).message);
+			const msg = (e as Error).message;
+			// A survey that's already closed is a normal "thank you, already answered"
+			// state, not an access error — show the completed screen.
+			if (msg?.toLowerCase().includes('alreadycompleted')) {
+				setAlreadyAnswered(true);
+			} else {
+				setError(msg);
+			}
 		} finally {
 			setLoading(false);
 		}
@@ -152,7 +159,12 @@ export function useGRASurvey() {
 			setSurveyData(data);
 			setOutcomes(data.items);
 		} catch (e) {
-			setError((e as Error).message);
+			const msg = (e as Error).message;
+			if (msg?.toLowerCase().includes('alreadycompleted')) {
+				setAlreadyAnswered(true);
+			} else {
+				setError(msg);
+			}
 		} finally {
 			setLoading(false);
 		}
