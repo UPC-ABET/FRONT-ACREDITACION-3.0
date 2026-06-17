@@ -44,7 +44,9 @@ export function ProjectCreateWizard() {
 			};
 			const res = await projectsService.createFull(body);
 			const projectId = res.data?.id;
-			router.push(projectId ? `/evaluation/projects/${projectId}/edit` : '/evaluation/projects');
+			router.push(
+				projectId ? `/academic-projects/projects/${projectId}/edit` : '/academic-projects/projects',
+			);
 		} catch (err) {
 			const key = err instanceof Error ? err.message : 'projects.create.error.create';
 			showError(tryTranslateReason(t, key));

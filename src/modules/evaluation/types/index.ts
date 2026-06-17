@@ -238,12 +238,15 @@ export type ProjectDetailsStudentResponse = {
 export type ProjectDetailsEvaluatorResponse = {
 	id: number;
 	professorId: number;
+	professorCode: string;
 	professorFirstName: string;
 	professorLastName: string;
 	professorEmail: string;
 	evaluatorTypeId: number;
-	evaluatorTypeName: { en: string; es: string };
-	evaluatorTypeCode: string;
+	evaluatorTypeName: { en: string; es: string } | null;
+	evaluatorTypeCode: string | null;
+	canEvaluate: boolean;
+	maxEvaluators: number | null;
 };
 
 export type CriteriaScoreResponse = {
@@ -318,13 +321,6 @@ export type ProjectDetailsResponse = {
 	}>;
 };
 
-export type ProjectEvaluatorInfoResponse = {
-	firstName: string;
-	lastName: string;
-	evaluatorTypeName: { en: string; es: string };
-	evaluatorTypeCode: string;
-};
-
 export type ProjectEvaluatorResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
@@ -334,12 +330,13 @@ export type ProjectEvaluatorResponse = {
 	projectId: number;
 	professorId: number;
 	evaluatorTypeId: number;
-	evaluatorInfo?: {
-		firstName: string;
-		lastName: string;
-		evaluatorTypeName: { en: string; es: string };
-		evaluatorTypeCode: string;
-	};
+	professorFirstName: string;
+	professorLastName: string;
+	professorCode: string;
+	evaluatorTypeName: { es: string; en: string } | null;
+	evaluatorTypeCode: string | null;
+	canEvaluate: boolean;
+	maxEvaluators: number | null;
 };
 
 export type ProjectResponse = BaseEntity & {

@@ -60,10 +60,13 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	const removeStudentMutation = useRemoveProjectStudent(projectId);
 	const removeEvaluatorMutation = useRemoveProjectEvaluator(projectId);
 
-	const existingEvaluatorTypeIds = useMemo(
-		() => new Set(data?.evaluators?.map((e) => e.evaluatorTypeId) ?? []),
-		[data?.evaluators],
-	);
+	const existingEvaluatorTypeCounts = useMemo(() => {
+		const counts = new Map<number, number>();
+		for (const e of data?.evaluators ?? []) {
+			counts.set(e.evaluatorTypeId, (counts.get(e.evaluatorTypeId) ?? 0) + 1);
+		}
+		return counts;
+	}, [data?.evaluators]);
 
 	const enterEditMode = () => {
 		if (!data) return;
@@ -120,7 +123,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 		return (
 			<div className="space-y-4">
 				<Link
-					href="/evaluation/projects"
+					href="/academic-projects/projects"
 					className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800">
 					<ArrowLeftIcon className="h-4 w-4" />
 					{t('projects.edit.backButton')}
@@ -140,7 +143,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	return (
 		<div className="space-y-6">
 			<Link
-				href="/evaluation/projects"
+				href="/academic-projects/projects"
 				className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800">
 				<ArrowLeftIcon className="h-4 w-4" />
 				{t('projects.edit.backButton')}
@@ -334,8 +337,8 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 											{evaluator.professorFirstName} {evaluator.professorLastName}
 										</span>
 										<span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
-											{evaluator.evaluatorTypeName[locale as 'es' | 'en'] ??
-												evaluator.evaluatorTypeName.es}
+											{evaluator.evaluatorTypeName?.[locale as 'es' | 'en'] ??
+												evaluator.evaluatorTypeName?.es}
 										</span>
 									</div>
 									<span className="text-xs text-zinc-500">{evaluator.professorEmail}</span>
@@ -384,7 +387,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				onOpenChange={setEvaluatorModalOpen}
 				projectId={projectId}
 				projectNumericId={project.id}
-				existingEvaluatorTypeIds={existingEvaluatorTypeIds}
+				existingEvaluatorTypeCounts={existingEvaluatorTypeCounts}
 				onSuccess={() => showToast('success', t('projects.edit.evaluators.modal.successMessage'))}
 			/>
 

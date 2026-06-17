@@ -20,7 +20,7 @@ import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
 import type { ProfessorSearchResponse } from '@/modules/academic';
-import { TYPE_GROUP_CODES, EVALUATOR_GRADING_ROLES } from '@/shared/constants';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
 
 const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
 
@@ -30,7 +30,7 @@ interface AddEvaluatorModalProps {
 	projectId: string;
 	projectNumericId: number;
 	onSuccess?: () => void;
-	existingEvaluatorTypeIds?: Set<number>;
+	existingEvaluatorTypeCounts?: Map<number, number>;
 }
 
 export function AddEvaluatorModal({
@@ -39,7 +39,7 @@ export function AddEvaluatorModal({
 	projectId,
 	projectNumericId,
 	onSuccess,
-	existingEvaluatorTypeIds,
+	existingEvaluatorTypeCounts,
 }: AddEvaluatorModalProps) {
 	const { t, locale } = useI18n();
 	const queryClient = useQueryClient();
@@ -93,14 +93,15 @@ export function AddEvaluatorModal({
 		() =>
 			evaluatorTypes
 				.filter((type) => {
-					if (EVALUATOR_GRADING_ROLES.has(type.code)) return true;
-					return !existingEvaluatorTypeIds?.has(type.id);
+					const current = existingEvaluatorTypeCounts?.get(type.id) ?? 0;
+					const max = type.extra?.maxEvaluators as number | undefined;
+					return max == null || current < max;
 				})
 				.map((type) => ({
 					label: type.name[locale as 'es' | 'en'] ?? type.name.es,
 					value: type.id,
 				})),
-		[evaluatorTypes, locale, existingEvaluatorTypeIds],
+		[evaluatorTypes, locale, existingEvaluatorTypeCounts],
 	);
 
 	const createMutation = useMutation({

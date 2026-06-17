@@ -9,7 +9,7 @@ import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable';
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable';
-import { TYPE_CODES, EVALUATOR_GRADING_ROLES } from '@/shared/constants';
+import { TYPE_CODES } from '@/shared/constants';
 
 interface ProjectEvaluatePageProps {
 	projectId: string;
@@ -42,19 +42,17 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 		[data?.evaluators, professorId],
 	);
 
-	// Use the first grading-role entry as the grading identity; fall back to first entry
+	// Use the first canEvaluate entry as the grading identity; fall back to first entry
 	const evaluatorId = useMemo(() => {
 		if (!myEvaluatorEntries.length) return 0;
-		const grading = myEvaluatorEntries.find((e) =>
-			EVALUATOR_GRADING_ROLES.has(e.evaluatorTypeCode),
-		);
+		const grading = myEvaluatorEntries.find((e) => e.canEvaluate);
 		return (grading ?? myEvaluatorEntries[0]).id;
 	}, [myEvaluatorEntries]);
 
-	// Read-only when the professor has no grading role among their entries
+	// Read-only when none of the professor's entries have canEvaluate
 	const isReadOnly = useMemo(() => {
-		if (!myEvaluatorEntries.length) return false; // not assigned → handled separately
-		return !myEvaluatorEntries.some((e) => EVALUATOR_GRADING_ROLES.has(e.evaluatorTypeCode));
+		if (!myEvaluatorEntries.length) return false;
+		return !myEvaluatorEntries.some((e) => e.canEvaluate);
 	}, [myEvaluatorEntries]);
 
 	// Keep isDocEvaluator for the "view-only" banner
@@ -278,7 +276,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 					<span>
 						{isDocEvaluator
 							? t('projects.evaluate.docReadOnly')
-							: t('projects.evaluate.nonCommitteeReadOnly')}
+							: t('projects.evaluate.readOnlyNoPermission')}
 					</span>
 				</div>
 			) : null}

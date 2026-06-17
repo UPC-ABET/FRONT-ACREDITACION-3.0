@@ -151,14 +151,33 @@ export function GradeProjectsPage() {
 								<TableCell>
 									<div className="flex flex-col gap-1 text-sm text-zinc-700">
 										{project.evaluators?.length ? (
-											project.evaluators.map((ev) => (
-												<div key={ev.id} className="flex flex-col gap-0.5">
-													<span className="font-medium">
-														{ev.firstName} {ev.lastName}
-													</span>
-													<span className="inline-flex w-fit items-center rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 font-mono text-xs text-zinc-500">
-														{ev.evaluatorType[locale as 'es' | 'en'] ?? ev.evaluatorType.es}
-													</span>
+											Object.values(
+												project.evaluators.reduce<
+													Record<number, { name: string; types: { id: number; label: string }[] }>
+												>((acc, ev) => {
+													const pid = ev.professorId;
+													if (!acc[pid])
+														acc[pid] = { name: `${ev.firstName} ${ev.lastName}`, types: [] };
+													if (ev.evaluatorType) {
+														acc[pid].types.push({
+															id: ev.id,
+															label: ev.evaluatorType[locale as 'es' | 'en'] ?? ev.evaluatorType.es,
+														});
+													}
+													return acc;
+												}, {}),
+											).map((entry) => (
+												<div key={entry.name} className="flex flex-col gap-0.5">
+													<span className="font-medium">{entry.name}</span>
+													<div className="flex flex-wrap gap-1">
+														{entry.types.map((tp) => (
+															<span
+																key={tp.id}
+																className="inline-flex items-center rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 font-mono text-xs text-zinc-500">
+																{tp.label}
+															</span>
+														))}
+													</div>
 												</div>
 											))
 										) : (

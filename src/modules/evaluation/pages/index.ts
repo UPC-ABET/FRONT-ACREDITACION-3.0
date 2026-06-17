@@ -8,3 +8,4 @@ export * from './PerformanceLevels';
 export * from './EvaluationCourses';
 export * from './ProjectCreate';
 export { default as CapstoneConsolePage } from './CapstoneConsole';
+export * from './EvaluatorTypesPage';

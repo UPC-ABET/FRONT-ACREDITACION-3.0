@@ -17,7 +17,7 @@ import { useI18n } from '@/providers';
 import { professorsService } from '@/modules/academic/services';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import type { LocalEvaluator } from './ProjectWizardStep2';
-import { TYPE_GROUP_CODES, EVALUATOR_GRADING_ROLES } from '@/shared/constants';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { ProfessorSearchResponse } from '@/modules/academic';
 
 const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
@@ -81,15 +81,22 @@ export function WizardSelectEvaluatorModal({
 		{ enabled: typeGroupId != null },
 	);
 
-	const usedTypeIds = useMemo(() => new Set(existing.map((e) => e.typeId)), [existing]);
+	const typeCountMap = useMemo(() => {
+		const counts = new Map<number, number>();
+		for (const e of existing) {
+			counts.set(e.typeId, (counts.get(e.typeId) ?? 0) + 1);
+		}
+		return counts;
+	}, [existing]);
 
 	const availableTypes = useMemo(
 		() =>
 			allTypes.filter((type) => {
-				if (EVALUATOR_GRADING_ROLES.has(type.code)) return true;
-				return !usedTypeIds.has(type.id);
+				const current = typeCountMap.get(type.id) ?? 0;
+				const max = type.extra?.maxEvaluators as number | undefined;
+				return max == null || current < max;
 			}),
-		[allTypes, usedTypeIds],
+		[allTypes, typeCountMap],
 	);
 
 	const typeOptions = useMemo(

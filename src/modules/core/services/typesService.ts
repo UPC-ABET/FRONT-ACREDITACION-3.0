@@ -1,5 +1,5 @@
 import { ApiResponse } from '@/shared';
-import { apiGet, apiPost } from '@/shared/lib';
+import { apiDelete, apiGet, apiPatch, apiPost } from '@/shared/lib';
 import { ApiError } from '@/shared/lib/apiError';
 
 export interface TypeOption {
@@ -31,5 +31,25 @@ export const typesService = {
 
 	getByGroupCode(groupCode: string): Promise<ApiResponse<TypeOption[]>> {
 		return apiGet(`/types/by-group-code/${encodeURIComponent(groupCode)}`);
+	},
+
+	setCanEvaluate(
+		id: number,
+		body: { canEvaluate: boolean; maxEvaluators?: number },
+	): Promise<ApiResponse<TypeOption>> {
+		return apiPatch(`/types/set-can-evaluate/${id}`, body);
+	},
+
+	create(body: {
+		typeGroupId: number;
+		name: Record<string, string>;
+		canEvaluate?: boolean;
+		maxEvaluators?: number;
+	}): Promise<ApiResponse<TypeOption>> {
+		return apiPost('/types/create', body);
+	},
+
+	delete(id: number): Promise<void> {
+		return apiDelete(`/types/delete/${id}`);
 	},
 };

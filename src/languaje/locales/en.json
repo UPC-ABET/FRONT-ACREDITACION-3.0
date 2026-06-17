@@ -36,7 +36,11 @@
 			"history": "History"
 		},
 		"portfolio": "Portfolio",
-		"banner": "Scraping"
+		"banner": "Scraping",
+		"academicProjects": {
+			"label": "Academic Projects",
+			"evaluators": "Evaluators"
+		}
 	},
 	"scraping": {
 		"title": "Scraping — Data extraction",
@@ -1887,7 +1891,7 @@
 			"notFound": "Project not found.",
 			"backButton": "Back",
 			"docReadOnly": "Your role is DOCENTE. You can view the project and its grades, but you cannot grade.",
-			"nonCommitteeReadOnly": "Only evaluators with the Committee role can grade this project. You are in read-only mode.",
+			"readOnlyNoPermission": "Your evaluator role does not have permission to grade this project. You are in read-only mode.",
 			"notAssigned": "You are not assigned as an evaluator for this project.",
 			"header": {
 				"course": "Course",
@@ -3464,6 +3468,32 @@
 			"observationHint": "At least {{min}} characters are required to save.",
 			"save": "Save evaluation",
 			"saving": "Saving..."
+		}
+	},
+	"academicProjects": {
+		"evaluators": {
+			"title": "Evaluator roles",
+			"description": "Configure roles for evaluating academic projects.",
+			"loading": "Loading roles...",
+			"error": "Could not load evaluator roles.",
+			"empty": "No evaluator roles found.",
+			"addButton": "Add role",
+			"createTitle": "New evaluator role",
+			"nameLabel": "Name",
+			"nameRequired": "You must enter at least one name.",
+			"createError": "Could not create the role. Please try again.",
+			"deleteTitle": "Delete evaluator role",
+			"deleteConfirm": "Are you sure you want to delete the role \"{{name}}\"? This action cannot be undone.",
+			"deleteError": "Could not delete the role. Please try again.",
+			"canGrade": "Can grade",
+			"readOnly": "View only",
+			"maxLabel": "Max. {{max}} evaluators",
+			"editTitle": "Edit settings",
+			"editError": "Could not save changes. Please try again.",
+			"canGradeLabel": "Can grade",
+			"maxEvaluatorsLabel": "Maximum evaluators",
+			"maxEvaluatorsPlaceholder": "No limit",
+			"maxInvalid": "Maximum must be a number greater than 0."
 		}
 	},
 	"portfolio": {
