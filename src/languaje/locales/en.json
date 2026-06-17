@@ -55,7 +55,7 @@
 			"items": {
 				"docentes": {
 					"title": "Professors",
-					"description": "Code, last name, first name and email (code@upc.edu.pe)."
+					"description": "Code, last name, first name and institutional email (from Banner)."
 				},
 				"secciones": {
 					"title": "Sections",

@@ -55,7 +55,7 @@
 			"items": {
 				"docentes": {
 					"title": "Docentes",
-					"description": "Código, apellidos, nombres y correo (código@upc.edu.pe)."
+					"description": "Código, apellidos, nombres y correo institucional (de Banner)."
 				},
 				"secciones": {
 					"title": "Secciones",
