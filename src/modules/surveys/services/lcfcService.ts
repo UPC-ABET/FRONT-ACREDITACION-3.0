@@ -6,6 +6,7 @@ import type {
 	LCFCNotificationSendRequest,
 	LCFCEmailParam,
 	DashboardResponse,
+	AvailableSection,
 } from '../types';
 import type { I18nText } from '@/shared/types';
 
@@ -19,12 +20,30 @@ interface BackendLcfcConfig {
 		surveyType?: string;
 		courseSectionId?: number;
 		courseId?: number;
-		courseName?: string;
+		courseName?: string | I18nText;
 		sectionCode?: string;
 		academicPeriodId?: number;
 		programId?: number;
 		campusId?: number;
 	};
+}
+
+interface BackendGenerateResult {
+	created: number;
+	skipped: number;
+	configs: Array<BackendLcfcConfig & { _status: 'created' | 'skipped' }>;
+}
+
+export interface GenerateConfigResult {
+	created: number;
+	skipped: number;
+}
+
+export interface CloneConfigResult {
+	generated: number;
+	skipped: number;
+	statusCopied: number;
+	sourcePeriodId: number;
 }
 
 function toI18nText(value: string | I18nText | undefined): I18nText {
@@ -37,10 +56,13 @@ function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 	const extra = raw.extra ?? {};
 	const name = toI18nText(raw.userOutcomeName);
 	const description = toI18nText(raw.userOutcomeDescription);
+	const courseNameI18n = toI18nText(extra.courseName);
+	const resolvedCourseName =
+		courseNameI18n.es || courseNameI18n.en || name.es || name.en || `Course ${raw.id}`;
 	return {
 		id: raw.id,
 		outcomeId: raw.outcomeId,
-		courseName: extra.courseName ?? name.es ?? name.en ?? `Course ${raw.id}`,
+		courseName: resolvedCourseName,
 		code: extra.sectionCode ?? '',
 		isActive: raw.isActive,
 		name,
@@ -62,16 +84,29 @@ export async function listLCFCCourses(
 	return { courses: list.map((c) => adaptLcfcConfig(c)) };
 }
 
+export async function getAvailableSections(
+	programId: number,
+	academicPeriodId: number,
+): Promise<AvailableSection[]> {
+	const res = await apiGet(
+		`lcfc/config/available-sections?programId=${programId}&academicPeriodId=${academicPeriodId}`,
+	);
+	return getApiData<AvailableSection[]>(res) ?? [];
+}
+
 export async function generateLCFCConfiguration(
 	modalityTypeId: number,
 	academicPeriodId: number,
 	programId: number,
-) {
-	return apiPost('lcfc/config/generate', {
-		modalityTypeId,
-		academicPeriodId,
-		programId,
-	});
+	courseSectionIds?: number[],
+): Promise<GenerateConfigResult> {
+	const body: Record<string, unknown> = { modalityTypeId, academicPeriodId, programId };
+	if (courseSectionIds && courseSectionIds.length > 0) {
+		body.courseSectionIds = courseSectionIds;
+	}
+	const res = await apiPost('lcfc/config/generate', body);
+	const data = getApiData<BackendGenerateResult>(res);
+	return { created: data?.created ?? 0, skipped: data?.skipped ?? 0 };
 }
 
 export async function updateLCFCConfig(id: number, data: LCFCConfigUpdateRequest) {
@@ -83,17 +118,20 @@ export async function deleteLCFCConfig(id: number) {
 }
 
 export async function cloneLCFCConfiguration(
-	sourcePeriodId: number,
 	targetPeriodId: number,
-	programId = 0,
-	campusId = 0,
-) {
-	return apiPost('lcfc/config/clone', {
-		sourceAcademicPeriodId: sourcePeriodId,
-		targetAcademicPeriodId: targetPeriodId,
-		programId,
-		campusId,
-	});
+	programId: number,
+	sourcePeriodId?: number,
+): Promise<CloneConfigResult> {
+	const body: Record<string, unknown> = { targetAcademicPeriodId: targetPeriodId, programId };
+	if (sourcePeriodId != null) body.sourceAcademicPeriodId = sourcePeriodId;
+	const res = await apiPost('lcfc/config/clone', body);
+	const data = getApiData<CloneConfigResult>(res);
+	return {
+		generated: data?.generated ?? 0,
+		skipped: data?.skipped ?? 0,
+		statusCopied: data?.statusCopied ?? 0,
+		sourcePeriodId: data?.sourcePeriodId ?? 0,
+	};
 }
 
 export async function changeLCFCConfigStatus(configId: number, newStatus: LCFCConfigStatus) {
