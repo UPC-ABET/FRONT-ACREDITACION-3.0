@@ -162,6 +162,13 @@ export interface LCFCConfigUpdateRequest {
 	userOutcomeName?: I18nText;
 	userOutcomeDescription?: I18nText;
 	isActive?: boolean;
+	outcomeId?: number;
+}
+
+export interface LCFCSectionOutcome {
+	outcomeId: number;
+	code: string;
+	name: string;
 }
 
 export interface LCFCStudent {

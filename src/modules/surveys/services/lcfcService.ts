@@ -7,6 +7,7 @@ import type {
 	LCFCEmailParam,
 	DashboardResponse,
 	AvailableSection,
+	LCFCSectionOutcome,
 } from '../types';
 import type { I18nText } from '@/shared/types';
 
@@ -52,6 +53,17 @@ function toI18nText(value: string | I18nText | undefined): I18nText {
 	return value;
 }
 
+/** Coerce an I18nText ({ es, en }) or plain string to a display string (prefers Spanish). */
+function toText(value: unknown): string {
+	if (typeof value === 'string') return value;
+	if (value && typeof value === 'object') {
+		const obj = value as Record<string, unknown>;
+		const picked = obj.es ?? obj.en;
+		if (typeof picked === 'string') return picked;
+	}
+	return '';
+}
+
 function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 	const extra = raw.extra ?? {};
 	const name = toI18nText(raw.userOutcomeName);
@@ -94,6 +106,21 @@ export async function getAvailableSections(
 		`lcfc/config/available-sections?programId=${programId}&academicPeriodId=${academicPeriodId}`,
 	);
 	return getApiData<AvailableSection[]>(res) ?? [];
+}
+
+export async function getLCFCSectionOutcomes(
+	courseSectionId: number,
+	programId: number,
+): Promise<LCFCSectionOutcome[]> {
+	const res = await apiGet(
+		`lcfc/config/section-outcomes?courseSectionId=${courseSectionId}&programId=${programId}`,
+	);
+	const raw = getApiData<Array<{ outcomeId: number; code: unknown; name: unknown }>>(res) ?? [];
+	return raw.map((o) => ({
+		outcomeId: o.outcomeId,
+		code: toText(o.code),
+		name: toText(o.name),
+	}));
 }
 
 export async function generateLCFCConfiguration(
