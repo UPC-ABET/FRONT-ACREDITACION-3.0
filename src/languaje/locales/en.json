@@ -2084,6 +2084,8 @@
 				"urlLabel": "Survey base URL",
 				"urlPlaceholder": "https://your-domain.com/survey/lcfc",
 				"dateLabel": "Registration deadline",
+				"resendLabel": "Resend to students who already received it",
+				"resendHint": "Re-sends the email to students who already have a survey, reusing the same link and refreshing the deadline.",
 				"send": "Send Notifications",
 				"sending": "Sending...",
 				"toast": {

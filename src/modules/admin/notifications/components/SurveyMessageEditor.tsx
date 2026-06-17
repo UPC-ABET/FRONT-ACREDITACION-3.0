@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import { Button, Input, Select } from '@/shared/components';
-import { usePrograms, type ProgramResponse } from '@/modules/academic';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import type { I18nText } from '@/shared/types';
@@ -38,12 +37,10 @@ export function SurveyMessageEditor({ message, onCancel, onSuccess, onError }: P
 	const isEditing = message != null;
 
 	const { data: surveyTypes = [] } = useSurveyTypes();
-	const { data: programs = [] } = usePrograms();
 	const { data: surveyVars = [] } = useSurveyNotifyVars();
 	const { save } = useSurveyMessageMutations();
 
 	const [surveyTypeId, setSurveyTypeId] = useState<number | null>(message?.surveyTypeId ?? null);
-	const [programId, setProgramId] = useState<number | null>(message?.programId ?? null);
 	const [name, setName] = useState<I18nText>(() => asI18n(message?.name));
 	const [subject, setSubject] = useState<I18nText>(() => asI18n(message?.subject));
 	const [body, setBody] = useState<I18nText>(() => asI18n(message?.body));
@@ -64,21 +61,11 @@ export function SurveyMessageEditor({ message, onCancel, onSuccess, onError }: P
 		[surveyTypes, locale],
 	);
 
-	const programOptions = useMemo(
-		() =>
-			programs.map((program: ProgramResponse) => ({
-				value: program.id,
-				label: program.name?.[locale] ?? program.name?.es ?? program.code,
-			})),
-		[programs, locale],
-	);
-
 	const selectedSurveyType =
 		surveyTypeOptions.find((option) => option.value === surveyTypeId) ?? null;
-	const selectedProgram = programOptions.find((option) => option.value === programId) ?? null;
 
 	async function handleSubmit() {
-		if (surveyTypeId == null || programId == null) {
+		if (surveyTypeId == null) {
 			setError(t('admin.notify.survey.error.required'));
 			return;
 		}
@@ -91,7 +78,6 @@ export function SurveyMessageEditor({ message, onCancel, onSuccess, onError }: P
 
 		const payload: SurveyMessageBody = {
 			surveyTypeId,
-			programId,
 			name,
 			subject,
 			body,
@@ -135,17 +121,6 @@ export function SurveyMessageEditor({ message, onCancel, onSuccess, onError }: P
 						value={selectedSurveyType}
 						onChange={(_name, value) =>
 							setSurveyTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
-						}
-					/>
-					<Select
-						name="program"
-						label={t('admin.notify.survey.field.program')}
-						placeholder={t('admin.notify.survey.field.programPlaceholder')}
-						isSearchable
-						options={programOptions}
-						value={selectedProgram}
-						onChange={(_name, value) =>
-							setProgramId(value && !Array.isArray(value) ? Number(value.value) : null)
 						}
 					/>
 				</div>

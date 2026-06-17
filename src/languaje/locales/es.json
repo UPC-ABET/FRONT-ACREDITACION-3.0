@@ -2084,6 +2084,8 @@
 				"urlLabel": "URL base de la encuesta",
 				"urlPlaceholder": "https://tu-dominio.com/encuesta/lcfc",
 				"dateLabel": "Fecha límite de registro",
+				"resendLabel": "Reenviar a quienes ya recibieron",
+				"resendHint": "Vuelve a enviar el correo a los estudiantes que ya tienen encuesta, reutilizando el mismo enlace y actualizando la fecha límite.",
 				"send": "Enviar Notificaciones",
 				"sending": "Enviando...",
 				"toast": {

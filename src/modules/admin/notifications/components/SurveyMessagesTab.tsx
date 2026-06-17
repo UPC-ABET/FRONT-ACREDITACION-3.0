@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Button, ConfirmDialog, DataTable, TableErrorState, Toast } from '@/shared/components';
-import { usePrograms, type ProgramResponse } from '@/modules/academic';
 import { useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getErrorMessage } from '@/shared/lib/apiError';
@@ -25,7 +24,6 @@ export function SurveyMessagesTab() {
 	const { toast, showToast, clearToast } = useApiErrorToast();
 	const { data: messages = [], isLoading, isError, refetch } = useSurveyMessages();
 	const { data: surveyTypes = [] } = useSurveyTypes();
-	const { data: programs = [] } = usePrograms();
 	const { remove } = useSurveyMessageMutations();
 
 	const [view, setView] = useState<View>({ mode: 'list' });
@@ -38,14 +36,6 @@ export function SurveyMessagesTab() {
 		}
 		return map;
 	}, [surveyTypes, locale]);
-
-	const programNameById = useMemo(() => {
-		const map = new Map<number, string>();
-		for (const program of programs as ProgramResponse[]) {
-			map.set(program.id, program.name?.[locale] ?? program.name?.es ?? program.code);
-		}
-		return map;
-	}, [programs, locale]);
 
 	const handleDelete = async () => {
 		if (!pendingDelete) return;
@@ -65,11 +55,6 @@ export function SurveyMessagesTab() {
 				id: 'surveyType',
 				header: t('admin.notify.survey.col.surveyType'),
 				cell: ({ row }) => surveyTypeNameById.get(row.original.surveyTypeId) ?? '—',
-			},
-			{
-				id: 'program',
-				header: t('admin.notify.survey.col.program'),
-				cell: ({ row }) => programNameById.get(row.original.programId) ?? '—',
 			},
 			{
 				id: 'name',
@@ -105,7 +90,7 @@ export function SurveyMessagesTab() {
 				),
 			},
 		],
-		[t, locale, surveyTypeNameById, programNameById],
+		[t, locale, surveyTypeNameById],
 	);
 
 	if (view.mode !== 'list') {
