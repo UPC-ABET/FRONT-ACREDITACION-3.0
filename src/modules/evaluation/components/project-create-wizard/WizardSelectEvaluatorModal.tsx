@@ -81,11 +81,22 @@ export function WizardSelectEvaluatorModal({
 		{ enabled: typeGroupId != null },
 	);
 
-	const usedTypeIds = useMemo(() => new Set(existing.map((e) => e.typeId)), [existing]);
+	const typeCountMap = useMemo(() => {
+		const counts = new Map<number, number>();
+		for (const e of existing) {
+			counts.set(e.typeId, (counts.get(e.typeId) ?? 0) + 1);
+		}
+		return counts;
+	}, [existing]);
 
 	const availableTypes = useMemo(
-		() => allTypes.filter((type) => !usedTypeIds.has(type.id)),
-		[allTypes, usedTypeIds],
+		() =>
+			allTypes.filter((type) => {
+				const current = typeCountMap.get(type.id) ?? 0;
+				const max = type.extra?.maxEvaluators as number | undefined;
+				return max == null || current < max;
+			}),
+		[allTypes, typeCountMap],
 	);
 
 	const typeOptions = useMemo(

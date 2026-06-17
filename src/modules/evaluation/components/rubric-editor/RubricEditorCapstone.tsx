@@ -113,9 +113,7 @@ export function RubricEditorCapstone({
 										handleDeleteCriteriaLocal(activeCommission.id, outcome.id, criteriaId)
 									}
 									onNotifyRetry={() => onNotify('warning', messages.autosaveRetry)}
-									onConfirmDelete={() =>
-										window.confirm(t('rubrics.editor.capstone.criteria.confirmDelete'))
-									}
+									onConfirmDelete={() => true}
 								/>
 							))}
 						</OutcomeCard>

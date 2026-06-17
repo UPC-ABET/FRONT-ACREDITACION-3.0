@@ -446,46 +446,48 @@ export function ProjectRubricCapstoneTable({
 				</table>
 			</div>
 
-			<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
-				{(hasMissingStatus || !allFilled) && (
-					<ul className="space-y-1 text-sm">
-						{hasMissingStatus && (
-							<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
-								<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
-								{t('projects.evaluate.rubric.missingStatus')}
-							</li>
-						)}
-						{!allFilled && !hasMissingStatus && (
-							<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
-								<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
-								{t('projects.evaluate.capstone.fillAll')}
-							</li>
-						)}
-					</ul>
-				)}
-				<div className="flex justify-end">
-					<button
-						type="button"
-						disabled={!allFilled || isPending || readOnly}
-						className={cn(
-							'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-							allFilled && !isPending && !readOnly
-								? 'bg-red-600 text-white hover:bg-red-700'
-								: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
-						)}
-						onClick={handleSave}>
-						{readOnly
-							? t('projects.evaluate.rubric.readOnly')
-							: t('projects.evaluate.rubric.saveButton')}
-						{isPending && (
-							<span
-								aria-hidden="true"
-								className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-0.125em]"
-							/>
-						)}
-					</button>
+			{!readOnly && (
+				<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
+					{(hasMissingStatus || !allFilled) && (
+						<ul className="space-y-1 text-sm">
+							{hasMissingStatus && (
+								<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
+									<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
+									{t('projects.evaluate.rubric.missingStatus')}
+								</li>
+							)}
+							{!allFilled && !hasMissingStatus && (
+								<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
+									<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
+									{t('projects.evaluate.capstone.fillAll')}
+								</li>
+							)}
+						</ul>
+					)}
+					<div className="flex justify-end">
+						<button
+							type="button"
+							disabled={!allFilled || isPending || readOnly}
+							className={cn(
+								'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
+								allFilled && !isPending && !readOnly
+									? 'bg-red-600 text-white hover:bg-red-700'
+									: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
+							)}
+							onClick={handleSave}>
+							{readOnly
+								? t('projects.evaluate.rubric.readOnly')
+								: t('projects.evaluate.rubric.saveButton')}
+							{isPending && (
+								<span
+									aria-hidden="true"
+									className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-0.125em]"
+								/>
+							)}
+						</button>
+					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 }

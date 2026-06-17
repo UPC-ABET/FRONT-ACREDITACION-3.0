@@ -37,18 +37,32 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 		return new Set(statusTypes.filter((s) => nrNaCodes.has(s.code)).map((s) => s.id));
 	}, [statusTypes]);
 
-	const evaluatorId = useMemo(() => {
-		if (!data?.evaluators?.length || !professorId) return 0;
-		const match = data.evaluators.find((e) => e.professorId === professorId);
-		return match?.id ?? 0;
-	}, [data?.evaluators, professorId]);
+	const myEvaluatorEntries = useMemo(
+		() => (data?.evaluators ?? []).filter((e) => e.professorId === professorId),
+		[data?.evaluators, professorId],
+	);
 
-	const isDocEvaluator = useMemo(() => {
-		if (!data?.evaluators?.length || !professorId) return false;
-		const match = data.evaluators.find((e) => e.professorId === professorId);
-		if (!match) return false;
-		return match.evaluatorTypeCode === TYPE_CODES.EVALUATOR_TYPE_CODE.TEACHER;
-	}, [data?.evaluators, professorId]);
+	// Use the first canEvaluate entry as the grading identity; fall back to first entry
+	const evaluatorId = useMemo(() => {
+		if (!myEvaluatorEntries.length) return 0;
+		const grading = myEvaluatorEntries.find((e) => e.canEvaluate);
+		return (grading ?? myEvaluatorEntries[0]).id;
+	}, [myEvaluatorEntries]);
+
+	// Read-only when none of the professor's entries have canEvaluate
+	const isReadOnly = useMemo(() => {
+		if (!myEvaluatorEntries.length) return false;
+		return !myEvaluatorEntries.some((e) => e.canEvaluate);
+	}, [myEvaluatorEntries]);
+
+	// Keep isDocEvaluator for the "view-only" banner
+	const isDocEvaluator = useMemo(
+		() =>
+			myEvaluatorEntries.some(
+				(e) => e.evaluatorTypeCode === TYPE_CODES.EVALUATOR_TYPE_CODE.TEACHER,
+			),
+		[myEvaluatorEntries],
+	);
 
 	const initialQualifStatuses = useMemo<Record<number, number | null>>(() => {
 		const result: Record<number, number | null> = {};
@@ -215,23 +229,25 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 									</div>
 								</div>
 
-								<select
-									value={qualifStatuses[student.id] ?? ''}
-									onChange={(e) =>
-										setQualifStatuses((prev) => ({
-											...prev,
-											[student.id]: Number(e.target.value),
-										}))
-									}
-									disabled={isLoadingStatuses || isDocEvaluator}
-									className="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-red-600 disabled:opacity-50">
-									<option value="">—</option>
-									{statusTypes.map((s) => (
-										<option key={s.id} value={s.id}>
-											{s.name[locale as 'es' | 'en'] ?? s.name.es}
-										</option>
-									))}
-								</select>
+								{!isReadOnly && (
+									<select
+										value={qualifStatuses[student.id] ?? ''}
+										onChange={(e) =>
+											setQualifStatuses((prev) => ({
+												...prev,
+												[student.id]: Number(e.target.value),
+											}))
+										}
+										disabled={isLoadingStatuses}
+										className="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-red-600 disabled:opacity-50">
+										<option value="">—</option>
+										{statusTypes.map((s) => (
+											<option key={s.id} value={s.id}>
+												{s.name[locale as 'es' | 'en'] ?? s.name.es}
+											</option>
+										))}
+									</select>
+								)}
 
 								<div className="flex flex-col items-end gap-0.5">
 									<span className="text-xs font-medium text-zinc-400">
@@ -254,14 +270,18 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 				</div>
 			</div>
 
-			{isDocEvaluator ? (
+			{isReadOnly ? (
 				<div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
 					<EyeIcon className="h-5 w-5 shrink-0 text-blue-500" />
-					<span>{t('projects.evaluate.docReadOnly')}</span>
+					<span>
+						{isDocEvaluator
+							? t('projects.evaluate.docReadOnly')
+							: t('projects.evaluate.readOnlyNoPermission')}
+					</span>
 				</div>
 			) : null}
 
-			{!evaluatorId && !isDocEvaluator ? (
+			{!evaluatorId && !isReadOnly ? (
 				<div className="flex items-center gap-3 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
 					<ExclamationTriangleIcon className="h-5 w-5 shrink-0 text-yellow-500" />
 					<span>{t('projects.evaluate.notAssigned')}</span>
@@ -318,7 +338,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 							projectId={projectId}
 							qualifStatuses={qualifStatuses}
 							nrNaTypeIds={nrNaTypeIds}
-							readOnly={isDocEvaluator}
+							readOnly={isReadOnly}
 							disableDuplicate={careerIds.length > 1}
 							onDirtyChange={(dirty) => handleDirtyChange(effectiveStudyPlanCourseId!, dirty)}
 							commissions={activeRubric.commissions}
@@ -332,7 +352,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 							projectId={projectId}
 							qualifStatuses={qualifStatuses}
 							nrNaTypeIds={nrNaTypeIds}
-							readOnly={isDocEvaluator}
+							readOnly={isReadOnly}
 							disableDuplicate={careerIds.length > 1}
 							onDirtyChange={(dirty) => handleDirtyChange(effectiveStudyPlanCourseId!, dirty)}
 						/>

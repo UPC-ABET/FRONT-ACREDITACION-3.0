@@ -16,6 +16,7 @@ import {
 	HomeIcon,
 	ArrowRightStartOnRectangleIcon,
 	ClipboardDocumentListIcon,
+	ClipboardDocumentCheckIcon,
 	DocumentChartBarIcon,
 	ShieldCheckIcon,
 	DocumentCheckIcon,
@@ -56,12 +57,17 @@ export function AppSidebar() {
 			],
 		},
 		{
-			name: t('nav.evaluation.label'),
+			name: t('nav.academicProjects.label'),
 			icon: AcademicCapIcon,
 			children: [
-				{ name: t('nav.projects'), href: '/evaluation/projects' },
-				{ name: t('nav.gradeProjects'), href: '/evaluation/grade-projects' },
+				{ name: t('nav.academicProjects.evaluators'), href: '/academic-projects/evaluators' },
+				{ name: t('nav.projects'), href: '/academic-projects/projects' },
 			],
+		},
+		{
+			name: t('nav.evaluation.label'),
+			icon: ClipboardDocumentCheckIcon,
+			children: [{ name: t('nav.gradeProjects'), href: '/evaluation/grade-projects' }],
 		},
 		{ name: t('nav.portfolio'), href: '/portfolio', icon: BriefcaseIcon },
 

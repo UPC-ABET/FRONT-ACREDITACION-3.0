@@ -81,3 +81,11 @@ export const TYPE_CODES = {
 		TEACHER: 'DOC',
 	},
 } as const;
+
+/**
+ * Evaluator role codes that are allowed to grade projects.
+ * Add new codes here when additional roles gain grading permissions.
+ */
+export const EVALUATOR_GRADING_ROLES = new Set<string>([
+	TYPE_CODES.EVALUATOR_LIMITED_TYPE.COMMITTEE,
+]);

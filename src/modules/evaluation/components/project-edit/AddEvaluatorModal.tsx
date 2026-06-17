@@ -30,7 +30,7 @@ interface AddEvaluatorModalProps {
 	projectId: string;
 	projectNumericId: number;
 	onSuccess?: () => void;
-	existingEvaluatorTypeIds?: Set<number>;
+	existingEvaluatorTypeCounts?: Map<number, number>;
 }
 
 export function AddEvaluatorModal({
@@ -39,7 +39,7 @@ export function AddEvaluatorModal({
 	projectId,
 	projectNumericId,
 	onSuccess,
-	existingEvaluatorTypeIds,
+	existingEvaluatorTypeCounts,
 }: AddEvaluatorModalProps) {
 	const { t, locale } = useI18n();
 	const queryClient = useQueryClient();
@@ -92,12 +92,16 @@ export function AddEvaluatorModal({
 	const roleOptions = useMemo(
 		() =>
 			evaluatorTypes
-				.filter((type) => !existingEvaluatorTypeIds?.has(type.id))
+				.filter((type) => {
+					const current = existingEvaluatorTypeCounts?.get(type.id) ?? 0;
+					const max = type.extra?.maxEvaluators as number | undefined;
+					return max == null || current < max;
+				})
 				.map((type) => ({
 					label: type.name[locale as 'es' | 'en'] ?? type.name.es,
 					value: type.id,
 				})),
-		[evaluatorTypes, locale, existingEvaluatorTypeIds],
+		[evaluatorTypes, locale, existingEvaluatorTypeCounts],
 	);
 
 	const createMutation = useMutation({

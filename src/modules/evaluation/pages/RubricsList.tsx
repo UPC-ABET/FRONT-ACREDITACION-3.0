@@ -29,8 +29,7 @@ import {
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useI18n, useABET } from '@/providers';
-import { programsService } from '@/modules/academic/services';
-import { useStudyPlanCourses } from '@/modules/academic/hooks';
+import { usePrograms, useStudyPlanCourses } from '@/modules/academic/hooks';
 import { useRubrics, useDeleteRubric } from '../hooks';
 import { mapRubricToRow } from '../utils/rubricsMappers';
 import type { RubricListRow } from '../types';
@@ -50,12 +49,10 @@ export function RubricsListPage() {
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
-	const { data: programs = [] } = useQuery({
-		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId: selectedPeriodId }],
-		queryFn: () =>
-			programsService.getByFilters({ isActive: true, schoolFilter: true }).then((r) => r.data),
-		enabled: !!selectedPeriodId && !!schoolId,
-	});
+	const { data: programs = [] } = usePrograms(
+		{ isActive: true, schoolFilter: true },
+		{ enabled: !!selectedPeriodId && !!schoolId },
+	);
 
 	const { data: evaluableSpcList = [] } = useStudyPlanCourses(
 		{

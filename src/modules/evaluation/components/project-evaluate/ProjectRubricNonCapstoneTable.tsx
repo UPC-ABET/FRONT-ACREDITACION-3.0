@@ -383,43 +383,50 @@ export function ProjectRubricNonCapstoneTable({
 				</table>
 			</div>
 
-			<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
-				<ValidationMessages
-					items={[
-						...(hasMissingStatus
-							? [{ message: t('projects.evaluate.rubric.missingStatus'), type: 'warning' as const }]
-							: []),
-						...(!allFilled && !hasMissingStatus
-							? [{ message: t('projects.evaluate.rubric.fillAll'), type: 'warning' as const }]
-							: []),
-						...(hasErrors
-							? [{ message: t('projects.evaluate.rubric.errorRange'), type: 'error' as const }]
-							: []),
-					]}
-				/>
-				<div className="flex justify-end">
-					<button
-						type="button"
-						disabled={!canSave || isPending || readOnly}
-						onClick={handleSave}
-						className={cn(
-							'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-							canSave && !isPending && !readOnly
-								? 'bg-red-600 text-white hover:bg-red-700'
-								: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
-						)}>
-						{readOnly
-							? t('projects.evaluate.rubric.readOnly')
-							: t('projects.evaluate.rubric.saveButton')}
-						{isPending && (
-							<span
-								aria-hidden="true"
-								className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-0.125em]"
-							/>
-						)}
-					</button>
+			{!readOnly && (
+				<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
+					<ValidationMessages
+						items={[
+							...(hasMissingStatus
+								? [
+										{
+											message: t('projects.evaluate.rubric.missingStatus'),
+											type: 'warning' as const,
+										},
+									]
+								: []),
+							...(!allFilled && !hasMissingStatus
+								? [{ message: t('projects.evaluate.rubric.fillAll'), type: 'warning' as const }]
+								: []),
+							...(hasErrors
+								? [{ message: t('projects.evaluate.rubric.errorRange'), type: 'error' as const }]
+								: []),
+						]}
+					/>
+					<div className="flex justify-end">
+						<button
+							type="button"
+							disabled={!canSave || isPending || readOnly}
+							onClick={handleSave}
+							className={cn(
+								'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
+								canSave && !isPending && !readOnly
+									? 'bg-red-600 text-white hover:bg-red-700'
+									: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
+							)}>
+							{readOnly
+								? t('projects.evaluate.rubric.readOnly')
+								: t('projects.evaluate.rubric.saveButton')}
+							{isPending && (
+								<span
+									aria-hidden="true"
+									className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-0.125em]"
+								/>
+							)}
+						</button>
+					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 }

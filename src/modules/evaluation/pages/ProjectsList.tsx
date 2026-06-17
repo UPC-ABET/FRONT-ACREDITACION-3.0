@@ -30,8 +30,7 @@ import { cn } from '@/shared/lib/utils';
 import { ApiError } from '@/shared/lib';
 import { interpolate, tryTranslateReason } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
-import { programsService } from '@/modules/academic/services';
-import { useStudyPlanCourses } from '@/modules/academic/hooks';
+import { usePrograms, useStudyPlanCourses } from '@/modules/academic/hooks';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { projectsService } from '../services';
@@ -53,16 +52,10 @@ export function ProjectsListPage() {
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
-	const { data: programs = [] } = useQuery({
-		queryKey: [
-			'programs',
-			'filtered',
-			{ schoolId, academicPeriodId: selectedPeriodId, isActive: true },
-		],
-		queryFn: () =>
-			programsService.getByFilters({ isActive: true, schoolFilter: true }).then((r) => r.data),
-		enabled: !!selectedPeriodId && !!schoolId,
-	});
+	const { data: programs = [] } = usePrograms(
+		{ isActive: true, schoolFilter: true },
+		{ enabled: !!selectedPeriodId && !!schoolId },
+	);
 
 	const { data: evaluableSpcList = [] } = useStudyPlanCourses(
 		{
@@ -178,7 +171,7 @@ export function ProjectsListPage() {
 							{t('projects.list.exportButton')}
 						</button>
 						<Link
-							href="/evaluation/projects/new"
+							href="/academic-projects/projects/new"
 							className={cn(
 								buttonVariants({ variant: 'primary', size: 'md' }),
 								'inline-flex items-center gap-1.5',
@@ -266,20 +259,45 @@ export function ProjectsListPage() {
 									</span>
 								</TableCell>
 								<TableCell>
-									<div className="flex flex-col gap-0.5">
+									<div className="flex flex-col gap-1 text-sm text-zinc-700">
 										{project.evaluators?.length ? (
-											project.evaluators.map((ev) => (
-												<div key={ev.id} className="flex items-center gap-2">
-													<span className="h-1.5 w-1.5 rounded-full bg-zinc-200" />
-													<span>
-														{ev.evaluatorInfo
-															? `${ev.evaluatorInfo.firstName} ${ev.evaluatorInfo.lastName}`
-															: `#${ev.professorId}`}
-													</span>
+											Object.values(
+												project.evaluators.reduce<
+													Record<
+														number,
+														{ pid: number; name: string; types: { id: number; label: string }[] }
+													>
+												>((acc, ev) => {
+													const pid = ev.professorId;
+													const name =
+														`${ev.professorFirstName} ${ev.professorLastName}`.trim() || `#${pid}`;
+													if (!acc[pid]) acc[pid] = { pid, name, types: [] };
+													if (ev.evaluatorTypeName) {
+														acc[pid].types.push({
+															id: ev.evaluatorTypeId,
+															label:
+																ev.evaluatorTypeName[locale as 'es' | 'en'] ??
+																ev.evaluatorTypeName.es,
+														});
+													}
+													return acc;
+												}, {}),
+											).map((entry) => (
+												<div key={entry.pid} className="flex flex-col gap-0.5">
+													<span className="font-medium">{entry.name}</span>
+													<div className="flex flex-wrap gap-1">
+														{entry.types.map((tp) => (
+															<span
+																key={tp.id}
+																className="inline-flex items-center rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 font-mono text-xs text-zinc-500">
+																{tp.label}
+															</span>
+														))}
+													</div>
 												</div>
 											))
 										) : (
-											<span className="text-zinc-400 text-sm">—</span>
+											<span className="text-zinc-400">—</span>
 										)}
 									</div>
 								</TableCell>
@@ -306,7 +324,7 @@ export function ProjectsListPage() {
 								<TableCell className="text-center">
 									<div className="flex justify-center gap-1">
 										<Link
-											href={`/evaluation/projects/${project.id}/edit`}
+											href={`/academic-projects/projects/${project.id}/edit`}
 											className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
 											title={t('projects.list.table.edit')}>
 											<PencilIcon className="h-4 w-4" />

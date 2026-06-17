@@ -36,7 +36,11 @@
 			"history": "Historial"
 		},
 		"portfolio": "Portafolio",
-		"banner": "Scraping"
+		"banner": "Scraping",
+		"academicProjects": {
+			"label": "Proyectos Académicos",
+			"evaluators": "Evaluadores"
+		}
 	},
 	"scraping": {
 		"title": "Scraping — Extracción de datos",
@@ -974,7 +978,8 @@
 			"accept": "Aceptar",
 			"decline": "Rechazar",
 			"cancel": "Cancelar",
-			"save": "Guardar"
+			"save": "Guardar",
+			"delete": "Eliminar"
 		},
 		"title": {
 			"form": "Nuevo Registro",
@@ -1887,6 +1892,7 @@
 			"notFound": "Proyecto no encontrado.",
 			"backButton": "Volver",
 			"docReadOnly": "Tu rol es DOCENTE. Puedes ver el proyecto y las calificaciones, pero no puedes calificar.",
+			"readOnlyNoPermission": "Tu rol de evaluador no tiene permisos para calificar este proyecto. Estás en modo lectura.",
 			"notAssigned": "No estás asignado como evaluador en este proyecto.",
 			"header": {
 				"course": "Curso",
@@ -3465,6 +3471,32 @@
 			"observationHint": "Requiere al menos {{min}} caracteres para guardar.",
 			"save": "Guardar evaluación",
 			"saving": "Guardando..."
+		}
+	},
+	"academicProjects": {
+		"evaluators": {
+			"title": "Roles de evaluador",
+			"description": "Configura los roles para calificar proyectos académicos.",
+			"loading": "Cargando roles...",
+			"error": "No fue posible cargar los roles de evaluador.",
+			"empty": "No hay roles de evaluador registrados.",
+			"addButton": "Agregar rol",
+			"createTitle": "Nuevo rol de evaluador",
+			"nameLabel": "Nombre",
+			"nameRequired": "Debes ingresar al menos un nombre.",
+			"createError": "No se pudo crear el rol. Inténtalo de nuevo.",
+			"deleteTitle": "Eliminar rol de evaluador",
+			"deleteConfirm": "¿Estás seguro de que deseas eliminar el rol \"{{name}}\"? Esta acción no se puede deshacer.",
+			"deleteError": "No se pudo eliminar el rol. Inténtalo de nuevo.",
+			"canGrade": "Puede calificar",
+			"readOnly": "Solo ver",
+			"maxLabel": "Máx. {{max}} evaluadores",
+			"editTitle": "Editar configuración",
+			"editError": "No se pudo guardar los cambios. Inténtalo de nuevo.",
+			"canGradeLabel": "Puede calificar",
+			"maxEvaluatorsLabel": "Máximo de evaluadores",
+			"maxEvaluatorsPlaceholder": "Sin límite",
+			"maxInvalid": "El máximo debe ser un número mayor a 0."
 		}
 	},
 	"portfolio": {

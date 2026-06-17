@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { CheckIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
 	Dialog,
@@ -16,8 +15,11 @@ import {
 } from '@/shared/components/ui';
 import { LoadingState } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
-import { programsService } from '@/modules/academic/services';
-import { useStudyPlanCourses, useEnableEvaluationCourse } from '@/modules/academic/hooks';
+import {
+	useStudyPlanCourses,
+	useEnableEvaluationCourse,
+	usePrograms,
+} from '@/modules/academic/hooks';
 import { StudyPlanCourseResponse } from '@/modules/academic';
 
 interface AddEvaluationCourseModalProps {
@@ -61,12 +63,10 @@ export function AddEvaluationCourseModal({
 		}
 	}, [open]);
 
-	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
-		queryKey: ['programs', 'filtered', { schoolId, academicPeriodId, isActive: true }],
-		queryFn: () =>
-			programsService.getByFilters({ isActive: true, schoolFilter: true }).then((r) => r.data),
-		enabled: !!schoolId && !!academicPeriodId && open,
-	});
+	const { data: programs = [], isLoading: loadingPrograms } = usePrograms(
+		{ isActive: true, schoolFilter: true },
+		{ enabled: !!schoolId && !!academicPeriodId && open },
+	);
 
 	const spcFilters = useMemo(
 		() => ({

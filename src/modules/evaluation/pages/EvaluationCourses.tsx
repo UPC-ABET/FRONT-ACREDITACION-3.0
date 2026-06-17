@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
@@ -29,8 +28,8 @@ import {
 	useAcademicPeriods,
 	useStudyPlanCourses,
 	useEnableEvaluationCourse,
+	usePrograms,
 } from '@/modules/academic/hooks';
-import { programsService } from '@/modules/academic/services';
 import { AddEvaluationCourseModal } from '../components/evaluation-courses/AddEvaluationCourseModal';
 import { StudyPlanCourseResponse } from '@/modules/academic';
 
@@ -54,16 +53,10 @@ export function EvaluationCoursesPage() {
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 	const selectedPeriodCode = periods.find((p) => p.id === selectedPeriodId)?.code ?? '';
 
-	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
-		queryKey: [
-			'programs',
-			'filtered',
-			{ schoolId, academicPeriodId: selectedPeriodId, isActive: true },
-		],
-		queryFn: () =>
-			programsService.getByFilters({ isActive: true, schoolFilter: true }).then((r) => r.data),
-		enabled: !!selectedPeriodId && !!schoolId,
-	});
+	const { data: programs = [], isLoading: loadingPrograms } = usePrograms(
+		{ isActive: true, schoolFilter: true },
+		{ enabled: !!selectedPeriodId && !!schoolId },
+	);
 
 	const programOptions: AnyOption[] = useMemo(
 		() => programs.map((p) => ({ label: p.name[locale as 'es' | 'en'] ?? p.name.es, value: p.id })),
