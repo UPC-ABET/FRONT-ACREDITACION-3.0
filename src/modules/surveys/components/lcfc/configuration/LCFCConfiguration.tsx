@@ -191,7 +191,10 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 	}
 
 	function handleClone() {
-		if (!academicPeriodId || !programId) return;
+		if (!academicPeriodId || !programId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
+			return;
+		}
 		clone(academicPeriodId, programId, (result) => {
 			setCloneDialogOpen(false);
 			const msg = t('surveys.lcfc.config.toastClonedCounts')
@@ -407,7 +410,9 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 					</DialogHeader>
 					<p className="text-sm text-zinc-600 py-2">{t('surveys.lcfc.config.cloneDialogBody')}</p>
 					<DialogFooter showCloseButton>
-						<Button onClick={handleClone}>{t('surveys.lcfc.config.cloneConfirm')}</Button>
+						<Button onClick={handleClone} disabled={loading}>
+							{loading ? t('surveys.shared.generating') : t('surveys.lcfc.config.cloneConfirm')}
+						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>

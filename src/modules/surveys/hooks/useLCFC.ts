@@ -107,11 +107,15 @@ export function useLCFCConfiguration() {
 			onSuccess?: (result: CloneConfigResult) => void,
 			sourcePeriodId?: number,
 		) => {
+			setLoading(true);
+			setError(null);
 			try {
 				const result = await cloneLCFCConfiguration(targetPeriodId, programId, sourcePeriodId);
 				onSuccess?.(result);
 			} catch (e) {
-				setError((e as Error).message);
+				setError((e as Error).message ?? 'error.generic');
+			} finally {
+				setLoading(false);
 			}
 		},
 		[],
