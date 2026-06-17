@@ -47,7 +47,33 @@
 		"subtitle": "Extracción de datos académicos desde Banner y Planner.",
 		"tabs": {
 			"banner": "Banner",
-			"planner": "Planner"
+			"planner": "Planner",
+			"exports": "Descargas"
+		},
+		"exports": {
+			"title": "Generar Excels de carga",
+			"subtitle": "Genera los archivos Excel listos para el módulo de carga a partir de los últimos datos extraídos.",
+			"download": "Descargar",
+			"downloaded": "Archivo generado correctamente.",
+			"downloadFailed": "No se pudo generar el archivo.",
+			"items": {
+				"docentes": {
+					"title": "Docentes",
+					"description": "Código, apellidos, nombres y correo institucional (de Banner)."
+				},
+				"secciones": {
+					"title": "Secciones",
+					"description": "Curso, sección, docente, campus y modalidad."
+				},
+				"alumnosMatriculados": {
+					"title": "Alumnos matriculados",
+					"description": "Código, apellidos, nombres, programa y campus."
+				},
+				"alumnosSecciones": {
+					"title": "Alumnos por sección",
+					"description": "Relación de alumno y sección."
+				}
+			}
 		}
 	},
 	"planner": {

@@ -47,7 +47,33 @@
 		"subtitle": "Academic data extraction from Banner and Planner.",
 		"tabs": {
 			"banner": "Banner",
-			"planner": "Planner"
+			"planner": "Planner",
+			"exports": "Downloads"
+		},
+		"exports": {
+			"title": "Generate upload Excels",
+			"subtitle": "Build the Excel files ready for the upload module from the latest extracted data.",
+			"download": "Download",
+			"downloaded": "File generated successfully.",
+			"downloadFailed": "The file could not be generated.",
+			"items": {
+				"docentes": {
+					"title": "Professors",
+					"description": "Code, last name, first name and institutional email (from Banner)."
+				},
+				"secciones": {
+					"title": "Sections",
+					"description": "Course, section, professor, campus and modality."
+				},
+				"alumnosMatriculados": {
+					"title": "Enrolled students",
+					"description": "Code, last name, first name, program and campus."
+				},
+				"alumnosSecciones": {
+					"title": "Students by section",
+					"description": "Student-to-section relationship."
+				}
+			}
 		}
 	},
 	"planner": {
