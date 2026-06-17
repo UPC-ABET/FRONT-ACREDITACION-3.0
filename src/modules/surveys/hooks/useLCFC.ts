@@ -15,6 +15,7 @@ import {
 	getAcademicPeriods,
 	listLCFCCourses,
 	generateLCFCConfiguration,
+	getAvailableSections,
 	cloneLCFCConfiguration,
 	changeLCFCConfigStatus,
 	updateLCFCConfig,
@@ -22,7 +23,9 @@ import {
 	getLCFCEmailParams,
 	sendLCFCNotification,
 	generateLCFCPerceptionReport,
+	type GenerateConfigResult,
 } from '../services';
+import type { AvailableSection } from '../types';
 
 export function useLCFCCycles() {
 	const { periods, loading, error, load: _load } = useLCFCPeriods();
@@ -78,11 +81,17 @@ export function useLCFCConfiguration() {
 			modalityTypeId: number,
 			academicPeriodId: number,
 			programId: number,
-			onSuccess?: () => void,
+			courseSectionIds?: number[],
+			onSuccess?: (result: GenerateConfigResult) => void,
 		) => {
 			try {
-				await generateLCFCConfiguration(modalityTypeId, academicPeriodId, programId);
-				onSuccess?.();
+				const result = await generateLCFCConfiguration(
+					modalityTypeId,
+					academicPeriodId,
+					programId,
+					courseSectionIds,
+				);
+				onSuccess?.(result);
 			} catch (e) {
 				setError((e as Error).message);
 			}
@@ -178,6 +187,26 @@ export function useLCFCNotification() {
 	);
 
 	return { params, loading, sending, error, loadParams, send };
+}
+
+export function useLCFCAvailableSections() {
+	const [sections, setSections] = useState<AvailableSection[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const load = useCallback(async (programId: number, academicPeriodId: number) => {
+		setLoading(true);
+		setError(null);
+		try {
+			setSections(await getAvailableSections(programId, academicPeriodId));
+		} catch (e) {
+			setError((e as Error).message);
+		} finally {
+			setLoading(false);
+		}
+	}, []);
+
+	return { sections, loading, error, load };
 }
 
 export function useLCFCReports() {
