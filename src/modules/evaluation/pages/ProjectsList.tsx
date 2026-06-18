@@ -1,21 +1,14 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
 import { ArrowDownTrayIcon, PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
 	Card,
+	DataTable,
 	PageHeader,
-	Table,
-	TableBody,
-	TableCell,
 	TableEmptyState,
-	TableErrorState,
-	TableHead,
-	TableHeader,
-	TableLoadingState,
-	TableRow,
 	Dialog,
 	DialogContent,
 	DialogHeader,
@@ -32,9 +25,8 @@ import { interpolate, tryTranslateReason } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import { usePrograms, useStudyPlanCourses } from '@/modules/academic/hooks';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
-import { TYPE_GROUP_CODES } from '@/shared/constants';
-import { projectsService } from '../services';
-import { useDeleteProject, useExportProjectGrades } from '../hooks';
+import { DEFAULT_PAGE_SIZE, TYPE_GROUP_CODES } from '@/shared/constants';
+import { useDeleteProject, useExportProjectGrades, useProjects } from '../hooks';
 import type { ProjectResponse } from '../types';
 
 type SelectOption = { label: string; value: number };
@@ -51,6 +43,18 @@ export function ProjectsListPage() {
 
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
+	const [page, setPage] = useState(1);
+	const [search, setSearch] = useState('');
+	const [debouncedSearch, setDebouncedSearch] = useState('');
+
+	useEffect(() => {
+		const timer = setTimeout(() => setDebouncedSearch(search), 300);
+		return () => clearTimeout(timer);
+	}, [search]);
+
+	useEffect(() => {
+		setPage(1);
+	}, [selectedProgram?.value, selectedCourse?.value, debouncedSearch]);
 
 	const { data: programs = [] } = usePrograms(
 		{ isActive: true, schoolFilter: true },
@@ -68,30 +72,25 @@ export function ProjectsListPage() {
 	);
 
 	const {
-		data: projects = [],
+		data: projectsData,
 		isLoading,
+		isFetching,
 		isError,
 		error,
-	} = useQuery({
-		queryKey: [
-			'projects',
-			'filtered',
-			{
-				schoolId,
-				academicPeriodId: selectedPeriodId,
-				programId: selectedProgram?.value,
-				courseId: selectedCourse?.value,
-			},
-		],
-		queryFn: () =>
-			projectsService
-				.getByFilters({
-					...(selectedProgram ? { programId: selectedProgram.value } : {}),
-					...(selectedCourse ? { courseId: selectedCourse.value } : {}),
-				})
-				.then((r) => r.data),
-		enabled: !!selectedPeriodId && !!schoolId && !!selectedProgram,
-	});
+	} = useProjects(
+		{
+			...(selectedProgram ? { programId: selectedProgram.value } : {}),
+			...(selectedCourse ? { courseId: selectedCourse.value } : {}),
+			...(debouncedSearch.trim() ? { search: debouncedSearch.trim() } : {}),
+			page,
+			pageSize: DEFAULT_PAGE_SIZE,
+		},
+		{ enabled: !!selectedPeriodId && !!schoolId && !!selectedProgram },
+	);
+
+	const projects = projectsData?.items ?? [];
+	const totalPages = projectsData?.totalPages ?? 1;
+	const total = projectsData?.total ?? 0;
 
 	const programOptions = useMemo(
 		() => programs.map((p) => ({ label: p.name[locale as 'es' | 'en'] ?? p.name.es, value: p.id })),
@@ -148,6 +147,150 @@ export function ProjectsListPage() {
 		setSelectedProgram(null);
 		setSelectedCourse(null);
 	};
+
+	const columns = useMemo<ColumnDef<ProjectResponse>[]>(
+		() => [
+			{
+				id: 'code',
+				header: t('projects.list.table.code'),
+				cell: ({ row }) => (
+					<span className="inline-flex items-center rounded-md border border-zinc-200 bg-zinc-100 px-2 py-1 font-mono text-xs font-medium text-zinc-700">
+						{row.original.code}
+					</span>
+				),
+				meta: { headerClassName: 'w-[10%] !whitespace-normal' },
+			},
+			{
+				id: 'name',
+				header: t('projects.list.table.name'),
+				cell: ({ row }) => (
+					<span className="font-medium text-zinc-900">
+						{row.original.name[locale as 'es' | 'en'] ?? row.original.name.es}
+					</span>
+				),
+				meta: {
+					headerClassName: 'w-[20%] !whitespace-normal',
+					cellClassName: '!whitespace-normal',
+				},
+			},
+			{
+				id: 'course',
+				header: t('projects.list.table.course'),
+				cell: ({ row }) => {
+					const name = row.original.courseName;
+					if (!name) return <span className="text-zinc-400">—</span>;
+					return (
+						<span className="text-sm text-zinc-700">{name[locale as 'es' | 'en'] ?? name.es}</span>
+					);
+				},
+				meta: {
+					headerClassName: 'w-[15%] !whitespace-normal',
+					cellClassName: '!whitespace-normal',
+				},
+			},
+			{
+				id: 'evaluators',
+				header: t('projects.list.table.evaluators'),
+				cell: ({ row }) => {
+					const evaluators = Object.values(
+						(row.original.evaluators ?? []).reduce<
+							Record<number, { pid: number; name: string; types: { id: number; label: string }[] }>
+						>((acc, ev) => {
+							const pid = ev.professorId;
+							const name = `${ev.professorFirstName} ${ev.professorLastName}`.trim() || `#${pid}`;
+							if (!acc[pid]) acc[pid] = { pid, name, types: [] };
+							if (ev.evaluatorTypeName) {
+								acc[pid].types.push({
+									id: ev.evaluatorTypeId,
+									label: ev.evaluatorTypeName[locale as 'es' | 'en'] ?? ev.evaluatorTypeName.es,
+								});
+							}
+							return acc;
+						}, {}),
+					);
+					return evaluators.length ? (
+						<div className="flex flex-col gap-1 text-sm text-zinc-700">
+							{evaluators.map((entry) => (
+								<div key={entry.pid} className="flex flex-col gap-0.5">
+									<span className="font-medium">{entry.name}</span>
+									<div className="flex flex-wrap gap-1">
+										{entry.types.map((tp) => (
+											<span
+												key={tp.id}
+												className="inline-flex items-center rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 font-mono text-xs text-zinc-500">
+												{tp.label}
+											</span>
+										))}
+									</div>
+								</div>
+							))}
+						</div>
+					) : (
+						<span className="text-zinc-400">—</span>
+					);
+				},
+				meta: {
+					headerClassName: 'w-[25%] !whitespace-normal',
+					cellClassName: '!whitespace-normal',
+				},
+			},
+			{
+				id: 'students',
+				header: t('projects.list.table.students'),
+				cell: ({ row }) =>
+					row.original.students?.length ? (
+						<div className="flex flex-col gap-1 text-sm text-zinc-700">
+							{row.original.students.map((st) => (
+								<div key={st.id} className="flex items-center gap-2">
+									<span className="h-1.5 w-1.5 rounded-full bg-zinc-200" />
+									<span>
+										{st.studentInfo
+											? `${st.studentInfo.firstName} ${st.studentInfo.lastName}`
+											: `#${st.studentSectionEnrollmentId}`}
+									</span>
+								</div>
+							))}
+						</div>
+					) : (
+						<span className="text-zinc-400">—</span>
+					),
+				meta: {
+					headerClassName: 'w-[20%] !whitespace-normal',
+					cellClassName: '!whitespace-normal',
+				},
+			},
+			{
+				id: 'actions',
+				header: t('projects.list.table.actions'),
+				cell: ({ row }) => (
+					<div className="flex justify-center gap-1">
+						<Link
+							href={`/academic-projects/projects/${row.original.id}/edit`}
+							className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
+							title={t('projects.list.table.edit')}>
+							<PencilIcon className="h-4 w-4" />
+						</Link>
+						<button
+							type="button"
+							onClick={() => {
+								setConfirmTarget(row.original);
+								setDeleteError(null);
+							}}
+							disabled={!!row.original.hasEvaluations}
+							className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:pointer-events-none disabled:opacity-30"
+							title={t('projects.list.table.delete')}>
+							<TrashIcon className="h-4 w-4" />
+						</button>
+					</div>
+				),
+				meta: {
+					headerClassName: 'w-[10%] !whitespace-normal !text-center',
+					cellClassName: 'text-center',
+				},
+			},
+		],
+		[t, locale, setConfirmTarget, setDeleteError],
+	);
 
 	return (
 		<div className="space-y-6">
@@ -223,139 +366,31 @@ export function ProjectsListPage() {
 
 			{!selectedProgram ? (
 				<TableEmptyState message={t('projects.list.selectProgram')} />
-			) : isLoading ? (
-				<TableLoadingState label={t('projects.list.loading')} />
-			) : isError ? (
-				<TableErrorState
-					message={tryTranslateReason(
-						t,
-						error instanceof Error ? error.message : 'projects.list.error',
-					)}
-				/>
-			) : !projects.length ? (
-				<TableEmptyState message={t('projects.list.empty')} />
 			) : (
-				<Table className="table-fixed min-w-[1200px]">
-					<TableHeader>
-						<TableRow>
-							<TableHead className="w-[10%] !whitespace-normal">
-								{t('projects.list.table.code')}
-							</TableHead>
-							<TableHead className="w-[25%] !whitespace-normal">
-								{t('projects.list.table.name')}
-							</TableHead>
-							<TableHead className="w-[30%] !whitespace-normal">
-								{t('projects.list.table.evaluators')}
-							</TableHead>
-							<TableHead className="w-[25%] !whitespace-normal">
-								{t('projects.list.table.students')}
-							</TableHead>
-							<TableHead className="w-[10%] !whitespace-normal !text-center">
-								{t('projects.list.table.actions')}
-							</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{projects.map((project) => (
-							<TableRow key={project.id}>
-								<TableCell>
-									<span className="inline-flex items-center rounded-md border border-zinc-200 bg-zinc-100 px-2 py-1 font-mono text-xs font-medium text-zinc-700">
-										{project.code}
-									</span>
-								</TableCell>
-								<TableCell className="!whitespace-normal">
-									<span className="font-medium text-zinc-900">
-										{project.name[locale as 'es' | 'en'] ?? project.name.es}
-									</span>
-								</TableCell>
-								<TableCell className="!whitespace-normal">
-									<div className="flex flex-col gap-1 text-sm text-zinc-700">
-										{project.evaluators?.length ? (
-											Object.values(
-												project.evaluators.reduce<
-													Record<
-														number,
-														{ pid: number; name: string; types: { id: number; label: string }[] }
-													>
-												>((acc, ev) => {
-													const pid = ev.professorId;
-													const name =
-														`${ev.professorFirstName} ${ev.professorLastName}`.trim() || `#${pid}`;
-													if (!acc[pid]) acc[pid] = { pid, name, types: [] };
-													if (ev.evaluatorTypeName) {
-														acc[pid].types.push({
-															id: ev.evaluatorTypeId,
-															label:
-																ev.evaluatorTypeName[locale as 'es' | 'en'] ??
-																ev.evaluatorTypeName.es,
-														});
-													}
-													return acc;
-												}, {}),
-											).map((entry) => (
-												<div key={entry.pid} className="flex flex-col gap-0.5">
-													<span className="font-medium">{entry.name}</span>
-													<div className="flex flex-wrap gap-1">
-														{entry.types.map((tp) => (
-															<span
-																key={tp.id}
-																className="inline-flex items-center rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 font-mono text-xs text-zinc-500">
-																{tp.label}
-															</span>
-														))}
-													</div>
-												</div>
-											))
-										) : (
-											<span className="text-zinc-400">—</span>
-										)}
-									</div>
-								</TableCell>
-								<TableCell className="!whitespace-normal">
-									<div className="flex flex-col gap-0.5">
-										<div className="flex flex-col gap-1 text-sm text-zinc-700">
-											{project.students?.length ? (
-												project.students.map((st) => (
-													<div key={st.id} className="flex items-center gap-2">
-														<span className="h-1.5 w-1.5 rounded-full bg-zinc-200" />
-														<span>
-															{st.studentInfo
-																? `${st.studentInfo.firstName} ${st.studentInfo.lastName}`
-																: `#${st.studentSectionEnrollmentId}`}
-														</span>
-													</div>
-												))
-											) : (
-												<span className="text-zinc-400">—</span>
-											)}
-										</div>
-									</div>
-								</TableCell>
-								<TableCell className="text-center">
-									<div className="flex justify-center gap-1">
-										<Link
-											href={`/academic-projects/projects/${project.id}/edit`}
-											className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
-											title={t('projects.list.table.edit')}>
-											<PencilIcon className="h-4 w-4" />
-										</Link>
-										<button
-											type="button"
-											onClick={() => {
-												setConfirmTarget(project);
-												setDeleteError(null);
-											}}
-											disabled={!!project.hasEvaluations}
-											className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:pointer-events-none disabled:opacity-30"
-											title={t('projects.list.table.delete')}>
-											<TrashIcon className="h-4 w-4" />
-										</button>
-									</div>
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
+				<DataTable
+					columns={columns}
+					data={projects}
+					isLoading={isLoading}
+					errorMessage={
+						isError
+							? tryTranslateReason(
+									t,
+									error instanceof Error ? error.message : 'projects.list.error',
+								)
+							: undefined
+					}
+					emptyMessage={t('projects.list.empty')}
+					searchValue={search}
+					onSearchChange={setSearch}
+					serverPagination={{
+						page,
+						pageCount: totalPages,
+						total,
+						onPageChange: setPage,
+						isFetching,
+					}}
+					tableClassName="table-fixed min-w-[1400px]"
+				/>
 			)}
 
 			<Dialog

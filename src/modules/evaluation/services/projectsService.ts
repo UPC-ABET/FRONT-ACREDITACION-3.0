@@ -9,6 +9,7 @@ import type {
 	ProjectByProfessorResponse,
 	ProjectDetailsResponse,
 	ProjectEvaluatorResponse,
+	ProjectPaginatedResponse,
 	ProjectResponse,
 	ProjectStudentResponse,
 } from '../types';
@@ -81,7 +82,7 @@ export const projectsService = {
 		return apiGet('/projects/get-all');
 	},
 
-	getByFilters(filters: FilterProjectDto = {}): Promise<ApiResponse<ProjectResponse[]>> {
+	getByFilters(filters: FilterProjectDto = {}): Promise<ApiResponse<ProjectPaginatedResponse>> {
 		return apiPost('/projects/get-by-filters', filters);
 	},
 

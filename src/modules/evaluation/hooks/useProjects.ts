@@ -25,10 +25,12 @@ export const projectsQueryKeys = {
 		['projects', 'details', projectId, params ?? {}] as const,
 };
 
-export function useProjects(filters: FilterProjectDto = {}) {
+export function useProjects(filters: FilterProjectDto = {}, options?: { enabled?: boolean }) {
 	return useQuery({
 		queryKey: projectsQueryKeys.filtered(filters),
 		queryFn: () => projectsService.getByFilters(filters).then((r) => r.data),
+		enabled: options?.enabled !== false,
+		placeholderData: (prev) => prev,
 	});
 }
 
