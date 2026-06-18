@@ -26,7 +26,7 @@ import {
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { useLCFCConfiguration, useLCFCAvailableSections } from '../../../hooks';
-import { getLCFCSectionOutcomes } from '../../../services';
+import { getLCFCSectionOutcomes, setLCFCDeadline } from '../../../services';
 import type { AvailableSection, LCFCCourse, LCFCSectionOutcome } from '../../../types';
 
 interface LCFCConfigurationProps {
@@ -80,6 +80,8 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 	const [selectedOutcomeId, setSelectedOutcomeId] = useState<number | null>(null);
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [saving, setSaving] = useState(false);
+	const [deadlineDate, setDeadlineDate] = useState('');
+	const [savingDeadline, setSavingDeadline] = useState(false);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -108,6 +110,35 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 			setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
 		}
 	}, [error, t]);
+
+	// Seed the deadline field from the stored config deadline (any course carries it).
+	useEffect(() => {
+		const stored = courses.find((c) => c.maxRegisterDate)?.maxRegisterDate;
+		if (!stored) return;
+		const d = new Date(stored);
+		if (Number.isNaN(d.getTime())) return;
+		const yyyy = d.getFullYear();
+		const mm = String(d.getMonth() + 1).padStart(2, '0');
+		const dd = String(d.getDate()).padStart(2, '0');
+		setDeadlineDate(`${yyyy}-${mm}-${dd}`);
+	}, [courses]);
+
+	function handleSaveDeadline() {
+		if (!academicPeriodId || !programId || !deadlineDate) {
+			setToast({ open: true, type: 'error', msg: t('surveys.lcfc.config.deadlineRequired') });
+			return;
+		}
+		setSavingDeadline(true);
+		// Anchor to end of the selected day in the user's timezone (see notifications view).
+		const iso = new Date(`${deadlineDate}T23:59:59`).toISOString();
+		setLCFCDeadline(programId, academicPeriodId, iso)
+			.then(() => {
+				setToast({ open: true, type: 'success', msg: t('surveys.lcfc.config.deadlineSaved') });
+				loadConfig(academicPeriodId, programId);
+			})
+			.catch((e) => setToast({ open: true, type: 'error', msg: (e as Error).message }))
+			.finally(() => setSavingDeadline(false));
+	}
 
 	const courseGroups = useMemo<CourseGroup[]>(() => {
 		const map = new Map<number, CourseGroup>();
@@ -304,6 +335,30 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 					<DocumentDuplicateIcon className="h-4 w-4 mr-1" />
 					{t('surveys.lcfc.config.cloneButton')}
 				</Button>
+			</div>
+
+			{/* Survey deadline — configured here (not in notifications). Updating it refreshes
+			    existing surveys' deadline without resending any email. */}
+			<div className="flex flex-wrap items-end gap-3 rounded-xl border border-zinc-200 p-4">
+				<div>
+					<label className="font-medium text-xs mb-1.5 text-zinc-700 block">
+						{t('surveys.lcfc.config.deadlineLabel')}
+					</label>
+					<input
+						type="date"
+						value={deadlineDate}
+						onChange={(e) => setDeadlineDate(e.target.value)}
+						className="h-9 rounded-md border border-zinc-200 px-3 text-sm focus:outline-none focus:border-red-500"
+					/>
+				</div>
+				<Button
+					size="sm"
+					onClick={handleSaveDeadline}
+					disabled={!deadlineDate || savingDeadline}
+					loading={savingDeadline}>
+					{t('surveys.lcfc.config.deadlineSave')}
+				</Button>
+				<p className="text-xs text-zinc-500 basis-full">{t('surveys.lcfc.config.deadlineHint')}</p>
 			</div>
 
 			<DataTable

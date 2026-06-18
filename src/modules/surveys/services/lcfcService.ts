@@ -26,6 +26,7 @@ interface BackendLcfcConfig {
 		academicPeriodId?: number;
 		programId?: number;
 		campusId?: number;
+		maxRegisterDate?: string;
 	};
 }
 
@@ -83,6 +84,7 @@ function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 		academicPeriodId: extra.academicPeriodId,
 		courseSectionId: extra.courseSectionId,
 		sectionCode: extra.sectionCode,
+		maxRegisterDate: extra.maxRegisterDate,
 	};
 }
 
@@ -140,6 +142,14 @@ export async function generateLCFCConfiguration(
 
 export async function updateLCFCConfig(id: number, data: LCFCConfigUpdateRequest) {
 	return apiPut(`lcfc/config/update/${id}`, data);
+}
+
+export async function setLCFCDeadline(
+	programId: number,
+	academicPeriodId: number,
+	maxRegisterDate: string,
+) {
+	return apiPost('lcfc/config/set-deadline', { programId, academicPeriodId, maxRegisterDate });
 }
 
 export async function deleteLCFCConfig(id: number) {

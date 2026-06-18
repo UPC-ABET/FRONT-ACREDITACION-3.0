@@ -156,6 +156,7 @@ export interface LCFCCourse {
 	academicPeriodId?: number;
 	courseSectionId?: number;
 	sectionCode?: string;
+	maxRegisterDate?: string;
 }
 
 export interface LCFCConfigUpdateRequest {
@@ -190,7 +191,7 @@ export interface LCFCNotificationSendRequest {
 	programId: number;
 	campusId?: number;
 	courseSectionId?: number;
-	maxRegisterDate: string;
+	maxRegisterDate?: string;
 	surveyBaseUrl: string;
 	resend?: boolean;
 }
