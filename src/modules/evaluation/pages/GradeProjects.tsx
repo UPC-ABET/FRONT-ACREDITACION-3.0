@@ -117,16 +117,30 @@ export function GradeProjectsPage() {
 			) : !projects.length ? (
 				<TableEmptyState message={t('projects.grade.empty')} />
 			) : (
-				<Table>
+				<Table className="table-fixed min-w-[1400px]">
 					<TableHeader>
 						<TableRow>
-							<TableHead>{t('projects.grade.table.code')}</TableHead>
-							<TableHead>{t('projects.grade.table.name')}</TableHead>
-							<TableHead>{t('projects.grade.table.course')}</TableHead>
-							<TableHead>{t('projects.grade.table.evaluator')}</TableHead>
-							<TableHead>{t('projects.grade.table.students')}</TableHead>
-							<TableHead>{t('projects.grade.table.evaluationDate')}</TableHead>
-							<TableHead className="text-center">{t('projects.grade.table.actions')}</TableHead>
+							<TableHead className="w-[10%] !whitespace-normal">
+								{t('projects.grade.table.code')}
+							</TableHead>
+							<TableHead className="w-[15%] !whitespace-normal">
+								{t('projects.grade.table.name')}
+							</TableHead>
+							<TableHead className="w-[13%] !whitespace-normal">
+								{t('projects.grade.table.course')}
+							</TableHead>
+							<TableHead className="w-[22%] !whitespace-normal">
+								{t('projects.grade.table.evaluator')}
+							</TableHead>
+							<TableHead className="w-[21%] !whitespace-normal">
+								{t('projects.grade.table.students')}
+							</TableHead>
+							<TableHead className="w-[10%] !whitespace-normal">
+								{t('projects.grade.table.evaluationDate')}
+							</TableHead>
+							<TableHead className="w-[8%] text-center">
+								{t('projects.grade.table.actions')}
+							</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -138,17 +152,17 @@ export function GradeProjectsPage() {
 									</span>
 								</TableCell>
 
-								<TableCell>
+								<TableCell className="!whitespace-normal">
 									<span className="font-medium text-zinc-900">
 										{project.projectName[locale as 'es' | 'en'] ?? project.projectName.es}
 									</span>
 								</TableCell>
 
-								<TableCell>
+								<TableCell className="!whitespace-normal">
 									<span className="text-sm text-zinc-700">{project.courseName}</span>
 								</TableCell>
 
-								<TableCell>
+								<TableCell className="!whitespace-normal">
 									<div className="flex flex-col gap-1 text-sm text-zinc-700">
 										{project.evaluators?.length ? (
 											Object.values(
@@ -186,7 +200,7 @@ export function GradeProjectsPage() {
 									</div>
 								</TableCell>
 
-								<TableCell>
+								<TableCell className="!whitespace-normal">
 									<div className="flex flex-col gap-0.5 text-sm text-zinc-700">
 										{project.students.length ? (
 											project.students.map((st) => (

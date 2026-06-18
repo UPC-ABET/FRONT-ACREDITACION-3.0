@@ -235,14 +235,24 @@ export function ProjectsListPage() {
 			) : !projects.length ? (
 				<TableEmptyState message={t('projects.list.empty')} />
 			) : (
-				<Table>
+				<Table className="table-fixed min-w-[1200px]">
 					<TableHeader>
 						<TableRow>
-							<TableHead>{t('projects.list.table.code')}</TableHead>
-							<TableHead>{t('projects.list.table.name')}</TableHead>
-							<TableHead>{t('projects.list.table.evaluators')}</TableHead>
-							<TableHead>{t('projects.list.table.students')}</TableHead>
-							<TableHead className="!text-center">{t('projects.list.table.actions')}</TableHead>
+							<TableHead className="w-[10%] !whitespace-normal">
+								{t('projects.list.table.code')}
+							</TableHead>
+							<TableHead className="w-[25%] !whitespace-normal">
+								{t('projects.list.table.name')}
+							</TableHead>
+							<TableHead className="w-[30%] !whitespace-normal">
+								{t('projects.list.table.evaluators')}
+							</TableHead>
+							<TableHead className="w-[25%] !whitespace-normal">
+								{t('projects.list.table.students')}
+							</TableHead>
+							<TableHead className="w-[10%] !whitespace-normal !text-center">
+								{t('projects.list.table.actions')}
+							</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -253,12 +263,12 @@ export function ProjectsListPage() {
 										{project.code}
 									</span>
 								</TableCell>
-								<TableCell>
+								<TableCell className="!whitespace-normal">
 									<span className="font-medium text-zinc-900">
 										{project.name[locale as 'es' | 'en'] ?? project.name.es}
 									</span>
 								</TableCell>
-								<TableCell>
+								<TableCell className="!whitespace-normal">
 									<div className="flex flex-col gap-1 text-sm text-zinc-700">
 										{project.evaluators?.length ? (
 											Object.values(
@@ -301,7 +311,7 @@ export function ProjectsListPage() {
 										)}
 									</div>
 								</TableCell>
-								<TableCell>
+								<TableCell className="!whitespace-normal">
 									<div className="flex flex-col gap-0.5">
 										<div className="flex flex-col gap-1 text-sm text-zinc-700">
 											{project.students?.length ? (
