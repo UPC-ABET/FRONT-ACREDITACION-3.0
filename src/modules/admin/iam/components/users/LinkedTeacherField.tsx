@@ -12,6 +12,7 @@ export type TeacherOption = {
 	code: string | null;
 	firstName: string;
 	lastName: string;
+	staffEmail: string | null;
 };
 
 export function teacherLabel(teacher: TeacherOption): string {
@@ -25,6 +26,7 @@ function toTeacher(professor: ProfessorLookupItem): TeacherOption {
 		code: professor.code ?? null,
 		firstName: professor.firstName ?? '',
 		lastName: professor.lastName ?? '',
+		staffEmail: professor.staffEmail ?? null,
 	};
 }
 
