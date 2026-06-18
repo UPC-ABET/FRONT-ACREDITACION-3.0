@@ -3,9 +3,9 @@
 import { useMemo, useState } from 'react';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import type { TypeOption } from '@/modules/core';
-import { TYPE_GROUP_CODES } from '@/shared/constants';
+import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import { Card, PageHeader, Tabs } from '@/shared/components';
-import { useABET, useI18n } from '@/providers';
+import { useABET, useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import {
 	hasUploadMaintenance,
 	UploadMaintenance,
@@ -27,6 +27,10 @@ export default function LoadsPage() {
 		if (!typeCode) return null;
 		return uploadTypes?.find((type) => type.code === typeCode) ?? null;
 	}, [typeCode, uploadTypes]);
+
+	useGlobalAcademicFiltersVisibilityOverride({
+		school: selectedType?.code === TYPE_CODES.UPLOAD_TYPE.CHARTS,
+	});
 
 	const maintenanceAvailable = selectedType ? hasUploadMaintenance(selectedType.code) : false;
 

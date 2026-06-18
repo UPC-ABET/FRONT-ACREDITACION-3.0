@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { ArrowLeftIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
@@ -12,10 +12,11 @@ import {
 	TableErrorState,
 	Toast,
 } from '@/shared/components';
+import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import { useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getErrorMessage } from '@/shared/lib/apiError';
-import { useDeleteUser, useDocumentTypes, useIamView, useUsers } from '../../hooks';
+import { useDeleteUser, useDocumentTypes, useIamView, useUser, useUsers } from '../../hooks';
 import type { IamUser } from '../../types';
 import { localizedText } from '../localizedText';
 import { UserFormView } from './UserFormView';
@@ -24,11 +25,43 @@ export function UsersTab() {
 	const { t, locale } = useI18n();
 	const { mode, editId, openCreate, openEdit, backToList } = useIamView('users');
 	const { toast, showToast, clearToast } = useApiErrorToast();
-	const { data: users = [], isLoading, isError, refetch } = useUsers();
+
+	const [search, setSearch] = useState('');
+	const [debouncedSearch, setDebouncedSearch] = useState('');
+	const [page, setPage] = useState(1);
+
+	useEffect(() => {
+		const timer = setTimeout(() => setDebouncedSearch(search), 300);
+		return () => clearTimeout(timer);
+	}, [search]);
+
+	const {
+		data: userList,
+		isLoading,
+		isFetching,
+		isError,
+		refetch,
+	} = useUsers({ page, pageSize: DEFAULT_PAGE_SIZE, search: debouncedSearch.trim() || undefined });
 	const { data: documentTypes = [] } = useDocumentTypes();
 	const deleteUser = useDeleteUser();
 
+	const users = userList?.items ?? [];
+	const totalPages = userList?.totalPages ?? 1;
+	const total = userList?.total ?? 0;
+
+	const editingFromList =
+		mode === 'edit' && editId != null ? (users.find((user) => user.id === editId) ?? null) : null;
+	const shouldFetchUser = mode === 'edit' && editId != null && !editingFromList;
+	const { data: fetchedUser, isError: isFetchedUserError } = useUser(
+		shouldFetchUser ? editId : null,
+	);
+
 	const [pendingDelete, setPendingDelete] = useState<IamUser | null>(null);
+
+	const handleSearchChange = (value: string) => {
+		setSearch(value);
+		setPage(1);
+	};
 
 	const documentTypeNameById = useMemo(() => {
 		const map = new Map<number, string>();
@@ -144,9 +177,9 @@ export function UsersTab() {
 	);
 
 	if (mode !== 'list') {
-		const editingUser = mode === 'edit' ? (users.find((user) => user.id === editId) ?? null) : null;
-		const editLoading = mode === 'edit' && !editingUser && isLoading;
-		const editNotFound = mode === 'edit' && !editingUser && !isLoading;
+		const editingUser = editingFromList ?? fetchedUser ?? null;
+		const editLoading = mode === 'edit' && !editingUser && shouldFetchUser && !isFetchedUserError;
+		const editNotFound = mode === 'edit' && !editingUser && !editLoading;
 
 		return (
 			<div className="space-y-4">
@@ -200,8 +233,17 @@ export function UsersTab() {
 				data={users}
 				title={t('admin.iam.users.title')}
 				searchPlaceholder={t('admin.iam.users.search')}
+				searchValue={search}
+				onSearchChange={handleSearchChange}
 				aria-label={t('admin.iam.users.title')}
 				isLoading={isLoading}
+				serverPagination={{
+					page,
+					pageCount: totalPages,
+					total,
+					onPageChange: setPage,
+					isFetching,
+				}}
 				actions={[
 					{
 						label: t('admin.iam.users.create'),

@@ -44,16 +44,22 @@ function UserAvatar({
 
 function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 	const { toggle, isMobile: isSidebarMobile } = useSidebar();
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
-	const { user } = useAuth();
+	const { activeRole, user } = useAuth();
 
 	const resolvedUserName =
 		userName ??
 		((user ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() : '') ||
 			t('navbar.user.name'));
 
-	const resolvedUserRole = userRole ?? t('navbar.user.role');
+	const resolvedUserRole =
+		userRole ??
+		activeRole?.name[locale] ??
+		activeRole?.name.es ??
+		activeRole?.name.en ??
+		activeRole?.code ??
+		t('navbar.user.role');
 
 	const resolvedUserInitials =
 		userInitials ??

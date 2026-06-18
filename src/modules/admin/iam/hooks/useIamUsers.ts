@@ -5,22 +5,34 @@ import {
 	assignUserRole,
 	createUser,
 	deleteUser,
+	getUserById,
 	listUsers,
 	unassignUserRole,
 	updateUser,
 } from '../services';
-import type { IamUser, UserCreateBody, UserRole, UserUpdateBody } from '../types';
+import type { IamUser, UserCreateBody, UserListParams, UserRole, UserUpdateBody } from '../types';
 import { userRolesKeys } from './useUserRoles';
 
 export const iamUsersKeys = {
 	all: ['iam-users'] as const,
-	list: () => [...iamUsersKeys.all, 'list'] as const,
+	list: (params: UserListParams) => [...iamUsersKeys.all, 'list', params] as const,
+	detail: (id: number) => [...iamUsersKeys.all, 'detail', id] as const,
 };
 
-export function useUsers() {
+export function useUsers(params: UserListParams) {
 	return useQuery({
-		queryKey: iamUsersKeys.list(),
-		queryFn: listUsers,
+		queryKey: iamUsersKeys.list(params),
+		queryFn: () => listUsers(params),
+		placeholderData: (previousData) => previousData,
+		staleTime: 0,
+	});
+}
+
+export function useUser(id: number | null) {
+	return useQuery({
+		queryKey: iamUsersKeys.detail(id ?? -1),
+		queryFn: () => getUserById(id as number),
+		enabled: id != null,
 		staleTime: 0,
 	});
 }

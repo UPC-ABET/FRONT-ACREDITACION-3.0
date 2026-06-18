@@ -25,7 +25,7 @@ export type AuthUser = {
 export type AuthRole = {
 	id: number;
 	code: string;
-	name: string;
+	name: I18nText;
 };
 
 export type AuthSchool = {

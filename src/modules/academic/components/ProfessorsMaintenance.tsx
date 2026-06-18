@@ -233,6 +233,7 @@ export function ProfessorsMaintenance() {
 										<TableHead>{t('loads.maintenance.col.code')}</TableHead>
 										<TableHead>{t('loads.maintenance.col.firstName')}</TableHead>
 										<TableHead>{t('loads.maintenance.col.lastName')}</TableHead>
+										<TableHead>{t('loads.maintenance.col.email')}</TableHead>
 										<TableHead className="text-right">
 											{t('loads.maintenance.col.actions')}
 										</TableHead>
@@ -244,6 +245,9 @@ export function ProfessorsMaintenance() {
 											<TableCell className="font-mono text-zinc-800">{item.code}</TableCell>
 											<TableCell className="text-zinc-700">{item.firstName}</TableCell>
 											<TableCell className="text-zinc-700">{item.lastName}</TableCell>
+											<TableCell className="text-zinc-700">
+												{item.staffEmail ?? <span className="text-zinc-400">—</span>}
+											</TableCell>
 											<TableCell>
 												<RowActions
 													onEdit={() => openEdit(item)}
@@ -269,6 +273,9 @@ export function ProfessorsMaintenance() {
 											<p className="truncate font-medium text-zinc-900">
 												{item.firstName} {item.lastName}
 											</p>
+											{item.staffEmail && (
+												<p className="truncate text-sm text-zinc-500">{item.staffEmail}</p>
+											)}
 										</div>
 										<div className="shrink-0">
 											<RowActions
