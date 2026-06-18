@@ -3,16 +3,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
-import { useSurvey } from '@/modules/surveys/hooks';
+import { useSurvey, useGRASurvey } from '@/modules/surveys/hooks';
 import { getLCFCStudentSurveys } from '@/modules/surveys/services';
-import type { LCFCStudentSurveys } from '@/modules/surveys/types';
+import type { LCFCStudentSurveys, LCFCStudentSurveyItem } from '@/modules/surveys/types';
 import { SurveyForm, SurveyAlreadyAnswered } from '@/modules/surveys/components';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 
 const ESCUELA = '1';
 
-/** Centered card used for loading / error / invalid states. */
 function CenteredCard({ children }: { readonly children: React.ReactNode }) {
 	return (
 		<div className="min-h-screen bg-zinc-50 flex items-center justify-center p-6">
@@ -23,13 +22,27 @@ function CenteredCard({ children }: { readonly children: React.ReactNode }) {
 	);
 }
 
-/** Answers a single survey (by its own token); reuses the existing survey flow. */
-function SurveyAnswer({
+function LoadingScreen() {
+	const { t } = useI18n();
+	return (
+		<div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+			<div className="text-center space-y-3">
+				<div className="h-10 w-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
+				<p className="text-sm text-zinc-500">{t('surveys.student.loading')}</p>
+			</div>
+		</div>
+	);
+}
+
+/** Answers a single LCFC survey. */
+function LCFCSurveyAnswer({
 	token,
 	onSubmitted,
+	onBack,
 }: {
 	readonly token: string;
 	readonly onSubmitted: () => void;
+	readonly onBack: () => void;
 }) {
 	const { t } = useI18n();
 	const {
@@ -53,16 +66,7 @@ function SurveyAnswer({
 		if (submitted) onSubmitted();
 	}, [submitted, onSubmitted]);
 
-	if (loading) {
-		return (
-			<div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-				<div className="text-center space-y-3">
-					<div className="h-10 w-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
-					<p className="text-sm text-zinc-500">{t('surveys.student.loading')}</p>
-				</div>
-			</div>
-		);
-	}
+	if (loading) return <LoadingScreen />;
 
 	if (error && !verification) {
 		return (
@@ -77,7 +81,7 @@ function SurveyAnswer({
 	}
 
 	if (alreadyAnswered) return <SurveyAlreadyAnswered />;
-	if (submitted) return null; // parent renders the post-submit screen
+	if (submitted) return null;
 	if (!verification) return null;
 
 	return (
@@ -88,7 +92,86 @@ function SurveyAnswer({
 			error={error}
 			onScoreChange={updateScore}
 			onSubmit={submit}
+			onBack={onBack}
 		/>
+	);
+}
+
+/** Answers a single GRA survey. */
+function GRASurveyAnswer({
+	token,
+	onSubmitted,
+	onBack,
+}: {
+	readonly token: string;
+	readonly onSubmitted: () => void;
+	readonly onBack: () => void;
+}) {
+	const { t } = useI18n();
+	const {
+		verification,
+		outcomes,
+		loading,
+		submitting,
+		submitted,
+		alreadyAnswered,
+		error,
+		verify,
+		updateScore,
+		submit,
+	} = useGRASurvey();
+
+	useEffect(() => {
+		if (token) verify(token);
+	}, [token, verify]);
+
+	useEffect(() => {
+		if (submitted) onSubmitted();
+	}, [submitted, onSubmitted]);
+
+	if (loading) return <LoadingScreen />;
+
+	if (error && !verification) {
+		return (
+			<CenteredCard>
+				<p className="text-2xl">❌</p>
+				<h2 className="text-lg font-bold text-zinc-900">
+					{t('surveys.student.accessError.title')}
+				</h2>
+				<p className="text-sm text-zinc-500">{tryTranslate(t, error)}</p>
+			</CenteredCard>
+		);
+	}
+
+	if (alreadyAnswered) return <SurveyAlreadyAnswered />;
+	if (submitted) return null;
+	if (!verification) return null;
+
+	return (
+		<SurveyForm
+			verification={verification}
+			outcomes={outcomes}
+			submitting={submitting}
+			error={error}
+			onScoreChange={updateScore}
+			onSubmit={submit}
+			onBack={onBack}
+		/>
+	);
+}
+
+function SurveyTypeBadge({ type }: { readonly type: string }) {
+	if (type === 'GRA') {
+		return (
+			<span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700 uppercase tracking-wide shrink-0">
+				GRA
+			</span>
+		);
+	}
+	return (
+		<span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-700 uppercase tracking-wide shrink-0">
+			LCFC
+		</span>
 	);
 }
 
@@ -100,7 +183,7 @@ export default function LCFCSurveyRespondPage() {
 	const [data, setData] = useState<LCFCStudentSurveys | null>(null);
 	const [loadingList, setLoadingList] = useState(true);
 	const [listError, setListError] = useState<string | null>(null);
-	const [activeToken, setActiveToken] = useState<string | null>(null);
+	const [activeItem, setActiveItem] = useState<LCFCStudentSurveyItem | null>(null);
 	const [justCompleted, setJustCompleted] = useState(false);
 
 	const fetchList = useCallback(() => {
@@ -129,7 +212,7 @@ export default function LCFCSurveyRespondPage() {
 		if (!justCompleted || pending.length === 0) return;
 		const id = setTimeout(() => {
 			setJustCompleted(false);
-			setActiveToken(null);
+			setActiveItem(null);
 		}, 3000);
 		return () => clearTimeout(id);
 	}, [justCompleted, pending.length]);
@@ -146,16 +229,7 @@ export default function LCFCSurveyRespondPage() {
 		);
 	}
 
-	if (loadingList) {
-		return (
-			<div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-				<div className="text-center space-y-3">
-					<div className="h-10 w-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
-					<p className="text-sm text-zinc-500">{t('surveys.student.loading')}</p>
-				</div>
-			</div>
-		);
-	}
+	if (loadingList) return <LoadingScreen />;
 
 	if (listError || !data) {
 		return (
@@ -184,7 +258,7 @@ export default function LCFCSurveyRespondPage() {
 						<button
 							onClick={() => {
 								setJustCompleted(false);
-								setActiveToken(null);
+								setActiveItem(null);
 							}}
 							className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
 							{t('surveys.student.goToPending')}
@@ -198,22 +272,36 @@ export default function LCFCSurveyRespondPage() {
 		);
 	}
 
+	const onBack = () => setActiveItem(null);
+	const onSubmitted = () => {
+		setActiveItem(null);
+		setJustCompleted(true);
+		fetchList();
+	};
+
 	// Answering a specific survey.
-	if (activeToken) {
+	if (activeItem) {
+		if (activeItem.surveyType === 'GRA') {
+			return (
+				<GRASurveyAnswer
+					key={activeItem.token}
+					token={activeItem.token}
+					onBack={onBack}
+					onSubmitted={onSubmitted}
+				/>
+			);
+		}
 		return (
-			<SurveyAnswer
-				key={activeToken}
-				token={activeToken}
-				onSubmitted={() => {
-					setActiveToken(null);
-					setJustCompleted(true);
-					fetchList();
-				}}
+			<LCFCSurveyAnswer
+				key={activeItem.token}
+				token={activeItem.token}
+				onBack={onBack}
+				onSubmitted={onSubmitted}
 			/>
 		);
 	}
 
-	// Survey list ("my surveys").
+	// Survey list panel.
 	return (
 		<div className="min-h-screen bg-zinc-50">
 			<div className="bg-red-600 text-white py-8 px-6">
@@ -251,18 +339,21 @@ export default function LCFCSurveyRespondPage() {
 					<div
 						key={s.token}
 						className="flex items-center justify-between gap-4 bg-white rounded-2xl shadow-sm border border-zinc-200 px-5 py-4">
-						<div className="min-w-0">
-							<p className="font-semibold text-zinc-800 truncate">{s.courseName}</p>
-							{s.sectionCode && <p className="text-xs text-zinc-500">{s.sectionCode}</p>}
+						<div className="min-w-0 flex items-start gap-2">
+							<SurveyTypeBadge type={s.surveyType} />
+							<div className="min-w-0">
+								<p className="font-semibold text-zinc-800 truncate">{s.courseName}</p>
+								{s.sectionCode && <p className="text-xs text-zinc-500">{s.sectionCode}</p>}
+							</div>
 						</div>
 						{s.completed ? (
-							<span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+							<span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 shrink-0">
 								<CheckCircleIcon className="h-4 w-4" />
 								{t('surveys.student.myList.statusCompleted')}
 							</span>
 						) : (
 							<button
-								onClick={() => setActiveToken(s.token)}
+								onClick={() => setActiveItem(s)}
 								className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 shrink-0">
 								{t('surveys.student.myList.respond')}
 								<ArrowRightIcon className="h-4 w-4" />

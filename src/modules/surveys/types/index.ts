@@ -157,6 +157,7 @@ export interface LCFCCourse {
 	courseSectionId?: number;
 	sectionCode?: string;
 	maxRegisterDate?: string;
+	commissionId?: number;
 }
 
 export interface LCFCConfigUpdateRequest {
@@ -164,10 +165,17 @@ export interface LCFCConfigUpdateRequest {
 	userOutcomeDescription?: I18nText;
 	isActive?: boolean;
 	outcomeId?: number;
+	commissionId?: number;
 }
 
 export interface LCFCSectionOutcome {
 	outcomeId: number;
+	code: string;
+	name: string;
+}
+
+export interface LCFCSectionCommission {
+	commissionId: number;
 	code: string;
 	name: string;
 }
@@ -177,6 +185,7 @@ export interface LCFCStudentSurveyItem {
 	courseName: string;
 	sectionCode: string;
 	completed: boolean;
+	surveyType: 'LCFC' | 'GRA';
 }
 
 export interface LCFCStudentSurveys {

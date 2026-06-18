@@ -2,7 +2,11 @@
 
 import React, { useState } from 'react';
 import { Button, TextArea, Toast } from '@/shared/components';
-import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import {
+	CheckCircleIcon,
+	ExclamationTriangleIcon,
+	ArrowLeftIcon,
+} from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import type { SurveyCommissionGroup, SurveyTokenVerification } from '../../types';
@@ -14,6 +18,7 @@ interface SurveyFormProps {
 	error: string | null;
 	onScoreChange: (commissionId: number, outcomeId: number, score: number) => void;
 	onSubmit: (comment: string) => void;
+	onBack?: () => void;
 }
 
 const SCORE_OPTIONS = [1, 2, 3, 4, 5];
@@ -25,6 +30,7 @@ export function SurveyForm({
 	error,
 	onScoreChange,
 	onSubmit,
+	onBack,
 }: SurveyFormProps) {
 	const { t } = useI18n();
 	const [comment, setComment] = useState('');
@@ -52,10 +58,6 @@ export function SurveyForm({
 			});
 			return;
 		}
-		if (!comment.trim()) {
-			setToast({ open: true, type: 'error', msg: t('surveys.student.error.commentRequired') });
-			return;
-		}
 		onSubmit(comment);
 	}
 
@@ -70,6 +72,14 @@ export function SurveyForm({
 		<div className="min-h-screen bg-zinc-50">
 			<div className="bg-red-600 text-white py-8 px-6">
 				<div className="max-w-3xl mx-auto">
+					{onBack && (
+						<button
+							onClick={onBack}
+							className="mb-4 inline-flex items-center gap-1.5 text-sm text-red-200 hover:text-white transition-colors">
+							<ArrowLeftIcon className="h-4 w-4" />
+							{t('surveys.student.backToList')}
+						</button>
+					)}
 					<div className="flex items-center gap-3 mb-4">
 						<img src="/assets/ABETLogo.png" alt="ABET" className="h-10 w-auto" />
 						<div>
@@ -215,7 +225,7 @@ export function SurveyForm({
 				<div className="flex justify-end pb-8">
 					<Button
 						onClick={handleSubmit}
-						disabled={submitting || progress < 100 || !comment.trim()}
+						disabled={submitting || progress < 100}
 						loading={submitting}
 						size="lg">
 						{t('surveys.student.submitButton')}

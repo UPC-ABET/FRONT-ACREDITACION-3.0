@@ -17,6 +17,7 @@ import type {
 	DashboardResponse,
 	AvailableSection,
 	LCFCSectionOutcome,
+	LCFCSectionCommission,
 	LCFCStudentSurveys,
 } from '../types';
 import type { I18nText } from '@/shared/types';
@@ -37,6 +38,7 @@ interface BackendLcfcConfig {
 		programId?: number;
 		campusId?: number;
 		maxRegisterDate?: string;
+		commissionId?: number;
 	};
 }
 
@@ -95,6 +97,7 @@ function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 		courseSectionId: extra.courseSectionId,
 		sectionCode: extra.sectionCode,
 		maxRegisterDate: extra.maxRegisterDate,
+		commissionId: extra.commissionId,
 	};
 }
 
@@ -111,12 +114,12 @@ export async function listLCFCCourses(
 }
 
 export async function getAvailableSections(
-	programId: number,
+	programId: number | undefined,
 	academicPeriodId: number,
 ): Promise<AvailableSection[]> {
-	const res = await apiGet(
-		`lcfc/config/available-sections?programId=${programId}&academicPeriodId=${academicPeriodId}`,
-	);
+	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId) });
+	if (programId) params.set('programId', String(programId));
+	const res = await apiGet(`lcfc/config/available-sections?${params.toString()}`);
 	return getApiData<AvailableSection[]>(res) ?? [];
 }
 
@@ -132,6 +135,21 @@ export async function getLCFCSectionOutcomes(
 		outcomeId: o.outcomeId,
 		code: toText(o.code),
 		name: toText(o.name),
+	}));
+}
+
+export async function getLCFCSectionCommissions(
+	courseSectionId: number,
+	programId?: number,
+): Promise<LCFCSectionCommission[]> {
+	const params = new URLSearchParams({ courseSectionId: String(courseSectionId) });
+	if (programId) params.set('programId', String(programId));
+	const res = await apiGet(`lcfc/config/section-commissions?${params.toString()}`);
+	const raw = getApiData<Array<{ commissionId: number; code: unknown; name: unknown }>>(res) ?? [];
+	return raw.map((c) => ({
+		commissionId: c.commissionId,
+		code: toText(c.code),
+		name: toText(c.name),
 	}));
 }
 
