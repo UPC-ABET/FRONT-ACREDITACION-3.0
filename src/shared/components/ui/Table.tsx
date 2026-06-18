@@ -133,6 +133,7 @@ interface DataTableProps<TData, TValue> {
 	isLoading?: boolean;
 	errorMessage?: string;
 	emptyMessage?: string;
+	tableClassName?: string;
 	'aria-label'?: string;
 }
 
@@ -155,6 +156,7 @@ export function DataTable<TData, TValue>({
 	isLoading = false,
 	errorMessage,
 	emptyMessage,
+	tableClassName,
 	'aria-label': ariaLabel,
 }: DataTableProps<TData, TValue>) {
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -295,7 +297,7 @@ export function DataTable<TData, TValue>({
 			<Table
 				aria-label={ariaLabel}
 				aria-rowcount={showPagination ? data.length : undefined}
-				className={cn(isFetching && 'opacity-60 transition-opacity')}>
+				className={cn(isFetching && 'opacity-60 transition-opacity', tableClassName)}>
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (
 						<TableRow key={headerGroup.id}>

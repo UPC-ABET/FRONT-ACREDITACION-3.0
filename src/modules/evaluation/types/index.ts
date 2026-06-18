@@ -218,6 +218,14 @@ export type ProjectByProfessorResponse = {
 	}[];
 };
 
+export type ProjectByProfessorPaginatedResponse = {
+	items: ProjectByProfessorResponse[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+};
+
 export type StudentEvaluationResponse = {
 	evaluatorId: number;
 	qualificationStatusTypeId: number;

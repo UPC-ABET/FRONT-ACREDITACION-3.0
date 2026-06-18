@@ -4,9 +4,10 @@ import { projectsService } from '../services';
 import type { FilterProjectDto } from '../types';
 
 type ByProfessorParams = {
-	academicPeriodId?: number;
-	schoolId?: number;
 	gradeTypeCode?: string;
+	page?: number;
+	pageSize?: number;
+	search?: string;
 };
 
 type DetailsParams = {
@@ -40,6 +41,7 @@ export function useProjectsByProfessor(
 		queryKey: projectsQueryKeys.byProfessor(professorId!, params),
 		queryFn: () => projectsService.getByProfessor(professorId!, params).then((r) => r.data),
 		enabled: professorId != null && options?.enabled !== false,
+		placeholderData: (prev) => prev,
 	});
 }
 
