@@ -4,19 +4,18 @@ import React, { useState } from 'react';
 import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { SurveyProgramSelect } from '../shared/SurveyProgramSelect';
-import { PPPDownloadTemplate } from './PPPDownloadTemplate';
 import { PPPMassiveUpload } from './PPPMassiveUpload';
 import { PPPReports } from './PPPReports';
 import { PPPConfiguration } from './configuration/PPPConfiguration';
 
 export function PPPManagementView() {
 	const { t } = useI18n();
-	const [activeTab, setActiveTab] = useState('download');
+	const [activeTab, setActiveTab] = useState('upload');
 	const [programId, setProgramId] = useState(0);
 
-	// PPP does not send survey notifications — only GRA and LCFC do.
+	// PPP does not send survey notifications — only GRA and LCFC do. The template
+	// download already lives inside the massive-upload tab, so it has no tab of its own.
 	const TABS = [
-		{ id: 'download', label: t('surveys.ppp.management.tabDownload') },
 		{ id: 'upload', label: t('surveys.ppp.management.tabUpload') },
 		{ id: 'reports', label: t('surveys.ppp.management.tabReports') },
 		{ id: 'config', label: t('surveys.ppp.management.tabConfig') },
@@ -35,7 +34,6 @@ export function PPPManagementView() {
 				<div className="space-y-6">
 					<SurveyProgramSelect value={programId} onChange={setProgramId} />
 
-					{activeTab === 'download' && <PPPDownloadTemplate programId={programId} />}
 					{activeTab === 'upload' && <PPPMassiveUpload programId={programId} />}
 					{activeTab === 'reports' && <PPPReports programId={programId} />}
 					{activeTab === 'config' && <PPPConfiguration programId={programId} />}

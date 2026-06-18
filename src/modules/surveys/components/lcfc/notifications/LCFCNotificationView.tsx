@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Toast, Toggle } from '@/shared/components';
+import { Button, Toast, Toggle } from '@/shared/components';
 import { PaperAirplaneIcon, BellAlertIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
 import { useLCFCNotification, useLCFCConfiguration } from '../../../hooks';
@@ -16,7 +16,6 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	const { sending, error: sendError, send } = useLCFCNotification();
 	const { courses, load: loadCourses } = useLCFCConfiguration();
 
-	const [maxRegisterDate, setMaxRegisterDate] = useState('');
 	const [resend, setResend] = useState(false);
 	// courseSectionId currently being (re)sent, for the per-row spinner; 0 = the "send all" button.
 	const [sendingSectionId, setSendingSectionId] = useState<number | null>(null);
@@ -26,7 +25,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		msg: '',
 	});
 
-	const isValid = !!academicPeriodId && maxRegisterDate !== '';
+	const isValid = !!academicPeriodId;
 
 	useEffect(() => {
 		if (academicPeriodId && programId) loadCourses(academicPeriodId, programId);
@@ -39,15 +38,13 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		}
 	}, [sendError]);
 
-	// Build the request shared by "send all" and per-row resend. The date input yields
-	// "YYYY-MM-DD"; anchor the deadline to the end of that day in the user's timezone so
-	// the survey stays open the whole selected day (UTC midnight would expire it same-day).
-	// The survey lives in this same app, so the base URL is always our own origin.
+	// Build the request shared by "send all" and per-row resend. The deadline is configured
+	// in the Configuration tab and applied by the backend, so it isn't sent here. The survey
+	// lives in this same app, so the base URL is always our own origin.
 	function buildRequest(courseSectionId?: number, forceResend?: boolean) {
 		return {
 			academicPeriodId: academicPeriodId as number,
 			programId: programId ?? 0,
-			maxRegisterDate: new Date(`${maxRegisterDate}T23:59:59`).toISOString(),
 			surveyBaseUrl: window.location.origin,
 			resend: forceResend ?? resend,
 			...(courseSectionId ? { courseSectionId } : {}),
@@ -100,12 +97,9 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 				</div>
 
 				<div className="space-y-4">
-					<Input
-						label={t('surveys.lcfc.notifications.dateLabel')}
-						value={maxRegisterDate}
-						onChange={(e) => setMaxRegisterDate(e.target.value)}
-						type="date"
-					/>
+					<p className="text-xs text-zinc-500">
+						{t('surveys.lcfc.notifications.deadlineInConfig')}
+					</p>
 
 					<div>
 						<Toggle

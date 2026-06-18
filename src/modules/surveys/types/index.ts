@@ -156,12 +156,35 @@ export interface LCFCCourse {
 	academicPeriodId?: number;
 	courseSectionId?: number;
 	sectionCode?: string;
+	maxRegisterDate?: string;
 }
 
 export interface LCFCConfigUpdateRequest {
 	userOutcomeName?: I18nText;
 	userOutcomeDescription?: I18nText;
 	isActive?: boolean;
+	outcomeId?: number;
+}
+
+export interface LCFCSectionOutcome {
+	outcomeId: number;
+	code: string;
+	name: string;
+}
+
+export interface LCFCStudentSurveyItem {
+	token: string;
+	courseName: string;
+	sectionCode: string;
+	completed: boolean;
+}
+
+export interface LCFCStudentSurveys {
+	studentName: string;
+	studentCode: string;
+	programName: string;
+	period: string;
+	surveys: LCFCStudentSurveyItem[];
 }
 
 export interface LCFCStudent {
@@ -183,7 +206,7 @@ export interface LCFCNotificationSendRequest {
 	programId: number;
 	campusId?: number;
 	courseSectionId?: number;
-	maxRegisterDate: string;
+	maxRegisterDate?: string;
 	surveyBaseUrl: string;
 	resend?: boolean;
 }

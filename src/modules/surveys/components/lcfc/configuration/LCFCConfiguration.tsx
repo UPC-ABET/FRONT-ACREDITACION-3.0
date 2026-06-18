@@ -11,8 +11,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogFooter,
-	Input,
-	TextArea,
+	Select,
 	Toggle,
 	Toast,
 	Checkbox,
@@ -27,18 +26,11 @@ import {
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { useLCFCConfiguration, useLCFCAvailableSections } from '../../../hooks';
-import type { AvailableSection, LCFCCourse } from '../../../types';
+import { getLCFCSectionOutcomes, setLCFCDeadline } from '../../../services';
+import type { AvailableSection, LCFCCourse, LCFCSectionOutcome } from '../../../types';
 
 interface LCFCConfigurationProps {
 	readonly programId: number;
-}
-
-interface EditForm {
-	nameEs: string;
-	nameEn: string;
-	descriptionEs: string;
-	descriptionEn: string;
-	isActive: boolean;
 }
 
 interface CourseGroup {
@@ -82,15 +74,14 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 	const [generating, setGenerating] = useState(false);
 	const [selectedSectionIds, setSelectedSectionIds] = useState<Set<number>>(new Set());
 	const [editing, setEditing] = useState<LCFCCourse | null>(null);
-	const [editForm, setEditForm] = useState<EditForm>({
-		nameEs: '',
-		nameEn: '',
-		descriptionEs: '',
-		descriptionEn: '',
-		isActive: true,
-	});
+	const [editActive, setEditActive] = useState(true);
+	const [sectionOutcomes, setSectionOutcomes] = useState<LCFCSectionOutcome[]>([]);
+	const [loadingOutcomes, setLoadingOutcomes] = useState(false);
+	const [selectedOutcomeId, setSelectedOutcomeId] = useState<number | null>(null);
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [saving, setSaving] = useState(false);
+	const [deadlineDate, setDeadlineDate] = useState('');
+	const [savingDeadline, setSavingDeadline] = useState(false);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -119,6 +110,35 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 			setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
 		}
 	}, [error, t]);
+
+	// Seed the deadline field from the stored config deadline (any course carries it).
+	useEffect(() => {
+		const stored = courses.find((c) => c.maxRegisterDate)?.maxRegisterDate;
+		if (!stored) return;
+		const d = new Date(stored);
+		if (Number.isNaN(d.getTime())) return;
+		const yyyy = d.getFullYear();
+		const mm = String(d.getMonth() + 1).padStart(2, '0');
+		const dd = String(d.getDate()).padStart(2, '0');
+		setDeadlineDate(`${yyyy}-${mm}-${dd}`);
+	}, [courses]);
+
+	function handleSaveDeadline() {
+		if (!academicPeriodId || !programId || !deadlineDate) {
+			setToast({ open: true, type: 'error', msg: t('surveys.lcfc.config.deadlineRequired') });
+			return;
+		}
+		setSavingDeadline(true);
+		// Anchor to end of the selected day in the user's timezone (see notifications view).
+		const iso = new Date(`${deadlineDate}T23:59:59`).toISOString();
+		setLCFCDeadline(programId, academicPeriodId, iso)
+			.then(() => {
+				setToast({ open: true, type: 'success', msg: t('surveys.lcfc.config.deadlineSaved') });
+				loadConfig(academicPeriodId, programId);
+			})
+			.catch((e) => setToast({ open: true, type: 'error', msg: (e as Error).message }))
+			.finally(() => setSavingDeadline(false));
+	}
 
 	const courseGroups = useMemo<CourseGroup[]>(() => {
 		const map = new Map<number, CourseGroup>();
@@ -208,13 +228,23 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 
 	function openEdit(course: LCFCCourse) {
 		setEditing(course);
-		setEditForm({
-			nameEs: course.name.es ?? '',
-			nameEn: course.name.en ?? '',
-			descriptionEs: course.description.es ?? '',
-			descriptionEn: course.description.en ?? '',
-			isActive: course.isActive,
-		});
+		setEditActive(course.isActive);
+		setSelectedOutcomeId(course.outcomeId || null);
+		setSectionOutcomes([]);
+		// Load the course's outcomes (scoped to its program) so the user can pick which one
+		// this LCFC config evaluates. If the course has a single outcome it stays auto-selected.
+		if (course.courseSectionId && course.programId) {
+			setLoadingOutcomes(true);
+			getLCFCSectionOutcomes(course.courseSectionId, course.programId)
+				.then((outcomes) => {
+					setSectionOutcomes(outcomes);
+					if (outcomes.length === 1) setSelectedOutcomeId(outcomes[0].outcomeId);
+					else if (!course.outcomeId && outcomes.length > 0)
+						setSelectedOutcomeId(outcomes[0].outcomeId);
+				})
+				.catch(() => setSectionOutcomes([]))
+				.finally(() => setLoadingOutcomes(false));
+		}
 	}
 
 	function handleSaveEdit() {
@@ -223,12 +253,8 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 		update(
 			editing.id,
 			{
-				userOutcomeName: { es: editForm.nameEs, en: editForm.nameEn || editForm.nameEs },
-				userOutcomeDescription: {
-					es: editForm.descriptionEs,
-					en: editForm.descriptionEn || editForm.descriptionEs,
-				},
-				isActive: editForm.isActive,
+				isActive: editActive,
+				...(selectedOutcomeId ? { outcomeId: selectedOutcomeId } : {}),
 			},
 			() => {
 				setSaving(false);
@@ -309,6 +335,30 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 					<DocumentDuplicateIcon className="h-4 w-4 mr-1" />
 					{t('surveys.lcfc.config.cloneButton')}
 				</Button>
+			</div>
+
+			{/* Survey deadline — configured here (not in notifications). Updating it refreshes
+			    existing surveys' deadline without resending any email. */}
+			<div className="flex flex-wrap items-end gap-3 rounded-xl border border-zinc-200 p-4">
+				<div>
+					<label className="font-medium text-xs mb-1.5 text-zinc-700 block">
+						{t('surveys.lcfc.config.deadlineLabel')}
+					</label>
+					<input
+						type="date"
+						value={deadlineDate}
+						onChange={(e) => setDeadlineDate(e.target.value)}
+						className="h-9 rounded-md border border-zinc-200 px-3 text-sm focus:outline-none focus:border-red-500"
+					/>
+				</div>
+				<Button
+					size="sm"
+					onClick={handleSaveDeadline}
+					disabled={!deadlineDate || savingDeadline}
+					loading={savingDeadline}>
+					{t('surveys.lcfc.config.deadlineSave')}
+				</Button>
+				<p className="text-xs text-zinc-500 basis-full">{t('surveys.lcfc.config.deadlineHint')}</p>
 			</div>
 
 			<DataTable
@@ -424,34 +474,51 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 						<DialogTitle>{t('surveys.lcfc.config.editDialogTitle')}</DialogTitle>
 					</DialogHeader>
 					<div className="space-y-4 py-2">
+						{editing && (
+							<div className="text-sm text-zinc-600">
+								<span className="font-semibold">{editing.courseName}</span>
+								{editing.sectionCode ? (
+									<span className="text-zinc-400"> · {editing.sectionCode}</span>
+								) : null}
+							</div>
+						)}
 						<Toggle
 							label={t('surveys.lcfc.config.activeLabel')}
-							checked={editForm.isActive}
-							onChange={(checked) => setEditForm((f) => ({ ...f, isActive: checked }))}
+							checked={editActive}
+							onChange={setEditActive}
 						/>
-						<Input
-							label={t('surveys.lcfc.config.nameEsLabel')}
-							value={editForm.nameEs}
-							onChange={(e) => setEditForm((f) => ({ ...f, nameEs: e.target.value }))}
-						/>
-						<Input
-							label={t('surveys.lcfc.config.nameEnLabel')}
-							value={editForm.nameEn}
-							onChange={(e) => setEditForm((f) => ({ ...f, nameEn: e.target.value }))}
-						/>
-						<TextArea
-							label={t('surveys.lcfc.config.descriptionEsLabel')}
-							value={editForm.descriptionEs}
-							onChange={(e) => setEditForm((f) => ({ ...f, descriptionEs: e.target.value }))}
-						/>
-						<TextArea
-							label={t('surveys.lcfc.config.descriptionEnLabel')}
-							value={editForm.descriptionEn}
-							onChange={(e) => setEditForm((f) => ({ ...f, descriptionEn: e.target.value }))}
-						/>
+						{loadingOutcomes ? (
+							<LoadingState size="sm" />
+						) : sectionOutcomes.length === 0 ? (
+							<p className="text-sm text-zinc-500 italic">
+								{t('surveys.lcfc.config.noOutcomesForSection')}
+							</p>
+						) : (
+							<Select
+								name="outcome"
+								label={t('surveys.lcfc.config.outcomeLabel')}
+								placeholder={t('surveys.lcfc.config.outcomePlaceholder')}
+								isSearchable
+								options={sectionOutcomes.map((o) => ({
+									value: o.outcomeId,
+									label: `${o.code}${o.name ? ` — ${o.name}` : ''}`,
+								}))}
+								value={
+									sectionOutcomes
+										.map((o) => ({
+											value: o.outcomeId,
+											label: `${o.code}${o.name ? ` — ${o.name}` : ''}`,
+										}))
+										.find((o) => o.value === selectedOutcomeId) ?? null
+								}
+								onChange={(_name, value) =>
+									setSelectedOutcomeId(value && !Array.isArray(value) ? Number(value.value) : null)
+								}
+							/>
+						)}
 					</div>
 					<DialogFooter showCloseButton>
-						<Button onClick={handleSaveEdit} disabled={saving || !editForm.nameEs.trim()}>
+						<Button onClick={handleSaveEdit} disabled={saving || !selectedOutcomeId}>
 							{t('surveys.lcfc.config.save')}
 						</Button>
 					</DialogFooter>
