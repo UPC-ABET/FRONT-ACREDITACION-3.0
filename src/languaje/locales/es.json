@@ -1867,7 +1867,8 @@
 			},
 			"table": {
 				"code": "Código",
-				"name": "Nombre",
+				"name": "Nombre del Proyecto",
+				"course": "Curso",
 				"evaluators": "Evaluadores",
 				"students": "Estudiantes",
 				"actions": "Acciones",

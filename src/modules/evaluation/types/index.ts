@@ -78,7 +78,18 @@ export type FilterProjectDto = Partial<{
 	courseId: number;
 	studentId: number;
 	professorId: number;
+	search: string;
+	page: number;
+	pageSize: number;
 }>;
+
+export type ProjectPaginatedResponse = {
+	items: ProjectResponse[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+};
 
 export type FilterRubricDto = Partial<{
 	studyPlanCourseId: number;
@@ -218,6 +229,14 @@ export type ProjectByProfessorResponse = {
 	}[];
 };
 
+export type ProjectByProfessorPaginatedResponse = {
+	items: ProjectByProfessorResponse[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+};
+
 export type StudentEvaluationResponse = {
 	evaluatorId: number;
 	qualificationStatusTypeId: number;
@@ -344,6 +363,7 @@ export type ProjectResponse = BaseEntity & {
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
 	hasEvaluations?: boolean;
+	courseName?: { en: string; es: string };
 	students?: ProjectStudentResponse[];
 	evaluators?: ProjectEvaluatorResponse[];
 };

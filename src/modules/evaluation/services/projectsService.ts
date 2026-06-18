@@ -5,9 +5,11 @@ import type {
 	CreateProjectFullDto,
 	FilterProjectDto,
 	UpdateProjectDto,
+	ProjectByProfessorPaginatedResponse,
 	ProjectByProfessorResponse,
 	ProjectDetailsResponse,
 	ProjectEvaluatorResponse,
+	ProjectPaginatedResponse,
 	ProjectResponse,
 	ProjectStudentResponse,
 } from '../types';
@@ -34,16 +36,17 @@ export const projectsService = {
 	getByProfessor(
 		professorId: string | number,
 		params?: {
-			academicPeriodId?: number;
-			schoolId?: number;
 			gradeTypeCode?: string;
+			page?: number;
+			pageSize?: number;
+			search?: string;
 		},
-	): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
+	): Promise<ApiResponse<ProjectByProfessorPaginatedResponse>> {
 		const qs = new URLSearchParams();
-		if (params?.academicPeriodId != null)
-			qs.set('academicPeriodId', String(params.academicPeriodId));
-		if (params?.schoolId != null) qs.set('schoolId', String(params.schoolId));
 		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
+		if (params?.page != null) qs.set('page', String(params.page));
+		if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize));
+		if (params?.search) qs.set('search', params.search);
 		const query = qs.toString();
 		return apiGet(`/projects/professor/${professorId}${query ? `?${query}` : ''}`);
 	},
@@ -79,7 +82,7 @@ export const projectsService = {
 		return apiGet('/projects/get-all');
 	},
 
-	getByFilters(filters: FilterProjectDto = {}): Promise<ApiResponse<ProjectResponse[]>> {
+	getByFilters(filters: FilterProjectDto = {}): Promise<ApiResponse<ProjectPaginatedResponse>> {
 		return apiPost('/projects/get-by-filters', filters);
 	},
 

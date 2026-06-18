@@ -29,7 +29,7 @@ function getSpcCourseName(spc: StudyPlanCourseResponse): { en: string; es: strin
 
 export function WizardStep1({ onNext }: WizardStep1Props) {
 	const { t, locale } = useI18n();
-	const { academicPeriodId, schoolId } = useABET();
+	const { academicPeriodId, schoolId, modalityTypeId } = useABET();
 
 	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
 	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
@@ -48,7 +48,7 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 
 	const { data: programs = [], isLoading: loadingPrograms } = usePrograms(
-		{ isActive: true, schoolFilter: true },
+		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
 		{ enabled: !!schoolId && !!academicPeriodId },
 	);
 
