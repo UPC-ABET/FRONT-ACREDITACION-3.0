@@ -55,7 +55,7 @@ export function RubricsListPage() {
 	}, [schoolId, selectedPeriodId, modalityTypeId]);
 
 	const { data: programs = [] } = usePrograms(
-		{ isActive: true, schoolFilter: true },
+		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
 		{ enabled: !!selectedPeriodId && !!schoolId },
 	);
 

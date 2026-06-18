@@ -62,7 +62,7 @@ export function ProjectsListPage() {
 	}, [selectedProgram?.value, selectedCourse?.value, debouncedSearch]);
 
 	const { data: programs = [] } = usePrograms(
-		{ isActive: true, schoolFilter: true },
+		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
 		{ enabled: !!selectedPeriodId && !!schoolId },
 	);
 

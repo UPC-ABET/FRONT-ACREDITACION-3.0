@@ -36,7 +36,7 @@ export function AddEvaluationCourseModal({
 	onSuccess,
 }: AddEvaluationCourseModalProps) {
 	const { t, locale } = useI18n();
-	const { academicPeriodId, schoolId } = useABET();
+	const { academicPeriodId, schoolId, modalityTypeId } = useABET();
 
 	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
 	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
@@ -64,7 +64,7 @@ export function AddEvaluationCourseModal({
 	}, [open]);
 
 	const { data: programs = [], isLoading: loadingPrograms } = usePrograms(
-		{ isActive: true, schoolFilter: true },
+		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
 		{ enabled: !!schoolId && !!academicPeriodId && open },
 	);
 
