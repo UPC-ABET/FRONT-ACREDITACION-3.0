@@ -6,3 +6,4 @@ export * from './GlobalFiltersVisibilityProvider';
 export * from './QueryProvider';
 export * from './AuthProvider';
 export * from './SessionGuard';
+export * from './GlobalAcademicFiltersVisibilityProvider';
