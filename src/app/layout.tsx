@@ -6,7 +6,7 @@ import {
 	LocaleProvider,
 	QueryProvider,
 	SessionGuard,
-	GlobalAcademicFiltersVisibilityProvider,
+	GlobalFiltersVisibilityProvider,
 } from '@/providers';
 import LayoutClient from '@/app/components/LayoutClient';
 import { APP_DESCRIPTION, APP_NAME, DEFAULT_LOCALE } from '@/shared/constants';
@@ -50,11 +50,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				<QueryProvider>
 					<LocaleProvider>
 						<AuthProvider>
-							<GlobalAcademicFiltersVisibilityProvider>
+							<GlobalFiltersVisibilityProvider>
 								<SessionGuard>
 									<LayoutClient>{children}</LayoutClient>
 								</SessionGuard>
-							</GlobalAcademicFiltersVisibilityProvider>
+							</GlobalFiltersVisibilityProvider>
 						</AuthProvider>
 					</LocaleProvider>
 				</QueryProvider>
