@@ -1,4 +1,13 @@
-import { apiPost, apiGet, apiPut, apiDelete, getApiData } from '@/shared/lib';
+import {
+	apiPost,
+	apiGet,
+	apiPut,
+	apiDelete,
+	getApiData,
+	apiGetBlobResponse,
+	triggerBlobDownload,
+	resolveDownloadFileName,
+} from '@/shared/lib';
 import type {
 	LCFCCourse,
 	LCFCConfigStatus,
@@ -7,6 +16,8 @@ import type {
 	LCFCEmailParam,
 	DashboardResponse,
 	AvailableSection,
+	LCFCSectionOutcome,
+	LCFCStudentSurveys,
 } from '../types';
 import type { I18nText } from '@/shared/types';
 
@@ -25,6 +36,7 @@ interface BackendLcfcConfig {
 		academicPeriodId?: number;
 		programId?: number;
 		campusId?: number;
+		maxRegisterDate?: string;
 	};
 }
 
@@ -52,6 +64,17 @@ function toI18nText(value: string | I18nText | undefined): I18nText {
 	return value;
 }
 
+/** Coerce an I18nText ({ es, en }) or plain string to a display string (prefers Spanish). */
+function toText(value: unknown): string {
+	if (typeof value === 'string') return value;
+	if (value && typeof value === 'object') {
+		const obj = value as Record<string, unknown>;
+		const picked = obj.es ?? obj.en;
+		if (typeof picked === 'string') return picked;
+	}
+	return '';
+}
+
 function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 	const extra = raw.extra ?? {};
 	const name = toI18nText(raw.userOutcomeName);
@@ -71,6 +94,7 @@ function adaptLcfcConfig(raw: BackendLcfcConfig): LCFCCourse {
 		academicPeriodId: extra.academicPeriodId,
 		courseSectionId: extra.courseSectionId,
 		sectionCode: extra.sectionCode,
+		maxRegisterDate: extra.maxRegisterDate,
 	};
 }
 
@@ -96,6 +120,21 @@ export async function getAvailableSections(
 	return getApiData<AvailableSection[]>(res) ?? [];
 }
 
+export async function getLCFCSectionOutcomes(
+	courseSectionId: number,
+	programId: number,
+): Promise<LCFCSectionOutcome[]> {
+	const res = await apiGet(
+		`lcfc/config/section-outcomes?courseSectionId=${courseSectionId}&programId=${programId}`,
+	);
+	const raw = getApiData<Array<{ outcomeId: number; code: unknown; name: unknown }>>(res) ?? [];
+	return raw.map((o) => ({
+		outcomeId: o.outcomeId,
+		code: toText(o.code),
+		name: toText(o.name),
+	}));
+}
+
 export async function generateLCFCConfiguration(
 	modalityTypeId: number,
 	academicPeriodId: number,
@@ -113,6 +152,14 @@ export async function generateLCFCConfiguration(
 
 export async function updateLCFCConfig(id: number, data: LCFCConfigUpdateRequest) {
 	return apiPut(`lcfc/config/update/${id}`, data);
+}
+
+export async function setLCFCDeadline(
+	programId: number,
+	academicPeriodId: number,
+	maxRegisterDate: string,
+) {
+	return apiPost('lcfc/config/set-deadline', { programId, academicPeriodId, maxRegisterDate });
 }
 
 export async function deleteLCFCConfig(id: number) {
@@ -194,4 +241,16 @@ export async function generateLCFCPerceptionReport(params: {
 
 export async function validateLCFCToken(token: string) {
 	return apiGet(`lcfc/token/validate/${encodeURIComponent(token)}`);
+}
+
+export async function downloadLCFCSurveys(academicPeriodId: number, programId = 0): Promise<void> {
+	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId) });
+	if (programId) params.set('programId', String(programId));
+	const { blob, response } = await apiGetBlobResponse(`lcfc/export?${params.toString()}`);
+	triggerBlobDownload(blob, resolveDownloadFileName(response, 'encuestas_lcfc.xlsx'));
+}
+
+export async function getLCFCStudentSurveys(token: string): Promise<LCFCStudentSurveys | null> {
+	const res = await apiGet(`lcfc/survey/list-by-token/${encodeURIComponent(token)}`);
+	return getApiData<LCFCStudentSurveys>(res) ?? null;
 }
