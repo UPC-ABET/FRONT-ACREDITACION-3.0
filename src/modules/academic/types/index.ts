@@ -143,6 +143,7 @@ export type ProfessorMaintenanceItem = {
 	code: string;
 	firstName: string;
 	lastName: string;
+	staffEmail: string | null;
 };
 
 export type ProfessorMaintenanceList = {
@@ -169,12 +170,14 @@ export type ProfessorMaintenanceUpdate = {
 	code?: string;
 	firstName?: string;
 	lastName?: string;
+	staffEmail?: string | null;
 };
 
 export type ProfessorMaintenanceCreate = {
 	code: string;
 	firstName: string;
 	lastName: string;
+	staffEmail: string | null;
 };
 
 export type ProfessorResponse = {

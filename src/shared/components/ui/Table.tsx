@@ -125,6 +125,8 @@ interface DataTableProps<TData, TValue> {
 	showSearch?: boolean;
 	searchPlaceholder?: string;
 	searchColumnId?: string;
+	searchValue?: string;
+	onSearchChange?: (value: string) => void;
 	actions?: DataTableAction[];
 	showPagination?: boolean;
 	serverPagination?: ServerPagination;
@@ -145,6 +147,8 @@ export function DataTable<TData, TValue>({
 	showSearch = true,
 	searchPlaceholder,
 	searchColumnId,
+	searchValue: controlledSearchValue,
+	onSearchChange,
 	actions = [],
 	showPagination = true,
 	serverPagination,
@@ -185,13 +189,20 @@ export function DataTable<TData, TValue>({
 		},
 	});
 
-	const searchValue = searchColumnId
-		? ((table.getColumn(searchColumnId)?.getFilterValue() as string) ?? '')
-		: globalFilter;
+	const isControlledSearch = onSearchChange !== undefined;
+	const searchValue = isControlledSearch
+		? (controlledSearchValue ?? '')
+		: searchColumnId
+			? ((table.getColumn(searchColumnId)?.getFilterValue() as string) ?? '')
+			: globalFilter;
 
 	const placeholderText = searchPlaceholder ?? t('table.search.placeholder');
 
 	const handleSearchChange = (value: string) => {
+		if (isControlledSearch) {
+			onSearchChange(value);
+			return;
+		}
 		if (searchColumnId) {
 			table.getColumn(searchColumnId)?.setFilterValue(value);
 			return;

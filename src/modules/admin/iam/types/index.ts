@@ -45,6 +45,21 @@ export interface UserFilters {
 	isActive?: boolean;
 }
 
+export interface UserListParams {
+	page: number;
+	pageSize: number;
+	search?: string;
+	unlinkedOnly?: boolean;
+}
+
+export interface UserListResult {
+	items: IamUser[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+}
+
 export interface AdminRole {
 	id: number;
 	code: string;

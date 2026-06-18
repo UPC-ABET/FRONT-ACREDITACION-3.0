@@ -31,6 +31,7 @@ export function ProfessorMaintenanceCreateDialog({
 	const [code, setCode] = useState('');
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
+	const [email, setEmail] = useState('');
 
 	const canSave =
 		code.trim() !== '' && firstName.trim() !== '' && lastName.trim() !== '' && !saving;
@@ -68,6 +69,12 @@ export function ProfessorMaintenanceCreateDialog({
 							required
 						/>
 					</div>
+					<Input
+						type="email"
+						label={t('loads.maintenance.col.email')}
+						value={email}
+						onChange={(event) => setEmail(event.target.value)}
+					/>
 					{errorMessage && <p className="text-sm font-medium text-red-600">{errorMessage}</p>}
 				</div>
 
@@ -84,6 +91,7 @@ export function ProfessorMaintenanceCreateDialog({
 								code: code.trim(),
 								firstName: firstName.trim(),
 								lastName: lastName.trim(),
+								staffEmail: email.trim() || null,
 							})
 						}>
 						{t('loads.maintenance.create.save')}

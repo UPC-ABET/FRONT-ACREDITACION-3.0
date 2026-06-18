@@ -89,43 +89,6 @@ export function GlobalAcademicFilters({
 				className={
 					isMobileLayout ? mobileLayoutClasses(visibleFilterCount) : layoutClasses(embedded, layout)
 				}>
-				{visibleFilters.school && (
-					<FilterItem
-						embedded={embedded}
-						mobile={isMobileLayout}
-						widthClass={embeddedWidth(layout, 'school')}>
-						{embedded ? (
-							<CompactNavbarSelect
-								label={t('navbar.school.label')}
-								value={filters.selectedSchoolOption?.value ?? ''}
-								options={filters.schoolOptions}
-								placeholder={
-									filters.schoolsLoading ? t('loading.default') : t('select.placeholder.default')
-								}
-								disabled={filters.schoolsLoading}
-								labelPlacement={compactLabelPlacement}
-								density={compactDensity}
-								wrapOptions
-								noOptionsMessage={t('select.noOptions')}
-								onChange={filters.handleSchoolChange}
-							/>
-						) : (
-							<Select
-								label={t('navbar.school.label')}
-								name="school"
-								value={filters.selectedSchoolOption}
-								options={filters.schoolOptions}
-								isSearchable
-								isDisabled={filters.schoolsLoading || filters.schoolOptions.length === 0}
-								onChange={(_, selected) => {
-									if (!selected || Array.isArray(selected)) return;
-									filters.handleSchoolChange(String(selected.value));
-								}}
-							/>
-						)}
-					</FilterItem>
-				)}
-
 				{visibleFilters.modality && (
 					<FilterItem
 						embedded={embedded}
@@ -175,6 +138,43 @@ export function GlobalAcademicFilters({
 							compactLabelPlacement={compactLabelPlacement}
 							compactDensity={compactDensity}
 						/>
+					</FilterItem>
+				)}
+
+				{visibleFilters.school && (
+					<FilterItem
+						embedded={embedded}
+						mobile={isMobileLayout}
+						widthClass={embeddedWidth(layout, 'school')}>
+						{embedded ? (
+							<CompactNavbarSelect
+								label={t('navbar.school.label')}
+								value={filters.selectedSchoolOption?.value ?? ''}
+								options={filters.schoolOptions}
+								placeholder={
+									filters.schoolsLoading ? t('loading.default') : t('select.placeholder.default')
+								}
+								disabled={filters.schoolsLoading}
+								labelPlacement={compactLabelPlacement}
+								density={compactDensity}
+								wrapOptions
+								noOptionsMessage={t('select.noOptions')}
+								onChange={filters.handleSchoolChange}
+							/>
+						) : (
+							<Select
+								label={t('navbar.school.label')}
+								name="school"
+								value={filters.selectedSchoolOption}
+								options={filters.schoolOptions}
+								isSearchable
+								isDisabled={filters.schoolsLoading || filters.schoolOptions.length === 0}
+								onChange={(_, selected) => {
+									if (!selected || Array.isArray(selected)) return;
+									filters.handleSchoolChange(String(selected.value));
+								}}
+							/>
+						)}
 					</FilterItem>
 				)}
 			</div>

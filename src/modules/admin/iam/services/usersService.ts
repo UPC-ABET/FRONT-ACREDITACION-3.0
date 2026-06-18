@@ -1,5 +1,12 @@
 import { apiDelete, apiGet, apiPost, apiPut, getApiData, ApiError } from '@/shared/lib';
-import type { IamUser, UserCreateBody, UserFilters, UserUpdateBody } from '../types';
+import type {
+	IamUser,
+	UserCreateBody,
+	UserFilters,
+	UserListParams,
+	UserListResult,
+	UserUpdateBody,
+} from '../types';
 
 interface RawStaff {
 	id: number;
@@ -32,11 +39,37 @@ function normalizeUser(rawUser: RawUser): IamUser {
 	};
 }
 
-export async function listUsers(): Promise<IamUser[]> {
-	const response = await apiGet('/users/get-all');
-	const users = getApiData<RawUser[]>(response);
-	if (!Array.isArray(users)) throw new ApiError('admin.iam.users.error.listFailed');
-	return users.map(normalizeUser);
+interface RawUserList {
+	items: RawUser[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+}
+
+export async function listUsers(params: UserListParams): Promise<UserListResult> {
+	const query = new URLSearchParams();
+	query.set('page', String(params.page));
+	query.set('pageSize', String(params.pageSize));
+	if (params.search) query.set('search', params.search);
+	if (params.unlinkedOnly) query.set('unlinkedOnly', 'true');
+
+	const response = await apiGet(`/users/get-all?${query.toString()}`);
+	const data = getApiData<RawUserList>(response);
+	if (!data || !Array.isArray(data.items)) throw new ApiError('admin.iam.users.error.listFailed');
+
+	return {
+		items: data.items.map(normalizeUser),
+		total: data.total,
+		page: data.page,
+		pageSize: data.pageSize,
+		totalPages: data.totalPages,
+	};
+}
+
+export async function getUserById(id: number): Promise<IamUser> {
+	const response = await apiGet(`/users/get-by-id/${Number(id)}`);
+	return normalizeUser(getApiData<RawUser>(response));
 }
 
 export async function getUsersByFilters(filters: UserFilters): Promise<IamUser[]> {

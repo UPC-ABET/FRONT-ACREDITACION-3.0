@@ -2943,6 +2943,7 @@
 				"code": "Code",
 				"firstName": "First name",
 				"lastName": "Last name",
+				"email": "Email",
 				"actions": "Actions"
 			},
 			"actions": {
