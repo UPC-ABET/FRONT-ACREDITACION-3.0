@@ -39,13 +39,18 @@ function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | nul
 
 export function ProjectsListPage() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
+	const { academicPeriodId: selectedPeriodId, schoolId, modalityTypeId } = useABET();
 
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
+
+	useEffect(() => {
+		setSelectedProgram(null);
+		setSelectedCourse(null);
+	}, [schoolId, selectedPeriodId, modalityTypeId]);
 
 	useEffect(() => {
 		const timer = setTimeout(() => setDebouncedSearch(search), 300);

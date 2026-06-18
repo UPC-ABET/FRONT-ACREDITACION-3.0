@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PencilSquareIcon, EyeIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
@@ -44,10 +44,15 @@ function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | nul
 
 export function RubricsListPage() {
 	const { locale, t } = useI18n();
-	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
+	const { academicPeriodId: selectedPeriodId, schoolId, modalityTypeId } = useABET();
 
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
+
+	useEffect(() => {
+		setSelectedProgram(null);
+		setSelectedCourse(null);
+	}, [schoolId, selectedPeriodId, modalityTypeId]);
 
 	const { data: programs = [] } = usePrograms(
 		{ isActive: true, schoolFilter: true },

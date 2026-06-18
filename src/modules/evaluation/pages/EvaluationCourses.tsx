@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
@@ -37,18 +37,16 @@ type AnyOption = { label: string; value: string | number };
 
 export function EvaluationCoursesPage() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId: selectedPeriodId, schoolId } = useABET();
+	const { academicPeriodId: selectedPeriodId, schoolId, modalityTypeId } = useABET();
 	const [modalOpen, setModalOpen] = useState(false);
 	const [confirmTarget, setConfirmTarget] = useState<StudyPlanCourseResponse | null>(null);
 	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
 	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
 
-	const [trackedPeriodId, setTrackedPeriodId] = useState(selectedPeriodId);
-	if (selectedPeriodId !== trackedPeriodId) {
-		setTrackedPeriodId(selectedPeriodId);
+	useEffect(() => {
 		setSelectedProgramId(null);
 		setSelectedProgramOpt(null);
-	}
+	}, [schoolId, selectedPeriodId, modalityTypeId]);
 
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 	const selectedPeriodCode = periods.find((p) => p.id === selectedPeriodId)?.code ?? '';
