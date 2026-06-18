@@ -159,6 +159,7 @@ export type ProfessorLookupItem = {
 	code: string | null;
 	firstName: string;
 	lastName: string;
+	staffEmail: string | null;
 	user: ProfessorStaffUserResponse | null;
 };
 

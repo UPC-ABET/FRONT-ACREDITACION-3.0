@@ -17,7 +17,7 @@ const NO_ROLE_LINKS: UserRole[] = [];
 function teacherFromUser(user: IamUser | null): TeacherOption | null {
 	if (!user?.linkedTeacher) return null;
 	const { staffId, code, firstName, lastName } = user.linkedTeacher;
-	return { staffId, code, firstName, lastName };
+	return { staffId, code, firstName, lastName, staffEmail: user.email };
 }
 
 type Props = {
@@ -58,6 +58,7 @@ export function UserFormView({ user, onCancel, onSuccess, onError }: Props) {
 		if (teacher) {
 			setFirstName(teacher.firstName);
 			setLastName(teacher.lastName);
+			if (teacher.staffEmail) setEmail(teacher.staffEmail);
 		}
 	};
 
