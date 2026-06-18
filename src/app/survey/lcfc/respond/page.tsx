@@ -124,13 +124,13 @@ export default function LCFCSurveyRespondPage() {
 
 	const pending = data?.surveys.filter((s) => !s.completed) ?? [];
 
-	// Auto-redirect to the list a few seconds after completing one, if any remain pending.
+	// Auto-redirect to the list 3 seconds after completing one, if any remain pending.
 	useEffect(() => {
 		if (!justCompleted || pending.length === 0) return;
 		const id = setTimeout(() => {
 			setJustCompleted(false);
 			setActiveToken(null);
-		}, 4000);
+		}, 3000);
 		return () => clearTimeout(id);
 	}, [justCompleted, pending.length]);
 
@@ -206,20 +206,6 @@ export default function LCFCSurveyRespondPage() {
 				token={activeToken}
 				onSubmitted={() => {
 					setActiveToken(null);
-					setJustCompleted(true);
-					fetchList();
-				}}
-			/>
-		);
-	}
-
-	// If there's a single survey, jump straight into it.
-	if (data.surveys.length === 1 && !data.surveys[0].completed) {
-		return (
-			<SurveyAnswer
-				key={data.surveys[0].token}
-				token={data.surveys[0].token}
-				onSubmitted={() => {
 					setJustCompleted(true);
 					fetchList();
 				}}

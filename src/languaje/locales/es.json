@@ -2343,8 +2343,8 @@
 				"statusCompleted": "Respondida",
 				"respond": "Responder"
 			},
-			"pendingRedirect": "Todavía tienes {{count}} encuesta(s) pendiente(s). Redirigiendo...",
-			"goToPending": "Ir a mis encuestas pendientes",
+			"pendingRedirect": "Aún tienes {{count}} encuesta(s) disponible(s). Redirigiendo...",
+			"goToPending": "Aún tienes encuestas disponibles, redirigiendo",
 			"programLabel": "Carrera",
 			"periodLabel": "Ciclo",
 			"courseLabel": "Curso",

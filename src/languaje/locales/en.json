@@ -2342,8 +2342,8 @@
 				"statusCompleted": "Answered",
 				"respond": "Answer"
 			},
-			"pendingRedirect": "You still have {{count}} pending survey(s). Redirecting...",
-			"goToPending": "Go to my pending surveys",
+			"pendingRedirect": "You still have {{count}} available survey(s). Redirecting...",
+			"goToPending": "You still have surveys available, redirecting",
 			"programLabel": "Program",
 			"periodLabel": "Period",
 			"courseLabel": "Course",

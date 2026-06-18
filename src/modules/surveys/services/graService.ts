@@ -398,3 +398,10 @@ export async function generateGRAPerceptionReport(params: {
 		programId: params.programId,
 	});
 }
+
+export async function downloadGRASurveys(academicPeriodId: number, programId = 0): Promise<void> {
+	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId) });
+	if (programId) params.set('programId', String(programId));
+	const { blob, response } = await apiGetBlobResponse(`gra/export?${params.toString()}`);
+	triggerBlobDownload(blob, resolveDownloadFileName(response, 'encuestas_gra.xlsx'));
+}
