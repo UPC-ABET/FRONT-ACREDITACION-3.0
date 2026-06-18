@@ -172,6 +172,21 @@ export interface LCFCSectionOutcome {
 	name: string;
 }
 
+export interface LCFCStudentSurveyItem {
+	token: string;
+	courseName: string;
+	sectionCode: string;
+	completed: boolean;
+}
+
+export interface LCFCStudentSurveys {
+	studentName: string;
+	studentCode: string;
+	programName: string;
+	period: string;
+	surveys: LCFCStudentSurveyItem[];
+}
+
 export interface LCFCStudent {
 	studentId: number;
 	code: string;

@@ -2336,6 +2336,14 @@
 			},
 			"title": "Sistema ABET — Encuesta LCFC",
 			"subtitle": "Logro de Fin de Ciclo",
+			"myList": {
+				"title": "Mis encuestas",
+				"subtitle": "Selecciona un curso para responder su encuesta.",
+				"statusCompleted": "Respondida",
+				"respond": "Responder"
+			},
+			"pendingRedirect": "Todavía tienes {{count}} encuesta(s) pendiente(s). Redirigiendo...",
+			"goToPending": "Ir a mis encuestas pendientes",
 			"programLabel": "Carrera",
 			"periodLabel": "Ciclo",
 			"courseLabel": "Curso",

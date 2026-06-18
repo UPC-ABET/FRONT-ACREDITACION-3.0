@@ -8,6 +8,7 @@ import type {
 	DashboardResponse,
 	AvailableSection,
 	LCFCSectionOutcome,
+	LCFCStudentSurveys,
 } from '../types';
 import type { I18nText } from '@/shared/types';
 
@@ -231,4 +232,9 @@ export async function generateLCFCPerceptionReport(params: {
 
 export async function validateLCFCToken(token: string) {
 	return apiGet(`lcfc/token/validate/${encodeURIComponent(token)}`);
+}
+
+export async function getLCFCStudentSurveys(token: string): Promise<LCFCStudentSurveys | null> {
+	const res = await apiGet(`lcfc/survey/list-by-token/${encodeURIComponent(token)}`);
+	return getApiData<LCFCStudentSurveys>(res) ?? null;
 }

@@ -2335,6 +2335,14 @@
 			},
 			"title": "ABET System — LCFC Survey",
 			"subtitle": "End of Cycle Achievement",
+			"myList": {
+				"title": "My surveys",
+				"subtitle": "Pick a course to answer its survey.",
+				"statusCompleted": "Answered",
+				"respond": "Answer"
+			},
+			"pendingRedirect": "You still have {{count}} pending survey(s). Redirecting...",
+			"goToPending": "Go to my pending surveys",
 			"programLabel": "Program",
 			"periodLabel": "Period",
 			"courseLabel": "Course",
