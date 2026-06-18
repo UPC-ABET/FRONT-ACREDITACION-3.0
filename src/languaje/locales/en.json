@@ -2285,6 +2285,7 @@
 			"selectCycle": "Select a cycle",
 			"generating": "Generating...",
 			"generateDashboard": "Generate Dashboard",
+			"downloadExcel": "Download Excel",
 			"summary": "Summary",
 			"totalSurveys": "Total surveys",
 			"completed": "Completed",

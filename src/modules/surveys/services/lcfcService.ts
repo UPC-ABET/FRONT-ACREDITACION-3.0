@@ -1,4 +1,13 @@
-import { apiPost, apiGet, apiPut, apiDelete, getApiData } from '@/shared/lib';
+import {
+	apiPost,
+	apiGet,
+	apiPut,
+	apiDelete,
+	getApiData,
+	apiGetBlobResponse,
+	triggerBlobDownload,
+	resolveDownloadFileName,
+} from '@/shared/lib';
 import type {
 	LCFCCourse,
 	LCFCConfigStatus,
@@ -232,6 +241,13 @@ export async function generateLCFCPerceptionReport(params: {
 
 export async function validateLCFCToken(token: string) {
 	return apiGet(`lcfc/token/validate/${encodeURIComponent(token)}`);
+}
+
+export async function downloadLCFCSurveys(academicPeriodId: number, programId = 0): Promise<void> {
+	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId) });
+	if (programId) params.set('programId', String(programId));
+	const { blob, response } = await apiGetBlobResponse(`lcfc/export?${params.toString()}`);
+	triggerBlobDownload(blob, resolveDownloadFileName(response, 'encuestas_lcfc.xlsx'));
 }
 
 export async function getLCFCStudentSurveys(token: string): Promise<LCFCStudentSurveys | null> {

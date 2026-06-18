@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { useLCFCReports } from '../../hooks';
+import { downloadLCFCSurveys } from '../../services';
 
 interface LCFCReportsProps {
 	readonly programId: number;
@@ -20,6 +22,7 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 		type: 'success',
 		msg: '',
 	});
+	const [downloading, setDownloading] = useState(false);
 
 	useEffect(() => {
 		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
@@ -33,6 +36,21 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 		await generate({ academicPeriodId, school: '1', programId: programId || undefined });
 	}
 
+	async function handleDownload() {
+		if (!academicPeriodId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
+			return;
+		}
+		setDownloading(true);
+		try {
+			await downloadLCFCSurveys(academicPeriodId, programId || 0);
+		} catch (e) {
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, (e as Error).message) });
+		} finally {
+			setDownloading(false);
+		}
+	}
+
 	if (!academicPeriodId) {
 		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
@@ -44,9 +62,19 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 				<p className="text-sm text-zinc-500 mt-1">{t('surveys.lcfc.reports.description')}</p>
 			</div>
 
-			<Button onClick={handleGenerate} disabled={loading} loading={loading}>
-				{t('surveys.shared.generateDashboard')}
-			</Button>
+			<div className="flex flex-wrap gap-2">
+				<Button onClick={handleGenerate} disabled={loading} loading={loading}>
+					{t('surveys.shared.generateDashboard')}
+				</Button>
+				<Button
+					variant="surface"
+					onClick={handleDownload}
+					disabled={downloading}
+					loading={downloading}>
+					<ArrowDownTrayIcon className="h-4 w-4 mr-1" />
+					{t('surveys.shared.downloadExcel')}
+				</Button>
+			</div>
 
 			{reportData && (
 				<div className="p-4 bg-zinc-50 rounded-xl border border-zinc-200 space-y-3">
