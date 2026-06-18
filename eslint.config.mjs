@@ -11,6 +11,7 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "dist-scripts/**",
+    "encuestas_anterior/**",
   ]),
   {
     // TEMP (Next 16 / React Compiler): these rules flag idiomatic

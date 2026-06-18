@@ -26,8 +26,8 @@ import {
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { useLCFCConfiguration, useLCFCAvailableSections } from '../../../hooks';
-import { getLCFCSectionOutcomes, setLCFCDeadline } from '../../../services';
-import type { AvailableSection, LCFCCourse, LCFCSectionOutcome } from '../../../types';
+import { getLCFCSectionCommissions, setLCFCDeadline } from '../../../services';
+import type { AvailableSection, LCFCCourse, LCFCSectionCommission } from '../../../types';
 
 interface LCFCConfigurationProps {
 	readonly programId: number;
@@ -75,9 +75,9 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 	const [selectedSectionIds, setSelectedSectionIds] = useState<Set<number>>(new Set());
 	const [editing, setEditing] = useState<LCFCCourse | null>(null);
 	const [editActive, setEditActive] = useState(true);
-	const [sectionOutcomes, setSectionOutcomes] = useState<LCFCSectionOutcome[]>([]);
-	const [loadingOutcomes, setLoadingOutcomes] = useState(false);
-	const [selectedOutcomeId, setSelectedOutcomeId] = useState<number | null>(null);
+	const [sectionCommissions, setSectionCommissions] = useState<LCFCSectionCommission[]>([]);
+	const [loadingCommissions, setLoadingCommissions] = useState(false);
+	const [selectedCommissionId, setSelectedCommissionId] = useState<number | null>(null);
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [saving, setSaving] = useState(false);
 	const [deadlineDate, setDeadlineDate] = useState('');
@@ -229,21 +229,19 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 	function openEdit(course: LCFCCourse) {
 		setEditing(course);
 		setEditActive(course.isActive);
-		setSelectedOutcomeId(course.outcomeId || null);
-		setSectionOutcomes([]);
-		// Load the course's outcomes (scoped to its program) so the user can pick which one
-		// this LCFC config evaluates. If the course has a single outcome it stays auto-selected.
-		if (course.courseSectionId && course.programId) {
-			setLoadingOutcomes(true);
-			getLCFCSectionOutcomes(course.courseSectionId, course.programId)
-				.then((outcomes) => {
-					setSectionOutcomes(outcomes);
-					if (outcomes.length === 1) setSelectedOutcomeId(outcomes[0].outcomeId);
-					else if (!course.outcomeId && outcomes.length > 0)
-						setSelectedOutcomeId(outcomes[0].outcomeId);
+		setSelectedCommissionId(course.commissionId ?? null);
+		setSectionCommissions([]);
+		if (course.courseSectionId) {
+			setLoadingCommissions(true);
+			getLCFCSectionCommissions(course.courseSectionId, course.programId)
+				.then((commissions) => {
+					setSectionCommissions(commissions);
+					if (!course.commissionId && commissions.length > 0)
+						setSelectedCommissionId(commissions[0].commissionId);
+					else if (commissions.length === 1) setSelectedCommissionId(commissions[0].commissionId);
 				})
-				.catch(() => setSectionOutcomes([]))
-				.finally(() => setLoadingOutcomes(false));
+				.catch(() => setSectionCommissions([]))
+				.finally(() => setLoadingCommissions(false));
 		}
 	}
 
@@ -254,7 +252,7 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 			editing.id,
 			{
 				isActive: editActive,
-				...(selectedOutcomeId ? { outcomeId: selectedOutcomeId } : {}),
+				...(selectedCommissionId ? { commissionId: selectedCommissionId } : {}),
 			},
 			() => {
 				setSaving(false);
@@ -343,6 +341,7 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 				<div>
 					<label className="font-medium text-xs mb-1.5 text-zinc-700 block">
 						{t('surveys.lcfc.config.deadlineLabel')}
+						<span className="ml-1 text-red-600">*</span>
 					</label>
 					<input
 						type="date"
@@ -487,38 +486,40 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 							checked={editActive}
 							onChange={setEditActive}
 						/>
-						{loadingOutcomes ? (
+						{loadingCommissions ? (
 							<LoadingState size="sm" />
-						) : sectionOutcomes.length === 0 ? (
+						) : sectionCommissions.length === 0 ? (
 							<p className="text-sm text-zinc-500 italic">
-								{t('surveys.lcfc.config.noOutcomesForSection')}
+								{t('surveys.lcfc.config.noCommissionsForSection')}
 							</p>
 						) : (
 							<Select
-								name="outcome"
-								label={t('surveys.lcfc.config.outcomeLabel')}
-								placeholder={t('surveys.lcfc.config.outcomePlaceholder')}
+								name="commission"
+								label={t('surveys.lcfc.config.commissionLabel')}
+								placeholder={t('surveys.lcfc.config.commissionPlaceholder')}
 								isSearchable
-								options={sectionOutcomes.map((o) => ({
-									value: o.outcomeId,
-									label: `${o.code}${o.name ? ` — ${o.name}` : ''}`,
+								options={sectionCommissions.map((c) => ({
+									value: c.commissionId,
+									label: `${c.code}${c.name ? ` — ${c.name}` : ''}`,
 								}))}
 								value={
-									sectionOutcomes
-										.map((o) => ({
-											value: o.outcomeId,
-											label: `${o.code}${o.name ? ` — ${o.name}` : ''}`,
+									sectionCommissions
+										.map((c) => ({
+											value: c.commissionId,
+											label: `${c.code}${c.name ? ` — ${c.name}` : ''}`,
 										}))
-										.find((o) => o.value === selectedOutcomeId) ?? null
+										.find((c) => c.value === selectedCommissionId) ?? null
 								}
 								onChange={(_name, value) =>
-									setSelectedOutcomeId(value && !Array.isArray(value) ? Number(value.value) : null)
+									setSelectedCommissionId(
+										value && !Array.isArray(value) ? Number(value.value) : null,
+									)
 								}
 							/>
 						)}
 					</div>
 					<DialogFooter showCloseButton>
-						<Button onClick={handleSaveEdit} disabled={saving || !selectedOutcomeId}>
+						<Button onClick={handleSaveEdit} disabled={saving || !selectedCommissionId}>
 							{t('surveys.lcfc.config.save')}
 						</Button>
 					</DialogFooter>
