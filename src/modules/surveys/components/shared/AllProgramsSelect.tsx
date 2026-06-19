@@ -12,12 +12,12 @@ interface Props {
 }
 
 /**
- * Program picker for LCFC. Unlike the generic SurveyProgramSelect it does NOT
- * filter by school, so all active programs across all schools are available.
- * The school filter is hidden in LCFC because the section (not the program) is
- * the primary entity, and a section can belong to programs from different schools.
+ * Program picker for the survey screens (LCFC, GRA, PPP). Unlike SurveyProgramSelect
+ * it does NOT filter by school, so all active programs across all schools are
+ * available. Surveys hide the sidebar school filter and list every program, because
+ * a section/student can belong to programs from different schools.
  */
-export function LCFCProgramSelect({ value, onChange }: Props) {
+export function AllProgramsSelect({ value, onChange }: Props) {
 	const { t, locale } = useI18n();
 	const { data: programs = [], isLoading } = useQuery({
 		queryKey: ['programs', 'all-active', { isActive: true }],

@@ -2135,7 +2135,8 @@
 			},
 			"reports": {
 				"title": "Dashboard — LCFC",
-				"description": "Resumen de percepción para encuestas de Logro de Fin de Ciclo."
+				"description": "Resumen de percepción para encuestas de Logro de Fin de Ciclo.",
+				"byProgramTitle": "Encuestas por programa"
 			},
 			"config": {
 				"colCode": "Código",
@@ -2317,6 +2318,7 @@
 			"generating": "Generando...",
 			"generateDashboard": "Generar Dashboard",
 			"downloadExcel": "Descargar Excel",
+			"downloadPdf": "Descargar PDF",
 			"summary": "Resumen",
 			"totalSurveys": "Total encuestas",
 			"completed": "Completadas",

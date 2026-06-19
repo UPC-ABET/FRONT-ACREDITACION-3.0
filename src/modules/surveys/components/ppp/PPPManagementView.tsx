@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { Card, PageHeader, Tabs } from '@/shared/components';
-import { useI18n } from '@/providers';
-import { SurveyProgramSelect } from '../shared/SurveyProgramSelect';
+import { useI18n, useGlobalAcademicFiltersVisibilityOverride } from '@/providers';
+import { AllProgramsSelect } from '../shared/AllProgramsSelect';
 import { PPPMassiveUpload } from './PPPMassiveUpload';
 import { PPPReports } from './PPPReports';
 import { PPPConfiguration } from './configuration/PPPConfiguration';
@@ -12,6 +12,9 @@ export function PPPManagementView() {
 	const { t } = useI18n();
 	const [activeTab, setActiveTab] = useState('upload');
 	const [programId, setProgramId] = useState(0);
+
+	// Hide school filter — surveys show all programs across schools.
+	useGlobalAcademicFiltersVisibilityOverride({ school: false, modality: true, period: true });
 
 	// PPP does not send survey notifications — only GRA and LCFC do. The template
 	// download already lives inside the massive-upload tab, so it has no tab of its own.
@@ -32,7 +35,7 @@ export function PPPManagementView() {
 
 			<Card className="overflow-visible">
 				<div className="space-y-6">
-					<SurveyProgramSelect value={programId} onChange={setProgramId} />
+					<AllProgramsSelect value={programId} onChange={setProgramId} />
 
 					{activeTab === 'upload' && <PPPMassiveUpload programId={programId} />}
 					{activeTab === 'reports' && <PPPReports programId={programId} />}

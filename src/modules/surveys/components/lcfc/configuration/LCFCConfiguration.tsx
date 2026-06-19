@@ -236,8 +236,17 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 			getLCFCSectionCommissions(course.courseSectionId, course.programId)
 				.then((commissions) => {
 					setSectionCommissions(commissions);
+					// When several commissions exist, default to EAC (Engineering Accreditation
+					// Commission) — matching by commission type first, then code/name — and fall
+					// back to the first one.
+					const isEac = (c: LCFCSectionCommission) =>
+						/eac/i.test(c.typeCode ?? '') ||
+						/eac/i.test(c.typeName ?? '') ||
+						/eac/i.test(c.code) ||
+						/eac/i.test(c.name);
+					const preferred = commissions.find(isEac) ?? commissions[0];
 					if (!course.commissionId && commissions.length > 0)
-						setSelectedCommissionId(commissions[0].commissionId);
+						setSelectedCommissionId(preferred.commissionId);
 					else if (commissions.length === 1) setSelectedCommissionId(commissions[0].commissionId);
 				})
 				.catch(() => setSectionCommissions([]))

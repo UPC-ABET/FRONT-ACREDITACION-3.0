@@ -145,11 +145,22 @@ export async function getLCFCSectionCommissions(
 	const params = new URLSearchParams({ courseSectionId: String(courseSectionId) });
 	if (programId) params.set('programId', String(programId));
 	const res = await apiGet(`lcfc/config/section-commissions?${params.toString()}`);
-	const raw = getApiData<Array<{ commissionId: number; code: unknown; name: unknown }>>(res) ?? [];
+	const raw =
+		getApiData<
+			Array<{
+				commissionId: number;
+				code: unknown;
+				name: unknown;
+				typeCode?: unknown;
+				typeName?: unknown;
+			}>
+		>(res) ?? [];
 	return raw.map((c) => ({
 		commissionId: c.commissionId,
 		code: toText(c.code),
 		name: toText(c.name),
+		typeCode: toText(c.typeCode),
+		typeName: toText(c.typeName),
 	}));
 }
 
@@ -230,6 +241,7 @@ export async function generateLCFCDashboard(params: {
 			completionRatePct?: number;
 		};
 		byCourse?: unknown[];
+		byProgram?: unknown[];
 		filters?: unknown;
 	}>(res);
 	const s = data?.summary ?? {};
@@ -243,6 +255,7 @@ export async function generateLCFCDashboard(params: {
 			completionRatePct: s.completionRatePct,
 		},
 		byCourse: data?.byCourse ?? [],
+		byProgram: data?.byProgram ?? [],
 		filters: data?.filters,
 	};
 }
@@ -266,6 +279,17 @@ export async function downloadLCFCSurveys(academicPeriodId: number, programId = 
 	if (programId) params.set('programId', String(programId));
 	const { blob, response } = await apiGetBlobResponse(`lcfc/export?${params.toString()}`);
 	triggerBlobDownload(blob, resolveDownloadFileName(response, 'encuestas_lcfc.xlsx'));
+}
+
+export async function downloadLCFCReportPdf(
+	academicPeriodId: number,
+	programId = 0,
+	lang = 'es',
+): Promise<void> {
+	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId), lang });
+	if (programId) params.set('programId', String(programId));
+	const { blob, response } = await apiGetBlobResponse(`lcfc/report-pdf?${params.toString()}`);
+	triggerBlobDownload(blob, resolveDownloadFileName(response, 'reporte_lcfc.pdf'));
 }
 
 export async function getLCFCStudentSurveys(token: string): Promise<LCFCStudentSurveys | null> {
