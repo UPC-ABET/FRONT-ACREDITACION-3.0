@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
-import { useABET, useI18n } from '@/providers';
+import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useNotificationConfigs } from '../hooks/useNotificationConfigs';
 import { NotificationConfigProvider } from '../hooks/useNotificationConfigContext';
@@ -12,11 +11,10 @@ import { TabHeader } from './shared';
 
 export function NotificationConfigPage() {
 	const { t } = useI18n();
-	const { academicPeriodId } = useABET();
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-	const { data, loading, error, refetch } = useNotificationConfigs(academicPeriodId);
+	const { data, loading, error, refetch } = useNotificationConfigs();
 
 	return (
 		<div className="space-y-6">
@@ -25,20 +23,10 @@ export function NotificationConfigPage() {
 				description={t('admin.notify.page.subtitle')}
 			/>
 			<div className="space-y-6">
-				{academicPeriodId === null && (
-					<div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-white py-14 text-zinc-500">
-						<CalendarDaysIcon className="h-10 w-10 text-zinc-400" />
-						<p className="text-base italic">{t('admin.notify.page.selectPeriod')}</p>
-					</div>
-				)}
+				{loading && <LoadingDialog isOpen label={t('loading.default')} />}
 
-				{academicPeriodId !== null && loading && (
-					<LoadingDialog isOpen label={t('loading.default')} />
-				)}
-
-				{academicPeriodId !== null && data && (
+				{data && (
 					<NotificationConfigProvider
-						periodId={academicPeriodId}
 						chartEntityTypes={data.chartEntityTypes}
 						notifyVars={data.notifyVars}
 						onSaved={() => {

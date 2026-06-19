@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, PageHeader, Tabs } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import { ChartHeadsConfigPage } from '@/modules/admin/chart-heads';
 import { PeriodsTab, ProgramCommissionsTab } from '../components';
 
@@ -14,6 +14,10 @@ export default function AdminConfigurationPage() {
 	const { t } = useI18n();
 
 	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
+
+	useGlobalAcademicFiltersVisibilityOverride(
+		activeTab === 'periods' ? { school: false, modality: false, period: false } : { school: false },
+	);
 
 	const topTabs = [
 		{ id: 'periods', label: t('admin.configuration.tabs.periods') },

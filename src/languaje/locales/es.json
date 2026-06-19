@@ -67,7 +67,7 @@
 				},
 				"alumnosMatriculados": {
 					"title": "Alumnos matriculados",
-					"description": "Código, apellidos, nombres, programa y campus."
+					"description": "Código, apellidos, nombres, carrera y campus."
 				},
 				"alumnosSecciones": {
 					"title": "Alumnos por sección",
@@ -1147,6 +1147,10 @@
 			"invalidOutcomeType": "Tipo de marca no válido para el mapeo.",
 			"duplicateCourseOutcome": "El curso tiene el mismo outcome marcado más de una vez."
 		},
+		"studentSectionEnrollment": {
+			"courseNotInStudyPlan": "El curso de la sección no pertenece a la malla curricular del alumno.",
+			"studyPlanPeriodMismatch": "El alumno no está matriculado en la misma malla curricular y período que la sección."
+		},
 		"validation": "Los datos ingresados no son válidos",
 		"badRequest": "Solicitud inválida",
 		"unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
@@ -1443,16 +1447,16 @@
 			},
 			"lcfc": {
 				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado.",
-				"noCourseSections": "No se encontraron secciones de curso para el programa y período seleccionados.",
-				"noProgramOutcomes": "El programa seleccionado no tiene outcomes registrados. Regístralos primero en Mantenimiento de Outcomes.",
+				"noCourseSections": "No se encontraron secciones de curso para la carrera y período seleccionados.",
+				"noProgramOutcomes": "La carrera seleccionada no tiene outcomes registrados. Regístralos primero en Mantenimiento de Outcomes.",
 				"configNotFound": "No se encontró la configuración LCFC indicada."
 			},
 			"ppp": {
-				"noActiveConfig": "No hay configuración PPP para el programa y período seleccionados. Ve a la pestaña Configuración y genera la configuración a partir de los outcomes del programa.",
+				"noActiveConfig": "No hay configuración PPP para la carrera y período seleccionados. Ve a la pestaña Configuración y genera la configuración a partir de los outcomes de la carrera.",
 				"invalidExcelFile": "El archivo proporcionado no es un Excel válido.",
 				"excelNoSheets": "El archivo Excel no contiene hojas.",
 				"excelEmpty": "El archivo Excel está vacío o no tiene datos en la primera hoja.",
-				"configExists": "Ya existe una configuración PPP para este outcome en el programa y período seleccionados.",
+				"configExists": "Ya existe una configuración PPP para este outcome en la carrera y período seleccionados.",
 				"configNotFound": "No se encontró la configuración PPP indicada.",
 				"surveyNotFound": "No se encontró la encuesta PPP indicada.",
 				"surveyTypeMissing": "No se encontró el tipo de encuesta PPP. Contacte al administrador.",
@@ -2146,7 +2150,7 @@
 				"generateDialogTitle": "Seleccionar secciones",
 				"generateConfirm": "Generar",
 				"selectAll": "Seleccionar todas",
-				"noSectionsAvailable": "No hay secciones disponibles para este programa y período.",
+				"noSectionsAvailable": "No hay secciones disponibles para esta carrera y período.",
 				"toastCloned": "Configuración clonada exitosamente.",
 				"toastClonedCounts": "{{generated}} configuraciones clonadas ({{skipped}} omitidas, {{statusCopied}} estados copiados).",
 				"cycleLabel": "Ciclo / Período",
@@ -2165,7 +2169,7 @@
 				"actionDelete": "Eliminar",
 				"deadlineLabel": "Fecha límite de la encuesta",
 				"deadlineSave": "Guardar fecha límite",
-				"deadlineHint": "Esta fecha aplica a las encuestas de este programa. Al guardarla se actualiza la fecha límite de las encuestas ya enviadas, sin reenviar correos.",
+				"deadlineHint": "Esta fecha aplica a las encuestas de esta carrera. Al guardarla se actualiza la fecha límite de las encuestas ya enviadas, sin reenviar correos.",
 				"deadlineRequired": "Selecciona una fecha límite.",
 				"deadlineSaved": "Fecha límite actualizada.",
 				"editDialogTitle": "Editar configuración",
@@ -2348,13 +2352,13 @@
 				"uploading": "Subiendo...",
 				"uploadButton": "Subir Archivo"
 			},
-			"programLabel": "Programa",
-			"selectProgram": "Selecciona un programa",
-			"noProgramsForSchool": "No hay programas configurados para esta escuela",
+			"programLabel": "Carrera",
+			"selectProgram": "Selecciona una carrera",
+			"noProgramsForSchool": "No hay carreras configuradas para esta escuela",
 			"generateConfig": "Generar configuración",
-			"generateConfigHint": "Genera la configuración a partir de los outcomes del programa seleccionado.",
+			"generateConfigHint": "Genera la configuración a partir de los outcomes de la carrera seleccionada.",
 			"configGenerated": "Configuración generada: {{created}} de {{total}} outcomes.",
-			"noOutcomesForProgram": "El programa seleccionado no tiene outcomes en este período. Regístralos primero en Mantenimiento de Outcomes."
+			"noOutcomesForProgram": "La carrera seleccionada no tiene outcomes en este período. Regístralos primero en Mantenimiento de Outcomes."
 		},
 		"student": {
 			"loading": "Cargando encuesta...",
@@ -3697,7 +3701,7 @@
 		},
 		"filter": {
 			"status": "Estado",
-			"program": "Programa",
+			"program": "Carrera",
 			"origin": "Origen",
 			"originAll": "Todos",
 			"originUpc": "UPC",
@@ -3718,7 +3722,7 @@
 			"fieldDescription": "Descripción",
 			"placeholderDescription": "Describe brevemente el proyecto",
 			"fieldCompany": "Empresa",
-			"fieldProgram": "Programa",
+			"fieldProgram": "Carrera",
 			"academicPeriod": "Período académico",
 			"origin": "Origen",
 			"originUpc": "UPC",

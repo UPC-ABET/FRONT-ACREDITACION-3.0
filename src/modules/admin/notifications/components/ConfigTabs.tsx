@@ -85,7 +85,7 @@ export function ConfigTabs({ triggers, statuses, configs }: Props) {
 			</div>
 
 			<ConfigEditor
-				key={`${triggerId}-${statusId}`}
+				key={`${triggerId}-${statusId}-${existing?.id ?? 'new'}-${existing?.isActive ?? 'na'}`}
 				triggerTypeId={triggerId}
 				statusTypeId={statusId}
 				statusCode={statusCode ?? ''}

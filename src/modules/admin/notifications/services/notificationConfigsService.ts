@@ -11,8 +11,6 @@ function normalizeConfig(c: NotificationConfig): NotificationConfig {
 	return {
 		...c,
 		id: Number(c.id),
-		schoolId: Number(c.schoolId),
-		academicPeriodId: Number(c.academicPeriodId),
 		triggerTypeId: Number(c.triggerTypeId),
 		ifcStatusTypeId: Number(c.ifcStatusTypeId),
 		emailTemplateId: c.emailTemplateId == null ? null : Number(c.emailTemplateId),
@@ -21,10 +19,8 @@ function normalizeConfig(c: NotificationConfig): NotificationConfig {
 	};
 }
 
-export async function listNotificationConfigs(periodId: number): Promise<NotificationConfig[]> {
-	const body = await apiGet<Envelope<NotificationConfig[]>>(
-		`/ifc-notification-configs/by-period?periodId=${Number(periodId)}`,
-	);
+export async function listNotificationConfigs(): Promise<NotificationConfig[]> {
+	const body = await apiGet<Envelope<NotificationConfig[]>>('/ifc-notification-configs/list');
 
 	if (!body?.data) throw new ApiError(body?.message ?? 'admin.notify.error.listFailed');
 	return body.data.map(normalizeConfig);

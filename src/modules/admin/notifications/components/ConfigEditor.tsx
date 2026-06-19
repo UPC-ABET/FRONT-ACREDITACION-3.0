@@ -95,7 +95,7 @@ function RecipientsField({
 
 export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existingConfig }: Props) {
 	const { t, locale: lang } = useI18n();
-	const { periodId, chartEntityTypes, notifyVars, onSaved, onError, onSuccess } =
+	const { chartEntityTypes, notifyVars, onSaved, onError, onSuccess } =
 		useNotificationConfigContext();
 	const [name, setName] = useState<I18nText>(() =>
 		existingConfig ? asI18n(existingConfig.name) : emptyI18n(),
@@ -129,7 +129,6 @@ export function ConfigEditor({ triggerTypeId, statusTypeId, statusCode, existing
 		setSaving(true);
 		try {
 			const payload: UpsertConfigBody = {
-				academicPeriodId: periodId,
 				triggerTypeId: triggerTypeId,
 				ifcStatusTypeId: statusTypeId,
 				name,

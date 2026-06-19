@@ -4,7 +4,6 @@ import { createContext, useContext } from 'react';
 import type { CoreType, NotifyVar } from '../types';
 
 interface NotificationConfigContextValue {
-	periodId: number;
 	chartEntityTypes: CoreType[];
 	notifyVars: NotifyVar[];
 	onSaved: () => void;

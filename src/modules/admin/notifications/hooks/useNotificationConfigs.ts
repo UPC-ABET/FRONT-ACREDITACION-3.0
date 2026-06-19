@@ -16,12 +16,12 @@ interface ConfigsBundle {
 
 const notificationConfigsKeys = {
 	all: ['notification-configs'] as const,
-	bundle: (periodId: number) => [...notificationConfigsKeys.all, 'bundle', periodId] as const,
+	bundle: () => [...notificationConfigsKeys.all, 'bundle'] as const,
 };
 
-async function fetchBundle(periodId: number): Promise<ConfigsBundle> {
+async function fetchBundle(): Promise<ConfigsBundle> {
 	const [configs, notifyVarsValue, statuses, triggers, chartEntityTypes] = await Promise.all([
-		listNotificationConfigs(periodId),
+		listNotificationConfigs(),
 		getParameterByCode<NotifyVar[]>(PARAMETER_CODES.IFC_NOTIFICATION_VARS),
 		getTypesByGroupCode(TYPE_GROUP_CODES.IFC_STATUS) as Promise<CoreType[]>,
 		getTypesByGroupCode(TYPE_GROUP_CODES.NOTIFICATION_TRIGGER) as Promise<CoreType[]>,
@@ -36,11 +36,10 @@ async function fetchBundle(periodId: number): Promise<ConfigsBundle> {
 	};
 }
 
-export function useNotificationConfigs(periodId: number | null) {
+export function useNotificationConfigs() {
 	const { data, isLoading, error, refetch } = useQuery({
-		queryKey: notificationConfigsKeys.bundle(periodId!),
-		queryFn: () => fetchBundle(periodId!),
-		enabled: periodId != null,
+		queryKey: notificationConfigsKeys.bundle(),
+		queryFn: fetchBundle,
 	});
 
 	return {

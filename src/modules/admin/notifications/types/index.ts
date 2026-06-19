@@ -2,8 +2,6 @@ import type { I18nText } from '@/shared/types';
 
 export interface NotificationConfig {
 	id: number;
-	schoolId: number;
-	academicPeriodId: number;
 	triggerTypeId: number;
 	triggerCode: string;
 	triggerName: I18nText;
@@ -32,7 +30,6 @@ export interface CoreType {
 }
 
 export interface UpsertConfigBody {
-	academicPeriodId: number;
 	triggerTypeId: number;
 	ifcStatusTypeId: number;
 	name: I18nText;

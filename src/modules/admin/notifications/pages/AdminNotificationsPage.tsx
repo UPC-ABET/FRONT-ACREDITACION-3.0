@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, PageHeader, Tabs } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import { NotificationConfigPage } from '@/modules/admin/notifications';
 import { SurveyMessagesTab } from '@/modules/admin/notifications';
 import { UserTemplatesTab } from '@/modules/admin/notifications';
@@ -16,6 +16,10 @@ export default function AdminNotificationsPage() {
 	const { t } = useI18n();
 
 	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
+
+	useGlobalAcademicFiltersVisibilityOverride(
+		activeTab === 'survey' ? {} : { school: false, modality: false, period: false },
+	);
 
 	const topTabs = [
 		{ id: 'ifc', label: t('admin.notifications.tabs.ifc') },

@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { PageHeader, Tabs } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import { IfcCodesPage } from '../components/IfcCodesPage';
 import { IfcFieldsPage } from '../components/IfcFieldsPage';
 import { PerformanceLevelsPage } from '@/modules/evaluation/pages';
@@ -17,6 +17,10 @@ export default function AdminParametersPage() {
 
 	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
 	const activeSub = searchParams.get('sub') ?? DEFAULT_IFC_SUB;
+
+	useGlobalAcademicFiltersVisibilityOverride(
+		activeTab === 'ifc' ? { school: false, modality: false, period: false } : {},
+	);
 
 	const topTabs = [
 		{ id: 'ifc', label: t('admin.parameters.tabs.ifc') },

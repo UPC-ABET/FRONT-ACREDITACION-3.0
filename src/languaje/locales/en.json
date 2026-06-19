@@ -1147,6 +1147,10 @@
 			"invalidOutcomeType": "Invalid mark type for the mapping.",
 			"duplicateCourseOutcome": "The course has the same outcome marked more than once."
 		},
+		"studentSectionEnrollment": {
+			"courseNotInStudyPlan": "The section's course does not belong to the student's study plan.",
+			"studyPlanPeriodMismatch": "The student is not enrolled in the same study plan and period as the section."
+		},
 		"validation": "The submitted data is not valid",
 		"badRequest": "Invalid request",
 		"unauthorized": "Your session has expired. Please sign in again.",

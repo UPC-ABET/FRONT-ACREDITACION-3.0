@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, PageHeader, Tabs } from '@/shared';
-import { useI18n } from '@/providers';
+import { useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import { UsersTab } from '../components/users';
 import { RolesTab } from '../components/roles';
 import { ModulesTab, PermissionsTab } from '@/modules/admin/iam';
@@ -15,6 +15,8 @@ export default function AdminIamPage() {
 	const { t } = useI18n();
 
 	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
+
+	useGlobalAcademicFiltersVisibilityOverride({ school: false, modality: false, period: false });
 
 	const topTabs = [
 		{ id: 'users', label: t('admin.iam.tabs.users') },
