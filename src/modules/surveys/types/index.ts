@@ -178,6 +178,9 @@ export interface LCFCSectionCommission {
 	commissionId: number;
 	code: string;
 	name: string;
+	/** Accreditation commission type (EAC/CAC/…) — used to default to EAC. */
+	typeCode?: string;
+	typeName?: string;
 }
 
 export interface LCFCStudentSurveyItem {
@@ -212,7 +215,7 @@ export interface LCFCEmailParam {
 
 export interface LCFCNotificationSendRequest {
 	academicPeriodId: number;
-	programId: number;
+	programId?: number;
 	campusId?: number;
 	courseSectionId?: number;
 	maxRegisterDate?: string;

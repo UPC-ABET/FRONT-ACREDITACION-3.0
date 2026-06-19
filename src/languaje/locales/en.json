@@ -2139,7 +2139,8 @@
 			},
 			"reports": {
 				"title": "Dashboard — LCFC",
-				"description": "Perception summary for End of Cycle Achievement surveys."
+				"description": "Perception summary for End of Cycle Achievement surveys.",
+				"byProgramTitle": "Surveys by program"
 			},
 			"config": {
 				"colCode": "Code",
@@ -2320,6 +2321,7 @@
 			"generating": "Generating...",
 			"generateDashboard": "Generate Dashboard",
 			"downloadExcel": "Download Excel",
+			"downloadPdf": "Download PDF",
 			"summary": "Summary",
 			"totalSurveys": "Total surveys",
 			"completed": "Completed",

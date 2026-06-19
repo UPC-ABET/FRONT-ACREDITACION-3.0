@@ -6,11 +6,19 @@ import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { useLCFCReports } from '../../hooks';
-import { downloadLCFCSurveys } from '../../services';
+import { downloadLCFCSurveys, downloadLCFCReportPdf } from '../../services';
 
 interface CourseRow {
 	courseName?: string | { es?: string; en?: string };
 	sectionCode?: string;
+	completed: number;
+	pending: number;
+	total: number;
+}
+
+interface ProgramRow {
+	programId?: number;
+	programName?: string | { es?: string; en?: string };
 	completed: number;
 	pending: number;
 	total: number;
@@ -31,7 +39,7 @@ interface LCFCReportsProps {
 }
 
 export function LCFCReports({ programId }: LCFCReportsProps) {
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const { academicPeriodId } = useABET();
 	const { loading, error, reportData, generate } = useLCFCReports();
 
@@ -41,6 +49,7 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 		msg: '',
 	});
 	const [downloading, setDownloading] = useState(false);
+	const [downloadingPdf, setDownloadingPdf] = useState(false);
 
 	useEffect(() => {
 		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
@@ -69,11 +78,28 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 		}
 	}
 
+	async function handleDownloadPdf() {
+		if (!academicPeriodId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
+			return;
+		}
+		setDownloadingPdf(true);
+		try {
+			await downloadLCFCReportPdf(academicPeriodId, programId || 0, locale);
+		} catch (e) {
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, (e as Error).message) });
+		} finally {
+			setDownloadingPdf(false);
+		}
+	}
+
 	if (!academicPeriodId) {
 		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
 
 	const byCourse = (reportData?.byCourse ?? []) as CourseRow[];
+	// Per-program breakdown is only meaningful when no single program is filtered.
+	const byProgram = (!programId ? (reportData?.byProgram ?? []) : []) as ProgramRow[];
 
 	return (
 		<div className="max-w-2xl space-y-6">
@@ -93,6 +119,14 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 					loading={downloading}>
 					<ArrowDownTrayIcon className="h-4 w-4 mr-1" />
 					{t('surveys.shared.downloadExcel')}
+				</Button>
+				<Button
+					variant="surface"
+					onClick={handleDownloadPdf}
+					disabled={downloadingPdf}
+					loading={downloadingPdf}>
+					<ArrowDownTrayIcon className="h-4 w-4 mr-1" />
+					{t('surveys.shared.downloadPdf')}
 				</Button>
 			</div>
 
@@ -148,6 +182,40 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 							</div>
 						)}
 					</div>
+
+					{byProgram.length > 0 && (
+						<div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
+							<div className="bg-zinc-800 px-4 py-2">
+								<p className="text-xs font-bold text-white uppercase tracking-wide">
+									{t('surveys.lcfc.reports.byProgramTitle')}
+								</p>
+							</div>
+							<div className="divide-y divide-zinc-100">
+								{byProgram.map((row, i) => {
+									const name = toText(row.programName);
+									const rate = row.total > 0 ? Math.round((row.completed / row.total) * 100) : 0;
+									return (
+										<div
+											key={row.programId ?? i}
+											className="px-4 py-3 flex items-center justify-between gap-3">
+											<span className="text-sm font-medium text-zinc-800 truncate">
+												{name || `Programa ${i + 1}`}
+											</span>
+											<div className="flex items-center gap-3 shrink-0 text-xs">
+												<span className="text-green-700 font-semibold">
+													{t('surveys.shared.completed')}: {row.completed}
+												</span>
+												<span className="text-amber-700 font-semibold">
+													{t('surveys.shared.pending')}: {row.pending}
+												</span>
+												<span className="text-zinc-400">{rate}%</span>
+											</div>
+										</div>
+									);
+								})}
+							</div>
+						</div>
+					)}
 
 					{byCourse.length > 0 && (
 						<div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">

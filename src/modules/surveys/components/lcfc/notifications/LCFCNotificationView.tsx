@@ -28,7 +28,8 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	const isValid = !!academicPeriodId;
 
 	useEffect(() => {
-		if (academicPeriodId && programId) loadCourses(academicPeriodId, programId);
+		// With no program selected we still load every configured course across all programs.
+		if (academicPeriodId) loadCourses(academicPeriodId, programId);
 	}, [academicPeriodId, programId, loadCourses]);
 
 	React.useEffect(() => {
@@ -44,9 +45,10 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	function buildRequest(courseSectionId?: number, forceResend?: boolean) {
 		return {
 			academicPeriodId: academicPeriodId as number,
-			programId: programId ?? 0,
 			surveyBaseUrl: window.location.origin,
 			resend: forceResend ?? resend,
+			// Omit programId when no program is selected so the backend targets every program.
+			...(programId ? { programId } : {}),
 			...(courseSectionId ? { courseSectionId } : {}),
 		};
 	}

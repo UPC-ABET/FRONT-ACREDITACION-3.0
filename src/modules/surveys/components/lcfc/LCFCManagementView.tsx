@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n, useGlobalAcademicFiltersVisibilityOverride } from '@/providers';
-import { LCFCProgramSelect } from '../shared/LCFCProgramSelect';
+import { AllProgramsSelect } from '../shared/AllProgramsSelect';
 import { LCFCReports } from './LCFCReports';
 import { LCFCNotificationView } from './notifications/LCFCNotificationView';
 import { LCFCConfiguration } from './configuration/LCFCConfiguration';
@@ -33,7 +33,7 @@ export function LCFCManagementView() {
 
 			<Card className="overflow-visible">
 				<div className="space-y-6">
-					<LCFCProgramSelect value={programId} onChange={setProgramId} />
+					<AllProgramsSelect value={programId} onChange={setProgramId} />
 
 					{activeTab === 'reports' && <LCFCReports programId={programId} />}
 					{activeTab === 'notifications' && (
