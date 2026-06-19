@@ -40,7 +40,7 @@ export function useSchoolSourceData(): SchoolSourceData {
 		queryKey: ['school-source', source?.key ?? 'default'],
 		queryFn: () => source!.fetch(),
 		enabled: source != null,
-		staleTime: Infinity,
+		staleTime: 0,
 	});
 	const schools = query.data ?? [];
 	return {
