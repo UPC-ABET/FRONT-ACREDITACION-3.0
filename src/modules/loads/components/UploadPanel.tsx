@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import type { DragEvent } from 'react';
-import { Download, Upload } from 'lucide-react';
+import { Download, FileSpreadsheet, Upload } from 'lucide-react';
 import {
 	Button,
 	Card,
@@ -17,6 +17,7 @@ import { useApiErrorToast } from '@/shared/hooks';
 import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import type { TypeOption } from '@/modules/core';
+import { downloadScrapingExport, scrapingExportForUploadType } from '@/modules/scraping-exports';
 import { downloadErrorExcel, useDownloadTemplate, useUpload } from '../hooks';
 import type { UploadResult } from '../types';
 import { cn } from '@/shared/lib/utils';
@@ -39,6 +40,10 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 	const [errorOpen, setErrorOpen] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [isDraggingFile, setIsDraggingFile] = useState(false);
+	const [scrapingPending, setScrapingPending] = useState(false);
+
+	// Only the upload types backed by scraping get a "Excel web-scraping" button.
+	const scrapingKind = scrapingExportForUploadType(type.code);
 
 	const handleFileChange = (selected: File | null) => {
 		setLocalError(null);
@@ -89,6 +94,20 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 			{ lang: locale, fallbackFileName: `${slug}-template.xlsx` },
 			{ onError: (err) => handleError(err, 'loads.upload.error.templateDownloadFailed') },
 		);
+	};
+
+	// Generates the upload-ready Excel from the scraped data, scoped to the active school/period
+	// (the api client sends X-School-Id / X-Academic-Period-Id automatically).
+	const handleWebScraping = async () => {
+		if (!scrapingKind) return;
+		setScrapingPending(true);
+		try {
+			await downloadScrapingExport(scrapingKind, locale === 'en' ? 'en' : 'es');
+		} catch (err) {
+			handleError(err, 'loads.upload.error.webScrapingFailed');
+		} finally {
+			setScrapingPending(false);
+		}
 	};
 
 	const handleUpload = () => {
@@ -150,19 +169,36 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 								/>
 							)}
 						</div>
-						<Button
-							variant="surface"
-							size="sm"
-							onClick={handleDownloadTemplate}
-							loading={downloadTemplate.isPending}
-							className="w-full sm:w-auto sm:self-start">
-							<Download className="h-4 w-4" />
-							<span>
-								{downloadTemplate.isPending
-									? t('loads.upload.downloadingTemplate')
-									: t('loads.upload.downloadTemplate')}
-							</span>
-						</Button>
+						<div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:self-start">
+							<Button
+								variant="surface"
+								size="sm"
+								onClick={handleDownloadTemplate}
+								loading={downloadTemplate.isPending}
+								className="w-full sm:w-auto">
+								<Download className="h-4 w-4" />
+								<span>
+									{downloadTemplate.isPending
+										? t('loads.upload.downloadingTemplate')
+										: t('loads.upload.downloadTemplate')}
+								</span>
+							</Button>
+							{scrapingKind && (
+								<Button
+									variant="primary"
+									size="sm"
+									onClick={handleWebScraping}
+									loading={scrapingPending}
+									className="w-full sm:w-auto">
+									<FileSpreadsheet className="h-4 w-4" />
+									<span>
+										{scrapingPending
+											? t('loads.upload.webScrapingLoading')
+											: t('loads.upload.webScraping')}
+									</span>
+								</Button>
+							)}
+						</div>
 					</header>
 
 					<div

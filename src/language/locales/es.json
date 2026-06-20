@@ -2928,6 +2928,8 @@
 			"selectBoth": "Selecciona un tipo de carga y un período académico para continuar.",
 			"downloadTemplate": "Descargar plantilla",
 			"downloadingTemplate": "Descargando",
+			"webScraping": "Excel web-scraping",
+			"webScrapingLoading": "Generando...",
 			"dropzone": "Haz clic o arrastra el archivo Excel aquí",
 			"submit": "Cargar archivo",
 			"loadedSummary": "Filas cargadas",
@@ -2940,6 +2942,7 @@
 				"rowsWithErrors": "Se encontraron errores. Revisa el archivo descargado.",
 				"fileTypeInvalid": "Solo se permiten archivos .xlsx",
 				"templateDownloadFailed": "No se pudo descargar la plantilla",
+				"webScrapingFailed": "No se pudo generar el Excel desde el scraping.",
 				"generic": "Ocurrió un error durante la carga"
 			}
 		},
