@@ -2,6 +2,7 @@
 
 import React, { ReactNode } from 'react';
 import { Navbar } from '@/shared/components';
+import { GlobalAcademicFilters } from '@/modules/academic/components';
 import AppSidebar from '@/app/components/AppSidebar';
 import {
 	ABETProvider,
@@ -36,7 +37,17 @@ export default function LayoutClient({ children }: LayoutClientProps) {
 
 							<div className="flex flex-col flex-1 h-full overflow-hidden">
 								<div data-layout-navbar="true">
-									<Navbar />
+									<Navbar
+										filtersSlot={(layout) =>
+											layout === 'mobile' ? (
+												<GlobalAcademicFilters embedded layout="mobile" />
+											) : layout === 'tablet' ? (
+												<GlobalAcademicFilters embedded layout="tablet" />
+											) : (
+												<GlobalAcademicFilters embedded />
+											)
+										}
+									/>
 								</div>
 
 								<main className="flex-1 overflow-y-auto bg-white px-4 py-6 lg:px-6">

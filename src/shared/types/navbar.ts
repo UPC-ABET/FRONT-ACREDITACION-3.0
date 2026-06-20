@@ -1,8 +1,12 @@
+import type { ReactNode } from 'react';
+
 export type ProgramOption = {
 	value: string;
 	label?: string;
 	labelKey?: string;
 };
+
+export type NavbarFiltersLayout = 'mobile' | 'tablet' | 'desktop';
 
 export type NavbarProps = {
 	schoolName?: string;
@@ -11,4 +15,5 @@ export type NavbarProps = {
 	userName?: string;
 	userRole?: string;
 	userInitials?: string;
+	filtersSlot?: (layout: NavbarFiltersLayout) => ReactNode;
 };

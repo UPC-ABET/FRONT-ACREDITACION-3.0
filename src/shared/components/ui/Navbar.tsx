@@ -5,7 +5,6 @@ import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
 import { useAuth, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
 import { DEFAULT_USER_INITIALS } from '@/shared/constants';
-import { GlobalAcademicFilters } from '@/modules/academic/components';
 import type { NavbarProps } from '@/shared/types';
 
 const Sep = () => <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />;
@@ -42,7 +41,7 @@ function UserAvatar({
 	);
 }
 
-function Navbar({ userName, userRole, userInitials }: NavbarProps) {
+function Navbar({ userName, userRole, userInitials, filtersSlot }: NavbarProps) {
 	const { toggle, isMobile: isSidebarMobile } = useSidebar();
 	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
@@ -92,9 +91,7 @@ function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 						role={resolvedUserRole}
 					/>
 				</div>
-				<div className="h-[92px] px-4 pb-4">
-					<GlobalAcademicFilters embedded layout="mobile" />
-				</div>
+				<div className="h-[92px] px-4 pb-4">{filtersSlot?.('mobile')}</div>
 			</nav>
 		);
 	}
@@ -103,9 +100,7 @@ function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 		return (
 			<nav className={`${navClass} flex h-[72px] items-center gap-3 px-4`}>
 				{menuBtn}
-				<div className="min-w-0 flex-1 overflow-visible">
-					<GlobalAcademicFilters embedded layout="tablet" />
-				</div>
+				<div className="min-w-0 flex-1 overflow-visible">{filtersSlot?.('tablet')}</div>
 				<Sep />
 				<LanguageSwitcher />
 				<Sep />
@@ -121,9 +116,7 @@ function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 	return (
 		<nav className={`${navClass} flex h-[72px] items-center gap-4 px-6`}>
 			{menuBtn}
-			<div className="min-w-0 flex-1 overflow-visible">
-				<GlobalAcademicFilters embedded />
-			</div>
+			<div className="min-w-0 flex-1 overflow-visible">{filtersSlot?.('desktop')}</div>
 			<Sep />
 			<LanguageSwitcher />
 			<Sep />
