@@ -47,7 +47,7 @@ export type AuthPermission = {
 
 type AuthState = {
 	user: AuthUser | null;
-	activeRole: AuthRole | null;
+	roles: AuthRole[];
 	permissions: AuthPermission[];
 	allowedRoutes: string[];
 	schoolId: number | null;
@@ -65,8 +65,7 @@ const AuthContext = createContext<AuthState | null>(null);
 
 interface MePayload {
 	user: AuthUser;
-	activeRole: AuthRole;
-	allowedRoles: AuthRole[];
+	roles: AuthRole[];
 	permissions: AuthPermission[];
 	schoolId?: number;
 	userSchools?: AuthSchool[];
@@ -80,7 +79,7 @@ interface Envelope<T> {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [user, setUser] = useState<AuthUser | null>(null);
-	const [activeRole, setActiveRole] = useState<AuthRole | null>(null);
+	const [roles, setRoles] = useState<AuthRole[]>([]);
 	const [permissions, setPermissions] = useState<AuthPermission[]>([]);
 	const [schoolId, setSchoolId] = useState<number | null>(null);
 	const [userSchools, setUserSchools] = useState<AuthSchool[]>([]);
@@ -89,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	const clearAuthState = useCallback(() => {
 		setUser(null);
-		setActiveRole(null);
+		setRoles([]);
 		setPermissions([]);
 		setSchoolId(null);
 		setUserSchools([]);
@@ -123,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				}
 
 				setUser(payload.user);
-				setActiveRole(payload.activeRole ?? null);
+				setRoles(payload.roles ?? []);
 				setPermissions(nextPermissions);
 				setSchoolId(payload.schoolId ?? null);
 				setUserSchools(payload.userSchools ?? []);
@@ -186,7 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const value = useMemo<AuthState>(
 		() => ({
 			user,
-			activeRole,
+			roles,
 			permissions,
 			allowedRoutes,
 			schoolId,
@@ -201,7 +200,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		}),
 		[
 			user,
-			activeRole,
+			roles,
 			permissions,
 			allowedRoutes,
 			schoolId,

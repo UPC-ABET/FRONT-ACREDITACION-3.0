@@ -46,20 +46,19 @@ function Navbar({ userName, userRole, userInitials }: NavbarProps) {
 	const { toggle, isMobile: isSidebarMobile } = useSidebar();
 	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
-	const { activeRole, user } = useAuth();
+	const { roles, user } = useAuth();
 
 	const resolvedUserName =
 		userName ??
 		((user ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() : '') ||
 			t('navbar.user.name'));
 
-	const resolvedUserRole =
-		userRole ??
-		activeRole?.name[locale] ??
-		activeRole?.name.es ??
-		activeRole?.name.en ??
-		activeRole?.code ??
-		t('navbar.user.role');
+	const joinedRoleNames = roles
+		.map((role) => role.name[locale] ?? role.name.es ?? role.name.en ?? role.code)
+		.filter(Boolean)
+		.join(', ');
+
+	const resolvedUserRole = userRole ?? (joinedRoleNames || t('navbar.user.role'));
 
 	const resolvedUserInitials =
 		userInitials ??

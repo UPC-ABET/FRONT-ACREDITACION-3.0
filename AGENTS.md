@@ -177,7 +177,7 @@ All modules import these from `@/modules/core`. Never duplicate type/parameter c
 
 - **Backend** sets an `HttpOnly; Secure; SameSite=Lax` cookie on login. The frontend never reads or writes auth tokens.
 - **`AuthProvider`** (`src/providers/AuthProvider.tsx`) calls `GET /users/me` on mount and stores the user in context.
-- **`useAuth()`** hook exposes: `user`, `activeRole`, `permissions`, `schoolId`, `isAuthenticated`, `isLoading`, `refreshUser`, `clearUser`.
+- **`useAuth()`** hook exposes: `user`, `roles`, `permissions`, `schoolId`, `isAuthenticated`, `isLoading`, `refreshUser`, `clearUser`.
 - **`SessionGuard`** (`src/providers/SessionGuard.tsx`) handles route guarding, session expiry, and auth redirects.
 - **`LayoutClient`** (`src/app/components/LayoutClient.tsx`) is a thin layout shell — no business logic.
 
