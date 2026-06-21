@@ -23,10 +23,13 @@ RUN npm install -g pnpm@11
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-# NEXT_PUBLIC_* must be present at build time. "/api" is relative
-# (same-origin via Nginx), so no secret is baked into the bundle.
+# NEXT_PUBLIC_* are inlined into the bundle at build time, so they MUST be present
+# during `pnpm run build` — setting them only at runtime has no effect. "/api" is
+# relative (same-origin via Nginx), so no secret is baked into the bundle.
 ARG NEXT_PUBLIC_API_URL=/api
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_PORTFOLIO_URL=https://portafolio.tcupc.pe
+ENV NEXT_PUBLIC_PORTFOLIO_URL=$NEXT_PUBLIC_PORTFOLIO_URL
 RUN pnpm run build
 
 ############################
