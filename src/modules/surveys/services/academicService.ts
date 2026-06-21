@@ -44,8 +44,6 @@ export async function getPrograms(): Promise<Program[]> {
 	}
 }
 
-// The performance-levels endpoint requires instrumentTypeId (numeric FK to types table).
-
 let _surveyTypeIds: Map<string, number> | null = null;
 
 function extractTypesList(raw: unknown): Array<{ id: number; code: string }> {
@@ -98,7 +96,6 @@ export async function getSurveyTypeId(code: string): Promise<number> {
 			}
 		} catch (err) {
 			logger.warn('[getSurveyTypeId] failed to fetch survey type catalog:', err);
-			// don't set _surveyTypeIds — allow retry on next call
 		}
 	}
 	const id = _surveyTypeIds?.get(code.toUpperCase()) ?? 0;
