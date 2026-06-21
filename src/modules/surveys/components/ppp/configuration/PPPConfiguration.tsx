@@ -76,7 +76,7 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 			</div>
 
 			<div className="space-y-8">
-				{/* Competencias Específicas */}
+				{/* Specific competences */}
 				<CompetenceCRUD
 					cycleId={academicPeriodId}
 					programId={programId}
@@ -90,7 +90,7 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 					onDelete={removeComp}
 				/>
 
-				{/* Competencias Generales */}
+				{/* General competences */}
 				<CompetenceCRUD
 					cycleId={academicPeriodId}
 					programId={programId}

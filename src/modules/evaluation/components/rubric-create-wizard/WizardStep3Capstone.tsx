@@ -67,7 +67,7 @@ export function WizardStep3Capstone({
 		const loaded: LocalOutcome[] = fetchedOutcomes.map((o) => {
 			const commission = o.programCommission?.commission;
 			const commissionId = String(
-				commission?.id ?? o.programCommission?.id ?? o.programCommissionId ?? 'sin-comision',
+				commission?.id ?? o.programCommission?.id ?? o.programCommissionId ?? 'no-commission',
 			);
 			return {
 				outcomeId: o.id,

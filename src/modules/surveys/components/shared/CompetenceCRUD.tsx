@@ -30,7 +30,7 @@ export interface CompetenceCRUDProps {
 	programId?: number;
 	/** 'general' shows non-linked items; 'specific' shows items linked to a real outcome */
 	competenceType: 'general' | 'specific';
-	/** Show the "¿Es para carrera ajena?" toggle — typically only PPP */
+	/** Show the "Is it for another program?" toggle — typically only PPP */
 	showExternalToggle?: boolean;
 	competences: CompetenceConfig[];
 	loading: boolean;
@@ -307,7 +307,7 @@ export function CompetenceCRUD({
 					</DialogHeader>
 
 					<div className="space-y-4 py-2">
-						{/* Orden + Visibilidad */}
+						{/* Order + Visibility */}
 						<div className="flex items-end gap-4">
 							<div className="w-28">
 								<label className="font-medium text-xs mb-1.5 text-zinc-700 block">
@@ -339,7 +339,7 @@ export function CompetenceCRUD({
 							</div>
 						</div>
 
-						{/* Nombre en español (required) */}
+						{/* Name in Spanish (required) */}
 						<Input
 							label={t('surveys.competence.modal.nameEsLabel')}
 							value={form.generalCompetence}
@@ -348,7 +348,7 @@ export function CompetenceCRUD({
 							required
 						/>
 
-						{/* Descripción en español (required) */}
+						{/* Description in Spanish (required) */}
 						<TextArea
 							label={t('surveys.competence.modal.descriptionEsLabel')}
 							value={form.description}
@@ -357,7 +357,7 @@ export function CompetenceCRUD({
 							rows={2}
 						/>
 
-						{/* Nombre en inglés (required) */}
+						{/* Name in English (required) */}
 						<Input
 							label={t('surveys.competence.modal.nameEnLabel')}
 							value={form.specificCompetence}
@@ -366,7 +366,7 @@ export function CompetenceCRUD({
 							required
 						/>
 
-						{/* Descripción en inglés (required) */}
+						{/* Description in English (required) */}
 						<TextArea
 							label={t('surveys.competence.modal.descriptionEnLabel')}
 							value={form.descriptionEn ?? ''}
@@ -375,7 +375,7 @@ export function CompetenceCRUD({
 							rows={2}
 						/>
 
-						{/* ¿Es para carrera ajena? (PPP only) */}
+						{/* "Is it for another program?" (PPP only) */}
 						{showExternalToggle && (
 							<div className="rounded-lg border border-zinc-100 bg-zinc-50 px-4 py-3">
 								<Toggle
@@ -389,7 +389,7 @@ export function CompetenceCRUD({
 							</div>
 						)}
 
-						{/* Outcomes por comisión (ocultos si es externa o no hay programa) */}
+						{/* Outcomes by commission (hidden when external or no program selected) */}
 						{showOutcomes && (
 							<div className="space-y-3">
 								<p className="text-xs font-medium text-zinc-500 uppercase tracking-wide">

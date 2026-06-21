@@ -1,4 +1,4 @@
-// Direct-evaluation rubric for Capstone courses (Notas RB).
+// Direct-evaluation rubric for Capstone courses (RB grades).
 // Mirrors the future evaluation.* tables in the backend (not yet implemented).
 
 export interface CapstoneProject {
