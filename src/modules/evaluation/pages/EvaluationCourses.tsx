@@ -23,6 +23,7 @@ import {
 	DialogFooter,
 	DialogClose,
 } from '@/shared/components/ui';
+import { tryTranslate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import {
 	useAcademicPeriods,
@@ -134,7 +135,11 @@ export function EvaluationCoursesPage() {
 				<TableLoadingState label={t('evaluationCourses.list.loading')} />
 			) : isError ? (
 				<TableErrorState
-					message={error instanceof Error ? error.message : t('evaluationCourses.list.error')}
+					message={
+						error instanceof Error
+							? tryTranslate(t, error.message)
+							: t('evaluationCourses.list.error')
+					}
 				/>
 			) : courses.length === 0 ? (
 				<TableEmptyState message={t('evaluationCourses.list.empty')} />

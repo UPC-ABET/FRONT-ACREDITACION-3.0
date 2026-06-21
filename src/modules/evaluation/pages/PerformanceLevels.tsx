@@ -25,6 +25,7 @@ import {
 import { Select } from '@/shared/components/ui/Select';
 import { Input } from '@/shared/components/ui/Input';
 import { cn } from '@/shared/lib/utils';
+import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import {
 	useAcademicPeriods,
@@ -286,7 +287,11 @@ export function PerformanceLevelsPage() {
 				<TableLoadingState label={t('performanceLevels.list.loading')} />
 			) : isError ? (
 				<TableErrorState
-					message={error instanceof Error ? error.message : t('performanceLevels.list.error')}
+					message={
+						error instanceof Error
+							? tryTranslate(t, error.message)
+							: t('performanceLevels.list.error')
+					}
 				/>
 			) : !sortedLevels.length ? (
 				<TableEmptyState message={t('performanceLevels.list.empty')} />

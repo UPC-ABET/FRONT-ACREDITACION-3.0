@@ -28,6 +28,7 @@ import {
 	DialogClose,
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
+import { tryTranslate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import { usePrograms, useStudyPlanCourses } from '@/modules/academic/hooks';
 import { useRubrics, useDeleteRubric } from '../hooks';
@@ -174,7 +175,9 @@ export function RubricsListPage() {
 				<TableLoadingState label={t('rubrics.list.loading')} />
 			) : isError ? (
 				<TableErrorState
-					message={error instanceof Error ? error.message : t('rubrics.list.error')}
+					message={
+						error instanceof Error ? tryTranslate(t, error.message) : t('rubrics.list.error')
+					}
 				/>
 			) : !items.length ? (
 				<TableEmptyState message={t('rubrics.list.empty')} />
