@@ -1730,7 +1730,7 @@
 			"loading": "Loading performance levels...",
 			"error": "Could not load performance levels.",
 			"empty": "No performance levels registered for the selected filters.",
-			"selectFilter": "Select an academic period and/or instrument to start.",
+			"selectFilter": "Select an academic period from the top bar to start.",
 			"periodFilter": "Academic Period",
 			"instrumentFilter": "Instrument",
 			"allPeriods": "All periods",

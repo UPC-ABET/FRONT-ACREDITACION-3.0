@@ -26,7 +26,7 @@ import { Select } from '@/shared/components/ui/Select';
 import { Input } from '@/shared/components/ui/Input';
 import { cn } from '@/shared/lib/utils';
 import { tryTranslate } from '@/shared/utils';
-import { useI18n } from '@/providers';
+import { useI18n, useABET } from '@/providers';
 import {
 	useAcademicPeriods,
 	usePerformanceLevels,
@@ -147,8 +147,8 @@ function PerformanceLevelForm({
 
 export function PerformanceLevelsPage() {
 	const { t, locale } = useI18n();
+	const { academicPeriodId } = useABET();
 
-	const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
 	const [selectedInstrument, setSelectedInstrument] = useState<OptionItem | null>(null);
 
 	const [modalOpen, setModalOpen] = useState(false);
@@ -168,20 +168,20 @@ export function PerformanceLevelsPage() {
 
 	const filters = useMemo(
 		() => ({
-			...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
+			...(academicPeriodId ? { academicPeriodId } : {}),
 			...(selectedInstrument?.value ? { instrumentTypeId: selectedInstrument.value } : {}),
 		}),
-		[selectedPeriodId, selectedInstrument],
+		[academicPeriodId, selectedInstrument],
 	);
 
-	const hasFilters = selectedPeriodId != null || selectedInstrument != null;
+	const hasPeriod = academicPeriodId != null;
 
 	const {
 		data: performanceLevels = [],
 		isLoading,
 		isError,
 		error,
-	} = usePerformanceLevels(filters, { enabled: hasFilters });
+	} = usePerformanceLevels(filters, { enabled: hasPeriod });
 
 	const sortedLevels = useMemo(
 		() => [...performanceLevels].sort((a, b) => Number(a.uniqueValue) - Number(b.uniqueValue)),
@@ -230,7 +230,6 @@ export function PerformanceLevelsPage() {
 	}
 
 	function handleClearFilters() {
-		setSelectedPeriodId(null);
 		setSelectedInstrument(null);
 	}
 
@@ -265,12 +264,6 @@ export function PerformanceLevelsPage() {
 			<Card>
 				<div className="space-y-4">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<AcademicPeriodSelect
-							value={selectedPeriodId}
-							onChange={setSelectedPeriodId}
-							isClearable
-							onClear={() => setSelectedPeriodId(null)}
-						/>
 						<Select
 							label={t('performanceLevels.list.instrumentFilter')}
 							options={instrumentTypeOptions}
@@ -281,7 +274,7 @@ export function PerformanceLevelsPage() {
 						/>
 					</div>
 
-					{hasFilters && (
+					{selectedInstrument != null && (
 						<div className="flex justify-end">
 							<button
 								type="button"
@@ -298,7 +291,7 @@ export function PerformanceLevelsPage() {
 				</div>
 			</Card>
 
-			{!hasFilters ? (
+			{!hasPeriod ? (
 				<TableEmptyState message={t('performanceLevels.list.selectFilter')} />
 			) : isLoading ? (
 				<TableLoadingState label={t('performanceLevels.list.loading')} />

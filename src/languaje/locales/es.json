@@ -1730,7 +1730,7 @@
 			"loading": "Cargando niveles de desempeño...",
 			"error": "No fue posible cargar los niveles de desempeño.",
 			"empty": "No hay niveles de desempeño registrados para los filtros seleccionados.",
-			"selectFilter": "Selecciona un período académico y/o instrumento para comenzar.",
+			"selectFilter": "Selecciona un período académico en la barra superior para comenzar.",
 			"periodFilter": "Período Académico",
 			"instrumentFilter": "Instrumento",
 			"allPeriods": "Todos los períodos",
