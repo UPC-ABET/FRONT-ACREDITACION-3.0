@@ -52,6 +52,8 @@ function PerformanceLevelForm({
 	onChange: (f: PerformanceLevelFormState) => void;
 	instrumentTypeOptions: OptionItem[];
 }) {
+	const { t } = useI18n();
+
 	const set = (key: keyof PerformanceLevelFormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
 		onChange({
 			...form,
@@ -64,10 +66,10 @@ function PerformanceLevelForm({
 	return (
 		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 			<Select
-				label="Instrumento"
+				label={t('performanceLevels.form.instrument')}
 				options={instrumentTypeOptions}
 				value={selectedInstrument}
-				placeholder="Seleccionar instrumento"
+				placeholder={t('performanceLevels.form.instrumentPlaceholder')}
 				onChange={(_name, val) => {
 					const opt = val as OptionItem | null;
 					onChange({ ...form, instrumentTypeId: opt?.value ?? 0 });
@@ -78,11 +80,26 @@ function PerformanceLevelForm({
 				onChange={(id) => onChange({ ...form, academicPeriodId: id })}
 			/>
 
-			<Input label="Nombre (ES)" value={form.nameEs} onChange={set('nameEs')} required />
-			<Input label="Nombre (EN)" value={form.nameEn} onChange={set('nameEn')} required />
-			<Input label="Código" value={form.code} onChange={set('code')} required />
 			<Input
-				label="Valor único"
+				label={t('performanceLevels.form.nameEs')}
+				value={form.nameEs}
+				onChange={set('nameEs')}
+				required
+			/>
+			<Input
+				label={t('performanceLevels.form.nameEn')}
+				value={form.nameEn}
+				onChange={set('nameEn')}
+				required
+			/>
+			<Input
+				label={t('performanceLevels.form.code')}
+				value={form.code}
+				onChange={set('code')}
+				required
+			/>
+			<Input
+				label={t('performanceLevels.form.uniqueValue')}
 				type="number"
 				step="0.01"
 				value={form.uniqueValue}
@@ -90,7 +107,7 @@ function PerformanceLevelForm({
 				required
 			/>
 			<Input
-				label="Puntaje mínimo"
+				label={t('performanceLevels.form.minScore')}
 				type="number"
 				step="0.01"
 				value={form.minScore}
@@ -98,7 +115,7 @@ function PerformanceLevelForm({
 				required
 			/>
 			<Input
-				label="Puntaje máximo"
+				label={t('performanceLevels.form.maxScore')}
 				type="number"
 				step="0.01"
 				value={form.maxScore}
@@ -106,7 +123,7 @@ function PerformanceLevelForm({
 				required
 			/>
 			<Input
-				label="Valor máximo"
+				label={t('performanceLevels.form.maxValue')}
 				type="number"
 				step="0.01"
 				value={form.maxValue}
@@ -115,7 +132,7 @@ function PerformanceLevelForm({
 			/>
 			<div className="flex flex-col">
 				<label className="block text-base font-semibold text-zinc-900 mb-2 select-none">
-					Color
+					{t('performanceLevels.form.color')}
 				</label>
 				<input
 					type="color"

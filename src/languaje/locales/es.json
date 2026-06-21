@@ -1757,7 +1757,17 @@
 			"update": "Actualizar",
 			"saving": "Guardando...",
 			"deleting": "Eliminando...",
-			"saveError": "Ocurrió un error al guardar."
+			"saveError": "Ocurrió un error al guardar.",
+			"instrument": "Instrumento",
+			"instrumentPlaceholder": "Seleccionar instrumento",
+			"nameEs": "Nombre (ES)",
+			"nameEn": "Nombre (EN)",
+			"code": "Código",
+			"uniqueValue": "Valor único",
+			"minScore": "Puntaje mínimo",
+			"maxScore": "Puntaje máximo",
+			"maxValue": "Valor máximo",
+			"color": "Color"
 		},
 		"delete": {
 			"title": "Eliminar nivel de desempeño",
@@ -2120,7 +2130,10 @@
 			"reports": {
 				"title": "Dashboard — LCFC",
 				"description": "Resumen de percepción para encuestas de Logro de Fin de Ciclo.",
-				"byProgramTitle": "Encuestas por programa"
+				"byProgramTitle": "Encuestas por programa",
+				"byCourseTitle": "Encuestas en curso por sección",
+				"programFallback": "Programa {{index}}",
+				"courseFallback": "Curso {{index}}"
 			},
 			"config": {
 				"colCode": "Código",

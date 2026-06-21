@@ -1757,7 +1757,17 @@
 			"update": "Update",
 			"saving": "Saving...",
 			"deleting": "Deleting...",
-			"saveError": "An error occurred while saving."
+			"saveError": "An error occurred while saving.",
+			"instrument": "Instrument",
+			"instrumentPlaceholder": "Select instrument",
+			"nameEs": "Name (ES)",
+			"nameEn": "Name (EN)",
+			"code": "Code",
+			"uniqueValue": "Unique value",
+			"minScore": "Minimum score",
+			"maxScore": "Maximum score",
+			"maxValue": "Maximum value",
+			"color": "Color"
 		},
 		"delete": {
 			"title": "Delete performance level",
@@ -2120,7 +2130,10 @@
 			"reports": {
 				"title": "Dashboard — LCFC",
 				"description": "Perception summary for End of Cycle Achievement surveys.",
-				"byProgramTitle": "Surveys by program"
+				"byProgramTitle": "Surveys by program",
+				"byCourseTitle": "Surveys in progress by section",
+				"programFallback": "Program {{index}}",
+				"courseFallback": "Course {{index}}"
 			},
 			"config": {
 				"colCode": "Code",

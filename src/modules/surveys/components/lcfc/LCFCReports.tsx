@@ -199,7 +199,11 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 											key={row.programId ?? i}
 											className="px-4 py-3 flex items-center justify-between gap-3">
 											<span className="text-sm font-medium text-zinc-800 truncate">
-												{name || `Programa ${i + 1}`}
+												{name ||
+													t('surveys.lcfc.reports.programFallback').replace(
+														'{{index}}',
+														String(i + 1),
+													)}
 											</span>
 											<div className="flex items-center gap-3 shrink-0 text-xs">
 												<span className="text-green-700 font-semibold">
@@ -221,7 +225,7 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 						<div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
 							<div className="bg-red-600 px-4 py-2">
 								<p className="text-xs font-bold text-white uppercase tracking-wide">
-									Encuestas en curso por sección
+									{t('surveys.lcfc.reports.byCourseTitle')}
 								</p>
 							</div>
 							<div className="divide-y divide-zinc-100">
@@ -233,7 +237,11 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 											<div className="flex items-center justify-between">
 												<div className="min-w-0">
 													<span className="text-sm font-medium text-zinc-800 truncate block">
-														{name || `Curso ${i + 1}`}
+														{name ||
+															t('surveys.lcfc.reports.courseFallback').replace(
+																'{{index}}',
+																String(i + 1),
+															)}
 													</span>
 													{row.sectionCode && (
 														<span className="text-xs text-zinc-400">{row.sectionCode}</span>
