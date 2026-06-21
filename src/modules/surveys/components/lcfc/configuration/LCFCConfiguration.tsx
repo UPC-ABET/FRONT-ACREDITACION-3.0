@@ -1,53 +1,23 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { type ColumnDef } from '@tanstack/react-table';
-import {
-	Button,
-	Badge,
-	DataTable,
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-	Select,
-	Toggle,
-	Toast,
-	Checkbox,
-	LoadingState,
-} from '@/shared/components';
-import {
-	SparklesIcon,
-	DocumentDuplicateIcon,
-	PencilSquareIcon,
-	TrashIcon,
-} from '@heroicons/react/24/outline';
+import { Button, DataTable, Toast } from '@/shared/components';
+import { SparklesIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { useLCFCConfiguration, useLCFCAvailableSections } from '../../../hooks';
 import { getLCFCSectionCommissions, setLCFCDeadline } from '../../../services';
-import type { AvailableSection, LCFCCourse, LCFCSectionCommission } from '../../../types';
+import type { LCFCCourse, LCFCSectionCommission } from '../../../types';
+import { toStr, type CourseGroup } from './lcfcConfigurationHelpers';
+import { buildLCFCConfigurationColumns } from './lcfcConfigurationColumns';
+import { LCFCDeadlineField } from './LCFCDeadlineField';
+import { LCFCGenerateDialog } from './LCFCGenerateDialog';
+import { LCFCCloneDialog } from './LCFCCloneDialog';
+import { LCFCEditCourseDialog } from './LCFCEditCourseDialog';
+import { LCFCDeleteDialog } from './LCFCDeleteDialog';
 
 interface LCFCConfigurationProps {
 	readonly programId: number;
-}
-
-interface CourseGroup {
-	courseId: number;
-	courseName: string;
-	sections: AvailableSection[];
-}
-
-/** Safely extract a display string from a value that may be I18nText at runtime. */
-function toStr(value: unknown, fallback = ''): string {
-	if (typeof value === 'string') return value;
-	if (value && typeof value === 'object') {
-		const obj = value as Record<string, unknown>;
-		const s = obj.es ?? obj.en ?? '';
-		if (typeof s === 'string') return s;
-	}
-	return fallback;
 }
 
 export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
@@ -280,48 +250,7 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 		});
 	}
 
-	const columns: ColumnDef<LCFCCourse>[] = [
-		{ accessorKey: 'code', header: t('surveys.lcfc.config.colCode') },
-		{ accessorKey: 'courseName', header: t('surveys.lcfc.config.colCourse') },
-		{
-			accessorKey: 'isActive',
-			header: t('surveys.lcfc.config.colStatus'),
-			cell: ({ getValue }) => {
-				// NOSONAR — cell renderers are render functions, not React components
-				const isActive = getValue() as boolean;
-				return (
-					<Badge variant={isActive ? 'success' : 'outline'}>
-						{isActive
-							? t('surveys.lcfc.config.statusActive')
-							: t('surveys.lcfc.config.statusInactive')}
-					</Badge>
-				);
-			},
-		},
-		{
-			id: 'actions',
-			header: t('surveys.lcfc.config.colActions'),
-			cell: ({ row }) => (
-				// NOSONAR — cell renderers are render functions, not React components
-				<div className="flex gap-2">
-					<Button
-						size="sm"
-						variant="surface"
-						onClick={() => openEdit(row.original)}
-						aria-label={t('surveys.lcfc.config.actionEdit')}>
-						<PencilSquareIcon className="h-4 w-4" />
-					</Button>
-					<Button
-						size="sm"
-						variant="warning"
-						onClick={() => setDeleteId(row.original.id)}
-						aria-label={t('surveys.lcfc.config.actionDelete')}>
-						<TrashIcon className="h-4 w-4" />
-					</Button>
-				</div>
-			),
-		},
-	];
+	const columns = buildLCFCConfigurationColumns({ t, onEdit: openEdit, onDelete: setDeleteId });
 
 	if (!academicPeriodId) {
 		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
@@ -344,30 +273,12 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 				</Button>
 			</div>
 
-			{/* Survey deadline — configured here (not in notifications). Updating it refreshes
-			    existing surveys' deadline without resending any email. */}
-			<div className="flex flex-wrap items-end gap-3 rounded-xl border border-zinc-200 p-4">
-				<div>
-					<label className="font-medium text-xs mb-1.5 text-zinc-700 block">
-						{t('surveys.lcfc.config.deadlineLabel')}
-						<span className="ml-1 text-red-600">*</span>
-					</label>
-					<input
-						type="date"
-						value={deadlineDate}
-						onChange={(e) => setDeadlineDate(e.target.value)}
-						className="h-9 rounded-md border border-zinc-200 px-3 text-sm focus:outline-none focus:border-red-500"
-					/>
-				</div>
-				<Button
-					size="sm"
-					onClick={handleSaveDeadline}
-					disabled={!deadlineDate || savingDeadline}
-					loading={savingDeadline}>
-					{t('surveys.lcfc.config.deadlineSave')}
-				</Button>
-				<p className="text-xs text-zinc-500 basis-full">{t('surveys.lcfc.config.deadlineHint')}</p>
-			</div>
+			<LCFCDeadlineField
+				deadlineDate={deadlineDate}
+				savingDeadline={savingDeadline}
+				onDeadlineDateChange={setDeadlineDate}
+				onSave={handleSaveDeadline}
+			/>
 
 			<DataTable
 				columns={columns}
@@ -376,179 +287,51 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 			/>
 
 			{/* Generate dialog — section picker */}
-			<Dialog
+			<LCFCGenerateDialog
 				open={generateDialogOpen}
 				onOpenChange={(open) => {
 					if (!generating) setGenerateDialogOpen(open);
-				}}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>{t('surveys.lcfc.config.generateDialogTitle')}</DialogTitle>
-					</DialogHeader>
-					<div className="space-y-3 py-2 max-h-96 overflow-y-auto">
-						{loadingSections ? (
-							<LoadingState size="sm" />
-						) : courseGroups.length === 0 ? (
-							<p className="text-sm text-zinc-500 italic">
-								{t('surveys.lcfc.config.noSectionsAvailable')}
-							</p>
-						) : (
-							<>
-								{/* Select-all row */}
-								<label className="flex items-center gap-2 cursor-pointer pb-2 border-b border-zinc-200">
-									<Checkbox
-										checked={allSectionsSelected}
-										indeterminate={someSectionsSelected}
-										onCheckedChange={toggleAll}
-									/>
-									<span className="text-sm font-medium">{t('surveys.lcfc.config.selectAll')}</span>
-								</label>
-
-								{/* Course groups */}
-								{courseGroups.map((group) => {
-									const groupAllSelected = group.sections.every((s) =>
-										selectedSectionIds.has(s.courseSectionId),
-									);
-									const groupSomeSelected =
-										group.sections.some((s) => selectedSectionIds.has(s.courseSectionId)) &&
-										!groupAllSelected;
-									return (
-										<div key={group.courseId} className="space-y-1.5">
-											<label className="flex items-center gap-2 cursor-pointer">
-												<Checkbox
-													checked={groupAllSelected}
-													indeterminate={groupSomeSelected}
-													onCheckedChange={() => toggleCourse(group)}
-												/>
-												<span className="text-sm font-semibold">{group.courseName}</span>
-											</label>
-											<div className="ml-6 flex flex-wrap gap-x-4 gap-y-1.5">
-												{group.sections.map((section) => (
-													<label
-														key={section.courseSectionId}
-														className="flex items-center gap-1.5 cursor-pointer">
-														<Checkbox
-															checked={selectedSectionIds.has(section.courseSectionId)}
-															onCheckedChange={() => toggleSection(section.courseSectionId)}
-														/>
-														<span className="text-sm text-zinc-600">
-															{toStr(section.sectionCode, '—')}
-														</span>
-													</label>
-												))}
-											</div>
-										</div>
-									);
-								})}
-							</>
-						)}
-					</div>
-					<DialogFooter showCloseButton>
-						<Button
-							onClick={handleGenerateConfirm}
-							disabled={
-								loadingSections ||
-								selectedSectionIds.size === 0 ||
-								generating ||
-								courseGroups.length === 0
-							}
-							loading={generating}>
-							<SparklesIcon className="h-4 w-4 mr-1" />
-							{t('surveys.lcfc.config.generateConfirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+				}}
+				loadingSections={loadingSections}
+				courseGroups={courseGroups}
+				selectedSectionIds={selectedSectionIds}
+				allSectionsSelected={allSectionsSelected}
+				someSectionsSelected={someSectionsSelected}
+				generating={generating}
+				onToggleAll={toggleAll}
+				onToggleCourse={toggleCourse}
+				onToggleSection={toggleSection}
+				onConfirm={handleGenerateConfirm}
+			/>
 
 			{/* Clone dialog — auto-resolves previous period, no selection needed */}
-			<Dialog open={cloneDialogOpen} onOpenChange={setCloneDialogOpen}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>{t('surveys.lcfc.config.cloneDialogTitle')}</DialogTitle>
-					</DialogHeader>
-					<p className="text-sm text-zinc-600 py-2">{t('surveys.lcfc.config.cloneDialogBody')}</p>
-					<DialogFooter showCloseButton>
-						<Button onClick={handleClone} disabled={loading}>
-							{loading ? t('surveys.shared.generating') : t('surveys.lcfc.config.cloneConfirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+			<LCFCCloneDialog
+				open={cloneDialogOpen}
+				onOpenChange={setCloneDialogOpen}
+				loading={loading}
+				onConfirm={handleClone}
+			/>
 
 			{/* Edit dialog */}
-			<Dialog open={editing !== null} onOpenChange={() => setEditing(null)}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>{t('surveys.lcfc.config.editDialogTitle')}</DialogTitle>
-					</DialogHeader>
-					<div className="space-y-4 py-2">
-						{editing && (
-							<div className="text-sm text-zinc-600">
-								<span className="font-semibold">{editing.courseName}</span>
-								{editing.sectionCode ? (
-									<span className="text-zinc-400"> · {editing.sectionCode}</span>
-								) : null}
-							</div>
-						)}
-						<Toggle
-							label={t('surveys.lcfc.config.activeLabel')}
-							checked={editActive}
-							onChange={setEditActive}
-						/>
-						{loadingCommissions ? (
-							<LoadingState size="sm" />
-						) : sectionCommissions.length === 0 ? (
-							<p className="text-sm text-zinc-500 italic">
-								{t('surveys.lcfc.config.noCommissionsForSection')}
-							</p>
-						) : (
-							<Select
-								name="commission"
-								label={t('surveys.lcfc.config.commissionLabel')}
-								placeholder={t('surveys.lcfc.config.commissionPlaceholder')}
-								isSearchable
-								options={sectionCommissions.map((c) => ({
-									value: c.commissionId,
-									label: `${c.code}${c.name ? ` — ${c.name}` : ''}`,
-								}))}
-								value={
-									sectionCommissions
-										.map((c) => ({
-											value: c.commissionId,
-											label: `${c.code}${c.name ? ` — ${c.name}` : ''}`,
-										}))
-										.find((c) => c.value === selectedCommissionId) ?? null
-								}
-								onChange={(_name, value) =>
-									setSelectedCommissionId(
-										value && !Array.isArray(value) ? Number(value.value) : null,
-									)
-								}
-							/>
-						)}
-					</div>
-					<DialogFooter showCloseButton>
-						<Button onClick={handleSaveEdit} disabled={saving || !selectedCommissionId}>
-							{t('surveys.lcfc.config.save')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+			<LCFCEditCourseDialog
+				editing={editing}
+				onOpenChange={() => setEditing(null)}
+				editActive={editActive}
+				onEditActiveChange={setEditActive}
+				loadingCommissions={loadingCommissions}
+				sectionCommissions={sectionCommissions}
+				selectedCommissionId={selectedCommissionId}
+				onSelectedCommissionChange={setSelectedCommissionId}
+				saving={saving}
+				onSave={handleSaveEdit}
+			/>
 
 			{/* Delete dialog */}
-			<Dialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>{t('surveys.lcfc.config.deleteDialogTitle')}</DialogTitle>
-					</DialogHeader>
-					<p className="text-sm text-zinc-600 py-2">{t('surveys.lcfc.config.deleteDialogBody')}</p>
-					<DialogFooter showCloseButton>
-						<Button variant="warning" onClick={() => deleteId !== null && handleDelete(deleteId)}>
-							{t('surveys.lcfc.config.deleteConfirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+			<LCFCDeleteDialog
+				deleteId={deleteId}
+				onOpenChange={() => setDeleteId(null)}
+				onConfirm={() => deleteId !== null && handleDelete(deleteId)}
+			/>
 
 			<Toast
 				isOpen={toast.open}

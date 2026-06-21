@@ -1,5 +1,9 @@
 export { FileBreadcrumbs } from './FileBreadcrumbs';
 export { FileManagerTable } from './FileManagerTable';
+export { FileManagerToolbar } from './FileManagerToolbar';
+export { FileManagerBody } from './FileManagerBody';
+export { FileManagerDialogs } from './FileManagerDialogs';
+export { FileManagerHeader } from './FileManagerHeader';
 export { CreateFolderDialog } from './CreateFolderDialog';
 export { CreateCommentDialog } from './CreateCommentDialog';
 export { RenameDialog } from './RenameDialog';

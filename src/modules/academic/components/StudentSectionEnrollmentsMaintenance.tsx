@@ -4,26 +4,16 @@ import { useEffect, useMemo, useState } from 'react';
 import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
-	ExclamationTriangleIcon,
 	MagnifyingGlassIcon,
-	PencilSquareIcon,
 	PlusIcon,
-	TrashIcon,
 } from '@heroicons/react/24/outline';
 import {
 	Button,
 	Card,
 	ConfirmDialog,
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
 	Select,
 	Table,
 	TableBody,
-	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -51,41 +41,17 @@ import {
 	StudentSectionEnrollmentCreateDialog,
 	StudentSectionEnrollmentEditDialog,
 } from '@/modules';
+import {
+	StudentSectionEnrollmentCard,
+	StudentSectionEnrollmentRow,
+} from './StudentSectionEnrollmentRow';
+import { StudentSectionEnrollmentBlockedDialog } from './StudentSectionEnrollmentBlockedDialog';
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
 	if (!text) return '';
 	return text[locale as 'es' | 'en'] ?? text.es ?? text.en ?? '';
-}
-
-function RowActions({
-	onEdit,
-	onDelete,
-	editLabel,
-	deleteLabel,
-}: {
-	onEdit: () => void;
-	onDelete: () => void;
-	editLabel: string;
-	deleteLabel: string;
-}) {
-	return (
-		<div className="flex items-center justify-end gap-1">
-			<Button variant="ghost" size="icon" onClick={onEdit} aria-label={editLabel} title={editLabel}>
-				<PencilSquareIcon className="h-4 w-4" />
-			</Button>
-			<Button
-				variant="ghost"
-				size="icon"
-				className="text-red-600 hover:bg-red-50"
-				onClick={onDelete}
-				aria-label={deleteLabel}
-				title={deleteLabel}>
-				<TrashIcon className="h-4 w-4" />
-			</Button>
-		</div>
-	);
 }
 
 export function StudentSectionEnrollmentsMaintenance() {
@@ -334,25 +300,15 @@ export function StudentSectionEnrollmentsMaintenance() {
 								</TableHeader>
 								<TableBody>
 									{items.map((item) => (
-										<TableRow key={item.id}>
-											<TableCell className="text-zinc-800">
-												{localized(item.courseName, locale)}
-											</TableCell>
-											<TableCell className="font-mono text-zinc-700">{item.courseCode}</TableCell>
-											<TableCell className="font-mono text-zinc-700">{item.sectionCode}</TableCell>
-											<TableCell className="font-mono text-zinc-700">{item.studentCode}</TableCell>
-											<TableCell className="text-zinc-700">
-												{item.studentFirstName} {item.studentLastName}
-											</TableCell>
-											<TableCell>
-												<RowActions
-													onEdit={() => openEdit(item)}
-													onDelete={() => setPendingDelete(item)}
-													editLabel={editLabel}
-													deleteLabel={deleteLabel}
-												/>
-											</TableCell>
-										</TableRow>
+										<StudentSectionEnrollmentRow
+											key={item.id}
+											item={item}
+											locale={locale}
+											editLabel={editLabel}
+											deleteLabel={deleteLabel}
+											onEdit={openEdit}
+											onDelete={setPendingDelete}
+										/>
 									))}
 								</TableBody>
 							</Table>
@@ -360,34 +316,15 @@ export function StudentSectionEnrollmentsMaintenance() {
 
 						<ul className="space-y-3 md:hidden">
 							{items.map((item) => (
-								<li
+								<StudentSectionEnrollmentCard
 									key={item.id}
-									className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
-									<div className="flex items-start justify-between gap-3">
-										<div className="min-w-0 space-y-1">
-											<p className="truncate font-medium text-zinc-900">
-												{localized(item.courseName, locale)}
-											</p>
-											<p className="flex flex-wrap items-center gap-2 font-mono text-xs text-zinc-500">
-												<span>{item.courseCode}</span>
-												<span>·</span>
-												<span>{item.sectionCode}</span>
-											</p>
-											<p className="text-sm text-zinc-600">
-												<span className="font-mono text-zinc-500">{item.studentCode}</span>{' '}
-												{item.studentFirstName} {item.studentLastName}
-											</p>
-										</div>
-										<div className="shrink-0">
-											<RowActions
-												onEdit={() => openEdit(item)}
-												onDelete={() => setPendingDelete(item)}
-												editLabel={editLabel}
-												deleteLabel={deleteLabel}
-											/>
-										</div>
-									</div>
-								</li>
+									item={item}
+									locale={locale}
+									editLabel={editLabel}
+									deleteLabel={deleteLabel}
+									onEdit={openEdit}
+									onDelete={setPendingDelete}
+								/>
 							))}
 						</ul>
 					</div>
@@ -454,31 +391,12 @@ export function StudentSectionEnrollmentsMaintenance() {
 				isLoading={remove.isPending}
 			/>
 
-			<Dialog
-				open={blockedReasons != null}
+			<StudentSectionEnrollmentBlockedDialog
+				reasons={blockedReasons}
 				onOpenChange={(open) => {
 					if (!open) setBlockedReasons(null);
-				}}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<div className="flex items-center gap-2 text-red-700">
-							<ExclamationTriangleIcon className="h-5 w-5" />
-							<DialogTitle>
-								{t('loads.studentSectionEnrollmentsMaintenance.delete.blockedTitle')}
-							</DialogTitle>
-						</div>
-						<DialogDescription>
-							{t('loads.studentSectionEnrollmentsMaintenance.delete.blockedSubtitle')}
-						</DialogDescription>
-					</DialogHeader>
-					<ul className="list-disc space-y-1 pl-5 text-sm text-zinc-700">
-						{(blockedReasons ?? []).map((reason) => (
-							<li key={reason}>{tryTranslate(t, reason)}</li>
-						))}
-					</ul>
-					<DialogFooter showCloseButton />
-				</DialogContent>
-			</Dialog>
+				}}
+			/>
 
 			<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
 		</Card>

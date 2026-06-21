@@ -1,29 +1,8 @@
 'use client';
 
 import { type DragEvent, useMemo, useRef, useState } from 'react';
-import {
-	ArrowDownTrayIcon,
-	ArrowPathIcon,
-	ArrowUpTrayIcon,
-	ClipboardDocumentIcon,
-	ClipboardIcon,
-	CloudArrowUpIcon,
-	DocumentPlusIcon,
-	FolderPlusIcon,
-	ListBulletIcon,
-	MagnifyingGlassIcon,
-	PencilSquareIcon,
-	TrashIcon,
-	TruckIcon,
-} from '@heroicons/react/24/outline';
-import {
-	Button,
-	Card,
-	ConfirmDialog,
-	Skeleton,
-	SuccessDialog,
-	Toast,
-} from '@/shared/components/ui';
+import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
+import { Card } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import type { S3Entry } from '../types';
@@ -32,6 +11,7 @@ import {
 	useCreateFolder,
 	useCreateTextFile,
 	useDeleteEntries,
+	useFileManagerSelection,
 	useMoveEntries,
 	usePortfolioFiles,
 	useRenameEntry,
@@ -40,14 +20,11 @@ import {
 import { portfolioS3Service } from '../services';
 import {
 	buildBreadcrumbs,
-	CreateCommentDialog,
-	CreateFolderDialog,
-	FileBreadcrumbs,
-	FileManagerTable,
+	FileManagerBody,
+	FileManagerDialogs,
+	FileManagerHeader,
+	FileManagerToolbar,
 	formatBytes,
-	MoveDialog,
-	RenameDialog,
-	TreeViewerDialog,
 } from '../components';
 
 /** Download guard: refuse selections larger than 1 GB (matches the legacy client). */
@@ -58,9 +35,16 @@ const FILE_LIMIT = 4 * 1024 ** 3;
 export function PortfolioFileManagerPage() {
 	const { t } = useI18n();
 
-	const [prefix, setPrefix] = useState('');
-	const [search, setSearch] = useState('');
-	const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+	const {
+		prefix,
+		search,
+		setSearch,
+		selectedKeys,
+		setSelectedKeys,
+		clearSelection,
+		navigateTo,
+		toggleSelect,
+	} = useFileManagerSelection();
 	const [showCreateFolder, setShowCreateFolder] = useState(false);
 	const [showCreateComment, setShowCreateComment] = useState(false);
 	const [showTree, setShowTree] = useState(false);
@@ -108,25 +92,6 @@ export function PortfolioFileManagerPage() {
 		() => entries.filter((e) => selectedKeys.has(e.key)),
 		[entries, selectedKeys],
 	);
-
-	function clearSelection() {
-		setSelectedKeys(new Set());
-	}
-
-	function navigateTo(nextPrefix: string) {
-		setPrefix(nextPrefix);
-		setSearch('');
-		clearSelection();
-	}
-
-	function toggleSelect(key: string) {
-		setSelectedKeys((prev) => {
-			const next = new Set(prev);
-			if (next.has(key)) next.delete(key);
-			else next.add(key);
-			return next;
-		});
-	}
 
 	function toggleAll() {
 		setSelectedKeys((prev) => {
@@ -305,47 +270,6 @@ export function PortfolioFileManagerPage() {
 	const selectedCount = selectedKeys.size;
 	const isUploading = uploadProgress !== null;
 
-	function renderBody() {
-		if (isLoading) {
-			return (
-				<div className="space-y-2">
-					{Array.from({ length: 6 }).map((_, i) => (
-						<Skeleton key={`fm-sk-${i}`} className="h-11 w-full rounded-lg" />
-					))}
-				</div>
-			);
-		}
-		if (isError) {
-			return (
-				<p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-					{t(getErrorMessage(error, 'portfolio.error.loadFailed'))}
-				</p>
-			);
-		}
-		if (entries.length === 0) {
-			return (
-				<div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-300 py-16 text-center">
-					<CloudArrowUpIcon className="mb-3 h-12 w-12 text-zinc-300" />
-					<p className="text-sm font-medium text-zinc-500">
-						{search.trim() ? t('portfolio.table.noResults') : t('portfolio.table.empty')}
-					</p>
-				</div>
-			);
-		}
-		return (
-			<FileManagerTable
-				entries={entries}
-				selectedKeys={selectedKeys}
-				onToggleSelect={toggleSelect}
-				onToggleAll={toggleAll}
-				onOpenFolder={(entry) => navigateTo(entry.key)}
-				onDownload={handleDownload}
-				onDeleteOne={(entry) => setConfirmDelete([entry])}
-				downloadingKey={downloadingKey}
-			/>
-		);
-	}
-
 	return (
 		<Card title={t('portfolio.title')}>
 			<div
@@ -362,95 +286,33 @@ export function PortfolioFileManagerPage() {
 				<p className="text-sm text-zinc-500">{t('portfolio.subtitle')}</p>
 
 				{/* Breadcrumbs + refresh */}
-				<div className="flex items-center justify-between gap-2 rounded-xl border border-zinc-200 bg-zinc-50/60 px-3 py-2">
-					<FileBreadcrumbs segments={breadcrumbs} onNavigate={navigateTo} />
-					<button
-						type="button"
-						onClick={() => refetch()}
-						className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-700"
-						title={t('portfolio.toolbar.refresh')}
-						aria-label={t('portfolio.toolbar.refresh')}>
-						<ArrowPathIcon className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
-					</button>
-				</div>
+				<FileManagerHeader
+					segments={breadcrumbs}
+					onNavigate={navigateTo}
+					onRefresh={() => refetch()}
+					isFetching={isFetching}
+				/>
 
 				{/* Toolbar */}
-				<div className="flex flex-wrap items-center gap-2">
-					<Button variant="primary" size="md" onClick={() => setShowCreateFolder(true)}>
-						<FolderPlusIcon className="h-5 w-5" />
-						{t('portfolio.toolbar.newFolder')}
-					</Button>
-					<Button variant="secondary" size="md" onClick={() => setShowCreateComment(true)}>
-						<DocumentPlusIcon className="h-5 w-5" />
-						{t('portfolio.toolbar.newComment')}
-					</Button>
-					<Button
-						variant="secondary"
-						size="md"
-						disabled={isUploading}
-						onClick={() => fileInputRef.current?.click()}>
-						<ArrowUpTrayIcon className="h-5 w-5" />
-						{isUploading
-							? `${t('portfolio.dropzone.uploading')} ${uploadProgress.done}/${uploadProgress.total}`
-							: t('portfolio.toolbar.upload')}
-					</Button>
-					<Button variant="surface" size="md" onClick={() => setShowTree(true)}>
-						<ListBulletIcon className="h-5 w-5" />
-						{t('portfolio.toolbar.tree')}
-					</Button>
-					<input
-						ref={fileInputRef}
-						type="file"
-						multiple
-						className="hidden"
-						onChange={handleInputUpload}
-					/>
-					{clipboard.length > 0 && (
-						<Button variant="surface" size="md" onClick={handlePaste}>
-							<ClipboardIcon className="h-5 w-5" />
-							{t('portfolio.toolbar.paste')} ({clipboard.length})
-						</Button>
-					)}
-					{selectedCount > 0 && (
-						<>
-							<Button variant="surface" size="md" onClick={handleCopy}>
-								<ClipboardDocumentIcon className="h-5 w-5" />
-								{t('portfolio.toolbar.copy')} ({selectedCount})
-							</Button>
-							{selectedCount === 1 && (
-								<Button
-									variant="surface"
-									size="md"
-									onClick={() => setRenameTarget(selectedEntries[0])}>
-									<PencilSquareIcon className="h-5 w-5" />
-									{t('portfolio.toolbar.rename')}
-								</Button>
-							)}
-							<Button variant="surface" size="md" onClick={() => setMoveSources(selectedEntries)}>
-								<TruckIcon className="h-5 w-5" />
-								{t('portfolio.toolbar.move')} ({selectedCount})
-							</Button>
-							<Button variant="surface" size="md" onClick={handleDownloadSelected}>
-								<ArrowDownTrayIcon className="h-5 w-5" />
-								{t('portfolio.toolbar.download')} ({selectedCount})
-							</Button>
-							<Button variant="warning" size="md" onClick={() => setConfirmDelete(selectedEntries)}>
-								<TrashIcon className="h-5 w-5" />
-								{t('portfolio.toolbar.delete')} ({selectedCount})
-							</Button>
-						</>
-					)}
-					<div className="relative ml-auto w-full sm:w-64">
-						<MagnifyingGlassIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-zinc-400" />
-						<input
-							type="text"
-							value={search}
-							onChange={(e) => setSearch(e.target.value)}
-							placeholder={t('portfolio.toolbar.searchPlaceholder')}
-							className="h-9 w-full rounded-md border border-zinc-200 bg-white pl-8 pr-3 text-sm placeholder-zinc-400 focus:border-red-400 focus:outline-none focus:ring-1 focus:ring-red-400"
-						/>
-					</div>
-				</div>
+				<FileManagerToolbar
+					fileInputRef={fileInputRef}
+					isUploading={isUploading}
+					uploadProgress={uploadProgress}
+					clipboardCount={clipboard.length}
+					selectedCount={selectedCount}
+					search={search}
+					onSearchChange={setSearch}
+					onNewFolder={() => setShowCreateFolder(true)}
+					onNewComment={() => setShowCreateComment(true)}
+					onOpenTree={() => setShowTree(true)}
+					onInputUpload={handleInputUpload}
+					onPaste={handlePaste}
+					onCopy={handleCopy}
+					onRename={() => setRenameTarget(selectedEntries[0])}
+					onMove={() => setMoveSources(selectedEntries)}
+					onDownloadSelected={handleDownloadSelected}
+					onDeleteSelected={() => setConfirmDelete(selectedEntries)}
+				/>
 
 				{/* Dropzone hint (visible while dragging) */}
 				{isDragging && (
@@ -463,74 +325,54 @@ export function PortfolioFileManagerPage() {
 				)}
 
 				{/* Listing */}
-				{!isDragging && renderBody()}
+				{!isDragging && (
+					<FileManagerBody
+						isLoading={isLoading}
+						isError={isError}
+						error={error}
+						entries={entries}
+						search={search}
+						selectedKeys={selectedKeys}
+						onToggleSelect={toggleSelect}
+						onToggleAll={toggleAll}
+						onOpenFolder={(entry) => navigateTo(entry.key)}
+						onDownload={handleDownload}
+						onDeleteOne={(entry) => setConfirmDelete([entry])}
+						downloadingKey={downloadingKey}
+					/>
+				)}
 			</div>
 
 			{/* Modals */}
-			<CreateFolderDialog
-				key={showCreateFolder ? 'folder-open' : 'folder-closed'}
-				isOpen={showCreateFolder}
-				onClose={() => setShowCreateFolder(false)}
-				onConfirm={handleCreateFolder}
-				isLoading={creatingFolder}
+			<FileManagerDialogs
+				prefix={prefix}
+				showCreateFolder={showCreateFolder}
+				onCloseCreateFolder={() => setShowCreateFolder(false)}
+				onConfirmCreateFolder={handleCreateFolder}
+				creatingFolder={creatingFolder}
+				showCreateComment={showCreateComment}
+				onCloseCreateComment={() => setShowCreateComment(false)}
+				onConfirmCreateComment={handleCreateComment}
+				creatingComment={creatingComment}
+				renameTarget={renameTarget}
+				onCloseRename={() => setRenameTarget(null)}
+				onConfirmRename={handleRename}
+				renaming={renaming}
+				moveSources={moveSources}
+				onCloseMove={() => setMoveSources(null)}
+				onConfirmMove={handleMove}
+				moving={moving}
+				showTree={showTree}
+				onCloseTree={() => setShowTree(false)}
+				confirmDelete={confirmDelete}
+				onCloseConfirmDelete={() => setConfirmDelete(null)}
+				onConfirmDelete={handleConfirmDelete}
+				deleting={deleting}
+				successMessage={successMessage}
+				onCloseSuccess={() => setSuccessMessage(null)}
+				toastError={toastError}
+				onCloseToast={() => setToastError(null)}
 			/>
-
-			<CreateCommentDialog
-				key={showCreateComment ? 'comment-open' : 'comment-closed'}
-				isOpen={showCreateComment}
-				onClose={() => setShowCreateComment(false)}
-				onConfirm={handleCreateComment}
-				isLoading={creatingComment}
-			/>
-
-			<RenameDialog
-				key={renameTarget?.key ?? 'rename-closed'}
-				isOpen={renameTarget != null}
-				entry={renameTarget}
-				onClose={() => setRenameTarget(null)}
-				onConfirm={handleRename}
-				isLoading={renaming}
-			/>
-
-			{moveSources && (
-				<MoveDialog
-					key={`move-${moveSources.map((s) => s.key).join('|')}`}
-					isOpen
-					sources={moveSources}
-					startPrefix={prefix}
-					onClose={() => setMoveSources(null)}
-					onConfirm={handleMove}
-					isLoading={moving}
-				/>
-			)}
-
-			<TreeViewerDialog isOpen={showTree} prefix={prefix} onClose={() => setShowTree(false)} />
-
-			<ConfirmDialog
-				isOpen={confirmDelete != null}
-				onClose={() => setConfirmDelete(null)}
-				onConfirm={handleConfirmDelete}
-				onDecline={() => setConfirmDelete(null)}
-				title={t('portfolio.delete.title')}
-				message={
-					confirmDelete && confirmDelete.length === 1
-						? t('portfolio.delete.bodyOne').replace('{{name}}', confirmDelete[0].name)
-						: t('portfolio.delete.bodyMany').replace(
-								'{{count}}',
-								String(confirmDelete?.length ?? 0),
-							)
-				}
-				confirmLabel={t('portfolio.delete.confirm')}
-				isLoading={deleting}
-			/>
-
-			{successMessage && (
-				<SuccessDialog isOpen onClose={() => setSuccessMessage(null)} message={successMessage} />
-			)}
-
-			{toastError && (
-				<Toast isOpen type="error" onClose={() => setToastError(null)} message={toastError} />
-			)}
 		</Card>
 	);
 }
