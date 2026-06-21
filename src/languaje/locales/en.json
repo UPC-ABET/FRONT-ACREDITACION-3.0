@@ -1554,9 +1554,16 @@
 				"autosaveRetry": "Retry save.",
 				"saveRubricSuccess": "Rubric saved successfully."
 			},
+			"outcome": {
+				"addQuestion": "Add question"
+			},
+			"criteria": {
+				"saving": "Saving criterion..."
+			},
 			"capstone": {
 				"saveRubric": "Save rubric",
 				"saving": "Saving rubric...",
+				"saveError": "Error saving the rubric.",
 				"noCommissions": "No commissions found.",
 				"tooltips": {
 					"commissionCheckboxIncomplete": "Incomplete criteria for the outcomes.",
@@ -1580,6 +1587,7 @@
 				"points": "points",
 				"saveRubric": "Save rubric",
 				"saving": "Saving rubric...",
+				"saveError": "Error saving the rubric.",
 				"tooltips": {
 					"saveDisabled": "Invalid rubric. Saving disabled.",
 					"maxCols": "You have reached the maximum number of criteria."

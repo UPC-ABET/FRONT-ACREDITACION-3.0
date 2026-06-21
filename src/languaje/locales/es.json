@@ -1554,9 +1554,16 @@
 				"autosaveRetry": "Reintentar guardado.",
 				"saveRubricSuccess": "Rúbrica guardada exitosamente."
 			},
+			"outcome": {
+				"addQuestion": "Agregar pregunta"
+			},
+			"criteria": {
+				"saving": "Guardando criterio..."
+			},
 			"capstone": {
 				"saveRubric": "Guardar rúbrica",
 				"saving": "Guardando rúbrica...",
+				"saveError": "Error al guardar la rúbrica.",
 				"noCommissions": "No se encontraron comisiones.",
 				"tooltips": {
 					"commissionCheckboxIncomplete": "Criterios incompletos para los outcomes.",
@@ -1580,6 +1587,7 @@
 				"points": "puntos",
 				"saveRubric": "Guardar rúbrica",
 				"saving": "Guardando rúbrica...",
+				"saveError": "Error al guardar la rúbrica.",
 				"tooltips": {
 					"saveDisabled": "Rúbrica no válida. Guardado deshabilitado.",
 					"maxCols": "Has alcanzado el número máximo de criterios."
