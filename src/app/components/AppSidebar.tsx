@@ -36,9 +36,12 @@ type NavChild = {
 type NavItem = {
 	name: string;
 	href?: string;
+	externalHref?: string;
 	icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 	children?: NavChild[];
 };
+
+const PORTFOLIO_URL = process.env.NEXT_PUBLIC_PORTFOLIO_URL ?? '';
 
 export function AppSidebar() {
 	const pathname = usePathname();
@@ -69,7 +72,12 @@ export function AppSidebar() {
 			icon: ClipboardDocumentCheckIcon,
 			children: [{ name: t('nav.gradeProjects'), href: '/evaluation/grade-projects' }],
 		},
-		{ name: t('nav.portfolio'), href: '/portfolio', icon: BriefcaseIcon },
+		{
+			name: t('nav.portfolio'),
+			href: '/portfolio',
+			externalHref: PORTFOLIO_URL,
+			icon: BriefcaseIcon,
+		},
 
 		{
 			name: t('nav.ifc.label'),
@@ -145,7 +153,11 @@ export function AppSidebar() {
 
 						return (
 							<div key={item.name}>
-								{!item.children ? (
+								{!item.children && item.externalHref ? (
+									<a href={item.externalHref} target="_blank" rel="noopener noreferrer">
+										<SidebarItem label={item.name} icon={<item.icon className="h-5 w-5" />} />
+									</a>
+								) : !item.children ? (
 									<Link href={item.href ?? '#'}>
 										<SidebarItem
 											label={item.name}
