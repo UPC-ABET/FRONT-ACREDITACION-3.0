@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getSurveyTypeId } from '../../services/academicService';
-import { getSurveyMessagesByFilters } from '@/modules/admin/notifications/services/notificationMessagesService';
+import { getSurveyMessagesByFilters } from '@/modules/admin/notifications';
 import type { SurveyMessage } from '@/modules/admin/notifications/types';
 
 interface Props {

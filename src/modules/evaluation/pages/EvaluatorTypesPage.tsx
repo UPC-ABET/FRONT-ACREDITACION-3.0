@@ -17,7 +17,7 @@ import {
 import { cn } from '@/shared/lib/utils';
 import { Toggle } from '@/shared/components/ui/Toggle';
 import { useI18n } from '@/providers';
-import { TypeOption } from '@/modules/core/services/typesService';
+import { TypeOption } from '@/modules/core';
 import {
 	useTypeGroups,
 	useTypesByGroupCode,

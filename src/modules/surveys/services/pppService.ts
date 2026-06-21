@@ -10,7 +10,7 @@ import {
 } from '@/shared/lib';
 import { logger } from '@/shared/lib/logger';
 import { getSurveyTypeId } from './academicService';
-import { performanceLevelsService } from '@/modules/academic/services/performanceLevelsService';
+import { performanceLevelsService } from '@/modules/academic';
 import type { PerformanceLevelResponse } from '@/modules/academic/types';
 import type {
 	CompetenceConfig,
