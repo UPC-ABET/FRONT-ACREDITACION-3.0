@@ -81,6 +81,8 @@ module-name/
 
 `modules/admin/` groups cross-cutting admin concerns (`configuration/`, `iam/`, `notifications/`, `parameters/`, plus the route-less `chart-heads/` helper). Each routed sub-module is a normal module — it owns one admin page that splits domain coverage via **in-page tabs**, not via separate routes or sidebar entries.
 
+**`admin/` is a namespace folder, not a module — it has no aggregate barrel by design.** There is intentionally no `src/modules/admin/index.ts`; importing the whole group would conflate independent concerns whose public surfaces overlap (e.g. both `admin/iam` and `admin/chart-heads` export a `RawUser` type, which an `export *` aggregate would silently drop). Always import the concern sub-module barrel directly: `@/modules/admin/iam`, `@/modules/admin/notifications`, etc. — never `@/modules/admin`.
+
 Pattern:
 
 - **One route per admin concern.** `/admin/configuration`, `/admin/iam`, `/admin/notifications`, `/admin/parameters`. Never `/admin/<concern>/<domain>`.
@@ -117,7 +119,7 @@ Modules CAN import from other modules when consuming domain-owned exports:
 - `evaluation` → `@/modules/core` (for `TYPE_CODES`, `TYPE_GROUP_CODES`)
 - `ifcs` → `@/modules/core` (for constants and services)
 
-Modules must NEVER import from another module's internal paths. Use the module barrel (`@/modules/X`) or specific public folder (`@/modules/X/components`). For nested modules like `admin/parameters`, the barrel is `@/modules/admin/parameters`.
+Modules must NEVER import from another module's internal paths. Use the module barrel (`@/modules/X`) or specific public folder (`@/modules/X/components`). For nested modules like `admin/parameters`, the barrel is `@/modules/admin/parameters` — `admin/` itself has no barrel (see Admin Modules above).
 
 ### shared/ Must Not Import from modules/
 
