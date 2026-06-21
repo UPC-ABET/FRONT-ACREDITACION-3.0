@@ -26,7 +26,6 @@ interface AddStudentModalProps {
 	projectId: string;
 	projectNumericId: number;
 	courseId: number | null;
-	academicPeriodId: number | null;
 	onSuccess?: () => void;
 }
 
@@ -36,7 +35,6 @@ export function AddStudentModal({
 	projectId,
 	projectNumericId,
 	courseId,
-	academicPeriodId,
 	onSuccess,
 }: AddStudentModalProps) {
 	const { t } = useI18n();
@@ -65,7 +63,6 @@ export function AddStudentModal({
 		coursesService
 			.getEnrolledStudents(courseId, {
 				isActive: true,
-				...(academicPeriodId != null ? { academicPeriodId: academicPeriodId } : {}),
 			})
 			.then((r) => setStudents(r.data ?? []))
 			.catch(() => setStudents([]))

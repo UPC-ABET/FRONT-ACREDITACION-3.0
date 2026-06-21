@@ -22,7 +22,6 @@ export const outcomesService = {
 	}): Promise<ApiResponse<OutcomeMaintenanceList>> {
 		const query = new URLSearchParams();
 		query.set('programId', String(params.programId));
-		query.set('academicPeriodId', String(params.academicPeriodId));
 		if (params.page != null) query.set('page', String(params.page));
 		if (params.pageSize != null) query.set('pageSize', String(params.pageSize));
 		if (params.search) query.set('search', params.search);

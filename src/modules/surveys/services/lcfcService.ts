@@ -72,7 +72,6 @@ export async function listLCFCCourses(
 	programId?: number,
 ): Promise<{ courses: LCFCCourse[] }> {
 	const res = await apiPost('lcfc/config/get-by-filters', {
-		academicPeriodId,
 		programId: programId || undefined,
 	});
 	const list = getApiData<BackendLcfcConfig[]>(res) ?? [];
@@ -81,11 +80,11 @@ export async function listLCFCCourses(
 
 export async function getAvailableSections(
 	programId: number | undefined,
-	academicPeriodId: number,
 ): Promise<AvailableSection[]> {
-	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId) });
+	const params = new URLSearchParams();
 	if (programId) params.set('programId', String(programId));
-	const res = await apiGet(`lcfc/config/available-sections?${params.toString()}`);
+	const qs = params.toString();
+	const res = await apiGet(`lcfc/config/available-sections${qs ? `?${qs}` : ''}`);
 	return getApiData<AvailableSection[]>(res) ?? [];
 }
 
@@ -136,7 +135,7 @@ export async function generateLCFCConfiguration(
 	programId: number,
 	courseSectionIds?: number[],
 ): Promise<GenerateConfigResult> {
-	const body: Record<string, unknown> = { modalityTypeId, academicPeriodId, programId };
+	const body: Record<string, unknown> = { modalityTypeId, programId };
 	if (courseSectionIds && courseSectionIds.length > 0) {
 		body.courseSectionIds = courseSectionIds;
 	}
@@ -154,7 +153,7 @@ export async function setLCFCDeadline(
 	academicPeriodId: number,
 	maxRegisterDate: string,
 ) {
-	return apiPost('lcfc/config/set-deadline', { programId, academicPeriodId, maxRegisterDate });
+	return apiPost('lcfc/config/set-deadline', { programId, maxRegisterDate });
 }
 
 export async function deleteLCFCConfig(id: number) {
@@ -185,7 +184,15 @@ export async function changeLCFCConfigStatus(configId: number, newStatus: LCFCCo
 }
 
 export async function sendLCFCNotification(request: LCFCNotificationSendRequest, lang = 'es') {
-	return apiPost('lcfc/notification/send', { ...request, lang });
+	return apiPost('lcfc/notification/send', {
+		programId: request.programId,
+		campusId: request.campusId,
+		courseSectionId: request.courseSectionId,
+		maxRegisterDate: request.maxRegisterDate,
+		surveyBaseUrl: request.surveyBaseUrl,
+		resend: request.resend,
+		lang,
+	});
 }
 
 export async function getLCFCEmailParams(): Promise<LCFCEmailParam[]> {
@@ -197,7 +204,10 @@ export async function generateLCFCDashboard(params: {
 	programId?: number;
 	campusId?: number;
 }): Promise<DashboardResponse> {
-	const res = await apiPost('lcfc/dashboard', params);
+	const res = await apiPost('lcfc/dashboard', {
+		programId: params.programId,
+		campusId: params.campusId,
+	});
 	const data = getApiData<{
 		summary?: {
 			total?: number;
@@ -231,7 +241,6 @@ export async function generateLCFCPerceptionReport(params: {
 	programId?: number;
 }) {
 	return generateLCFCDashboard({
-		academicPeriodId: params.academicPeriodId,
 		programId: params.programId,
 	});
 }
@@ -240,19 +249,16 @@ export async function validateLCFCToken(token: string) {
 	return apiGet(`lcfc/token/validate/${encodeURIComponent(token)}`);
 }
 
-export async function downloadLCFCSurveys(academicPeriodId: number, programId = 0): Promise<void> {
-	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId) });
+export async function downloadLCFCSurveys(programId = 0): Promise<void> {
+	const params = new URLSearchParams();
 	if (programId) params.set('programId', String(programId));
-	const { blob, response } = await apiGetBlobResponse(`lcfc/export?${params.toString()}`);
+	const qs = params.toString();
+	const { blob, response } = await apiGetBlobResponse(`lcfc/export${qs ? `?${qs}` : ''}`);
 	triggerBlobDownload(blob, resolveDownloadFileName(response, 'encuestas_lcfc.xlsx'));
 }
 
-export async function downloadLCFCReportPdf(
-	academicPeriodId: number,
-	programId = 0,
-	lang = 'es',
-): Promise<void> {
-	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId), lang });
+export async function downloadLCFCReportPdf(programId = 0, lang = 'es'): Promise<void> {
+	const params = new URLSearchParams({ lang });
 	if (programId) params.set('programId', String(programId));
 	const { blob, response } = await apiGetBlobResponse(`lcfc/report-pdf?${params.toString()}`);
 	triggerBlobDownload(blob, resolveDownloadFileName(response, 'reporte_lcfc.pdf'));

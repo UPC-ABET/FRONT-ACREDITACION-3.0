@@ -27,7 +27,7 @@ export function PPPMassiveUpload({ programId }: PPPMassiveUploadProps) {
 		if (!academicPeriodId) return;
 		try {
 			const { downloadPPPTemplate } = await import('../../services/pppService');
-			await downloadPPPTemplate(academicPeriodId, programId);
+			await downloadPPPTemplate(programId);
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : t('surveys.ppp.upload.downloadError');
 			setToast({ open: true, type: 'error', msg: tryTranslate(t, msg) });

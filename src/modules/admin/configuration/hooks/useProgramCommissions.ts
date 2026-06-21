@@ -12,7 +12,7 @@ import { configurationKeys } from './queryKeys';
 export function useProgramCommissions(academicPeriodId: number | null) {
 	return useQuery<ProgramCommissionAssociation[], Error>({
 		queryKey: configurationKeys.programCommissionsByPeriod(academicPeriodId ?? 0),
-		queryFn: () => listProgramCommissions(academicPeriodId as number),
+		queryFn: () => listProgramCommissions(),
 		enabled: academicPeriodId !== null,
 	});
 }

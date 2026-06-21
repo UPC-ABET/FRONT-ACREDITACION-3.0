@@ -141,7 +141,7 @@ export function usePPPDownload() {
 		setLoading(true);
 		setError(null);
 		try {
-			await downloadPPPTemplate(academicPeriodId, programId);
+			await downloadPPPTemplate(programId);
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {

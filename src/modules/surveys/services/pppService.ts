@@ -93,7 +93,6 @@ export async function listPPPCompetences(
 ): Promise<CompetenceConfig[]> {
 	const res = await apiPost('ppp/config/get-by-filters', {
 		programId: programId || undefined,
-		academicPeriodId,
 		isActive: true,
 	});
 	const list = getApiData<BackendPppConfig[]>(res) ?? [];
@@ -113,11 +112,8 @@ function pickEs(value: I18nOrString): string {
  * commission on the backend and flattened here. PPP/GRA/LCFC all measure these
  * same outcomes, so this list is the source of truth for building survey configs.
  */
-export async function listProgramOutcomes(
-	programId: number,
-	academicPeriodId: number,
-): Promise<ProgramOutcome[]> {
-	const res = await apiPost('gra/outcomes/list', { programId, academicPeriodId });
+export async function listProgramOutcomes(programId: number): Promise<ProgramOutcome[]> {
+	const res = await apiPost('gra/outcomes/list', { programId });
 	const groups = getApiData<Array<{ outcomes?: ProgramOutcome[] }>>(res) ?? [];
 	return groups.flatMap((g) => g.outcomes ?? []);
 }
@@ -132,7 +128,7 @@ export async function generatePPPConfigFromOutcomes(
 	programId: number,
 	academicPeriodId: number,
 ): Promise<{ created: number; skipped: number; total: number }> {
-	const outcomes = await listProgramOutcomes(programId, academicPeriodId);
+	const outcomes = await listProgramOutcomes(programId);
 	let created = 0;
 	let skipped = 0;
 	for (let i = 0; i < outcomes.length; i++) {
@@ -168,7 +164,6 @@ export async function savePPPCompetence(data: CompetenceFormData) {
 		descriptionEn: data.descriptionEn || data.description,
 		order: data.performanceLevel,
 		programId: data.programId ?? 0,
-		academicPeriodId: data.academicPeriodId,
 		isVisible: data.isVisible ?? true,
 		isExternal: data.isExternal ?? false,
 	};
@@ -220,10 +215,11 @@ export async function updatePPPPerformanceLevels(
 	);
 }
 
-export async function downloadPPPTemplate(academicPeriodId: number, programId = 0): Promise<void> {
-	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId) });
+export async function downloadPPPTemplate(programId = 0): Promise<void> {
+	const params = new URLSearchParams();
 	if (programId) params.set('programId', String(programId));
-	const { blob, response } = await apiGetBlobResponse(`ppp/survey/template?${params.toString()}`);
+	const qs = params.toString();
+	const { blob, response } = await apiGetBlobResponse(`ppp/survey/template${qs ? `?${qs}` : ''}`);
 	triggerBlobDownload(blob, resolveDownloadFileName(response, 'PPP_Survey_Template.xlsx'));
 }
 
@@ -236,7 +232,6 @@ export async function uploadPPPMassive(
 	const fileBase64 = await fileToBase64(file);
 	const res = await apiPost('ppp/survey/upload-excel', {
 		fileBase64,
-		academicPeriodId,
 		programId,
 		campusId,
 	});
@@ -253,7 +248,11 @@ export async function generatePPPDashboard(params: {
 	campusId?: number;
 	practiceNumber?: number;
 }): Promise<DashboardResponse> {
-	const res = await apiPost('ppp/survey/dashboard', params);
+	const res = await apiPost('ppp/survey/dashboard', {
+		programId: params.programId,
+		campusId: params.campusId,
+		practiceNumber: params.practiceNumber,
+	});
 	return getApiData<DashboardResponse>(res);
 }
 
@@ -263,7 +262,11 @@ export async function generatePPPFindings(params: {
 	campusId?: number;
 	practiceNumber?: number;
 }) {
-	return apiPost('ppp/survey/generate-findings', params);
+	return apiPost('ppp/survey/generate-findings', {
+		programId: params.programId,
+		campusId: params.campusId,
+		practiceNumber: params.practiceNumber,
+	});
 }
 
 export async function generatePPPPerceptionReport(params: {
@@ -272,7 +275,6 @@ export async function generatePPPPerceptionReport(params: {
 	commissionId?: number;
 }) {
 	return generatePPPDashboard({
-		academicPeriodId: params.academicPeriodId,
 		programId: params.programId,
 	});
 }
@@ -284,7 +286,12 @@ export async function getPPPSurveysByFilters(params: {
 	studentId?: number;
 	practiceNumber?: number;
 }) {
-	const res = await apiPost('ppp/survey/get-by-filters', params);
+	const res = await apiPost('ppp/survey/get-by-filters', {
+		programId: params.programId,
+		campusId: params.campusId,
+		studentId: params.studentId,
+		practiceNumber: params.practiceNumber,
+	});
 	return getApiData(res);
 }
 

@@ -221,7 +221,6 @@ export function ProjectWizardStep2({
 				open={studentModalOpen}
 				onOpenChange={setStudentModalOpen}
 				courseId={step1.courseId}
-				academicPeriodId={step1.periodId}
 				studyPlanAcademicPeriodId={step1.studyPlanAcademicPeriodId}
 				selectedIds={selectedStudentIds}
 				onConfirm={(result) => setSelectedStudents(result)}

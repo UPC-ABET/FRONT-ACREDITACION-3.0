@@ -112,7 +112,6 @@ export async function listGRACompetences(
 ): Promise<CompetenceConfig[]> {
 	const res = await apiPost('gra/config/get-by-filters', {
 		programId: programId || undefined,
-		academicPeriodId,
 		isActive: true,
 	});
 	const list = getApiData<BackendGraConfig[]>(res) ?? [];
@@ -128,7 +127,6 @@ export async function saveGRACompetence(data: CompetenceFormData) {
 		descriptionEn: data.descriptionEn || data.description,
 		order: data.performanceLevel,
 		programId: data.programId ?? 0,
-		academicPeriodId: data.academicPeriodId,
 		isVisible: data.isVisible ?? true,
 		isExternal: data.isExternal ?? false,
 	};
@@ -156,8 +154,8 @@ export async function cloneGRAConfiguration(params: {
 	});
 }
 
-export async function listGRAOutcomes(params: { programId: number; academicPeriodId: number }) {
-	const res = await apiPost('gra/outcomes/list', params);
+export async function listGRAOutcomes(params: { programId: number }) {
+	const res = await apiPost('gra/outcomes/list', { programId: params.programId });
 	const raw =
 		getApiData<
 			Array<{
@@ -223,7 +221,6 @@ export async function addStudentToNotification(params: {
 	return apiPost('gra/notification/save', {
 		studentId: params.studentId,
 		programId: params.programId,
-		academicPeriodId: params.academicPeriodId,
 		campusId: params.campusId ?? 0,
 		maxRegisterDate:
 			params.maxRegisterDate ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
@@ -240,7 +237,11 @@ export async function listGRAStudents(params: {
 	campusId?: number;
 	studentCode?: string;
 }): Promise<{ students: GRAStudent[] }> {
-	const res = await apiPost('gra/notification/list-students', params);
+	const res = await apiPost('gra/notification/list-students', {
+		programId: params.programId,
+		campusId: params.campusId,
+		studentCode: params.studentCode,
+	});
 	const list = getApiData<BackendGraStudent[]>(res) ?? [];
 	return { students: list.map((s) => adaptGraStudent(s)) };
 }
@@ -249,7 +250,12 @@ export async function sendGRAEmail(
 	request: GRAEmailSendRequest,
 	lang = 'es',
 ): Promise<SendEmailResponse> {
-	const res = await apiPost('gra/email/send', { ...request, lang });
+	const res = await apiPost('gra/email/send', {
+		programId: request.programId,
+		surveyBaseUrl: request.surveyBaseUrl,
+		notificationMessageId: request.notificationMessageId,
+		lang,
+	});
 	const data = getApiData<{ sent?: number; failed?: number }>(res);
 	return { success: true, data: { sent: data?.sent ?? 0, failed: data?.failed ?? 0 } };
 }
@@ -292,7 +298,6 @@ export async function uploadGRAMassive(
 	const res = await apiPost('gra/notification/upload-excel', {
 		fileBase64,
 		programId: params.programId,
-		academicPeriodId: params.academicPeriodId,
 		campusId: params.campusId ?? 0,
 		maxRegisterDate:
 			params.maxRegisterDate ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
@@ -305,7 +310,10 @@ export async function generateGRADashboard(params: {
 	programId?: number;
 	campusId?: number;
 }): Promise<DashboardResponse> {
-	const res = await apiPost('gra/dashboard', params);
+	const res = await apiPost('gra/dashboard', {
+		programId: params.programId,
+		campusId: params.campusId,
+	});
 	const data = getApiData<{
 		summary?: {
 			total?: number;
@@ -338,7 +346,6 @@ export async function generateGRAPerceptionReport(params: {
 	commissionId?: number;
 }) {
 	return generateGRADashboard({
-		academicPeriodId: params.academicPeriodId,
 		programId: params.programId,
 	});
 }

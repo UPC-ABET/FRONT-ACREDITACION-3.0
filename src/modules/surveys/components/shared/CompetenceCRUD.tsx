@@ -99,7 +99,7 @@ export function CompetenceCRUD({
 			setCommissionGroups([]);
 			return;
 		}
-		listGRAOutcomes({ programId, academicPeriodId: cycleId })
+		listGRAOutcomes({ programId })
 			.then((groups) => setCommissionGroups(groups))
 			.catch(() => setCommissionGroups([]));
 	}, [programId, cycleId]);

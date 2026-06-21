@@ -378,7 +378,6 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				projectId={projectId}
 				projectNumericId={project.id}
 				courseId={course?.id ?? null}
-				academicPeriodId={data.academicPeriod?.id ?? null}
 				onSuccess={() => showToast('success', t('projects.edit.students.modal.successMessage'))}
 			/>
 

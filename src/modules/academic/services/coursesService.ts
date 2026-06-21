@@ -36,7 +36,6 @@ export const coursesService = {
 		courseId: number,
 		filters: {
 			isActive?: boolean;
-			academicPeriodId?: number;
 			campusId?: number;
 			studyPlanAcademicPeriodId?: number;
 			search?: string;

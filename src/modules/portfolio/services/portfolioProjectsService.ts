@@ -1,4 +1,12 @@
-import { apiDelete, apiGet, apiGetBlobResponse, apiPost, apiPostBlobResponse, apiPut, apiUploadFormData } from '@/shared/lib';
+import {
+	apiDelete,
+	apiGet,
+	apiGetBlobResponse,
+	apiPost,
+	apiPostBlobResponse,
+	apiPut,
+	apiUploadFormData,
+} from '@/shared/lib';
 import { parseFilename } from '@/shared/utils';
 import type {
 	BulkUploadPortfolioResponse,
@@ -21,9 +29,11 @@ export const portfolioProjectsService = {
 		page = 1,
 		pageSize = 20,
 	): Promise<PaginatedPortfolioProjectsResponse> {
+		const body = { ...filters };
+		delete body.academicPeriodId;
 		return apiPost('/portfolio/get-all', {
 			page: { pageNumber: page, pageSize },
-			body: filters,
+			body,
 		});
 	},
 
@@ -50,7 +60,10 @@ export const portfolioProjectsService = {
 		return apiDelete(`/portfolio/delete/${id}`);
 	},
 
-	unassignStudent(projectId: number | string, studentId: number | string): Promise<PortfolioProjectResponse> {
+	unassignStudent(
+		projectId: number | string,
+		studentId: number | string,
+	): Promise<PortfolioProjectResponse> {
 		return apiDelete(`/portfolio/unassign-student/${projectId}/${studentId}`);
 	},
 
@@ -154,9 +167,11 @@ export const portfolioProjectsService = {
 	},
 
 	async export(filters: FilterPortfolioProjectDto = {}): Promise<void> {
+		const body = { ...filters };
+		delete body.academicPeriodId;
 		const { blob, response } = await apiPostBlobResponse('/portfolio/export', {
 			page: { pageNumber: 1, pageSize: 99999 },
-			body: filters,
+			body,
 		});
 		const filename = parseFilename(
 			response.headers.get('Content-Disposition'),

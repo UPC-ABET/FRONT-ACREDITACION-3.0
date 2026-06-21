@@ -197,11 +197,11 @@ export function useLCFCAvailableSections() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const load = useCallback(async (programId: number, academicPeriodId: number) => {
+	const load = useCallback(async (programId: number) => {
 		setLoading(true);
 		setError(null);
 		try {
-			setSections(await getAvailableSections(programId, academicPeriodId));
+			setSections(await getAvailableSections(programId));
 		} catch (e) {
 			setError((e as Error).message);
 		} finally {

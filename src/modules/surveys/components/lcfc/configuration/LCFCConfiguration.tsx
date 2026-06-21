@@ -65,7 +65,7 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 
 	useEffect(() => {
 		if (generateDialogOpen && academicPeriodId && programId) {
-			loadSections(programId, academicPeriodId);
+			loadSections(programId);
 		}
 	}, [generateDialogOpen, academicPeriodId, programId, loadSections]);
 

@@ -3,11 +3,8 @@ import type { AssociateProgramCommissionPayload, ProgramCommissionAssociation } 
 
 const BASE = '/configuration/program-commissions';
 
-export async function listProgramCommissions(
-	academicPeriodId: number,
-): Promise<ProgramCommissionAssociation[]> {
-	const qs = new URLSearchParams({ academicPeriodId: String(academicPeriodId) }).toString();
-	return getApiData<ProgramCommissionAssociation[]>(await apiGet(`${BASE}?${qs}`));
+export async function listProgramCommissions(): Promise<ProgramCommissionAssociation[]> {
+	return getApiData<ProgramCommissionAssociation[]>(await apiGet(BASE));
 }
 
 export async function associateProgramCommission(

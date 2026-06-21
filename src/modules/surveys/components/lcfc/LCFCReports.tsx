@@ -70,7 +70,7 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 		}
 		setDownloading(true);
 		try {
-			await downloadLCFCSurveys(academicPeriodId, programId || 0);
+			await downloadLCFCSurveys(programId || 0);
 		} catch (e) {
 			setToast({ open: true, type: 'error', msg: tryTranslate(t, (e as Error).message) });
 		} finally {
@@ -85,7 +85,7 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 		}
 		setDownloadingPdf(true);
 		try {
-			await downloadLCFCReportPdf(academicPeriodId, programId || 0, locale);
+			await downloadLCFCReportPdf(programId || 0, locale);
 		} catch (e) {
 			setToast({ open: true, type: 'error', msg: tryTranslate(t, (e as Error).message) });
 		} finally {

@@ -20,7 +20,6 @@ interface WizardSelectStudentsModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	courseId: number;
-	academicPeriodId: number | null;
 	studyPlanAcademicPeriodId: number;
 	selectedIds: Set<number>;
 	onConfirm: (selected: EnrolledStudentResponse[]) => void;
@@ -30,7 +29,6 @@ export function WizardSelectStudentsModal({
 	open,
 	onOpenChange,
 	courseId,
-	academicPeriodId,
 	studyPlanAcademicPeriodId,
 	selectedIds,
 	onConfirm,
@@ -57,7 +55,6 @@ export function WizardSelectStudentsModal({
 		coursesService
 			.getEnrolledStudents(courseId, {
 				isActive: true,
-				...(academicPeriodId != null ? { academicPeriodId: academicPeriodId } : {}),
 				studyPlanAcademicPeriodId: studyPlanAcademicPeriodId,
 			})
 			.then((r) => {
