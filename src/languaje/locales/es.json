@@ -1545,7 +1545,10 @@
 			"error": {
 				"saveError": "Error al guardar la rúbrica.",
 				"notFound": "Rúbrica no encontrada.",
-				"load": "Error al cargar la rúbrica."
+				"load": "Error al cargar la rúbrica.",
+				"emptyResponse": "La respuesta de la rúbrica está vacía.",
+				"normalizeFailed": "No fue posible procesar la respuesta de la rúbrica.",
+				"missingRubric": "Falta la información de la rúbrica en la respuesta."
 			},
 			"save": {
 				"autosaveRetry": "Reintentar guardado.",

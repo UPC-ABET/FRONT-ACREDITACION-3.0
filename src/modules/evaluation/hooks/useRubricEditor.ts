@@ -111,18 +111,18 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 			const res = await rubricsService.getById(rubricId);
 			logger.debug('[useRubricEditor] rubricsService.getById response', res);
 			if (!res) {
-				throw new ApiError('Empty rubric response from API');
+				throw new ApiError('rubrics.editor.error.emptyResponse');
 			}
 
 			const data = unwrapApiData<ApiRubricDetailData>(res);
 			logger.debug('[useRubricEditor] normalized data', data);
 			if (!data) {
-				throw new ApiError('Could not normalize rubric response from API');
+				throw new ApiError('rubrics.editor.error.normalizeFailed');
 			}
 
 			const rubric = data.rubric;
 			if (!rubric) {
-				throw new ApiError('Missing rubric field in API response');
+				throw new ApiError('rubrics.editor.error.missingRubric');
 			}
 
 			const academicPeriodId: number | undefined =

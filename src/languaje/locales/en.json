@@ -1545,7 +1545,10 @@
 			"error": {
 				"saveError": "Error saving the rubric.",
 				"notFound": "Rubric not found.",
-				"load": "Error loading the rubric."
+				"load": "Error loading the rubric.",
+				"emptyResponse": "The rubric response is empty.",
+				"normalizeFailed": "Could not process the rubric response.",
+				"missingRubric": "The rubric data is missing from the response."
 			},
 			"save": {
 				"autosaveRetry": "Retry save.",
