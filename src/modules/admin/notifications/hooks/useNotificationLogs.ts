@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getTypesByGroupCode } from '@/modules/core';
+import { coreQueryKeys, getTypesByGroupCode } from '@/modules/core';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { getNotificationLogsByFilters } from '../services';
 import type { CoreType, NotificationLogFilters } from '../types';
@@ -22,7 +22,7 @@ export function useNotificationLogs(filters: NotificationLogFilters) {
 
 export function useNotificationStatuses() {
 	return useQuery({
-		queryKey: ['types', TYPE_GROUP_CODES.NOTIFICATION_STATUS],
+		queryKey: coreQueryKeys.typesByGroupCode(TYPE_GROUP_CODES.NOTIFICATION_STATUS),
 		queryFn: () => getTypesByGroupCode(TYPE_GROUP_CODES.NOTIFICATION_STATUS) as Promise<CoreType[]>,
 		staleTime: Infinity,
 	});

@@ -24,7 +24,7 @@ import {
 	FindingActionsTable,
 	FindingGeneralInfo,
 } from '@/modules';
-import { getParameterByCode } from '@/modules/core';
+import { coreQueryKeys, getParameterByCode } from '@/modules/core';
 import { PARAMETER_CODES } from '@/shared';
 import type { I18nText } from '@/shared';
 import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
@@ -37,7 +37,7 @@ export default function FindingDetailPage() {
 
 	const { data, isLoading, error, refetch } = useFindingDetail(id);
 	const { data: languages = ['es', 'en'] } = useQuery({
-		queryKey: ['parameter', PARAMETER_CODES.LANGUAGES],
+		queryKey: coreQueryKeys.parameterByCode(PARAMETER_CODES.LANGUAGES),
 		queryFn: () => getParameterByCode<string[]>(PARAMETER_CODES.LANGUAGES),
 		staleTime: Infinity,
 	});

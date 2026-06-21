@@ -23,8 +23,9 @@ export const surveyQueryKeys = {
 	periods: () => ['surveys', 'periods'] as const,
 	programs: () => ['surveys', 'programs'] as const,
 
-	graCompetences: (periodId: number, programId?: number) =>
-		['surveys', 'gra', 'competences', { periodId, programId }] as const,
+	graCompetences: () => ['surveys', 'gra', 'competences'] as const,
+	graCompetencesList: (periodId: number, programId?: number) =>
+		[...surveyQueryKeys.graCompetences(), { periodId, programId }] as const,
 	graStudents: (params: {
 		programId?: number;
 		academicPeriodId?: number;
@@ -37,8 +38,9 @@ export const surveyQueryKeys = {
 	lcfcDashboard: (params: { academicPeriodId?: number; programId?: number; campusId?: number }) =>
 		['surveys', 'lcfc', 'dashboard', params] as const,
 
-	pppCompetences: (periodId: number, programId?: number) =>
-		['surveys', 'ppp', 'competences', { periodId, programId }] as const,
+	pppCompetences: () => ['surveys', 'ppp', 'competences'] as const,
+	pppCompetencesList: (periodId: number, programId?: number) =>
+		[...surveyQueryKeys.pppCompetences(), { periodId, programId }] as const,
 	pppDashboard: (params: {
 		academicPeriodId?: number;
 		programId?: number;
@@ -69,7 +71,7 @@ export function useGRACompetencesQuery(
 	options?: { enabled?: boolean },
 ) {
 	return useQuery({
-		queryKey: surveyQueryKeys.graCompetences(periodId, programId),
+		queryKey: surveyQueryKeys.graCompetencesList(periodId, programId),
 		queryFn: () => listGRACompetences(periodId, programId),
 		enabled: (options?.enabled ?? true) && periodId > 0,
 	});
@@ -80,7 +82,7 @@ export function useSaveGRACompetence() {
 	return useMutation({
 		mutationFn: (data: CompetenceFormData) => saveGRACompetence(data),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['surveys', 'gra', 'competences'] });
+			queryClient.invalidateQueries({ queryKey: surveyQueryKeys.graCompetences() });
 		},
 	});
 }
@@ -90,7 +92,7 @@ export function useDeleteGRACompetence() {
 	return useMutation({
 		mutationFn: (id: number) => deleteGRACompetence(id),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['surveys', 'gra', 'competences'] });
+			queryClient.invalidateQueries({ queryKey: surveyQueryKeys.graCompetences() });
 		},
 	});
 }
@@ -105,7 +107,7 @@ export function useCloneGRAConfiguration() {
 			targetPeriodId: number;
 		}) => cloneGRAConfiguration(params),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['surveys', 'gra', 'competences'] });
+			queryClient.invalidateQueries({ queryKey: surveyQueryKeys.graCompetences() });
 		},
 	});
 }
@@ -154,7 +156,7 @@ export function usePPPCompetencesQuery(
 	options?: { enabled?: boolean },
 ) {
 	return useQuery({
-		queryKey: surveyQueryKeys.pppCompetences(periodId, programId),
+		queryKey: surveyQueryKeys.pppCompetencesList(periodId, programId),
 		queryFn: () => listPPPCompetences(periodId, programId),
 		enabled: (options?.enabled ?? true) && periodId > 0,
 	});
@@ -165,7 +167,7 @@ export function useSavePPPCompetence() {
 	return useMutation({
 		mutationFn: (data: CompetenceFormData) => savePPPCompetence(data),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['surveys', 'ppp', 'competences'] });
+			queryClient.invalidateQueries({ queryKey: surveyQueryKeys.pppCompetences() });
 		},
 	});
 }
@@ -175,7 +177,7 @@ export function useDeletePPPCompetence() {
 	return useMutation({
 		mutationFn: (id: number) => deletePPPCompetence(id),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['surveys', 'ppp', 'competences'] });
+			queryClient.invalidateQueries({ queryKey: surveyQueryKeys.pppCompetences() });
 		},
 	});
 }
@@ -190,7 +192,7 @@ export function useClonePPPConfiguration() {
 			targetPeriodId: number;
 		}) => clonePPPConfiguration(params),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['surveys', 'ppp', 'competences'] });
+			queryClient.invalidateQueries({ queryKey: surveyQueryKeys.pppCompetences() });
 		},
 	});
 }

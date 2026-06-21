@@ -5,6 +5,13 @@ import { FilterProgramRequest } from '../types';
 export const programsQueryKeys = {
 	all: ['programs'] as const,
 	filtered: (filters: FilterProgramRequest) => ['programs', 'filtered', filters] as const,
+	allActive: () => ['programs', 'all-active', { isActive: true }] as const,
+	bySchoolModality: (schoolId: number | null, modalityTypeId: number | null) =>
+		[
+			'programs',
+			'filtered',
+			{ schoolId, modalityTypeId, isActive: true, schoolFilter: true },
+		] as const,
 };
 
 export function usePrograms(filters: FilterProgramRequest = {}, options?: { enabled?: boolean }) {

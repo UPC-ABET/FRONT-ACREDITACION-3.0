@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Select } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
-import { programsService, type ProgramResponse } from '@/modules/academic';
+import { programsQueryKeys, programsService, type ProgramResponse } from '@/modules/academic';
 
 interface Props {
 	readonly value: number;
@@ -25,11 +25,7 @@ export function SurveyProgramSelect({ value, onChange }: Props) {
 	const { t, locale } = useI18n();
 	const { schoolId, modalityTypeId } = useABET();
 	const { data: programs = [], isLoading } = useQuery({
-		queryKey: [
-			'programs',
-			'filtered',
-			{ schoolId, modalityTypeId, isActive: true, schoolFilter: true },
-		],
+		queryKey: programsQueryKeys.bySchoolModality(schoolId, modalityTypeId),
 		queryFn: () =>
 			programsService
 				.getByFilters({ isActive: true, schoolFilter: true })

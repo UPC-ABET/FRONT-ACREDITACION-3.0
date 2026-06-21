@@ -26,7 +26,7 @@ export function useChartMutations() {
 	const queryClient = useQueryClient();
 
 	const invalidateTree = () =>
-		queryClient.invalidateQueries({ queryKey: [...chartsQueryKeys.all, 'tree'] });
+		queryClient.invalidateQueries({ queryKey: chartsQueryKeys.treeAll() });
 
 	const create = useMutation({
 		mutationFn: (payload: ChartCreatePayload) => chartsService.create(payload),

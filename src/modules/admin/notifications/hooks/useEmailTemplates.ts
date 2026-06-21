@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getParameterByCode, getTypesByGroupCode } from '@/modules/core';
+import { coreQueryKeys, getParameterByCode, getTypesByGroupCode } from '@/modules/core';
 import { PARAMETER_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import {
 	createEmailTemplate,
@@ -26,7 +26,7 @@ export function useEmailTemplates() {
 
 export function useNotificationCategories() {
 	return useQuery({
-		queryKey: ['types', TYPE_GROUP_CODES.NOTIFICATION_CATEGORY],
+		queryKey: coreQueryKeys.typesByGroupCode(TYPE_GROUP_CODES.NOTIFICATION_CATEGORY),
 		queryFn: () =>
 			getTypesByGroupCode(TYPE_GROUP_CODES.NOTIFICATION_CATEGORY) as Promise<CoreType[]>,
 		staleTime: Infinity,
@@ -35,7 +35,7 @@ export function useNotificationCategories() {
 
 export function useUserNotifyVars() {
 	return useQuery({
-		queryKey: ['parameter', PARAMETER_CODES.USER_NOTIFICATION_VARS],
+		queryKey: coreQueryKeys.parameterByCode(PARAMETER_CODES.USER_NOTIFICATION_VARS),
 		queryFn: () => getParameterByCode<NotifyVar[]>(PARAMETER_CODES.USER_NOTIFICATION_VARS),
 		staleTime: Infinity,
 	});

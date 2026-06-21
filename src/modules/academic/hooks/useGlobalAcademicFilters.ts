@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getTypesByGroupCode } from '@/modules/core';
+import { coreQueryKeys, getTypesByGroupCode } from '@/modules/core';
 import { useABET, useAuth, useI18n, useSchoolSource, useSchoolSourceData } from '@/providers';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import type { SchoolSourceItem } from '@/shared/types';
@@ -35,7 +35,7 @@ export function useGlobalAcademicFilters() {
 	);
 
 	const { data: modalityOptions = [] } = useQuery({
-		queryKey: ['types', TYPE_GROUP_CODES.PROGRAM_MODALITY],
+		queryKey: coreQueryKeys.typesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY),
 		queryFn: () => getTypesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY),
 		staleTime: Infinity,
 	});

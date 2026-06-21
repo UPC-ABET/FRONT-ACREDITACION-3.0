@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getTypesByGroupCode } from '@/modules/core';
+import { coreQueryKeys, getTypesByGroupCode } from '@/modules/core';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { coursesService, studyPlanCoursesService, studyPlansService } from '../services';
 import type { CourseUpdateBody, StudyPlanCourseCreate, StudyPlanCourseLevelOption } from '../types';
@@ -14,7 +14,10 @@ function toLevelNumber(value: unknown): number {
 
 export function useStudyPlanCourseLevels() {
 	return useQuery({
-		queryKey: ['types', TYPE_GROUP_CODES.STUDY_PLAN_COURSE_LEVEL, 'levels'] as const,
+		queryKey: [
+			...coreQueryKeys.typesByGroupCode(TYPE_GROUP_CODES.STUDY_PLAN_COURSE_LEVEL),
+			'levels',
+		] as const,
 		queryFn: (): Promise<StudyPlanCourseLevelOption[]> =>
 			getTypesByGroupCode(TYPE_GROUP_CODES.STUDY_PLAN_COURSE_LEVEL).then((types) =>
 				types

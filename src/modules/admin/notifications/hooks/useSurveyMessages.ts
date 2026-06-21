@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getParameterByCode, getTypesByGroupCode } from '@/modules/core';
+import { coreQueryKeys, getParameterByCode, getTypesByGroupCode } from '@/modules/core';
 import { PARAMETER_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import {
 	createSurveyMessage,
@@ -26,7 +26,7 @@ export function useSurveyMessages() {
 
 export function useSurveyTypes() {
 	return useQuery({
-		queryKey: ['types', TYPE_GROUP_CODES.SURVEY_TYPE],
+		queryKey: coreQueryKeys.typesByGroupCode(TYPE_GROUP_CODES.SURVEY_TYPE),
 		queryFn: () => getTypesByGroupCode(TYPE_GROUP_CODES.SURVEY_TYPE) as Promise<CoreType[]>,
 		staleTime: Infinity,
 	});
@@ -34,7 +34,7 @@ export function useSurveyTypes() {
 
 export function useSurveyNotifyVars() {
 	return useQuery({
-		queryKey: ['parameter', PARAMETER_CODES.SURVEY_NOTIFICATION_VARS],
+		queryKey: coreQueryKeys.parameterByCode(PARAMETER_CODES.SURVEY_NOTIFICATION_VARS),
 		queryFn: () => getParameterByCode<NotifyVar[]>(PARAMETER_CODES.SURVEY_NOTIFICATION_VARS),
 		staleTime: Infinity,
 	});

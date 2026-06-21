@@ -10,4 +10,7 @@ export const coreQueryKeys = {
 	typeGroups: () => [...coreQueryKeys.all, 'type-groups'] as const,
 	typeGroupsByFilter: (filters: { code?: string }) =>
 		[...coreQueryKeys.typeGroups(), filters] as const,
+
+	parameters: () => [...coreQueryKeys.all, 'parameters'] as const,
+	parameterByCode: (code: string) => [...coreQueryKeys.parameters(), code] as const,
 };

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Select } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { programsService, type ProgramResponse } from '@/modules/academic';
+import { programsQueryKeys, programsService, type ProgramResponse } from '@/modules/academic';
 
 interface Props {
 	readonly value: number;
@@ -20,7 +20,7 @@ interface Props {
 export function AllProgramsSelect({ value, onChange }: Props) {
 	const { t, locale } = useI18n();
 	const { data: programs = [], isLoading } = useQuery({
-		queryKey: ['programs', 'all-active', { isActive: true }],
+		queryKey: programsQueryKeys.allActive(),
 		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data ?? []),
 		staleTime: Infinity,
 	});

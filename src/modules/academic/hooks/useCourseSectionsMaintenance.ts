@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getTypesByGroupCode, type TypeOption } from '@/modules/core';
+import { coreQueryKeys, getTypesByGroupCode, type TypeOption } from '@/modules/core';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { campusesService, courseSectionsService } from '../services';
 import type { CourseSectionMaintenanceCreate, CourseSectionMaintenanceUpdate } from '../types';
@@ -72,7 +72,7 @@ export function useCampuses() {
 
 export function useSectionModalityTypes() {
 	return useQuery({
-		queryKey: ['types', TYPE_GROUP_CODES.SECTION_MODALITY],
+		queryKey: coreQueryKeys.typesByGroupCode(TYPE_GROUP_CODES.SECTION_MODALITY),
 		queryFn: () => getTypesByGroupCode(TYPE_GROUP_CODES.SECTION_MODALITY) as Promise<TypeOption[]>,
 		staleTime: Infinity,
 	});
