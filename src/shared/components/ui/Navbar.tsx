@@ -6,6 +6,7 @@ import { useAuth, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
 import { DEFAULT_USER_INITIALS } from '@/shared/constants';
 import type { NavbarProps } from '@/shared/types';
+import { cn } from '@/shared/lib/utils';
 
 const Sep = () => <div className="w-px h-6 bg-zinc-200 flex-shrink-0" />;
 
@@ -24,7 +25,10 @@ function UserAvatar({
 }) {
 	return (
 		<div
-			className={`flex items-center gap-2 rounded-xl cursor-pointer hover:bg-zinc-100 transition-colors flex-shrink-0 ${withName ? 'py-1 pl-1 pr-2' : 'py-1 pl-1 pr-1.5'}`}>
+			className={cn(
+				'flex items-center gap-2 rounded-xl cursor-pointer hover:bg-zinc-100 transition-colors flex-shrink-0',
+				withName ? 'py-1 pl-1 pr-2' : 'py-1 pl-1 pr-1.5',
+			)}>
 			<div className="w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-extrabold text-white flex-shrink-0 bg-[var(--brand)]">
 				{initials}
 			</div>

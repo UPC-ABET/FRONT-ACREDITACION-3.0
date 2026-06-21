@@ -5,6 +5,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { Button } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
+import { cn } from '@/shared/lib/utils';
 import { RubricTable } from '../rubric-editor/RubricTable';
 import type { RubricQuestion, QuestionCriteria } from '../../types';
 import type { Step1Data } from './WizardStep1';
@@ -88,11 +89,15 @@ function ValidationMessages({
 			{items.map((item, i) => (
 				<li
 					key={i}
-					className={`flex items-center gap-2 rounded-lg px-3 py-2 ${
-						item.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-amber-50 text-amber-800'
-					}`}>
+					className={cn(
+						'flex items-center gap-2 rounded-lg px-3 py-2',
+						item.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-amber-50 text-amber-800',
+					)}>
 					<ExclamationTriangleIcon
-						className={`h-4 w-4 shrink-0 ${item.type === 'error' ? 'text-red-500' : 'text-amber-500'}`}
+						className={cn(
+							'h-4 w-4 shrink-0',
+							item.type === 'error' ? 'text-red-500' : 'text-amber-500',
+						)}
 					/>
 					{item.message}
 				</li>
@@ -301,7 +306,7 @@ export function WizardStep3NonCapstone({
 				<div className="flex items-center gap-4">
 					<span className="text-sm text-zinc-600">
 						{t('rubrics.editor.nonCapstone.totalScore')}:{' '}
-						<span className={`font-semibold ${sumValid ? 'text-emerald-600' : 'text-red-600'}`}>
+						<span className={cn('font-semibold', sumValid ? 'text-emerald-600' : 'text-red-600')}>
 							{total.toFixed(1)} / {TARGET_SUM.toFixed(1)} {t('rubrics.editor.nonCapstone.points')}
 						</span>
 					</span>

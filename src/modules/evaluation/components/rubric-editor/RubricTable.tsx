@@ -4,6 +4,7 @@ import { CriteriaCell } from './CriteriaCell';
 import { QuestionCell } from './QuestionCell';
 import type { RubricQuestion } from '../../types';
 import { useState } from 'react';
+import { cn } from '@/shared/lib/utils';
 
 interface RubricTableProps {
 	questions: RubricQuestion[];
@@ -59,12 +60,16 @@ export function RubricTable({
 						{Array.from({ length: columnCount }).map((_, colIndex) => (
 							<th
 								key={colIndex}
-								className={`w-[200px] border-l border-zinc-100 p-2 text-left text-xs font-semibold uppercase tracking-wide text-zinc-600 transition-colors duration-300 ${
-									hoveredCol === colIndex ? 'bg-red-50' : ''
-								}`}>
+								className={cn(
+									'w-[200px] border-l border-zinc-100 p-2 text-left text-xs font-semibold uppercase tracking-wide text-zinc-600 transition-colors duration-300',
+									hoveredCol === colIndex && 'bg-red-50',
+								)}>
 								<div className="flex items-center justify-between gap-2">
 									<span
-										className={`transition-colors duration-300 ${hoveredCol === colIndex ? 'text-red-600' : 'text-zinc-600'}`}>
+										className={cn(
+											'transition-colors duration-300',
+											hoveredCol === colIndex ? 'text-red-600' : 'text-zinc-600',
+										)}>
 										{criteriaHeader} {colIndex + 1}
 									</span>
 
@@ -77,7 +82,10 @@ export function RubricTable({
 											onMouseLeave={() => setHoveredCol(null)}
 											onClick={() => onDeleteColumn(colIndex)}>
 											<TrashIcon
-												className={`h-3.5 w-3.5 transition-colors duration-300 ${hoveredCol === colIndex ? 'text-red-500' : ''}`}
+												className={cn(
+													'h-3.5 w-3.5 transition-colors duration-300',
+													hoveredCol === colIndex && 'text-red-500',
+												)}
 											/>
 										</button>
 									) : null}
@@ -94,9 +102,10 @@ export function RubricTable({
 							className="border-b border-zinc-100 last:border-b-0">
 							{canEdit ? (
 								<td
-									className={`w-8 border-r border-zinc-100 align-middle transition-colors duration-300 ${
-										hoveredRow === rowIndex ? 'bg-red-50' : ''
-									}`}>
+									className={cn(
+										'w-8 border-r border-zinc-100 align-middle transition-colors duration-300',
+										hoveredRow === rowIndex && 'bg-red-50',
+									)}>
 									{questions.length > 1 ? (
 										<div className="flex items-center justify-center h-fit py-3 ">
 											<button
@@ -107,7 +116,10 @@ export function RubricTable({
 												onMouseLeave={() => setHoveredRow(null)}
 												onClick={() => questions.length > 1 && onDeleteRow(rowIndex)}>
 												<TrashIcon
-													className={`h-4 w-4 transition-colors duration-300 ${hoveredRow === rowIndex ? 'text-red-500' : ''}`}
+													className={cn(
+														'h-4 w-4 transition-colors duration-300',
+														hoveredRow === rowIndex && 'text-red-500',
+													)}
 												/>
 											</button>
 										</div>
@@ -116,7 +128,10 @@ export function RubricTable({
 							) : null}
 
 							<td
-								className={`align-top transition-colors duration-300 ${hoveredRow === rowIndex ? 'bg-red-50' : ''}`}>
+								className={cn(
+									'align-top transition-colors duration-300',
+									hoveredRow === rowIndex && 'bg-red-50',
+								)}>
 								<QuestionCell
 									questionText={question.questionText[locale]}
 									questionIndex={rowIndex}
@@ -135,9 +150,10 @@ export function RubricTable({
 								return (
 									<td
 										key={`${rowIndex}-${colIndex}`}
-										className={`align-top border-l border-zinc-100 transition-colors duration-300 ${
-											isColHovered || isRowHovered ? 'bg-red-50' : ''
-										}`}>
+										className={cn(
+											'align-top border-l border-zinc-100 transition-colors duration-300',
+											(isColHovered || isRowHovered) && 'bg-red-50',
+										)}>
 										{cell ? (
 											<CriteriaCell
 												criteriaText={cell.criteriaText[locale]}

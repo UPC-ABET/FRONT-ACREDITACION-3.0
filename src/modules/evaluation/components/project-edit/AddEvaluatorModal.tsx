@@ -21,6 +21,7 @@ import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
 import type { ProfessorSearchResponse } from '@/modules/academic';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
+import { cn } from '@/shared/lib/utils';
 
 const EVALUATOR_TYPE_GROUP_CODE = TYPE_GROUP_CODES.EVALUATOR_ROLE;
 
@@ -177,14 +178,20 @@ export function AddEvaluatorModal({
 															<span className="font-medium truncate">{displayName}</span>
 															{professor.code && (
 																<span
-																	className={`text-xs font-mono shrink-0 ${isSelected ? 'text-zinc-400' : 'text-zinc-400'}`}>
+																	className={cn(
+																		'text-xs font-mono shrink-0',
+																		isSelected ? 'text-zinc-400' : 'text-zinc-400',
+																	)}>
 																	{professor.code}
 																</span>
 															)}
 														</div>
 														{email && displayName !== email && (
 															<span
-																className={`text-xs truncate ${isSelected ? 'text-zinc-300' : 'text-zinc-400'}`}>
+																className={cn(
+																	'text-xs truncate',
+																	isSelected ? 'text-zinc-300' : 'text-zinc-400',
+																)}>
 																{email}
 															</span>
 														)}

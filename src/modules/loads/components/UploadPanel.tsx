@@ -19,6 +19,7 @@ import { useI18n } from '@/providers';
 import type { TypeOption } from '@/modules/core';
 import { downloadErrorExcel, useDownloadTemplate, useUpload } from '../hooks';
 import type { UploadResult } from '../types';
+import { cn } from '@/shared/lib/utils';
 
 interface UploadPanelProps {
 	type: TypeOption;
@@ -184,7 +185,7 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 								: 'border-gray-300 bg-gray-50 hover:border-red-400 hover:bg-red-50/40'
 						}`}>
 						<Upload
-							className={`mb-2 h-6 w-6 ${isDraggingFile ? 'text-red-500' : 'text-gray-400'}`}
+							className={cn('mb-2 h-6 w-6', isDraggingFile ? 'text-red-500' : 'text-gray-400')}
 						/>
 						<span
 							className={`text-sm font-medium ${

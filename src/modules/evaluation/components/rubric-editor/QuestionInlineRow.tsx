@@ -5,6 +5,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { Button, Input } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { OutcomeQuestion } from '../../types';
+import { cn } from '@/shared/lib/utils';
 
 function isValidText(s: string): boolean {
 	return s.trim().length > 0;
@@ -140,7 +141,7 @@ export function QuestionInlineRow({
 						focusedRef.current = true;
 					}}
 					onBlur={() => void handleBlur()}
-					className={`w-full transition-colors ${trashHovered ? 'border-red-200' : ''}`}
+					className={cn('w-full transition-colors', trashHovered && 'border-red-200')}
 				/>
 				{isSaving ? (
 					<span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-zinc-400">
@@ -158,7 +159,10 @@ export function QuestionInlineRow({
 					onMouseLeave={() => setTrashHovered(false)}
 					onClick={() => void handleDelete()}>
 					<TrashIcon
-						className={`h-5 w-5 transition-colors ${trashHovered ? 'text-red-500' : 'text-zinc-500'}`}
+						className={cn(
+							'h-5 w-5 transition-colors',
+							trashHovered ? 'text-red-500' : 'text-zinc-500',
+						)}
 						aria-hidden
 					/>
 					<span className="sr-only">{t('rubrics.editor.delete')}</span>

@@ -10,6 +10,7 @@ import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
 import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable';
 import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable';
 import { TYPE_CODES } from '@/shared/constants';
+import { cn } from '@/shared/lib/utils';
 
 interface ProjectEvaluatePageProps {
 	projectId: string;
@@ -303,12 +304,12 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 										<button
 											key={id}
 											onClick={() => setActiveStudyPlanCourseId(id)}
-											className={[
+											className={cn(
 												'flex items-center gap-1.5 whitespace-nowrap border-b-2 px-1 py-4 text-xs font-bold uppercase tracking-wider transition-all',
 												isActive
 													? 'border-red-600 text-red-600'
 													: 'border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700',
-											].join(' ')}>
+											)}>
 											{dirty && (
 												<ExclamationTriangleIcon
 													className="h-4 w-4 shrink-0 text-amber-500"

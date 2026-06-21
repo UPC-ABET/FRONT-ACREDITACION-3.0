@@ -3,6 +3,7 @@
 import { useI18n } from '@/providers';
 import { SubTitle, Title } from '@/shared/components';
 import { PerformanceLevel } from '@/modules';
+import { cn } from '@/shared/lib/utils';
 
 interface PerformanceLevelsSummaryProps {
 	levels: PerformanceLevel[];
@@ -43,12 +44,12 @@ export function PerformanceLevelsSummary({ levels }: PerformanceLevelsSummaryPro
 							key={level.id}
 							className="flex items-center gap-2 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs"
 							style={{ backgroundColor: level.color ?? 'transparent' }}>
-							<span className={`font-medium ${level.color ? 'text-white' : 'text-zinc-800'}`}>
+							<span className={cn('font-medium', level.color ? 'text-white' : 'text-zinc-800')}>
 								{level.name[locale]}
 							</span>
 							<span className={level.color ? 'text-white/50' : 'text-zinc-300'}>·</span>
 							{level.uniqueValue != null ? (
-								<span className={`font-semibold ${level.color ? 'text-white' : 'text-zinc-600'}`}>
+								<span className={cn('font-semibold', level.color ? 'text-white' : 'text-zinc-600')}>
 									{formatScore(level.uniqueValue)}
 								</span>
 							) : (

@@ -5,6 +5,7 @@ import { Button, Toast } from '@/shared/components';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon, DocumentIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
+import { cn } from '@/shared/lib/utils';
 
 interface FileUploadPanelProps {
 	readonly title: string;
@@ -159,7 +160,7 @@ export function FileUploadPanel({
 					onDragLeave={handleDragLeave}
 					onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && inputRef.current?.click()}>
 					<DocumentIcon
-						className={`h-8 w-8 ${isDraggingFile ? 'text-red-500' : 'text-zinc-400'}`}
+						className={cn('h-8 w-8', isDraggingFile ? 'text-red-500' : 'text-zinc-400')}
 					/>
 					{selectedFile ? (
 						<p className="text-sm font-medium text-zinc-700">{selectedFile.name}</p>

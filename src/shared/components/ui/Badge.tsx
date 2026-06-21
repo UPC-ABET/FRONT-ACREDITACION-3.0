@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { cn } from '@/shared/lib/utils';
 
 type BadgeVariant = 'default' | 'danger' | 'success' | 'outline';
 
@@ -23,7 +24,7 @@ function Badge({ children, variant = 'default', color, className }: BadgeProps) 
 	if (color) {
 		return (
 			<span
-				className={`${baseClass} ${className ?? ''}`}
+				className={cn(baseClass, className)}
 				style={{
 					color,
 					backgroundColor: hexWithAlpha(color, '1A'),
@@ -41,7 +42,7 @@ function Badge({ children, variant = 'default', color, className }: BadgeProps) 
 		outline: 'border-zinc-200 text-zinc-600 bg-transparent',
 	};
 
-	return <span className={`${baseClass} ${variants[variant]} ${className ?? ''}`}>{children}</span>;
+	return <span className={cn(baseClass, variants[variant], className)}>{children}</span>;
 }
 
 export { Badge };

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { cn } from '@/shared/lib/utils';
 
 interface QuestionCellProps {
 	questionText: string;
@@ -33,7 +34,10 @@ export function QuestionCell({
 	return (
 		<div className="space-y-1.5 p-3">
 			<span
-				className={`text-xs font-semibold uppercase tracking-wide transition-colors duration-300 ${isHovered ? 'text-red-600' : 'text-zinc-500'}`}>
+				className={cn(
+					'text-xs font-semibold uppercase tracking-wide transition-colors duration-300',
+					isHovered ? 'text-red-600' : 'text-zinc-500',
+				)}>
 				{labelPrefix} {questionIndex + 1}
 			</span>
 			<textarea

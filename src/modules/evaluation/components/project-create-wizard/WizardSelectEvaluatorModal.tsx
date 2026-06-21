@@ -14,6 +14,7 @@ import { Input } from '@/shared/components/ui/Input';
 import { Select } from '@/shared/components/ui/Select';
 import { Button } from '@/shared/components/ui/Button';
 import { useI18n } from '@/providers';
+import { cn } from '@/shared/lib/utils';
 import { useProfessorsByFilters } from '@/modules/academic';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import type { LocalEvaluator } from './ProjectWizardStep2';
@@ -169,14 +170,20 @@ export function WizardSelectEvaluatorModal({
 															<span className="font-medium truncate">{profDisplayName(p)}</span>
 															{p.code && (
 																<span
-																	className={`text-xs font-mono shrink-0 ${isSelected ? 'text-zinc-400' : 'text-zinc-400'}`}>
+																	className={cn(
+																		'text-xs font-mono shrink-0',
+																		isSelected ? 'text-zinc-400' : 'text-zinc-400',
+																	)}>
 																	{p.code}
 																</span>
 															)}
 														</div>
 														{p.staff?.staffEmail && (
 															<span
-																className={`text-xs truncate ${isSelected ? 'text-zinc-300' : 'text-zinc-400'}`}>
+																className={cn(
+																	'text-xs truncate',
+																	isSelected ? 'text-zinc-300' : 'text-zinc-400',
+																)}>
 																{p.staff.staffEmail}
 															</span>
 														)}

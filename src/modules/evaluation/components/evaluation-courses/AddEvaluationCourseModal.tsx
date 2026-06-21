@@ -21,6 +21,7 @@ import {
 	usePrograms,
 } from '@/modules/academic/hooks';
 import { StudyPlanCourseResponse } from '@/modules/academic';
+import { cn } from '@/shared/lib/utils';
 
 interface AddEvaluationCourseModalProps {
 	open: boolean;
@@ -187,7 +188,7 @@ export function AddEvaluationCourseModal({
 													key={spc.id}
 													className="flex items-center justify-between gap-3 px-4 py-3">
 													<span
-														className={`text-sm ${isMarked ? 'text-zinc-400' : 'text-zinc-800'}`}>
+														className={cn('text-sm', isMarked ? 'text-zinc-400' : 'text-zinc-800')}>
 														{courseName(spc)}
 													</span>
 													<button

@@ -4,6 +4,7 @@ import { ChevronRightIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/outli
 import { useScreen } from '@/shared/hooks';
 import { useI18n } from '@/providers';
 import { Button } from '@/shared/components';
+import { cn } from '@/shared/lib/utils';
 
 type SidebarContextType = {
 	open: boolean;
@@ -62,7 +63,7 @@ function Sidebar({
 				/>
 			)}
 			<aside
-				className={[
+				className={cn(
 					'fixed sm:relative z-40 flex flex-col h-screen',
 					'transition-all duration-300 ease-in-out',
 					'bg-zinc-900',
@@ -76,7 +77,7 @@ function Sidebar({
 							? 'w-64'
 							: 'w-20',
 					className,
-				].join(' ')}>
+				)}>
 				<div className="absolute top-0 left-0 right-0 h-[3px] bg-[linear-gradient(90deg,#C8102E_0%,#FF2D4E_60%,#C8102E_100%)] shadow-[0_0_12px_rgba(200,16,46,0.7)]" />
 
 				<div className="absolute inset-0 pointer-events-none opacity-[0.025] bg-sidebar-noise" />
@@ -95,23 +96,23 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 
 	return (
 		<div
-			className={[
+			className={cn(
 				'relative w-full border-b border-zinc-700 flex items-center justify-center',
 				open ? 'h-28 py-3 px-4' : 'h-20 px-2 py-2',
 				'transition-all duration-300',
 				className,
-			].join(' ')}>
+			)}>
 			<div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_120%,rgba(200,16,46,0.12)_0%,transparent_70%)]" />
 
 			{open ? (
 				<img
 					src="/assets/ABETLogo.png"
 					alt={t('sidebar.logoAlt')}
-					className={[
+					className={cn(
 						'w-full h-full transition-all duration-300 relative z-10',
 						'object-contain scale-100',
 						'brightness-0 invert',
-					].join(' ')}
+					)}
 				/>
 			) : (
 				<button
@@ -128,12 +129,12 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 					size="icon"
 					onClick={toggle}
 					aria-label={t('sidebar.close')}
-					className={[
+					className={cn(
 						'absolute top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center transition-all z-20',
 						'text-zinc-100 hover:text-white',
 						'hover:bg-zinc-700/60',
 						'right-3',
-					].join(' ')}>
+					)}>
 					<Bars3BottomLeftIcon className="h-[18px] w-[18px] transition-transform duration-200 rotate-180" />
 				</Button>
 			)}
@@ -227,24 +228,24 @@ export function SidebarItem({
 		<div
 			onClick={onClick}
 			title={!open ? label : undefined}
-			className={[
+			className={cn(
 				'relative flex items-center px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
 				hasIcon ? 'gap-3' : 'gap-0',
 				active
 					? 'bg-[linear-gradient(135deg,rgba(200,16,46,1)_0%,rgba(180,10,36,1)_100%)] shadow-[0_4px_12px_rgba(200,16,46,0.4),inset_0_1px_0_rgba(255,255,255,0.15)]'
 					: 'hover:bg-zinc-800/70',
 				className,
-			].join(' ')}>
+			)}>
 			{active && (
 				<div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-white" />
 			)}
 
 			{hasIcon && (
 				<div
-					className={[
+					className={cn(
 						'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all',
 						active ? 'bg-white/20' : 'bg-zinc-800 group-hover:bg-zinc-700',
-					].join(' ')}>
+					)}>
 					<span className={active ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-200'}>
 						{icon}
 					</span>
@@ -255,18 +256,18 @@ export function SidebarItem({
 				<>
 					<div className="flex flex-col flex-1 min-w-0">
 						<span
-							className={[
+							className={cn(
 								'text-[13px] font-semibold leading-tight whitespace-normal break-words',
 								active ? 'text-white' : 'text-zinc-300 group-hover:text-white',
-							].join(' ')}>
+							)}>
 							{label}
 						</span>
 						{sublabel && (
 							<span
-								className={[
+								className={cn(
 									'text-[10.5px] whitespace-normal break-words',
 									active ? 'text-white/80' : 'text-zinc-500',
-								].join(' ')}>
+								)}>
 								{sublabel}
 							</span>
 						)}
@@ -317,19 +318,19 @@ export function SidebarNavGroup({
 				onClick={() => {
 					if (open) setExpanded((p) => !p);
 				}}
-				className={[
+				className={cn(
 					'relative flex items-center gap-3 px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
 					active ? 'bg-red-500/10' : 'hover:bg-zinc-800/70',
-				].join(' ')}>
+				)}>
 				{active && (
 					<div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-red-600 rounded-r-full" />
 				)}
 
 				<div
-					className={[
+					className={cn(
 						'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all',
 						active ? 'bg-red-500/20' : 'bg-zinc-800 group-hover:bg-zinc-700',
-					].join(' ')}>
+					)}>
 					<span className={active ? 'text-red-500' : 'text-zinc-400 group-hover:text-zinc-200'}>
 						{icon}
 					</span>
@@ -338,10 +339,10 @@ export function SidebarNavGroup({
 				{open && (
 					<>
 						<span
-							className={[
+							className={cn(
 								'text-[13px] font-semibold flex-1 truncate',
 								active ? 'text-white' : 'text-zinc-300 group-hover:text-white',
-							].join(' ')}>
+							)}>
 							{label}
 						</span>
 						{badge !== undefined && (
@@ -355,11 +356,11 @@ export function SidebarNavGroup({
 							</span>
 						)}
 						<ChevronRightIcon
-							className={[
+							className={cn(
 								'h-3.5 w-3.5 transition-transform duration-200 flex-shrink-0',
 								expanded ? 'rotate-90' : '',
 								active ? 'text-red-500' : 'text-zinc-600',
-							].join(' ')}
+							)}
 						/>
 					</>
 				)}
@@ -367,10 +368,10 @@ export function SidebarNavGroup({
 
 			{open && (
 				<div
-					className={[
+					className={cn(
 						'ml-5 pl-3 flex flex-col gap-0.5 overflow-hidden transition-all duration-200 border-l border-white/20',
 						expanded ? 'max-h-[500px] mt-0.5 mb-1' : 'max-h-0',
-					].join(' ')}>
+					)}>
 					{children}
 				</div>
 			)}

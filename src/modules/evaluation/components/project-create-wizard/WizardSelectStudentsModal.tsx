@@ -13,6 +13,7 @@ import {
 import { Input } from '@/shared/components/ui/Input';
 import { Button } from '@/shared/components/ui/Button';
 import { useI18n } from '@/providers';
+import { cn } from '@/shared/lib/utils';
 import { useEnrolledStudents } from '@/modules/academic';
 import type { EnrolledStudentResponse } from '@/modules/academic';
 
@@ -138,7 +139,10 @@ export function WizardSelectStudentsModal({
 														{student.firstName} {student.lastName}
 													</span>
 													<div
-														className={`flex items-center gap-2 text-xs ${isSelected ? 'text-zinc-300' : 'text-zinc-400'}`}>
+														className={cn(
+															'flex items-center gap-2 text-xs',
+															isSelected ? 'text-zinc-300' : 'text-zinc-400',
+														)}>
 														<span className="font-mono">{student.studentCode}</span>
 														{student.sectionCode && (
 															<>

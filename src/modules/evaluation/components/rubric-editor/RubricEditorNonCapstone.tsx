@@ -10,6 +10,7 @@ import { MAX_COLS, MAX_QUESTIONS, TARGET_SUM } from '../../constants';
 import { useRubricNonCapstoneState } from '../../hooks/useRubricNonCapstoneState';
 import { useRubricNonCapstoneValidation } from '../../hooks/useRubricNonCapstoneValidation';
 import { useRubricNonCapstoneSave } from '../../hooks/useRubricNonCapstoneSave';
+import { cn } from '@/shared/lib/utils';
 
 function ValidationMessages({
 	items,
@@ -154,7 +155,7 @@ export function RubricEditorNonCapstone({
 			<div className="flex flex-wrap items-center justify-between gap-4">
 				<span className="text-sm text-zinc-600">
 					{t('rubrics.editor.nonCapstone.totalScore')}:{' '}
-					<span className={`font-semibold ${sumValid ? 'text-emerald-600' : 'text-red-600'}`}>
+					<span className={cn('font-semibold', sumValid ? 'text-emerald-600' : 'text-red-600')}>
 						{total.toFixed(1)} / {TARGET_SUM.toFixed(1)} {t('rubrics.editor.nonCapstone.points')}
 					</span>
 				</span>
