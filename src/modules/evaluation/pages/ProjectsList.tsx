@@ -58,8 +58,7 @@ export function ProjectsListPage() {
 	const { data: evaluableSpcList = [] } = useStudyPlanCourses(
 		{
 			programId: selectedProgram?.value,
-			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
-			extra: { is_evaluable: true },
+			extra: { isEvaluable: true },
 			isActive: true,
 		},
 		{ enabled: !!selectedPeriodId && !!selectedProgram && !!schoolId },

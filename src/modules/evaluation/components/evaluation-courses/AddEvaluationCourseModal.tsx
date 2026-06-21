@@ -81,8 +81,7 @@ export function AddEvaluationCourseModal({
 	});
 
 	const markedIds = useMemo(
-		// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
-		() => new Set(spcList.filter((s) => s.extra?.is_evaluable === true).map((s) => s.id)),
+		() => new Set(spcList.filter((s) => s.extra?.isEvaluable === true).map((s) => s.id)),
 		[spcList],
 	);
 

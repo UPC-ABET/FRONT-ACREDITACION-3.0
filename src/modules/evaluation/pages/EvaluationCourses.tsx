@@ -71,8 +71,7 @@ export function EvaluationCoursesPage() {
 	} = useStudyPlanCourses(
 		{
 			programId: selectedProgramId ?? undefined,
-			// NOTE: Backend field is "is_evaluable" (snake_case), do NOT convert to camelCase
-			extra: { is_evaluable: true },
+			extra: { isEvaluable: true },
 			isActive: true,
 		},
 		{ enabled: !!selectedPeriodId && !!selectedProgramId },

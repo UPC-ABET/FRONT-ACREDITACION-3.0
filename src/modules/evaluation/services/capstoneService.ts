@@ -9,7 +9,7 @@ import type {
 const BASE = '/capstone';
 
 export function listCapstoneProjects(professorId: number): Promise<CapstoneProject[]> {
-	return apiGet<CapstoneProject[]>(`${BASE}/projects?professor_id=${professorId}`);
+	return apiGet<CapstoneProject[]>(`${BASE}/projects?professorId=${professorId}`);
 }
 
 export function getCapstoneRubric(projectId: number): Promise<CapstoneRubric> {

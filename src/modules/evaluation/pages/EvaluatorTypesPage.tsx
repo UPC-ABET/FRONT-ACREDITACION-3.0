@@ -53,9 +53,8 @@ export function EvaluatorTypesPage() {
 	const openEdit = (type: TypeOption) => {
 		setEditState({
 			id: type.id,
-			// NOTE: Backend fields are "can_evaluate" and "max_evaluators" (snake_case), do NOT convert to camelCase
-			canEvaluate: type.extra?.can_evaluate === true,
-			maxEvaluators: String(type.extra?.max_evaluators ?? ''),
+			canEvaluate: type.extra?.canEvaluate === true,
+			maxEvaluators: String(type.extra?.maxEvaluators ?? ''),
 		});
 		setEditError(null);
 	};
@@ -117,10 +116,9 @@ export function EvaluatorTypesPage() {
 			{
 				typeGroupId: typeGroupId!,
 				name: nameValue,
-				// NOTE: Backend expects snake_case inside extra, do NOT convert to camelCase
 				extra: {
-					can_evaluate: createCanEvaluate,
-					...(max !== '' ? { max_evaluators: Number(max) } : {}),
+					canEvaluate: createCanEvaluate,
+					...(max !== '' ? { maxEvaluators: Number(max) } : {}),
 				},
 			},
 			{
@@ -182,9 +180,8 @@ export function EvaluatorTypesPage() {
 				) : (
 					<ul className="divide-y divide-zinc-100">
 						{types.map((type) => {
-							// NOTE: Backend fields are "can_evaluate" and "max_evaluators" (snake_case), do NOT convert to camelCase
-							const canEvaluate = type.extra?.can_evaluate === true;
-							const maxEvaluators = type.extra?.max_evaluators as number | undefined;
+							const canEvaluate = type.extra?.canEvaluate === true;
+							const maxEvaluators = type.extra?.maxEvaluators as number | undefined;
 							const label = type.name[loc] ?? type.name.es;
 							return (
 								<li key={type.id} className="flex items-center justify-between gap-4 px-6 py-4">

@@ -15,10 +15,8 @@ export default function RubricCriterionSlider({
 	onChange,
 }: RubricCriterionSliderProps) {
 	const { t } = useI18n();
-	const maxScore = criterion.max_score;
-	const currentLevel = criterion.levels.find(
-		(lv) => value >= lv.min_score && value <= lv.max_score,
-	);
+	const maxScore = criterion.maxScore;
+	const currentLevel = criterion.levels.find((lv) => value >= lv.minScore && value <= lv.maxScore);
 
 	return (
 		<div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
@@ -27,7 +25,7 @@ export default function RubricCriterionSlider({
 					<p className="text-sm font-semibold text-gray-900">{criterion.code}</p>
 					<p className="mt-0.5 text-xs text-gray-500">{criterion.description}</p>
 					<p className="mt-0.5 text-xs text-gray-400">
-						{t('capstone.slider.outcome')}: {criterion.outcome_code}
+						{t('capstone.slider.outcome')}: {criterion.outcomeCode}
 					</p>
 				</div>
 				<span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
@@ -55,7 +53,7 @@ export default function RubricCriterionSlider({
 							className={`rounded px-2 py-0.5 text-[10px] uppercase tracking-wide ${
 								active ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-600'
 							}`}>
-							{lv.name} ({lv.min_score}–{lv.max_score})
+							{lv.name} ({lv.minScore}–{lv.maxScore})
 						</span>
 					);
 				})}

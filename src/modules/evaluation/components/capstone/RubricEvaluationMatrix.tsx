@@ -25,9 +25,9 @@ export default function RubricEvaluationMatrix({
 }: RubricEvaluationMatrixProps) {
 	const { t } = useI18n();
 	const [evaluation, setEvaluation] = useState<CapstoneStudentEvaluation>({
-		student_id: student.id,
-		student_code: student.code,
-		student_name: student.name,
+		studentId: student.id,
+		studentCode: student.code,
+		studentName: student.name,
 		scores: {},
 		observation: '',
 	});
@@ -38,11 +38,11 @@ export default function RubricEvaluationMatrix({
 		[rubric.criteria, evaluation.scores],
 	);
 	const maxPossible = useMemo(
-		() => rubric.criteria.reduce((sum, c) => sum + c.max_score, 0),
+		() => rubric.criteria.reduce((sum, c) => sum + c.maxScore, 0),
 		[rubric.criteria],
 	);
 
-	// Business rule: the sum of per-criterion max_score must equal RUBRIC_TOTAL_SCORE.
+	// Business rule: the sum of per-criterion maxScore must equal RUBRIC_TOTAL_SCORE.
 	// If it doesn't, the rubric itself is misconfigured and the save button stays disabled.
 	const rubricConfigValid = maxPossible === RUBRIC_TOTAL_SCORE;
 	const observationValid = evaluation.observation.trim().length >= MIN_OBSERVATION_CHARS;
@@ -61,11 +61,11 @@ export default function RubricEvaluationMatrix({
 		setSubmitting(true);
 		try {
 			await onSubmit({
-				project_id: rubric.project_id,
-				rubric_id: rubric.id,
-				student_id: student.id,
+				projectId: rubric.projectId,
+				rubricId: rubric.id,
+				studentId: student.id,
 				scores: Object.entries(evaluation.scores).map(([cid, score]) => ({
-					criterion_id: Number(cid),
+					criterionId: Number(cid),
 					score,
 				})),
 				observation: evaluation.observation.trim(),

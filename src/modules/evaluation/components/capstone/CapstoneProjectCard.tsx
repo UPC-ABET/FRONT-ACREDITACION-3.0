@@ -18,8 +18,8 @@ export default function CapstoneProjectCard({
 }: CapstoneProjectCardProps) {
 	const { t } = useI18n();
 	const pct =
-		project.total_students > 0
-			? Math.round((project.graded_students / project.total_students) * 100)
+		project.totalStudents > 0
+			? Math.round((project.gradedStudents / project.totalStudents) * 100)
 			: 0;
 	const circumference = 2 * Math.PI * SVG_RADIUS;
 	const dashOffset = circumference - (pct / 100) * circumference;
@@ -35,7 +35,7 @@ export default function CapstoneProjectCard({
 				<div className="min-w-0">
 					<p className="truncate text-sm font-semibold text-gray-900">{project.name}</p>
 					<p className="mt-1 truncate text-xs text-gray-500">
-						{project.course_code} · {project.section_code}
+						{project.courseCode} · {project.sectionCode}
 					</p>
 				</div>
 				<svg width="56" height="56" className="shrink-0">
@@ -59,7 +59,7 @@ export default function CapstoneProjectCard({
 				</svg>
 			</div>
 			<p className="mt-3 text-xs text-gray-600">
-				{project.graded_students} {t('capstone.card.gradedOf')} {project.total_students}{' '}
+				{project.gradedStudents} {t('capstone.card.gradedOf')} {project.totalStudents}{' '}
 				{t('capstone.card.students')}
 			</p>
 		</button>
