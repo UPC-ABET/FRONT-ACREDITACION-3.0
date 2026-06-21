@@ -1552,6 +1552,7 @@
 				"autosaveRetry": "Reintentar guardado.",
 				"saveRubricSuccess": "Rúbrica guardada exitosamente."
 			},
+			"delete": "Eliminar",
 			"outcome": {
 				"addQuestion": "Agregar pregunta"
 			},

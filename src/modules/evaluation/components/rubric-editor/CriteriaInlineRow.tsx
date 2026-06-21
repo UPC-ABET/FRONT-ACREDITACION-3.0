@@ -56,7 +56,7 @@ export function CriteriaInlineRow({
 	onNotifyRetry,
 	onConfirmDelete,
 }: CriteriaInlineRowProps) {
-	const { locale } = useI18n();
+	const { locale, t } = useI18n();
 	const currentDescription = criterion.description[locale];
 
 	const [text, setText] = useState(currentDescription);
@@ -152,7 +152,7 @@ export function CriteriaInlineRow({
 					className="shrink-0"
 					onClick={() => void handleDelete()}>
 					<TrashIcon className="h-5 w-5 text-zinc-500" aria-hidden />
-					<span className="sr-only">Delete</span>
+					<span className="sr-only">{t('rubrics.editor.delete')}</span>
 				</Button>
 			) : null}
 		</div>

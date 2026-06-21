@@ -54,7 +54,7 @@ export function QuestionInlineRow({
 	onDeleteLocal,
 	onNotifyRetry,
 }: QuestionInlineRowProps) {
-	const { locale } = useI18n();
+	const { locale, t } = useI18n();
 	const currentText = question.questionText[locale];
 
 	const [text, setText] = useState(currentText);
@@ -161,7 +161,7 @@ export function QuestionInlineRow({
 						className={`h-5 w-5 transition-colors ${trashHovered ? 'text-red-500' : 'text-zinc-500'}`}
 						aria-hidden
 					/>
-					<span className="sr-only">Delete</span>
+					<span className="sr-only">{t('rubrics.editor.delete')}</span>
 				</Button>
 			) : null}
 		</div>

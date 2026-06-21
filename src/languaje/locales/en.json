@@ -1552,6 +1552,7 @@
 				"autosaveRetry": "Retry save.",
 				"saveRubricSuccess": "Rubric saved successfully."
 			},
+			"delete": "Delete",
 			"outcome": {
 				"addQuestion": "Add question"
 			},
