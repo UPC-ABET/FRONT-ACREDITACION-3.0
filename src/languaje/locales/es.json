@@ -1147,10 +1147,6 @@
 			"invalidOutcomeType": "Tipo de marca no válido para el mapeo.",
 			"duplicateCourseOutcome": "El curso tiene el mismo outcome marcado más de una vez."
 		},
-		"studentSectionEnrollment": {
-			"courseNotInStudyPlan": "El curso de la sección no pertenece a la malla curricular del alumno.",
-			"studyPlanPeriodMismatch": "El alumno no está matriculado en la misma malla curricular y período que la sección."
-		},
 		"validation": "Los datos ingresados no son válidos",
 		"badRequest": "Solicitud inválida",
 		"unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
@@ -1216,7 +1212,9 @@
 			"usedInStudentCourseOutcomeGrades": "Tiene notas de outcomes",
 			"enrollmentExists": "El estudiante ya está matriculado en esa sección.",
 			"notFound": "Matrícula no encontrada.",
-			"updateFailed": "No se pudo actualizar la matrícula."
+			"updateFailed": "No se pudo actualizar la matrícula.",
+			"courseNotInStudyPlan": "El curso de la sección no pertenece a la malla curricular del alumno.",
+			"studyPlanPeriodMismatch": "El alumno no está matriculado en la misma malla curricular y período que la sección."
 		},
 		"studyPlan": {
 			"inUse": "No se puede eliminar la malla porque está en uso.",
