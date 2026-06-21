@@ -221,8 +221,8 @@ const { schoolId, modalityTypeId, academicPeriodId } = useABET();
   	bundle: (periodId: number) => [...notificationConfigsKeys.all, 'bundle', periodId] as const,
   };
   ```
-- Global default `staleTime` is `30_000` (30 seconds), set in `QueryProvider`.
-- Use `staleTime: Infinity` for static data (types, modalities). Use `staleTime: 0` for data that changes via modals on the same page.
+- Global default `staleTime` is `0`, set in `QueryProvider` (queries are considered stale immediately and refetch on the next mount; `refetchOnWindowFocus` is off and `gcTime` is 5 minutes).
+- Use `staleTime: Infinity` for static lookups (types, modalities, parameters, languages); always pair it with explicit invalidation if the data can change. Rely on the `0` default for list/detail data that mutates.
 
 ### API Client
 
