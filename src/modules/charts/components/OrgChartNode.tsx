@@ -59,7 +59,7 @@ export function OrgChartNode({
 	return (
 		<g
 			transform={`translate(${x} ${y})`}
-			style={{ cursor: 'pointer' }}
+			className="cursor-pointer"
 			role="button"
 			aria-label={`${roleTitle} — ${fullName}`}
 			onMouseEnter={() => onHover(node.chartId)}
@@ -144,7 +144,7 @@ export function OrgChartNode({
 			{hasChildren && !exporting && (
 				<g
 					transform={`translate(${NODE_WIDTH / 2} ${NODE_HEIGHT})`}
-					style={{ cursor: 'pointer' }}
+					className="cursor-pointer"
 					role="button"
 					aria-label={collapsed ? 'expand' : 'collapse'}
 					onClick={(event) => {

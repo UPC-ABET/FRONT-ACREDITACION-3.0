@@ -45,7 +45,7 @@ export function OrgChart({
 			height={viewHeight * scale}
 			viewBox={`0 0 ${viewWidth} ${viewHeight}`}
 			role="tree"
-			style={{ display: 'block' }}>
+			className="block">
 			<defs>
 				<filter id="nodeShadow" x="-10%" y="-10%" width="120%" height="130%">
 					<feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#0f172a" floodOpacity="0.10" />
