@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { CompactNavbarSelect, Select } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
-import { academicPeriodsService } from '../services';
+import { useAcademicPeriods } from '../hooks';
 
 type AcademicPeriodOption = {
 	id: number;
@@ -48,41 +48,25 @@ export function AcademicPeriodSelect({
 }: Props) {
 	const { t } = useI18n();
 	const { modalityTypeId } = useABET();
-	const [periods, setPeriods] = useState<AcademicPeriodOption[]>([]);
-	const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		if (modalityTypeId === null) {
-			setPeriods([]);
-			setLoading(true);
-			return;
-		}
-		let active = true;
-		setLoading(true);
-		academicPeriodsService
-			.getByFilters({ modalityTypeId })
-			.then((envelope) => {
-				if (!active) return;
-				const rows = (envelope?.data ?? [])
-					.map((r) => ({
-						id: r.id,
-						code: r.code,
-						startDate: r.startDate,
-						endDate: r.endDate,
-					}))
-					.sort(compareAcademicPeriods);
-				setPeriods(rows);
-			})
-			.catch(() => {
-				if (active) setPeriods([]);
-			})
-			.finally(() => {
-				if (active) setLoading(false);
-			});
-		return () => {
-			active = false;
-		};
-	}, [modalityTypeId]);
+	const { data: periodRows = [], isLoading } = useAcademicPeriods(
+		{ modalityTypeId: modalityTypeId ?? undefined },
+		{ enabled: modalityTypeId !== null },
+	);
+	const loading = modalityTypeId === null || isLoading;
+
+	const periods = useMemo<AcademicPeriodOption[]>(
+		() =>
+			periodRows
+				.map((r) => ({
+					id: r.id,
+					code: r.code,
+					startDate: r.startDate,
+					endDate: r.endDate,
+				}))
+				.sort(compareAcademicPeriods),
+		[periodRows],
+	);
 
 	const options = useMemo(() => periods.map((p) => ({ value: p.id, label: p.code })), [periods]);
 

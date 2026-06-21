@@ -1,32 +1,27 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { getParameterByFilters } from '../services/parametersAdminService';
+import { parametersQueryKeys } from './useParameters';
 import type { ParameterRow } from '../types';
 
 export function useParameter<T>(code: string) {
-	const [data, setData] = useState<ParameterRow<T> | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const queryClient = useQueryClient();
 
-	const load = useCallback(async () => {
-		setLoading(true);
-		setError(null);
-		try {
-			const row = await getParameterByFilters<T>(code);
-			setData(row);
-		} catch (e) {
-			setError(getErrorMessage(e, 'admin.params.error.loadFailed'));
-		} finally {
-			setLoading(false);
-		}
-	}, [code]);
+	const query = useQuery({
+		queryKey: parametersQueryKeys.byCode(code),
+		queryFn: () => getParameterByFilters<T>(code),
+	});
 
-	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: auto-load
-		void load();
-	}, [load]);
+	const setData = (row: ParameterRow<T>) =>
+		queryClient.setQueryData(parametersQueryKeys.byCode(code), row);
 
-	return { data, loading, error, refetch: load, setData };
+	return {
+		data: query.data ?? null,
+		loading: query.isLoading,
+		error: query.error ? getErrorMessage(query.error, 'admin.params.error.loadFailed') : null,
+		refetch: query.refetch,
+		setData,
+	};
 }

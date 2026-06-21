@@ -15,7 +15,7 @@ import { Input } from '@/shared/components/ui/Input';
 import { Button } from '@/shared/components/ui/Button';
 import { LoadingState } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { coursesService } from '@/modules/academic/services';
+import { useEnrolledStudents } from '@/modules/academic';
 import type { EnrolledStudentResponse } from '@/modules/academic';
 import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
@@ -40,8 +40,6 @@ export function AddStudentModal({
 	const { t } = useI18n();
 	const queryClient = useQueryClient();
 
-	const [students, setStudents] = useState<EnrolledStudentResponse[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
 	const [search, setSearch] = useState('');
 	const [selectedStudents, setSelectedStudents] = useState<Map<number, EnrolledStudentResponse>>(
 		new Map(),
@@ -53,21 +51,14 @@ export function AddStudentModal({
 			setSearch('');
 			setSelectedStudents(new Map());
 			setSubmitError(null);
-			setStudents([]);
 		}
 	}, [open]);
 
-	useEffect(() => {
-		if (!open || courseId == null) return;
-		setIsLoading(true);
-		coursesService
-			.getEnrolledStudents(courseId, {
-				isActive: true,
-			})
-			.then((r) => setStudents(r.data ?? []))
-			.catch(() => setStudents([]))
-			.finally(() => setIsLoading(false));
-	}, [open]);
+	const { data: students = [], isLoading } = useEnrolledStudents(
+		courseId,
+		{ isActive: true },
+		{ enabled: open },
+	);
 
 	const filtered = useMemo(() => {
 		const term = search.trim().toLowerCase();

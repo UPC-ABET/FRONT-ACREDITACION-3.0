@@ -13,7 +13,7 @@ import {
 import { Input } from '@/shared/components/ui/Input';
 import { Button } from '@/shared/components/ui/Button';
 import { useI18n } from '@/providers';
-import { coursesService } from '@/modules/academic/services';
+import { useEnrolledStudents } from '@/modules/academic';
 import type { EnrolledStudentResponse } from '@/modules/academic';
 
 interface WizardSelectStudentsModalProps {
@@ -35,43 +35,30 @@ export function WizardSelectStudentsModal({
 }: WizardSelectStudentsModalProps) {
 	const { t } = useI18n();
 
-	const [students, setStudents] = useState<EnrolledStudentResponse[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
 	const [draft, setDraft] = useState<Map<number, EnrolledStudentResponse>>(new Map());
 	const [search, setSearch] = useState('');
+
+	const { data: students = [], isLoading } = useEnrolledStudents(
+		courseId,
+		{ isActive: true, studyPlanAcademicPeriodId },
+		{ enabled: open },
+	);
 
 	useEffect(() => {
 		if (!open) {
 			setSearch('');
 			setDraft(new Map());
-			setStudents([]);
+			return;
 		}
-	}, [open]);
-
-	useEffect(() => {
-		if (!open) return;
-
-		setIsLoading(true);
-		coursesService
-			.getEnrolledStudents(courseId, {
-				isActive: true,
-				studyPlanAcademicPeriodId: studyPlanAcademicPeriodId,
-			})
-			.then((r) => {
-				const data = r.data ?? [];
-				setStudents(data);
-				setDraft(
-					new Map(
-						data
-							.filter((s) => selectedIds.has(s.studentSectionEnrollmentId))
-							.map((s) => [s.studentSectionEnrollmentId, s]),
-					),
-				);
-			})
-			.catch(() => setStudents([]))
-			.finally(() => setIsLoading(false));
+		setDraft(
+			new Map(
+				students
+					.filter((s) => selectedIds.has(s.studentSectionEnrollmentId))
+					.map((s) => [s.studentSectionEnrollmentId, s]),
+			),
+		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [open]);
+	}, [open, students]);
 
 	const filtered = useMemo(() => {
 		const term = search.trim().toLowerCase();

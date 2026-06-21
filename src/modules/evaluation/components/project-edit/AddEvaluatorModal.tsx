@@ -15,7 +15,7 @@ import { Input } from '@/shared/components/ui/Input';
 import { Select } from '@/shared/components/ui/Select';
 import { Button } from '@/shared/components/ui/Button';
 import { useI18n } from '@/providers';
-import { professorsService } from '@/modules/academic/services';
+import { useProfessorsByFilters } from '@/modules/academic';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { projectsService } from '../../services';
 import { projectsQueryKeys } from '../../hooks';
@@ -46,8 +46,6 @@ export function AddEvaluatorModal({
 
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
-	const [professors, setProfessors] = useState<ProfessorSearchResponse[]>([]);
-	const [loadingProfessors, setLoadingProfessors] = useState(false);
 	const [selectedProfessor, setSelectedProfessor] = useState<ProfessorSearchResponse | null>(null);
 	const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
 	const [submitError, setSubmitError] = useState<string | null>(null);
@@ -61,22 +59,16 @@ export function AddEvaluatorModal({
 		if (!open) {
 			setSearch('');
 			setDebouncedSearch('');
-			setProfessors([]);
 			setSelectedProfessor(null);
 			setSelectedRoleId(null);
 			setSubmitError(null);
 		}
 	}, [open]);
 
-	useEffect(() => {
-		if (!open) return;
-		setLoadingProfessors(true);
-		professorsService
-			.getByFilters({ search: debouncedSearch.trim() || undefined, isActive: true })
-			.then((r) => setProfessors(r.data ?? []))
-			.catch(() => setProfessors([]))
-			.finally(() => setLoadingProfessors(false));
-	}, [open, debouncedSearch]);
+	const { data: professors = [], isLoading: loadingProfessors } = useProfessorsByFilters(
+		{ search: debouncedSearch.trim() || undefined, isActive: true },
+		{ enabled: open },
+	);
 
 	const { data: typeGroups = [] } = useTypeGroups(
 		{ code: EVALUATOR_TYPE_GROUP_CODE },

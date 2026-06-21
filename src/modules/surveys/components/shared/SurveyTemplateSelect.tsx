@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { getSurveyTypeId } from '../../services/academicService';
@@ -16,38 +16,22 @@ interface Props {
 
 export function SurveyTemplateSelect({ surveyTypeCode, programId, value, onChange }: Props) {
 	const { t, locale } = useI18n();
-	const [options, setOptions] = useState<{ value: number; label: string }[]>([]);
-	const [loading, setLoading] = useState(false);
 
-	useEffect(() => {
-		let cancelled = false;
-		setLoading(true);
-		(async () => {
-			try {
-				const surveyTypeId = await getSurveyTypeId(surveyTypeCode);
-				const messages = await getSurveyMessagesByFilters({
-					...(surveyTypeId > 0 ? { surveyTypeId } : {}),
-					...(programId ? { programId } : {}),
-					isActive: true,
-				});
-				if (!cancelled) {
-					setOptions(
-						messages.map((m: SurveyMessage) => ({
-							value: m.id,
-							label: m.name?.[locale as 'es' | 'en'] ?? m.name?.es ?? `Template #${m.id}`,
-						})),
-					);
-				}
-			} catch {
-				if (!cancelled) setOptions([]);
-			} finally {
-				if (!cancelled) setLoading(false);
-			}
-		})();
-		return () => {
-			cancelled = true;
-		};
-	}, [surveyTypeCode, programId, locale]);
+	const { data: options = [], isLoading: loading } = useQuery({
+		queryKey: ['survey-templates', surveyTypeCode, programId ?? null, locale],
+		queryFn: async () => {
+			const surveyTypeId = await getSurveyTypeId(surveyTypeCode);
+			const messages = await getSurveyMessagesByFilters({
+				...(surveyTypeId > 0 ? { surveyTypeId } : {}),
+				...(programId ? { programId } : {}),
+				isActive: true,
+			});
+			return messages.map((m: SurveyMessage) => ({
+				value: m.id,
+				label: m.name?.[locale as 'es' | 'en'] ?? m.name?.es ?? `Template #${m.id}`,
+			}));
+		},
+	});
 
 	const selected = options.find((o) => o.value === value) ?? null;
 

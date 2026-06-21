@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
 	DataTable,
@@ -23,13 +24,6 @@ import type { CompetenceConfig, CompetenceFormData } from '../../types';
 import { competenceSchema } from '../../schemas/competenceSchema';
 import { MIN_PERFORMANCE_LEVEL, MAX_PERFORMANCE_LEVEL } from '../../constants/competence';
 import { listGRAOutcomes } from '../../services/graService';
-
-// One entry per commission returned by the outcomes endpoint
-interface CommissionGroup {
-	commissionId: number;
-	commissionName: string;
-	outcomes: Array<{ outcomeId: number; outcomeCode: string; outcomeName: string }>;
-}
 
 export interface CompetenceCRUDProps {
 	cycleId: number;
@@ -80,7 +74,6 @@ export function CompetenceCRUD({
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [form, setForm] = useState(EMPTY_FORM);
 	const [saving, setSaving] = useState(false);
-	const [commissionGroups, setCommissionGroups] = useState<CommissionGroup[]>([]);
 	// commissionId → outcomeId selected for that commission
 	const [commissionSelections, setCommissionSelections] = useState<Record<number, number>>({});
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
@@ -93,16 +86,11 @@ export function CompetenceCRUD({
 		if (cycleId) onLoad(cycleId, programId);
 	}, [cycleId, programId, onLoad]);
 
-	// Fetch outcomes grouped by commission whenever program/cycle changes
-	useEffect(() => {
-		if (!programId || !cycleId) {
-			setCommissionGroups([]);
-			return;
-		}
-		listGRAOutcomes({ programId })
-			.then((groups) => setCommissionGroups(groups))
-			.catch(() => setCommissionGroups([]));
-	}, [programId, cycleId]);
+	const { data: commissionGroups = [] } = useQuery({
+		queryKey: ['gra-outcomes', programId, cycleId],
+		queryFn: () => listGRAOutcomes({ programId: programId as number }),
+		enabled: Boolean(programId) && Boolean(cycleId),
+	});
 
 	// Filter the list by type
 	const filteredItems = competences.filter((item) =>

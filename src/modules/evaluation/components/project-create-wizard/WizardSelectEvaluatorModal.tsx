@@ -14,7 +14,7 @@ import { Input } from '@/shared/components/ui/Input';
 import { Select } from '@/shared/components/ui/Select';
 import { Button } from '@/shared/components/ui/Button';
 import { useI18n } from '@/providers';
-import { professorsService } from '@/modules/academic/services';
+import { useProfessorsByFilters } from '@/modules/academic';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import type { LocalEvaluator } from './ProjectWizardStep2';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
@@ -38,8 +38,6 @@ export function WizardSelectEvaluatorModal({
 
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
-	const [professors, setProfessors] = useState<ProfessorSearchResponse[]>([]);
-	const [loadingProfs, setLoadingProfs] = useState(false);
 	const [selectedProf, setSelectedProf] = useState<ProfessorSearchResponse | null>(null);
 	const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -48,7 +46,6 @@ export function WizardSelectEvaluatorModal({
 		if (!open) {
 			setSearch('');
 			setDebouncedSearch('');
-			setProfessors([]);
 			setSelectedProf(null);
 			setSelectedTypeId(null);
 			setError(null);
@@ -60,15 +57,10 @@ export function WizardSelectEvaluatorModal({
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	useEffect(() => {
-		if (!open) return;
-		setLoadingProfs(true);
-		professorsService
-			.getByFilters({ search: debouncedSearch.trim() || undefined, isActive: true })
-			.then((r) => setProfessors(r.data ?? []))
-			.catch(() => setProfessors([]))
-			.finally(() => setLoadingProfs(false));
-	}, [open, debouncedSearch]);
+	const { data: professors = [], isLoading: loadingProfs } = useProfessorsByFilters(
+		{ search: debouncedSearch.trim() || undefined, isActive: true },
+		{ enabled: open },
+	);
 
 	const { data: typeGroups = [] } = useTypeGroups(
 		{ code: EVALUATOR_TYPE_GROUP_CODE },

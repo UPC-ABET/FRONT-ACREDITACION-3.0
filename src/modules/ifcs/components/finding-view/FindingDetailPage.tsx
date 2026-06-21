@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import {
@@ -35,26 +36,16 @@ export default function FindingDetailPage() {
 	const id = Number(params?.id);
 
 	const { data, isLoading, error, refetch } = useFindingDetail(id);
-	const [languages, setLanguages] = useState<string[]>([]);
+	const { data: languages = ['es', 'en'] } = useQuery({
+		queryKey: ['parameter', PARAMETER_CODES.LANGUAGES],
+		queryFn: () => getParameterByCode<string[]>(PARAMETER_CODES.LANGUAGES),
+		staleTime: Infinity,
+	});
 	const [saving, setSaving] = useState(false);
 	const [deleting, setDeleting] = useState(false);
 	const [pendingDelete, setPendingDelete] = useState(false);
 	const [actionError, setActionError] = useState<ApiErrorContent | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
-	useEffect(() => {
-		let alive = true;
-		getParameterByCode<string[]>(PARAMETER_CODES.LANGUAGES)
-			.then((langs) => {
-				if (alive) setLanguages(langs);
-			})
-			.catch(() => {
-				if (alive) setLanguages(['es', 'en']);
-			});
-		return () => {
-			alive = false;
-		};
-	}, []);
 
 	async function handleSave(description: I18nText) {
 		setSaving(true);

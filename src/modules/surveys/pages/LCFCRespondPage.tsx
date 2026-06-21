@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { useSurvey, useGRASurvey } from '../hooks';
 import { getLCFCStudentSurveys } from '../services';
-import type { LCFCStudentSurveys, LCFCStudentSurveyItem } from '../types';
+import type { LCFCStudentSurveyItem } from '../types';
 import { SurveyForm, SurveyAlreadyAnswered } from '../components';
 import { LCFC_SURVEY_SCHOOL_ID } from '../constants/survey';
 import { useI18n } from '@/providers';
@@ -179,30 +180,26 @@ export default function LCFCRespondPage() {
 	const searchParams = useSearchParams();
 	const entryToken = searchParams.get('token') ?? '';
 
-	const [data, setData] = useState<LCFCStudentSurveys | null>(null);
-	const [loadingList, setLoadingList] = useState(true);
-	const [listError, setListError] = useState<string | null>(null);
 	const [activeItem, setActiveItem] = useState<LCFCStudentSurveyItem | null>(null);
 	const [justCompleted, setJustCompleted] = useState(false);
 
-	const fetchList = useCallback(() => {
-		if (!entryToken) {
-			setLoadingList(false);
-			return;
-		}
-		setLoadingList(true);
-		getLCFCStudentSurveys(entryToken)
-			.then((d) => {
-				setData(d);
-				setListError(d ? null : 'error.survey.lcfc.tokenNotFound');
-			})
-			.catch((e) => setListError((e as Error).message))
-			.finally(() => setLoadingList(false));
-	}, [entryToken]);
+	const {
+		data: surveyData,
+		isLoading: loadingList,
+		error: listQueryError,
+		refetch,
+	} = useQuery({
+		queryKey: ['lcfc-student-surveys', entryToken],
+		queryFn: () => getLCFCStudentSurveys(entryToken),
+		enabled: Boolean(entryToken),
+	});
 
-	useEffect(() => {
-		fetchList();
-	}, [fetchList]);
+	const data = surveyData ?? null;
+	const listError = listQueryError
+		? listQueryError.message
+		: surveyData === null
+			? 'error.survey.lcfc.tokenNotFound'
+			: null;
 
 	const pending = data?.surveys.filter((s) => !s.completed) ?? [];
 
@@ -275,7 +272,7 @@ export default function LCFCRespondPage() {
 	const onSubmitted = () => {
 		setActiveItem(null);
 		setJustCompleted(true);
-		fetchList();
+		void refetch();
 	};
 
 	// Answering a specific survey.
