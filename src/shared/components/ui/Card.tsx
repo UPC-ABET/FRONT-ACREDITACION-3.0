@@ -7,14 +7,12 @@ interface CardProps {
 	children: React.ReactNode;
 	description?: string;
 	className?: string;
-	style?: { minHeight: string; aspectRatio: string } | { aspectRatio: string };
 }
 
-function Card({ title, children, description, className = '', style }: CardProps) {
+function Card({ title, children, description, className = '' }: CardProps) {
 	return (
 		<div
-			className={`bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden ${className}`}
-			style={style}>
+			className={`bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden ${className}`}>
 			{(title || description) && (
 				<div className="p-4 border-b border-zinc-100">
 					{title && (
