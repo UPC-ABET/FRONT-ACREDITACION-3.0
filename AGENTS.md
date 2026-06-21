@@ -25,6 +25,9 @@ src/
 │   ├── academic/           # Academic periods, courses, programs, professors
 │   ├── accreditation/      # Commissions, outcomes
 │   ├── admin/              # Admin panels — sub-modules per concern, tabs split by domain
+│   │   ├── chart-heads/    # Org-chart heads config (dean/directors) — helper module, no standalone route
+│   │   ├── configuration/  # Academic periods & program commissions administration
+│   │   ├── iam/            # Identity & access management (users, roles, permissions, modules)
 │   │   ├── notifications/  # Notification config (IFC today; surveys, etc. as new tabs)
 │   │   └── parameters/     # Parameter administration (IFC today; rubrics, general, academic as new tabs)
 │   ├── auth/               # Authentication, login, session
@@ -76,11 +79,11 @@ module-name/
 
 ### Admin Modules and Tab Navigation
 
-`modules/admin/` groups cross-cutting admin concerns (`notifications/`, `parameters/`, ...). Each sub-module is a normal module — it owns one admin page that splits domain coverage via **in-page tabs**, not via separate routes or sidebar entries.
+`modules/admin/` groups cross-cutting admin concerns (`configuration/`, `iam/`, `notifications/`, `parameters/`, plus the route-less `chart-heads/` helper). Each routed sub-module is a normal module — it owns one admin page that splits domain coverage via **in-page tabs**, not via separate routes or sidebar entries.
 
 Pattern:
 
-- **One route per admin concern.** `/admin/parameters`, `/admin/notifications`. Never `/admin/<concern>/<domain>`.
+- **One route per admin concern.** `/admin/configuration`, `/admin/iam`, `/admin/notifications`, `/admin/parameters`. Never `/admin/<concern>/<domain>`.
 - **Top tabs select the domain.** IFC, Rubrics, General, Academic, Surveys, ... Adding a new domain = adding a tab entry, not a new route or sidebar item.
 - **Sub-tabs only when a domain has multiple screens** (e.g., IFC parameters → Codes | Fields).
 - **Tab state lives in the URL** via `?tab=<domain>` (and `?sub=<screen>` when needed). Shareable, no nested routes. Switching the top tab clears `?sub=` so sub-state doesn't leak across domains.
@@ -89,7 +92,7 @@ Pattern:
 
 - **Max 2 levels** in the sidebar: top-level group → leaf items. No third level.
 - When a feature has more sub-screens than fit cleanly as siblings, push the split **into the page as tabs**, not into the sidebar as a third level.
-- Admin currently exposes 2 leaf items: `Parameters` and `Notifications`. Adding a new admin concern means a new leaf, not nesting.
+- Admin currently exposes 4 leaf items: `Configuration`, `IAM`, `Notifications`, and `Parameters` (the `chart-heads` helper module has no sidebar leaf). Adding a new admin concern means a new leaf, not nesting.
 
 ---
 
