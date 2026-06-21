@@ -67,6 +67,7 @@ function Sidebar({
 					'transition-all duration-300 ease-in-out',
 					'bg-zinc-900',
 					'border-r border-zinc-800',
+					'shadow-[4px_0_24px_rgba(0,0,0,0.4)]',
 					isMobile
 						? open
 							? 'w-64 translate-x-0'
@@ -75,25 +76,10 @@ function Sidebar({
 							? 'w-64'
 							: 'w-20',
 					className,
-				].join(' ')}
-				style={{
-					boxShadow: '4px 0 24px rgba(0,0,0,0.4)',
-				}}>
-				<div
-					className="absolute top-0 left-0 right-0 h-[3px]"
-					style={{
-						background: 'linear-gradient(90deg, #C8102E 0%, #FF2D4E 60%, #C8102E 100%)',
-						boxShadow: '0 0 12px rgba(200,16,46,0.7)',
-					}}
-				/>
+				].join(' ')}>
+				<div className="absolute top-0 left-0 right-0 h-[3px] bg-[linear-gradient(90deg,#C8102E_0%,#FF2D4E_60%,#C8102E_100%)] shadow-[0_0_12px_rgba(200,16,46,0.7)]" />
 
-				<div
-					className="absolute inset-0 pointer-events-none opacity-[0.025]"
-					style={{
-						backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
-						backgroundSize: '128px 128px',
-					}}
-				/>
+				<div className="absolute inset-0 pointer-events-none opacity-[0.025] bg-sidebar-noise" />
 
 				{children}
 			</aside>
@@ -115,13 +101,7 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 				'transition-all duration-300',
 				className,
 			].join(' ')}>
-			<div
-				className="absolute inset-0 pointer-events-none"
-				style={{
-					background:
-						'radial-gradient(ellipse at 50% 120%, rgba(200,16,46,0.12) 0%, transparent 70%)',
-				}}
-			/>
+			<div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_120%,rgba(200,16,46,0.12)_0%,transparent_70%)]" />
 
 			{open ? (
 				<img
@@ -130,8 +110,8 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 					className={[
 						'w-full h-full transition-all duration-300 relative z-10',
 						'object-contain scale-100',
+						'brightness-0 invert',
 					].join(' ')}
-					style={{ filter: 'brightness(0) invert(1)' }}
 				/>
 			) : (
 				<button
@@ -185,10 +165,7 @@ export function SidebarFooter({
 }) {
 	return (
 		<div
-			className={`px-2.5 py-3 border-t border-zinc-700 ${className}`}
-			style={{
-				background: 'linear-gradient(to top, rgba(0,0,0,0.3), transparent)',
-			}}>
+			className={`px-2.5 py-3 border-t border-zinc-700 bg-[linear-gradient(to_top,rgba(0,0,0,0.3),transparent)] ${className}`}>
 			{children}
 		</div>
 	);
@@ -253,22 +230,13 @@ export function SidebarItem({
 			className={[
 				'relative flex items-center px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
 				hasIcon ? 'gap-3' : 'gap-0',
-				active ? '' : 'hover:bg-zinc-800/70',
-				className,
-			].join(' ')}
-			style={
 				active
-					? {
-							background: 'linear-gradient(135deg, rgba(200,16,46,1) 0%, rgba(180,10,36,1) 100%)',
-							boxShadow: '0 4px 12px rgba(200,16,46,0.4), inset 0 1px 0 rgba(255,255,255,0.15)',
-						}
-					: undefined
-			}>
+					? 'bg-[linear-gradient(135deg,rgba(200,16,46,1)_0%,rgba(180,10,36,1)_100%)] shadow-[0_4px_12px_rgba(200,16,46,0.4),inset_0_1px_0_rgba(255,255,255,0.15)]'
+					: 'hover:bg-zinc-800/70',
+				className,
+			].join(' ')}>
 			{active && (
-				<div
-					className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
-					style={{ background: '#fff' }}
-				/>
+				<div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-white" />
 			)}
 
 			{hasIcon && (
@@ -400,10 +368,9 @@ export function SidebarNavGroup({
 			{open && (
 				<div
 					className={[
-						'ml-5 pl-3 flex flex-col gap-0.5 overflow-hidden transition-all duration-200',
+						'ml-5 pl-3 flex flex-col gap-0.5 overflow-hidden transition-all duration-200 border-l border-white/20',
 						expanded ? 'max-h-[500px] mt-0.5 mb-1' : 'max-h-0',
-					].join(' ')}
-					style={{ borderLeft: '1px solid rgba(255,255,255,0.2)' }}>
+					].join(' ')}>
 					{children}
 				</div>
 			)}
