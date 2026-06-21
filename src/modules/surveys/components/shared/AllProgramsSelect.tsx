@@ -22,7 +22,6 @@ export function AllProgramsSelect({ value, onChange }: Props) {
 	const { data: programs = [], isLoading } = useQuery({
 		queryKey: programsQueryKeys.allActive(),
 		queryFn: () => programsService.getByFilters({ isActive: true }).then((r) => r.data ?? []),
-		staleTime: Infinity,
 	});
 
 	const options = useMemo(

@@ -31,7 +31,6 @@ export function SurveyProgramSelect({ value, onChange }: Props) {
 				.getByFilters({ isActive: true, schoolFilter: true })
 				.then((r) => r.data ?? []),
 		enabled: schoolId != null && modalityTypeId != null,
-		staleTime: Infinity,
 	});
 
 	const options = useMemo(

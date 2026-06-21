@@ -32,6 +32,5 @@ export function useProgramsByModality(modalityTypeId: number | null) {
 		queryKey: [...programsQueryKeys.all, 'by-modality', modalityTypeId] as const,
 		queryFn: () => programsService.byModality().then((r) => r.data ?? []),
 		enabled: modalityTypeId != null,
-		staleTime: Infinity,
 	});
 }

@@ -18,7 +18,6 @@ export function usePrograms(enabled: boolean) {
 		queryKey: chartsQueryKeys.programs(),
 		queryFn: () => chartsService.programsGetAll(),
 		enabled,
-		staleTime: Infinity,
 	});
 }
 
