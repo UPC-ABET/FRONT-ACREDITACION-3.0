@@ -1,5 +1,7 @@
-'use client';
+import dynamic from 'next/dynamic';
 
-import { AdminNotificationsPage } from '@/modules/admin/notifications';
+const AdminNotificationsPage = dynamic(() =>
+	import('@/modules/admin/notifications').then((m) => m.AdminNotificationsPage),
+);
 
 export default AdminNotificationsPage;

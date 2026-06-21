@@ -1,5 +1,5 @@
-'use client';
+import dynamic from 'next/dynamic';
 
-import { AdminIamPage } from '@/modules/admin/iam';
+const AdminIamPage = dynamic(() => import('@/modules/admin/iam').then((m) => m.AdminIamPage));
 
 export default AdminIamPage;

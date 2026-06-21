@@ -1,5 +1,7 @@
-'use client';
+import dynamic from 'next/dynamic';
 
-import { AdminParametersPage } from '@/modules/admin/parameters';
+const AdminParametersPage = dynamic(() =>
+	import('@/modules/admin/parameters').then((m) => m.AdminParametersPage),
+);
 
 export default AdminParametersPage;

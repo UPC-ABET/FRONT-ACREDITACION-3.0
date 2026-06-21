@@ -1,5 +1,5 @@
-'use client';
+import dynamic from 'next/dynamic';
 
-import { IFCEditPageEntry } from '@/modules/ifcs';
+const IFCEditPageEntry = dynamic(() => import('@/modules/ifcs').then((m) => m.IFCEditPageEntry));
 
 export default IFCEditPageEntry;

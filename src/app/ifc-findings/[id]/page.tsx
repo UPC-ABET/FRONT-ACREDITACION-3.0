@@ -1,5 +1,7 @@
-'use client';
+import dynamic from 'next/dynamic';
 
-import { IFCFindingDetailPageEntry } from '@/modules/ifcs';
+const IFCFindingDetailPageEntry = dynamic(() =>
+	import('@/modules/ifcs').then((m) => m.IFCFindingDetailPageEntry),
+);
 
 export default IFCFindingDetailPageEntry;
