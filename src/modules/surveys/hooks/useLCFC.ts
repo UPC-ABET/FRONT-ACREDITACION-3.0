@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
 import type {
 	AcademicPeriod,
@@ -48,7 +49,7 @@ export function useLCFCPeriods() {
 		try {
 			setPeriods(await getAcademicPeriods());
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -69,7 +70,7 @@ export function useLCFCConfiguration() {
 			const { courses } = await listLCFCCourses(periodId, programId);
 			setCourses(courses);
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -92,7 +93,7 @@ export function useLCFCConfiguration() {
 				);
 				onSuccess?.(result);
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			}
 		},
 		[],
@@ -111,7 +112,7 @@ export function useLCFCConfiguration() {
 				const result = await cloneLCFCConfiguration(targetPeriodId, programId, sourcePeriodId);
 				onSuccess?.(result);
 			} catch (e) {
-				setError((e as Error).message ?? 'error.generic');
+				setError(getErrorMessage(e));
 			} finally {
 				setLoading(false);
 			}
@@ -125,7 +126,7 @@ export function useLCFCConfiguration() {
 				await changeLCFCConfigStatus(configId, newStatus);
 				onSuccess?.();
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			}
 		},
 		[],
@@ -137,7 +138,7 @@ export function useLCFCConfiguration() {
 				await updateLCFCConfig(id, data);
 				onSuccess?.();
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			}
 		},
 		[],
@@ -148,7 +149,7 @@ export function useLCFCConfiguration() {
 			await deleteLCFCConfig(id);
 			onSuccess?.();
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		}
 	}, []);
 
@@ -167,7 +168,7 @@ export function useLCFCNotification() {
 		try {
 			setParams(await getLCFCEmailParams());
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -181,7 +182,7 @@ export function useLCFCNotification() {
 				await sendLCFCNotification(request, locale);
 				onSuccess?.();
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setSending(false);
 			}
@@ -203,7 +204,7 @@ export function useLCFCAvailableSections() {
 		try {
 			setSections(await getAvailableSections(programId));
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -229,7 +230,7 @@ export function useLCFCReports() {
 					}),
 				);
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setLoading(false);
 			}

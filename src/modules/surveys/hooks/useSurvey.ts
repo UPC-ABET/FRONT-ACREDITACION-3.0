@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { getErrorMessage } from '@/shared/lib';
 import type {
 	SurveyTokenVerification,
 	SurveyOutcomesResponse,
@@ -42,7 +43,7 @@ export function useSurvey() {
 			setSurveyData(data);
 			setOutcomes(data.items);
 		} catch (e) {
-			const msg = (e as Error).message;
+			const msg = getErrorMessage(e);
 			// A survey that's already closed is a normal "thank you, already answered"
 			// state, not an access error — show the completed screen.
 			if (msg?.toLowerCase().includes('alreadycompleted')) {
@@ -109,7 +110,7 @@ export function useSurvey() {
 					setError('Could not submit the survey. Please try again.');
 				}
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setSubmitting(false);
 			}
@@ -159,7 +160,7 @@ export function useGRASurvey() {
 			setSurveyData(data);
 			setOutcomes(data.items);
 		} catch (e) {
-			const msg = (e as Error).message;
+			const msg = getErrorMessage(e);
 			if (msg?.toLowerCase().includes('alreadycompleted')) {
 				setAlreadyAnswered(true);
 			} else {
@@ -214,7 +215,7 @@ export function useGRASurvey() {
 					setError('Could not submit the survey. Please try again.');
 				}
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setSubmitting(false);
 			}

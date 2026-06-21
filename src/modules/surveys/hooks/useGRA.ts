@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
 import type {
 	AcademicPeriod,
@@ -53,7 +54,7 @@ export function useGRAPeriods() {
 		try {
 			setPeriods(await getAcademicPeriods());
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -73,7 +74,7 @@ export function useGRACompetences() {
 		try {
 			setCompetences(await listGRACompetences(periodId, programId));
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -84,7 +85,7 @@ export function useGRACompetences() {
 			await saveGRACompetence(data);
 			onSuccess?.();
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		}
 	}, []);
 
@@ -93,7 +94,7 @@ export function useGRACompetences() {
 			await deleteGRACompetence(id);
 			onSuccess?.();
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		}
 	}, []);
 
@@ -111,7 +112,7 @@ export function useGRACompetences() {
 				await cloneGRAConfiguration(params);
 				onSuccess?.();
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			}
 		},
 		[],
@@ -138,7 +139,7 @@ export function useGRAStudents() {
 				const { students: data } = await listGRAStudents(params);
 				setStudents(data);
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setLoading(false);
 			}
@@ -151,7 +152,7 @@ export function useGRAStudents() {
 			await deleteStudentNotification(notificationId);
 			onSuccess?.();
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		}
 	}, []);
 
@@ -175,7 +176,7 @@ export function useGRAStudentSearch() {
 				setError('surveys.gra.notifications.studentNotFound');
 			}
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -197,7 +198,7 @@ export function useGRAStudentSearch() {
 				setResult(null);
 				onSuccess?.();
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			}
 		},
 		[],
@@ -220,7 +221,7 @@ export function useGRAEmail() {
 		try {
 			setTemplate(await getGRAEmailTemplate(locale));
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -232,7 +233,7 @@ export function useGRAEmail() {
 			await saveGRAEmailTemplate({ subject: tmpl.subject, body: tmpl.body });
 			onSuccess?.();
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setSaving(false);
 		}
@@ -245,7 +246,7 @@ export function useGRAEmail() {
 				await sendGRAEmail(req, locale);
 				onSuccess?.();
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setSending(false);
 			}
@@ -274,7 +275,7 @@ export function useGRAUpload() {
 		try {
 			await downloadGRATemplate();
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		}
 	}, []);
 
@@ -288,7 +289,7 @@ export function useGRAUpload() {
 			setResult(uploadResult);
 			setSuccess(true);
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -320,7 +321,7 @@ export function useGRAReports() {
 			try {
 				setReportData(await generateGRAPerceptionReport(params));
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setLoading(false);
 			}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
 import type {
 	AcademicPeriod,
@@ -46,7 +47,7 @@ export function usePPPPeriods() {
 		try {
 			setPeriods(await getAcademicPeriods());
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -66,7 +67,7 @@ export function usePPPCompetences() {
 		try {
 			setCompetences(await listPPPCompetences(periodId, programId));
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -77,7 +78,7 @@ export function usePPPCompetences() {
 			await savePPPCompetence(data);
 			onSuccess?.();
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		}
 	}, []);
 
@@ -86,7 +87,7 @@ export function usePPPCompetences() {
 			await deletePPPCompetence(id);
 			onSuccess?.();
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		}
 	}, []);
 
@@ -104,7 +105,7 @@ export function usePPPCompetences() {
 				await clonePPPConfiguration(params);
 				onSuccess?.();
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			}
 		},
 		[],
@@ -122,7 +123,7 @@ export function usePPPCompetences() {
 				const result = await generatePPPConfigFromOutcomes(programId, academicPeriodId);
 				onSuccess?.(result);
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setLoading(false);
 			}
@@ -143,7 +144,7 @@ export function usePPPDownload() {
 		try {
 			await downloadPPPTemplate(programId);
 		} catch (e) {
-			setError((e as Error).message);
+			setError(getErrorMessage(e));
 		} finally {
 			setLoading(false);
 		}
@@ -169,7 +170,7 @@ export function usePPPUpload() {
 				setResult(uploadResult);
 				setSuccess(true);
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setLoading(false);
 			}
@@ -202,7 +203,7 @@ export function usePPPReports() {
 			try {
 				setReportData(await generatePPPPerceptionReport(params));
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setLoading(false);
 			}
@@ -226,7 +227,7 @@ export function usePPPNotification() {
 				await sendPPPNotification(request, locale);
 				onSuccess?.();
 			} catch (e) {
-				setError((e as Error).message);
+				setError(getErrorMessage(e));
 			} finally {
 				setSending(false);
 			}
