@@ -22,7 +22,7 @@ export function useTypesByGroupCode(groupCode: string, options?: { enabled?: boo
 	});
 }
 
-export function useSetCanEvaluate(groupCode: string) {
+export function useSetCanEvaluate() {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: ({
@@ -32,25 +32,22 @@ export function useSetCanEvaluate(groupCode: string) {
 			id: number;
 			body: { canEvaluate: boolean; maxEvaluators?: number };
 		}) => typesService.setCanEvaluate(id, body),
-		onSuccess: () =>
-			queryClient.invalidateQueries({ queryKey: coreQueryKeys.typesByGroupCode(groupCode) }),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: coreQueryKeys.types() }),
 	});
 }
 
-export function useCreateType(groupCode: string) {
+export function useCreateType() {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: (body: Parameters<typeof typesService.create>[0]) => typesService.create(body),
-		onSuccess: () =>
-			queryClient.invalidateQueries({ queryKey: coreQueryKeys.typesByGroupCode(groupCode) }),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: coreQueryKeys.types() }),
 	});
 }
 
-export function useDeleteType(groupCode: string) {
+export function useDeleteType() {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: (id: number) => typesService.delete(id),
-		onSuccess: () =>
-			queryClient.invalidateQueries({ queryKey: coreQueryKeys.typesByGroupCode(groupCode) }),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: coreQueryKeys.types() }),
 	});
 }

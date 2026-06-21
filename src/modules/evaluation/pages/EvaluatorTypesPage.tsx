@@ -60,7 +60,7 @@ export function EvaluatorTypesPage() {
 		setEditError(null);
 	};
 
-	const setCanEvaluateMutation = useSetCanEvaluate(TYPE_GROUP_CODES.EVALUATOR_ROLE);
+	const setCanEvaluateMutation = useSetCanEvaluate();
 	const handleEditSave = () => {
 		const max = editState!.maxEvaluators;
 		if (max !== '' && (isNaN(Number(max)) || Number(max) < 1)) {
@@ -100,7 +100,7 @@ export function EvaluatorTypesPage() {
 		setCreateOpen(true);
 	};
 
-	const createTypeMutation = useCreateType(TYPE_GROUP_CODES.EVALUATOR_ROLE);
+	const createTypeMutation = useCreateType();
 	const handleCreate = () => {
 		const hasName = Object.values(nameValue).some((v) => v.trim().length > 0);
 		if (!hasName) {
@@ -134,7 +134,7 @@ export function EvaluatorTypesPage() {
 	const [deleteTarget, setDeleteTarget] = useState<{ id: number; label: string } | null>(null);
 	const [deleteError, setDeleteError] = useState<string | null>(null);
 
-	const deleteTypeMutation = useDeleteType(TYPE_GROUP_CODES.EVALUATOR_ROLE);
+	const deleteTypeMutation = useDeleteType();
 	const handleDelete = () => {
 		if (!deleteTarget) return;
 		deleteTypeMutation.mutate(deleteTarget.id, {

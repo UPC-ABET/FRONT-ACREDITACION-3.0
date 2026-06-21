@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	getCapstoneRubric,
 	listCapstoneProjects,
@@ -27,7 +27,9 @@ export function useCapstoneRubric(projectId: number | null) {
 }
 
 export function useSubmitCapstoneEvaluation() {
+	const queryClient = useQueryClient();
 	return useMutation<{ id: number }, Error, SubmitCapstoneEvaluationPayload>({
 		mutationFn: submitCapstoneEvaluation,
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: ['capstone'] }),
 	});
 }
