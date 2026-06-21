@@ -7,6 +7,15 @@ import { XCircleIcon } from '@heroicons/react/24/outline';
 import { cn } from '@/shared/utils';
 import { Button } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
+import { logger } from '@/shared/lib/logger';
+
+function containsDialogTitle(node: React.ReactNode): boolean {
+	return React.Children.toArray(node).some((child) => {
+		if (!React.isValidElement<{ children?: React.ReactNode }>(child)) return false;
+		if (child.type === DialogTitle) return true;
+		return containsDialogTitle(child.props.children);
+	});
+}
 
 const mergeClassName = <T,>(
 	base: string,
@@ -57,6 +66,14 @@ function DialogContent({
 	showCloseButton?: boolean;
 }) {
 	const { t } = useI18n();
+
+	React.useEffect(() => {
+		if (!containsDialogTitle(children)) {
+			logger.warn(
+				'DialogContent is missing a <DialogTitle>; dialogs need an accessible name for screen readers.',
+			);
+		}
+	}, [children]);
 
 	// `cn` doesn't merge Tailwind conflicts, so skip the default width when overridden.
 	const hasWidthOverride = className?.includes('max-w-') ?? false;
