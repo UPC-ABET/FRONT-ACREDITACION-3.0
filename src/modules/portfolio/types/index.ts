@@ -1,10 +1,5 @@
-/**
- * Portfolio file manager — S3-backed types.
- *
- * S3 has no real folders: a "folder" is a key ending with `/`. Files are keys
- * that do not end with `/`.
- */
-
+// S3 has no real folders: a "folder" is a key ending with `/`. Files are keys
+// that do not end with `/`.
 export type S3Entry = {
 	key: string;
 	name: string;
@@ -23,8 +18,6 @@ export type BreadcrumbSegment = {
 	name: string;
 	prefix: string;
 };
-
-// ─── Business-logic portfolio types ──────────────────────────────────────────
 
 export const PORTFOLIO_STATUS = {
 	APPROVED: 'APPROVED',

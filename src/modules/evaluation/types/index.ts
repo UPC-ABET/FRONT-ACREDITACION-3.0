@@ -382,7 +382,6 @@ export type RubricQuestionResponse = {
 	criterias?: RubricQuestionCriteriaResponse[];
 };
 
-/** Shape returned by GET /rubrics/get-all and similar list endpoints */
 export type RubricResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
@@ -398,7 +397,6 @@ export type RubricResponse = {
 	isUsed: boolean;
 };
 
-/** Shape returned by GET /rubrics/get-by-id/:id */
 export type GetRubricByIdResponse = {
 	rubric: {
 		id: number;

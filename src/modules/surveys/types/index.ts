@@ -178,7 +178,6 @@ export interface LCFCSectionCommission {
 	commissionId: number;
 	code: string;
 	name: string;
-	/** Accreditation commission type (EAC/CAC/…) — used to default to EAC. */
 	typeCode?: string;
 	typeName?: string;
 }
