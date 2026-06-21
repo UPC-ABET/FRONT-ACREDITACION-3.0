@@ -5,6 +5,7 @@ import { coreQueryKeys, getTypesByGroupCode } from '@/modules/core';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { coursesService, studyPlanCoursesService, studyPlansService } from '../services';
 import type { CourseUpdateBody, StudyPlanCourseCreate, StudyPlanCourseLevelOption } from '../types';
+import { academicQueryKeys } from './queryKeys';
 
 function toLevelNumber(value: unknown): number {
 	if (typeof value === 'number') return value;
@@ -32,12 +33,6 @@ export function useStudyPlanCourseLevels() {
 	});
 }
 
-export const studyPlanCoursesViewKeys = {
-	all: ['study-plan-courses-view'] as const,
-	view: (studyPlanId: number | null, academicPeriodId: number | null) =>
-		[...studyPlanCoursesViewKeys.all, studyPlanId, academicPeriodId] as const,
-};
-
 export function useStudyPlanCoursesView(
 	studyPlanId: number | null,
 	academicPeriodId: number | null,
@@ -45,7 +40,7 @@ export function useStudyPlanCoursesView(
 	return useQuery({
 		// Period travels as the X-Academic-Period-Id header; it is part of the key so a
 		// period switch re-fetches. Disabled until both the plan and a period exist.
-		queryKey: studyPlanCoursesViewKeys.view(studyPlanId, academicPeriodId),
+		queryKey: academicQueryKeys.studyPlanCoursesView(studyPlanId, academicPeriodId),
 		queryFn: () => studyPlansService.getCoursesView(studyPlanId!).then((response) => response.data),
 		enabled: studyPlanId != null && academicPeriodId != null,
 		placeholderData: (previousData) => previousData,
@@ -56,7 +51,7 @@ export function useStudyPlanCoursesViewMutations() {
 	const queryClient = useQueryClient();
 
 	const invalidate = () =>
-		queryClient.invalidateQueries({ queryKey: studyPlanCoursesViewKeys.all });
+		queryClient.invalidateQueries({ queryKey: academicQueryKeys.studyPlanCourses() });
 
 	const updateCourse = useMutation({
 		mutationFn: ({ courseId, body }: { courseId: number; body: CourseUpdateBody }) =>

@@ -11,6 +11,8 @@ export const academicQueryKeys = {
 	studyPlanCourses: () => [...academicQueryKeys.all, 'spc'] as const,
 	studyPlanCoursesByFilter: (filters: StudyPlanCourseFilters) =>
 		[...academicQueryKeys.studyPlanCourses(), filters] as const,
+	studyPlanCoursesView: (studyPlanId: number | null, academicPeriodId: number | null) =>
+		[...academicQueryKeys.studyPlanCourses(), 'view', studyPlanId, academicPeriodId] as const,
 
 	courseOutcomeMappings: () => [...academicQueryKeys.all, 'com'] as const,
 	courseOutcomeMappingsByFilter: (filters: CourseOutcomeMappingFilters) =>
