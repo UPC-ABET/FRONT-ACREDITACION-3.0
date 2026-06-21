@@ -3,10 +3,12 @@ import { portfolioResearchLinesService } from '../services';
 import type { CreatePortfolioResearchLineDto } from '../types';
 import { portfolioQueryKeys } from './queryKeys';
 
-export function usePortfolioResearchLines(params: {
-	programId?: number;
-	modalityTypeId?: number;
-} = {}) {
+export function usePortfolioResearchLines(
+	params: {
+		programId?: number;
+		modalityTypeId?: number;
+	} = {},
+) {
 	return useQuery({
 		queryKey: portfolioQueryKeys.researchLines(params),
 		queryFn: () => portfolioResearchLinesService.getAll(params),
@@ -19,7 +21,7 @@ export function useCreatePortfolioResearchLine() {
 	return useMutation({
 		mutationFn: (dto: CreatePortfolioResearchLineDto) => portfolioResearchLinesService.create(dto),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.all });
+			queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.researchLinesAll() });
 		},
 	});
 }

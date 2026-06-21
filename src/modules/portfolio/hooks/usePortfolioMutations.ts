@@ -4,7 +4,7 @@ import { portfolioQueryKeys } from './queryKeys';
 
 function useInvalidateAll() {
 	const queryClient = useQueryClient();
-	return () => queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.all });
+	return () => queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.s3All });
 }
 
 export function useRenameEntry() {

@@ -16,7 +16,7 @@ export function useCreateFolder() {
 		mutationFn: ({ prefix, name }: { prefix: string; name: string }) =>
 			portfolioS3Service.createFolder(prefix, name),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.all });
+			queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.s3All });
 		},
 	});
 }
@@ -26,7 +26,7 @@ export function useDeleteEntries() {
 	return useMutation({
 		mutationFn: (keys: string[]) => portfolioS3Service.deleteEntries(keys),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.all });
+			queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.s3All });
 		},
 	});
 }
@@ -56,7 +56,7 @@ export function useUploadFiles() {
 			}
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.all });
+			queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.s3All });
 		},
 	});
 }

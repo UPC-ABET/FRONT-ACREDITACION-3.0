@@ -135,7 +135,7 @@ export function useDeletePortfolioApplication() {
 		mutationFn: (applicationId: number | string) =>
 			portfolioProjectsService.deleteApplication(applicationId),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.all });
+			queryClient.invalidateQueries({ queryKey: portfolioQueryKeys.s3All });
 		},
 	});
 }
