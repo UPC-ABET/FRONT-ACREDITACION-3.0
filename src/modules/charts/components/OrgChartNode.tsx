@@ -61,10 +61,18 @@ export function OrgChartNode({
 			transform={`translate(${x} ${y})`}
 			className="cursor-pointer"
 			role="button"
+			tabIndex={0}
 			aria-label={`${roleTitle} — ${fullName}`}
 			onMouseEnter={() => onHover(node.chartId)}
 			onMouseLeave={() => onHover(null)}
-			onClick={(event) => onSelect(node, event.clientX, event.clientY)}>
+			onClick={(event) => onSelect(node, event.clientX, event.clientY)}
+			onKeyDown={(event) => {
+				if (event.key === 'Enter' || event.key === ' ') {
+					event.preventDefault();
+					const rect = event.currentTarget.getBoundingClientRect();
+					onSelect(node, rect.left + rect.width / 2, rect.top + rect.height / 2);
+				}
+			}}>
 			<rect
 				width={NODE_WIDTH}
 				height={NODE_HEIGHT}
@@ -146,10 +154,18 @@ export function OrgChartNode({
 					transform={`translate(${NODE_WIDTH / 2} ${NODE_HEIGHT})`}
 					className="cursor-pointer"
 					role="button"
+					tabIndex={0}
 					aria-label={collapsed ? 'expand' : 'collapse'}
 					onClick={(event) => {
 						event.stopPropagation();
 						onToggle(node.chartId);
+					}}
+					onKeyDown={(event) => {
+						if (event.key === 'Enter' || event.key === ' ') {
+							event.preventDefault();
+							event.stopPropagation();
+							onToggle(node.chartId);
+						}
 					}}>
 					<circle r={11} fill="#ffffff" stroke="#d4d4d8" strokeWidth={1} />
 					<line

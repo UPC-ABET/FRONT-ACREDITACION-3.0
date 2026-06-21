@@ -225,11 +225,12 @@ export function SidebarItem({
 	};
 
 	return (
-		<div
+		<button
+			type="button"
 			onClick={onClick}
 			title={!open ? label : undefined}
 			className={cn(
-				'relative flex items-center px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
+				'relative w-full text-left flex items-center px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
 				hasIcon ? 'gap-3' : 'gap-0',
 				active
 					? 'bg-[linear-gradient(135deg,rgba(200,16,46,1)_0%,rgba(180,10,36,1)_100%)] shadow-[0_4px_12px_rgba(200,16,46,0.4),inset_0_1px_0_rgba(255,255,255,0.15)]'
@@ -282,7 +283,7 @@ export function SidebarItem({
 					)}
 				</>
 			)}
-		</div>
+		</button>
 	);
 }
 
@@ -314,12 +315,14 @@ export function SidebarNavGroup({
 
 	return (
 		<div>
-			<div
+			<button
+				type="button"
 				onClick={() => {
 					if (open) setExpanded((p) => !p);
 				}}
+				aria-expanded={open ? expanded : undefined}
 				className={cn(
-					'relative flex items-center gap-3 px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
+					'relative w-full text-left flex items-center gap-3 px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
 					active ? 'bg-red-500/10' : 'hover:bg-zinc-800/70',
 				)}>
 				{active && (
@@ -364,7 +367,7 @@ export function SidebarNavGroup({
 						/>
 					</>
 				)}
-			</div>
+			</button>
 
 			{open && (
 				<div
