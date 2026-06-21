@@ -9,5 +9,5 @@ export default function PPPPage() {
 }
 
 export const metadata = {
-	title: 'PPP — Prácticas Pre-Profesionales | ABET',
+	title: 'PPP — Pre-Professional Internships | ABET',
 };

@@ -9,5 +9,5 @@ export default function GRAPage() {
 }
 
 export const metadata = {
-	title: 'GRA — Encuestas de Graduandos | ABET',
+	title: 'GRA — Graduating Students Surveys | ABET',
 };

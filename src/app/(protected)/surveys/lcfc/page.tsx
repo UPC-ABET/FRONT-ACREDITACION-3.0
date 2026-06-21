@@ -9,5 +9,5 @@ export default function LCFCPage() {
 }
 
 export const metadata = {
-	title: 'LCFC — Logro de Fin de Ciclo | ABET',
+	title: 'LCFC — End of Cycle Achievement | ABET',
 };
