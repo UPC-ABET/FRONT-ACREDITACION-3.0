@@ -1,9 +1,12 @@
 'use client';
 
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
 
 export function useQualificationStatusTypes() {
-	const { data: typeGroups = [], isLoading: isLoadingGroup } = useTypeGroups({ code: 'TG404' });
+	const { data: typeGroups = [], isLoading: isLoadingGroup } = useTypeGroups({
+		code: TYPE_GROUP_CODES.QUALIFICATION_STATUS,
+	});
 
 	const typeGroupId = typeGroups[0]?.id ?? null;
 
