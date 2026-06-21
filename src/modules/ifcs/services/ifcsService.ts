@@ -26,13 +26,16 @@ export async function listIFCs(chartIds: number[]): Promise<IFCRow[]> {
 export async function getIFCView(id: number): Promise<IFCViewPayload> {
 	const envelope = await apiGet<ApiResponse<unknown>>(`/ifcs/get-by-id/${id}`);
 	if (!envelope?.data) throw new ApiError('ifcs.error.viewFailed');
+	// Schema is a partial runtime guard (coerces ids, defaults arrays) and passes the
+	// rest of the rich payload through untyped, so its inferred type cannot model the
+	// full IFCViewPayload — the unknown bridge is required.
 	return ifcViewPayloadSchema.parse(envelope.data) as unknown as IFCViewPayload;
 }
 
 export async function submitIFC(id: number): Promise<SubmitResult> {
 	const envelope = await apiPost<ApiResponse<unknown>>(`/ifcs/${id}/submit`);
 	if (!envelope?.data) throw new ApiError('ifcs.error.submitFailed');
-	return submitResultSchema.parse(envelope.data) as unknown as SubmitResult;
+	return submitResultSchema.parse(envelope.data) as SubmitResult;
 }
 
 export async function approveIFC(id: number): Promise<void> {
@@ -46,6 +49,8 @@ export async function rejectIFC(id: number, comment: RejectIFCBody['comment']): 
 export async function getIFCPrefill(chartId: number): Promise<IFCPrefill> {
 	const envelope = await apiGet<ApiResponse<IFCPrefill>>(`/ifcs/prefill?chartId=${chartId}`);
 	if (!envelope?.data) throw new ApiError('ifcs.error.prefillFailed');
+	// Schema only validates/coerces ids and passes the remaining PreviousAction fields
+	// through untyped, so the unknown bridge is required.
 	envelope.data.previousActions = previousActionsSchema.parse(
 		envelope.data.previousActions,
 	) as unknown as IFCPrefill['previousActions'];
@@ -53,7 +58,7 @@ export async function getIFCPrefill(chartId: number): Promise<IFCPrefill> {
 }
 
 function parseSaveResult(data: unknown): SubmitResult {
-	return submitResultSchema.parse(data) as unknown as SubmitResult;
+	return submitResultSchema.parse(data) as SubmitResult;
 }
 
 export async function createIFC(payload: CreateIFCBody): Promise<SubmitResult> {
