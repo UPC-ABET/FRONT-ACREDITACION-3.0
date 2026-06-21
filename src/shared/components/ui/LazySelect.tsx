@@ -7,6 +7,7 @@ import SelectBase, {
 	type SingleValue,
 } from 'react-select';
 import { useI18n } from '@/providers';
+import { logger } from '@/shared/lib/logger';
 
 export type LazyPageResult<T> = { items: T[]; totalPages: number };
 export type LazySelectValue = { id: number; label: string };
@@ -85,7 +86,8 @@ export function LazySelect<T>({
 				setOptions((prev) => (append ? [...prev, ...mapped] : mapped));
 				setPage(nextPage);
 				setTotalPages(result.totalPages);
-			} catch {
+			} catch (err) {
+				logger.warn('[LazySelect] failed to load options:', err);
 				if (requestId === requestIdRef.current && !append) setOptions([]);
 			} finally {
 				if (requestId === requestIdRef.current) setLoading(false);

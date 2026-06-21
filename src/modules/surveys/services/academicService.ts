@@ -24,7 +24,8 @@ export async function getAcademicPeriods(): Promise<AcademicPeriod[]> {
 			name: adaptDisplayName(raw),
 			code: raw.code ?? raw.codigo,
 		}));
-	} catch {
+	} catch (err) {
+		logger.warn('[getAcademicPeriods] failed to fetch academic periods:', err);
 		return [];
 	}
 }
@@ -37,7 +38,8 @@ export async function getPrograms(): Promise<Program[]> {
 			name: adaptDisplayName(raw),
 			code: raw.code ?? raw.codigo,
 		}));
-	} catch {
+	} catch (err) {
+		logger.warn('[getPrograms] failed to fetch programs:', err);
 		return [];
 	}
 }

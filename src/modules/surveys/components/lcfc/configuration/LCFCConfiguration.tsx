@@ -5,6 +5,7 @@ import { Button, DataTable, Toast } from '@/shared/components';
 import { SparklesIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
+import { logger } from '@/shared/lib/logger';
 import { useLCFCConfiguration, useLCFCAvailableSections } from '../../../hooks';
 import { getLCFCSectionCommissions, setLCFCDeadline } from '../../../services';
 import type { LCFCCourse, LCFCSectionCommission } from '../../../types';
@@ -219,7 +220,10 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 						setSelectedCommissionId(preferred.commissionId);
 					else if (commissions.length === 1) setSelectedCommissionId(commissions[0].commissionId);
 				})
-				.catch(() => setSectionCommissions([]))
+				.catch((err) => {
+					logger.warn('[LCFCConfiguration] failed to load section commissions:', err);
+					setSectionCommissions([]);
+				})
 				.finally(() => setLoadingCommissions(false));
 		}
 	}
