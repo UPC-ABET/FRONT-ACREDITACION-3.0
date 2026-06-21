@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { rubricQuestionSchema } from './question.schema';
+import { rubricQuestionSchema } from './questionSchema';
 
 export const createRubricFullSchema = z.object({
 	rubricTypeId: z.number(),

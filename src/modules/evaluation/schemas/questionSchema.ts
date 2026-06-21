@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { rubricCriteriaSchema } from './criteria.schema';
+import { rubricCriteriaSchema } from './criteriaSchema';
 
 export const rubricQuestionSchema = z.object({
 	outcomeId: z.number().nullable().optional(),
