@@ -18,7 +18,11 @@ function PageHeader({ title, description, action, className }: PageHeaderProps) 
 				className,
 			)}>
 			<div>
-				<Title title={title} className="[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-zinc-900" />
+				<Title
+					title={title}
+					as="h1"
+					className="[&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-zinc-900"
+				/>
 				{description && (
 					<SubTitle
 						name={description}

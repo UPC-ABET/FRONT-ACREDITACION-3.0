@@ -5,6 +5,7 @@ interface TitleProps {
 	title: string;
 	icon?: React.ReactNode;
 	className?: string;
+	as?: 'h1' | 'h2';
 }
 
 interface SubTitleProps {
@@ -13,11 +14,11 @@ interface SubTitleProps {
 	className?: string;
 }
 
-export const Title = ({ title, icon = null, className = '' }: TitleProps) => {
+export const Title = ({ title, icon = null, className = '', as: Heading = 'h2' }: TitleProps) => {
 	return (
 		<div className={`flex items-center ${className}`}>
 			{icon}
-			<h2 className="text-2xl font-semibold text-gray-900">{title}</h2>
+			<Heading className="text-2xl font-semibold text-gray-900">{title}</Heading>
 		</div>
 	);
 };
