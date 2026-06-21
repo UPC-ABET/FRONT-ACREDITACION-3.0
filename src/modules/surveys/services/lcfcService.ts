@@ -19,46 +19,12 @@ import type {
 	LCFCSectionOutcome,
 	LCFCSectionCommission,
 	LCFCStudentSurveys,
+	GenerateConfigResult,
+	CloneConfigResult,
+	BackendLcfcConfig,
+	BackendGenerateResult,
 } from '../types';
 import type { I18nText } from '@/shared/types';
-
-interface BackendLcfcConfig {
-	id: number;
-	outcomeId: number;
-	userOutcomeName?: string | I18nText;
-	userOutcomeDescription?: string | I18nText;
-	isActive: boolean;
-	extra?: {
-		surveyType?: string;
-		courseSectionId?: number;
-		courseId?: number;
-		courseName?: string | I18nText;
-		sectionCode?: string;
-		academicPeriodId?: number;
-		programId?: number;
-		campusId?: number;
-		maxRegisterDate?: string;
-		commissionId?: number;
-	};
-}
-
-interface BackendGenerateResult {
-	created: number;
-	skipped: number;
-	configs: Array<BackendLcfcConfig & { _status: 'created' | 'skipped' }>;
-}
-
-export interface GenerateConfigResult {
-	created: number;
-	skipped: number;
-}
-
-export interface CloneConfigResult {
-	generated: number;
-	skipped: number;
-	statusCopied: number;
-	sourcePeriodId: number;
-}
 
 function toI18nText(value: string | I18nText | undefined): I18nText {
 	if (value == null) return { es: '', en: '' };

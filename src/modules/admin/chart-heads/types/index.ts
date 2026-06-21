@@ -108,3 +108,25 @@ export interface ChartHeadsFormErrors {
 	dean?: HeadFormErrors;
 	directors: Record<string, DirectorFormErrors>;
 }
+
+export interface RawLinkedStaff {
+	id: number;
+	code?: string | null;
+	firstName?: string;
+	lastName?: string;
+}
+
+export interface RawUser {
+	id: number | string;
+	name?: string;
+	firstName?: string;
+	lastName?: string;
+	email?: string;
+	staff?: RawLinkedStaff | null;
+}
+
+export interface RawSchool {
+	id: number | string;
+	code: string;
+	name: string | I18nText;
+}

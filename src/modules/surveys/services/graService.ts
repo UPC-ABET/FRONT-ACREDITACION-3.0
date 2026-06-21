@@ -23,6 +23,11 @@ import type {
 	DashboardResponse,
 	PerformanceLevel,
 	MassiveUploadResult,
+	BackendGraConfig,
+	BackendGraStudent,
+	BackendStudent,
+	BackendEmailTemplate,
+	BackendUploadResult,
 } from '../types';
 
 /** Coerce an I18nText ({ es, en }) or plain string to a display string (prefers Spanish). */
@@ -34,67 +39,6 @@ function toText(value: unknown): string {
 		if (typeof picked === 'string') return picked;
 	}
 	return '';
-}
-
-interface BackendGraConfig {
-	id: number;
-	outcomeId: number;
-	isActive: boolean;
-	isVisible?: boolean;
-	extra?: {
-		surveyType?: string;
-		nameEs?: string;
-		nameEn?: string;
-		descriptionEs?: string;
-		descriptionEn?: string;
-		order?: number;
-		programId?: number;
-		academicPeriodId?: number;
-		commissionId?: number;
-		isExternal?: boolean;
-	};
-	userOutcomeName?: string;
-}
-
-interface BackendGraStudent {
-	notificationId: number;
-	studentId: number;
-	studentCode: string;
-	studentName: string;
-	studentEmail?: string;
-	programId?: number;
-	campusId?: number;
-	status: string;
-	sendDate?: string;
-	responseStatus?: string;
-	responseDate?: string;
-	maxRegisterDate?: string;
-	surveyId?: number;
-}
-
-interface BackendStudent {
-	id: number;
-	code?: string;
-	studentCode?: string;
-	name?: string | { es?: string; en?: string };
-	fullName?: string;
-	email?: string;
-	programName?: string;
-	programId?: number;
-}
-
-interface BackendEmailTemplate {
-	code?: string;
-	name?: string | { es?: string; en?: string };
-	subject?: string | { es?: string; en?: string };
-	body?: string | { es?: string; en?: string };
-}
-
-interface BackendUploadResult {
-	total?: number;
-	success?: number;
-	failed?: number;
-	errors?: Array<{ row?: number; code?: string; reason?: string; message?: string }>;
 }
 
 function localized(value: string | { es?: string; en?: string } | undefined, lang = 'es'): string {

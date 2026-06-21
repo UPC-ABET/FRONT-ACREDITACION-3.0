@@ -8,9 +8,9 @@ import { courseOutcomeMappingFiltersService } from '../services/courseOutcomeMap
 import {
 	courseOutcomeMappingMaintenanceService,
 	courseOutcomeMappingsService,
-	type CourseOutcomeMappingFilters,
 } from '../services/courseOutcomeMappingsService';
 import type {
+	CourseOutcomeMappingFilters,
 	AccreditorOption,
 	CommissionOption,
 	CourseOutcomeMappingBulkSave,

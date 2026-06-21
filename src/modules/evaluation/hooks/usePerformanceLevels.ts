@@ -1,12 +1,12 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-	performanceLevelsService,
-	type FilterPerformanceLevelDto,
-	type CreatePerformanceLevelDto,
-	type UpdatePerformanceLevelDto,
-} from '@/modules/academic/services';
+import { performanceLevelsService } from '@/modules/academic/services';
+import type {
+	FilterPerformanceLevelDto,
+	CreatePerformanceLevelDto,
+	UpdatePerformanceLevelDto,
+} from '@/modules/academic/types';
 import { academicQueryKeys } from '@/modules/academic/hooks';
 
 export function usePerformanceLevels(

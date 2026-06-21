@@ -12,6 +12,7 @@ import { logger } from '@/shared/lib/logger';
 import { getSurveyTypeId } from './academicService';
 import { performanceLevelsService } from '@/modules/academic';
 import type { PerformanceLevelResponse } from '@/modules/academic/types';
+import type { ProgramOutcome, I18nOrString } from '../types';
 import type {
 	CompetenceConfig,
 	CompetenceFormData,
@@ -19,34 +20,9 @@ import type {
 	DashboardResponse,
 	MassiveUploadResult,
 	PPPNotificationSendRequest,
+	BackendPppConfig,
+	BackendUploadResult,
 } from '../types';
-
-interface BackendPppConfig {
-	id: number;
-	outcomeId: number;
-	isActive: boolean;
-	isVisible?: boolean;
-	extra?: {
-		surveyType?: string;
-		nameEs?: string;
-		nameEn?: string;
-		descriptionEs?: string;
-		descriptionEn?: string;
-		order?: number;
-		programId?: number;
-		academicPeriodId?: number;
-		isExternal?: boolean;
-	};
-	userOutcomeName?: string;
-	outcomeCode?: string;
-}
-
-interface BackendUploadResult {
-	total?: number;
-	success?: number;
-	failed?: number;
-	errors?: Array<{ row?: number; code?: string; reason?: string; message?: string }>;
-}
 
 function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 	const extra = raw.extra ?? {};
@@ -122,15 +98,6 @@ export async function listPPPCompetences(
 	});
 	const list = getApiData<BackendPppConfig[]>(res) ?? [];
 	return list.map((c) => adaptPppConfig(c));
-}
-
-type I18nOrString = string | { es?: string; en?: string } | null | undefined;
-
-export interface ProgramOutcome {
-	outcomeId: number;
-	outcomeCode: string;
-	outcomeName: I18nOrString;
-	outcomeDescription?: I18nOrString;
 }
 
 // The outcomes endpoint returns the raw jsonb name/description ({ es, en }); fall

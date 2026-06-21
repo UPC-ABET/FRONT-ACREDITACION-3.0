@@ -4,14 +4,13 @@ import type {
 	ChartNode,
 	ChartUpdatePayload,
 	CourseLookupItem,
+	LookupParams,
 	PaginatedResult,
 	ProgramItem,
 	StaffLookupItem,
 } from '../types';
 
 const BASE = '/charts/maintenance';
-
-type LookupParams = { search?: string; page?: number; pageSize?: number };
 
 function buildLookupQuery(params: LookupParams): string {
 	const query = new URLSearchParams();

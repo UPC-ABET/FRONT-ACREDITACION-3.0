@@ -24,3 +24,20 @@ export type TypeGroupResponse = {
 	name: { en: string; es: string };
 	description: { en: string; es: string };
 };
+
+export interface TypeOption {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+	description: Record<string, string>;
+	extra?: Record<string, unknown>;
+}
+
+export interface ParameterRow<T> {
+	id: number;
+	code: string;
+	value: T;
+	name: Record<string, string>;
+	description: Record<string, string>;
+	isActive: boolean;
+}

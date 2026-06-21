@@ -5,6 +5,9 @@ import type {
 	SurveyCommissionGroup,
 	SurveySubmitRequest,
 	SurveySubmitResponse,
+	BackendTokenValidation,
+	BackendOutcome,
+	BackendOutcomesPayload,
 } from '../types';
 
 const LANG = 'es-PE';
@@ -23,54 +26,6 @@ function toText(value: unknown): string {
 		if (typeof picked === 'string') return picked;
 	}
 	return '';
-}
-
-interface BackendTokenValidation {
-	surveyId?: number;
-	surveyStatus?: string;
-	studentId?: number;
-	studentCode?: string;
-	studentName?: string;
-	studentEmail?: string;
-	programId?: number;
-	programName?: string;
-	campusId?: number;
-	courseSectionId?: number;
-	courseName?: string;
-	courseCode?: string;
-	academicPeriod?: string;
-	period?: string;
-	school?: string;
-	schoolName?: string;
-	isCompleted?: boolean;
-	completed?: boolean;
-}
-
-interface BackendOutcome {
-	outcomeConfigId?: number;
-	outcomeId?: number;
-	commissionId?: number;
-	commissionName?: string;
-	code?: string;
-	name?: string;
-	specificCompetence?: string;
-	generalCompetence?: string;
-	description?: string;
-	order?: number;
-}
-
-interface BackendOutcomesPayload {
-	school?: string;
-	schoolName?: string;
-	programName?: string;
-	period?: string;
-	courseName?: string;
-	courseCode?: string;
-	surveyId?: number;
-	items?: BackendOutcome[];
-	outcomes?: BackendOutcome[];
-	scores?: BackendOutcome[];
-	list?: BackendOutcome[];
 }
 
 function adaptTokenVerification(

@@ -1,13 +1,6 @@
 import { apiGetBlobResponse } from '@/shared/lib/apiClient';
 import { resolveDownloadFileName, triggerBlobDownload } from '@/shared/lib/fileDownload';
-
-// The four upload-ready Excels the backend builds from the raw scrape data
-// (see BACK scraping-exports module). Each maps to a GET endpoint that streams an .xlsx.
-export type ScrapingExportKind =
-	| 'docentes'
-	| 'secciones'
-	| 'alumnosMatriculados'
-	| 'alumnosSecciones';
+import type { ScrapingExportKind } from '../types';
 
 const EXPORTS: Record<ScrapingExportKind, { path: string; fallbackFileName: string }> = {
 	docentes: { path: '/scraping/exports/docentes', fallbackFileName: 'Docentes.xlsx' },

@@ -1,14 +1,11 @@
 import { ApiResponse } from '@/shared';
 import { apiDelete, apiPost, apiPut, apiPatch } from '@/shared/lib';
-import type { StudyPlanCourseCreate, StudyPlanCourseCreatedRow } from '../types';
+import type {
+	StudyPlanCourseCreate,
+	StudyPlanCourseCreatedRow,
+	StudyPlanCourseFilters,
+} from '../types';
 import { StudyPlanCourseResponse } from '../types';
-
-export type StudyPlanCourseFilters = {
-	programId?: number;
-	courseId?: number;
-	isActive?: boolean;
-	extra?: Record<string, unknown>;
-};
 
 export const studyPlanCoursesService = {
 	getByFilters(filters: StudyPlanCourseFilters): Promise<ApiResponse<StudyPlanCourseResponse[]>> {

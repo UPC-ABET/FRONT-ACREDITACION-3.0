@@ -540,3 +540,35 @@ export type CourseOutcomeMappingBulkSave = {
 	programCommissionId: number;
 	courses: CourseOutcomeMappingBulkSaveCourse[];
 };
+
+export type FilterPerformanceLevelDto = Partial<{
+	isActive: boolean;
+	academicPeriodId: number;
+	instrumentTypeId: number;
+}>;
+
+export type CreatePerformanceLevelDto = {
+	instrumentTypeId: number;
+	academicPeriodId: number;
+	name: { es: string; en: string };
+	code: string;
+	uniqueValue: number;
+	minScore: number;
+	maxScore: number;
+	maxValue: number;
+	extra?: { color?: string };
+};
+
+export type UpdatePerformanceLevelDto = Partial<CreatePerformanceLevelDto>;
+
+export type StudyPlanCourseFilters = {
+	programId?: number;
+	courseId?: number;
+	isActive?: boolean;
+	extra?: Record<string, unknown>;
+};
+
+export type CourseOutcomeMappingFilters = {
+	studyPlanCourseId?: number;
+	isActive?: boolean;
+};

@@ -5,12 +5,8 @@ import type {
 	CourseOutcomeMappingBulkSave,
 	CourseOutcomeMappingResponse,
 	CourseOutcomeMappingView,
+	CourseOutcomeMappingFilters,
 } from '../types';
-
-export type CourseOutcomeMappingFilters = {
-	studyPlanCourseId?: number;
-	isActive?: boolean;
-};
 
 export const courseOutcomeMappingsService = {
 	getByFilters(

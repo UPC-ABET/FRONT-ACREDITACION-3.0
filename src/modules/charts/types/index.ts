@@ -66,3 +66,5 @@ export type PaginatedResult<T> = {
 	page: number;
 	pageSize: number;
 };
+
+export type LookupParams = { search?: string; page?: number; pageSize?: number };

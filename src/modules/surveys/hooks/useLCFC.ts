@@ -23,10 +23,8 @@ import {
 	getLCFCEmailParams,
 	sendLCFCNotification,
 	generateLCFCPerceptionReport,
-	type GenerateConfigResult,
-	type CloneConfigResult,
 } from '../services';
-import type { AvailableSection } from '../types';
+import type { AvailableSection, GenerateConfigResult, CloneConfigResult } from '../types';
 
 export function useLCFCCycles() {
 	const { periods, loading, error, load: _load } = useLCFCPeriods();

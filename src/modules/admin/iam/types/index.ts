@@ -172,3 +172,23 @@ export interface TypeFormErrors {
 	route?: string;
 	module?: string;
 }
+
+export interface RawStaff {
+	id: number;
+	code: string | null;
+	firstName: string;
+	lastName: string;
+}
+
+export type RawUser = Omit<IamUser, 'linkedTeacher' | 'staffId'> & {
+	staff?: RawStaff | null;
+	staffId?: number | null;
+};
+
+export interface RawUserList {
+	items: RawUser[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+}

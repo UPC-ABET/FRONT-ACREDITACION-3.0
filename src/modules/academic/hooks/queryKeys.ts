@@ -1,7 +1,9 @@
-import type { StudyPlanCourseFilters } from '../services/studyPlanCoursesService';
-import type { CourseOutcomeMappingFilters } from '../services/courseOutcomeMappingsService';
-import type { FilterPerformanceLevelDto } from '../services/performanceLevelsService';
-import type { CourseOutcomeMappingFilter } from '../types';
+import type {
+	StudyPlanCourseFilters,
+	CourseOutcomeMappingFilters,
+	FilterPerformanceLevelDto,
+	CourseOutcomeMappingFilter,
+} from '../types';
 
 export const academicQueryKeys = {
 	all: ['academic'] as const,

@@ -1,17 +1,6 @@
 import { apiGet } from '@/shared/lib';
 import { logger } from '@/shared/lib/logger';
-import type { AcademicPeriod, Program } from '../types';
-
-interface BackendEntity {
-	id: number;
-	code?: string;
-	codigo?: string;
-	name?: string | { es?: string; en?: string };
-	nombre?: string;
-	isActive?: boolean;
-}
-
-type Envelope<T> = T[] | { data?: T[] };
+import type { AcademicPeriod, Program, BackendEntity, Envelope } from '../types';
 
 function unwrapList<T>(res: Envelope<T>): T[] {
 	return Array.isArray(res) ? res : (res.data ?? []);

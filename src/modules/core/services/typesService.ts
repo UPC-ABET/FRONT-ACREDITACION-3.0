@@ -1,23 +1,10 @@
 import { ApiResponse } from '@/shared';
 import { apiDelete, apiGet, apiPatch, apiPost } from '@/shared/lib';
 import { ApiError } from '@/shared/lib/apiError';
-
-export interface TypeOption {
-	id: number;
-	code: string;
-	name: { es: string; en: string };
-	description: Record<string, string>;
-	extra?: Record<string, unknown>;
-}
-
-interface Envelope<T> {
-	code: number;
-	message: string;
-	data: T;
-}
+import type { TypeOption } from '../types';
 
 export async function getTypesByGroupCode(groupCode: string): Promise<TypeOption[]> {
-	const envelope = await apiGet<Envelope<TypeOption[]>>(
+	const envelope = await apiGet<ApiResponse<TypeOption[]>>(
 		`/types/by-group-code/${encodeURIComponent(groupCode)}`,
 	);
 	if (!envelope?.data) throw new ApiError('types.error.byGroupFailed');

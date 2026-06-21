@@ -1,12 +1,6 @@
 import { apiGet, getApiData } from '@/shared/lib/apiClient';
 import type { I18nText } from '@/shared/types';
-import type { SchoolOption } from '../types';
-
-interface RawSchool {
-	id: number | string;
-	code: string;
-	name: string | I18nText;
-}
+import type { RawSchool, SchoolOption } from '../types';
 
 function resolveName(name: string | I18nText): string {
 	if (typeof name === 'string') return name;

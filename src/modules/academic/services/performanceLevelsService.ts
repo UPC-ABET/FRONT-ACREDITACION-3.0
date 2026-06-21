@@ -1,26 +1,11 @@
 import { ApiResponse } from '@/shared';
-import { PerformanceLevelResponse } from '../types';
 import { apiPost, apiPut, apiDelete } from '@/shared/lib';
-
-export type FilterPerformanceLevelDto = Partial<{
-	isActive: boolean;
-	academicPeriodId: number;
-	instrumentTypeId: number;
-}>;
-
-export type CreatePerformanceLevelDto = {
-	instrumentTypeId: number;
-	academicPeriodId: number;
-	name: { es: string; en: string };
-	code: string;
-	uniqueValue: number;
-	minScore: number;
-	maxScore: number;
-	maxValue: number;
-	extra?: { color?: string };
-};
-
-export type UpdatePerformanceLevelDto = Partial<CreatePerformanceLevelDto>;
+import type {
+	PerformanceLevelResponse,
+	FilterPerformanceLevelDto,
+	CreatePerformanceLevelDto,
+	UpdatePerformanceLevelDto,
+} from '../types';
 
 export const performanceLevelsService = {
 	getByFilters(

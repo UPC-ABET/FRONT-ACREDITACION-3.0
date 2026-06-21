@@ -286,3 +286,12 @@ export interface SubmitResult {
 	id: number;
 	notification: NotifyResult;
 }
+
+export interface RawIfcSchool {
+	id: number | string;
+	code: string;
+	name: I18nText;
+	facultyId?: number;
+	facultyCode?: string | null;
+	facultyName?: I18nText | null;
+}

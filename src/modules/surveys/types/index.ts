@@ -359,3 +359,190 @@ export interface SurveyApiResponse<T = unknown> {
 	};
 	message?: string;
 }
+
+export type I18nOrString = string | { es?: string; en?: string } | null | undefined;
+
+export interface ProgramOutcome {
+	outcomeId: number;
+	outcomeCode: string;
+	outcomeName: I18nOrString;
+	outcomeDescription?: I18nOrString;
+}
+
+export interface GenerateConfigResult {
+	created: number;
+	skipped: number;
+}
+
+export interface CloneConfigResult {
+	generated: number;
+	skipped: number;
+	statusCopied: number;
+	sourcePeriodId: number;
+}
+
+export interface BackendTokenValidation {
+	surveyId?: number;
+	surveyStatus?: string;
+	studentId?: number;
+	studentCode?: string;
+	studentName?: string;
+	studentEmail?: string;
+	programId?: number;
+	programName?: string;
+	campusId?: number;
+	courseSectionId?: number;
+	courseName?: string;
+	courseCode?: string;
+	academicPeriod?: string;
+	period?: string;
+	school?: string;
+	schoolName?: string;
+	isCompleted?: boolean;
+	completed?: boolean;
+}
+
+export interface BackendOutcome {
+	outcomeConfigId?: number;
+	outcomeId?: number;
+	commissionId?: number;
+	commissionName?: string;
+	code?: string;
+	name?: string;
+	specificCompetence?: string;
+	generalCompetence?: string;
+	description?: string;
+	order?: number;
+}
+
+export interface BackendOutcomesPayload {
+	school?: string;
+	schoolName?: string;
+	programName?: string;
+	period?: string;
+	courseName?: string;
+	courseCode?: string;
+	surveyId?: number;
+	items?: BackendOutcome[];
+	outcomes?: BackendOutcome[];
+	scores?: BackendOutcome[];
+	list?: BackendOutcome[];
+}
+
+export interface BackendPppConfig {
+	id: number;
+	outcomeId: number;
+	isActive: boolean;
+	isVisible?: boolean;
+	extra?: {
+		surveyType?: string;
+		nameEs?: string;
+		nameEn?: string;
+		descriptionEs?: string;
+		descriptionEn?: string;
+		order?: number;
+		programId?: number;
+		academicPeriodId?: number;
+		isExternal?: boolean;
+	};
+	userOutcomeName?: string;
+	outcomeCode?: string;
+}
+
+export interface BackendUploadResult {
+	total?: number;
+	success?: number;
+	failed?: number;
+	errors?: Array<{ row?: number; code?: string; reason?: string; message?: string }>;
+}
+
+export interface BackendLcfcConfig {
+	id: number;
+	outcomeId: number;
+	userOutcomeName?: string | I18nText;
+	userOutcomeDescription?: string | I18nText;
+	isActive: boolean;
+	extra?: {
+		surveyType?: string;
+		courseSectionId?: number;
+		courseId?: number;
+		courseName?: string | I18nText;
+		sectionCode?: string;
+		academicPeriodId?: number;
+		programId?: number;
+		campusId?: number;
+		maxRegisterDate?: string;
+		commissionId?: number;
+	};
+}
+
+export interface BackendGenerateResult {
+	created: number;
+	skipped: number;
+	configs: Array<BackendLcfcConfig & { _status: 'created' | 'skipped' }>;
+}
+
+export interface BackendGraConfig {
+	id: number;
+	outcomeId: number;
+	isActive: boolean;
+	isVisible?: boolean;
+	extra?: {
+		surveyType?: string;
+		nameEs?: string;
+		nameEn?: string;
+		descriptionEs?: string;
+		descriptionEn?: string;
+		order?: number;
+		programId?: number;
+		academicPeriodId?: number;
+		commissionId?: number;
+		isExternal?: boolean;
+	};
+	userOutcomeName?: string;
+}
+
+export interface BackendGraStudent {
+	notificationId: number;
+	studentId: number;
+	studentCode: string;
+	studentName: string;
+	studentEmail?: string;
+	programId?: number;
+	campusId?: number;
+	status: string;
+	sendDate?: string;
+	responseStatus?: string;
+	responseDate?: string;
+	maxRegisterDate?: string;
+	surveyId?: number;
+}
+
+export interface BackendStudent {
+	id: number;
+	code?: string;
+	studentCode?: string;
+	name?: string | { es?: string; en?: string };
+	fullName?: string;
+	email?: string;
+	programName?: string;
+	programId?: number;
+}
+
+export interface BackendEmailTemplate {
+	code?: string;
+	name?: string | { es?: string; en?: string };
+	subject?: string | { es?: string; en?: string };
+	body?: string | { es?: string; en?: string };
+}
+
+export interface BackendEntity {
+	id: number;
+	code?: string;
+	codigo?: string;
+	name?: string | { es?: string; en?: string };
+	nombre?: string;
+	isActive?: boolean;
+}
+
+export type Envelope<T> = T[] | { data?: T[] };

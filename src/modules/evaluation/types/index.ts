@@ -419,3 +419,32 @@ export type GetRubricByIdResponse = {
 	questions: Array<RubricQuestionResponse>;
 	isUsed: boolean;
 };
+
+export type RubricTypeResolution = {
+	id: number;
+	code: string;
+	name: { es: string; en: string };
+};
+
+export interface CreateEvaluationPayload {
+	projectStudentId: number;
+	projectEvaluatorId: number;
+	rubricId?: number;
+	observation?: { es: string; en: string };
+	scores?: Array<{ rubricQuestionCriteriaId: number; score: number }>;
+	qualificationStatusTypeId?: number | null;
+}
+
+export interface UpdateEvaluationPayload {
+	observation?: { es: string; en: string };
+	scores?: Array<{ rubricQuestionCriteriaId: number; score: number }>;
+	qualificationStatusTypeId?: number | null;
+}
+
+export interface EvaluationFilters {
+	projectStudentId?: number;
+	projectEvaluatorId?: number;
+	rubricId?: number;
+	qualificationStatusTypeId?: number;
+	isActive?: boolean;
+}

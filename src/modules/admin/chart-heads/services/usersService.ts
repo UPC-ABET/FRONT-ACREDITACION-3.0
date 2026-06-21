@@ -1,21 +1,5 @@
 import { apiGet, getApiData } from '@/shared/lib/apiClient';
-import type { UserOption } from '../types';
-
-interface RawLinkedStaff {
-	id: number;
-	code?: string | null;
-	firstName?: string;
-	lastName?: string;
-}
-
-interface RawUser {
-	id: number | string;
-	name?: string;
-	firstName?: string;
-	lastName?: string;
-	email?: string;
-	staff?: RawLinkedStaff | null;
-}
+import type { RawUser, UserOption } from '../types';
 
 function buildLabel(user: RawUser): string {
 	const fullName = user.name ?? [user.firstName, user.lastName].filter(Boolean).join(' ').trim();

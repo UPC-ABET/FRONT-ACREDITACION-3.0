@@ -1,14 +1,9 @@
 import { apiPost, apiPut, ApiError } from '@/shared/lib';
+import { ApiResponse } from '@/shared';
 import type { ParameterRow, UpdateParameterBody } from '../types';
 
-interface Envelope<T> {
-	code: number;
-	message: string;
-	data: T;
-}
-
 export async function getParameterByFilters<T>(code: string): Promise<ParameterRow<T>> {
-	const body = await apiPost<Envelope<Array<ParameterRow<T>>>>('/parameters/get-by-filters', {
+	const body = await apiPost<ApiResponse<Array<ParameterRow<T>>>>('/parameters/get-by-filters', {
 		code,
 	});
 
@@ -23,7 +18,10 @@ export async function updateParameter<T>(
 	id: number,
 	payload: UpdateParameterBody<T>,
 ): Promise<ParameterRow<T>> {
-	const body = await apiPut<Envelope<ParameterRow<T>>>(`/parameters/update/${Number(id)}`, payload);
+	const body = await apiPut<ApiResponse<ParameterRow<T>>>(
+		`/parameters/update/${Number(id)}`,
+		payload,
+	);
 
 	if (!body?.data) throw new ApiError(body?.message ?? 'admin.params.error.saveFailed');
 	return { ...body.data, id: Number(body.data.id) };

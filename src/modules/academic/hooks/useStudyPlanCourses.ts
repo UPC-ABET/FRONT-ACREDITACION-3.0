@@ -1,10 +1,8 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-	studyPlanCoursesService,
-	type StudyPlanCourseFilters,
-} from '../services/studyPlanCoursesService';
+import { studyPlanCoursesService } from '../services/studyPlanCoursesService';
+import type { StudyPlanCourseFilters } from '../types';
 import { academicQueryKeys } from './queryKeys';
 
 export function useStudyPlanCourses(

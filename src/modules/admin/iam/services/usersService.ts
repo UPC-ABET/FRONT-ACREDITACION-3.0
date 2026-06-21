@@ -1,24 +1,14 @@
 import { apiDelete, apiGet, apiPost, apiPut, getApiData, ApiError } from '@/shared/lib';
 import type {
 	IamUser,
+	RawUser,
+	RawUserList,
 	UserCreateBody,
 	UserFilters,
 	UserListParams,
 	UserListResult,
 	UserUpdateBody,
 } from '../types';
-
-interface RawStaff {
-	id: number;
-	code: string | null;
-	firstName: string;
-	lastName: string;
-}
-
-type RawUser = Omit<IamUser, 'linkedTeacher' | 'staffId'> & {
-	staff?: RawStaff | null;
-	staffId?: number | null;
-};
 
 function normalizeUser(rawUser: RawUser): IamUser {
 	const { staff, ...user } = rawUser;
@@ -37,14 +27,6 @@ function normalizeUser(rawUser: RawUser): IamUser {
 				}
 			: null,
 	};
-}
-
-interface RawUserList {
-	items: RawUser[];
-	total: number;
-	page: number;
-	pageSize: number;
-	totalPages: number;
 }
 
 export async function listUsers(params: UserListParams): Promise<UserListResult> {

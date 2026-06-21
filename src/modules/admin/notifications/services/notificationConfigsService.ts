@@ -1,11 +1,6 @@
 import { apiGet, apiPost, apiDelete, ApiError } from '@/shared/lib';
+import { ApiResponse } from '@/shared';
 import type { NotificationConfig, UpsertConfigBody } from '../types';
-
-interface Envelope<T> {
-	code: number;
-	message: string;
-	data: T;
-}
 
 function normalizeConfig(c: NotificationConfig): NotificationConfig {
 	return {
@@ -20,7 +15,7 @@ function normalizeConfig(c: NotificationConfig): NotificationConfig {
 }
 
 export async function listNotificationConfigs(): Promise<NotificationConfig[]> {
-	const body = await apiGet<Envelope<NotificationConfig[]>>('/ifc-notification-configs/list');
+	const body = await apiGet<ApiResponse<NotificationConfig[]>>('/ifc-notification-configs/list');
 
 	if (!body?.data) throw new ApiError(body?.message ?? 'admin.notify.error.listFailed');
 	return body.data.map(normalizeConfig);
@@ -29,7 +24,7 @@ export async function listNotificationConfigs(): Promise<NotificationConfig[]> {
 export async function upsertNotificationConfig(
 	payload: UpsertConfigBody,
 ): Promise<NotificationConfig> {
-	const body = await apiPost<Envelope<NotificationConfig>>(
+	const body = await apiPost<ApiResponse<NotificationConfig>>(
 		'/ifc-notification-configs/upsert',
 		payload,
 	);
@@ -39,5 +34,5 @@ export async function upsertNotificationConfig(
 }
 
 export async function deleteNotificationConfig(id: number): Promise<void> {
-	await apiDelete<Envelope<unknown>>(`/ifc-notification-configs/${Number(id)}`);
+	await apiDelete<ApiResponse<unknown>>(`/ifc-notification-configs/${Number(id)}`);
 }

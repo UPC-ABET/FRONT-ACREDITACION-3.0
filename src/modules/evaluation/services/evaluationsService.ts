@@ -1,30 +1,12 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost, apiPut, apiDelete } from '@/shared/lib';
 import type { FinalizeEvaluationDto, SubmitEvaluationPayload } from '../types';
-import type { EvaluationResponse } from '../types';
-
-interface CreateEvaluationPayload {
-	projectStudentId: number;
-	projectEvaluatorId: number;
-	rubricId?: number;
-	observation?: { es: string; en: string };
-	scores?: Array<{ rubricQuestionCriteriaId: number; score: number }>;
-	qualificationStatusTypeId?: number | null;
-}
-
-interface UpdateEvaluationPayload {
-	observation?: { es: string; en: string };
-	scores?: Array<{ rubricQuestionCriteriaId: number; score: number }>;
-	qualificationStatusTypeId?: number | null;
-}
-
-interface EvaluationFilters {
-	projectStudentId?: number;
-	projectEvaluatorId?: number;
-	rubricId?: number;
-	qualificationStatusTypeId?: number;
-	isActive?: boolean;
-}
+import type {
+	EvaluationResponse,
+	CreateEvaluationPayload,
+	UpdateEvaluationPayload,
+	EvaluationFilters,
+} from '../types';
 
 export const evaluationsService = {
 	submit(body: SubmitEvaluationPayload): Promise<ApiResponse<EvaluationResponse>> {

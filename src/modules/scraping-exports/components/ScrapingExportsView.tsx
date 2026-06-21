@@ -5,11 +5,8 @@ import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Toast } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
 import { useI18n } from '@/providers';
-import {
-	SCRAPING_EXPORT_KINDS,
-	ScrapingExportKind,
-	downloadScrapingExport,
-} from '../services';
+import { SCRAPING_EXPORT_KINDS, downloadScrapingExport } from '../services';
+import type { ScrapingExportKind } from '../types';
 
 // "Descargas" tab of /scrapping: builds the upload-ready Excels (docentes, secciones,
 // matriculados, alumno-sección) from the latest scrape runs and downloads them. The files line up
@@ -33,9 +30,7 @@ export function ScrapingExportsView() {
 
 	return (
 		<div className="w-full space-y-4">
-			<Card
-				title={t('scraping.exports.title')}
-				description={t('scraping.exports.subtitle')}>
+			<Card title={t('scraping.exports.title')} description={t('scraping.exports.subtitle')}>
 				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 					{SCRAPING_EXPORT_KINDS.map((kind) => (
 						<div

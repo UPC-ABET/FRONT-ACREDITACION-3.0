@@ -8,13 +8,8 @@ import type {
 	UpdateRubricDto,
 	GetRubricByIdResponse,
 	RubricResponse,
+	RubricTypeResolution,
 } from '../types';
-
-export type RubricTypeResolution = {
-	id: number;
-	code: string;
-	name: { es: string; en: string };
-};
 
 export const rubricsService = {
 	getAll(params?: GetAllRubricsParams): Promise<ApiResponse<RubricResponse[]>> {
