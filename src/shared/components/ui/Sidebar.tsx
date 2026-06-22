@@ -85,7 +85,7 @@ function Sidebar({
 							: 'w-20',
 					className,
 				)}>
-				<div className="absolute top-0 left-0 right-0 h-[3px] bg-[linear-gradient(90deg,#C8102E_0%,#FF2D4E_60%,#C8102E_100%)] shadow-[0_0_12px_rgba(200,16,46,0.7)]" />
+				<div className="absolute top-0 left-0 right-0 h-[3px] bg-[linear-gradient(90deg,var(--brand)_0%,var(--brand-light)_60%,var(--brand)_100%)] shadow-[0_0_12px_var(--brand-glow)]" />
 
 				<div className="absolute inset-0 pointer-events-none opacity-[0.025] bg-sidebar-noise" />
 
@@ -109,7 +109,7 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 				'transition-all duration-300',
 				className,
 			)}>
-			<div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_120%,rgba(200,16,46,0.12)_0%,transparent_70%)]" />
+			<div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_120%,var(--brand-haze)_0%,transparent_70%)]" />
 
 			{open ? (
 				<Image
@@ -197,7 +197,7 @@ export function SidebarGroup({
 		<div className={`mt-1 ${className}`}>
 			{label && open && (
 				<div className="flex items-center gap-2 px-2.5 mb-2 mt-1">
-					<div className="w-3 h-px bg-[#C8102E] opacity-80 flex-shrink-0" />
+					<div className="w-3 h-px bg-[var(--brand)] opacity-80 flex-shrink-0" />
 					<p className="text-[9px] font-bold uppercase tracking-[0.14em] text-zinc-500">{label}</p>
 				</div>
 			)}
@@ -243,7 +243,7 @@ export function SidebarItem({
 				'relative w-full text-left flex items-center px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
 				hasIcon ? 'gap-3' : 'gap-0',
 				active
-					? 'bg-[linear-gradient(135deg,rgba(200,16,46,1)_0%,rgba(180,10,36,1)_100%)] shadow-[0_4px_12px_rgba(200,16,46,0.4),inset_0_1px_0_rgba(255,255,255,0.15)]'
+					? 'bg-[linear-gradient(135deg,var(--brand)_0%,var(--brand-dark)_100%)] shadow-[0_4px_12px_var(--brand-shadow),inset_0_1px_0_rgba(255,255,255,0.15)]'
 					: 'hover:bg-zinc-800/70',
 				className,
 			)}>

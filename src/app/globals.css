@@ -5,7 +5,12 @@
 	--background: #f9fafb; /* Un gris muy sutil (zinc-50) */
 	--foreground: #18181b; /* Un negro casi total (zinc-900) */
 	--brand: #c8102e;
+	--brand-dark: #b40a24;
+	--brand-light: #ff2d4e;
 	--brand-border: rgba(200, 16, 46, 0.15);
+	--brand-glow: rgba(200, 16, 46, 0.7);
+	--brand-haze: rgba(200, 16, 46, 0.12);
+	--brand-shadow: rgba(200, 16, 46, 0.4);
 	--login-bg: url('https://aulavirtual.upc.edu.pe/bbcswebdav/institution/Branding/New_Login/fondo-bb.jpg');
 }
 

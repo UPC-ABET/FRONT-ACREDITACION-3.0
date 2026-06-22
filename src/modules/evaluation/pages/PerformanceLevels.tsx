@@ -35,7 +35,6 @@ import {
 	useDeletePerformanceLevel,
 	usePerformanceLevelForm,
 } from '@/modules/academic/hooks';
-import { AcademicPeriodSelect } from '@/modules/academic/components';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '@/modules/academic/constants';
@@ -76,11 +75,6 @@ function PerformanceLevelForm({
 					onChange({ ...form, instrumentTypeId: opt?.value ?? 0 });
 				}}
 			/>
-			<AcademicPeriodSelect
-				value={form.academicPeriodId || null}
-				onChange={(id) => onChange({ ...form, academicPeriodId: id })}
-			/>
-
 			<Input
 				label={t('performanceLevels.form.nameEs')}
 				value={form.nameEs}
@@ -217,11 +211,11 @@ export function PerformanceLevelsPage() {
 	}
 
 	async function handleSubmit() {
-		const dto = toDto();
 		if (editingLevel) {
-			await updateMutation.mutateAsync({ id: editingLevel.id, ...dto });
+			await updateMutation.mutateAsync({ id: editingLevel.id, ...toDto() });
 		} else {
-			await createMutation.mutateAsync(dto);
+			if (academicPeriodId == null) return;
+			await createMutation.mutateAsync({ ...toDto(), academicPeriodId });
 		}
 		handleModalClose();
 	}
@@ -258,7 +252,7 @@ export function PerformanceLevelsPage() {
 	return (
 		<div className="space-y-6">
 			<div className="flex justify-end">
-				<Button variant="primary" size="md" onClick={openCreateModal}>
+				<Button variant="primary" size="md" onClick={openCreateModal} disabled={!hasPeriod}>
 					<PlusIcon className="h-4 w-4 mr-2" />
 					{t('performanceLevels.list.createButton')}
 				</Button>
