@@ -6,7 +6,7 @@
 - **Language**: TypeScript (strict mode)
 - **State/Data**: TanStack Query for server state, React context for client state
 - **Styling**: Tailwind CSS v4 (`@import "tailwindcss"`)
-- **i18n**: Custom `useI18n()` hook with locale JSON files at `src/languaje/locales/{es,en}.json`
+- **i18n**: Custom `useI18n()` hook with locale JSON files at `src/language/locales/{es,en}.json`
 - **Components**: Custom UI primitives in `src/shared/components/ui/`, some based on shadcn/ui
 
 ---
@@ -44,7 +44,7 @@ src/
 │   ├── lib/                # API client, error handling, logger, utils
 │   ├── types/              # Shared types (I18nText, ABETContextType, etc.)
 │   └── utils/              # Pure utility functions
-└── languaje/locales/       # i18n JSON files (es.json, en.json)
+└── language/locales/       # i18n JSON files (es.json, en.json)
 ```
 
 ### Module Structure
@@ -243,7 +243,7 @@ const { schoolId, modalityTypeId, academicPeriodId } = useABET();
 ## i18n
 
 - All user-visible text must use `t('key')` from `useI18n()`.
-- Locale files: `src/languaje/locales/es.json` and `src/languaje/locales/en.json`.
+- Locale files: `src/language/locales/es.json` and `src/language/locales/en.json`.
 - Error codes from the backend (like `error.ifc.notFound`) are also i18n keys — add them to both locale files.
 - Never hardcode Spanish (or English) strings in components, services, or toasts.
 - Services throw i18n keys, never localized text: `throw new ApiError('ifcs.error.createFailed')`.
@@ -319,7 +319,7 @@ Top-level pages follow one consistent shell so card usage is uniform across the 
 
 ## Git & Commits
 
-- Commit messages: concise, focused on the "why". End with `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>`.
+- Commit messages: concise, focused on the "why". Never end with `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>`.
 - Prefer new commits over amending.
 - Never force-push to main/master.
 - Never skip hooks (`--no-verify`).

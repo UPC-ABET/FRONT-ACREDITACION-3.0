@@ -24,17 +24,18 @@ src/
   modules/            # Modulos de dominio (auth, tests, etc.)
   shared/             # UI y utilidades compartidas
   providers/          # Contextos globales
-  languaje/           # i18n (json de traducciones)
+  language/           # i18n (json de traducciones)
 public/
   assets/             # Imagenes estaticas (logo, etc.)
 ```
 
 Notas:
+
 - `src/app` solo orquesta pantallas y conecta modulos (no logica de negocio compleja).
 - `src/modules` contiene logica de dominio, servicios y paginas reutilizables.
 - `src/shared` contiene UI, hooks, utils y tipos globales.
 - `src/providers` centraliza contextos globales.
-- `src/languaje` contiene los mensajes de i18n (nota: el folder se llama "languaje").
+- `src/language` contiene los mensajes de i18n.
 
 ## Rutas y layouts (App Router)
 
@@ -59,18 +60,21 @@ Notas:
 
 `LayoutClient` es el punto de composicion de providers globales y layout visual.
 
-## i18n (languaje / locales)
+## i18n (language / locales)
 
 Los mensajes viven en:
-- `src/languaje/locales/es.json`
-- `src/languaje/locales/en.json`
+
+- `src/language/locales/es.json`
+- `src/language/locales/en.json`
 
 `LocaleProvider` expone:
+
 - `locale`: `es` o `en`
 - `setLocale(nextLocale)`
 - `t('ruta.clave')`
 
 El locale se persiste en:
+
 - `localStorage` con la key `app_locale`
 - `document.documentElement.lang`
 - cookie `app_locale` (max-age 1 anio)
@@ -112,6 +116,7 @@ src/modules/<modulo>/
 ### Modulo `tests`
 
 Contiene paginas demo de UI para validar componentes compartidos:
+
 - `charts`, `tables`, `modals`, `public`
 
 ## Generator de modulos
@@ -154,6 +159,7 @@ Para `rubricas`, crea:
 ## UI compartida
 
 `src/shared/components` contiene:
+
 - Componentes base (Button, Card, Input, Select, Table, Dialogs, etc.)
 - Layout (Navbar, Sidebar)
 - `LanguageSwitcher` para cambiar idioma
@@ -165,6 +171,7 @@ Para `rubricas`, crea:
 ## Variables de entorno
 
 Actualmente se usa:
+
 - `NEXT_PUBLIC_API_URL` (generator la usa para construir URLs en services).
 
 Si agregas mas variables, documentalas aqui y mantenlas en `.env.local`.
