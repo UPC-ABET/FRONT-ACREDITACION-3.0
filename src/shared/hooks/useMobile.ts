@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 // Aligned with Tailwind: sm=640, lg=1024
 const BREAKPOINTS = {
@@ -18,25 +18,14 @@ function getScreen(): ScreenType {
 	return 'desktop';
 }
 
+function subscribe(onChange: () => void): () => void {
+	const queries = Object.values(BREAKPOINTS).map((query) => window.matchMedia(query));
+	queries.forEach((mql) => mql.addEventListener('change', onChange));
+	return () => queries.forEach((mql) => mql.removeEventListener('change', onChange));
+}
+
 export function useScreen() {
-	const [screen, setScreen] = useState<ScreenType>('desktop');
-
-	useEffect(() => {
-		setScreen(getScreen());
-
-		const queries = (Object.entries(BREAKPOINTS) as [ScreenType, string][]).map(([type, query]) => {
-			const mql = window.matchMedia(query);
-			const handler = (e: MediaQueryListEvent) => {
-				if (e.matches) setScreen(type);
-			};
-			mql.addEventListener('change', handler);
-			return { mql, handler };
-		});
-
-		return () => {
-			queries.forEach(({ mql, handler }) => mql.removeEventListener('change', handler));
-		};
-	}, []);
+	const screen = useSyncExternalStore(subscribe, getScreen, () => 'desktop' as ScreenType);
 
 	return {
 		screen,

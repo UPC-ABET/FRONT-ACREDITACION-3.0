@@ -98,6 +98,7 @@ export function IFCDashboard() {
 	const noSchools = academicPeriodId !== null && schoolSourceEmpty;
 
 	useEffect(() => {
+		/* eslint-disable react-hooks/set-state-in-effect -- reset dashboard state and bootstrap scope when the external period/school changes */
 		setSelections({});
 		setRows([]);
 		setLastSearchedChartIds(null);
@@ -108,6 +109,7 @@ export function IFCDashboard() {
 			setScope(null);
 			return;
 		}
+		/* eslint-enable react-hooks/set-state-in-effect */
 		let active = true;
 		void loadScope().then((tree) => {
 			if (!active || !tree || tree.levels.length === 0) return;

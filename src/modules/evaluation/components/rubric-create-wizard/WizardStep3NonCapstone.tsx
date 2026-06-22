@@ -107,8 +107,6 @@ function ValidationMessages({
 }
 
 export function WizardStep3NonCapstone({
-	step1,
-	step2,
 	onBack,
 	onSubmit,
 	isSubmitting,

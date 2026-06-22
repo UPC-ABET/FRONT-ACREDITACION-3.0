@@ -63,7 +63,6 @@ export function CompetenceCRUD({
 	competenceType,
 	showExternalToggle = false,
 	competences,
-	loading,
 	error,
 	onLoad,
 	onSave,

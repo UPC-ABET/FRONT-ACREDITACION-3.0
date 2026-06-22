@@ -72,13 +72,16 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 
 	// Pre-select all sections when the list loads
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- resetting the editable selection draft each time the fetched section list changes; the set is mutated afterward via toggles so it can't be a render-derived value
 		setSelectedSectionIds(new Set(availableSections.map((s) => s.courseSectionId)));
 	}, [availableSections]);
 
 	useEffect(() => {
 		if (error) {
+			/* eslint-disable react-hooks/set-state-in-effect -- syncing the hook's async error into dismissible toast state and clearing the in-flight generating flag; neither is derivable during render */
 			setGenerating(false);
 			setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
+			/* eslint-enable react-hooks/set-state-in-effect */
 		}
 	}, [error, t]);
 
@@ -91,6 +94,7 @@ export function LCFCConfiguration({ programId }: LCFCConfigurationProps) {
 		const yyyy = d.getFullYear();
 		const mm = String(d.getMonth() + 1).padStart(2, '0');
 		const dd = String(d.getDate()).padStart(2, '0');
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- seeding the editable deadline input draft from the fetched config once it loads; the field is user-editable afterward so it can't be a render-derived value
 		setDeadlineDate(`${yyyy}-${mm}-${dd}`);
 	}, [courses]);
 

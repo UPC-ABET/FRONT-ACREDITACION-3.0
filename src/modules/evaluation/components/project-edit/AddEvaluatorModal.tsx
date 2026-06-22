@@ -58,11 +58,13 @@ export function AddEvaluatorModal({
 
 	useEffect(() => {
 		if (!open) {
+			/* eslint-disable react-hooks/set-state-in-effect -- reset selection draft when the modal closes so it reopens clean */
 			setSearch('');
 			setDebouncedSearch('');
 			setSelectedProfessor(null);
 			setSelectedRoleId(null);
 			setSubmitError(null);
+			/* eslint-enable react-hooks/set-state-in-effect */
 		}
 	}, [open]);
 

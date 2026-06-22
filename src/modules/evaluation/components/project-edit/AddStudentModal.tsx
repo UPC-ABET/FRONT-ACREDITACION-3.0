@@ -48,9 +48,11 @@ export function AddStudentModal({
 
 	useEffect(() => {
 		if (!open) {
+			/* eslint-disable react-hooks/set-state-in-effect -- reset selection draft when the modal closes so it reopens clean */
 			setSearch('');
 			setSelectedStudents(new Map());
 			setSubmitError(null);
+			/* eslint-enable react-hooks/set-state-in-effect */
 		}
 	}, [open]);
 

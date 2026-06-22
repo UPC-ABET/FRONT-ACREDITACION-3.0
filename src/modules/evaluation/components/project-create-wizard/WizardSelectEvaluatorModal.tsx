@@ -45,11 +45,13 @@ export function WizardSelectEvaluatorModal({
 
 	useEffect(() => {
 		if (!open) {
+			/* eslint-disable react-hooks/set-state-in-effect -- reset selection draft when the modal closes so it reopens clean */
 			setSearch('');
 			setDebouncedSearch('');
 			setSelectedProf(null);
 			setSelectedTypeId(null);
 			setError(null);
+			/* eslint-enable react-hooks/set-state-in-effect */
 		}
 	}, [open]);
 

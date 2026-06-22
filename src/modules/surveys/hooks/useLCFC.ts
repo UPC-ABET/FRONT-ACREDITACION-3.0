@@ -29,12 +29,9 @@ import type { AvailableSection, GenerateConfigResult, CloneConfigResult } from '
 
 export function useLCFCCycles() {
 	const { periods, loading, error, load: _load } = useLCFCPeriods();
-	const load = useCallback(
-		(_modalityId?: unknown) => {
-			_load();
-		},
-		[_load],
-	);
+	const load = useCallback(() => {
+		_load();
+	}, [_load]);
 	return { cycles: periods, loading, error, load };
 }
 

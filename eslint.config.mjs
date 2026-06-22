@@ -14,16 +14,42 @@ const eslintConfig = defineConfig([
     "encuestas_anterior/**",
   ]),
   {
-    // TEMP (Next 16 / React Compiler): these rules flag idiomatic
-    // setState-in-effect, ref-in-render, and manual-memoization patterns as
-    // ERRORS, which currently blocks ~40 spots across the app. Downgraded to
-    // 'warn' so they don't block CI/deploy on a stable release.
-    // TODO (tech debt): refactor the ~38 effects (prefer react-query / derived
-    // state), then restore these to 'error' and delete this block.
+    // React Compiler / react-hooks v6 correctness rules, enforced as errors.
+    // Effects that legitimately set state (SSR mount guards, async bootstrap,
+    // external store sync) carry an inline eslint-disable with a specific reason.
     rules: {
-      "react-hooks/set-state-in-effect": "warn",
-      "react-hooks/refs": "warn",
-      "react-hooks/preserve-manual-memoization": "warn",
+      "react-hooks/set-state-in-effect": "error",
+      "react-hooks/refs": "error",
+      "react-hooks/preserve-manual-memoization": "error",
+      "react-hooks/exhaustive-deps": "error",
+      "react-hooks/incompatible-library": "error",
+    },
+  },
+  {
+    // Accessibility rules (see AGENTS.md "Accessibility"). eslint-config-next only
+    // enables the valid-ARIA subset; these add the interactive-element checks that
+    // catch missing keyboard handlers on click targets. label-has-associated-control
+    // is deliberately omitted: it can't see i18n-dynamic label text or a wrapper
+    // primitive's consumer-supplied control, so it only false-positives here.
+    rules: {
+      "jsx-a11y/click-events-have-key-events": "error",
+      "jsx-a11y/no-static-element-interactions": "error",
+      "jsx-a11y/no-noninteractive-element-interactions": "error",
+      "jsx-a11y/interactive-supports-focus": "error",
+      "jsx-a11y/mouse-events-have-key-events": "error",
+      "jsx-a11y/anchor-is-valid": "error",
+      "jsx-a11y/no-noninteractive-tabindex": "error",
+    },
+  },
+  {
+    // Full-strict: promote the remaining advisory rules from eslint-config-next to
+    // errors. Combined with `--max-warnings 0` in the lint script, the lint gate
+    // fails on any problem.
+    rules: {
+      "@typescript-eslint/no-unused-vars": "error",
+      "@typescript-eslint/no-unused-expressions": "error",
+      "@next/next/no-img-element": "error",
+      "import/no-anonymous-default-export": "error",
     },
   },
 ]);

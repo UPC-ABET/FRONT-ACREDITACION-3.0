@@ -58,6 +58,10 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
 	);
 
 	useEffect(() => {
+		// Locale init: server renders the default; on mount, reconcile with the persisted
+		// preference (localStorage) or the browser language. Neither source exists during
+		// SSR render, so this must run as a mount effect.
+		/* eslint-disable react-hooks/set-state-in-effect -- mount-only locale reconciliation */
 		if (typeof window === 'undefined') return;
 
 		const stored = window.localStorage.getItem(STORAGE_KEY) as Locale | null;
@@ -74,6 +78,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
 		document.documentElement.lang = inferred;
 		window.localStorage.setItem(STORAGE_KEY, inferred);
 		document.cookie = `${STORAGE_KEY}=${inferred}; path=/; max-age=${COOKIE_MAX_AGE}`;
+		/* eslint-enable react-hooks/set-state-in-effect */
 	}, []);
 
 	const t = useCallback((key: string) => resolveMessage(locale, key), [locale]);

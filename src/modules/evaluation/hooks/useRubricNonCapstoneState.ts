@@ -54,10 +54,13 @@ export function useRubricNonCapstoneState({
 
 	useEffect(() => {
 		const { questions: q, columnCount: c } = buildShape(rubric.questions);
+		// Re-sync local editable draft when switching between different rubrics (keyed on rubric.id).
+		/* eslint-disable react-hooks/set-state-in-effect -- reseed editable rubric draft when the target rubric changes */
 		setQuestions(q);
 		setColumnCount(c);
-		// note: Intentionally depends only on rubric.id to re-sync state when switching between different rubrics
-	}, [rubric.id]); // eslint-disable-line react-hooks/exhaustive-deps
+		/* eslint-enable react-hooks/set-state-in-effect */
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- key on rubric.id only; reseeding on every rubric.questions change would clobber in-progress edits
+	}, [rubric.id]);
 
 	const update = useCallback(
 		(next: RubricQuestion[]) => {

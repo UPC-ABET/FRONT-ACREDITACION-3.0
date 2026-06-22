@@ -72,6 +72,7 @@ export function CommissionTabs({
 									: 'border-transparent text-zinc-600 hover:border-zinc-200 hover:bg-zinc-50 hover:text-zinc-800'
 							}`}>
 							<span
+								role="presentation"
 								onClick={(event) => event.stopPropagation()}
 								onMouseDown={(event) => event.stopPropagation()}
 								onKeyDown={(event) => event.stopPropagation()}

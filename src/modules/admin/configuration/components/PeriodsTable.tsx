@@ -118,7 +118,7 @@ export default function PeriodsTable() {
 				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},
 		],
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- column defs exclude the stable row handlers; rebuild only on label/locale/modality/pending changes
 		[t, locale, modalityNameById, activate.isPending],
 	);
 

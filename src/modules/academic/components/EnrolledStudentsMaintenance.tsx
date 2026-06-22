@@ -125,6 +125,7 @@ export function EnrolledStudentsMaintenance() {
 	};
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset paging to the first page when the external academic period changes
 		setPage(1);
 	}, [academicPeriodId]);
 

@@ -46,6 +46,7 @@ export function WizardSelectStudentsModal({
 	);
 
 	useEffect(() => {
+		/* eslint-disable react-hooks/set-state-in-effect -- sync the selection draft to the fetched students / incoming selectedIds when the modal opens, and reset it when it closes */
 		if (!open) {
 			setSearch('');
 			setDraft(new Map());
@@ -58,7 +59,8 @@ export function WizardSelectStudentsModal({
 					.map((s) => [s.studentSectionEnrollmentId, s]),
 			),
 		);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		/* eslint-enable react-hooks/set-state-in-effect */
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- re-run only when the modal opens or the fetched students change; selectedIds is the initial seed, not a re-trigger
 	}, [open, students]);
 
 	const filtered = useMemo(() => {

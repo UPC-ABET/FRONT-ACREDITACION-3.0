@@ -75,12 +75,14 @@ export function FindingsConsultPage() {
 		);
 
 	useEffect(() => {
+		/* eslint-disable react-hooks/set-state-in-effect -- reset selections and bootstrap scope when the external period/school changes */
 		setSelections({});
 		setHasSearched(false);
 		if (academicPeriodId === null || schoolId === null) {
 			setScope(null);
 			return;
 		}
+		/* eslint-enable react-hooks/set-state-in-effect */
 		let active = true;
 		void loadScope().then((tree) => {
 			if (!active || !tree || tree.levels.length === 0) return;

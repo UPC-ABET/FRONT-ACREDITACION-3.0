@@ -37,8 +37,10 @@ export function ProjectsListPage() {
 	const [debouncedSearch, setDebouncedSearch] = useState('');
 
 	useEffect(() => {
+		/* eslint-disable react-hooks/set-state-in-effect -- clear the program/course filters when the global school/period/modality context changes so stale selections aren't queried */
 		setSelectedProgram(null);
 		setSelectedCourse(null);
+		/* eslint-enable react-hooks/set-state-in-effect */
 	}, [schoolId, selectedPeriodId, modalityTypeId]);
 
 	useEffect(() => {
@@ -47,6 +49,7 @@ export function ProjectsListPage() {
 	}, [search]);
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset to page 1 whenever the program/course filter or search term changes so paging starts fresh
 		setPage(1);
 	}, [selectedProgram?.value, selectedCourse?.value, debouncedSearch]);
 
@@ -120,10 +123,9 @@ export function ProjectsListPage() {
 	const [exportError, setExportError] = useState<string | null>(null);
 	const exportMutation = useExportProjectGrades();
 
-	const { data: gradeTypes = [], isLoading: loadingGradeTypes } = useTypesByGroupCode(
-		TYPE_GROUP_CODES.GRADE_TYPE,
-		{ enabled: exportOpen },
-	);
+	const { data: gradeTypes = [] } = useTypesByGroupCode(TYPE_GROUP_CODES.GRADE_TYPE, {
+		enabled: exportOpen,
+	});
 
 	const gradeTypeOptions = useMemo(
 		() =>

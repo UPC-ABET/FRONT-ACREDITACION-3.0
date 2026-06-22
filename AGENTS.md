@@ -287,6 +287,17 @@ Top-level pages follow one consistent shell so card usage is uniform across the 
 
 ---
 
+## Accessibility
+
+- **One `<h1>` per page.** The page title is a real `h1`, emitted by `PageHeader` (`Title as="h1"`). Card and section titles are `<h2>`; subtitles `<h3>`. Never skip levels or emit a second page-level `h1`.
+- **Every interactive control has an accessible name.** Icon-only buttons need an `aria-label` (or a `title`, which doubles as the tooltip — see the `title=` rule), or a visually-hidden `<span className="sr-only">{t(...)}</span>`. Decorative icons inside a labelled control get `aria-hidden`.
+- **Prefer native elements.** Use `<button type="button">` / `<a>` for clickable things, not `<div onClick>`. Tailwind's preflight strips native button chrome, so a styled `<button>` looks identical to a styled `<div>` — there is no reason to reach for a div.
+- **Custom interactives must be keyboard-operable.** If a non-native element (e.g. an SVG `<g>`) must be interactive, give it `role="button"`, `tabIndex={0}`, and an `onKeyDown` that fires on `Enter`/`Space` (call `preventDefault()`). Collapsibles expose `aria-expanded`.
+- **Every `Dialog` renders a `<DialogTitle>`** for its accessible name. `DialogContent` warns (dev-only, via `logger.warn`) when the title is missing — do not ignore the warning.
+- **Color is never the only signal.** Pair status color with a text label or icon. User-visible text must meet WCAG AA contrast (4.5:1 for normal text, 3:1 for large). The `Badge` color variant auto-darkens its label toward AA against the tinted background, so backend-supplied colors stay legible.
+
+---
+
 ## TypeScript
 
 - **No `any` or `as any`.** Use `unknown`, generics, or specific types. Catch blocks use `catch (err: unknown)` + `instanceof Error`.

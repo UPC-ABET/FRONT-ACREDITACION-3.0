@@ -101,17 +101,20 @@ export function FileUploadPanel({
 
 	React.useEffect(() => {
 		if (success) {
+			/* eslint-disable react-hooks/set-state-in-effect -- reacting to the parent's async upload-success flag: showing dismissible toast state and clearing the selected-file draft; neither is derivable during render */
 			setToast({
 				open: true,
 				type: 'success',
 				msg: t('surveys.shared.fileUpload.processedSuccess'),
 			});
 			setSelectedFile(null);
+			/* eslint-enable react-hooks/set-state-in-effect */
 			if (inputRef.current) inputRef.current.value = '';
 		}
 	}, [success, t]);
 
 	React.useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- syncing the parent's async upload error into dismissible toast state; toast is user-mutable so it can't be derived during render
 		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
 	}, [error, t]);
 

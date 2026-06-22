@@ -79,9 +79,11 @@ export function WizardStep3Capstone({
 			};
 		});
 
+		/* eslint-disable react-hooks/set-state-in-effect -- one-time bootstrap of local editable outcomes from the async-fetched outcome list, guarded by outcomesInitialized */
 		setOutcomes(loaded);
 		setActiveCommissionId(loaded[0]?.commissionId ?? '');
 		setOutcomesInitialized(true);
+		/* eslint-enable react-hooks/set-state-in-effect */
 	}, [fetchedOutcomes, outcomesInitialized, loadingOutcomes]);
 
 	const commissionTabs = useMemo(() => {

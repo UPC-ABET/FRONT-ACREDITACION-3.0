@@ -42,6 +42,7 @@ export function GradeProjectsPage() {
 	}, [search]);
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset to page 1 whenever the active tab or search term changes so paging starts fresh
 		setPage(1);
 	}, [activeTab, debouncedSearch]);
 
@@ -220,6 +221,7 @@ export function GradeProjectsPage() {
 				},
 			},
 		],
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- formatDate is a render-local helper that only closes over locale (already a dep); depending on it would rebuild the columns every render
 		[t, locale, activeTab],
 	);
 

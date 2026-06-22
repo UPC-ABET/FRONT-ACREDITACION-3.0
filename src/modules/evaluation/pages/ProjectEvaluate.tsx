@@ -77,6 +77,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 	const [qualifStatuses, setQualifStatuses] =
 		useState<Record<number, number | null>>(initialQualifStatuses);
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reseed the editable qualification-status draft from server data when the loaded students or active evaluator change
 		setQualifStatuses(initialQualifStatuses);
 	}, [initialQualifStatuses]);
 
@@ -86,7 +87,11 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 	const handleDirtyChange = (studyPlanCourseId: number, isDirty: boolean) => {
 		setDirtyTabs((prev) => {
 			const next = new Set(prev);
-			isDirty ? next.add(studyPlanCourseId) : next.delete(studyPlanCourseId);
+			if (isDirty) {
+				next.add(studyPlanCourseId);
+			} else {
+				next.delete(studyPlanCourseId);
+			}
 			return next;
 		});
 	};

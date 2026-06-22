@@ -64,7 +64,9 @@ export function ProjectRubricCapstoneTable({
 		() => commissions[0]?.id ?? null,
 	);
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset the active commission tab to the first one when switching to a different rubric
 		setActiveCommissionId(commissions[0]?.id ?? null);
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally re-run only when rubricId changes; including commissions would reset the user's selected tab on every re-render
 	}, [rubricId]);
 
 	const [duplicateMode, setDuplicateMode] = useState(false);

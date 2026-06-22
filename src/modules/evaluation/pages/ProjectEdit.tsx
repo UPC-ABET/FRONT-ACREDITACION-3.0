@@ -30,8 +30,8 @@ interface ProjectEditPageProps {
 export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	const { t, locale } = useI18n();
 
-	const [studentError, setStudentError] = useState<string | null>(null);
-	const [evaluatorError, setEvaluatorError] = useState<string | null>(null);
+	const [, setStudentError] = useState<string | null>(null);
+	const [, setEvaluatorError] = useState<string | null>(null);
 	const [evaluatorModalOpen, setEvaluatorModalOpen] = useState(false);
 	const [studentModalOpen, setStudentModalOpen] = useState(false);
 

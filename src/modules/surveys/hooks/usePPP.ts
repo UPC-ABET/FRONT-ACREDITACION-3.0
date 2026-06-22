@@ -27,12 +27,9 @@ import {
 // Backward-compat alias: components that import usePPPCycles still work.
 export function usePPPCycles() {
 	const { periods, loading, error, load: _load } = usePPPPeriods();
-	const load = useCallback(
-		(_modalityId?: unknown) => {
-			_load();
-		},
-		[_load],
-	);
+	const load = useCallback(() => {
+		_load();
+	}, [_load]);
 	return { cycles: periods, loading, error, load };
 }
 

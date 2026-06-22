@@ -2,8 +2,6 @@
 
 import * as React from 'react';
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
-import { XCircleIcon } from '@heroicons/react/24/outline';
-
 import { cn } from '@/shared/utils';
 import { Button } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
@@ -59,14 +57,11 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
 function DialogContent({
 	className,
 	children,
-	showCloseButton = true,
 }: {
 	className?: string;
 	children?: React.ReactNode;
 	showCloseButton?: boolean;
 }) {
-	const { t } = useI18n();
-
 	React.useEffect(() => {
 		if (!containsDialogTitle(children)) {
 			logger.warn(

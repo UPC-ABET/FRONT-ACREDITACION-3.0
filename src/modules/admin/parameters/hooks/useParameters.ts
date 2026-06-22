@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getParameterByFilters, updateParameter } from '../services/parametersAdminService';
-import type { ParameterRow, UpdateParameterBody } from '../types';
+import type { UpdateParameterBody } from '../types';
 
 export const parametersQueryKeys = {
 	all: ['parameters'] as const,
@@ -20,7 +20,7 @@ export function useUpdateParameter<T>() {
 	return useMutation({
 		mutationFn: ({ id, payload }: { id: number; payload: UpdateParameterBody<T> }) =>
 			updateParameter<T>(id, payload),
-		onSuccess: (_data, variables) => {
+		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: parametersQueryKeys.all });
 		},
 	});

@@ -128,8 +128,10 @@ export function StudyPlanMasterList({ onView }: { onView: (studyPlanId: number) 
 	};
 
 	useEffect(() => {
+		/* eslint-disable react-hooks/set-state-in-effect -- reset paging and program filter when the external modality type changes */
 		setPage(1);
 		setProgramId(null);
+		/* eslint-enable react-hooks/set-state-in-effect */
 	}, [modalityTypeId]);
 
 	const { data, isLoading, isFetching, isError, refetch } = useStudyPlansMaintenance({

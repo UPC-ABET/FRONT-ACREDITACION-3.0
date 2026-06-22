@@ -16,7 +16,7 @@ import { Skeleton, SubTitle, Title, Button, Input, DEFAULT_PAGE_SIZE } from '@/s
 import { useI18n } from '@/providers';
 
 declare module '@tanstack/react-table' {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- TData/TValue must match the library's generic signature for declaration merging
 	interface ColumnMeta<TData extends RowData, TValue> {
 		cellClassName?: string;
 		headerClassName?: string;
@@ -166,6 +166,7 @@ export function DataTable<TData, TValue>({
 	const isServer = serverPagination !== undefined;
 	const clientPaginated = !isServer && showPagination;
 
+	// eslint-disable-next-line react-hooks/incompatible-library -- @tanstack/react-table owns a mutable instance the React Compiler can't analyze
 	const table = useReactTable({
 		data,
 		columns,

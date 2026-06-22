@@ -39,6 +39,7 @@ export function GRAReports() {
 	const [downloading, setDownloading] = useState(false);
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- syncing the hook's async error into dismissible toast state; toast is user-mutable so it can't be derived during render
 		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
 	}, [error, t]);
 

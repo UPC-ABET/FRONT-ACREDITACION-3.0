@@ -22,6 +22,7 @@ export function PPPReports({ programId }: PPPReportsProps) {
 	});
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- syncing the hook's async error into dismissible toast state; toast is user-mutable so it can't be derived during render
 		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
 	}, [error, t]);
 
@@ -34,9 +35,7 @@ export function PPPReports({ programId }: PPPReportsProps) {
 	}
 
 	if (!academicPeriodId) {
-		return (
-			<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>
-		);
+		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
 
 	return (

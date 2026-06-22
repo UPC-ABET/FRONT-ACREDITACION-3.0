@@ -52,7 +52,7 @@ export function useRubricCapstoneSave({
 		const hasComplete = draftRubric.commissions.some(isComplete);
 		const hasPartial = draftRubric.commissions.some(isPartial);
 		return hasComplete && !hasPartial;
-	}, [draftRubric.commissions, locale]);
+	}, [draftRubric, locale]);
 
 	const handleSave = useCallback(async () => {
 		if (!canEdit || !saveAllowed) return;

@@ -48,6 +48,7 @@ export function SessionGuard({ children }: { children: React.ReactNode }) {
 	}, [clearUser]);
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- mount-only hydration flag
 		setMounted(true);
 	}, []);
 

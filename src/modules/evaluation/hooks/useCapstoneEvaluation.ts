@@ -100,6 +100,7 @@ export function useCapstoneEvaluation({
 			}
 		}
 		return result;
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- evaluatorId intentionally reseeds the score grid when the active evaluator changes
 	}, [outcomes, students, questionByOutcome, evaluatorId]);
 
 	const initialDupSelections = useMemo<DupSelections>(() => {
@@ -113,9 +114,11 @@ export function useCapstoneEvaluation({
 
 	// Sync when data arrives after mount (React Query stale-while-revalidate)
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reseed grid from server data when the query revalidates
 		setSelections(initialSelections);
 	}, [initialSelections]);
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reseed duplicate grid from server data when the query revalidates
 		setDupSelections(initialDupSelections);
 	}, [initialDupSelections]);
 
@@ -172,6 +175,7 @@ export function useCapstoneEvaluation({
 		dupSelections,
 		qualifStatuses,
 		nrNaTypeIds,
+		hasMissingStatus,
 	]);
 
 	const handleSelect = (criteriaId: number, projectStudentId: number, value: number) => {

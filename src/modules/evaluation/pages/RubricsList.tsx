@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { PencilSquareIcon, EyeIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
 	Badge,
@@ -51,8 +50,10 @@ export function RubricsListPage() {
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
 
 	useEffect(() => {
+		/* eslint-disable react-hooks/set-state-in-effect -- clear the program/course filters when the global school/period/modality context changes so stale selections aren't queried */
 		setSelectedProgram(null);
 		setSelectedCourse(null);
+		/* eslint-enable react-hooks/set-state-in-effect */
 	}, [schoolId, selectedPeriodId, modalityTypeId]);
 
 	const { data: programs = [] } = usePrograms(

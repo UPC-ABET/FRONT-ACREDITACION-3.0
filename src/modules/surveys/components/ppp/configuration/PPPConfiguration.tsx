@@ -37,7 +37,8 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 	useEffect(() => {
 		if (!academicPeriodId) return;
 		loadComp(academicPeriodId, programId);
-	}, [academicPeriodId, programId]); // eslint-disable-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- loadComp is an unstable service binding; refetch only when period/program changes
+	}, [academicPeriodId, programId]);
 
 	function handleGenerate() {
 		if (!academicPeriodId) return;

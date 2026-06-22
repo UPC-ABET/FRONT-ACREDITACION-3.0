@@ -28,6 +28,7 @@ export default function ErrorsDrawer({
 
 	useEffect(() => {
 		if (!open || !excelBase64) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect -- clear parsed rows when the drawer closes or has no source workbook
 			setRows([]);
 			return;
 		}
@@ -57,7 +58,12 @@ export default function ErrorsDrawer({
 
 	return (
 		<div className="fixed inset-0 z-50 flex">
-			<div className="flex-1 bg-black/30" onClick={onClose} />
+			<button
+				type="button"
+				aria-label={t('dialog.close')}
+				className="flex-1 bg-black/30"
+				onClick={onClose}
+			/>
 			<aside className="flex w-full max-w-xl flex-col overflow-y-auto border-l border-gray-200 bg-white p-6 shadow-xl">
 				<header className="mb-4 flex items-center justify-between">
 					<div>

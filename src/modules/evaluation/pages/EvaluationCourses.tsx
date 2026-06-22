@@ -45,8 +45,10 @@ export function EvaluationCoursesPage() {
 	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
 
 	useEffect(() => {
+		/* eslint-disable react-hooks/set-state-in-effect -- clear the program filter when the global school/period/modality context changes so a stale program isn't queried */
 		setSelectedProgramId(null);
 		setSelectedProgramOpt(null);
+		/* eslint-enable react-hooks/set-state-in-effect */
 	}, [schoolId, selectedPeriodId, modalityTypeId]);
 
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });

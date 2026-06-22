@@ -34,8 +34,10 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 
 	React.useEffect(() => {
 		if (sendError) {
+			/* eslint-disable react-hooks/set-state-in-effect -- syncing the hook's async send error into dismissible toast state and clearing the in-flight spinner id; neither is derivable during render */
 			setToast({ open: true, type: 'error', msg: sendError });
 			setSendingSectionId(null);
+			/* eslint-enable react-hooks/set-state-in-effect */
 		}
 	}, [sendError]);
 

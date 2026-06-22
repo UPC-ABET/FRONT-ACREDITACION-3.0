@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Button, TextArea, Toast } from '@/shared/components';
 import {
 	CheckCircleIcon,
@@ -81,7 +82,13 @@ export function SurveyForm({
 						</button>
 					)}
 					<div className="flex items-center gap-3 mb-4">
-						<img src="/assets/ABETLogo.png" alt="ABET" className="h-10 w-auto" />
+						<Image
+							src="/assets/ABETLogo.png"
+							alt="ABET"
+							width={515}
+							height={484}
+							className="h-10 w-auto"
+						/>
 						<div>
 							<h1 className="text-xl font-bold">{t('surveys.student.title')}</h1>
 							<p className="text-red-200 text-sm">{t('surveys.student.subtitle')}</p>

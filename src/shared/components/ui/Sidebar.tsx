@@ -1,5 +1,6 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ChevronRightIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/outline';
 import { useScreen } from '@/shared/hooks';
 import { useI18n } from '@/providers';
@@ -27,6 +28,9 @@ export function SidebarProvider({
 	const toggle = () => setOpen((v) => !v);
 
 	useEffect(() => {
+		// Collapse the drawer when the viewport crosses into mobile; intentional one-way sync
+		// to the external screen-size signal, not derivable from render.
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- viewport-driven collapse
 		if (isMobile) setOpen(false);
 	}, [isMobile]);
 
@@ -53,11 +57,14 @@ function Sidebar({
 	overlay?: boolean;
 }) {
 	const { open, toggle, isMobile } = useSidebar();
+	const { t } = useI18n();
 
 	return (
 		<>
 			{overlay && open && isMobile && (
-				<div
+				<button
+					type="button"
+					aria-label={t('sidebar.close')}
 					className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm"
 					onClick={toggle}
 				/>
@@ -105,9 +112,12 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 			<div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_120%,rgba(200,16,46,0.12)_0%,transparent_70%)]" />
 
 			{open ? (
-				<img
+				<Image
 					src="/assets/ABETLogo.png"
 					alt={t('sidebar.logoAlt')}
+					width={515}
+					height={484}
+					priority
 					className={cn(
 						'w-full h-full transition-all duration-300 relative z-10',
 						'object-contain scale-100',

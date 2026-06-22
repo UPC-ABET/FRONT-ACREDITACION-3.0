@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
@@ -303,7 +304,13 @@ export default function LCFCRespondPage() {
 			<div className="bg-red-600 text-white py-8 px-6">
 				<div className="max-w-3xl mx-auto">
 					<div className="flex items-center gap-3 mb-4">
-						<img src="/assets/ABETLogo.png" alt="ABET" className="h-10 w-auto" />
+						<Image
+							src="/assets/ABETLogo.png"
+							alt="ABET"
+							width={515}
+							height={484}
+							className="h-10 w-auto"
+						/>
 						<div>
 							<h1 className="text-xl font-bold">{t('surveys.student.myList.title')}</h1>
 							<p className="text-red-200 text-sm">{t('surveys.student.myList.subtitle')}</p>

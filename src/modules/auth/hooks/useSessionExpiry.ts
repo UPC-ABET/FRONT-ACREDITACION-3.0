@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useInsertionEffect, useRef } from 'react';
 import { apiGet } from '@/shared/lib';
 
 type UseSessionExpiryParams = {
@@ -23,7 +23,9 @@ export function useSessionExpiry({
 }: UseSessionExpiryParams) {
 	const expiredRef = useRef(false);
 	const modalityCodeRef = useRef(modalityCode);
-	modalityCodeRef.current = modalityCode;
+	useInsertionEffect(() => {
+		modalityCodeRef.current = modalityCode;
+	});
 
 	useEffect(() => {
 		if (!enabled) return;

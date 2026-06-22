@@ -81,6 +81,7 @@ export function useNonCapstoneRubricTable({
 	const [dupScores, setDupScores] = useState<DupScores>(initialDupScores);
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reseed scores from server data when the query revalidates
 		setScores(initialScores);
 	}, [initialScores]);
 
@@ -117,7 +118,16 @@ export function useNonCapstoneRubricTable({
 			}
 		}
 		return true;
-	}, [questions, students, duplicateMode, scores, dupScores, qualifStatuses, nrNaTypeIds]);
+	}, [
+		questions,
+		students,
+		duplicateMode,
+		scores,
+		dupScores,
+		qualifStatuses,
+		nrNaTypeIds,
+		hasMissingStatus,
+	]);
 
 	const hasErrors = useMemo(() => {
 		for (const q of questions) {

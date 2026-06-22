@@ -179,6 +179,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	);
 
 	useEffect(() => {
+		// Auth bootstrap: resolve the current user once on mount, then clear the loading gate.
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- async session bootstrap
 		fetchUser(DEFAULT_MODALITY_CODE).finally(() => setIsLoading(false));
 	}, [fetchUser]);
 

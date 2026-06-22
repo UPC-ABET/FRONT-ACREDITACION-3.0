@@ -10,13 +10,7 @@ import {
 	rejectIFC,
 	submitIFC,
 } from '../services/ifcsService';
-import type {
-	CreateIFCBody,
-	IFCViewPayload,
-	PatchIFCBody,
-	RejectIFCBody,
-	SubmitResult,
-} from '../types';
+import type { CreateIFCBody, PatchIFCBody, RejectIFCBody, SubmitResult } from '../types';
 
 export const ifcQueryKeys = {
 	all: ['ifcs'] as const,

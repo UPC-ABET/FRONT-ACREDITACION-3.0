@@ -56,11 +56,13 @@ export function AddEvaluationCourseModal({
 
 	useEffect(() => {
 		if (!open) {
+			/* eslint-disable react-hooks/set-state-in-effect -- reset draft selection when the modal closes so it reopens clean */
 			setSelectedProgramId(null);
 			setSelectedProgramOpt(null);
 			setSearch('');
 			setPendingIds(new Set());
 			setAddError(null);
+			/* eslint-enable react-hooks/set-state-in-effect */
 		}
 	}, [open]);
 
@@ -91,7 +93,11 @@ export function AddEvaluationCourseModal({
 	const togglePending = (id: number) => {
 		setPendingIds((prev) => {
 			const next = new Set(prev);
-			next.has(id) ? next.delete(id) : next.add(id);
+			if (next.has(id)) {
+				next.delete(id);
+			} else {
+				next.add(id);
+			}
 			return next;
 		});
 	};
@@ -124,6 +130,7 @@ export function AddEvaluationCourseModal({
 		if (!search.trim()) return spcList;
 		const q = search.trim().toLowerCase();
 		return spcList.filter((spc) => courseName(spc).toLowerCase().includes(q));
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- courseName is a render-local helper recreated each render; depending on it would defeat the memo
 	}, [spcList, search]);
 
 	const canConfirm = pendingIds.size > 0 && !enableEvaluation.isPending;

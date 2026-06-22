@@ -34,12 +34,9 @@ import {
 
 export function useGRACycles() {
 	const { periods, loading, error, load: _load } = useGRAPeriods();
-	const load = useCallback(
-		(_modalityId?: unknown) => {
-			_load();
-		},
-		[_load],
-	);
+	const load = useCallback(() => {
+		_load();
+	}, [_load]);
 	return { cycles: periods, loading, error, load };
 }
 
@@ -123,7 +120,7 @@ export function useGRACompetences() {
 
 export function useGRAStudents() {
 	const [students, setStudents] = useState<GRAStudent[]>([]);
-	const [loading, setLoading] = useState(false);
+	const [, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	const load = useCallback(

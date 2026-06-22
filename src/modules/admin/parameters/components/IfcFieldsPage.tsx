@@ -74,9 +74,11 @@ export function IfcFieldsPage() {
 		const value = Array.isArray(data.value) ? data.value : [];
 		const sorted = cloneFields(value).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
+		/* eslint-disable react-hooks/set-state-in-effect -- seed editable fields from fetched parameter data once it loads or refetches */
 		setFields(sorted);
 		setOriginal(sorted);
 		setShowValidation(false);
+		/* eslint-enable react-hooks/set-state-in-effect */
 	}, [data]);
 
 	const validationByIndex = useMemo(() => validateIFCFields(fields), [fields]);

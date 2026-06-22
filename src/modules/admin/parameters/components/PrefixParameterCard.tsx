@@ -23,6 +23,7 @@ export function PrefixParameterCard({ parameter, onSaved, onError, onSuccess }: 
 	const [saving, setSaving] = useState(false);
 
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- sync the editable input value when the external parameter prop changes
 		setValue(parameter.value ?? '');
 	}, [parameter.value]);
 

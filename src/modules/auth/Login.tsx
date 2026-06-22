@@ -1,6 +1,7 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
+import Image from 'next/image';
 import LoginForm from './components/LoginForm';
 import { Card } from '@/shared/components/ui/Card';
 import { LanguageSwitcher, Title } from '@/shared/components';
@@ -17,10 +18,13 @@ export default function Login() {
 							<LanguageSwitcher />
 						</div>
 						<div className="text-center">
-							<img
+							<Image
 								className="mx-auto w-auto mb-3 h-[72px] md:h-[96px]"
 								src="/assets/ABETLogo.png"
 								alt={t('sidebar.logoAlt')}
+								width={515}
+								height={484}
+								priority
 							/>
 
 							<div className="flex justify-center">

@@ -40,6 +40,9 @@ export function ChartContainer({
 	const [isMounted, setIsMounted] = React.useState(false);
 
 	React.useEffect(() => {
+		// One-time mount flag: ResponsiveContainer measures the DOM, so it must render only
+		// after hydration. This is the canonical SSR mount guard, not derivable in render.
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- mount-only hydration flag
 		setIsMounted(true);
 	}, []);
 

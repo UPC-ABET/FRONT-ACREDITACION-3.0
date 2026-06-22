@@ -28,6 +28,7 @@ export function PPPNotificationView({ programId }: PPPNotificationViewProps) {
 	const isValid = !!academicPeriodId && surveyBaseUrl.trim() !== '';
 
 	React.useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- syncing the hook's async send error into dismissible toast state; toast is user-mutable so it can't be derived during render
 		if (sendError) setToast({ open: true, type: 'error', msg: sendError });
 	}, [sendError]);
 

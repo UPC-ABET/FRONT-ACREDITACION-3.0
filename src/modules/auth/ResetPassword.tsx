@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import Image from 'next/image';
 import { Card } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import ResetPasswordForm from './components/ResetPasswordForm';
@@ -14,10 +14,13 @@ export default function ResetPassword() {
 				<div className="mx-auto w-full max-w-[360px] sm:max-w-[480px] md:max-w-[540px]">
 					<Card className="w-full px-8 py-8 flex flex-col justify-center gap-5 aspect-auto md:aspect-square">
 						<div className="text-center">
-							<img
+							<Image
 								className="mx-auto w-auto mb-3 h-[72px] md:h-[96px]"
 								src="/assets/ABETLogo.png"
 								alt={t('sidebar.logoAlt')}
+								width={515}
+								height={484}
+								priority
 							/>
 						</div>
 						<ResetPasswordForm />
