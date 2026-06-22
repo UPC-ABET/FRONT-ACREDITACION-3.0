@@ -74,7 +74,8 @@
 					"description": "Relación de alumno y sección."
 				}
 			}
-		}
+		},
+		"metaTitle": "Scraping — Extracción de datos"
 	},
 	"planner": {
 		"session": {
@@ -2185,7 +2186,8 @@
 				"deleteConfirm": "Eliminar",
 				"toastUpdated": "Configuración actualizada exitosamente.",
 				"toastDeleted": "Configuración eliminada exitosamente."
-			}
+			},
+			"metaTitle": "LCFC — Logro de Fin de Ciclo"
 		},
 		"gra": {
 			"notifications": {
@@ -2266,7 +2268,8 @@
 				"bodyPlaceholder": "Escribe el contenido del correo...",
 				"saveButton": "Guardar Plantilla",
 				"saved": "Plantilla de correo guardada."
-			}
+			},
+			"metaTitle": "GRA — Encuestas de Graduandos"
 		},
 		"ppp": {
 			"management": {
@@ -2308,7 +2311,8 @@
 					"required": "Selecciona una plantilla y completa todos los campos.",
 					"sent": "Notificaciones enviadas exitosamente."
 				}
-			}
+			},
+			"metaTitle": "PPP — Prácticas Pre-Profesionales"
 		},
 		"shared": {
 			"academicCycle": "Ciclo Académico",

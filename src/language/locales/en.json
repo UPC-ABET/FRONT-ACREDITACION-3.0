@@ -74,7 +74,8 @@
 					"description": "Student-to-section relationship."
 				}
 			}
-		}
+		},
+		"metaTitle": "Scraping — Data extraction"
 	},
 	"planner": {
 		"session": {
@@ -2185,7 +2186,8 @@
 				"deleteConfirm": "Delete",
 				"toastUpdated": "Configuration updated successfully.",
 				"toastDeleted": "Configuration deleted successfully."
-			}
+			},
+			"metaTitle": "LCFC — End of Cycle Achievement"
 		},
 		"gra": {
 			"notifications": {
@@ -2265,7 +2267,8 @@
 				"bodyPlaceholder": "Write the email content here...",
 				"saveButton": "Save Template",
 				"saved": "Email template saved."
-			}
+			},
+			"metaTitle": "GRA — Graduating Students Surveys"
 		},
 		"ppp": {
 			"management": {
@@ -2307,7 +2310,8 @@
 					"required": "Please select a template and fill in all fields.",
 					"sent": "Notifications sent successfully."
 				}
-			}
+			},
+			"metaTitle": "PPP — Pre-Professional Internships"
 		},
 		"shared": {
 			"academicCycle": "Academic Cycle",
