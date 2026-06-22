@@ -325,7 +325,7 @@ Top-level pages follow one consistent shell so card usage is uniform across the 
 
 ## Git & Commits
 
-- Commit messages: concise, focused on the "why". Never end with `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>`.
+- Commit messages: concise, focused on the "why". Never end with `Co-Authored-By: {model} <noreply@anthropic.com>`.
 - Prefer new commits over amending.
 - Never force-push to main/master.
 - Never skip hooks (`--no-verify`).
