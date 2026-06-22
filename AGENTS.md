@@ -20,6 +20,8 @@ src/
 ├── app/                    # Next.js App Router — routes and layouts ONLY
 │   ├── layout.tsx          # Root layout (providers wrapper)
 │   ├── globals.css         # Global styles + CSS variables
+│   ├── (protected)/        # Route group: authenticated-only layout wrapper
+│   ├── [locale]/           # Locale route segment (layout placeholder)
 │   └── <route>/page.tsx    # Route files import from modules
 ├── modules/                # Domain modules (feature-sliced)
 │   ├── academic/           # Academic periods, courses, programs, professors
@@ -31,11 +33,15 @@ src/
 │   │   ├── notifications/  # Notification config (IFC today; surveys, etc. as new tabs)
 │   │   └── parameters/     # Parameter administration (IFC today; rubrics, general, academic as new tabs)
 │   ├── auth/               # Authentication, login, session
+│   ├── banner/             # Banner SIS scraping (departments, sections, login sessions)
+│   ├── charts/             # Organization charts (org-chart rendering & maintenance)
 │   ├── core/               # Shared backend entity types, services, constants
 │   ├── evaluation/         # Rubrics, projects, grading
 │   ├── ifcs/               # End-of-cycle reports (IFC)
-│   ├── surveys/            # PPP, GRA, LCFC surveys
-│   └── tests/              # Demo/test pages
+│   ├── loads/              # Bulk Excel data loads & upload history
+│   ├── planner/            # Planner scraping (courses, sessions)
+│   ├── scraping-exports/   # Scraping export downloads
+│   └── surveys/            # PPP, GRA, LCFC surveys
 ├── providers/              # Global React context providers
 ├── shared/                 # Cross-cutting utilities (truly no one's domain)
 │   ├── components/ui/      # Reusable UI primitives
