@@ -573,18 +573,25 @@ export type CourseOutcomeMappingFilters = {
 	isActive?: boolean;
 };
 
-
 export type ClassRepresentativeMaintenanceItem = {
-    id: number;
-    isClassRepresentative: boolean;
-    courseCode: string;
-    courseName: string;
-    sectionCode: string;
-    studentCode: string;
-    studentFullName: string;
+	id: number;
+	isClassRepresentative: boolean;
+	courseCode: string;
+	courseName: string;
+	sectionCode: string;
+	studentCode: string;
+	studentFullName: string;
 };
 
 export type AssignRepresentativeDto = {
-    studentCode: string;
-    sectionCode: string;
+	studentCode: string;
+	sectionCode: string;
+};
+
+export type ClassRepresentativeMaintenanceList = {
+	items: ClassRepresentativeMaintenanceItem[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
 };
