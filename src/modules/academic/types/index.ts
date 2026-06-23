@@ -572,3 +572,19 @@ export type CourseOutcomeMappingFilters = {
 	studyPlanCourseId?: number;
 	isActive?: boolean;
 };
+
+
+export type ClassRepresentativeMaintenanceItem = {
+    id: number;
+    isClassRepresentative: boolean;
+    courseCode: string;
+    courseName: string;
+    sectionCode: string;
+    studentCode: string;
+    studentFullName: string;
+};
+
+export type AssignRepresentativeDto = {
+    studentCode: string;
+    sectionCode: string;
+};
