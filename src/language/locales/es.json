@@ -1217,6 +1217,9 @@
 			"courseNotInStudyPlan": "El curso de la sección no pertenece a la malla curricular del alumno.",
 			"studyPlanPeriodMismatch": "El alumno no está matriculado en la misma malla curricular y período que la sección."
 		},
+		"classRepresentativeAssign": {
+			"studentNotEnrolledInSection": "El estudiante no está matriculado en esta sección"
+		},
 		"studyPlan": {
 			"inUse": "No se puede eliminar la malla porque está en uso.",
 			"usedInAcademicPeriods": "Está ofertada en períodos académicos",

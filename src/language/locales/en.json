@@ -1217,6 +1217,9 @@
 			"courseNotInStudyPlan": "The section's course does not belong to the student's study plan.",
 			"studyPlanPeriodMismatch": "The student is not enrolled in the same study plan and period as the section."
 		},
+		"classRepresentativeAssign": {
+			"studentNotEnrolledInSection": "This student is not enrolled in this section."
+		},
 		"studyPlan": {
 			"inUse": "This study plan cannot be deleted because it is in use.",
 			"usedInAcademicPeriods": "Offered in academic periods",
