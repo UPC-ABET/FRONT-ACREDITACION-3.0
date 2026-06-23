@@ -12,6 +12,7 @@ import {
 import { OutcomesMaintenance } from '@/modules/accreditation';
 import { OrganizationChartMaintenance } from '@/modules/charts';
 import { TYPE_CODES } from '@/shared/constants';
+import { ClassRepresentativesMaintenance } from '@/modules/academic/components/ClassRepresentativesMaintenance';
 
 interface UploadMaintenanceProps {
 	typeCode: string;
