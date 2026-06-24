@@ -1,6 +1,7 @@
 'use client';
 
 import {
+	ClassRepresentativesMaintenance,
 	CourseOutcomeMappingMaintenance,
 	EnrolledStudentsMaintenance,
 	ProfessorsMaintenance,
@@ -25,6 +26,7 @@ const MAINTENANCE_TYPE_CODES = new Set<string>([
 	TYPE_CODES.UPLOAD_TYPE.STUDY_PLANS,
 	TYPE_CODES.UPLOAD_TYPE.ARTICULATION,
 	TYPE_CODES.UPLOAD_TYPE.CHARTS,
+	TYPE_CODES.UPLOAD_TYPE.CLASS_REPRESENTATIVES,
 ]);
 
 /** Whether the given upload type has a maintenance view (editable table). */
@@ -50,6 +52,8 @@ export default function UploadMaintenance({ typeCode }: UploadMaintenanceProps) 
 			return <CourseOutcomeMappingMaintenance />;
 		case TYPE_CODES.UPLOAD_TYPE.CHARTS:
 			return <OrganizationChartMaintenance />;
+		case TYPE_CODES.UPLOAD_TYPE.CLASS_REPRESENTATIVES:
+			return <ClassRepresentativesMaintenance />;
 		default:
 			return null;
 	}

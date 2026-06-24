@@ -572,3 +572,24 @@ export type CourseOutcomeMappingFilters = {
 	studyPlanCourseId?: number;
 	isActive?: boolean;
 };
+
+export type ClassRepresentativeMaintenanceItem = {
+	id: number;
+	courseSectionId: number;
+	enrolledStudentId: number;
+	isClassRepresentative: boolean;
+	courseName: { es: string; en: string };
+	courseCode: string;
+	sectionCode: string;
+	studentCode: string;
+	studentFirstName: string;
+	studentLastName: string;
+};
+
+export type AssignRepresentativeDto = {
+	studentCode: string;
+	sectionCode: string;
+};
+
+export type ClassRepresentativeMaintenanceList =
+	PaginatedEnvelope<ClassRepresentativeMaintenanceItem>;

@@ -1217,6 +1217,9 @@
 			"courseNotInStudyPlan": "The section's course does not belong to the student's study plan.",
 			"studyPlanPeriodMismatch": "The student is not enrolled in the same study plan and period as the section."
 		},
+		"classRepresentativeAssign": {
+			"studentNotEnrolledInSection": "This student is not enrolled in this section."
+		},
 		"studyPlan": {
 			"inUse": "This study plan cannot be deleted because it is in use.",
 			"usedInAcademicPeriods": "Offered in academic periods",
@@ -3274,6 +3277,55 @@
 				"created": "Student created successfully.",
 				"updated": "Student updated successfully.",
 				"deleted": "Student deleted successfully."
+			}
+		},
+		"classRepresentativesMaintenance": {
+			"title": "Class representatives maintenance",
+			"subtitle": "Assign or remove the section class representatives for the selected academic period.",
+			"selectPeriod": "Select an academic period in the header to continue.",
+			"searchPlaceholder": "Search by course, section or student code...",
+			"results": "results",
+			"page": "Page",
+			"prev": "Previous",
+			"next": "Next",
+			"retry": "Retry",
+			"col": {
+				"courseName": "Course",
+				"courseCode": "Course Code",
+				"sectionCode": "Section Code",
+				"studentCode": "Student Code",
+				"studentName": "Student Name",
+				"actions": "Actions"
+			},
+			"actions": {
+				"new": "New representative",
+				"remove": "Remove"
+			},
+			"empty": {
+				"title": "No class representatives",
+				"subtitle": "No representatives found with the current filters."
+			},
+			"error": {
+				"loadFailed": "Could not load the class representatives."
+			},
+			"create": {
+				"title": "New representative",
+				"subtitle": "Select the section and the student to assign as representative.",
+				"sectionLabel": "Section",
+				"sectionPlaceholder": "Select a section",
+				"studentLabel": "Student",
+				"studentPlaceholder": "Select a student",
+				"save": "Save",
+				"error": "Could not assign the representative."
+			},
+			"remove": {
+				"title": "Remove representative",
+				"message": "This will remove the student as the section representative. Continue?",
+				"error": "Could not remove the representative."
+			},
+			"toast": {
+				"assigned": "Representative assigned successfully.",
+				"removed": "Representative removed successfully."
 			}
 		},
 		"studentSectionEnrollmentsMaintenance": {
