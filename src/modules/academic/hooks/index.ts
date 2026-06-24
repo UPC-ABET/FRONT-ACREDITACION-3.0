@@ -9,6 +9,7 @@ export * from './useProfessors';
 export * from './useProfessorsMaintenance';
 export * from './useCourseSectionsMaintenance';
 export * from './useEnrolledStudentsMaintenance';
+export * from './useClassRepresentativesMaintenance';
 export * from './useStudentSectionEnrollmentsMaintenance';
 export * from './useStudyPlansMaintenance';
 export * from './useStudyPlanCoursesView';

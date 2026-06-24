@@ -1,28 +1,94 @@
 'use client';
 
-import { useState } from 'react';
-import { useClassRepresentativesMaintenance } from '../hooks/useClassRepresentativesMaintenance';
-import { ClassRepresentativeCreateDialog } from './ClassRepresentativeCreateDialog';
-import { useI18n } from '@/providers';
+import { useEffect, useState } from 'react';
+import {
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	MagnifyingGlassIcon,
+	PlusIcon,
+	TrashIcon,
+} from '@heroicons/react/24/outline';
+import {
+	Button,
+	Card,
+	ConfirmDialog,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+	SubTitle,
+	Title,
+	Toast,
+} from '@/shared/components';
+import { useABET, useI18n } from '@/providers';
+import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
-import { tryTranslate } from '@/shared';
+import { tryTranslate } from '@/shared/utils';
+import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
+import { useClassRepresentativeMutations, useClassRepresentativesMaintenance } from '../hooks';
+import type { ClassRepresentativeMaintenanceItem } from '../types';
+import { ClassRepresentativeCreateDialog } from './ClassRepresentativeCreateDialog';
+
+const PAGE_SIZE = DEFAULT_PAGE_SIZE;
+
+function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
+	if (!text) return '';
+	return text[locale as 'es' | 'en'] ?? text.es ?? text.en ?? '';
+}
 
 export function ClassRepresentativesMaintenance() {
-	const { t } = useI18n();
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const [apiError, setApiError] = useState<string | null>(null);
+	const { t, locale } = useI18n();
+	const { academicPeriodId } = useABET();
+	const { toast, showToast, clearToast } = useApiErrorToast();
 
-	const { representatives, isLoading, assignRepresentative, isAssigning, removeRepresentative } =
-		useClassRepresentativesMaintenance();
+	const [search, setSearch] = useState('');
+	const [debouncedSearch, setDebouncedSearch] = useState('');
+	const [page, setPage] = useState(1);
+	const [creating, setCreating] = useState(false);
+	const [createError, setCreateError] = useState<string | null>(null);
+	const [pendingRemove, setPendingRemove] = useState<ClassRepresentativeMaintenanceItem | null>(
+		null,
+	);
 
-	const handleSave = async (body: { studentCode: string; sectionCode: string }) => {
+	const { assign, remove } = useClassRepresentativeMutations();
+
+	useEffect(() => {
+		const timer = setTimeout(() => setDebouncedSearch(search), 300);
+		return () => clearTimeout(timer);
+	}, [search]);
+
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset paging to the first page when the external academic period changes
+		setPage(1);
+	}, [academicPeriodId]);
+
+	const handleSearchChange = (value: string) => {
+		setSearch(value);
+		setPage(1);
+	};
+
+	const { data, isLoading, isFetching, isError, refetch } = useClassRepresentativesMaintenance({
+		academicPeriodId,
+		page,
+		pageSize: PAGE_SIZE,
+		search: debouncedSearch,
+	});
+
+	const items = data?.items ?? [];
+	const total = data?.total ?? 0;
+	const totalPages = data?.totalPages ?? 1;
+
+	const handleAssign = async (body: { sectionCode: string; studentCode: string }) => {
+		setCreateError(null);
 		try {
-			setApiError(null);
-			await assignRepresentative(body);
-			setIsDialogOpen(false);
+			await assign.mutateAsync(body);
+			showToast('loads.classRepresentativesMaintenance.toast.assigned', 'success');
+			setCreating(false);
 		} catch (error) {
 			const [reason] = getApiErrorReasons(error);
-			setApiError(
+			setCreateError(
 				tryTranslate(
 					t,
 					reason ?? getErrorMessage(error, 'loads.classRepresentativesMaintenance.create.error'),
@@ -31,114 +97,243 @@ export function ClassRepresentativesMaintenance() {
 		}
 	};
 
-	const handleRemove = async (studentCode: string, sectionCode: string) => {
-		const confirmRemove = window.confirm(t('¿Está seguro de que desea remover a este delegado?'));
-		if (!confirmRemove) return;
-
+	const handleConfirmRemove = async () => {
+		if (!pendingRemove) return;
 		try {
-			await removeRepresentative({ studentCode, sectionCode });
+			await remove.mutateAsync({
+				studentCode: pendingRemove.studentCode,
+				sectionCode: pendingRemove.sectionCode,
+			});
+			showToast('loads.classRepresentativesMaintenance.toast.removed', 'success');
+			setPendingRemove(null);
 		} catch (error) {
-			console.error(error);
-			alert(t('error.internalServer'));
+			setPendingRemove(null);
+			showToast(
+				getErrorMessage(error, 'loads.classRepresentativesMaintenance.remove.error'),
+				'error',
+			);
 		}
 	};
 
+	const removeLabel = t('loads.classRepresentativesMaintenance.actions.remove');
+	const noPeriodSelected = academicPeriodId == null;
+
 	return (
-		<div className="space-y-4">
-			<div className="flex items-center justify-between">
-				<h3 className="text-lg font-medium text-gray-900">{t('Listado de Delegados')}</h3>
-				<button
-					onClick={() => {
-						setApiError(null);
-						setIsDialogOpen(true);
-					}}
-					className="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-					<span className="mr-1.5 font-bold">+</span>
-					{t('Nuevo')}
-				</button>
+		<Card>
+			<div className="space-y-5">
+				<div className="space-y-1">
+					<Title
+						title={t('loads.classRepresentativesMaintenance.title')}
+						className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+					/>
+					<SubTitle
+						name={t('loads.classRepresentativesMaintenance.subtitle')}
+						className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+					/>
+				</div>
+
+				<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+					<div className="relative w-full sm:max-w-xs">
+						<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+						<input
+							type="search"
+							value={search}
+							onChange={(event) => handleSearchChange(event.target.value)}
+							placeholder={t('loads.classRepresentativesMaintenance.searchPlaceholder')}
+							aria-label={t('loads.classRepresentativesMaintenance.searchPlaceholder')}
+							disabled={noPeriodSelected}
+							className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
+						/>
+					</div>
+					<Button
+						variant="primary"
+						size="sm"
+						className="w-full sm:w-auto"
+						disabled={noPeriodSelected}
+						onClick={() => {
+							setCreateError(null);
+							setCreating(true);
+						}}>
+						<PlusIcon className="h-4 w-4" />
+						<span>{t('loads.classRepresentativesMaintenance.actions.new')}</span>
+					</Button>
+				</div>
+
+				{noPeriodSelected ? (
+					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
+						<p className="text-sm text-zinc-500">
+							{t('loads.classRepresentativesMaintenance.selectPeriod')}
+						</p>
+					</div>
+				) : isError ? (
+					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
+						<p className="text-sm text-zinc-500">
+							{t('loads.classRepresentativesMaintenance.error.loadFailed')}
+						</p>
+						<Button variant="surface" size="sm" onClick={() => refetch()}>
+							{t('loads.classRepresentativesMaintenance.retry')}
+						</Button>
+					</div>
+				) : isLoading ? (
+					<div className="space-y-2" aria-busy>
+						{Array.from({ length: 6 }).map((_, index) => (
+							<div key={index} className="h-12 animate-pulse rounded-lg bg-zinc-100" />
+						))}
+					</div>
+				) : items.length === 0 ? (
+					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
+						<p className="text-sm font-medium text-zinc-700">
+							{t('loads.classRepresentativesMaintenance.empty.title')}
+						</p>
+						<p className="text-sm text-zinc-500">
+							{t('loads.classRepresentativesMaintenance.empty.subtitle')}
+						</p>
+					</div>
+				) : (
+					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
+						<div className="hidden overflow-x-auto md:block">
+							<Table>
+								<TableHeader>
+									<TableRow>
+										<TableHead>
+											{t('loads.classRepresentativesMaintenance.col.courseName')}
+										</TableHead>
+										<TableHead>
+											{t('loads.classRepresentativesMaintenance.col.courseCode')}
+										</TableHead>
+										<TableHead>
+											{t('loads.classRepresentativesMaintenance.col.sectionCode')}
+										</TableHead>
+										<TableHead>
+											{t('loads.classRepresentativesMaintenance.col.studentCode')}
+										</TableHead>
+										<TableHead>
+											{t('loads.classRepresentativesMaintenance.col.studentName')}
+										</TableHead>
+										<TableHead className="text-right">
+											{t('loads.classRepresentativesMaintenance.col.actions')}
+										</TableHead>
+									</TableRow>
+								</TableHeader>
+								<TableBody>
+									{items.map((item) => (
+										<TableRow key={item.id}>
+											<TableCell className="font-medium text-zinc-900">
+												{localized(item.courseName, locale)}
+											</TableCell>
+											<TableCell className="font-mono text-zinc-700">{item.courseCode}</TableCell>
+											<TableCell className="font-mono text-zinc-700">{item.sectionCode}</TableCell>
+											<TableCell className="font-mono text-zinc-700">{item.studentCode}</TableCell>
+											<TableCell className="text-zinc-700">
+												{item.studentFirstName} {item.studentLastName}
+											</TableCell>
+											<TableCell>
+												<div className="flex items-center justify-end">
+													<Button
+														variant="ghost"
+														size="icon"
+														className="text-red-600 hover:bg-red-50"
+														onClick={() => setPendingRemove(item)}
+														aria-label={removeLabel}
+														title={removeLabel}>
+														<TrashIcon className="h-4 w-4" />
+													</Button>
+												</div>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</div>
+
+						<ul className="space-y-3 md:hidden">
+							{items.map((item) => (
+								<li
+									key={item.id}
+									className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+									<div className="flex items-start justify-between gap-3">
+										<div className="min-w-0 space-y-1">
+											<p className="truncate font-medium text-zinc-900">
+												{localized(item.courseName, locale)}
+											</p>
+											<p className="font-mono text-xs text-zinc-400">
+												{item.courseCode} · {item.sectionCode}
+											</p>
+											<p className="text-sm text-zinc-500">
+												{item.studentFirstName} {item.studentLastName}
+											</p>
+											<p className="font-mono text-xs text-zinc-400">{item.studentCode}</p>
+										</div>
+										<div className="shrink-0">
+											<Button
+												variant="ghost"
+												size="icon"
+												className="text-red-600 hover:bg-red-50"
+												onClick={() => setPendingRemove(item)}
+												aria-label={removeLabel}
+												title={removeLabel}>
+												<TrashIcon className="h-4 w-4" />
+											</Button>
+										</div>
+									</div>
+								</li>
+							))}
+						</ul>
+					</div>
+				)}
+
+				{!noPeriodSelected && !isLoading && !isError && items.length > 0 && (
+					<div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+						<p className="text-xs text-zinc-500">
+							{total} {t('loads.classRepresentativesMaintenance.results')}
+						</p>
+						<div className="flex items-center justify-center gap-3">
+							<Button
+								variant="surface"
+								size="sm"
+								disabled={page <= 1 || isFetching}
+								onClick={() => setPage((current) => Math.max(1, current - 1))}
+								aria-label={t('loads.classRepresentativesMaintenance.prev')}>
+								<ChevronLeftIcon className="h-4 w-4" />
+							</Button>
+							<span className="text-sm text-zinc-600">
+								{t('loads.classRepresentativesMaintenance.page')} {page} / {totalPages}
+							</span>
+							<Button
+								variant="surface"
+								size="sm"
+								disabled={page >= totalPages || isFetching}
+								onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+								aria-label={t('loads.classRepresentativesMaintenance.next')}>
+								<ChevronRightIcon className="h-4 w-4" />
+							</Button>
+						</div>
+					</div>
+				)}
 			</div>
 
-			<div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-				<table className="min-w-full divide-y divide-gray-300">
-					<thead className="bg-gray-50">
-						<tr>
-							<th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-								{t('Nombre Curso')}
-							</th>
-							<th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-								{t('Código Curso')}
-							</th>
-							<th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-								{t('Código Sección')}
-							</th>
-							<th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-								{t('Código Alumno')}
-							</th>
-							<th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-								{t('Nombre Alumno')}
-							</th>
-							<th className="relative px-6 py-3.5 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
-								{t('Acciones')}
-							</th>
-						</tr>
-					</thead>
-					<tbody className="divide-y divide-gray-200 bg-white">
-						{isLoading ? (
-							<tr>
-								<td colSpan={6} className="px-6 py-10 text-center text-sm text-gray-500">
-									{t('Cargando delegados...')}
-								</td>
-							</tr>
-						) : representatives.length === 0 ? (
-							<tr>
-								<td colSpan={6} className="px-6 py-10 text-center text-sm text-gray-500">
-									{t('No se encontraron delegados registrados.')}
-								</td>
-							</tr>
-						) : (
-							representatives.map((row) => (
-								<tr key={row.id} className="hover:bg-gray-50">
-									<td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 font-medium">
-										{row.courseName}
-									</td>
-									<td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-										{row.courseCode}
-									</td>
-									<td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-										{row.sectionCode}
-									</td>
-									<td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-										{row.studentCode}
-									</td>
-									<td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-										{row.studentFullName}
-									</td>
-									<td className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
-										<button
-											onClick={() => handleRemove(row.studentCode, row.sectionCode)}
-											className="inline-flex items-center justify-center rounded-full bg-gray-100 p-1.5 text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors"
-											title={t('Remover')}>
-											{/* Representación del icono circular menos (-) de la maqueta */}
-											<span className="w-5 h-5 flex items-center justify-center font-black border border-current rounded-full text-xs">
-												—
-											</span>
-										</button>
-									</td>
-								</tr>
-							))
-						)}
-					</tbody>
-				</table>
-			</div>
-
-			{isDialogOpen && (
+			{creating && (
 				<ClassRepresentativeCreateDialog
-					saving={isAssigning}
-					errorMessage={apiError}
-					onClose={() => setIsDialogOpen(false)}
-					onSave={handleSave}
+					saving={assign.isPending}
+					errorMessage={createError}
+					onClose={() => setCreating(false)}
+					onSave={handleAssign}
 				/>
 			)}
-		</div>
+
+			<ConfirmDialog
+				isOpen={pendingRemove != null}
+				onClose={() => setPendingRemove(null)}
+				title={t('loads.classRepresentativesMaintenance.remove.title')}
+				message={t('loads.classRepresentativesMaintenance.remove.message')}
+				confirmLabel={t('loads.classRepresentativesMaintenance.actions.remove')}
+				declineLabel={t('dialog.actions.cancel')}
+				onConfirm={handleConfirmRemove}
+				onDecline={() => setPendingRemove(null)}
+				isLoading={remove.isPending}
+			/>
+
+			<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
+		</Card>
 	);
 }

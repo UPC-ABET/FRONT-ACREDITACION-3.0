@@ -23,3 +23,5 @@ export * from './CourseOutcomeMappingMaintenance';
 export * from './CourseOutcomeMappingGrid';
 export * from './CourseOutcomeMappingList';
 export * from './CourseOutcomeMappingGlyph';
+export * from './ClassRepresentativesMaintenance';
+export * from './ClassRepresentativeCreateDialog';

@@ -1218,7 +1218,7 @@
 			"studyPlanPeriodMismatch": "El alumno no está matriculado en la misma malla curricular y período que la sección."
 		},
 		"classRepresentativeAssign": {
-			"studentNotEnrolledInSection": "El estudiante no está matriculado en esta sección"
+			"studentNotEnrolledInSection": "El estudiante no está matriculado en esta sección."
 		},
 		"studyPlan": {
 			"inUse": "No se puede eliminar la malla porque está en uso.",
@@ -3278,6 +3278,55 @@
 				"created": "Estudiante creado correctamente.",
 				"updated": "Estudiante actualizado correctamente.",
 				"deleted": "Estudiante eliminado correctamente."
+			}
+		},
+		"classRepresentativesMaintenance": {
+			"title": "Mantenimiento de delegados",
+			"subtitle": "Asigna o remueve los delegados de sección del período académico seleccionado.",
+			"selectPeriod": "Selecciona un período académico en la cabecera para continuar.",
+			"searchPlaceholder": "Buscar por curso, sección o código de alumno...",
+			"results": "resultados",
+			"page": "Página",
+			"prev": "Anterior",
+			"next": "Siguiente",
+			"retry": "Reintentar",
+			"col": {
+				"courseName": "Curso",
+				"courseCode": "Código curso",
+				"sectionCode": "Código sección",
+				"studentCode": "Código alumno",
+				"studentName": "Nombre alumno",
+				"actions": "Acciones"
+			},
+			"actions": {
+				"new": "Nuevo delegado",
+				"remove": "Remover"
+			},
+			"empty": {
+				"title": "Sin delegados registrados",
+				"subtitle": "No se encontraron delegados con los filtros actuales."
+			},
+			"error": {
+				"loadFailed": "No se pudieron cargar los delegados."
+			},
+			"create": {
+				"title": "Nuevo delegado",
+				"subtitle": "Selecciona la sección y el estudiante correspondiente para asignarle el cargo.",
+				"sectionLabel": "Sección",
+				"sectionPlaceholder": "Selecciona una sección",
+				"studentLabel": "Alumno",
+				"studentPlaceholder": "Selecciona un alumno",
+				"save": "Guardar",
+				"error": "No se pudo asignar el delegado."
+			},
+			"remove": {
+				"title": "Remover delegado",
+				"message": "Esto removerá al alumno como delegado de la sección. ¿Continuar?",
+				"error": "No se pudo remover el delegado."
+			},
+			"toast": {
+				"assigned": "Delegado asignado correctamente.",
+				"removed": "Delegado removido correctamente."
 			}
 		},
 		"studentSectionEnrollmentsMaintenance": {

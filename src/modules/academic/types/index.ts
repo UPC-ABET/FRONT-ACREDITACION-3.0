@@ -575,12 +575,15 @@ export type CourseOutcomeMappingFilters = {
 
 export type ClassRepresentativeMaintenanceItem = {
 	id: number;
+	courseSectionId: number;
+	enrolledStudentId: number;
 	isClassRepresentative: boolean;
+	courseName: { es: string; en: string };
 	courseCode: string;
-	courseName: string;
 	sectionCode: string;
 	studentCode: string;
-	studentFullName: string;
+	studentFirstName: string;
+	studentLastName: string;
 };
 
 export type AssignRepresentativeDto = {
@@ -588,10 +591,5 @@ export type AssignRepresentativeDto = {
 	sectionCode: string;
 };
 
-export type ClassRepresentativeMaintenanceList = {
-	items: ClassRepresentativeMaintenanceItem[];
-	total: number;
-	page: number;
-	pageSize: number;
-	totalPages: number;
-};
+export type ClassRepresentativeMaintenanceList =
+	PaginatedEnvelope<ClassRepresentativeMaintenanceItem>;
