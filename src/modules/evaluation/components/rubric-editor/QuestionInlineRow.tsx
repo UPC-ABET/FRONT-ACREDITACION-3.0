@@ -59,16 +59,11 @@ export function QuestionInlineRow({
 	const currentText = question.questionText[locale];
 
 	const [text, setText] = useState(currentText);
+	const [isFocused, setIsFocused] = useState(false);
 	const [trashHovered, setTrashHovered] = useState(false);
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const focusedRef = useRef(false);
 
-	useEffect(() => {
-		if (!focusedRef.current) {
-			// eslint-disable-next-line react-hooks/set-state-in-effect -- only resyncs from server data when the field isn't focused; reading focusedRef requires effect/event timing, not render
-			setText(question.questionText[locale]);
-		}
-	}, [question.questionText, question.id, locale]);
+	const displayText = isFocused ? text : currentText;
 
 	useEffect(() => {
 		return () => {
@@ -95,7 +90,7 @@ export function QuestionInlineRow({
 	}, [text, canEdit, question.id, flushPatch]);
 
 	const handleBlur = async () => {
-		focusedRef.current = false;
+		setIsFocused(false);
 		if (!canEdit) return;
 		if (isTempId(question.id)) {
 			const trimmed = text.trim();
@@ -131,7 +126,7 @@ export function QuestionInlineRow({
 			</span>
 			<div className="relative min-w-[12rem] flex-1">
 				<Input
-					value={text}
+					value={displayText}
 					disabled={!canEdit}
 					placeholder={placeholder}
 					onChange={(e) => {
@@ -139,7 +134,8 @@ export function QuestionInlineRow({
 						onTextChange?.(question.id, e.target.value);
 					}}
 					onFocus={() => {
-						focusedRef.current = true;
+						setText(currentText);
+						setIsFocused(true);
 					}}
 					onBlur={() => void handleBlur()}
 					className={cn('w-full transition-colors', trashHovered && 'border-red-200')}

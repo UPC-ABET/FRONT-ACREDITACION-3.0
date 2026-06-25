@@ -60,15 +60,10 @@ export function CriteriaInlineRow({
 	const currentDescription = criterion.description[locale];
 
 	const [text, setText] = useState(currentDescription);
+	const [isFocused, setIsFocused] = useState(false);
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const focusedRef = useRef(false);
 
-	useEffect(() => {
-		if (!focusedRef.current) {
-			// eslint-disable-next-line react-hooks/set-state-in-effect -- only resyncs from server data when the field isn't focused; reading focusedRef requires effect/event timing, not render
-			setText(criterion.description[locale]);
-		}
-	}, [criterion.description, criterion.id, locale]);
+	const displayText = isFocused ? text : currentDescription;
 
 	useEffect(() => {
 		return () => {
@@ -95,7 +90,7 @@ export function CriteriaInlineRow({
 	}, [text, canEdit, criterion.id, flushPatch]);
 
 	const handleBlur = async () => {
-		focusedRef.current = false;
+		setIsFocused(false);
 		if (!canEdit) return;
 		if (isTempId(criterion.id)) {
 			const trimmed = text.trim();
@@ -126,7 +121,7 @@ export function CriteriaInlineRow({
 			</span>
 			<div className="relative min-w-[12rem] flex-1">
 				<Input
-					value={text}
+					value={displayText}
 					disabled={!canEdit}
 					placeholder={placeholder}
 					onChange={(e) => {
@@ -134,7 +129,8 @@ export function CriteriaInlineRow({
 						onTextChange?.(criterion.id, e.target.value);
 					}}
 					onFocus={() => {
-						focusedRef.current = true;
+						setText(currentDescription);
+						setIsFocused(true);
 					}}
 					onBlur={() => void handleBlur()}
 					className="w-full"
