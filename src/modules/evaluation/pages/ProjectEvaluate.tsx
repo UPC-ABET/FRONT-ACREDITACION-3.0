@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeftIcon, EyeIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { Skeleton, TableEmptyState, Title } from '@/shared/components/ui';
@@ -76,9 +76,11 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 
 	const [qualifStatuses, setQualifStatuses] =
 		useState<Record<number, number | null>>(initialQualifStatuses);
-	useEffect(() => {
+	const [trackedQualifStatuses, setTrackedQualifStatuses] = useState(initialQualifStatuses);
+	if (initialQualifStatuses !== trackedQualifStatuses) {
+		setTrackedQualifStatuses(initialQualifStatuses);
 		setQualifStatuses(initialQualifStatuses);
-	}, [initialQualifStatuses]);
+	}
 
 	const [activeStudyPlanCourseId, setActiveStudyPlanCourseId] = useState<number | null>(null);
 	const [dirtyTabs, setDirtyTabs] = useState<Set<number>>(new Set());
