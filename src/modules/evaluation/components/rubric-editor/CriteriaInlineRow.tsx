@@ -65,6 +65,7 @@ export function CriteriaInlineRow({
 
 	useEffect(() => {
 		if (!focusedRef.current) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect -- only resyncs from server data when the field isn't focused; reading focusedRef requires effect/event timing, not render
 			setText(criterion.description[locale]);
 		}
 	}, [criterion.description, criterion.id, locale]);

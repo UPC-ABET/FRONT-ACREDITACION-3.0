@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
 	InformationCircleIcon,
@@ -68,10 +68,11 @@ export function ProjectRubricCapstoneTable({
 	const [activeCommissionId, setActiveCommissionId] = useState<number | null>(
 		() => commissions[0]?.id ?? null,
 	);
-	useEffect(() => {
+	const [trackedRubricId, setTrackedRubricId] = useState(rubricId);
+	if (rubricId !== trackedRubricId) {
+		setTrackedRubricId(rubricId);
 		setActiveCommissionId(commissions[0]?.id ?? null);
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally re-run only when rubricId changes; including commissions would reset the user's selected tab on every re-render
-	}, [rubricId]);
+	}
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 	const [openOutcomeIds, setOpenOutcomeIds] = useState<Set<number>>(new Set());
