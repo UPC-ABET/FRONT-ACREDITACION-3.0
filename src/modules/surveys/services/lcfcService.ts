@@ -23,6 +23,8 @@ import type {
 	CloneConfigResult,
 	BackendLcfcConfig,
 	BackendGenerateResult,
+	PerceptionReportFilters,
+	PerceptionReportResponse,
 } from '../types';
 import type { I18nText } from '@/shared/types';
 
@@ -267,4 +269,18 @@ export async function downloadLCFCReportPdf(programId = 0, lang = 'es'): Promise
 export async function getLCFCStudentSurveys(token: string): Promise<LCFCStudentSurveys | null> {
 	const res = await apiGet(`lcfc/survey/list-by-token/${encodeURIComponent(token)}`);
 	return getApiData<LCFCStudentSurveys>(res) ?? null;
+}
+
+export async function generateLCFCPerceptionPdf(
+	params: PerceptionReportFilters & { programId?: number },
+): Promise<PerceptionReportResponse> {
+	const res = await apiPost('lcfc/report/perception', {
+		programId: params.programId,
+		commissionId: params.commissionId,
+		campusId: params.campusId,
+		surveyNumbers: params.surveyNumbers,
+		modalityLabel: params.modalityLabel,
+		lang: params.lang ?? 'es',
+	});
+	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };
 }

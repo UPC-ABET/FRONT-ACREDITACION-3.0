@@ -2316,6 +2316,23 @@
 			},
 			"metaTitle": "PPP — Pre-Professional Internships"
 		},
+		"perception": {
+			"commission": "Commission",
+			"allCommissions": "All commissions",
+			"campus": "Campus",
+			"allCampuses": "All campuses",
+			"surveyNumber": "Survey number",
+			"allSurveyNumbers": "All",
+			"language": "Language",
+			"spanish": "Spanish",
+			"english": "English",
+			"generate": "Generate",
+			"results": "Reports",
+			"view": "View",
+			"download": "Download",
+			"downloadZip": "Download ZIP",
+			"empty": "No data found for the selected filters"
+		},
 		"shared": {
 			"academicCycle": "Academic Cycle",
 			"selectCycle": "Select a cycle",

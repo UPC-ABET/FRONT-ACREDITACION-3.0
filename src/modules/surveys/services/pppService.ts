@@ -22,6 +22,8 @@ import type {
 	PPPNotificationSendRequest,
 	BackendPppConfig,
 	BackendUploadResult,
+	PerceptionReportFilters,
+	PerceptionReportResponse,
 } from '../types';
 
 function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
@@ -277,6 +279,20 @@ export async function generatePPPPerceptionReport(params: {
 	return generatePPPDashboard({
 		programId: params.programId,
 	});
+}
+
+export async function generatePPPPerceptionPdf(
+	params: PerceptionReportFilters & { programId?: number },
+): Promise<PerceptionReportResponse> {
+	const res = await apiPost('ppp/report/perception', {
+		programId: params.programId,
+		commissionId: params.commissionId,
+		campusId: params.campusId,
+		surveyNumbers: params.surveyNumbers,
+		modalityLabel: params.modalityLabel,
+		lang: params.lang ?? 'es',
+	});
+	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };
 }
 
 export async function getPPPSurveysByFilters(params: {
