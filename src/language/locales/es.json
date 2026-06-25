@@ -2317,6 +2317,23 @@
 			},
 			"metaTitle": "PPP — Prácticas Pre-Profesionales"
 		},
+		"perception": {
+			"commission": "Comisión",
+			"allCommissions": "Todas las comisiones",
+			"campus": "Sede",
+			"allCampuses": "Todas las sedes",
+			"surveyNumber": "Número de encuesta",
+			"allSurveyNumbers": "Todas",
+			"language": "Idioma",
+			"spanish": "Español",
+			"english": "Inglés",
+			"generate": "Generar",
+			"results": "Reportes",
+			"view": "Visualizar",
+			"download": "Descargar",
+			"downloadZip": "Descargar ZIP",
+			"empty": "No se encontraron datos para los filtros seleccionados"
+		},
 		"shared": {
 			"academicCycle": "Ciclo Académico",
 			"selectCycle": "Selecciona un ciclo",

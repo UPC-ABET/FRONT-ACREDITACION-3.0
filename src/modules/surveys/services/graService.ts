@@ -28,6 +28,8 @@ import type {
 	BackendStudent,
 	BackendEmailTemplate,
 	BackendUploadResult,
+	PerceptionReportFilters,
+	PerceptionReportResponse,
 } from '../types';
 
 /** Coerce an I18nText ({ es, en }) or plain string to a display string (prefers Spanish). */
@@ -340,14 +342,17 @@ export async function generateGRADashboard(params: {
 	};
 }
 
-export async function generateGRAPerceptionReport(params: {
-	academicPeriodId?: number;
-	programId?: number;
-	commissionId?: number;
-}) {
-	return generateGRADashboard({
+export async function generateGRAPerceptionPdf(
+	params: PerceptionReportFilters & { programId?: number },
+): Promise<PerceptionReportResponse> {
+	const res = await apiPost('gra/report/perception', {
 		programId: params.programId,
+		commissionId: params.commissionId,
+		campusId: params.campusId,
+		surveyNumbers: params.surveyNumbers,
+		lang: params.lang ?? 'es',
 	});
+	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };
 }
 
 export async function downloadGRASurveys(academicPeriodId: number, programId = 0): Promise<void> {

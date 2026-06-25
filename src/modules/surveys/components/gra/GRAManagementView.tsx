@@ -34,7 +34,7 @@ export function GRAManagementView() {
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
 			<Card className="overflow-visible">
-				{activeTab === 'reports' && <GRAReports />}
+				{activeTab === 'reports' && <GRAReports programId={programId || undefined} />}
 				{activeTab === 'notifications' && (
 					<GRANotificationView programId={programId || undefined} />
 				)}

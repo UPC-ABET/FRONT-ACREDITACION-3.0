@@ -97,6 +97,10 @@ export function CompetenceCRUD({
 	);
 
 	function openAdd() {
+		if (!programId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
+			return;
+		}
 		setForm(EMPTY_FORM);
 		setCommissionSelections({});
 		setModalOpen(true);
@@ -131,6 +135,10 @@ export function CompetenceCRUD({
 	}
 
 	function handleSave() {
+		if (!programId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
+			return;
+		}
 		// Merge commission selection into form for validation
 		const firstOutcomeId = Object.values(commissionSelections)[0];
 		const formToValidate = {

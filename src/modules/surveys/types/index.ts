@@ -350,6 +350,25 @@ export interface ReportPDFFile {
 	base64Content: string;
 }
 
+export interface PerceptionReportFile {
+	campusId: number | null;
+	campusName: string;
+	filename: string;
+	base64: string;
+}
+
+export interface PerceptionReportResponse {
+	reports: PerceptionReportFile[];
+	zip: { filename: string; base64: string } | null;
+}
+
+export interface PerceptionReportFilters {
+	commissionId?: number;
+	campusId?: number;
+	surveyNumbers?: number[];
+	lang?: 'es' | 'en';
+}
+
 export interface SurveyApiResponse<T = unknown> {
 	success: boolean;
 	data?: {

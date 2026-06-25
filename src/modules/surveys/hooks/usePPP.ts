@@ -7,7 +7,6 @@ import type {
 	AcademicPeriod,
 	CompetenceConfig,
 	CompetenceFormData,
-	DashboardResponse,
 	MassiveUploadResult,
 	PPPNotificationSendRequest,
 } from '../types';
@@ -20,7 +19,6 @@ import {
 	generatePPPConfigFromOutcomes,
 	downloadPPPTemplate,
 	uploadPPPMassive,
-	generatePPPPerceptionReport,
 	sendPPPNotification,
 } from '../services';
 
@@ -186,29 +184,6 @@ export function usePPPUpload() {
 			setResult(null);
 		},
 	};
-}
-
-export function usePPPReports() {
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [reportData, setReportData] = useState<DashboardResponse | null>(null);
-
-	const generate = useCallback(
-		async (params: { academicPeriodId?: number; programId?: number; commissionId?: number }) => {
-			setLoading(true);
-			setError(null);
-			try {
-				setReportData(await generatePPPPerceptionReport(params));
-			} catch (e) {
-				setError(getErrorMessage(e));
-			} finally {
-				setLoading(false);
-			}
-		},
-		[],
-	);
-
-	return { loading, error, reportData, generate };
 }
 
 export function usePPPNotification() {
