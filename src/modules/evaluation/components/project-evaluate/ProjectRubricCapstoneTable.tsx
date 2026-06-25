@@ -2,20 +2,17 @@
 
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import {
-	InformationCircleIcon,
-	ExclamationTriangleIcon,
-	ChevronDownIcon,
-} from '@heroicons/react/24/outline';
+import { ExclamationTriangleIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import { Toggle } from '@/shared/components/ui';
-import { Spinner } from '@/shared/components';
+import { Spinner } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
+import { localizedText } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import { performanceLevelsService } from '@/modules/academic/services';
 import { useCapstoneEvaluation } from '../../hooks/useCapstoneEvaluation';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 import { CapstoneRubricRow } from './CapstoneRubricRow';
+import { DuplicateGradesToggle } from './DuplicateGradesToggle';
 import { PLSelector, type PerformanceLevel } from './CapstonePerformanceLevelSelector';
 
 type OutcomeRow = {
@@ -171,15 +168,11 @@ export function ProjectRubricCapstoneTable({
 				</div>
 			)}
 			{!disableDuplicate && (
-				<div className="flex items-center justify-end gap-2 border-b border-zinc-200 px-4 py-3">
-					<span className="text-xs text-zinc-500">
-						{t('projects.evaluate.rubric.duplicateGrades')}
-					</span>
-					<Toggle checked={duplicateMode} onChange={setDuplicateMode} disabled={readOnly} />
-					<span title={t('projects.evaluate.rubric.duplicateGradesInfo')}>
-						<InformationCircleIcon className="h-4 w-4 cursor-help text-zinc-400" />
-					</span>
-				</div>
+				<DuplicateGradesToggle
+					checked={duplicateMode}
+					onChange={setDuplicateMode}
+					disabled={readOnly}
+				/>
 			)}
 
 			<div className="hidden w-full overflow-x-auto md:block">
@@ -234,9 +227,9 @@ export function ProjectRubricCapstoneTable({
 
 			<div className="divide-y divide-zinc-200 md:hidden">
 				{visibleOutcomes.map((outcome) => {
-					const q = questionByOutcome.get(outcome.id);
-					const criterias = q?.criterias ?? [];
-					const outcomeDesc = outcome.description[locale as 'es' | 'en'] ?? outcome.description.es;
+					const question = questionByOutcome.get(outcome.id);
+					const criterias = question?.criterias ?? [];
+					const outcomeDescription = localizedText(outcome.description, locale);
 					const isOpen = openOutcomeIds.has(outcome.id);
 
 					return (
@@ -244,10 +237,11 @@ export function ProjectRubricCapstoneTable({
 							<button
 								type="button"
 								onClick={() => toggleOutcomeOpen(outcome.id)}
+								aria-expanded={isOpen}
 								className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left">
 								<div>
 									<p className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-										Outcome
+										{t('projects.evaluate.capstone.outcome')}
 									</p>
 									<p className="text-sm font-semibold text-zinc-800">{outcome.code}</p>
 								</div>
@@ -261,14 +255,14 @@ export function ProjectRubricCapstoneTable({
 
 							{isOpen && (
 								<div className="space-y-3 px-4 pb-4">
-									<p className="text-xs leading-snug text-zinc-500">{outcomeDesc}</p>
+									<p className="text-xs leading-snug text-zinc-500">{outcomeDescription}</p>
 
-									{criterias.map((criteria) => {
-										const criteriaDesc = criteria.text[locale as 'es' | 'en'] ?? criteria.text.es;
+									{criterias.map((criterion) => {
+										const criterionDescription = localizedText(criterion.text, locale);
 										return (
-											<div key={criteria.id} className="rounded-lg border border-zinc-200 p-3">
+											<div key={criterion.id} className="rounded-lg border border-zinc-200 p-3">
 												<div className="mb-2 rounded-lg border border-zinc-200 bg-zinc-50 p-2.5 text-xs leading-snug text-zinc-600">
-													{criteriaDesc}
+													{criterionDescription}
 												</div>
 
 												{isLoadingLevels ? (
@@ -283,27 +277,31 @@ export function ProjectRubricCapstoneTable({
 												) : duplicateMode ? (
 													<PLSelector
 														levels={performanceLevels}
-														selected={dupSelections[criteria.id] ?? null}
+														selected={dupSelections[criterion.id] ?? null}
 														locale={locale}
-														onChange={(val) => handleDupSelect(criteria.id, val)}
+														onChange={(value) => handleDupSelect(criterion.id, value)}
 														disabled={readOnly}
 													/>
 												) : (
 													<div className="flex flex-col gap-3">
 														{students
-															.filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1))
-															.map((st) => {
-																const current = selections[criteria.id]?.[st.id] ?? null;
+															.filter(
+																(student) => !nrNaTypeIds.has(qualifStatuses[student.id] ?? -1),
+															)
+															.map((student) => {
+																const current = selections[criterion.id]?.[student.id] ?? null;
 																return (
-																	<div key={st.id} className="flex flex-col gap-1">
+																	<div key={student.id} className="flex flex-col gap-1">
 																		<span className="text-xs font-medium text-zinc-700">
-																			{st.firstName} {st.lastName}
+																			{student.firstName} {student.lastName}
 																		</span>
 																		<PLSelector
 																			levels={performanceLevels}
 																			selected={current}
 																			locale={locale}
-																			onChange={(val) => handleSelect(criteria.id, st.id, val)}
+																			onChange={(value) =>
+																				handleSelect(criterion.id, student.id, value)
+																			}
 																			disabled={readOnly}
 																		/>
 																	</div>
