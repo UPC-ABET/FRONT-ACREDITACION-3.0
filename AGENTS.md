@@ -325,7 +325,8 @@ Top-level pages follow one consistent shell so card usage is uniform across the 
 
 ## Git & Commits
 
-- Commit messages: concise, focused on the "why". Never end with `Co-Authored-By: {model} <noreply@anthropic.com>`.
+- **Commit messages are exactly ONE line.** No body, no bullet points, no blank-line description. Concise, focused on the "why".
+- **NEVER add a `Co-Authored-By` trailer** (or any `Co-Authored-By: {model} <noreply@anthropic.com>` line) to commits.
 - Prefer new commits over amending.
 - Never force-push to main/master.
 - Never skip hooks (`--no-verify`).

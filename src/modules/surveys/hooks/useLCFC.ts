@@ -5,7 +5,6 @@ import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
 import type {
 	AcademicPeriod,
-	DashboardResponse,
 	LCFCCourse,
 	LCFCConfigStatus,
 	LCFCConfigUpdateRequest,
@@ -23,7 +22,6 @@ import {
 	deleteLCFCConfig,
 	getLCFCEmailParams,
 	sendLCFCNotification,
-	generateLCFCPerceptionReport,
 } from '../services';
 import type { AvailableSection, GenerateConfigResult, CloneConfigResult } from '../types';
 
@@ -208,32 +206,4 @@ export function useLCFCAvailableSections() {
 	}, []);
 
 	return { sections, loading, error, load };
-}
-
-export function useLCFCReports() {
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [reportData, setReportData] = useState<DashboardResponse | null>(null);
-
-	const generate = useCallback(
-		async (params: { academicPeriodId?: number; school?: string; programId?: number }) => {
-			setLoading(true);
-			setError(null);
-			try {
-				setReportData(
-					await generateLCFCPerceptionReport({
-						academicPeriodId: params.academicPeriodId,
-						programId: params.programId,
-					}),
-				);
-			} catch (e) {
-				setError(getErrorMessage(e));
-			} finally {
-				setLoading(false);
-			}
-		},
-		[],
-	);
-
-	return { loading, error, reportData, generate };
 }

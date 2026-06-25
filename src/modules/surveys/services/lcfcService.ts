@@ -238,15 +238,6 @@ export async function generateLCFCDashboard(params: {
 	};
 }
 
-export async function generateLCFCPerceptionReport(params: {
-	academicPeriodId?: number;
-	programId?: number;
-}) {
-	return generateLCFCDashboard({
-		programId: params.programId,
-	});
-}
-
 export async function validateLCFCToken(token: string) {
 	return apiGet(`lcfc/token/validate/${encodeURIComponent(token)}`);
 }
@@ -279,7 +270,6 @@ export async function generateLCFCPerceptionPdf(
 		commissionId: params.commissionId,
 		campusId: params.campusId,
 		surveyNumbers: params.surveyNumbers,
-		modalityLabel: params.modalityLabel,
 		lang: params.lang ?? 'es',
 	});
 	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };

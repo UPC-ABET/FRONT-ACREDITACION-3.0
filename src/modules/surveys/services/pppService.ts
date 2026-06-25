@@ -271,16 +271,6 @@ export async function generatePPPFindings(params: {
 	});
 }
 
-export async function generatePPPPerceptionReport(params: {
-	academicPeriodId?: number;
-	programId?: number;
-	commissionId?: number;
-}) {
-	return generatePPPDashboard({
-		programId: params.programId,
-	});
-}
-
 export async function generatePPPPerceptionPdf(
 	params: PerceptionReportFilters & { programId?: number },
 ): Promise<PerceptionReportResponse> {
@@ -289,7 +279,6 @@ export async function generatePPPPerceptionPdf(
 		commissionId: params.commissionId,
 		campusId: params.campusId,
 		surveyNumbers: params.surveyNumbers,
-		modalityLabel: params.modalityLabel,
 		lang: params.lang ?? 'es',
 	});
 	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };

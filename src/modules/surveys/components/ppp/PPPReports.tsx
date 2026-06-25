@@ -3,7 +3,7 @@
 import React from 'react';
 import { useI18n, useABET } from '@/providers';
 import { PerceptionReportPanel } from '../shared/PerceptionReportPanel';
-import { generatePPPPerceptionPdf } from '../../services/pppService';
+import { generatePPPPerceptionPdf } from '../../services';
 
 interface PPPReportsProps {
 	readonly programId: number;

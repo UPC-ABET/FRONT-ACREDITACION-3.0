@@ -366,7 +366,6 @@ export interface PerceptionReportFilters {
 	commissionId?: number;
 	campusId?: number;
 	surveyNumbers?: number[];
-	modalityLabel?: string;
 	lang?: 'es' | 'en';
 }
 

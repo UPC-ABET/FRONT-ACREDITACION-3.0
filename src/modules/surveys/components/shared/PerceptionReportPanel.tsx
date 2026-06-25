@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Card, Button, Select, Toast } from '@/shared/components';
 import { ArrowDownTrayIcon, EyeIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { getErrorMessage } from '@/shared/lib';
 import { campusesService } from '@/modules/academic';
-import { listGRAOutcomes } from '../../services/graService';
+import { listGRAOutcomes } from '../../services';
 import type {
 	PerceptionReportFilters,
 	PerceptionReportResponse,
@@ -22,7 +22,6 @@ interface OptionItem {
 
 export interface PerceptionReportPanelProps {
 	programId?: number;
-	/** PPP exposes a "survey number" (practice number) multi-select; GRA/LCFC do not. */
 	showSurveyNumber?: boolean;
 	generate: (
 		filters: PerceptionReportFilters & { programId?: number },
@@ -33,6 +32,12 @@ const SURVEY_NUMBER_OPTIONS: OptionItem[] = [
 	{ value: 1, label: '1' },
 	{ value: 2, label: '2' },
 ];
+
+const perceptionKeys = {
+	all: ['perception'] as const,
+	commissions: (programId?: number) => [...perceptionKeys.all, 'commissions', programId] as const,
+	campuses: () => [...perceptionKeys.all, 'campuses'] as const,
+};
 
 function base64ToBlob(base64: string, type: string): Blob {
 	const binary = atob(base64);
@@ -65,8 +70,6 @@ export function PerceptionReportPanel({
 		value: 'es',
 		label: t('surveys.perception.spanish'),
 	});
-	const [loading, setLoading] = useState(false);
-	const [result, setResult] = useState<PerceptionReportResponse | null>(null);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -74,7 +77,7 @@ export function PerceptionReportPanel({
 	});
 
 	const { data: commissionOptions = [] } = useQuery({
-		queryKey: ['perception-commissions', programId],
+		queryKey: perceptionKeys.commissions(programId),
 		queryFn: () => listGRAOutcomes({ programId: programId as number }),
 		enabled: Boolean(programId),
 		select: (groups) =>
@@ -82,7 +85,7 @@ export function PerceptionReportPanel({
 	});
 
 	const { data: campusOptions = [] } = useQuery({
-		queryKey: ['perception-campuses'],
+		queryKey: perceptionKeys.campuses(),
 		queryFn: () => campusesService.getAll().then((response) => response.data ?? []),
 		select: (campuses) =>
 			campuses.map((item) => ({ value: item.id, label: item.name?.es ?? item.code })),
@@ -93,37 +96,39 @@ export function PerceptionReportPanel({
 		{ value: 'en', label: t('surveys.perception.english') },
 	];
 
-	async function handleGenerate() {
+	const generateMutation = useMutation({
+		mutationFn: generate,
+		onSuccess: (response) => {
+			if (response.reports.length === 0) {
+				setToast({ open: true, type: 'error', msg: t('surveys.perception.empty') });
+			}
+		},
+		onError: (error) => {
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, getErrorMessage(error)) });
+		},
+	});
+	const result = generateMutation.data;
+
+	function handleGenerate() {
 		if (!programId) {
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
 			return;
 		}
-		setLoading(true);
-		setResult(null);
-		try {
-			const response = await generate({
-				programId,
-				commissionId: commission ? Number(commission.value) : undefined,
-				campusId: campus ? Number(campus.value) : undefined,
-				surveyNumbers: showSurveyNumber
-					? surveyNumbers.map((option) => Number(option.value))
-					: undefined,
-				lang: language.value === 'en' ? 'en' : 'es',
-			});
-			setResult(response);
-			if (response.reports.length === 0) {
-				setToast({ open: true, type: 'error', msg: t('surveys.perception.empty') });
-			}
-		} catch (error) {
-			setToast({ open: true, type: 'error', msg: tryTranslate(t, getErrorMessage(error)) });
-		} finally {
-			setLoading(false);
-		}
+		generateMutation.mutate({
+			programId,
+			commissionId: commission ? Number(commission.value) : undefined,
+			campusId: campus ? Number(campus.value) : undefined,
+			surveyNumbers: showSurveyNumber
+				? surveyNumbers.map((option) => Number(option.value))
+				: undefined,
+			lang: language.value === 'en' ? 'en' : 'es',
+		});
 	}
 
 	function viewReport(file: PerceptionReportFile) {
 		const url = URL.createObjectURL(base64ToBlob(file.base64, 'application/pdf'));
 		window.open(url, '_blank', 'noopener');
+		setTimeout(() => URL.revokeObjectURL(url), 60_000);
 	}
 
 	function downloadReport(file: PerceptionReportFile) {
@@ -187,7 +192,10 @@ export function PerceptionReportPanel({
 					/>
 				</div>
 				<div className="flex justify-end">
-					<Button onClick={handleGenerate} disabled={loading} loading={loading}>
+					<Button
+						onClick={handleGenerate}
+						disabled={generateMutation.isPending}
+						loading={generateMutation.isPending}>
 						{t('surveys.perception.generate')}
 					</Button>
 				</div>
@@ -196,12 +204,10 @@ export function PerceptionReportPanel({
 			{result && result.reports.length > 0 && (
 				<Card className="p-5 space-y-3">
 					<div className="flex items-center justify-between gap-3">
-						<h3 className="text-base font-bold text-zinc-800">
-							{t('surveys.perception.results')}
-						</h3>
+						<h3 className="text-base font-bold text-zinc-800">{t('surveys.perception.results')}</h3>
 						{result.zip && (
 							<Button size="sm" variant="surface" onClick={downloadZip}>
-								<DocumentArrowDownIcon className="h-4 w-4 mr-1" />
+								<DocumentArrowDownIcon className="h-4 w-4 mr-1" aria-hidden="true" />
 								{t('surveys.perception.downloadZip')}
 							</Button>
 						)}
@@ -214,11 +220,11 @@ export function PerceptionReportPanel({
 								<span className="truncate text-zinc-700">{file.filename}</span>
 								<div className="flex shrink-0 gap-2">
 									<Button size="sm" variant="surface" onClick={() => viewReport(file)}>
-										<EyeIcon className="h-4 w-4 mr-1" />
+										<EyeIcon className="h-4 w-4 mr-1" aria-hidden="true" />
 										{t('surveys.perception.view')}
 									</Button>
 									<Button size="sm" variant="surface" onClick={() => downloadReport(file)}>
-										<ArrowDownTrayIcon className="h-4 w-4 mr-1" />
+										<ArrowDownTrayIcon className="h-4 w-4 mr-1" aria-hidden="true" />
 										{t('surveys.perception.download')}
 									</Button>
 								</div>

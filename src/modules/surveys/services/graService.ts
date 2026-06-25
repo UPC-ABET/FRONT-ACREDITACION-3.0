@@ -342,16 +342,6 @@ export async function generateGRADashboard(params: {
 	};
 }
 
-export async function generateGRAPerceptionReport(params: {
-	academicPeriodId?: number;
-	programId?: number;
-	commissionId?: number;
-}) {
-	return generateGRADashboard({
-		programId: params.programId,
-	});
-}
-
 export async function generateGRAPerceptionPdf(
 	params: PerceptionReportFilters & { programId?: number },
 ): Promise<PerceptionReportResponse> {
@@ -360,7 +350,6 @@ export async function generateGRAPerceptionPdf(
 		commissionId: params.commissionId,
 		campusId: params.campusId,
 		surveyNumbers: params.surveyNumbers,
-		modalityLabel: params.modalityLabel,
 		lang: params.lang ?? 'es',
 	});
 	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };

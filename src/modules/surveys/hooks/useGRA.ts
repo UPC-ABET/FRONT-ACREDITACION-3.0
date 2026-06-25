@@ -7,7 +7,6 @@ import type {
 	AcademicPeriod,
 	CompetenceConfig,
 	CompetenceFormData,
-	DashboardResponse,
 	GRAStudent,
 	StudentSearchResult,
 	EmailTemplate,
@@ -29,7 +28,6 @@ import {
 	sendGRAEmail,
 	downloadGRATemplate,
 	uploadGRAMassive,
-	generateGRAPerceptionReport,
 } from '../services';
 
 export function useGRACycles() {
@@ -304,27 +302,4 @@ export function useGRAUpload() {
 			setResult(null);
 		},
 	};
-}
-
-export function useGRAReports() {
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [reportData, setReportData] = useState<DashboardResponse | null>(null);
-
-	const generate = useCallback(
-		async (params: { academicPeriodId?: number; programId?: number; commissionId?: number }) => {
-			setLoading(true);
-			setError(null);
-			try {
-				setReportData(await generateGRAPerceptionReport(params));
-			} catch (e) {
-				setError(getErrorMessage(e));
-			} finally {
-				setLoading(false);
-			}
-		},
-		[],
-	);
-
-	return { loading, error, reportData, generate };
 }
