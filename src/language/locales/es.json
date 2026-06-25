@@ -1927,6 +1927,7 @@
 			},
 			"students": {
 				"title": "Estudiantes",
+				"attendance": "Asistencia",
 				"grade": "Nota",
 				"noGrade": "Sin nota",
 				"empty": "No hay estudiantes en este proyecto."

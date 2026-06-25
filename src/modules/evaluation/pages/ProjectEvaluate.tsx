@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeftIcon, EyeIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { Skeleton, TableEmptyState, Title } from '@/shared/components/ui';
@@ -76,10 +76,11 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 
 	const [qualifStatuses, setQualifStatuses] =
 		useState<Record<number, number | null>>(initialQualifStatuses);
-	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- reseed the editable qualification-status draft from server data when the loaded students or active evaluator change
+	const [trackedQualifStatuses, setTrackedQualifStatuses] = useState(initialQualifStatuses);
+	if (initialQualifStatuses !== trackedQualifStatuses) {
+		setTrackedQualifStatuses(initialQualifStatuses);
 		setQualifStatuses(initialQualifStatuses);
-	}, [initialQualifStatuses]);
+	}
 
 	const [activeStudyPlanCourseId, setActiveStudyPlanCourseId] = useState<number | null>(null);
 	const [dirtyTabs, setDirtyTabs] = useState<Set<number>>(new Set());
@@ -223,7 +224,9 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 						<TableEmptyState message={t('projects.evaluate.students.empty')} />
 					) : (
 						students.map((student) => (
-							<div key={student.id} className="flex items-center justify-between gap-4 px-6 py-4">
+							<div
+								key={student.id}
+								className="flex flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
 								<div className="flex flex-col gap-0.5">
 									<span className="font-medium text-zinc-900">
 										{student.firstName} {student.lastName}
@@ -235,40 +238,47 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 									</div>
 								</div>
 
-								{!isReadOnly && (
-									<select
-										value={qualifStatuses[student.id] ?? ''}
-										onChange={(e) =>
-											setQualifStatuses((prev) => ({
-												...prev,
-												[student.id]: Number(e.target.value),
-											}))
-										}
-										disabled={isLoadingStatuses}
-										className="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-red-600 disabled:opacity-50">
-										<option value="">—</option>
-										{statusTypes.map((s) => (
-											<option key={s.id} value={s.id}>
-												{s.name[locale as 'es' | 'en'] ?? s.name.es}
-											</option>
-										))}
-									</select>
-								)}
-
-								<div className="flex flex-col items-end gap-0.5">
-									<span className="text-xs font-medium text-zinc-400">
-										{t('projects.evaluate.students.grade')}
-									</span>
-									{student.totalGrade != null ? (
-										<span className="text-2xl font-bold tabular-nums text-zinc-900">
-											{student.totalGrade}
-											<span className="ml-0.5 text-sm font-normal text-zinc-400">/20</span>
-										</span>
-									) : (
-										<span className="text-sm text-zinc-400">
-											{t('projects.evaluate.students.noGrade')}
-										</span>
+								<div className="flex items-center justify-between gap-4 sm:justify-end sm:gap-8">
+									{!isReadOnly && (
+										<div className="flex flex-col gap-0.5">
+											<span className="text-xs font-medium text-zinc-400">
+												{t('projects.evaluate.students.attendance')}
+											</span>
+											<select
+												value={qualifStatuses[student.id] ?? ''}
+												onChange={(e) =>
+													setQualifStatuses((prev) => ({
+														...prev,
+														[student.id]: Number(e.target.value),
+													}))
+												}
+												disabled={isLoadingStatuses}
+												className="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-red-600 disabled:opacity-50">
+												<option value="">—</option>
+												{statusTypes.map((s) => (
+													<option key={s.id} value={s.id}>
+														{s.name[locale as 'es' | 'en'] ?? s.name.es}
+													</option>
+												))}
+											</select>
+										</div>
 									)}
+
+									<div className="flex flex-col items-end gap-0.5">
+										<span className="text-xs font-medium text-zinc-400">
+											{t('projects.evaluate.students.grade')}
+										</span>
+										{student.totalGrade != null ? (
+											<span className="text-2xl font-bold tabular-nums text-zinc-900">
+												{student.totalGrade}
+												<span className="ml-0.5 text-sm font-normal text-zinc-400">/20</span>
+											</span>
+										) : (
+											<span className="text-sm text-zinc-400">
+												{t('projects.evaluate.students.noGrade')}
+											</span>
+										)}
+									</div>
 								</div>
 							</div>
 						))

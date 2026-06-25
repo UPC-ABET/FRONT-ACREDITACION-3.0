@@ -1,17 +1,19 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { InformationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { ExclamationTriangleIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import { Toggle } from '@/shared/components/ui';
+import { Spinner } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
+import { localizedText } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import { performanceLevelsService } from '@/modules/academic/services';
 import { useCapstoneEvaluation } from '../../hooks/useCapstoneEvaluation';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 import { CapstoneRubricRow } from './CapstoneRubricRow';
-import type { PerformanceLevel } from './CapstonePerformanceLevelSelector';
+import { DuplicateGradesToggle } from './DuplicateGradesToggle';
+import { PLSelector, type PerformanceLevel } from './CapstonePerformanceLevelSelector';
 
 type OutcomeRow = {
 	id: number;
@@ -63,13 +65,26 @@ export function ProjectRubricCapstoneTable({
 	const [activeCommissionId, setActiveCommissionId] = useState<number | null>(
 		() => commissions[0]?.id ?? null,
 	);
-	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset the active commission tab to the first one when switching to a different rubric
+	const [trackedRubricId, setTrackedRubricId] = useState(rubricId);
+	if (rubricId !== trackedRubricId) {
+		setTrackedRubricId(rubricId);
 		setActiveCommissionId(commissions[0]?.id ?? null);
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally re-run only when rubricId changes; including commissions would reset the user's selected tab on every re-render
-	}, [rubricId]);
+	}
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
+	const [openOutcomeIds, setOpenOutcomeIds] = useState<Set<number>>(new Set());
+
+	const toggleOutcomeOpen = (id: number) => {
+		setOpenOutcomeIds((prev) => {
+			const next = new Set(prev);
+			if (next.has(id)) {
+				next.delete(id);
+			} else {
+				next.add(id);
+			}
+			return next;
+		});
+	};
 
 	const { data: rawLevels = [], isLoading: isLoadingLevels } = useQuery({
 		queryKey: ['performance-levels', { academicPeriodId: academicPeriodId, isActive: true }],
@@ -152,7 +167,15 @@ export function ProjectRubricCapstoneTable({
 					</nav>
 				</div>
 			)}
-			<div className="w-full overflow-x-auto">
+			{!disableDuplicate && (
+				<DuplicateGradesToggle
+					checked={duplicateMode}
+					onChange={setDuplicateMode}
+					disabled={readOnly}
+				/>
+			)}
+
+			<div className="hidden w-full overflow-x-auto md:block">
 				<table className="w-full table-auto border-collapse text-sm">
 					<thead>
 						<tr className="border-b border-zinc-200 bg-zinc-50">
@@ -162,27 +185,8 @@ export function ProjectRubricCapstoneTable({
 							<th className="w-52 min-w-[16rem] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
 								{t('projects.evaluate.capstone.criteria')}
 							</th>
-							<th className="min-w-[12rem] px-4 py-3 text-left md:min-w-[14rem]">
-								<div className="flex items-center justify-between gap-4">
-									<span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-										{t('projects.evaluate.capstone.score')}
-									</span>
-									{!disableDuplicate && (
-										<div className="flex items-center gap-2 shrink-0">
-											<span className="text-xs text-zinc-500">
-												{t('projects.evaluate.rubric.duplicateGrades')}
-											</span>
-											<Toggle
-												checked={duplicateMode}
-												onChange={setDuplicateMode}
-												disabled={readOnly}
-											/>
-											<span title={t('projects.evaluate.rubric.duplicateGradesInfo')}>
-												<InformationCircleIcon className="h-4 w-4 cursor-help text-zinc-400" />
-											</span>
-										</div>
-									)}
-								</div>
+							<th className="min-w-[12rem] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500 md:min-w-[14rem]">
+								{t('projects.evaluate.capstone.score')}
 							</th>
 						</tr>
 					</thead>
@@ -219,6 +223,100 @@ export function ProjectRubricCapstoneTable({
 						})}
 					</tbody>
 				</table>
+			</div>
+
+			<div className="divide-y divide-zinc-200 md:hidden">
+				{visibleOutcomes.map((outcome) => {
+					const question = questionByOutcome.get(outcome.id);
+					const criterias = question?.criterias ?? [];
+					const outcomeDescription = localizedText(outcome.description, locale);
+					const isOpen = openOutcomeIds.has(outcome.id);
+
+					return (
+						<div key={outcome.id}>
+							<button
+								type="button"
+								onClick={() => toggleOutcomeOpen(outcome.id)}
+								aria-expanded={isOpen}
+								className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left">
+								<div>
+									<p className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+										{t('projects.evaluate.capstone.outcome')}
+									</p>
+									<p className="text-sm font-semibold text-zinc-800">{outcome.code}</p>
+								</div>
+								<ChevronDownIcon
+									className={cn(
+										'h-4 w-4 shrink-0 text-zinc-400 transition-transform',
+										isOpen && 'rotate-180',
+									)}
+								/>
+							</button>
+
+							{isOpen && (
+								<div className="space-y-3 px-4 pb-4">
+									<p className="text-xs leading-snug text-zinc-500">{outcomeDescription}</p>
+
+									{criterias.map((criterion) => {
+										const criterionDescription = localizedText(criterion.text, locale);
+										return (
+											<div key={criterion.id} className="rounded-lg border border-zinc-200 p-3">
+												<div className="mb-2 rounded-lg border border-zinc-200 bg-zinc-50 p-2.5 text-xs leading-snug text-zinc-600">
+													{criterionDescription}
+												</div>
+
+												{isLoadingLevels ? (
+													<Spinner
+														size="sm"
+														aria-label={t('projects.evaluate.capstone.loadingLevels')}
+													/>
+												) : !performanceLevels.length ? (
+													<p className="text-xs text-zinc-400">
+														{t('projects.evaluate.capstone.noLevels')}
+													</p>
+												) : duplicateMode ? (
+													<PLSelector
+														levels={performanceLevels}
+														selected={dupSelections[criterion.id] ?? null}
+														locale={locale}
+														onChange={(value) => handleDupSelect(criterion.id, value)}
+														disabled={readOnly}
+													/>
+												) : (
+													<div className="flex flex-col gap-3">
+														{students
+															.filter(
+																(student) => !nrNaTypeIds.has(qualifStatuses[student.id] ?? -1),
+															)
+															.map((student) => {
+																const current = selections[criterion.id]?.[student.id] ?? null;
+																return (
+																	<div key={student.id} className="flex flex-col gap-1">
+																		<span className="text-xs font-medium text-zinc-700">
+																			{student.firstName} {student.lastName}
+																		</span>
+																		<PLSelector
+																			levels={performanceLevels}
+																			selected={current}
+																			locale={locale}
+																			onChange={(value) =>
+																				handleSelect(criterion.id, student.id, value)
+																			}
+																			disabled={readOnly}
+																		/>
+																	</div>
+																);
+															})}
+													</div>
+												)}
+											</div>
+										);
+									})}
+								</div>
+							)}
+						</div>
+					);
+				})}
 			</div>
 
 			{!readOnly && (

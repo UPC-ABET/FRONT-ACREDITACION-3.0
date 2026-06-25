@@ -1927,6 +1927,7 @@
 			},
 			"students": {
 				"title": "Students",
+				"attendance": "Attendance",
 				"grade": "Grade",
 				"noGrade": "No grade",
 				"empty": "No students in this project."
