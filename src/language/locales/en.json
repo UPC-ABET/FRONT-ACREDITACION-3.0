@@ -2927,6 +2927,8 @@
 			"selectBoth": "Pick an upload type and an academic period to continue.",
 			"downloadTemplate": "Download template",
 			"downloadingTemplate": "Downloading",
+			"webScraping": "Web-scraping Excel",
+			"webScrapingLoading": "Generating...",
 			"dropzone": "Click or drag the Excel file here",
 			"submit": "Upload file",
 			"loadedSummary": "Loaded rows",
@@ -2939,6 +2941,7 @@
 				"rowsWithErrors": "Errors were found. Check the downloaded file.",
 				"fileTypeInvalid": "Only .xlsx files are allowed",
 				"templateDownloadFailed": "Failed to download the template",
+				"webScrapingFailed": "Could not generate the Excel from scraping.",
 				"generic": "An error occurred during the upload"
 			}
 		},
