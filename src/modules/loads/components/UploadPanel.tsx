@@ -42,7 +42,6 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 	const [isDraggingFile, setIsDraggingFile] = useState(false);
 	const [scrapingPending, setScrapingPending] = useState(false);
 
-	// Only the upload types backed by scraping get a "Excel web-scraping" button.
 	const scrapingKind = scrapingExportForUploadType(type.code);
 
 	const handleFileChange = (selected: File | null) => {
@@ -96,13 +95,12 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 		);
 	};
 
-	// Generates the upload-ready Excel from the scraped data, scoped to the active school/period
-	// (the api client sends X-School-Id / X-Academic-Period-Id automatically).
+	// Scoped to the active school/period: the api client forwards X-School-Id / X-Academic-Period-Id automatically.
 	const handleWebScraping = async () => {
 		if (!scrapingKind) return;
 		setScrapingPending(true);
 		try {
-			await downloadScrapingExport(scrapingKind, locale === 'en' ? 'en' : 'es');
+			await downloadScrapingExport(scrapingKind, locale);
 		} catch (err) {
 			handleError(err, 'loads.upload.error.webScrapingFailed');
 		} finally {
