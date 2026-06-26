@@ -20,6 +20,7 @@ import {
 	deleteGRACompetence,
 	cloneGRAConfiguration,
 	searchStudentByCode,
+	searchStudentsByPrefix,
 	addStudentToNotification,
 	deleteStudentNotification,
 	listGRAStudents,
@@ -156,15 +157,16 @@ export function useGRAStudents() {
 
 export function useGRAStudentSearch() {
 	const [result, setResult] = useState<StudentSearchResult | null>(null);
+	const [suggestions, setSuggestions] = useState<StudentSearchResult[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const search = useCallback(async (code: string, programId: number) => {
+	const search = useCallback(async (code: string) => {
 		setLoading(true);
 		setError(null);
 		setResult(null);
 		try {
-			const found = await searchStudentByCode(code, programId);
+			const found = await searchStudentByCode(code);
 			if (found) {
 				setResult(found);
 			} else {
@@ -175,6 +177,28 @@ export function useGRAStudentSearch() {
 		} finally {
 			setLoading(false);
 		}
+	}, []);
+
+	const searchPrefix = useCallback(async (prefix: string) => {
+		if (!prefix.trim()) {
+			setSuggestions([]);
+			return;
+		}
+		setLoading(true);
+		try {
+			const found = await searchStudentsByPrefix(prefix);
+			setSuggestions(found);
+		} catch {
+			setSuggestions([]);
+		} finally {
+			setLoading(false);
+		}
+	}, []);
+
+	const selectSuggestion = useCallback((student: StudentSearchResult) => {
+		setResult(student);
+		setSuggestions([]);
+		setError(null);
 	}, []);
 
 	const add = useCallback(
@@ -199,7 +223,23 @@ export function useGRAStudentSearch() {
 		[],
 	);
 
-	return { result, loading, error, search, add, reset: () => setResult(null) };
+	const reset = useCallback(() => {
+		setResult(null);
+		setSuggestions([]);
+		setError(null);
+	}, []);
+
+	return {
+		result,
+		suggestions,
+		loading,
+		error,
+		search,
+		searchPrefix,
+		selectSuggestion,
+		add,
+		reset,
+	};
 }
 
 export function useGRAEmail() {

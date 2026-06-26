@@ -35,7 +35,7 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 	});
 
 	useEffect(() => {
-		if (!academicPeriodId) return;
+		if (!academicPeriodId || !programId) return;
 		loadComp(academicPeriodId, programId);
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- loadComp is an unstable service binding; refetch only when period/program changes
 	}, [academicPeriodId, programId]);
@@ -64,6 +64,10 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 
 	if (!academicPeriodId) {
 		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
+	}
+
+	if (!programId) {
+		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectProgram')}</p>;
 	}
 
 	return (

@@ -542,6 +542,8 @@ export interface BackendStudent {
 	studentCode?: string;
 	name?: string | { es?: string; en?: string };
 	fullName?: string;
+	firstName?: string;
+	lastName?: string;
 	email?: string;
 	programName?: string;
 	programId?: number;
