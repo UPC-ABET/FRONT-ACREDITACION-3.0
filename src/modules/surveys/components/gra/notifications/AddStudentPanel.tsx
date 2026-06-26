@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { Input, Button, Toast } from '@/shared/components';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { useGRAStudentSearch } from '../../../hooks';
+
+const SEARCH_DEBOUNCE_MS = 250;
 
 interface AddStudentPanelProps {
 	readonly programId: number;
@@ -21,9 +23,10 @@ export function AddStudentPanel({
 	const { t } = useI18n();
 	const { result, suggestions, loading, error, searchPrefix, selectSuggestion, add, reset } =
 		useGRAStudentSearch();
-	const [codigo, setCodigo] = useState('');
+	const [studentCode, setStudentCode] = useState('');
 	const [adding, setAdding] = useState(false);
 	const [showDropdown, setShowDropdown] = useState(false);
+	const [activeIndex, setActiveIndex] = useState(-1);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -32,10 +35,11 @@ export function AddStudentPanel({
 
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const wrapperRef = useRef<HTMLDivElement>(null);
+	const listboxId = useId();
 
 	useEffect(() => {
-		function handleClickOutside(e: MouseEvent) {
-			if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+		function handleClickOutside(event: MouseEvent) {
+			if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
 				setShowDropdown(false);
 			}
 		}
@@ -44,8 +48,9 @@ export function AddStudentPanel({
 	}, []);
 
 	function handleChange(value: string) {
-		setCodigo(value);
+		setStudentCode(value);
 		reset();
+		setActiveIndex(-1);
 		if (!value.trim()) {
 			setShowDropdown(false);
 			return;
@@ -54,13 +59,31 @@ export function AddStudentPanel({
 		if (debounceRef.current) clearTimeout(debounceRef.current);
 		debounceRef.current = setTimeout(() => {
 			searchPrefix(value.trim());
-		}, 250);
+		}, SEARCH_DEBOUNCE_MS);
 	}
 
 	function handleSelect(student: (typeof suggestions)[number]) {
-		setCodigo(student.code);
+		setStudentCode(student.code);
 		selectSuggestion(student);
 		setShowDropdown(false);
+		setActiveIndex(-1);
+	}
+
+	function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+		if (!showDropdown || suggestions.length === 0) return;
+		if (event.key === 'ArrowDown') {
+			event.preventDefault();
+			setActiveIndex((current) => (current + 1) % suggestions.length);
+		} else if (event.key === 'ArrowUp') {
+			event.preventDefault();
+			setActiveIndex((current) => (current <= 0 ? suggestions.length - 1 : current - 1));
+		} else if (event.key === 'Enter' && activeIndex >= 0) {
+			event.preventDefault();
+			handleSelect(suggestions[activeIndex]);
+		} else if (event.key === 'Escape') {
+			setShowDropdown(false);
+			setActiveIndex(-1);
+		}
 	}
 
 	async function handleAdd() {
@@ -78,13 +101,16 @@ export function AddStudentPanel({
 					type: 'success',
 					msg: t('surveys.gra.notifications.toast.studentAdded').replace('{{name}}', result.name),
 				});
-				setCodigo('');
+				setStudentCode('');
 				reset();
 				onStudentAdded?.();
 			},
 		);
 		setAdding(false);
 	}
+
+	const dropdownOpen = showDropdown && suggestions.length > 0;
+	const activeOptionId = activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined;
 
 	return (
 		<div className="space-y-4">
@@ -95,28 +121,43 @@ export function AddStudentPanel({
 			<div className="relative" ref={wrapperRef}>
 				<Input
 					placeholder={t('surveys.gra.notifications.studentCodePlaceholder')}
-					value={codigo}
-					onChange={(e) => handleChange(e.target.value)}
+					value={studentCode}
+					onChange={(event) => handleChange(event.target.value)}
 					onFocus={() => {
 						if (suggestions.length > 0) setShowDropdown(true);
 					}}
+					onKeyDown={handleKeyDown}
+					role="combobox"
+					aria-expanded={dropdownOpen}
+					aria-controls={listboxId}
+					aria-autocomplete="list"
+					aria-activedescendant={activeOptionId}
 				/>
-				{showDropdown && suggestions.length > 0 && (
-					<ul className="absolute z-50 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg max-h-56 overflow-y-auto">
-						{suggestions.map((s) => (
-							<li key={s.studentId}>
+				{dropdownOpen && (
+					<ul
+						id={listboxId}
+						role="listbox"
+						className="absolute z-50 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg max-h-56 overflow-y-auto">
+						{suggestions.map((student, index) => (
+							<li
+								key={student.studentId}
+								id={`${listboxId}-option-${index}`}
+								role="option"
+								aria-selected={index === activeIndex}>
 								<button
 									type="button"
-									className="w-full text-left px-3 py-2 text-sm hover:bg-zinc-50 flex justify-between gap-2"
-									onMouseDown={() => handleSelect(s)}>
-									<span className="font-mono text-zinc-700">{s.code}</span>
-									<span className="text-zinc-500 truncate">{s.name}</span>
+									className={`w-full text-left px-3 py-2 text-sm flex justify-between gap-2 ${
+										index === activeIndex ? 'bg-zinc-100' : 'hover:bg-zinc-50'
+									}`}
+									onMouseDown={() => handleSelect(student)}>
+									<span className="font-mono text-zinc-700">{student.code}</span>
+									<span className="text-zinc-500 truncate">{student.name}</span>
 								</button>
 							</li>
 						))}
 					</ul>
 				)}
-				{showDropdown && !loading && suggestions.length === 0 && codigo.trim().length > 0 && (
+				{showDropdown && !loading && suggestions.length === 0 && studentCode.trim().length > 0 && (
 					<div className="absolute z-50 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg px-3 py-2 text-sm text-zinc-400">
 						{t('surveys.gra.notifications.studentNotFound')}
 					</div>

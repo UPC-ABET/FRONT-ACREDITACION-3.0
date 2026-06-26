@@ -22,6 +22,8 @@ export const surveyQueryKeys = {
 
 	periods: () => ['surveys', 'periods'] as const,
 	programs: () => ['surveys', 'programs'] as const,
+	commissions: (programId?: number) => ['surveys', 'commissions', programId] as const,
+	campuses: () => ['surveys', 'campuses'] as const,
 
 	graCompetences: () => ['surveys', 'gra', 'competences'] as const,
 	graCompetencesList: (periodId: number, programId?: number) =>
@@ -32,6 +34,8 @@ export const surveyQueryKeys = {
 		campusId?: number;
 		studentCode?: string;
 	}) => ['surveys', 'gra', 'students', params] as const,
+	graStudentSuggestions: (codePrefix: string) =>
+		['surveys', 'gra', 'student-suggestions', codePrefix] as const,
 	graDashboard: (params: { academicPeriodId?: number; programId?: number; campusId?: number }) =>
 		['surveys', 'gra', 'dashboard', params] as const,
 

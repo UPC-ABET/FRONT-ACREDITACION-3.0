@@ -10,20 +10,15 @@ import { getErrorMessage } from '@/shared/lib';
 import { campusesService } from '@/modules/academic';
 import { listGRAOutcomes } from '../../services';
 import type {
+	OptionItem,
 	PerceptionReportFilters,
 	PerceptionReportResponse,
 	PerceptionReportFile,
 } from '../../types';
 
-interface OptionItem {
-	value: string | number;
-	label: string;
-}
-
 export interface PerceptionReportPanelProps {
 	programId?: number;
 	showSurveyNumber?: boolean;
-	/** When provided, commission/campus/language selects are hidden and these values are used directly. */
 	externalFilters?: {
 		commissionId?: number;
 		campusId?: number;

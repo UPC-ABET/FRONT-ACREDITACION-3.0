@@ -2,6 +2,11 @@ import type { I18nText } from '@/shared/types';
 
 export type SurveyType = 'PPP' | 'GRA' | 'LCFC';
 
+export interface OptionItem {
+	value: string | number;
+	label: string;
+}
+
 export interface PageRequest {
 	pageNumber: number;
 	pageSize: number;

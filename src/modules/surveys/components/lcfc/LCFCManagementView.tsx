@@ -10,11 +10,8 @@ import { LCFCReports } from './LCFCReports';
 import { LCFCNotificationView } from './notifications/LCFCNotificationView';
 import { LCFCConfiguration } from './configuration/LCFCConfiguration';
 import { listGRAOutcomes } from '../../services';
-
-interface OptionItem {
-	value: string | number;
-	label: string;
-}
+import { surveyQueryKeys } from '../../hooks';
+import type { OptionItem } from '../../types';
 
 export function LCFCManagementView() {
 	const { t } = useI18n();
@@ -27,7 +24,7 @@ export function LCFCManagementView() {
 	useGlobalAcademicFiltersVisibilityOverride({ school: false, modality: true, period: true });
 
 	const { data: commissionOptions = [] } = useQuery({
-		queryKey: ['lcfc-commissions', programId],
+		queryKey: surveyQueryKeys.commissions(programId),
 		queryFn: () => listGRAOutcomes({ programId }),
 		enabled: Boolean(programId),
 		select: (groups) =>
@@ -35,10 +32,14 @@ export function LCFCManagementView() {
 	});
 
 	const { data: campusOptions = [] } = useQuery({
-		queryKey: ['lcfc-campuses'],
-		queryFn: () => campusesService.getAll().then((res) => res.data ?? []),
+		queryKey: surveyQueryKeys.campuses(),
+		queryFn: () => campusesService.getAll().then((response) => response.data ?? []),
+		staleTime: Infinity,
 		select: (campuses) =>
-			campuses.map((item) => ({ value: item.id, label: item.name?.es ?? item.code })),
+			campuses.map((campusItem) => ({
+				value: campusItem.id,
+				label: campusItem.name?.es ?? campusItem.code,
+			})),
 	});
 
 	const TABS = [
