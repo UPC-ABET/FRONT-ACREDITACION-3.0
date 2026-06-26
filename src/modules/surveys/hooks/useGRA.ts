@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
+import { surveyQueryKeys } from './useSurveyQueries';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
@@ -19,7 +21,7 @@ import {
 	saveGRACompetence,
 	deleteGRACompetence,
 	cloneGRAConfiguration,
-	searchStudentByCode,
+	searchStudentsByPrefix,
 	addStudentToNotification,
 	deleteStudentNotification,
 	listGRAStudents,
@@ -155,26 +157,27 @@ export function useGRAStudents() {
 }
 
 export function useGRAStudentSearch() {
+	const [codePrefix, setCodePrefix] = useState('');
 	const [result, setResult] = useState<StudentSearchResult | null>(null);
-	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const search = useCallback(async (code: string, programId: number) => {
-		setLoading(true);
-		setError(null);
+	const trimmedPrefix = codePrefix.trim();
+	const suggestionsQuery = useQuery({
+		queryKey: surveyQueryKeys.graStudentSuggestions(trimmedPrefix),
+		queryFn: () => searchStudentsByPrefix(trimmedPrefix),
+		enabled: trimmedPrefix.length > 0 && !result,
+	});
+
+	const searchPrefix = useCallback((value: string) => {
 		setResult(null);
-		try {
-			const found = await searchStudentByCode(code, programId);
-			if (found) {
-				setResult(found);
-			} else {
-				setError('surveys.gra.notifications.studentNotFound');
-			}
-		} catch (e) {
-			setError(getErrorMessage(e));
-		} finally {
-			setLoading(false);
-		}
+		setError(null);
+		setCodePrefix(value);
+	}, []);
+
+	const selectSuggestion = useCallback((student: StudentSearchResult) => {
+		setResult(student);
+		setCodePrefix('');
+		setError(null);
 	}, []);
 
 	const add = useCallback(
@@ -192,14 +195,29 @@ export function useGRAStudentSearch() {
 				await addStudentToNotification(params);
 				setResult(null);
 				onSuccess?.();
-			} catch (e) {
-				setError(getErrorMessage(e));
+			} catch (caughtError) {
+				setError(getErrorMessage(caughtError));
 			}
 		},
 		[],
 	);
 
-	return { result, loading, error, search, add, reset: () => setResult(null) };
+	const reset = useCallback(() => {
+		setResult(null);
+		setCodePrefix('');
+		setError(null);
+	}, []);
+
+	return {
+		result,
+		suggestions: result ? [] : (suggestionsQuery.data ?? []),
+		loading: suggestionsQuery.isFetching,
+		error,
+		searchPrefix,
+		selectSuggestion,
+		add,
+		reset,
+	};
 }
 
 export function useGRAEmail() {

@@ -10,19 +10,20 @@ import { getErrorMessage } from '@/shared/lib';
 import { campusesService } from '@/modules/academic';
 import { listGRAOutcomes } from '../../services';
 import type {
+	OptionItem,
 	PerceptionReportFilters,
 	PerceptionReportResponse,
 	PerceptionReportFile,
 } from '../../types';
 
-interface OptionItem {
-	value: string | number;
-	label: string;
-}
-
 export interface PerceptionReportPanelProps {
 	programId?: number;
 	showSurveyNumber?: boolean;
+	externalFilters?: {
+		commissionId?: number;
+		campusId?: number;
+		lang?: 'es' | 'en';
+	};
 	generate: (
 		filters: PerceptionReportFilters & { programId?: number },
 	) => Promise<PerceptionReportResponse>;
@@ -60,9 +61,10 @@ function downloadBlob(blob: Blob, filename: string): void {
 export function PerceptionReportPanel({
 	programId,
 	showSurveyNumber = false,
+	externalFilters,
 	generate,
 }: PerceptionReportPanelProps) {
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const [commission, setCommission] = useState<OptionItem | null>(null);
 	const [campus, setCampus] = useState<OptionItem | null>(null);
 	const [surveyNumbers, setSurveyNumbers] = useState<OptionItem[]>([]);
@@ -114,14 +116,27 @@ export function PerceptionReportPanel({
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
 			return;
 		}
+		const resolvedLang: 'es' | 'en' = externalFilters
+			? (externalFilters.lang ?? (locale === 'en' ? 'en' : 'es'))
+			: language.value === 'en'
+				? 'en'
+				: 'es';
 		generateMutation.mutate({
 			programId,
-			commissionId: commission ? Number(commission.value) : undefined,
-			campusId: campus ? Number(campus.value) : undefined,
+			commissionId: externalFilters
+				? externalFilters.commissionId
+				: commission
+					? Number(commission.value)
+					: undefined,
+			campusId: externalFilters
+				? externalFilters.campusId
+				: campus
+					? Number(campus.value)
+					: undefined,
 			surveyNumbers: showSurveyNumber
 				? surveyNumbers.map((option) => Number(option.value))
 				: undefined,
-			lang: language.value === 'en' ? 'en' : 'es',
+			lang: resolvedLang,
 		});
 	}
 
@@ -143,54 +158,56 @@ export function PerceptionReportPanel({
 	return (
 		<div className="space-y-6">
 			<Card className="p-5 space-y-4">
-				<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-					<Select
-						name="commission"
-						label={t('surveys.perception.commission')}
-						placeholder={t('surveys.perception.allCommissions')}
-						isClearable
-						isSearchable
-						options={commissionOptions}
-						value={commission}
-						onChange={(_name, value) =>
-							setCommission(value && !Array.isArray(value) ? (value as OptionItem) : null)
-						}
-					/>
-					<Select
-						name="campus"
-						label={t('surveys.perception.campus')}
-						placeholder={t('surveys.perception.allCampuses')}
-						isClearable
-						isSearchable
-						options={campusOptions}
-						value={campus}
-						onChange={(_name, value) =>
-							setCampus(value && !Array.isArray(value) ? (value as OptionItem) : null)
-						}
-					/>
-					{showSurveyNumber && (
+				{!externalFilters && (
+					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<Select
-							name="surveyNumbers"
-							label={t('surveys.perception.surveyNumber')}
-							placeholder={t('surveys.perception.allSurveyNumbers')}
-							isMulti
-							options={SURVEY_NUMBER_OPTIONS}
-							value={surveyNumbers}
+							name="commission"
+							label={t('surveys.perception.commission')}
+							placeholder={t('surveys.perception.allCommissions')}
+							isClearable
+							isSearchable
+							options={commissionOptions}
+							value={commission}
 							onChange={(_name, value) =>
-								setSurveyNumbers(Array.isArray(value) ? (value as OptionItem[]) : [])
+								setCommission(value && !Array.isArray(value) ? (value as OptionItem) : null)
 							}
 						/>
-					)}
-					<Select
-						name="language"
-						label={t('surveys.perception.language')}
-						options={languageOptions}
-						value={language}
-						onChange={(_name, value) =>
-							value && !Array.isArray(value) && setLanguage(value as OptionItem)
-						}
-					/>
-				</div>
+						<Select
+							name="campus"
+							label={t('surveys.perception.campus')}
+							placeholder={t('surveys.perception.allCampuses')}
+							isClearable
+							isSearchable
+							options={campusOptions}
+							value={campus}
+							onChange={(_name, value) =>
+								setCampus(value && !Array.isArray(value) ? (value as OptionItem) : null)
+							}
+						/>
+						{showSurveyNumber && (
+							<Select
+								name="surveyNumbers"
+								label={t('surveys.perception.surveyNumber')}
+								placeholder={t('surveys.perception.allSurveyNumbers')}
+								isMulti
+								options={SURVEY_NUMBER_OPTIONS}
+								value={surveyNumbers}
+								onChange={(_name, value) =>
+									setSurveyNumbers(Array.isArray(value) ? (value as OptionItem[]) : [])
+								}
+							/>
+						)}
+						<Select
+							name="language"
+							label={t('surveys.perception.language')}
+							options={languageOptions}
+							value={language}
+							onChange={(_name, value) =>
+								value && !Array.isArray(value) && setLanguage(value as OptionItem)
+							}
+						/>
+					</div>
+				)}
 				<div className="flex justify-end">
 					<Button
 						onClick={handleGenerate}
