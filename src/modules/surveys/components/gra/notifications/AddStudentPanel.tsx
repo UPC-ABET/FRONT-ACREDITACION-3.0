@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Input, Button, Toast } from '@/shared/components';
-import { MagnifyingGlassIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { UserPlusIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { useGRAStudentSearch } from '../../../hooks';
@@ -19,18 +19,48 @@ export function AddStudentPanel({
 	onStudentAdded,
 }: AddStudentPanelProps) {
 	const { t } = useI18n();
-	const { result, loading, error, search, add, reset } = useGRAStudentSearch();
+	const { result, suggestions, loading, error, searchPrefix, selectSuggestion, add, reset } =
+		useGRAStudentSearch();
 	const [codigo, setCodigo] = useState('');
 	const [adding, setAdding] = useState(false);
+	const [showDropdown, setShowDropdown] = useState(false);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
 		msg: '',
 	});
 
-	async function handleSearch() {
-		if (!codigo.trim()) return;
-		await search(codigo.trim(), programId);
+	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const wrapperRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		function handleClickOutside(e: MouseEvent) {
+			if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+				setShowDropdown(false);
+			}
+		}
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, []);
+
+	function handleChange(value: string) {
+		setCodigo(value);
+		reset();
+		if (!value.trim()) {
+			setShowDropdown(false);
+			return;
+		}
+		setShowDropdown(true);
+		if (debounceRef.current) clearTimeout(debounceRef.current);
+		debounceRef.current = setTimeout(() => {
+			searchPrefix(value.trim());
+		}, 250);
+	}
+
+	function handleSelect(student: (typeof suggestions)[number]) {
+		setCodigo(student.code);
+		selectSuggestion(student);
+		setShowDropdown(false);
 	}
 
 	async function handleAdd() {
@@ -62,20 +92,35 @@ export function AddStudentPanel({
 				{t('surveys.gra.notifications.addStudentTitle')}
 			</h4>
 
-			<div className="flex gap-2">
+			<div className="relative" ref={wrapperRef}>
 				<Input
 					placeholder={t('surveys.gra.notifications.studentCodePlaceholder')}
 					value={codigo}
-					onChange={(e) => setCodigo(e.target.value)}
-					onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+					onChange={(e) => handleChange(e.target.value)}
+					onFocus={() => {
+						if (suggestions.length > 0) setShowDropdown(true);
+					}}
 				/>
-				<Button
-					onClick={handleSearch}
-					disabled={loading || !codigo.trim()}
-					size="md"
-					aria-label={t('surveys.gra.notifications.searchStudent')}>
-					<MagnifyingGlassIcon className="h-4 w-4" />
-				</Button>
+				{showDropdown && suggestions.length > 0 && (
+					<ul className="absolute z-50 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg max-h-56 overflow-y-auto">
+						{suggestions.map((s) => (
+							<li key={s.studentId}>
+								<button
+									type="button"
+									className="w-full text-left px-3 py-2 text-sm hover:bg-zinc-50 flex justify-between gap-2"
+									onMouseDown={() => handleSelect(s)}>
+									<span className="font-mono text-zinc-700">{s.code}</span>
+									<span className="text-zinc-500 truncate">{s.name}</span>
+								</button>
+							</li>
+						))}
+					</ul>
+				)}
+				{showDropdown && !loading && suggestions.length === 0 && codigo.trim().length > 0 && (
+					<div className="absolute z-50 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg px-3 py-2 text-sm text-zinc-400">
+						{t('surveys.gra.notifications.studentNotFound')}
+					</div>
+				)}
 			</div>
 
 			{error && (

@@ -192,25 +192,43 @@ export async function listGRAPerformanceLevels(
 	return list.map((l, i) => adaptPerformanceLevel(l, i));
 }
 
+function adaptStudent(s: BackendStudent, fallbackCode = ''): StudentSearchResult {
+	const firstName = s.firstName ?? '';
+	const lastName = s.lastName ?? '';
+	const name =
+		s.fullName ??
+		localized(s.name) ??
+		(firstName || lastName ? `${firstName} ${lastName}`.trim() : '');
+	return {
+		studentId: s.id,
+		code: s.code ?? s.studentCode ?? fallbackCode,
+		name,
+		email: s.email ?? '',
+		career: s.programName ?? '',
+	};
+}
+
 export async function searchStudentByCode(
 	studentCode: string,
-	programId: number,
 ): Promise<StudentSearchResult | null> {
 	const res = await apiPost('students/get-by-filters', {
-		extra: { code: studentCode },
-		programId: programId || undefined,
+		code: studentCode,
 		isActive: true,
 	});
 	const list = getApiData<BackendStudent[]>(res) ?? [];
 	const match = list.find((s) => (s.code ?? s.studentCode) === studentCode) ?? list[0] ?? null;
 	if (!match) return null;
-	return {
-		studentId: match.id,
-		code: match.code ?? match.studentCode ?? studentCode,
-		name: match.fullName ?? localized(match.name),
-		email: match.email ?? '',
-		career: match.programName ?? '',
-	};
+	return adaptStudent(match, studentCode);
+}
+
+export async function searchStudentsByPrefix(codePrefix: string): Promise<StudentSearchResult[]> {
+	if (!codePrefix.trim()) return [];
+	const res = await apiPost('students/get-by-filters', {
+		code: codePrefix.trim(),
+		isActive: true,
+	});
+	const list = getApiData<BackendStudent[]>(res) ?? [];
+	return list.slice(0, 30).map((s) => adaptStudent(s));
 }
 
 export async function addStudentToNotification(params: {

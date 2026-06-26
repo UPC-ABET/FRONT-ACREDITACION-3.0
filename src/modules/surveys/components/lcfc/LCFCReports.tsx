@@ -14,9 +14,11 @@ import {
 
 interface LCFCReportsProps {
 	readonly programId: number;
+	readonly commissionId?: number;
+	readonly campusId?: number;
 }
 
-export function LCFCReports({ programId }: LCFCReportsProps) {
+export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsProps) {
 	const { t, locale } = useI18n();
 	const { academicPeriodId } = useABET();
 
@@ -92,6 +94,11 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 			<PerceptionReportPanel
 				programId={programId || undefined}
 				generate={generateLCFCPerceptionPdf}
+				externalFilters={{
+					commissionId: commissionId || undefined,
+					campusId: campusId || undefined,
+					lang: locale === 'en' ? 'en' : 'es',
+				}}
 			/>
 
 			<Toast
