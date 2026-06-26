@@ -28,7 +28,7 @@ type Props = {
 	onCreate: (body: StudyPlanMaintenanceCreate) => void;
 };
 
-const CODE_MAX_LENGTH = 10;
+const CODE_MAX_LENGTH = 20;
 
 export function StudyPlanCreateDialog({
 	programs,

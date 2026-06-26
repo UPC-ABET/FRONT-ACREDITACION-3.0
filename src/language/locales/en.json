@@ -1224,6 +1224,7 @@
 			"inUse": "This study plan cannot be deleted because it is in use.",
 			"usedInAcademicPeriods": "Offered in academic periods",
 			"codeExists": "The code is already assigned to another study plan in the program.",
+			"periodExists": "A study plan already exists for this program in the active period.",
 			"programNotInModality": "The program does not belong to the active modality.",
 			"notFound": "Study plan not found.",
 			"updateFailed": "Could not update the study plan."

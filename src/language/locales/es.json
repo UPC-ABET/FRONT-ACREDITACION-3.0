@@ -1224,6 +1224,7 @@
 			"inUse": "No se puede eliminar la malla porque está en uso.",
 			"usedInAcademicPeriods": "Está ofertada en períodos académicos",
 			"codeExists": "El código ya está asignado a otra malla de la carrera.",
+			"periodExists": "Ya existe una malla para esta carrera en el período activo.",
 			"programNotInModality": "La carrera no pertenece a la modalidad activa.",
 			"notFound": "Malla no encontrada.",
 			"updateFailed": "No se pudo actualizar la malla."
