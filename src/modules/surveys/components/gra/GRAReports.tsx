@@ -1,27 +1,48 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
+import { getErrorMessage } from '@/shared/lib';
 import { PerceptionReportPanel } from '../shared/PerceptionReportPanel';
-import { downloadGRASurveys, generateGRAPerceptionPdf } from '../../services';
+import { CommissionCampusFilters } from '../shared/CommissionCampusFilters';
+import { SurveyMetricsSummary } from '../shared/SurveyMetricsSummary';
+import { useSurveyFilterOptions } from '../../hooks';
+import { downloadGRASurveys, generateGRAPerceptionPdf, generateGRADashboard } from '../../services';
+import type { OptionItem } from '../../types';
 
 interface GRAReportsProps {
 	readonly programId?: number;
 }
 
 export function GRAReports({ programId }: GRAReportsProps) {
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const { academicPeriodId } = useABET();
-
+	const [commission, setCommission] = useState<OptionItem | null>(null);
+	const [campus, setCampus] = useState<OptionItem | null>(null);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
 		msg: '',
 	});
 	const [downloading, setDownloading] = useState(false);
+
+	const { commissionOptions, campusOptions } = useSurveyFilterOptions(programId);
+
+	const dashboardMutation = useMutation({
+		mutationFn: () =>
+			generateGRADashboard({
+				academicPeriodId: academicPeriodId ?? undefined,
+				programId: programId || undefined,
+				campusId: campus ? Number(campus.value) : undefined,
+			}),
+		onError: (error) =>
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, getErrorMessage(error)) }),
+	});
+	const dashboard = dashboardMutation.data;
 
 	async function handleDownload() {
 		if (!academicPeriodId) {
@@ -31,8 +52,8 @@ export function GRAReports({ programId }: GRAReportsProps) {
 		setDownloading(true);
 		try {
 			await downloadGRASurveys(academicPeriodId, programId ?? 0);
-		} catch (e) {
-			setToast({ open: true, type: 'error', msg: tryTranslate(t, (e as Error).message) });
+		} catch (error) {
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, (error as Error).message) });
 		} finally {
 			setDownloading(false);
 		}
@@ -59,7 +80,29 @@ export function GRAReports({ programId }: GRAReportsProps) {
 				</Button>
 			</div>
 
-			<PerceptionReportPanel programId={programId} generate={generateGRAPerceptionPdf} />
+			<CommissionCampusFilters
+				commissionOptions={commissionOptions}
+				campusOptions={campusOptions}
+				commission={commission}
+				campus={campus}
+				onCommissionChange={setCommission}
+				onCampusChange={setCampus}
+			/>
+
+			{dashboard && <SurveyMetricsSummary summary={dashboard.summary} />}
+
+			<PerceptionReportPanel
+				programId={programId}
+				generate={async (filters) => {
+					dashboardMutation.mutate();
+					return generateGRAPerceptionPdf(filters);
+				}}
+				externalFilters={{
+					commissionId: commission ? Number(commission.value) : undefined,
+					campusId: campus ? Number(campus.value) : undefined,
+					lang: locale === 'en' ? 'en' : 'es',
+				}}
+			/>
 
 			<Toast
 				isOpen={toast.open}

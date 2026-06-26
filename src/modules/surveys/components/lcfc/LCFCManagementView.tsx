@@ -1,16 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Card, PageHeader, Tabs, Select } from '@/shared/components';
 import { useI18n, useGlobalAcademicFiltersVisibilityOverride } from '@/providers';
-import { campusesService } from '@/modules/academic';
 import { AllProgramsSelect } from '../shared/AllProgramsSelect';
 import { LCFCReports } from './LCFCReports';
 import { LCFCNotificationView } from './notifications/LCFCNotificationView';
 import { LCFCConfiguration } from './configuration/LCFCConfiguration';
-import { listGRAOutcomes } from '../../services';
-import { surveyQueryKeys } from '../../hooks';
+import { useSurveyFilterOptions } from '../../hooks';
 import type { OptionItem } from '../../types';
 
 export function LCFCManagementView() {
@@ -23,24 +20,7 @@ export function LCFCManagementView() {
 	// Hide school filter — LCFC shows all programs across schools.
 	useGlobalAcademicFiltersVisibilityOverride({ school: false, modality: true, period: true });
 
-	const { data: commissionOptions = [] } = useQuery({
-		queryKey: surveyQueryKeys.commissions(programId),
-		queryFn: () => listGRAOutcomes({ programId }),
-		enabled: Boolean(programId),
-		select: (groups) =>
-			groups.map((group) => ({ value: group.commissionId, label: group.commissionName })),
-	});
-
-	const { data: campusOptions = [] } = useQuery({
-		queryKey: surveyQueryKeys.campuses(),
-		queryFn: () => campusesService.getAll().then((response) => response.data ?? []),
-		staleTime: Infinity,
-		select: (campuses) =>
-			campuses.map((campusItem) => ({
-				value: campusItem.id,
-				label: campusItem.name?.es ?? campusItem.code,
-			})),
-	});
+	const { commissionOptions, campusOptions } = useSurveyFilterOptions(programId);
 
 	const TABS = [
 		{ id: 'reports', label: t('surveys.lcfc.management.tabReports') },
