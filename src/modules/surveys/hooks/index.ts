@@ -4,3 +4,4 @@ export * from './useLCFC';
 export * from './useLCFCNotificationForm';
 export * from './useSurvey';
 export * from './useSurveyQueries';
+export * from './useSurveyFilterOptions';

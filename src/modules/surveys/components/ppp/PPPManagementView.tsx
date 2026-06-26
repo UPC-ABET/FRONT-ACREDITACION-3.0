@@ -16,6 +16,8 @@ export function PPPManagementView() {
 	// Hide school filter — surveys show all programs across schools.
 	useGlobalAcademicFiltersVisibilityOverride({ school: false, modality: true, period: true });
 
+	// PPP does not send survey notifications — only GRA and LCFC do. The template
+	// download already lives inside the massive-upload tab, so it has no tab of its own.
 	const TABS = [
 		{ id: 'upload', label: t('surveys.ppp.management.tabUpload') },
 		{ id: 'reports', label: t('surveys.ppp.management.tabReports') },
@@ -33,7 +35,6 @@ export function PPPManagementView() {
 
 			<Card className="overflow-visible">
 				<div className="space-y-6">
-					{/* Program selector always visible across all tabs */}
 					<AllProgramsSelect value={programId} onChange={setProgramId} />
 
 					{activeTab === 'upload' && <PPPMassiveUpload programId={programId} />}

@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { Card, Button, Select, Toast } from '@/shared/components';
 import { ArrowDownTrayIcon, EyeIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { getErrorMessage } from '@/shared/lib';
-import { campusesService } from '@/modules/academic';
-import { listGRAOutcomes } from '../../services';
+import { useSurveyFilterOptions } from '../../hooks';
 import type {
 	OptionItem,
 	PerceptionReportFilters,
@@ -33,12 +32,6 @@ const SURVEY_NUMBER_OPTIONS: OptionItem[] = [
 	{ value: 1, label: '1' },
 	{ value: 2, label: '2' },
 ];
-
-const perceptionKeys = {
-	all: ['perception'] as const,
-	commissions: (programId?: number) => [...perceptionKeys.all, 'commissions', programId] as const,
-	campuses: () => [...perceptionKeys.all, 'campuses'] as const,
-};
 
 function base64ToBlob(base64: string, type: string): Blob {
 	const binary = atob(base64);
@@ -78,20 +71,7 @@ export function PerceptionReportPanel({
 		msg: '',
 	});
 
-	const { data: commissionOptions = [] } = useQuery({
-		queryKey: perceptionKeys.commissions(programId),
-		queryFn: () => listGRAOutcomes({ programId: programId as number }),
-		enabled: Boolean(programId),
-		select: (groups) =>
-			groups.map((group) => ({ value: group.commissionId, label: group.commissionName })),
-	});
-
-	const { data: campusOptions = [] } = useQuery({
-		queryKey: perceptionKeys.campuses(),
-		queryFn: () => campusesService.getAll().then((response) => response.data ?? []),
-		select: (campuses) =>
-			campuses.map((item) => ({ value: item.id, label: item.name?.es ?? item.code })),
-	});
+	const { commissionOptions, campusOptions } = useSurveyFilterOptions(programId);
 
 	const languageOptions: OptionItem[] = [
 		{ value: 'es', label: t('surveys.perception.spanish') },

@@ -1,26 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { ArrowDownTrayIcon, ChartBarIcon } from '@heroicons/react/24/outline';
-import { Button, Select, Toast } from '@/shared/components';
+import { useMutation } from '@tanstack/react-query';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { getErrorMessage } from '@/shared/lib';
-import { campusesService } from '@/modules/academic';
 import { PerceptionReportPanel } from '../shared/PerceptionReportPanel';
+import { SurveyMetricsSummary } from '../shared/SurveyMetricsSummary';
 import {
 	downloadLCFCSurveys,
 	downloadLCFCReportPdf,
 	generateLCFCPerceptionPdf,
 	generateLCFCDashboard,
-	listGRAOutcomes,
 } from '../../services';
-
-interface OptionItem {
-	value: string | number;
-	label: string;
-}
 
 interface LCFCReportsProps {
 	readonly programId: number;
@@ -31,8 +25,6 @@ interface LCFCReportsProps {
 export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsProps) {
 	const { t, locale } = useI18n();
 	const { academicPeriodId } = useABET();
-	const [commission, setCommission] = useState<OptionItem | null>(null);
-	const [campus, setCampus] = useState<OptionItem | null>(null);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -41,30 +33,15 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 	const [downloading, setDownloading] = useState(false);
 	const [downloadingPdf, setDownloadingPdf] = useState(false);
 
-	const { data: commissionOptions = [] } = useQuery({
-		queryKey: ['lcfc-commissions', programId],
-		queryFn: () => listGRAOutcomes({ programId }),
-		enabled: Boolean(programId),
-		select: (groups) => groups.map((g) => ({ value: g.commissionId, label: g.commissionName })),
-	});
-
-	const { data: campusOptions = [] } = useQuery({
-		queryKey: ['lcfc-campuses'],
-		queryFn: () => campusesService.getAll().then((res) => res.data ?? []),
-		select: (campuses) =>
-			campuses.map((item) => ({ value: item.id, label: item.name?.es ?? item.code })),
-	});
-
-	// Dashboard metrics — loaded on demand when "Generar" is clicked
 	const dashboardMutation = useMutation({
 		mutationFn: () =>
 			generateLCFCDashboard({
 				academicPeriodId: academicPeriodId ?? undefined,
 				programId: programId || undefined,
-				campusId: campus ? Number(campus.value) : undefined,
+				campusId,
 			}),
-		onError: (e) =>
-			setToast({ open: true, type: 'error', msg: tryTranslate(t, getErrorMessage(e)) }),
+		onError: (error) =>
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, getErrorMessage(error)) }),
 	});
 	const dashboard = dashboardMutation.data;
 
@@ -76,8 +53,8 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 		setDownloading(true);
 		try {
 			await downloadLCFCSurveys(programId || 0);
-		} catch (e) {
-			setToast({ open: true, type: 'error', msg: tryTranslate(t, (e as Error).message) });
+		} catch (error) {
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, (error as Error).message) });
 		} finally {
 			setDownloading(false);
 		}
@@ -91,8 +68,8 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 		setDownloadingPdf(true);
 		try {
 			await downloadLCFCReportPdf(programId || 0, locale);
-		} catch (e) {
-			setToast({ open: true, type: 'error', msg: tryTranslate(t, (e as Error).message) });
+		} catch (error) {
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, (error as Error).message) });
 		} finally {
 			setDownloadingPdf(false);
 		}
@@ -104,7 +81,6 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 
 	return (
 		<div className="space-y-6">
-			{/* Report title + Excel download buttons */}
 			<div className="flex items-start justify-between gap-3">
 				<div>
 					<h3 className="text-base font-bold text-zinc-800">{t('surveys.lcfc.reports.title')}</h3>
@@ -130,63 +106,14 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 				</div>
 			</div>
 
-			{/* Commission + campus filters */}
-			<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-				<Select
-					name="lcfc-commission"
-					label={t('surveys.perception.commission')}
-					placeholder={t('surveys.perception.allCommissions')}
-					isClearable
-					isSearchable
-					options={commissionOptions}
-					value={commission}
-					onChange={(_name, value) =>
-						setCommission(value && !Array.isArray(value) ? (value as OptionItem) : null)
-					}
-				/>
-				<Select
-					name="lcfc-campus"
-					label={t('surveys.perception.campus')}
-					placeholder={t('surveys.perception.allCampuses')}
-					isClearable
-					isSearchable
-					options={campusOptions}
-					value={campus}
-					onChange={(_name, value) =>
-						setCampus(value && !Array.isArray(value) ? (value as OptionItem) : null)
-					}
-				/>
-			</div>
+			{dashboard && <SurveyMetricsSummary summary={dashboard.summary} />}
 
-			{/* Dashboard metrics card — shown after Generate is clicked */}
-			{dashboard && (
-				<div className="grid grid-cols-2 gap-3 md:grid-cols-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-					<MetricBox
-						label={t('surveys.shared.totalSurveys')}
-						value={dashboard.summary.totalSurveys}
-					/>
-					<MetricBox
-						label={t('surveys.shared.completed')}
-						value={dashboard.summary.completed ?? 0}
-						color="text-green-700"
-					/>
-					<MetricBox
-						label={t('surveys.shared.pending')}
-						value={dashboard.summary.pending ?? 0}
-						color="text-amber-600"
-					/>
-					<MetricBox
-						label={t('surveys.shared.completionRate')}
-						value={`${dashboard.summary.completionRatePct ?? 0}%`}
-						color="text-blue-700"
-					/>
-				</div>
-			)}
-
-			{/* Perception PDF report generator — Generate button also triggers dashboard */}
 			<PerceptionReportPanel
 				programId={programId || undefined}
-				generate={generateLCFCPerceptionPdf}
+				generate={async (filters) => {
+					dashboardMutation.mutate();
+					return generateLCFCPerceptionPdf(filters);
+				}}
 				externalFilters={{
 					commissionId: commissionId || undefined,
 					campusId: campusId || undefined,
@@ -200,24 +127,6 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 				message={toast.msg}
 				onClose={() => setToast({ ...toast, open: false })}
 			/>
-		</div>
-	);
-}
-
-function MetricBox({
-	label,
-	value,
-	color = 'text-zinc-800',
-}: {
-	label: string;
-	value: number | string;
-	color?: string;
-}) {
-	return (
-		<div className="flex flex-col items-center justify-center gap-1 py-2">
-			<ChartBarIcon className="h-5 w-5 text-zinc-400" />
-			<span className={`text-2xl font-bold ${color}`}>{value}</span>
-			<span className="text-xs text-zinc-500 text-center">{label}</span>
 		</div>
 	);
 }
