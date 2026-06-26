@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
+import { surveyQueryKeys } from './useSurveyQueries';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
@@ -19,7 +21,6 @@ import {
 	saveGRACompetence,
 	deleteGRACompetence,
 	cloneGRAConfiguration,
-	searchStudentByCode,
 	searchStudentsByPrefix,
 	addStudentToNotification,
 	deleteStudentNotification,
@@ -156,48 +157,26 @@ export function useGRAStudents() {
 }
 
 export function useGRAStudentSearch() {
+	const [codePrefix, setCodePrefix] = useState('');
 	const [result, setResult] = useState<StudentSearchResult | null>(null);
-	const [suggestions, setSuggestions] = useState<StudentSearchResult[]>([]);
-	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const search = useCallback(async (code: string) => {
-		setLoading(true);
-		setError(null);
-		setResult(null);
-		try {
-			const found = await searchStudentByCode(code);
-			if (found) {
-				setResult(found);
-			} else {
-				setError('surveys.gra.notifications.studentNotFound');
-			}
-		} catch (e) {
-			setError(getErrorMessage(e));
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+	const trimmedPrefix = codePrefix.trim();
+	const suggestionsQuery = useQuery({
+		queryKey: surveyQueryKeys.graStudentSuggestions(trimmedPrefix),
+		queryFn: () => searchStudentsByPrefix(trimmedPrefix),
+		enabled: trimmedPrefix.length > 0 && !result,
+	});
 
-	const searchPrefix = useCallback(async (prefix: string) => {
-		if (!prefix.trim()) {
-			setSuggestions([]);
-			return;
-		}
-		setLoading(true);
-		try {
-			const found = await searchStudentsByPrefix(prefix);
-			setSuggestions(found);
-		} catch {
-			setSuggestions([]);
-		} finally {
-			setLoading(false);
-		}
+	const searchPrefix = useCallback((value: string) => {
+		setResult(null);
+		setError(null);
+		setCodePrefix(value);
 	}, []);
 
 	const selectSuggestion = useCallback((student: StudentSearchResult) => {
 		setResult(student);
-		setSuggestions([]);
+		setCodePrefix('');
 		setError(null);
 	}, []);
 
@@ -216,8 +195,8 @@ export function useGRAStudentSearch() {
 				await addStudentToNotification(params);
 				setResult(null);
 				onSuccess?.();
-			} catch (e) {
-				setError(getErrorMessage(e));
+			} catch (caughtError) {
+				setError(getErrorMessage(caughtError));
 			}
 		},
 		[],
@@ -225,16 +204,15 @@ export function useGRAStudentSearch() {
 
 	const reset = useCallback(() => {
 		setResult(null);
-		setSuggestions([]);
+		setCodePrefix('');
 		setError(null);
 	}, []);
 
 	return {
 		result,
-		suggestions,
-		loading,
+		suggestions: result ? [] : (suggestionsQuery.data ?? []),
+		loading: suggestionsQuery.isFetching,
 		error,
-		search,
 		searchPrefix,
 		selectSuggestion,
 		add,

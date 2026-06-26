@@ -192,19 +192,19 @@ export async function listGRAPerformanceLevels(
 	return list.map((l, i) => adaptPerformanceLevel(l, i));
 }
 
-function adaptStudent(s: BackendStudent, fallbackCode = ''): StudentSearchResult {
-	const firstName = s.firstName ?? '';
-	const lastName = s.lastName ?? '';
+function adaptStudent(student: BackendStudent, fallbackCode = ''): StudentSearchResult {
+	const firstName = student.firstName ?? '';
+	const lastName = student.lastName ?? '';
 	const name =
-		s.fullName ??
-		localized(s.name) ??
+		student.fullName ??
+		localized(student.name) ??
 		(firstName || lastName ? `${firstName} ${lastName}`.trim() : '');
 	return {
-		studentId: s.id,
-		code: s.code ?? s.studentCode ?? fallbackCode,
+		studentId: student.id,
+		code: student.code ?? student.studentCode ?? fallbackCode,
 		name,
-		email: s.email ?? '',
-		career: s.programName ?? '',
+		email: student.email ?? '',
+		career: student.programName ?? '',
 	};
 }
 
@@ -216,10 +216,15 @@ export async function searchStudentByCode(
 		isActive: true,
 	});
 	const list = getApiData<BackendStudent[]>(res) ?? [];
-	const match = list.find((s) => (s.code ?? s.studentCode) === studentCode) ?? list[0] ?? null;
+	const match =
+		list.find((student) => (student.code ?? student.studentCode) === studentCode) ??
+		list[0] ??
+		null;
 	if (!match) return null;
 	return adaptStudent(match, studentCode);
 }
+
+const MAX_PREFIX_SUGGESTIONS = 30;
 
 export async function searchStudentsByPrefix(codePrefix: string): Promise<StudentSearchResult[]> {
 	if (!codePrefix.trim()) return [];
@@ -228,7 +233,7 @@ export async function searchStudentsByPrefix(codePrefix: string): Promise<Studen
 		isActive: true,
 	});
 	const list = getApiData<BackendStudent[]>(res) ?? [];
-	return list.slice(0, 30).map((s) => adaptStudent(s));
+	return list.slice(0, MAX_PREFIX_SUGGESTIONS).map((student) => adaptStudent(student));
 }
 
 export async function addStudentToNotification(params: {

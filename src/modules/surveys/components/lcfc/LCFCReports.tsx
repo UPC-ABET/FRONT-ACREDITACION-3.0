@@ -24,9 +24,11 @@ interface OptionItem {
 
 interface LCFCReportsProps {
 	readonly programId: number;
+	readonly commissionId?: number;
+	readonly campusId?: number;
 }
 
-export function LCFCReports({ programId }: LCFCReportsProps) {
+export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsProps) {
 	const { t, locale } = useI18n();
 	const { academicPeriodId } = useABET();
 	const [commission, setCommission] = useState<OptionItem | null>(null);
@@ -184,13 +186,10 @@ export function LCFCReports({ programId }: LCFCReportsProps) {
 			{/* Perception PDF report generator — Generate button also triggers dashboard */}
 			<PerceptionReportPanel
 				programId={programId || undefined}
-				generate={async (filters) => {
-					dashboardMutation.mutate();
-					return generateLCFCPerceptionPdf(filters);
-				}}
+				generate={generateLCFCPerceptionPdf}
 				externalFilters={{
-					commissionId: commission ? Number(commission.value) : undefined,
-					campusId: campus ? Number(campus.value) : undefined,
+					commissionId: commissionId || undefined,
+					campusId: campusId || undefined,
 					lang: locale === 'en' ? 'en' : 'es',
 				}}
 			/>
