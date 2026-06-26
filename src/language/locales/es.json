@@ -7,6 +7,7 @@
 		"performanceLevels": "Niveles de Desempeño",
 		"projects": "Proyectos Académicos",
 		"gradeProjects": "Calificar Proyectos",
+		"semaphoreReports": "Reportes Semáforo",
 		"evaluation": {
 			"label": "Evaluación"
 		},
@@ -3634,6 +3635,63 @@
 			"maxEvaluatorsLabel": "Máximo de evaluadores",
 			"maxEvaluatorsPlaceholder": "Sin límite",
 			"maxInvalid": "El máximo debe ser un número mayor a 0."
+		}
+	},
+	"semaphoreReports": {
+		"title": "Reportes Semáforo",
+		"subtitle": "Cumplimiento de Student Outcomes (ABET) por curso y outcome, clasificado en semáforo.",
+		"selectPeriod": "Selecciona un periodo académico en la barra superior para ver el reporte.",
+		"empty": "No hay datos para los filtros seleccionados.",
+		"downloadPdf": "Descargar PDF",
+		"downloadExcel": "Descargar Excel",
+		"tabs": {
+			"rc": "RC — Control",
+			"rv": "RV — Verificación"
+		},
+		"filters": {
+			"accreditor": "Acreditador",
+			"allAccreditors": "Todos los acreditadores",
+			"commission": "Comisión",
+			"allCommissions": "Todas las comisiones",
+			"program": "Carrera",
+			"allPrograms": "Todas las carreras",
+			"outcome": "Outcome",
+			"allOutcomes": "Todos los outcomes",
+			"campus": "Sede",
+			"allCampuses": "Todas las sedes",
+			"language": "Idioma del reporte",
+			"languageEs": "Español",
+			"languageEn": "Inglés",
+			"clear": "Limpiar filtros"
+		},
+		"kpi": {
+			"green": "Cursos en verde",
+			"yellow": "Cursos en amarillo",
+			"red": "Cursos en rojo"
+		},
+		"metadata": {
+			"program": "Carrera",
+			"commission": "Comisión",
+			"accreditor": "Acreditador",
+			"period": "Ciclo"
+		},
+		"table": {
+			"courseCode": "Código curso",
+			"courseName": "Curso",
+			"outcomeCode": "Outcome",
+			"outcomeName": "Nombre del outcome",
+			"campus": "Sede",
+			"totalStudents": "Total alumnos",
+			"studentsAchieved": "Alcanzaron",
+			"percentageAchieved": "% alcanzado",
+			"status": "Semáforo",
+			"searchPlaceholder": "Buscar por curso u outcome...",
+			"ariaLabel": "Reporte semáforo por curso y outcome"
+		},
+		"color": {
+			"VERDE": "Verde",
+			"AMARILLO": "Amarillo",
+			"ROJO": "Rojo"
 		}
 	}
 }

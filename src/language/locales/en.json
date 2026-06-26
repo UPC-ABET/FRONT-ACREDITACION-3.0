@@ -13,6 +13,7 @@
 		"evaluationCourses": "Courses to Grade",
 		"projects": "Academic Projects",
 		"gradeProjects": "Grade Projects",
+		"semaphoreReports": "Semaphore Reports",
 		"evaluation": {
 			"label": "Evaluation"
 		},
@@ -3633,6 +3634,63 @@
 			"maxEvaluatorsLabel": "Maximum evaluators",
 			"maxEvaluatorsPlaceholder": "No limit",
 			"maxInvalid": "Maximum must be a number greater than 0."
+		}
+	},
+	"semaphoreReports": {
+		"title": "Semaphore Reports",
+		"subtitle": "Student Outcome (ABET) achievement by course and outcome, classified as a traffic light.",
+		"selectPeriod": "Select an academic period in the top bar to view the report.",
+		"empty": "No data for the selected filters.",
+		"downloadPdf": "Download PDF",
+		"downloadExcel": "Download Excel",
+		"tabs": {
+			"rc": "RC — Control",
+			"rv": "RV — Verification"
+		},
+		"filters": {
+			"accreditor": "Accreditor",
+			"allAccreditors": "All accreditors",
+			"commission": "Commission",
+			"allCommissions": "All commissions",
+			"program": "Program",
+			"allPrograms": "All programs",
+			"outcome": "Outcome",
+			"allOutcomes": "All outcomes",
+			"campus": "Campus",
+			"allCampuses": "All campuses",
+			"language": "Report language",
+			"languageEs": "Spanish",
+			"languageEn": "English",
+			"clear": "Clear filters"
+		},
+		"kpi": {
+			"green": "Courses in green",
+			"yellow": "Courses in yellow",
+			"red": "Courses in red"
+		},
+		"metadata": {
+			"program": "Program",
+			"commission": "Commission",
+			"accreditor": "Accreditor",
+			"period": "Cycle"
+		},
+		"table": {
+			"courseCode": "Course code",
+			"courseName": "Course",
+			"outcomeCode": "Outcome",
+			"outcomeName": "Outcome name",
+			"campus": "Campus",
+			"totalStudents": "Total students",
+			"studentsAchieved": "Achieved",
+			"percentageAchieved": "% achieved",
+			"status": "Traffic light",
+			"searchPlaceholder": "Search by course or outcome...",
+			"ariaLabel": "Semaphore report by course and outcome"
+		},
+		"color": {
+			"VERDE": "Green",
+			"AMARILLO": "Yellow",
+			"ROJO": "Red"
 		}
 	}
 }

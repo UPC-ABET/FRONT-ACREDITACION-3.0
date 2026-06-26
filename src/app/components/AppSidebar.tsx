@@ -70,7 +70,10 @@ export function AppSidebar() {
 		{
 			name: t('nav.evaluation.label'),
 			icon: ClipboardDocumentCheckIcon,
-			children: [{ name: t('nav.gradeProjects'), href: '/evaluation/grade-projects' }],
+			children: [
+				{ name: t('nav.gradeProjects'), href: '/evaluation/grade-projects' },
+				{ name: t('nav.semaphoreReports'), href: '/evaluation/semaphore-reports' },
+			],
 		},
 		{
 			name: t('nav.portfolio'),

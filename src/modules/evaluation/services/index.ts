@@ -6,3 +6,4 @@ export {
 	listCapstoneProjects,
 	submitCapstoneEvaluation,
 } from './capstoneService';
+export { semaphoreReportsService } from './semaphoreReportsService';

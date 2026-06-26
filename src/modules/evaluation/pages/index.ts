@@ -9,3 +9,4 @@ export * from './EvaluationCourses';
 export * from './ProjectCreate';
 export { default as CapstoneConsolePage } from './CapstoneConsole';
 export * from './EvaluatorTypesPage';
+export * from './SemaphoreReports';
