@@ -9,6 +9,7 @@ import { programsQueryKeys, programsService, type ProgramResponse } from '@/modu
 interface Props {
 	readonly value: number;
 	readonly onChange: (programId: number) => void;
+	readonly wrapperClassName?: string;
 }
 
 /**
@@ -17,7 +18,7 @@ interface Props {
  * available. Surveys hide the sidebar school filter and list every program, because
  * a section/student can belong to programs from different schools.
  */
-export function AllProgramsSelect({ value, onChange }: Props) {
+export function AllProgramsSelect({ value, onChange, wrapperClassName = 'max-w-xs' }: Props) {
 	const { t, locale } = useI18n();
 	const { data: programs = [], isLoading } = useQuery({
 		queryKey: programsQueryKeys.allActive(),
@@ -35,7 +36,7 @@ export function AllProgramsSelect({ value, onChange }: Props) {
 	const selected = options.find((o) => o.value === value) ?? null;
 
 	return (
-		<div className="max-w-xs">
+		<div className={wrapperClassName}>
 			<Select
 				label={t('surveys.shared.programLabel')}
 				name="program"

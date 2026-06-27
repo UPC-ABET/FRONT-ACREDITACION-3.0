@@ -2,6 +2,11 @@ import type { I18nText } from '@/shared/types';
 
 export type SurveyType = 'PPP' | 'GRA' | 'LCFC';
 
+export interface OptionItem {
+	value: string | number;
+	label: string;
+}
+
 export interface PageRequest {
 	pageNumber: number;
 	pageSize: number;
@@ -542,6 +547,8 @@ export interface BackendStudent {
 	studentCode?: string;
 	name?: string | { es?: string; en?: string };
 	fullName?: string;
+	firstName?: string;
+	lastName?: string;
 	email?: string;
 	programName?: string;
 	programId?: number;
