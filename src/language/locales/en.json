@@ -3663,11 +3663,6 @@
 			"languageEn": "English",
 			"clear": "Clear filters"
 		},
-		"kpi": {
-			"green": "Courses in green",
-			"yellow": "Courses in yellow",
-			"red": "Courses in red"
-		},
 		"metadata": {
 			"program": "Program",
 			"commission": "Commission",
@@ -3681,16 +3676,13 @@
 			"outcomeName": "Outcome name",
 			"campus": "Campus",
 			"totalStudents": "Total students",
-			"studentsAchieved": "Achieved",
-			"percentageAchieved": "% achieved",
+			"critical": "Critical",
+			"yes": "Yes",
+			"no": "No",
 			"status": "Traffic light",
 			"searchPlaceholder": "Search by course or outcome...",
-			"ariaLabel": "Semaphore report by course and outcome"
-		},
-		"color": {
-			"VERDE": "Green",
-			"AMARILLO": "Yellow",
-			"ROJO": "Red"
+			"ariaLabel": "Semaphore report by course and outcome",
+			"cycle": "Cycle"
 		}
 	}
 }

@@ -4,11 +4,11 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { SemaphoreColorBadge } from './SemaphoreColorBadge';
-import type { SemaphoreReportSummaryDto } from '../../types';
+import type { SemaphoreCourseOutcomeSummaryDto, SemaphoreLevelLegendDto } from '../../types';
 
 interface SemaphoreSummaryTableProps {
-	readonly rows: SemaphoreReportSummaryDto[];
+	readonly rows: SemaphoreCourseOutcomeSummaryDto[];
+	readonly legend: SemaphoreLevelLegendDto[];
 	readonly isLoading: boolean;
 	readonly errorMessage?: string;
 	readonly emptyMessage: string;
@@ -16,14 +16,20 @@ interface SemaphoreSummaryTableProps {
 
 export function SemaphoreSummaryTable({
 	rows,
+	legend,
 	isLoading,
 	errorMessage,
 	emptyMessage,
 }: SemaphoreSummaryTableProps) {
 	const { t } = useI18n();
 
-	const columns = useMemo<ColumnDef<SemaphoreReportSummaryDto>[]>(
+	// legend always arrives ordered rojo -> amarillo -> verde, matching studentsRed/Yellow/Green.
+	const [redLevel, yellowLevel, greenLevel] = legend;
+
+	const columns = useMemo<ColumnDef<SemaphoreCourseOutcomeSummaryDto>[]>(
 		() => [
+			{ accessorKey: 'sede', header: t('semaphoreReports.table.campus') },
+			{ accessorKey: 'cicloAcademico', header: t('semaphoreReports.table.cycle') },
 			{
 				accessorKey: 'courseCode',
 				header: t('semaphoreReports.table.courseCode'),
@@ -36,31 +42,74 @@ export function SemaphoreSummaryTable({
 				cell: ({ row }) => <span className="font-mono">{row.original.outcomeCode}</span>,
 			},
 			{ accessorKey: 'outcomeName', header: t('semaphoreReports.table.outcomeName') },
-			{ accessorKey: 'sede', header: t('semaphoreReports.table.campus') },
 			{
 				accessorKey: 'totalStudents',
 				header: t('semaphoreReports.table.totalStudents'),
 				meta: { cellClassName: 'text-right tabular-nums', headerClassName: 'text-right' },
 			},
 			{
-				accessorKey: 'studentsAchieved',
-				header: t('semaphoreReports.table.studentsAchieved'),
+				id: 'red',
+				header: redLevel?.name ?? '',
+				cell: ({ row }) => (
+					<>
+						{row.original.studentsRed}{' '}
+						<span className="text-zinc-400">({(row.original.percentageRed ?? 0).toFixed(2)}%)</span>
+					</>
+				),
 				meta: { cellClassName: 'text-right tabular-nums', headerClassName: 'text-right' },
 			},
 			{
-				accessorKey: 'percentageAchieved',
-				header: t('semaphoreReports.table.percentageAchieved'),
-				cell: ({ row }) => `${row.original.percentageAchieved.toFixed(2)}%`,
+				id: 'yellow',
+				header: yellowLevel?.name ?? '',
+				cell: ({ row }) => (
+					<>
+						{row.original.studentsYellow}{' '}
+						<span className="text-zinc-400">
+							({(row.original.percentageYellow ?? 0).toFixed(2)}%)
+						</span>
+					</>
+				),
 				meta: { cellClassName: 'text-right tabular-nums', headerClassName: 'text-right' },
 			},
 			{
-				accessorKey: 'color',
-				header: t('semaphoreReports.table.status'),
-				cell: ({ row }) => <SemaphoreColorBadge color={row.original.color} />,
+				id: 'green',
+				header: greenLevel?.name ?? '',
+				cell: ({ row }) => (
+					<>
+						{row.original.studentsGreen}{' '}
+						<span className="text-zinc-400">
+							({(row.original.percentageGreen ?? 0).toFixed(2)}%)
+						</span>
+					</>
+				),
+				meta: { cellClassName: 'text-right tabular-nums', headerClassName: 'text-right' },
+			},
+			{
+				accessorKey: 'isCritical',
+				header: t('semaphoreReports.table.critical'),
+				cell: ({ row }) => (
+					<span className={row.original.isCritical ? 'font-bold text-red-600' : undefined}>
+						{row.original.isCritical
+							? t('semaphoreReports.table.yes')
+							: t('semaphoreReports.table.no')}
+					</span>
+				),
+				enableGlobalFilter: false,
+			},
+			{
+				id: 'colorDot',
+				header: '',
+				cell: ({ row }) => (
+					<span
+						className="inline-block h-3 w-3 rounded-full"
+						style={{ backgroundColor: row.original.color }}
+						aria-hidden="true"
+					/>
+				),
 				enableGlobalFilter: false,
 			},
 		],
-		[t],
+		[t, redLevel, yellowLevel, greenLevel],
 	);
 
 	return (

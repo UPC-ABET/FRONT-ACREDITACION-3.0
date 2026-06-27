@@ -7,7 +7,7 @@ import { useI18n } from '@/providers';
 import { ApiError, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { useSemaphoreReport, useSemaphoreReportDownload } from '../../hooks/useSemaphoreReports';
-import { SemaphoreKpiCards } from './SemaphoreKpiCards';
+import { SemaphoreLegend } from './SemaphoreLegend';
 import { SemaphoreSummaryTable } from './SemaphoreSummaryTable';
 import type { SemaphoreFilterDto, SemaphoreReportKind } from '../../types';
 
@@ -120,16 +120,11 @@ export function SemaphoreReportView({ kind, filters, academicPeriodId }: Semapho
 				</div>
 			</div>
 
-			{hasRows && (
-				<SemaphoreKpiCards
-					greenCount={report?.greenDetail.length ?? 0}
-					yellowCount={report?.yellowDetail.length ?? 0}
-					redCount={report?.redDetail.length ?? 0}
-				/>
-			)}
+			{hasRows && report && <SemaphoreLegend legend={report.legend} />}
 
 			<SemaphoreSummaryTable
 				rows={isEmpty ? [] : (report?.summary ?? [])}
+				legend={report?.legend ?? []}
 				isLoading={reportQuery.isLoading}
 				errorMessage={tableError}
 				emptyMessage={t('semaphoreReports.empty')}

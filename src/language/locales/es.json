@@ -3664,11 +3664,6 @@
 			"languageEn": "Inglés",
 			"clear": "Limpiar filtros"
 		},
-		"kpi": {
-			"green": "Cursos en verde",
-			"yellow": "Cursos en amarillo",
-			"red": "Cursos en rojo"
-		},
 		"metadata": {
 			"program": "Carrera",
 			"commission": "Comisión",
@@ -3682,16 +3677,13 @@
 			"outcomeName": "Nombre del outcome",
 			"campus": "Sede",
 			"totalStudents": "Total alumnos",
-			"studentsAchieved": "Alcanzaron",
-			"percentageAchieved": "% alcanzado",
+			"critical": "Crítico",
+			"yes": "Sí",
+			"no": "No",
 			"status": "Semáforo",
 			"searchPlaceholder": "Buscar por curso u outcome...",
-			"ariaLabel": "Reporte semáforo por curso y outcome"
-		},
-		"color": {
-			"VERDE": "Verde",
-			"AMARILLO": "Amarillo",
-			"ROJO": "Rojo"
+			"ariaLabel": "Reporte semáforo por curso y outcome",
+			"cycle": "Ciclo"
 		}
 	}
 }

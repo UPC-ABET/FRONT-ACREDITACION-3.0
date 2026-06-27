@@ -1,5 +1,3 @@
-export type SemaphoreColor = 'ROJO' | 'AMARILLO' | 'VERDE';
-
 export type SemaphoreReportKind = 'rc' | 'rv';
 
 export type SemaphoreReportFormat = 'pdf' | 'excel';
@@ -7,6 +5,7 @@ export type SemaphoreReportFormat = 'pdf' | 'excel';
 export type SemaphoreReportLang = 'es' | 'en';
 
 export type SemaphoreFilterDto = {
+	academicPeriodId?: number;
 	programCommissionId?: number;
 	outcomeId?: number;
 	campusId?: number;
@@ -14,17 +13,29 @@ export type SemaphoreFilterDto = {
 	lang?: SemaphoreReportLang;
 };
 
-export type SemaphoreReportSummaryDto = {
+export type SemaphoreLevelLegendDto = {
+	name: string;
+	minScore: number;
+	maxScore: number;
+	color: string;
+};
+
+export type SemaphoreCourseOutcomeSummaryDto = {
+	sede: string;
+	cicloAcademico: string;
 	courseCode: string;
 	courseName: string;
 	outcomeCode: string;
 	outcomeName: string;
 	totalStudents: number;
-	studentsAchieved: number;
-	percentageAchieved: number;
-	color: SemaphoreColor;
-	sede: string;
-	cicloAcademico: string;
+	studentsRed: number;
+	studentsYellow: number;
+	studentsGreen: number;
+	percentageRed: number;
+	percentageYellow: number;
+	percentageGreen: number;
+	isCritical: boolean;
+	color: string;
 };
 
 export type SemaphoreMetadataDto = {
@@ -35,9 +46,7 @@ export type SemaphoreMetadataDto = {
 };
 
 export type SemaphoreReportDto = {
-	summary: SemaphoreReportSummaryDto[];
-	redDetail: SemaphoreReportSummaryDto[];
-	yellowDetail: SemaphoreReportSummaryDto[];
-	greenDetail: SemaphoreReportSummaryDto[];
+	legend: SemaphoreLevelLegendDto[];
+	summary: SemaphoreCourseOutcomeSummaryDto[];
 	metadata: SemaphoreMetadataDto;
 };
