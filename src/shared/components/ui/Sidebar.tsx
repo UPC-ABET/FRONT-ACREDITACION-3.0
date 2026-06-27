@@ -1,6 +1,7 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ChevronRightIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/outline';
 import { useScreen } from '@/shared/hooks';
 import { useI18n } from '@/providers';
@@ -214,6 +215,8 @@ export function SidebarItem({
 	badgeVariant = 'neutral',
 	active = false,
 	onClick,
+	href,
+	external = false,
 	className = '',
 }: {
 	icon?: React.ReactNode;
@@ -223,6 +226,8 @@ export function SidebarItem({
 	badgeVariant?: 'urgent' | 'info' | 'neutral';
 	active?: boolean;
 	onClick?: () => void;
+	href?: string;
+	external?: boolean;
 	className?: string;
 }) {
 	const { open } = useSidebar();
@@ -234,19 +239,18 @@ export function SidebarItem({
 		neutral: 'bg-zinc-700/60 text-zinc-300 border border-zinc-600/50',
 	};
 
-	return (
-		<button
-			type="button"
-			onClick={onClick}
-			title={!open ? label : undefined}
-			className={cn(
-				'relative w-full text-left flex items-center px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
-				hasIcon ? 'gap-3' : 'gap-0',
-				active
-					? 'bg-[linear-gradient(135deg,var(--brand)_0%,var(--brand-dark)_100%)] shadow-[0_4px_12px_var(--brand-shadow),inset_0_1px_0_rgba(255,255,255,0.15)]'
-					: 'hover:bg-zinc-800/70',
-				className,
-			)}>
+	const itemClassName = cn(
+		'relative w-full text-left flex items-center px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
+		hasIcon ? 'gap-3' : 'gap-0',
+		active
+			? 'bg-[linear-gradient(135deg,var(--brand)_0%,var(--brand-dark)_100%)] shadow-[0_4px_12px_var(--brand-shadow),inset_0_1px_0_rgba(255,255,255,0.15)]'
+			: 'hover:bg-zinc-800/70',
+		className,
+	);
+	const itemTitle = !open ? label : undefined;
+
+	const content = (
+		<>
 			{active && (
 				<div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-white" />
 			)}
@@ -293,6 +297,32 @@ export function SidebarItem({
 					)}
 				</>
 			)}
+		</>
+	);
+
+	if (href !== undefined) {
+		if (external) {
+			return (
+				<a
+					href={href}
+					target="_blank"
+					rel="noopener noreferrer"
+					title={itemTitle}
+					className={itemClassName}>
+					{content}
+				</a>
+			);
+		}
+		return (
+			<Link href={href} title={itemTitle} className={itemClassName}>
+				{content}
+			</Link>
+		);
+	}
+
+	return (
+		<button type="button" onClick={onClick} title={itemTitle} className={itemClassName}>
+			{content}
 		</button>
 	);
 }

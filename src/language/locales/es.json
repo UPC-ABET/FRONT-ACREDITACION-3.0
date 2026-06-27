@@ -16,6 +16,10 @@
 			"overview": "Resumen",
 			"findings": "Hallazgos"
 		},
+		"ard": {
+			"label": "ARD",
+			"overview": "Resumen"
+		},
 		"surveys": {
 			"label": "Encuestas",
 			"ppp": "PPP — Prácticas Pre-Prof.",
@@ -40,6 +44,108 @@
 		"academicProjects": {
 			"label": "Proyectos Académicos",
 			"evaluators": "Evaluadores"
+		}
+	},
+	"ard": {
+		"loading": "Cargando…",
+		"overview": {
+			"title": "ARD — Actas de Reunión Docente",
+			"description": "Registra una nueva acta de reunión docente (ARD).",
+			"created": "ARD {code} creada. Continúa agregando sus detalles.",
+			"selectPeriod": "Selecciona un periodo académico en la barra superior para continuar.",
+			"meetingDate": "Fecha de reunión",
+			"campus": "Sede",
+			"program": "Programa",
+			"listTitle": "Actas",
+			"searchPlaceholder": "Buscar por código…",
+			"empty": "No se encontraron ARD para los filtros seleccionados.",
+			"edit": {
+				"title": "Editar fecha de reunión"
+			},
+			"delete": {
+				"title": "Eliminar ARD",
+				"message": "¿Eliminar la ARD {code} y todos sus detalles? Esta acción es permanente y no se puede deshacer."
+			}
+		},
+		"participants": {
+			"title": "Participantes de la reunión",
+			"description": "ARD {code} — selecciona los delegados asistentes y agrega estudiantes invitados.",
+			"representatives": {
+				"sectionTitle": "Delegados de clase",
+				"attended": "Asistió",
+				"empty": "No se encontraron delegados para este programa y sede."
+			},
+			"invited": {
+				"sectionTitle": "Estudiantes invitados",
+				"add": "Agregar estudiante invitado",
+				"empty": "No se agregaron estudiantes invitados.",
+				"dialogTitle": "Agregar estudiante invitado",
+				"studentLabel": "Estudiante",
+				"studentPlaceholder": "Busca por código o nombre…",
+				"alreadyAdded": "Este estudiante ya está en la lista de participantes."
+			}
+		},
+		"details": {
+			"title": "Detalle de la reunión",
+			"description": "ARD {code} — registra el curso, docente y comentario de cada participante.",
+			"sectionTitle": "Agregar detalle",
+			"student": "Estudiante",
+			"course": "Curso",
+			"professor": "Docente",
+			"comment": "Comentario",
+			"addRow": "Agregar a la lista",
+			"empty": "Aún no se agregaron detalles."
+		},
+		"flow": {
+			"backToOverview": "Volver al resumen"
+		},
+		"view": {
+			"title": "ARD",
+			"description": "Detalle del acta de reunión.",
+			"notFound": "No se encontró esta ARD.",
+			"noDetails": "Esta ARD aún no tiene detalles."
+		},
+		"edit": {
+			"description": "Agrega, edita o elimina los detalles de la reunión y guarda.",
+			"detailsTitle": "Detalles",
+			"addRow": "Agregar detalle",
+			"editRow": "Editar detalle",
+			"addToList": "Agregar",
+			"updateRow": "Actualizar",
+			"empty": "Aún no hay detalles. Agrega un detalle o un estudiante invitado.",
+			"periodMismatch": "Selecciona el periodo académico de esta ARD en la barra superior para editar sus detalles."
+		},
+		"table": {
+			"code": "Código",
+			"fullName": "Nombre completo",
+			"course": "Curso",
+			"section": "Sección",
+			"professor": "Docente",
+			"meetingDate": "Fecha de reunión",
+			"campus": "Sede",
+			"program": "Programa",
+			"details": "Detalles",
+			"createdAt": "Creada",
+			"actions": "Acciones",
+			"error": "No se pudieron cargar los datos."
+		},
+		"actions": {
+			"new": "Nuevo",
+			"cancel": "Cancelar",
+			"continue": "Continuar",
+			"back": "Atrás",
+			"finish": "Finalizar",
+			"remove": "Quitar",
+			"edit": "Editar",
+			"delete": "Eliminar",
+			"save": "Guardar",
+			"view": "Ver"
+		},
+		"errors": {
+			"createFailed": "No se pudo crear la ARD.",
+			"saveFailed": "No se pudieron guardar los detalles.",
+			"updateFailed": "No se pudo actualizar la fecha de reunión.",
+			"deleteFailed": "No se pudo eliminar la ARD."
 		}
 	},
 	"scraping": {
@@ -1217,8 +1323,17 @@
 			"courseNotInStudyPlan": "El curso de la sección no pertenece a la malla curricular del alumno.",
 			"studyPlanPeriodMismatch": "El alumno no está matriculado en la misma malla curricular y período que la sección."
 		},
-		"classRepresentativeAssign": {
+		"classRepresentative": {
 			"studentNotEnrolledInSection": "El estudiante no está matriculado en esta sección."
+		},
+		"ard": {
+			"notFound": "No se encontró la ARD.",
+			"createFailed": "No se pudo crear la ARD.",
+			"updateFailed": "No se pudo actualizar la ARD.",
+			"detailsFailed": "No se pudieron guardar los detalles.",
+			"detailsRequired": "Agrega al menos un detalle antes de guardar.",
+			"duplicateArd": "Ya existe una ARD para este periodo, sede, programa y fecha de reunión.",
+			"duplicateDetail": "Algunos detalles están repetidos (mismo estudiante, curso y docente)."
 		},
 		"studyPlan": {
 			"inUse": "No se puede eliminar la malla porque está en uso.",

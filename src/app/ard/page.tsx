@@ -1,9 +1,7 @@
 import dynamic from 'next/dynamic';
 
-const ArdRegistrationPage = dynamic(() =>
-	import('@/modules/ard').then((m) => m.ArdRegistrationPage),
-);
+const ArdOverviewPage = dynamic(() => import('@/modules/ard').then((m) => m.ArdOverviewPage));
 
 export default function Page() {
-	return <ArdRegistrationPage />;
+	return <ArdOverviewPage />;
 }
