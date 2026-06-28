@@ -236,7 +236,7 @@ export function ClassRepresentativesMaintenance() {
 														onClick={() => setPendingRemove(item)}
 														aria-label={removeLabel}
 														title={removeLabel}>
-														<TrashIcon className="h-4 w-4" />
+														<TrashIcon className="h-5 w-5" />
 													</Button>
 												</div>
 											</TableCell>
@@ -272,7 +272,7 @@ export function ClassRepresentativesMaintenance() {
 												onClick={() => setPendingRemove(item)}
 												aria-label={removeLabel}
 												title={removeLabel}>
-												<TrashIcon className="h-4 w-4" />
+												<TrashIcon className="h-5 w-5" />
 											</Button>
 										</div>
 									</div>

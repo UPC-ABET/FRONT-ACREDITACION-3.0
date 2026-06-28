@@ -71,8 +71,14 @@ function RowActions({
 }) {
 	return (
 		<div className="flex items-center justify-end gap-1">
-			<Button variant="ghost" size="icon" onClick={onEdit} aria-label={editLabel} title={editLabel}>
-				<PencilSquareIcon className="h-4 w-4" />
+			<Button
+				variant="ghost"
+				size="icon"
+				className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+				onClick={onEdit}
+				aria-label={editLabel}
+				title={editLabel}>
+				<PencilSquareIcon className="h-5 w-5" />
 			</Button>
 			<Button
 				variant="ghost"
@@ -81,7 +87,7 @@ function RowActions({
 				onClick={onDelete}
 				aria-label={deleteLabel}
 				title={deleteLabel}>
-				<TrashIcon className="h-4 w-4" />
+				<TrashIcon className="h-5 w-5" />
 			</Button>
 		</div>
 	);

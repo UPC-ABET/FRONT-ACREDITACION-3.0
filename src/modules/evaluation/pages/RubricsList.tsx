@@ -190,7 +190,7 @@ export function RubricsListPage() {
 								<TableHead>{t('rubrics.list.columns.period')}</TableHead>
 								<TableHead>{t('rubrics.list.columns.gradeType')}</TableHead>
 								<TableHead>{t('rubrics.list.columns.rubricType')}</TableHead>
-								<TableHead className="w-24 text-center">
+								<TableHead className="w-24 text-right">
 									{t('rubrics.list.columns.actions')}
 								</TableHead>
 							</TableRow>
@@ -215,34 +215,39 @@ export function RubricsListPage() {
 										)}
 									</TableCell>
 									<TableCell>
-										<div className="flex items-center justify-center gap-1">
+										<div className="flex items-center justify-end gap-1">
 											<Link
 												href={`/rubrics/${row.id}/edit`}
+												aria-label={
+													row.canEdit
+														? t('rubrics.list.actions.edit')
+														: t('rubrics.list.actions.view')
+												}
 												title={
 													row.canEdit
 														? t('rubrics.list.actions.edit')
 														: t('rubrics.list.actions.view')
 												}
 												className={cn(
-													'inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors',
-													row.canEdit
-														? 'text-zinc-500 hover:bg-blue-50 hover:text-blue-600'
-														: 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700',
+													buttonVariants({ variant: 'ghost', size: 'icon' }),
+													'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900',
 												)}>
 												{row.canEdit ? (
-													<PencilSquareIcon className="h-4 w-4" />
+													<PencilSquareIcon className="h-5 w-5" />
 												) : (
-													<EyeIcon className="h-4 w-4" />
+													<EyeIcon className="h-5 w-5" />
 												)}
 											</Link>
-											<button
-												type="button"
+											<Button
+												variant="ghost"
+												size="icon"
+												className="text-red-600 hover:bg-red-50"
 												disabled={!row.canEdit}
 												onClick={() => setConfirmTarget(row)}
-												title={t('rubrics.list.actions.delete')}
-												className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30">
-												<TrashIcon className="h-4 w-4" />
-											</button>
+												aria-label={t('rubrics.list.actions.delete')}
+												title={t('rubrics.list.actions.delete')}>
+												<TrashIcon className="h-5 w-5" />
+											</Button>
 										</div>
 									</TableCell>
 								</TableRow>

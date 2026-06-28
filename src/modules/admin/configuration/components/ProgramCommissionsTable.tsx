@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Trash2 } from 'lucide-react';
+import { TrashIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
 	Button,
@@ -131,16 +131,16 @@ export default function ProgramCommissionsTable({
 					</span>
 				),
 				cell: ({ row }) => (
-					<Button
-						variant="secondary"
-						size="sm"
-						onClick={() => setConfirm(row.original)}
-						aria-label={t('admin.configuration.programCommissions.table.unassociate')}>
-						<Trash2 className="h-3.5 w-3.5" />
-						<span className="hidden sm:inline">
-							{t('admin.configuration.programCommissions.table.unassociate')}
-						</span>
-					</Button>
+					<div className="flex items-center justify-end gap-1">
+						<Button
+							variant="ghost"
+							size="icon"
+							className="text-red-600 hover:bg-red-50"
+							onClick={() => setConfirm(row.original)}
+							aria-label={t('admin.configuration.programCommissions.table.unassociate')}>
+							<TrashIcon className="h-5 w-5" />
+						</Button>
+					</div>
 				),
 				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},

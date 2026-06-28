@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Eye, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { EyeIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Alert,
 	Button,
@@ -160,34 +161,36 @@ export function ArdOverviewPage() {
 				id: 'actions',
 				header: t('ard.table.actions'),
 				cell: ({ row }) => (
-					<div className="flex justify-end gap-2">
+					<div className="flex items-center justify-end gap-1">
 						<Button
-							variant="surface"
+							variant="ghost"
 							size="icon"
+							className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 							title={t('ard.actions.view')}
 							aria-label={t('ard.actions.view')}
 							onClick={() => router.push(`/ard/${row.original.id}`)}>
-							<Eye className="h-4 w-4" />
+							<EyeIcon className="h-5 w-5" />
 						</Button>
 						<Button
-							variant="surface"
+							variant="ghost"
 							size="icon"
+							className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 							title={t('ard.actions.edit')}
 							aria-label={t('ard.actions.edit')}
 							onClick={() => {
 								setEditing(row.original);
 								setEditDate(row.original.meetingDate.slice(0, 10));
 							}}>
-							<Pencil className="h-4 w-4" />
+							<PencilSquareIcon className="h-5 w-5" />
 						</Button>
 						<Button
-							variant="surface"
+							variant="ghost"
 							size="icon"
 							className="text-red-600 hover:bg-red-50"
 							title={t('ard.actions.delete')}
 							aria-label={t('ard.actions.delete')}
 							onClick={() => setPendingDelete(row.original)}>
-							<Trash2 className="h-4 w-4" />
+							<TrashIcon className="h-5 w-5" />
 						</Button>
 					</div>
 				),

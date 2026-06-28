@@ -67,7 +67,7 @@ function CourseRows({
 					<TableCell className="font-mono text-zinc-800">{row.courseCode}</TableCell>
 					<TableCell className="text-zinc-700">{localized(row.courseName, locale)}</TableCell>
 					<TableCell>
-						<span className="line-clamp-2 max-w-md text-sm text-zinc-500">
+						<span className="line-clamp-2 max-w-md text-zinc-500">
 							{localized(row.learningOutcome, locale)}
 						</span>
 					</TableCell>
@@ -76,10 +76,11 @@ function CourseRows({
 							<Button
 								variant="ghost"
 								size="icon"
+								className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 								onClick={() => onEdit(row)}
 								aria-label={editLabel}
 								title={editLabel}>
-								<PencilSquareIcon className="h-4 w-4" />
+								<PencilSquareIcon className="h-5 w-5" />
 							</Button>
 							<Button
 								variant="ghost"
@@ -88,7 +89,7 @@ function CourseRows({
 								onClick={() => onDelete(row)}
 								aria-label={deleteLabel}
 								title={deleteLabel}>
-								<TrashIcon className="h-4 w-4" />
+								<TrashIcon className="h-5 w-5" />
 							</Button>
 						</div>
 					</TableCell>

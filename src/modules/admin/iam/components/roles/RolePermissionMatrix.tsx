@@ -47,19 +47,19 @@ export function RolePermissionMatrix({ modules, permissions, value, onChange, di
 
 	return (
 		<div className="overflow-x-auto rounded-lg border border-zinc-200">
-			<table className="w-full border-collapse text-sm">
+			<table className="w-full border-collapse text-[13px]">
 				<thead>
 					<tr className="border-b border-zinc-200 bg-zinc-50">
 						<th
 							scope="col"
-							className="sticky left-0 z-10 bg-zinc-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-zinc-600">
+							className="sticky left-0 z-10 bg-zinc-50 px-4 py-3 text-left text-[13px] font-bold uppercase tracking-wider text-zinc-600">
 							{t('admin.iam.roles.matrix.corner')}
 						</th>
 						{permissions.map((permission) => (
 							<th
 								key={permission.id}
 								scope="col"
-								className="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-zinc-600 whitespace-nowrap">
+								className="px-3 py-3 text-center text-[13px] font-bold uppercase tracking-wider text-zinc-600 whitespace-nowrap">
 								{localizedText(permission.name, locale, permission.code)}
 							</th>
 						))}
@@ -72,7 +72,7 @@ export function RolePermissionMatrix({ modules, permissions, value, onChange, di
 							className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50/70">
 							<th
 								scope="row"
-								className="sticky left-0 z-10 bg-white px-4 py-3 text-left text-sm font-semibold text-zinc-800 whitespace-nowrap">
+								className="sticky left-0 z-10 bg-white px-4 py-3 text-left text-[13px] font-semibold text-zinc-800 whitespace-nowrap">
 								{localizedText(module.name, locale, module.code)}
 							</th>
 							{permissions.map((permission) => {

@@ -231,14 +231,15 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 												{row.academicPeriodCode}
 											</TableCell>
 											<TableCell>
-												<div className="flex justify-end">
+												<div className="flex items-center justify-end gap-1">
 													<Button
 														variant="ghost"
 														size="icon"
+														className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 														onClick={() => onView(row.programCommissionId)}
 														aria-label={t('loads.courseOutcomeMappingMaintenance.actions.view')}
 														title={t('loads.courseOutcomeMappingMaintenance.actions.view')}>
-														<EyeIcon className="h-4 w-4" />
+														<EyeIcon className="h-5 w-5" />
 													</Button>
 												</div>
 											</TableCell>

@@ -128,16 +128,16 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 			{/* Per-section summary table: resend to a single course section. */}
 			{activeCourses.length > 0 && (
 				<div className="rounded-xl border border-zinc-200 overflow-hidden">
-					<table className="w-full text-sm">
+					<table className="w-full text-[13px]">
 						<thead className="bg-zinc-50 text-zinc-600">
 							<tr>
-								<th className="text-left font-medium px-4 py-2">
+								<th className="text-left text-[13px] font-medium px-4 py-2">
 									{t('surveys.lcfc.notifications.colCourse')}
 								</th>
-								<th className="text-left font-medium px-4 py-2">
+								<th className="text-left text-[13px] font-medium px-4 py-2">
 									{t('surveys.lcfc.notifications.colSection')}
 								</th>
-								<th className="text-right font-medium px-4 py-2">
+								<th className="text-right text-[13px] font-medium px-4 py-2">
 									{t('surveys.lcfc.notifications.colActions')}
 								</th>
 							</tr>
@@ -145,18 +145,20 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 						<tbody className="divide-y divide-zinc-100">
 							{activeCourses.map((course) => (
 								<tr key={course.id}>
-									<td className="px-4 py-2 text-zinc-800">{course.courseName}</td>
-									<td className="px-4 py-2 text-zinc-600">{course.sectionCode ?? course.code}</td>
-									<td className="px-4 py-2 text-right">
+									<td className="px-4 py-2 text-[13px] text-zinc-800">{course.courseName}</td>
+									<td className="px-4 py-2 text-[13px] text-zinc-600">
+										{course.sectionCode ?? course.code}
+									</td>
+									<td className="px-4 py-2 text-[13px] text-right">
 										<Button
-											size="sm"
-											variant="surface"
+											size="icon"
+											variant="ghost"
+											className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 											disabled={!isValid || sending}
 											loading={sending && sendingSectionId === course.courseSectionId}
 											onClick={() => handleResendSection(course.courseSectionId as number)}
 											aria-label={t('surveys.lcfc.notifications.resendRow')}>
-											<BellAlertIcon className="h-4 w-4 mr-1" />
-											{t('surveys.lcfc.notifications.resendRow')}
+											<BellAlertIcon className="h-5 w-5" />
 										</Button>
 									</td>
 								</tr>

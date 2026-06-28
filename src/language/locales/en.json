@@ -363,7 +363,7 @@
 			"course": "Course",
 			"coordinator": "Professor",
 			"status": "Status",
-			"actions": "Options",
+			"actions": "Actions",
 			"statusFilter": "Status",
 			"empty": "No IFCs",
 			"actionView": "View",
@@ -468,7 +468,7 @@
 			"code": "Code",
 			"period": "Academic Period",
 			"description": "Description",
-			"actions": "Options"
+			"actions": "Actions"
 		},
 		"action": {
 			"view": "View",

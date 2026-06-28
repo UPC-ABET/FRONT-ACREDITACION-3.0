@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Button, DataTable } from '@/shared/components';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
@@ -62,7 +62,7 @@ export default function PeriodsTable() {
 				id: 'code',
 				header: t('admin.configuration.periods.table.col.code'),
 				cell: ({ row }) => row.original.code,
-				meta: { cellClassName: 'font-mono text-xs text-zinc-700' },
+				meta: { cellClassName: 'font-mono text-zinc-700' },
 			},
 			{
 				id: 'modality',
@@ -104,16 +104,17 @@ export default function PeriodsTable() {
 				),
 				cell: ({ row }) =>
 					row.original.isActive ? null : (
-						<Button
-							variant="secondary"
-							size="sm"
-							onClick={() => handleActivate(row.original)}
-							disabled={activate.isPending}>
-							<CheckCircle2 className="h-3.5 w-3.5" />
-							<span className="hidden sm:inline">
-								{t('admin.configuration.periods.table.activate')}
-							</span>
-						</Button>
+						<div className="flex items-center justify-end gap-1">
+							<Button
+								variant="ghost"
+								size="icon"
+								className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+								onClick={() => handleActivate(row.original)}
+								disabled={activate.isPending}
+								aria-label={t('admin.configuration.periods.table.activate')}>
+								<CheckCircleIcon className="h-5 w-5" />
+							</Button>
+						</div>
 					),
 				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},

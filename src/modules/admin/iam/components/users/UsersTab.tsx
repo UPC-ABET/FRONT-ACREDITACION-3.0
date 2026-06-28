@@ -151,26 +151,28 @@ export function UsersTab() {
 				id: 'actions',
 				header: t('admin.iam.users.col.actions'),
 				cell: ({ row }) => (
-					<div className="flex items-center gap-1">
+					<div className="flex items-center justify-end gap-1">
 						<Button
 							variant="ghost"
-							size="sm"
+							size="icon"
+							className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 							onClick={() => openEdit(row.original.id)}
 							title={t('admin.iam.actions.edit')}
 							aria-label={t('admin.iam.actions.edit')}>
-							<PencilSquareIcon className="h-4 w-4" />
+							<PencilSquareIcon className="h-5 w-5" />
 						</Button>
 						<Button
 							variant="ghost"
-							size="sm"
+							size="icon"
 							className="text-red-600 hover:bg-red-50"
 							onClick={() => setPendingDelete(row.original)}
 							title={t('admin.iam.actions.delete')}
 							aria-label={t('admin.iam.actions.delete')}>
-							<TrashIcon className="h-4 w-4" />
+							<TrashIcon className="h-5 w-5" />
 						</Button>
 					</div>
 				),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},
 		],
 		[t, openEdit, documentTypeNameById],

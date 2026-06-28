@@ -2,7 +2,8 @@
 
 import { useMemo, useRef, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { AlertTriangle, Pencil, Plus, Trash2, UserPlus } from 'lucide-react';
+import { AlertTriangle, Plus, UserPlus } from 'lucide-react';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
 	Alert,
 	Button,
@@ -249,17 +250,18 @@ export function ArdDetailEditor({
 				id: 'actions',
 				header: t('ard.table.actions'),
 				cell: ({ row }) => (
-					<div className="flex justify-end gap-2">
+					<div className="flex items-center justify-end gap-1">
 						<Button
-							variant="surface"
+							variant="ghost"
 							size="icon"
+							className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 							title={t('ard.actions.edit')}
 							aria-label={t('ard.actions.edit')}
 							onClick={() => openEdit(row.original)}>
-							<Pencil className="h-4 w-4" />
+							<PencilSquareIcon className="h-5 w-5" />
 						</Button>
 						<Button
-							variant="surface"
+							variant="ghost"
 							size="icon"
 							className="text-red-600 hover:bg-red-50"
 							title={t('ard.actions.delete')}
@@ -267,7 +269,7 @@ export function ArdDetailEditor({
 							onClick={() =>
 								setDetails((current) => current.filter((item) => item.rowId !== row.original.rowId))
 							}>
-							<Trash2 className="h-4 w-4" />
+							<TrashIcon className="h-5 w-5" />
 						</Button>
 					</div>
 				),

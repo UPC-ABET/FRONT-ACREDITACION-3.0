@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
+	buttonVariants,
 	DataTable,
 	PageHeader,
 	TableErrorState,
@@ -118,7 +119,7 @@ export function GradeProjectsPage() {
 			{
 				id: 'course',
 				header: t('projects.grade.table.course'),
-				cell: ({ row }) => <span className="text-sm text-zinc-700">{row.original.courseName}</span>,
+				cell: ({ row }) => <span className="text-zinc-700">{row.original.courseName}</span>,
 				meta: {
 					headerClassName: 'w-[13%] !whitespace-normal',
 					cellClassName: '!whitespace-normal',
@@ -144,7 +145,7 @@ export function GradeProjectsPage() {
 						}, {}),
 					);
 					return evaluators.length ? (
-						<div className="flex flex-col gap-1 text-sm text-zinc-700">
+						<div className="flex flex-col gap-1 text-zinc-700">
 							{evaluators.map((entry) => (
 								<div key={entry.name} className="flex flex-col gap-0.5">
 									<span className="font-medium">{entry.name}</span>
@@ -174,7 +175,7 @@ export function GradeProjectsPage() {
 				header: t('projects.grade.table.students'),
 				cell: ({ row }) =>
 					row.original.students.length ? (
-						<div className="flex flex-col gap-0.5 text-sm text-zinc-700">
+						<div className="flex flex-col gap-0.5 text-zinc-700">
 							{row.original.students.map((st) => (
 								<div key={st.id} className="flex items-center gap-2">
 									<span className="h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-300" />
@@ -196,7 +197,7 @@ export function GradeProjectsPage() {
 				id: 'evaluationDate',
 				header: t('projects.grade.table.evaluationDate'),
 				cell: ({ row }) => (
-					<span className="text-sm text-zinc-600">{formatDate(row.original.evaluationDate)}</span>
+					<span className="text-zinc-600">{formatDate(row.original.evaluationDate)}</span>
 				),
 				meta: { headerClassName: 'w-[10%] !whitespace-normal' },
 			},
@@ -206,18 +207,18 @@ export function GradeProjectsPage() {
 				cell: ({ row }) => (
 					<Link
 						href={`/evaluation/grade-projects/${activeTab}/${row.original.projectId}/evaluate`}
+						aria-label={t('projects.grade.table.grade')}
 						title={t('projects.grade.table.grade')}
 						className={cn(
-							'inline-flex items-center justify-center w-8 h-8 rounded-lg',
-							'text-zinc-500 transition-colors',
-							'hover:bg-blue-50 hover:text-blue-600',
+							buttonVariants({ variant: 'ghost', size: 'icon' }),
+							'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900',
 						)}>
-						<ClipboardDocumentCheckIcon className="h-4 w-4" />
+						<ClipboardDocumentCheckIcon className="h-5 w-5" />
 					</Link>
 				),
 				meta: {
-					headerClassName: 'w-[8%] text-center',
-					cellClassName: 'text-center',
+					headerClassName: 'w-[8%] text-right',
+					cellClassName: 'text-right',
 				},
 			},
 		],

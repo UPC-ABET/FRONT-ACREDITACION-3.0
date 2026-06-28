@@ -229,9 +229,7 @@ export function CompetenceCRUD({
 			accessorKey: 'description',
 			header: t('surveys.competence.table.description'),
 			cell: ({ getValue }) => (
-				<span className="max-w-xs block truncate text-sm text-zinc-500">
-					{getValue() as string}
-				</span>
+				<span className="max-w-xs block truncate text-zinc-500">{getValue() as string}</span>
 			),
 		},
 		{
@@ -254,23 +252,26 @@ export function CompetenceCRUD({
 			id: 'actions',
 			header: t('surveys.competence.table.actions'),
 			cell: ({ row }) => (
-				<div className="flex gap-2">
+				<div className="flex items-center justify-end gap-1">
 					<Button
-						size="sm"
-						variant="surface"
+						size="icon"
+						variant="ghost"
+						className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 						onClick={() => openEdit(row.original)}
 						aria-label={t('surveys.competence.actions.edit')}>
-						<PencilSquareIcon className="h-4 w-4" />
+						<PencilSquareIcon className="h-5 w-5" />
 					</Button>
 					<Button
-						size="sm"
-						variant="warning"
+						size="icon"
+						variant="ghost"
+						className="text-red-600 hover:bg-red-50"
 						onClick={() => setDeleteId(row.original.id)}
 						aria-label={t('surveys.competence.actions.delete')}>
-						<TrashIcon className="h-4 w-4" />
+						<TrashIcon className="h-5 w-5" />
 					</Button>
 				</div>
 			),
+			meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 		},
 	];
 

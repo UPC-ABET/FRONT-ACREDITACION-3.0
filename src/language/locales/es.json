@@ -251,7 +251,7 @@
 				"started": "Inicio",
 				"finished": "Fin",
 				"triggeredBy": "Ejecutado por",
-				"actions": "Opciones"
+				"actions": "Acciones"
 			}
 		}
 	},
@@ -301,7 +301,7 @@
 				"started": "Inicio",
 				"finished": "Fin",
 				"triggeredBy": "Ejecutado por",
-				"actions": "Opciones"
+				"actions": "Acciones"
 			}
 		},
 		"run": {
@@ -363,7 +363,7 @@
 			"course": "Curso",
 			"coordinator": "Docente",
 			"status": "Estado",
-			"actions": "Opciones",
+			"actions": "Acciones",
 			"statusFilter": "Estado",
 			"empty": "Sin IFCs",
 			"actionView": "Ver",
@@ -468,7 +468,7 @@
 			"code": "Código",
 			"period": "Período Académico",
 			"description": "Descripción",
-			"actions": "Opciones"
+			"actions": "Acciones"
 		},
 		"action": {
 			"view": "Ver",

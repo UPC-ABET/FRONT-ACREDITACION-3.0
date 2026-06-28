@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, DataTable, Toast } from '@/shared/components';
+import { Button, buttonVariants, cn } from '@/shared';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { TYPE_CODES } from '@/shared/constants';
@@ -26,9 +27,6 @@ type Props = {
 };
 
 const UNREG_LABEL: Record<string, string> = { en: 'Unregistered', es: 'Sin Registro' };
-
-const ICON_BTN =
-	'inline-flex h-10 w-10 items-center justify-center rounded-md text-red-700 transition-colors hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50';
 
 export function IFCTable({ rows, periodId, canNotify, notifyingChartId, onNotify }: Props) {
 	const { t, locale: lang } = useI18n();
@@ -66,6 +64,7 @@ export function IFCTable({ rows, periodId, canNotify, notifyingChartId, onNotify
 			{
 				id: 'actions',
 				header: t('ifcs.table.actions'),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 				cell: ({ row }) => {
 					const r = row.original;
 					const status = effectiveStatus(r);
@@ -78,59 +77,68 @@ export function IFCTable({ rows, periodId, canNotify, notifyingChartId, onNotify
 						const ifcId = Number(r.ifc.id);
 						const isApproved = r.ifc.statusCode === TYPE_CODES.IFC_STATUS.APPROVED;
 						return (
-							<div className="flex items-center gap-1">
+							<div className="flex items-center justify-end gap-1">
 								<Link
 									href={`/ifcs/${r.ifc.id}`}
-									className={ICON_BTN}
+									className={cn(
+										buttonVariants({ variant: 'ghost', size: 'icon' }),
+										'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900',
+									)}
 									aria-label={t('ifcs.table.actionView')}
 									title={t('ifcs.table.actionView')}>
 									<EyeIcon className="h-5 w-5" />
 								</Link>
 								{isApproved && (
-									<button
-										type="button"
+									<Button
+										variant="ghost"
+										size="icon"
+										className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 										disabled={downloadingId === ifcId}
 										onClick={() => downloadOne(ifcId)}
 										aria-label={t('ifcs.pdf.downloadPdf')}
-										title={t('ifcs.pdf.downloadPdf')}
-										className={ICON_BTN}>
+										title={t('ifcs.pdf.downloadPdf')}>
 										<ArrowDownTrayIcon className="h-5 w-5" />
-									</button>
+									</Button>
 								)}
 								{showNotify && periodId !== null && (
-									<button
-										type="button"
+									<Button
+										variant="ghost"
+										size="icon"
+										className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 										disabled={notifyingChartId === Number(r.chartId)}
 										onClick={() => onNotify(Number(r.chartId))}
 										aria-label={t('ifcs.notify.btn.tooltip')}
-										title={t('ifcs.notify.btn.tooltip')}
-										className={ICON_BTN}>
+										title={t('ifcs.notify.btn.tooltip')}>
 										<BellAlertIcon className="h-5 w-5" />
-									</button>
+									</Button>
 								)}
 							</div>
 						);
 					}
 					if (periodId !== null) {
 						return (
-							<div className="flex items-center gap-1">
+							<div className="flex items-center justify-end gap-1">
 								<Link
 									href={`/ifcs/new?chartId=${r.chartId}&periodId=${periodId}`}
-									className={ICON_BTN}
+									className={cn(
+										buttonVariants({ variant: 'ghost', size: 'icon' }),
+										'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900',
+									)}
 									aria-label={t('ifcs.table.actionRegister')}
 									title={t('ifcs.table.actionRegister')}>
 									<PencilSquareIcon className="h-5 w-5" />
 								</Link>
 								{showNotify && (
-									<button
-										type="button"
+									<Button
+										variant="ghost"
+										size="icon"
+										className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 										disabled={notifyingChartId === Number(r.chartId)}
 										onClick={() => onNotify(Number(r.chartId))}
 										aria-label={t('ifcs.notify.btn.tooltip')}
-										title={t('ifcs.notify.btn.tooltip')}
-										className={ICON_BTN}>
+										title={t('ifcs.notify.btn.tooltip')}>
 										<BellAlertIcon className="h-5 w-5" />
-									</button>
+									</Button>
 								)}
 							</div>
 						);
