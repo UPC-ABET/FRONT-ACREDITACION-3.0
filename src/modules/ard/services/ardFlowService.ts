@@ -1,9 +1,17 @@
 import { ApiResponse } from '@/shared';
-import { apiDelete, apiGet, apiPost, apiPut } from '@/shared/lib';
+import {
+	apiDelete,
+	apiGet,
+	apiPost,
+	apiPostBlobResponse,
+	apiPut,
+	resolveDownloadFileName,
+} from '@/shared/lib';
 import type {
 	ArdBulkDetailsBody,
 	ArdClassRepresentative,
 	ArdCourseProfessor,
+	ArdExportRequest,
 	ArdMaintenanceList,
 	ArdMaintenanceParams,
 	ArdProgramCourse,
@@ -72,5 +80,21 @@ export const ardFlowService = {
 			campusId: String(params.campusId),
 		});
 		return apiGet(`${ARD_FLOW_BASE}/course-professors?${query.toString()}`);
+	},
+
+	async exportReport(body: ArdExportRequest): Promise<{ blob: Blob; fileName: string }> {
+		const { blob, response } = await apiPostBlobResponse(`${ARD_FLOW_BASE}/export`, body);
+		return { blob, fileName: resolveDownloadFileName(response, 'ard-report.xlsx') };
+	},
+
+	async exportAttendanceByArd(
+		ardId: number,
+		lang: 'es' | 'en',
+	): Promise<{ blob: Blob; fileName: string }> {
+		const { blob, response } = await apiPostBlobResponse(`${ARD_FLOW_BASE}/attendance-export`, {
+			ardId,
+			lang,
+		});
+		return { blob, fileName: resolveDownloadFileName(response, 'ard-attendance.xlsx') };
 	},
 };

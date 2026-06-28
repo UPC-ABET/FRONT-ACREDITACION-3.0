@@ -83,17 +83,8 @@
 			"exportFailed": "No se pudo generar el reporte. Inténtalo de nuevo."
 		},
 		"participants": {
-			"title": "Participantes de la reunión",
-			"description": "ARD {code} — selecciona los delegados asistentes y agrega estudiantes invitados.",
-			"representatives": {
-				"sectionTitle": "Delegados de clase",
-				"attended": "Asistió",
-				"empty": "No se encontraron delegados para este programa y sede."
-			},
 			"invited": {
-				"sectionTitle": "Estudiantes invitados",
 				"add": "Agregar estudiante invitado",
-				"empty": "No se agregaron estudiantes invitados.",
 				"dialogTitle": "Agregar estudiante invitado",
 				"studentLabel": "Estudiante",
 				"studentPlaceholder": "Busca por código o nombre…",
@@ -101,15 +92,10 @@
 			}
 		},
 		"details": {
-			"title": "Detalle de la reunión",
-			"description": "ARD {code} — registra el curso, docente y comentario de cada participante.",
-			"sectionTitle": "Agregar detalle",
 			"student": "Estudiante",
 			"course": "Curso",
 			"professor": "Docente",
-			"comment": "Comentario",
-			"addRow": "Agregar a la lista",
-			"empty": "Aún no se agregaron detalles."
+			"comment": "Comentario"
 		},
 		"flow": {
 			"backToOverview": "Volver al resumen"
@@ -136,7 +122,6 @@
 			"code": "Código",
 			"fullName": "Nombre completo",
 			"course": "Curso",
-			"section": "Sección",
 			"professor": "Docente",
 			"meetingDate": "Fecha de reunión",
 			"campus": "Sede",
@@ -149,19 +134,12 @@
 		"actions": {
 			"new": "Nuevo",
 			"cancel": "Cancelar",
-			"continue": "Continuar",
-			"back": "Atrás",
-			"finish": "Finalizar",
-			"remove": "Quitar",
 			"edit": "Editar",
 			"delete": "Eliminar",
 			"save": "Guardar",
 			"view": "Ver"
 		},
 		"errors": {
-			"createFailed": "No se pudo crear la ARD.",
-			"saveFailed": "No se pudieron guardar los detalles.",
-			"updateFailed": "No se pudo actualizar la fecha de reunión.",
 			"deleteFailed": "No se pudo eliminar la ARD."
 		}
 	},

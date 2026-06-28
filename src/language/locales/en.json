@@ -83,17 +83,8 @@
 			"exportFailed": "The report could not be generated. Please try again."
 		},
 		"participants": {
-			"title": "Meeting participants",
-			"description": "ARD {code} — select the attending class representatives and add invited students.",
-			"representatives": {
-				"sectionTitle": "Class representatives",
-				"attended": "Attended",
-				"empty": "No class representatives found for this program and campus."
-			},
 			"invited": {
-				"sectionTitle": "Invited students",
 				"add": "Add invited student",
-				"empty": "No invited students added.",
 				"dialogTitle": "Add invited student",
 				"studentLabel": "Student",
 				"studentPlaceholder": "Search by code or name…",
@@ -101,15 +92,10 @@
 			}
 		},
 		"details": {
-			"title": "Meeting details",
-			"description": "ARD {code} — register the course, professor and comment for each participant.",
-			"sectionTitle": "Add detail",
 			"student": "Student",
 			"course": "Course",
 			"professor": "Professor",
-			"comment": "Comment",
-			"addRow": "Add to list",
-			"empty": "No details added yet."
+			"comment": "Comment"
 		},
 		"flow": {
 			"backToOverview": "Back to overview"
@@ -136,7 +122,6 @@
 			"code": "Code",
 			"fullName": "Full name",
 			"course": "Course",
-			"section": "Section",
 			"professor": "Professor",
 			"meetingDate": "Meeting date",
 			"campus": "Campus",
@@ -149,19 +134,12 @@
 		"actions": {
 			"new": "New",
 			"cancel": "Cancel",
-			"continue": "Continue",
-			"back": "Back",
-			"finish": "Finish",
-			"remove": "Remove",
 			"edit": "Edit",
 			"delete": "Delete",
 			"save": "Save",
 			"view": "View"
 		},
 		"errors": {
-			"createFailed": "The ARD could not be created.",
-			"saveFailed": "The details could not be saved.",
-			"updateFailed": "The meeting date could not be updated.",
 			"deleteFailed": "The ARD could not be deleted."
 		}
 	},
