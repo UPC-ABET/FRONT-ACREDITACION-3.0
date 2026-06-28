@@ -2,18 +2,9 @@
 
 import { useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import {
-	Edit,
-	Plus,
-	Trash2,
-} from 'lucide-react';
-import {
-	Button,
-	Card,
-	DataTable,
-	PageHeader,
-} from '@/shared/components/ui';
-import { useI18n } from '@/providers';
+import { Edit, Plus, Trash2 } from 'lucide-react';
+import { Button, Card, DataTable, PageHeader } from '@/shared/components/ui';
+import { useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import { useArdMeetings, useArdMutations } from '../hooks';
 import type { ArdMeetingSummary } from '../types';
 import { useRouter } from 'next/navigation';
@@ -23,6 +14,9 @@ const PAGE_SIZE = 10;
 export function ArdMaintenancePage() {
 	const { t } = useI18n();
 	const router = useRouter();
+
+	useGlobalAcademicFiltersVisibilityOverride({ school: false });
+
 	const [search, setSearch] = useState('');
 	const [page, setPage] = useState(1);
 	const meetingsQuery = useArdMeetings({ page, pageSize: PAGE_SIZE, search });

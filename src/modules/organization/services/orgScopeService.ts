@@ -10,6 +10,7 @@ export async function getOrgScope(): Promise<ScopeTree> {
 	envelope.data.levels.forEach((lvl) => {
 		lvl.options.forEach((opt) => {
 			opt.id = Number(opt.id);
+			opt.entityId = Number(opt.entityId);
 			opt.parentId = opt.parentId == null ? null : Number(opt.parentId);
 		});
 	});

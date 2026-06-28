@@ -1,151 +1,178 @@
 'use client';
 
-import { useState } from 'react';
-import {
-	CalendarDays,
-	Download,
-	FileText,
-} from 'lucide-react';
-import {
-	Button,
-	Card,
-	Input,
-	PageHeader,
-	Select,
-} from '@/shared/components/ui';
-import { triggerBlobDownload } from '@/shared/lib';
+import { useEffect, useState } from 'react';
+import { Download } from 'lucide-react';
+import { Alert, Button, Card, PageHeader, Skeleton, TableEmptyState } from '@/shared/components/ui';
+import { getErrorMessage, triggerBlobDownload } from '@/shared/lib';
+import { tryTranslate } from '@/shared/utils';
 import { useABET, useI18n } from '@/providers';
-import { useAcademicPeriods, useCampuses, useProgramsByModality } from '@/modules/academic';
-import { useArdReportExport } from '../hooks';
+import { TYPE_CODES } from '@/shared/constants';
+import {
+	optionsForLevel,
+	ScopeDropdowns,
+	useOrgScope,
+	type ScopeTree,
+	type SelectionValue,
+} from '@/modules/organization';
+import { useArdExport } from '../hooks';
+import type { ArdExportRequest } from '../types';
 
-type ReportView = 'acts' | 'attendance';
+const REPORT_LEVEL_CODES = new Set<string>([
+	TYPE_CODES.CHART_ENTITY_TYPE.PROGRAM,
+	TYPE_CODES.CHART_ENTITY_TYPE.AREA,
+	TYPE_CODES.CHART_ENTITY_TYPE.SUBAREA,
+]);
+
+function filterReportScope(scope: ScopeTree): ScopeTree {
+	return {
+		...scope,
+		levels: scope.levels.filter((level) =>
+			level.options.some((option) => option.tag && REPORT_LEVEL_CODES.has(option.tag.code)),
+		),
+	};
+}
+
+function levelNumForCode(scope: ScopeTree, code: string): number | null {
+	const level = scope.levels.find((item) =>
+		item.options.some((option) => option.tag?.code === code),
+	);
+	return level ? level.levelNum : null;
+}
+
+function autoSelectSingletons(
+	scope: ScopeTree,
+	selections: Record<number, SelectionValue>,
+	fromLevel: number,
+): Record<number, SelectionValue> {
+	const next = { ...selections };
+	const levels = scope.levels.filter((level) => level.levelNum >= fromLevel);
+	for (const level of levels) {
+		const options = optionsForLevel(scope, level.levelNum, next);
+		if (options.length === 1) next[level.levelNum] = options[0].id;
+		else break;
+	}
+	return next;
+}
 
 export function ArdReportsPage() {
-	const { t } = useI18n();
-	const [activeView, setActiveView] = useState<ReportView>('acts');
+	const { t, locale } = useI18n();
+	const { academicPeriodId, schoolId } = useABET();
+
+	const { scope, loading, load: loadScope, setScope } = useOrgScope();
+	const [selections, setSelections] = useState<Record<number, SelectionValue>>({});
+	const exportReport = useArdExport();
+
+	const reportScope = scope ? filterReportScope(scope) : null;
+
+	useEffect(() => {
+		/* eslint-disable react-hooks/set-state-in-effect -- reset selections and bootstrap scope when the external school/period changes */
+		setSelections({});
+		if (academicPeriodId === null || schoolId === null) {
+			setScope(null);
+			return;
+		}
+		/* eslint-enable react-hooks/set-state-in-effect */
+		let active = true;
+		void loadScope().then((tree) => {
+			if (!active || !tree) return;
+			const filtered = filterReportScope(tree);
+			if (filtered.levels.length === 0) return;
+			setSelections(autoSelectSingletons(filtered, {}, filtered.levels[0].levelNum));
+		});
+		return () => {
+			active = false;
+		};
+	}, [academicPeriodId, schoolId, loadScope, setScope]);
+
+	function handleSelect(levelNum: number, value: SelectionValue) {
+		if (!reportScope) return;
+		const next: Record<number, SelectionValue> = { ...selections, [levelNum]: value };
+		reportScope.levels.forEach((level) => {
+			if (level.levelNum > levelNum) next[level.levelNum] = null;
+		});
+		setSelections(autoSelectSingletons(reportScope, next, levelNum + 1));
+	}
+
+	const programLevelNum = reportScope
+		? levelNumForCode(reportScope, TYPE_CODES.CHART_ENTITY_TYPE.PROGRAM)
+		: null;
+	const areaLevelNum = reportScope
+		? levelNumForCode(reportScope, TYPE_CODES.CHART_ENTITY_TYPE.AREA)
+		: null;
+	const subareaLevelNum = reportScope
+		? levelNumForCode(reportScope, TYPE_CODES.CHART_ENTITY_TYPE.SUBAREA)
+		: null;
+
+	const programSelection = programLevelNum !== null ? (selections[programLevelNum] ?? null) : null;
+	const selectedProgramChartId = typeof programSelection === 'number' ? programSelection : null;
+
+	const allLevelsChosen = reportScope
+		? reportScope.levels.every((level) => (selections[level.levelNum] ?? null) !== null)
+		: false;
+	const canExport = selectedProgramChartId !== null && allLevelsChosen;
+
+	function handleExport() {
+		if (!reportScope || programLevelNum === null || selectedProgramChartId === null) return;
+
+		const programOption = reportScope.levels
+			.find((level) => level.levelNum === programLevelNum)
+			?.options.find((option) => option.id === selectedProgramChartId);
+		if (!programOption) return;
+
+		const areaSelection = areaLevelNum !== null ? (selections[areaLevelNum] ?? null) : null;
+		const subareaSelection =
+			subareaLevelNum !== null ? (selections[subareaLevelNum] ?? null) : null;
+
+		const body: ArdExportRequest = {
+			programId: programOption.entityId,
+			lang: locale === 'en' ? 'en' : 'es',
+		};
+		if (typeof subareaSelection === 'number') {
+			body.subareaChartIds = [subareaSelection];
+		} else if (typeof areaSelection === 'number') {
+			body.areaChartIds = [areaSelection];
+		}
+
+		exportReport.mutate(body, {
+			onSuccess: ({ blob, fileName }) => triggerBlobDownload(blob, fileName),
+		});
+	}
 
 	return (
 		<div className="space-y-6">
 			<PageHeader title={t('ard.reports.title')} description={t('ard.reports.description')} />
-			<div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-				<Card>
-					<nav className="space-y-2" aria-label={t('ard.reports.title')}>
-						<button
-							type="button"
-							onClick={() => setActiveView('acts')}
-							className={`flex w-full items-center gap-3 rounded-md px-3 py-3 text-left ${
-								activeView === 'acts' ? 'bg-red-600 text-white' : 'text-zinc-500 hover:bg-zinc-50'
-							}`}>
-							<FileText className="h-4 w-4" />
-							{t('ard.reports.acts')}
-						</button>
-						<button
-							type="button"
-							onClick={() => setActiveView('attendance')}
-							className={`flex w-full items-center gap-3 rounded-md px-3 py-3 text-left ${
-								activeView === 'attendance'
-									? 'bg-red-600 text-white'
-									: 'text-zinc-500 hover:bg-zinc-50'
-							}`}>
-							<CalendarDays className="h-4 w-4" />
-							{t('ard.reports.attendance')}
-						</button>
-					</nav>
-				</Card>
-				<ArdReportForm activeView={activeView} />
-			</div>
-		</div>
-	);
-}
-
-function ArdReportForm({ activeView }: { activeView: ReportView }) {
-	const { t, locale } = useI18n();
-	const { academicPeriodId, modalityTypeId } = useABET();
-	const [programId, setProgramId] = useState<number | null>(null);
-	const [periodId, setPeriodId] = useState<number | null>(academicPeriodId);
-	const [meetingDate, setMeetingDate] = useState('');
-	const [campusId, setCampusId] = useState<number | null>(null);
-	const { data: programs = [] } = useProgramsByModality(modalityTypeId);
-	const { data: periods = [] } = useAcademicPeriods({});
-	const { data: campuses = [] } = useCampuses();
-	const { exportActs, exportAttendance } = useArdReportExport();
-
-	const programOptions = programs.map((program) => ({
-		label: program.name[locale],
-		value: program.id,
-	}));
-	const periodOptions = periods.map((period) => ({ label: period.code, value: period.id }));
-	const campusOptions = campuses.map((campus) => ({
-		label: campus.name[locale],
-		value: campus.id,
-	}));
-
-	const exportReport = async () => {
-		const filters = {
-			programId: programId ?? undefined,
-			academicPeriodId: periodId ?? undefined,
-			meetingDate: meetingDate || undefined,
-			campusId: campusId ?? undefined,
-		};
-		const blob =
-			activeView === 'acts'
-				? await exportActs.mutateAsync(filters)
-				: await exportAttendance.mutateAsync(filters);
-		triggerBlobDownload(blob, activeView === 'acts' ? 'ard-actas.xlsx' : 'ard-asistencia.xlsx');
-	};
-
-	return (
-		<Card title={t('ard.reports.generalData')}>
-			<div className="grid gap-6 md:grid-cols-2">
-				{activeView === 'acts' ? (
+			<Card>
+				{academicPeriodId === null ? (
+					<p className="text-sm italic text-zinc-500">{t('ard.reports.selectPeriod')}</p>
+				) : schoolId === null ? (
+					<p className="text-sm italic text-zinc-500">{t('ard.reports.selectSchool')}</p>
+				) : loading ? (
+					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+						<Skeleton className="h-10 w-full" />
+						<Skeleton className="h-10 w-full" />
+						<Skeleton className="h-10 w-full" />
+					</div>
+				) : reportScope && reportScope.levels.length > 0 ? (
 					<>
-						<Select
-							label={t('ard.reports.program')}
-							value={programOptions.find((option) => option.value === programId) ?? null}
-							options={programOptions}
-							onChange={(_, option) => {
-								const selected = Array.isArray(option) ? option[0] : option;
-								setProgramId(selected ? Number(selected.value) : null);
-							}}
-						/>
-						<Select
-							label={t('ard.reports.period')}
-							value={periodOptions.find((option) => option.value === periodId) ?? null}
-							options={periodOptions}
-							onChange={(_, option) => {
-								const selected = Array.isArray(option) ? option[0] : option;
-								setPeriodId(selected ? Number(selected.value) : null);
-							}}
-						/>
-						<Input label={t('ard.reports.area')} value={t('ard.reports.all')} disabled />
-						<Input label={t('ard.reports.subArea')} value={t('ard.reports.all')} disabled />
+						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+							<ScopeDropdowns scope={reportScope} selections={selections} onSelect={handleSelect} />
+						</div>
+						{exportReport.isError && (
+							<Alert variant="destructive" className="mt-6">
+								{tryTranslate(t, getErrorMessage(exportReport.error, 'ard.reports.exportFailed'))}
+							</Alert>
+						)}
+						<div className="mt-6 flex justify-end border-t border-zinc-200 pt-5">
+							<Button disabled={!canExport} loading={exportReport.isPending} onClick={handleExport}>
+								<Download className="h-4 w-4" />
+								{t('ard.reports.export')}
+							</Button>
+						</div>
 					</>
 				) : (
-					<>
-						<Input
-							type="date"
-							label={t('ard.header.meetingDate')}
-							value={meetingDate}
-							onChange={(event) => setMeetingDate(event.target.value)}
-						/>
-						<Select
-							label={t('ard.header.campus')}
-							value={campusOptions.find((option) => option.value === campusId) ?? null}
-							options={campusOptions}
-							onChange={(_, option) => {
-								const selected = Array.isArray(option) ? option[0] : option;
-								setCampusId(selected ? Number(selected.value) : null);
-							}}
-						/>
-					</>
+					<TableEmptyState message={t('ard.reports.noScope')} />
 				)}
-			</div>
-			<div className="mt-8 flex justify-end">
-				<Button onClick={exportReport} loading={exportActs.isPending || exportAttendance.isPending}>
-					<Download className="h-4 w-4" />
-					{activeView === 'acts' ? t('ard.reports.export') : t('ard.reports.exportAttendance')}
-				</Button>
-			</div>
-		</Card>
+			</Card>
+		</div>
 	);
 }

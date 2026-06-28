@@ -22,7 +22,7 @@ import {
 } from '@/shared/components/ui';
 import { getApiErrorReasons } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
-import { useABET, useI18n } from '@/providers';
+import { useABET, useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import type { I18nText } from '@/shared/types';
 import { useCampuses, useProgramsByModality } from '@/modules/academic';
 import { useCreateArd, useDeleteArd, useArdMaintenance, useUpdateArd } from '../hooks';
@@ -44,6 +44,8 @@ export function ArdOverviewPage() {
 	const searchParams = useSearchParams();
 	const createdCode = searchParams.get('created');
 	const { academicPeriodId, modalityTypeId } = useABET();
+
+	useGlobalAcademicFiltersVisibilityOverride({ school: false });
 
 	const [meetingDate, setMeetingDate] = useState('');
 	const [campusId, setCampusId] = useState<number | null>(null);

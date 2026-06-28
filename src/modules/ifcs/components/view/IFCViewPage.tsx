@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ErrorDialog, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useGlobalAcademicFiltersLockOverride, useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useIFCView } from '../../hooks/useIfcs';
@@ -24,6 +24,8 @@ export default function IFCViewPage() {
 	const router = useRouter();
 	const params = useParams<{ id: string }>();
 	const id = Number(params?.id);
+
+	useGlobalAcademicFiltersLockOverride({ school: true, modality: true, period: true });
 
 	const { data, isLoading, error, refetch } = useIFCView(id);
 	const [observationText, setObservationText] = useState<I18nText>({});

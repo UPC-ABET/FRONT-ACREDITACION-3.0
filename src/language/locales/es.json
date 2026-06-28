@@ -1,4 +1,9 @@
 {
+	"organization": {
+		"scope": {
+			"level": "Nivel"
+		}
+	},
 	"nav": {
 		"home": "Inicio",
 		"rubrics": "Rúbricas",
@@ -18,7 +23,8 @@
 		},
 		"ard": {
 			"label": "ARD",
-			"overview": "Resumen"
+			"overview": "Resumen",
+			"reports": "Reportes"
 		},
 		"surveys": {
 			"label": "Encuestas",
@@ -67,6 +73,15 @@
 				"message": "¿Eliminar la ARD {code} y todos sus detalles? Esta acción es permanente y no se puede deshacer."
 			}
 		},
+		"reports": {
+			"title": "ARD — Reportes",
+			"description": "Selecciona el programa, área y subárea para exportar el reporte.",
+			"selectPeriod": "Selecciona un período académico en la barra superior para continuar.",
+			"selectSchool": "Selecciona una escuela en la barra superior para cargar sus programas.",
+			"noScope": "No hay alcance organizacional disponible para la escuela seleccionada.",
+			"export": "Exportar",
+			"exportFailed": "No se pudo generar el reporte. Inténtalo de nuevo."
+		},
 		"participants": {
 			"title": "Participantes de la reunión",
 			"description": "ARD {code} — selecciona los delegados asistentes y agrega estudiantes invitados.",
@@ -103,7 +118,9 @@
 			"title": "ARD",
 			"description": "Detalle del acta de reunión.",
 			"notFound": "No se encontró esta ARD.",
-			"noDetails": "Esta ARD aún no tiene detalles."
+			"noDetails": "Esta ARD aún no tiene detalles.",
+			"exportAttendance": "Exportar asistencia",
+			"exportFailed": "No se pudo generar el reporte de asistencia. Inténtalo de nuevo."
 		},
 		"edit": {
 			"description": "Agrega, edita o elimina los detalles de la reunión y guarda.",
@@ -1333,7 +1350,8 @@
 			"detailsFailed": "No se pudieron guardar los detalles.",
 			"detailsRequired": "Agrega al menos un detalle antes de guardar.",
 			"duplicateArd": "Ya existe una ARD para este periodo, sede, programa y fecha de reunión.",
-			"duplicateDetail": "Algunos detalles están repetidos (mismo estudiante, curso y docente)."
+			"duplicateDetail": "Algunos detalles están repetidos (mismo estudiante, curso y docente).",
+			"noDataToExport": "No hay ARDs que coincidan con los filtros seleccionados para exportar."
 		},
 		"studyPlan": {
 			"inUse": "No se puede eliminar la malla porque está en uso.",

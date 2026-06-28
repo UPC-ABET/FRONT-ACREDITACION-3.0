@@ -91,7 +91,10 @@ export function AppSidebar() {
 		{
 			name: t('nav.ard.label'),
 			icon: ChatBubbleLeftRightIcon,
-			children: [{ name: t('nav.ard.overview'), href: '/ard' }],
+			children: [
+				{ name: t('nav.ard.overview'), href: '/ard' },
+				{ name: t('nav.ard.reports'), href: '/ard/reports' },
+			],
 		},
 
 		{

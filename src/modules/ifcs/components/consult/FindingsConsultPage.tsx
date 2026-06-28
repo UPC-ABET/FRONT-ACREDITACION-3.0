@@ -16,12 +16,17 @@ import {
 import { useABET, useI18n, useSchoolSourceData, useSchoolSourceOverride } from '@/providers';
 import { resolveApiErrorContent, type ApiErrorContent } from '@/shared/utils/tryTranslate';
 import { TYPE_CODES } from '@/shared/constants';
-import { useFindingsList, useOrgScope } from '../../hooks';
+import { useFindingsList } from '../../hooks';
 import { deleteFinding } from '../../services/ifcFindingsService';
 import { getIfcSchools } from '../../services';
-import { optionsForLevel } from '../../services/scope';
-import type { FindingRow, ScopeTree, SelectionValue } from '../../types';
-import { ScopeDropdowns } from '../ScopeDropdowns';
+import {
+	optionsForLevel,
+	ScopeDropdowns,
+	useOrgScope,
+	type ScopeTree,
+	type SelectionValue,
+} from '@/modules/organization';
+import type { FindingRow } from '../../types';
 import { DeleteFindingModal } from '../shared/DeleteFindingModal';
 import { CONSULT_LABELS } from './consultLabels';
 import { FindingsTable } from './FindingsTable';

@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Pencil } from 'lucide-react';
+import { Download, Pencil } from 'lucide-react';
 import {
 	Alert,
 	Button,
@@ -13,9 +13,16 @@ import {
 	PageHeader,
 	TableLoadingState,
 } from '@/shared/components/ui';
-import { useABET, useI18n } from '@/providers';
+import { getErrorMessage, triggerBlobDownload } from '@/shared/lib';
+import { tryTranslate } from '@/shared/utils';
+import {
+	useABET,
+	useGlobalAcademicFiltersLockOverride,
+	useGlobalAcademicFiltersVisibilityOverride,
+	useI18n,
+} from '@/providers';
 import type { I18nText } from '@/shared/types';
-import { useArdById } from '../hooks';
+import { useArdAttendanceExport, useArdById } from '../hooks';
 import type { ArdDetailView } from '../types';
 import { ArdDetailEditor } from './ArdDetailEditor';
 
@@ -27,8 +34,12 @@ export function ArdViewPage() {
 	const ardId = Number(params.id);
 	const { academicPeriodId } = useABET();
 
+	useGlobalAcademicFiltersVisibilityOverride({ school: false });
+	useGlobalAcademicFiltersLockOverride({ school: true, modality: true, period: true });
+
 	const ardQuery = useArdById(Number.isFinite(ardId) ? ardId : null);
 	const ard = ardQuery.data ?? null;
+	const attendanceExport = useArdAttendanceExport();
 
 	const [isEditing, setIsEditing] = useState(searchParams.get('edit') === '1');
 
@@ -85,6 +96,14 @@ export function ArdViewPage() {
 		router.replace(`/ard/${ard.id}`);
 	};
 
+	const handleExportAttendance = () => {
+		if (!ard) return;
+		attendanceExport.mutate(
+			{ ardId: ard.id, lang: locale === 'en' ? 'en' : 'es' },
+			{ onSuccess: ({ blob, fileName }) => triggerBlobDownload(blob, fileName) },
+		);
+	};
+
 	if (isEditing) {
 		if (academicPeriodId === null || academicPeriodId !== ard.academicPeriodId) {
 			return (
@@ -115,12 +134,29 @@ export function ArdViewPage() {
 				title={ard.code}
 				description={t('ard.view.description')}
 				action={
-					<Button onClick={() => setIsEditing(true)}>
-						<Pencil className="h-4 w-4" />
-						{t('ard.actions.edit')}
-					</Button>
+					<div className="flex gap-2">
+						{ard.details.length > 0 && (
+							<Button
+								variant="surface"
+								onClick={handleExportAttendance}
+								loading={attendanceExport.isPending}>
+								<Download className="h-4 w-4" />
+								{t('ard.view.exportAttendance')}
+							</Button>
+						)}
+						<Button onClick={() => setIsEditing(true)}>
+							<Pencil className="h-4 w-4" />
+							{t('ard.actions.edit')}
+						</Button>
+					</div>
 				}
 			/>
+
+			{attendanceExport.isError && (
+				<Alert variant="destructive">
+					{tryTranslate(t, getErrorMessage(attendanceExport.error, 'ard.view.exportFailed'))}
+				</Alert>
+			)}
 
 			<Card>
 				<dl className="grid gap-4 sm:grid-cols-3">

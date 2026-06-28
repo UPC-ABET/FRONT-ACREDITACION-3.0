@@ -1,7 +1,16 @@
 import { ApiResponse } from '@/shared';
-import { apiDelete, apiGet, apiPost, apiPostBlob, apiPut } from '@/shared/lib';
+import {
+	apiDelete,
+	apiGet,
+	apiPost,
+	apiPostBlob,
+	apiPostBlobResponse,
+	apiPut,
+	resolveDownloadFileName,
+} from '@/shared/lib';
 import type {
 	ArdCourseOption,
+	ArdExportRequest,
 	ArdMeetingDetail,
 	ArdMeetingList,
 	ArdMeetingSummary,
@@ -235,9 +244,7 @@ function normalizeComment(value: unknown): ArdMeetingDetail['comments'][number] 
 	const enrollmentStudentId = getNumberField(record, 'enrollmentStudentId', 'studentId');
 
 	return {
-		id:
-			getStringField(record, 'id') ??
-			`comment:${participantId || enrollmentStudentId}`,
+		id: getStringField(record, 'id') ?? `comment:${participantId || enrollmentStudentId}`,
 		participantId,
 		enrollmentStudentId: enrollmentStudentId ?? 0,
 		studentCode: getStringField(record, 'studentCode', 'code') ?? '',
@@ -285,11 +292,14 @@ function toQuery(params: Record<string, string | number | undefined>) {
 }
 
 export const ardService = {
-	async list(params: {
-		page?: number;
-		pageSize?: number;
-		search?: string;
-	}, context?: ArdRequestContext): Promise<ApiResponse<ArdMeetingList>> {
+	async list(
+		params: {
+			page?: number;
+			pageSize?: number;
+			search?: string;
+		},
+		context?: ArdRequestContext,
+	): Promise<ApiResponse<ArdMeetingList>> {
 		const response = await apiGet<unknown>(`${ARD_API_BASE}/maintenance${toQuery(params)}`, {
 			headers: buildArdHeaders(context),
 		});
@@ -301,7 +311,10 @@ export const ardService = {
 		return withData(response, normalizeMeetingDetail(getEnvelopeData(response)));
 	},
 
-	async create(body: ArdSaveMeetingDto, context?: ArdRequestContext): Promise<ApiResponse<ArdMeetingSummary>> {
+	async create(
+		body: ArdSaveMeetingDto,
+		context?: ArdRequestContext,
+	): Promise<ApiResponse<ArdMeetingSummary>> {
 		const response = await apiPost<unknown>(`${ARD_API_BASE}/create`, body, {
 			headers: buildArdHeaders(context),
 		});
@@ -342,15 +355,18 @@ export const ardService = {
 		);
 	},
 
-	async getGuestCandidates(params: {
-		campusId: number;
-		programId: number;
-		search?: string;
-	}, context?: ArdRequestContext): Promise<ApiResponse<ArdStudentOption[]>> {
+	async getGuestCandidates(
+		params: {
+			campusId: number;
+			programId: number;
+			search?: string;
+		},
+		context?: ArdRequestContext,
+	): Promise<ApiResponse<ArdStudentOption[]>> {
 		const response = await apiGet<unknown>(
-			`${ARD_API_BASE}/attendees${toQuery({ 
-				campusId: params.campusId, 
-				programId: params.programId 
+			`${ARD_API_BASE}/attendees${toQuery({
+				campusId: params.campusId,
+				programId: params.programId,
 			})}`,
 			{
 				headers: buildArdHeaders(context),
@@ -361,10 +377,13 @@ export const ardService = {
 		return withData(response, guests.map(normalizeStudentOption));
 	},
 
-	async getSectionOptions(params: {
-		campusId: number;
-		studentCode?: string;
-	}, context?: ArdRequestContext): Promise<ApiResponse<ArdSectionOption[]>> {
+	async getSectionOptions(
+		params: {
+			campusId: number;
+			studentCode?: string;
+		},
+		context?: ArdRequestContext,
+	): Promise<ApiResponse<ArdSectionOption[]>> {
 		const response = await apiGet<unknown>(`${ARD_API_BASE}/course-sections${toQuery(params)}`, {
 			headers: buildArdHeaders(context),
 		});
@@ -385,7 +404,11 @@ export const ardService = {
 			},
 		);
 		const data = getEnvelopeData(response);
-		const courses = Array.isArray(data) ? data : isRecord(data) ? getArrayField(data, 'courses') : [];
+		const courses = Array.isArray(data)
+			? data
+			: isRecord(data)
+				? getArrayField(data, 'courses')
+				: [];
 		return withData(response, courses.map(normalizeCourseOption));
 	},
 
@@ -402,12 +425,16 @@ export const ardService = {
 			},
 		);
 		const data = getEnvelopeData(response);
-		const courses = Array.isArray(data) ? data : isRecord(data) ? getArrayField(data, 'courses') : [];
-		
+		const courses = Array.isArray(data)
+			? data
+			: isRecord(data)
+				? getArrayField(data, 'courses')
+				: [];
+
 		// Find the course and extract its sections with professors
-		const course = courses.find((c: any) => c.courseId === courseId);
+		const course = courses.find((item) => isRecord(item) && item.courseId === courseId);
 		const sections = course && isRecord(course) ? getArrayField(course, 'sections') : [];
-		
+
 		return withData(response, sections.map(normalizeProfessorOption));
 	},
 
@@ -417,5 +444,21 @@ export const ardService = {
 
 	exportAttendance(filters: ArdReportFilters): Promise<Blob> {
 		return apiPostBlob(`${ARD_API_BASE}/reports/attendance-list`, filters);
+	},
+
+	async exportReport(body: ArdExportRequest): Promise<{ blob: Blob; fileName: string }> {
+		const { blob, response } = await apiPostBlobResponse(`${ARD_API_BASE}/export`, body);
+		return { blob, fileName: resolveDownloadFileName(response, 'ard-report.xlsx') };
+	},
+
+	async exportAttendanceByArd(
+		ardId: number,
+		lang: 'es' | 'en',
+	): Promise<{ blob: Blob; fileName: string }> {
+		const { blob, response } = await apiPostBlobResponse(`${ARD_API_BASE}/attendance-export`, {
+			ardId,
+			lang,
+		});
+		return { blob, fileName: resolveDownloadFileName(response, 'ard-attendance.xlsx') };
 	},
 };

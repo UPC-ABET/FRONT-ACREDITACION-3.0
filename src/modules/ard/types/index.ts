@@ -99,6 +99,14 @@ export type ArdReportFilters = {
 	campusId?: number;
 };
 
+export type ArdExportRequest = {
+	programId: number;
+	lang: 'es' | 'en';
+	areaChartIds?: number[];
+	subareaChartIds?: number[];
+	campusId?: number;
+};
+
 export type ArdCourseOption = {
 	id: number;
 	code: string;

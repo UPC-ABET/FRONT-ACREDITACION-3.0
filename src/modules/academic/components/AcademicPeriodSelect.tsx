@@ -17,6 +17,7 @@ type Props = {
 	onChange: (id: number) => void;
 	isClearable?: boolean;
 	onClear?: () => void;
+	disabled?: boolean;
 	labelPlacement?: 'stacked' | 'inline';
 	compactLabelPlacement?: 'inline' | 'stacked';
 	compactDensity?: 'normal' | 'compact';
@@ -42,6 +43,7 @@ export function AcademicPeriodSelect({
 	onChange,
 	isClearable,
 	onClear,
+	disabled = false,
 	labelPlacement = 'stacked',
 	compactLabelPlacement = 'inline',
 	compactDensity = 'normal',
@@ -87,7 +89,7 @@ export function AcademicPeriodSelect({
 					label: option.label,
 				}))}
 				placeholder={loading ? t('loading.default') : t('select.placeholder.default')}
-				disabled={loading}
+				disabled={loading || disabled}
 				labelPlacement={compactLabelPlacement}
 				density={compactDensity}
 				noOptionsMessage={t('select.noOptions')}
@@ -102,7 +104,7 @@ export function AcademicPeriodSelect({
 	return (
 		<Select
 			label={t('ifcs.page.period')}
-			isDisabled={loading}
+			isDisabled={loading || disabled}
 			placeholder={loading ? t('loading.default') : undefined}
 			value={selected}
 			isClearable={isClearable}

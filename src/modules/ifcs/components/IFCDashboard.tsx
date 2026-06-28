@@ -26,16 +26,21 @@ import { ORG_LABELS } from '../constants';
 import {
 	useIFCList,
 	useIfcNotify,
-	useOrgScope,
 	usePdfDownload,
 	useStatusReportDownload,
 	useStatusTypes,
 } from '../hooks';
+import {
+	optionsForLevel,
+	ScopeDropdowns,
+	useOrgScope,
+	type ScopeTree,
+	type SelectionValue,
+} from '@/modules/organization';
 import { getIfcSchools } from '../services';
-import { effectiveStatus, optionsForLevel } from '../services/scope';
-import type { IFCStatusFilter, ScopeTree, SelectionValue } from '../types';
+import { effectiveStatus } from '../services/scope';
+import type { IFCStatusFilter } from '../types';
 import { IFCTable } from './IFCTable';
-import { ScopeDropdowns } from './ScopeDropdowns';
 
 function formatTemplate(template: string, vars: Record<string, string | number>): string {
 	let out = template;

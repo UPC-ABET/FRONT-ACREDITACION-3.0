@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useABET } from '@/providers';
 import { ardService } from '../services';
-import type { ArdReportFilters, ArdSaveMeetingDto } from '../types';
+import type { ArdExportRequest, ArdReportFilters, ArdSaveMeetingDto } from '../types';
 import { ardQueryKeys } from './queryKeys';
 
 export function useArdMeetings(params: { page: number; pageSize: number; search: string }) {
@@ -13,10 +13,7 @@ export function useArdMeetings(params: { page: number; pageSize: number; search:
 		queryKey: ardQueryKeys.list({ ...params, academicPeriodId }),
 		queryFn: () =>
 			ardService
-				.list(
-					{ ...params, search: params.search.trim() || undefined },
-					{ academicPeriodId },
-				)
+				.list({ ...params, search: params.search.trim() || undefined }, { academicPeriodId })
 				.then((response) => response.data),
 		enabled: academicPeriodId !== null,
 		placeholderData: (previousData) => previousData,
@@ -75,10 +72,7 @@ export function useArdSectionOptions(campusId: number | null, studentCode?: stri
 		queryKey: ardQueryKeys.sections(campusId, studentCode, academicPeriodId),
 		queryFn: () =>
 			ardService
-				.getSectionOptions(
-					{ campusId: campusId as number, studentCode },
-					{ academicPeriodId },
-				)
+				.getSectionOptions({ campusId: campusId as number, studentCode }, { academicPeriodId })
 				.then((response) => response.data ?? []),
 		enabled: campusId !== null && academicPeriodId !== null,
 		staleTime: Infinity,
@@ -109,14 +103,12 @@ export function useArdCourseProfessors(
 		queryKey: ardQueryKeys.courseProfessors(courseId, programId, campusId, academicPeriodId),
 		queryFn: () =>
 			ardService
-				.getCourseProfessors(
-					courseId as number,
-					programId as number,
-					campusId as number,
-					{ academicPeriodId },
-				)
+				.getCourseProfessors(courseId as number, programId as number, campusId as number, {
+					academicPeriodId,
+				})
 				.then((response) => response.data ?? []),
-		enabled: courseId !== null && programId !== null && campusId !== null && academicPeriodId !== null,
+		enabled:
+			courseId !== null && programId !== null && campusId !== null && academicPeriodId !== null,
 	});
 }
 
@@ -155,4 +147,17 @@ export function useArdReportExport() {
 	});
 
 	return { exportActs, exportAttendance };
+}
+
+export function useArdExport() {
+	return useMutation({
+		mutationFn: (body: ArdExportRequest) => ardService.exportReport(body),
+	});
+}
+
+export function useArdAttendanceExport() {
+	return useMutation({
+		mutationFn: ({ ardId, lang }: { ardId: number; lang: 'es' | 'en' }) =>
+			ardService.exportAttendanceByArd(ardId, lang),
+	});
 }

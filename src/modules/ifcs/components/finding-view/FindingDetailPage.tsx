@@ -13,7 +13,7 @@ import {
 	Title,
 	Toast,
 } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useGlobalAcademicFiltersLockOverride, useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib';
 import { resolveApiErrorContent, tryTranslateReason, type ApiErrorContent } from '@/shared/utils';
 import {
@@ -34,6 +34,8 @@ export default function FindingDetailPage() {
 	const router = useRouter();
 	const params = useParams<{ id: string }>();
 	const id = Number(params?.id);
+
+	useGlobalAcademicFiltersLockOverride({ school: true, modality: true, period: true });
 
 	const { data, isLoading, error, refetch } = useFindingDetail(id);
 	const { data: languages = ['es', 'en'] } = useQuery({

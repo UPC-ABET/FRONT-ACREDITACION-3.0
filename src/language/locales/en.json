@@ -1,4 +1,9 @@
 {
+	"organization": {
+		"scope": {
+			"level": "Level"
+		}
+	},
 	"nav": {
 		"home": "Home",
 		"ifcs": "IFCs",
@@ -10,7 +15,8 @@
 		},
 		"ard": {
 			"label": "ARD",
-			"overview": "Overview"
+			"overview": "Overview",
+			"reports": "Reports"
 		},
 		"rubrics": "Rubrics",
 		"rubricsList": "Rubrics",
@@ -67,6 +73,15 @@
 				"message": "Delete ARD {code} and all its details? This is permanent and cannot be undone."
 			}
 		},
+		"reports": {
+			"title": "ARD — Reports",
+			"description": "Select the program, area and sub-area to export the report.",
+			"selectPeriod": "Select an academic period in the top bar to continue.",
+			"selectSchool": "Select a school in the top bar to load its programs.",
+			"noScope": "No organizational scope is available for the selected school.",
+			"export": "Export",
+			"exportFailed": "The report could not be generated. Please try again."
+		},
 		"participants": {
 			"title": "Meeting participants",
 			"description": "ARD {code} — select the attending class representatives and add invited students.",
@@ -103,7 +118,9 @@
 			"title": "ARD",
 			"description": "Meeting record details.",
 			"notFound": "This ARD could not be found.",
-			"noDetails": "This ARD has no details yet."
+			"noDetails": "This ARD has no details yet.",
+			"exportAttendance": "Export attendance",
+			"exportFailed": "The attendance report could not be generated. Please try again."
 		},
 		"edit": {
 			"description": "Add, edit or remove the meeting details, then save.",
@@ -1333,7 +1350,8 @@
 			"detailsFailed": "The details could not be saved.",
 			"detailsRequired": "Add at least one detail before saving.",
 			"duplicateArd": "An ARD already exists for this period, campus, program and meeting date.",
-			"duplicateDetail": "Some details are repeated (same student, course and professor)."
+			"duplicateDetail": "Some details are repeated (same student, course and professor).",
+			"noDataToExport": "There are no ARDs matching the selected filters to export."
 		},
 		"studyPlan": {
 			"inUse": "This study plan cannot be deleted because it is in use.",

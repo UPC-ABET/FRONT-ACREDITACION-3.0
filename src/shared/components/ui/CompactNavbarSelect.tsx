@@ -65,10 +65,11 @@ export function CompactNavbarSelect({
 				disabled={disabled}
 				onClick={() => setIsOpen((current) => !current)}
 				className={cn(
-					'flex w-full min-w-0 items-center rounded-md border bg-white text-left shadow-sm transition-colors',
+					'flex w-full min-w-0 items-center rounded-md border text-left shadow-sm transition-colors',
 					isCompact ? 'h-8 px-2' : 'h-10 px-3 max-xl:h-8 max-xl:px-2',
-					'border-zinc-200 hover:border-zinc-300 focus-visible:border-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-100',
-					disabled && 'cursor-not-allowed bg-zinc-50 text-zinc-400',
+					disabled
+						? 'cursor-not-allowed border-zinc-200 bg-zinc-100 opacity-60'
+						: 'border-zinc-200 bg-white hover:border-zinc-300 focus-visible:border-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-100',
 				)}>
 				{labelPlacement === 'inline' && (
 					<span
