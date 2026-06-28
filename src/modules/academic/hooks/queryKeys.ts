@@ -33,4 +33,6 @@ export const academicQueryKeys = {
 	performanceLevels: () => [...academicQueryKeys.all, 'performance-levels'] as const,
 	performanceLevelsByFilter: (filters: FilterPerformanceLevelDto) =>
 		[...academicQueryKeys.performanceLevels(), filters] as const,
+
+	classRepresentatives: () => [...academicQueryKeys.all, 'class-representatives'] as const,
 };

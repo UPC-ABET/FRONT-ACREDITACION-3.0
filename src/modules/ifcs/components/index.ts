@@ -1,6 +1,5 @@
 export * from './IFCDashboard';
 export * from './IFCTable';
-export * from './ScopeDropdowns';
 export * from './shared';
 export * from './view';
 export * from './form';

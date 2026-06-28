@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { CompactNavbarSelect, Select } from '@/shared/components';
 import {
+	useGlobalAcademicFiltersLock,
 	useGlobalAcademicFiltersVisibility,
 	useI18n,
 	type GlobalAcademicFilterKey,
@@ -73,6 +74,7 @@ export function GlobalAcademicFilters({
 	const { t } = useI18n();
 	const filters = useGlobalAcademicFilters();
 	const visibleFilters = useGlobalAcademicFiltersVisibility();
+	const lockedFilters = useGlobalAcademicFiltersLock();
 	const visibleFilterCount = Object.values(visibleFilters).filter(Boolean).length;
 	const isMobileLayout = embedded && layout === 'mobile';
 	const compactDensity = layout === 'tablet' ? 'compact' : 'normal';
@@ -100,6 +102,7 @@ export function GlobalAcademicFilters({
 								value={filters.modalityTypeId === null ? '' : String(filters.modalityTypeId)}
 								options={filters.modalityCompactOptions}
 								placeholder={t('select.placeholder.default')}
+								disabled={lockedFilters.modality}
 								labelPlacement={compactLabelPlacement}
 								density={compactDensity}
 								noOptionsMessage={t('select.noOptions')}
@@ -114,7 +117,7 @@ export function GlobalAcademicFilters({
 								value={filters.selectedModalityOption}
 								options={filters.modalitySelectOptions}
 								isSearchable={false}
-								isDisabled={filters.modalitySelectOptions.length === 0}
+								isDisabled={lockedFilters.modality || filters.modalitySelectOptions.length === 0}
 								onChange={(_, selected) => {
 									if (!selected || Array.isArray(selected)) return;
 									filters.handleModalityChange(Number(selected.value));
@@ -134,6 +137,7 @@ export function GlobalAcademicFilters({
 							onChange={(id) => filters.setAcademicPeriodId(id)}
 							isClearable
 							onClear={() => filters.setAcademicPeriodId(null)}
+							disabled={lockedFilters.period}
 							labelPlacement={embedded ? 'inline' : 'stacked'}
 							compactLabelPlacement={compactLabelPlacement}
 							compactDensity={compactDensity}
@@ -154,7 +158,7 @@ export function GlobalAcademicFilters({
 								placeholder={
 									filters.schoolsLoading ? t('loading.default') : t('select.placeholder.default')
 								}
-								disabled={filters.schoolsLoading}
+								disabled={lockedFilters.school || filters.schoolsLoading}
 								labelPlacement={compactLabelPlacement}
 								density={compactDensity}
 								wrapOptions
@@ -168,7 +172,11 @@ export function GlobalAcademicFilters({
 								value={filters.selectedSchoolOption}
 								options={filters.schoolOptions}
 								isSearchable
-								isDisabled={filters.schoolsLoading || filters.schoolOptions.length === 0}
+								isDisabled={
+									lockedFilters.school ||
+									filters.schoolsLoading ||
+									filters.schoolOptions.length === 0
+								}
 								onChange={(_, selected) => {
 									if (!selected || Array.isArray(selected)) return;
 									filters.handleSchoolChange(String(selected.value));

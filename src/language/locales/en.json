@@ -1,4 +1,9 @@
 {
+	"organization": {
+		"scope": {
+			"level": "Level"
+		}
+	},
 	"nav": {
 		"home": "Home",
 		"ifcs": "IFCs",
@@ -7,6 +12,11 @@
 			"label": "IFC",
 			"overview": "Overview",
 			"findings": "Findings"
+		},
+		"ard": {
+			"label": "ARD",
+			"overview": "Overview",
+			"reports": "Reports"
 		},
 		"rubrics": "Rubrics",
 		"rubricsList": "Rubrics",
@@ -40,6 +50,97 @@
 		"academicProjects": {
 			"label": "Academic Projects",
 			"evaluators": "Evaluators"
+		}
+	},
+	"ard": {
+		"loading": "Loading…",
+		"overview": {
+			"title": "ARD — Teaching Meeting Records",
+			"description": "Register a new teaching meeting record (ARD).",
+			"created": "ARD {code} created. Continue by adding its details.",
+			"selectPeriod": "Select an academic period in the top bar to continue.",
+			"meetingDate": "Meeting date",
+			"campus": "Campus",
+			"program": "Program",
+			"listTitle": "Records",
+			"searchPlaceholder": "Search by code…",
+			"empty": "No ARDs found for the selected filters.",
+			"edit": {
+				"title": "Edit meeting date"
+			},
+			"delete": {
+				"title": "Delete ARD",
+				"message": "Delete ARD {code} and all its details? This is permanent and cannot be undone."
+			}
+		},
+		"reports": {
+			"title": "ARD — Reports",
+			"description": "Select the program, area and sub-area to export the report.",
+			"selectPeriod": "Select an academic period in the top bar to continue.",
+			"selectSchool": "Select a school in the top bar to load its programs.",
+			"noScope": "No organizational scope is available for the selected school.",
+			"export": "Export",
+			"exportFailed": "The report could not be generated. Please try again."
+		},
+		"participants": {
+			"invited": {
+				"add": "Add invited student",
+				"dialogTitle": "Add invited student",
+				"studentLabel": "Student",
+				"studentPlaceholder": "Search by code or name…",
+				"alreadyAdded": "This student is already in the participant list."
+			}
+		},
+		"details": {
+			"student": "Student",
+			"course": "Course",
+			"professor": "Professor",
+			"comment": "Comment"
+		},
+		"flow": {
+			"backToOverview": "Back to overview"
+		},
+		"view": {
+			"title": "ARD",
+			"description": "Meeting record details.",
+			"notFound": "This ARD could not be found.",
+			"noDetails": "This ARD has no details yet.",
+			"exportAttendance": "Export attendance",
+			"exportFailed": "The attendance report could not be generated. Please try again."
+		},
+		"edit": {
+			"description": "Add, edit or remove the meeting details, then save.",
+			"detailsTitle": "Details",
+			"addRow": "Add detail",
+			"editRow": "Edit detail",
+			"addToList": "Add",
+			"updateRow": "Update",
+			"empty": "No details yet. Add a detail or an invited student.",
+			"periodMismatch": "Select this ARD's academic period in the top bar to edit its details."
+		},
+		"table": {
+			"code": "Code",
+			"fullName": "Full name",
+			"course": "Course",
+			"professor": "Professor",
+			"meetingDate": "Meeting date",
+			"campus": "Campus",
+			"program": "Program",
+			"details": "Details",
+			"createdAt": "Created",
+			"actions": "Actions",
+			"error": "Could not load the data."
+		},
+		"actions": {
+			"new": "New",
+			"cancel": "Cancel",
+			"edit": "Edit",
+			"delete": "Delete",
+			"save": "Save",
+			"view": "View"
+		},
+		"errors": {
+			"deleteFailed": "The ARD could not be deleted."
 		}
 	},
 	"scraping": {
@@ -1217,8 +1318,18 @@
 			"courseNotInStudyPlan": "The section's course does not belong to the student's study plan.",
 			"studyPlanPeriodMismatch": "The student is not enrolled in the same study plan and period as the section."
 		},
-		"classRepresentativeAssign": {
+		"classRepresentative": {
 			"studentNotEnrolledInSection": "This student is not enrolled in this section."
+		},
+		"ard": {
+			"notFound": "The ARD could not be found.",
+			"createFailed": "The ARD could not be created.",
+			"updateFailed": "The ARD could not be updated.",
+			"detailsFailed": "The details could not be saved.",
+			"detailsRequired": "Add at least one detail before saving.",
+			"duplicateArd": "An ARD already exists for this period, campus, program and meeting date.",
+			"duplicateDetail": "Some details are repeated (same student, course and professor).",
+			"noDataToExport": "There are no ARDs matching the selected filters to export."
 		},
 		"studyPlan": {
 			"inUse": "This study plan cannot be deleted because it is in use.",

@@ -1,4 +1,3 @@
-export * from './useOrgScope';
 export * from './useIFCList';
 export * from './useFindingsList';
 export * from './useIFCFormBootstrap';
