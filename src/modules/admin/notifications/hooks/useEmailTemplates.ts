@@ -20,6 +20,7 @@ export function useEmailTemplates() {
 	return useQuery({
 		queryKey: emailTemplatesKeys.list(),
 		queryFn: listEmailTemplates,
+		placeholderData: (previousData) => previousData,
 		staleTime: 0,
 	});
 }

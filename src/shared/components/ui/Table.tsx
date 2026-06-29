@@ -127,10 +127,12 @@ interface DataTableProps<TData, TValue> {
 	searchColumnId?: string;
 	searchValue?: string;
 	onSearchChange?: (value: string) => void;
+	filters?: React.ReactNode;
 	actions?: DataTableAction[];
 	showPagination?: boolean;
 	serverPagination?: ServerPagination;
 	isLoading?: boolean;
+	isFetching?: boolean;
 	errorMessage?: string;
 	emptyMessage?: string;
 	tableClassName?: string;
@@ -150,10 +152,12 @@ export function DataTable<TData, TValue>({
 	searchColumnId,
 	searchValue: controlledSearchValue,
 	onSearchChange,
+	filters,
 	actions = [],
 	showPagination = true,
 	serverPagination,
 	isLoading = false,
+	isFetching: isFetchingProp = false,
 	errorMessage,
 	emptyMessage,
 	tableClassName,
@@ -219,7 +223,7 @@ export function DataTable<TData, TValue>({
 	const currentPage = isServer ? serverPagination.page : table.getState().pagination.pageIndex + 1;
 	const pageCount = isServer ? serverPagination.pageCount : table.getPageCount();
 	const totalCount = isServer ? serverPagination.total : table.getFilteredRowModel().rows.length;
-	const isFetching = isServer ? Boolean(serverPagination.isFetching) : false;
+	const isFetching = isFetchingProp || (isServer ? Boolean(serverPagination.isFetching) : false);
 	const canPreviousPage = isServer ? currentPage > 1 : table.getCanPreviousPage();
 	const canNextPage = isServer ? currentPage < pageCount : table.getCanNextPage();
 
@@ -258,40 +262,44 @@ export function DataTable<TData, TValue>({
 				</div>
 			)}
 
-			{(showSearch || actions?.length > 0) && (
-				<div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-					{showSearch ? (
-						<Input
-							placeholder={placeholderText}
-							value={searchValue}
-							onChange={(e) => handleSearchChange(e.target.value)}
-							className="max-w-sm"
-						/>
-					) : (
-						<div />
-					)}
+			{(showSearch || actions.length > 0 || filters) && (
+				<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+					<div className="flex flex-wrap items-center gap-3">{filters}</div>
 
-					{(actions ?? []).length > 0 && (
-						<div className="flex flex-wrap items-center gap-2 sm:justify-end">
-							{(actions ?? []).map((action) => (
-								<Button
-									key={action.label}
-									onClick={action.onClick}
-									aria-label={action.label}
-									{...action.buttonProps}>
-									{action.icon && (
-										<span
-											className={
-												action.showLabel === false ? 'flex items-center' : 'mr-2 flex items-center'
-											}>
-											{action.icon}
-										</span>
-									)}
-									{action.showLabel !== false && action.label}
-								</Button>
-							))}
-						</div>
-					)}
+					<div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+						{showSearch && (
+							<Input
+								placeholder={placeholderText}
+								value={searchValue}
+								onChange={(e) => handleSearchChange(e.target.value)}
+								className="w-full sm:w-64"
+							/>
+						)}
+
+						{actions.length > 0 && (
+							<div className="flex flex-wrap items-center gap-2 sm:justify-end">
+								{actions.map((action) => (
+									<Button
+										key={action.label}
+										onClick={action.onClick}
+										aria-label={action.label}
+										{...action.buttonProps}>
+										{action.icon && (
+											<span
+												className={
+													action.showLabel === false
+														? 'flex items-center'
+														: 'mr-2 flex items-center'
+												}>
+												{action.icon}
+											</span>
+										)}
+										{action.showLabel !== false && action.label}
+									</Button>
+								))}
+							</div>
+						)}
+					</div>
 				</div>
 			)}
 

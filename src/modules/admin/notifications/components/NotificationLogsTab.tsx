@@ -38,7 +38,7 @@ export function NotificationLogsTab() {
 		[categoryTypeId, statusTypeId],
 	);
 
-	const { data: logs = [], isLoading, isError, refetch } = useNotificationLogs(filters);
+	const { data: logs = [], isLoading, isFetching, isError, refetch } = useNotificationLogs(filters);
 
 	const categoryNameById = useMemo(() => {
 		const map = new Map<number, string>();
@@ -160,6 +160,7 @@ export function NotificationLogsTab() {
 				title={t('admin.notify.log.title')}
 				description={t('admin.notify.log.subtitle')}
 				isLoading={isLoading}
+				isFetching={isFetching}
 				aria-label={t('admin.notify.log.title')}
 			/>
 		</div>

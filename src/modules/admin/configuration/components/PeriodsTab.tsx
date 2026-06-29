@@ -1,34 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { Button, Toast } from '@/shared';
+import { Toast } from '@/shared';
 import { useApiErrorToast } from '@/shared/hooks';
-import { useI18n } from '@/providers';
-import OpenPeriodDialog from './OpenPeriodDialog';
 import PeriodsTable from './PeriodsTable';
 
 export default function PeriodsTab() {
-	const { t } = useI18n();
 	const { toast, clearToast } = useApiErrorToast();
-	const [dialogOpen, setDialogOpen] = useState(false);
 
 	return (
 		<section className="space-y-6">
-			<div className="flex justify-end">
-				<Button
-					variant="primary"
-					size="md"
-					onClick={() => setDialogOpen(true)}
-					className="w-full sm:w-auto">
-					<Plus className="h-4 w-4" />
-					<span>{t('admin.configuration.periods.openButton')}</span>
-				</Button>
-			</div>
-
 			<PeriodsTable />
-
-			<OpenPeriodDialog open={dialogOpen} onOpenChange={setDialogOpen} />
 
 			<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
 		</section>

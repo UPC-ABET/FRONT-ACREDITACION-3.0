@@ -189,7 +189,7 @@ export function ProjectEvaluatePage({ projectId, gradeTypeCode }: ProjectEvaluat
 				{t('projects.evaluate.backButton')}
 			</Link>
 
-			<PageHeader title={projectName} />
+			<PageHeader title={projectName} description={t('projects.evaluate.subtitle')} />
 
 			<Card>
 				<div className="flex flex-col gap-4">

@@ -16,6 +16,7 @@ export function useNotificationLogs(filters: NotificationLogFilters) {
 	return useQuery({
 		queryKey: notificationLogsKeys.filtered(filters),
 		queryFn: () => getNotificationLogsByFilters(filters),
+		placeholderData: (previousData) => previousData,
 		staleTime: 0,
 	});
 }

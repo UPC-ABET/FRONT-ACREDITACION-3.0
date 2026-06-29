@@ -51,6 +51,7 @@ export function PlannerManagementView() {
 			<PlannerScrapeRunHistory
 				data={runs}
 				isLoading={runsQuery.isLoading}
+				isFetching={runsQuery.isFetching}
 				errorMessage={runsQuery.isError ? t('planner.history.error') : undefined}
 				emptyMessage={historyEmptyMessage}
 				locale={locale}

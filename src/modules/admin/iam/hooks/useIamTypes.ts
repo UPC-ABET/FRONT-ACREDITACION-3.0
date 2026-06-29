@@ -20,6 +20,7 @@ export function useModules() {
 	return useQuery({
 		queryKey: iamTypesKeys.byGroup(TYPE_GROUP_CODES.IAM_MODULE),
 		queryFn: () => listTypesByGroupCode(TYPE_GROUP_CODES.IAM_MODULE),
+		placeholderData: (previousData) => previousData,
 		staleTime: 0,
 	});
 }
@@ -28,6 +29,7 @@ export function usePermissions() {
 	return useQuery({
 		queryKey: iamTypesKeys.byGroup(TYPE_GROUP_CODES.IAM_PERMISSION),
 		queryFn: () => listTypesByGroupCode(TYPE_GROUP_CODES.IAM_PERMISSION),
+		placeholderData: (previousData) => previousData,
 		staleTime: 0,
 	});
 }

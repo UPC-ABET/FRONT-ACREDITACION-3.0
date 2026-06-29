@@ -10,6 +10,7 @@ import type { PlannerScrapeRunSummary } from '../types';
 interface PlannerScrapeRunHistoryProps {
 	data: PlannerScrapeRunSummary[];
 	isLoading: boolean;
+	isFetching?: boolean;
 	errorMessage?: string;
 	emptyMessage?: string;
 	locale: 'es' | 'en';
@@ -19,6 +20,7 @@ interface PlannerScrapeRunHistoryProps {
 export function PlannerScrapeRunHistory({
 	data,
 	isLoading,
+	isFetching,
 	errorMessage,
 	emptyMessage,
 	locale,
@@ -87,6 +89,7 @@ export function PlannerScrapeRunHistory({
 			data={data}
 			title={t('planner.history.title')}
 			isLoading={isLoading}
+			isFetching={isFetching}
 			errorMessage={errorMessage}
 			emptyMessage={emptyMessage}
 			showSearch={false}

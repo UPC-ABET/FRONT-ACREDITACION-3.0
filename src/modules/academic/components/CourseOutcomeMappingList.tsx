@@ -160,54 +160,68 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 					/>
 				</div>
 
-				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-					<Select
-						name="accreditor"
-						label={t('loads.courseOutcomeMappingMaintenance.filters.accreditor')}
-						placeholder={t('loads.courseOutcomeMappingMaintenance.filters.accreditorPlaceholder')}
-						isSearchable
-						isClearable
-						options={accreditorOptions}
-						value={selectedOption(accreditorOptions, accreditorId)}
-						onChange={(_name, value) =>
-							handleAccreditorChange(toValue(value && !Array.isArray(value) ? value : null))
-						}
-					/>
-					<Select
-						name="commission"
-						label={t('loads.courseOutcomeMappingMaintenance.filters.commission')}
-						placeholder={t('loads.courseOutcomeMappingMaintenance.filters.commissionPlaceholder')}
-						isSearchable
-						isClearable
-						isDisabled={accreditorId == null}
-						options={commissionOptions}
-						value={selectedOption(commissionOptions, commissionId)}
-						onChange={(_name, value) =>
-							handleCommissionChange(toValue(value && !Array.isArray(value) ? value : null))
-						}
-					/>
-					<Select
-						name="program"
-						label={t('loads.courseOutcomeMappingMaintenance.filters.program')}
-						placeholder={t('loads.courseOutcomeMappingMaintenance.filters.programPlaceholder')}
-						isSearchable
-						isClearable
-						isDisabled={commissionId == null}
-						options={programOptions}
-						value={selectedOption(programOptions, programId)}
-						onChange={(_name, value) =>
-							setProgramId(toValue(value && !Array.isArray(value) ? value : null))
-						}
-					/>
-				</div>
-
 				<DataTable
 					columns={columns}
 					data={tableRows}
 					showSearch={false}
 					showPagination={false}
+					filters={
+						<>
+							<div className="w-full sm:w-56">
+								<Select
+									name="accreditor"
+									aria-label={t('loads.courseOutcomeMappingMaintenance.filters.accreditor')}
+									placeholder={t(
+										'loads.courseOutcomeMappingMaintenance.filters.accreditorPlaceholder',
+									)}
+									isSearchable
+									isClearable
+									options={accreditorOptions}
+									value={selectedOption(accreditorOptions, accreditorId)}
+									onChange={(_name, value) =>
+										handleAccreditorChange(toValue(value && !Array.isArray(value) ? value : null))
+									}
+								/>
+							</div>
+							<div className="w-full sm:w-56">
+								<Select
+									name="commission"
+									aria-label={t('loads.courseOutcomeMappingMaintenance.filters.commission')}
+									placeholder={t(
+										'loads.courseOutcomeMappingMaintenance.filters.commissionPlaceholder',
+									)}
+									isSearchable
+									isClearable
+									isDisabled={accreditorId == null}
+									options={commissionOptions}
+									value={selectedOption(commissionOptions, commissionId)}
+									onChange={(_name, value) =>
+										handleCommissionChange(toValue(value && !Array.isArray(value) ? value : null))
+									}
+								/>
+							</div>
+							<div className="w-full sm:w-56">
+								<Select
+									name="program"
+									aria-label={t('loads.courseOutcomeMappingMaintenance.filters.program')}
+									placeholder={t(
+										'loads.courseOutcomeMappingMaintenance.filters.programPlaceholder',
+									)}
+									isSearchable
+									isClearable
+									isDisabled={commissionId == null}
+									options={programOptions}
+									value={selectedOption(programOptions, programId)}
+									onChange={(_name, value) =>
+										setProgramId(toValue(value && !Array.isArray(value) ? value : null))
+									}
+								/>
+							</div>
+						</>
+					}
 					aria-label={t('loads.courseOutcomeMappingMaintenance.title')}
 					isLoading={detailedQuery.isLoading}
+					isFetching={detailedQuery.isFetching}
 					errorMessage={
 						detailedQuery.isError
 							? t('loads.courseOutcomeMappingMaintenance.error.loadFailed')

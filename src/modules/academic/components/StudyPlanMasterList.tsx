@@ -236,28 +236,29 @@ export function StudyPlanMasterList({ onView }: { onView: (studyPlanId: number) 
 					/>
 				</div>
 
-				<div className="w-full sm:max-w-xs">
-					<Select
-						name="program"
-						label={t('loads.studyPlansMaintenance.programLabel')}
-						placeholder={t('loads.studyPlansMaintenance.programPlaceholder')}
-						isSearchable
-						isClearable
-						isDisabled={noModalitySelected}
-						options={programOptions}
-						value={selectedProgram}
-						onChange={(_name, value) =>
-							handleProgramChange(value && !Array.isArray(value) ? Number(value.value) : null)
-						}
-					/>
-				</div>
-
 				<DataTable
 					columns={columns}
 					data={items}
 					searchPlaceholder={t('loads.studyPlansMaintenance.searchPlaceholder')}
 					searchValue={search}
 					onSearchChange={handleSearchChange}
+					filters={
+						<div className="w-full sm:w-56">
+							<Select
+								name="program"
+								aria-label={t('loads.studyPlansMaintenance.programLabel')}
+								placeholder={t('loads.studyPlansMaintenance.programPlaceholder')}
+								isSearchable
+								isClearable
+								isDisabled={noModalitySelected}
+								options={programOptions}
+								value={selectedProgram}
+								onChange={(_name, value) =>
+									handleProgramChange(value && !Array.isArray(value) ? Number(value.value) : null)
+								}
+							/>
+						</div>
+					}
 					aria-label={t('loads.studyPlansMaintenance.title')}
 					isLoading={isLoading}
 					errorMessage={isError ? t('loads.studyPlansMaintenance.error.loadFailed') : undefined}

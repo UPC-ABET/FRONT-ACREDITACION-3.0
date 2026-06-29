@@ -22,7 +22,7 @@ type View = { mode: 'list' } | { mode: 'new' } | { mode: 'edit'; message: Survey
 export function SurveyMessagesTab() {
 	const { t, locale } = useI18n();
 	const { toast, showToast, clearToast } = useApiErrorToast();
-	const { data: messages = [], isLoading, isError, refetch } = useSurveyMessages();
+	const { data: messages = [], isLoading, isFetching, isError, refetch } = useSurveyMessages();
 	const { data: surveyTypes = [] } = useSurveyTypes();
 	const { remove } = useSurveyMessageMutations();
 
@@ -137,6 +137,7 @@ export function SurveyMessagesTab() {
 				description={t('admin.notify.survey.subtitle')}
 				aria-label={t('admin.notify.survey.title')}
 				isLoading={isLoading}
+				isFetching={isFetching}
 				actions={[
 					{
 						label: t('admin.notify.survey.create'),

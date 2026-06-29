@@ -17,7 +17,7 @@ import { PermissionTypeFormDialog } from './PermissionTypeFormDialog';
 export function PermissionsTab() {
 	const { t, locale } = useI18n();
 	const { toast, showToast, clearToast } = useApiErrorToast();
-	const { data: permissions = [], isLoading, isError, refetch } = usePermissions();
+	const { data: permissions = [], isLoading, isFetching, isError, refetch } = usePermissions();
 	const { data: typeGroups } = useTypeGroups({ code: TYPE_GROUP_CODES.IAM_PERMISSION });
 	const { remove } = usePermissionTypeMutations();
 
@@ -112,6 +112,7 @@ export function PermissionsTab() {
 				searchPlaceholder={t('admin.iam.permissions.search')}
 				aria-label={t('admin.iam.permissions.title')}
 				isLoading={isLoading}
+				isFetching={isFetching}
 				actions={[
 					{
 						label: t('admin.iam.permissions.create'),

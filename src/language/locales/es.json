@@ -352,6 +352,7 @@
 	"ifcs": {
 		"page": {
 			"title": "Informe de Fin de Ciclo",
+			"subtitle": "Gestione los informes de fin de ciclo del período seleccionado.",
 			"period": "Período Académico",
 			"selectPeriod": "Seleccione un período académico en la barra superior para continuar.",
 			"noSchools": "No hay escuelas disponibles para el período seleccionado. Es posible que el organigrama aún no haya sido cargado. Contacte al administrador.",
@@ -461,7 +462,8 @@
 	},
 	"ifcFindings": {
 		"page": {
-			"title": "Hallazgos"
+			"title": "Hallazgos",
+			"subtitle": "Consulte los hallazgos registrados en los informes de fin de ciclo."
 		},
 		"col": {
 			"criticality": "Criticidad",
@@ -2029,6 +2031,7 @@
 			"error": "No fue posible cargar el proyecto.",
 			"notFound": "Proyecto no encontrado.",
 			"backButton": "Volver",
+			"subtitle": "Evalúe el proyecto según la rúbrica asignada.",
 			"docReadOnly": "Tu rol es DOCENTE. Puedes ver el proyecto y las calificaciones, pero no puedes calificar.",
 			"readOnlyNoPermission": "Tu rol de evaluador no tiene permisos para calificar este proyecto. Estás en modo lectura.",
 			"notAssigned": "No estás asignado como evaluador en este proyecto.",
@@ -2075,6 +2078,7 @@
 			"loading": "Cargando proyecto...",
 			"error": "No fue posible cargar el proyecto.",
 			"backButton": "Volver a proyectos",
+			"subtitle": "Edite la información del proyecto.",
 			"header": {
 				"course": "Curso",
 				"rubricType": "Tipo de rúbrica",

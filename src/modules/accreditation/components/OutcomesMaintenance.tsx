@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
-	ChevronLeftIcon,
-	ChevronRightIcon,
 	ExclamationTriangleIcon,
-	MagnifyingGlassIcon,
 	PencilSquareIcon,
 	PlusIcon,
 	TrashIcon,
@@ -14,6 +12,7 @@ import {
 	Button,
 	Card,
 	ConfirmDialog,
+	DataTable,
 	Dialog,
 	DialogContent,
 	DialogDescription,
@@ -21,12 +20,6 @@ import {
 	DialogHeader,
 	DialogTitle,
 	Select,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
 	SubTitle,
 	Title,
 	Toast,
@@ -130,7 +123,7 @@ export function OutcomesMaintenance() {
 		setPage(1);
 	};
 
-	const { data, isLoading, isFetching, isError, refetch } = useOutcomesMaintenance({
+	const { data, isLoading, isFetching, isError } = useOutcomesMaintenance({
 		programId,
 		academicPeriodId,
 		page,
@@ -209,10 +202,48 @@ export function OutcomesMaintenance() {
 
 	const needsSelection = academicPeriodId == null || programId == null;
 
-	const renderNotice = (message: string) => (
-		<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-			<p className="text-sm text-zinc-500">{message}</p>
-		</div>
+	const columns = useMemo<ColumnDef<OutcomeMaintenanceItem>[]>(
+		() => [
+			{
+				accessorKey: 'commissionCode',
+				header: t('loads.outcomesMaintenance.col.commissionCode'),
+				meta: { cellClassName: 'font-mono text-zinc-700' },
+			},
+			{
+				accessorKey: 'outcomeCode',
+				header: t('loads.outcomesMaintenance.col.outcomeCode'),
+				meta: { cellClassName: 'font-mono text-zinc-800' },
+			},
+			{
+				id: 'outcomeName',
+				header: t('loads.outcomesMaintenance.col.outcomeName'),
+				meta: { cellClassName: 'text-zinc-700' },
+				cell: ({ row }) => localized(row.original.outcomeName, locale),
+			},
+			{
+				id: 'outcomeDescription',
+				header: t('loads.outcomesMaintenance.col.outcomeDescription'),
+				cell: ({ row }) => (
+					<span className="line-clamp-2 max-w-md text-zinc-500">
+						{localized(row.original.outcomeDescription, locale)}
+					</span>
+				),
+			},
+			{
+				id: 'actions',
+				header: t('loads.outcomesMaintenance.col.actions'),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
+				cell: ({ row }) => (
+					<RowActions
+						onEdit={() => openEdit(row.original)}
+						onDelete={() => setPendingDelete(row.original)}
+						editLabel={editLabel}
+						deleteLabel={deleteLabel}
+					/>
+				),
+			},
+		],
+		[t, locale, editLabel, deleteLabel],
 	);
 
 	return (
@@ -221,188 +252,66 @@ export function OutcomesMaintenance() {
 				<div className="space-y-1">
 					<Title
 						title={t('loads.outcomesMaintenance.title')}
-						className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+						className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-zinc-900"
 					/>
 					<SubTitle
 						name={t('loads.outcomesMaintenance.subtitle')}
-						className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+						className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-500"
 					/>
 				</div>
 
-				<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-					<div className="w-full sm:max-w-xs">
-						<Select
-							name="program"
-							label={t('loads.outcomesMaintenance.programLabel')}
-							placeholder={t('loads.outcomesMaintenance.programPlaceholder')}
-							isSearchable
-							isClearable
-							options={programOptions}
-							value={selectedProgram}
-							onChange={(_name, value) =>
-								handleProgramChange(value && !Array.isArray(value) ? Number(value.value) : null)
-							}
-						/>
-					</div>
-					<div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-						<div className="relative w-full sm:max-w-xs">
-							<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-							<input
-								type="search"
-								value={search}
-								onChange={(event) => handleSearchChange(event.target.value)}
-								placeholder={t('loads.outcomesMaintenance.searchPlaceholder')}
-								aria-label={t('loads.outcomesMaintenance.searchPlaceholder')}
-								disabled={needsSelection}
-								className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
+				<DataTable
+					columns={columns}
+					data={items}
+					searchPlaceholder={t('loads.outcomesMaintenance.searchPlaceholder')}
+					searchValue={search}
+					onSearchChange={handleSearchChange}
+					aria-label={t('loads.outcomesMaintenance.title')}
+					isLoading={isLoading}
+					errorMessage={isError ? t('loads.outcomesMaintenance.error.loadFailed') : undefined}
+					emptyMessage={
+						academicPeriodId == null
+							? t('loads.outcomesMaintenance.selectPeriod')
+							: programId == null
+								? t('loads.outcomesMaintenance.selectProgram')
+								: t('loads.outcomesMaintenance.empty.title')
+					}
+					filters={
+						<div className="w-full sm:w-56">
+							<Select
+								name="program"
+								aria-label={t('loads.outcomesMaintenance.programLabel')}
+								placeholder={t('loads.outcomesMaintenance.programPlaceholder')}
+								isSearchable
+								isClearable
+								isDisabled={academicPeriodId == null}
+								options={programOptions}
+								value={selectedProgram}
+								onChange={(_name, value) =>
+									handleProgramChange(value && !Array.isArray(value) ? Number(value.value) : null)
+								}
 							/>
 						</div>
-						<Button
-							variant="primary"
-							size="sm"
-							className="w-full sm:w-auto"
-							disabled={needsSelection}
-							onClick={() => {
+					}
+					serverPagination={{
+						page,
+						pageCount: totalPages,
+						total,
+						onPageChange: setPage,
+						isFetching,
+					}}
+					actions={[
+						{
+							label: t('loads.outcomesMaintenance.actions.new'),
+							onClick: () => {
 								setCreateError(null);
 								setCreating(true);
-							}}>
-							<PlusIcon className="h-4 w-4" />
-							<span>{t('loads.outcomesMaintenance.actions.new')}</span>
-						</Button>
-					</div>
-				</div>
-
-				{academicPeriodId == null ? (
-					renderNotice(t('loads.outcomesMaintenance.selectPeriod'))
-				) : programId == null ? (
-					renderNotice(t('loads.outcomesMaintenance.selectProgram'))
-				) : isError ? (
-					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm text-zinc-500">
-							{t('loads.outcomesMaintenance.error.loadFailed')}
-						</p>
-						<Button variant="surface" size="sm" onClick={() => refetch()}>
-							{t('loads.outcomesMaintenance.retry')}
-						</Button>
-					</div>
-				) : isLoading ? (
-					<div className="space-y-2" aria-busy>
-						{Array.from({ length: 6 }).map((_, index) => (
-							<div key={index} className="h-12 animate-pulse rounded-lg bg-zinc-100" />
-						))}
-					</div>
-				) : items.length === 0 ? (
-					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm font-medium text-zinc-700">
-							{t('loads.outcomesMaintenance.empty.title')}
-						</p>
-						<p className="text-sm text-zinc-500">{t('loads.outcomesMaintenance.empty.subtitle')}</p>
-					</div>
-				) : (
-					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-						<div className="hidden overflow-x-auto md:block">
-							<Table>
-								<TableHeader>
-									<TableRow>
-										<TableHead>{t('loads.outcomesMaintenance.col.commissionCode')}</TableHead>
-										<TableHead>{t('loads.outcomesMaintenance.col.outcomeCode')}</TableHead>
-										<TableHead>{t('loads.outcomesMaintenance.col.outcomeName')}</TableHead>
-										<TableHead>{t('loads.outcomesMaintenance.col.outcomeDescription')}</TableHead>
-										<TableHead className="text-right">
-											{t('loads.outcomesMaintenance.col.actions')}
-										</TableHead>
-									</TableRow>
-								</TableHeader>
-								<TableBody>
-									{items.map((item) => (
-										<TableRow key={item.id}>
-											<TableCell className="font-mono text-zinc-700">
-												{item.commissionCode}
-											</TableCell>
-											<TableCell className="font-mono text-zinc-800">{item.outcomeCode}</TableCell>
-											<TableCell className="text-zinc-700">
-												{localized(item.outcomeName, locale)}
-											</TableCell>
-											<TableCell>
-												<span className="line-clamp-2 max-w-md text-zinc-500">
-													{localized(item.outcomeDescription, locale)}
-												</span>
-											</TableCell>
-											<TableCell>
-												<RowActions
-													onEdit={() => openEdit(item)}
-													onDelete={() => setPendingDelete(item)}
-													editLabel={editLabel}
-													deleteLabel={deleteLabel}
-												/>
-											</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
-							</Table>
-						</div>
-
-						<ul className="space-y-3 md:hidden">
-							{items.map((item) => (
-								<li
-									key={item.id}
-									className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
-									<div className="flex items-start justify-between gap-3">
-										<div className="min-w-0 space-y-1">
-											<p className="flex flex-wrap items-center gap-2 text-xs text-zinc-400">
-												<span className="font-mono">{item.commissionCode}</span>
-												<span className="font-mono text-zinc-500">{item.outcomeCode}</span>
-											</p>
-											<p className="font-medium text-zinc-900">
-												{localized(item.outcomeName, locale)}
-											</p>
-											<p className="line-clamp-2 text-sm text-zinc-500">
-												{localized(item.outcomeDescription, locale)}
-											</p>
-										</div>
-										<div className="shrink-0">
-											<RowActions
-												onEdit={() => openEdit(item)}
-												onDelete={() => setPendingDelete(item)}
-												editLabel={editLabel}
-												deleteLabel={deleteLabel}
-											/>
-										</div>
-									</div>
-								</li>
-							))}
-						</ul>
-					</div>
-				)}
-
-				{!needsSelection && !isLoading && !isError && items.length > 0 && (
-					<div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
-						<p className="text-xs text-zinc-500">
-							{total} {t('loads.outcomesMaintenance.results')}
-						</p>
-						<div className="flex items-center justify-center gap-3">
-							<Button
-								variant="surface"
-								size="sm"
-								disabled={page <= 1 || isFetching}
-								onClick={() => setPage((current) => Math.max(1, current - 1))}
-								aria-label={t('loads.outcomesMaintenance.prev')}>
-								<ChevronLeftIcon className="h-4 w-4" />
-							</Button>
-							<span className="text-sm text-zinc-600">
-								{t('loads.outcomesMaintenance.page')} {page} / {totalPages}
-							</span>
-							<Button
-								variant="surface"
-								size="sm"
-								disabled={page >= totalPages || isFetching}
-								onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-								aria-label={t('loads.outcomesMaintenance.next')}>
-								<ChevronRightIcon className="h-4 w-4" />
-							</Button>
-						</div>
-					</div>
-				)}
+							},
+							icon: <PlusIcon className="h-4 w-4" />,
+							buttonProps: { variant: 'primary', disabled: needsSelection },
+						},
+					]}
+				/>
 			</div>
 
 			{creating && programId != null && (

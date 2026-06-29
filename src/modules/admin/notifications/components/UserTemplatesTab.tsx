@@ -24,7 +24,7 @@ type View = { mode: 'list' } | { mode: 'new' } | { mode: 'edit'; template: Email
 export function UserTemplatesTab() {
 	const { t, locale } = useI18n();
 	const { toast, showToast, clearToast } = useApiErrorToast();
-	const { data: templates = [], isLoading, isError, refetch } = useEmailTemplates();
+	const { data: templates = [], isLoading, isFetching, isError, refetch } = useEmailTemplates();
 	const { data: categories = [] } = useNotificationCategories();
 	const { data: userVars = [] } = useUserNotifyVars();
 	const { remove } = useEmailTemplateMutations();
@@ -153,6 +153,7 @@ export function UserTemplatesTab() {
 				searchPlaceholder={t('admin.notify.template.search')}
 				aria-label={t('admin.notify.user.title')}
 				isLoading={isLoading}
+				isFetching={isFetching}
 				actions={[
 					{
 						label: t('admin.notify.user.create'),

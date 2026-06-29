@@ -24,7 +24,7 @@ export function RolesTab() {
 	const { t, locale } = useI18n();
 	const { mode, editId, openCreate, openEdit, backToList } = useIamView('roles');
 	const { toast, showToast, clearToast } = useApiErrorToast();
-	const { data: roles = [], isLoading, isError, refetch } = useRoles();
+	const { data: roles = [], isLoading, isFetching, isError, refetch } = useRoles();
 	const deleteRole = useDeleteRole();
 
 	const [pendingDelete, setPendingDelete] = useState<AdminRole | null>(null);
@@ -157,6 +157,7 @@ export function RolesTab() {
 				searchPlaceholder={t('admin.iam.roles.search')}
 				aria-label={t('admin.iam.roles.title')}
 				isLoading={isLoading}
+				isFetching={isFetching}
 				actions={[
 					{
 						label: t('admin.iam.roles.create'),

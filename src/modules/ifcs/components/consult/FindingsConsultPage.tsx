@@ -142,7 +142,10 @@ export function FindingsConsultPage() {
 
 	return (
 		<div className="space-y-6">
-			<PageHeader title={t('ifcFindings.page.title')} />
+			<PageHeader
+				title={t('ifcFindings.page.title')}
+				description={t('ifcFindings.page.subtitle')}
+			/>
 			<Card className={chartIncomplete ? 'hidden' : ''}>
 				{academicPeriodId === null ? (
 					<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>

@@ -205,6 +205,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				<>
 					<PageHeader
 						title={projectName}
+						description={t('projects.edit.subtitle')}
 						action={
 							<Button
 								variant="secondary"

@@ -17,7 +17,7 @@ import { ModuleTypeFormDialog } from './ModuleTypeFormDialog';
 export function ModulesTab() {
 	const { t, locale } = useI18n();
 	const { toast, showToast, clearToast } = useApiErrorToast();
-	const { data: modules = [], isLoading, isError, refetch } = useModules();
+	const { data: modules = [], isLoading, isFetching, isError, refetch } = useModules();
 	const { data: typeGroups } = useTypeGroups({ code: TYPE_GROUP_CODES.IAM_MODULE });
 	const { remove } = useModuleTypeMutations();
 
@@ -130,6 +130,7 @@ export function ModulesTab() {
 				searchPlaceholder={t('admin.iam.modules.search')}
 				aria-label={t('admin.iam.modules.title')}
 				isLoading={isLoading}
+				isFetching={isFetching}
 				actions={[
 					{
 						label: t('admin.iam.modules.create'),

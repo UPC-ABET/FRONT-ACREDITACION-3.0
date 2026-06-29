@@ -352,6 +352,7 @@
 	"ifcs": {
 		"page": {
 			"title": "End of Course Report",
+			"subtitle": "Manage the end-of-course reports for the selected period.",
 			"period": "Academic Period",
 			"selectPeriod": "Select an academic period in the top bar to continue.",
 			"noSchools": "No schools are available for the selected period yet. The organization chart may not have been uploaded. Please contact the administrator.",
@@ -461,7 +462,8 @@
 	},
 	"ifcFindings": {
 		"page": {
-			"title": "Findings"
+			"title": "Findings",
+			"subtitle": "Review the findings recorded across end-of-course reports."
 		},
 		"col": {
 			"criticality": "Criticality",
@@ -2029,6 +2031,7 @@
 			"error": "Could not load the project.",
 			"notFound": "Project not found.",
 			"backButton": "Back",
+			"subtitle": "Evaluate the project against its assigned rubric.",
 			"docReadOnly": "Your role is DOCENTE. You can view the project and its grades, but you cannot grade.",
 			"readOnlyNoPermission": "Your evaluator role does not have permission to grade this project. You are in read-only mode.",
 			"notAssigned": "You are not assigned as an evaluator for this project.",
@@ -2075,6 +2078,7 @@
 			"loading": "Loading project...",
 			"error": "Could not load the project.",
 			"backButton": "Back to projects",
+			"subtitle": "Edit the project information.",
 			"header": {
 				"course": "Course",
 				"rubricType": "Rubric type",

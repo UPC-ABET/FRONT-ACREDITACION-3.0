@@ -13,6 +13,7 @@ export function useProgramCommissions(academicPeriodId: number | null) {
 	return useQuery<ProgramCommissionAssociation[], Error>({
 		queryKey: configurationKeys.programCommissionsByPeriod(academicPeriodId ?? 0),
 		queryFn: () => listProgramCommissions(),
+		placeholderData: (previousData) => previousData,
 		enabled: academicPeriodId !== null,
 	});
 }
