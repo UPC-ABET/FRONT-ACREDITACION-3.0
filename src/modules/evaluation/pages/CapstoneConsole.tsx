@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, LoadingState, PageHeader } from '@/shared/components';
+import { Button, Card, LoadingState, PageHeader, TableEmptyState } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { CapstoneProjectCard, RubricEvaluationMatrix } from '../components/capstone';
 import {
@@ -16,10 +16,7 @@ interface CapstoneConsolePageProps {
 	studentsByProject: Record<number, Array<{ id: number; code: string; name: string }>>;
 }
 
-export default function CapstoneConsolePage({
-	professorId,
-	studentsByProject,
-}: CapstoneConsolePageProps) {
+export function CapstoneConsolePage({ professorId, studentsByProject }: CapstoneConsolePageProps) {
 	const { t } = useI18n();
 	const { data: projects, isLoading: loadingProjects } = useCapstoneProjects(professorId);
 	const [selectedProject, setSelectedProject] = useState<CapstoneProject | null>(null);
@@ -40,7 +37,7 @@ export default function CapstoneConsolePage({
 					<LoadingState className="py-4" label={t('capstone.projects.loading')} />
 				)}
 				{!loadingProjects && (projects?.length ?? 0) === 0 && (
-					<p className="py-6 text-center text-sm text-gray-400">{t('capstone.projects.empty')}</p>
+					<TableEmptyState message={t('capstone.projects.empty')} />
 				)}
 				<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 					{(projects ?? []).map((p) => (
@@ -63,17 +60,15 @@ export default function CapstoneConsolePage({
 						{(studentsByProject[selectedProject.id] ?? []).map((s) => {
 							const active = selectedStudent?.id === s.id;
 							return (
-								<button
+								<Button
 									key={s.id}
 									type="button"
+									size="sm"
+									variant={active ? 'primary' : 'surface'}
 									onClick={() => setSelectedStudent(s)}
-									className={`rounded-full px-3 py-1 text-xs ${
-										active
-											? 'border border-red-400 bg-red-50 text-red-700'
-											: 'border border-gray-200 bg-white text-gray-600 hover:border-red-300'
-									}`}>
+									className="rounded-full">
 									{s.code} — {s.name}
-								</button>
+								</Button>
 							);
 						})}
 					</div>

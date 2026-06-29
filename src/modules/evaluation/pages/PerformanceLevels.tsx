@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { PencilSquareIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
-	buttonVariants,
 	Card,
 	Dialog,
 	DialogContent,
@@ -24,7 +23,6 @@ import {
 } from '@/shared/components/ui';
 import { Select } from '@/shared/components/ui/Select';
 import { Input } from '@/shared/components/ui/Input';
-import { cn } from '@/shared/lib/utils';
 import { tryTranslate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import {
@@ -273,16 +271,10 @@ export function PerformanceLevelsPage() {
 
 					{selectedInstrument != null && (
 						<div className="flex justify-end">
-							<button
-								type="button"
-								onClick={handleClearFilters}
-								className={cn(
-									buttonVariants({ variant: 'warning', size: 'md' }),
-									'inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-red-100 hover:text-red-500',
-								)}>
+							<Button variant="secondary" onClick={handleClearFilters}>
 								<TrashIcon className="h-4 w-4" />
 								{t('performanceLevels.list.clearFilters')}
-							</button>
+							</Button>
 						</div>
 					)}
 				</div>

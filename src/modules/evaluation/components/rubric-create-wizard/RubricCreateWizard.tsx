@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Toast } from '@/shared/components/ui/Toast';
-import { SubTitle, Title } from '@/shared/components';
+import { PageHeader } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { tryTranslateReason } from '@/shared/utils/tryTranslate';
 import { useCreateRubricFull } from '@/modules';
@@ -79,17 +79,8 @@ export function RubricCreateWizard() {
 		step2Data?.isCapstone && step2Data?.gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
 
 	return (
-		<div className="space-y-8">
-			<div>
-				<Title
-					title={t('rubrics.wizard.title')}
-					className="[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-zinc-900"
-				/>
-				<SubTitle
-					name={t('rubrics.wizard.subtitle')}
-					className="mt-2 [&_h3]:text-base [&_h3]:font-normal [&_h3]:text-zinc-600"
-				/>
-			</div>
+		<div className="space-y-6">
+			<PageHeader title={t('rubrics.wizard.title')} description={t('rubrics.wizard.subtitle')} />
 
 			<WizardStepIndicator steps={steps} currentStep={currentStep} />
 

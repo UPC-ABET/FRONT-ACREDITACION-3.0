@@ -156,16 +156,10 @@ export function RubricsListPage() {
 
 					{hasFilters && (
 						<div className="flex justify-end">
-							<button
-								type="button"
-								onClick={handleClearFilters}
-								className={cn(
-									buttonVariants({ variant: 'warning', size: 'md' }),
-									'inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-red-100 hover:text-red-500',
-								)}>
+							<Button variant="secondary" onClick={handleClearFilters}>
 								<TrashIcon className="h-4 w-4" />
 								{t('rubrics.list.clearFilters')}
-							</button>
+							</Button>
 						</div>
 					)}
 				</div>
@@ -281,8 +275,7 @@ export function RubricsListPage() {
 							}
 						/>
 						<Button
-							variant="primary"
-							className="bg-red-600 hover:bg-red-700"
+							variant="danger"
 							disabled={deleteMutation.isPending}
 							onClick={() => {
 								if (confirmTarget) {

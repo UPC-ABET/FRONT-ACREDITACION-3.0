@@ -8,12 +8,14 @@ import { Download, Pencil } from 'lucide-react';
 import {
 	Alert,
 	Button,
+	buttonVariants,
 	Card,
 	DataTable,
 	PageHeader,
 	TableLoadingState,
 } from '@/shared/components/ui';
 import { getErrorMessage, triggerBlobDownload } from '@/shared/lib';
+import { cn } from '@/shared/lib/utils';
 import { tryTranslate } from '@/shared/utils';
 import {
 	useABET,
@@ -74,7 +76,12 @@ export function ArdViewPage() {
 	);
 
 	if (ardQuery.isLoading) {
-		return <TableLoadingState label={t('ard.loading')} />;
+		return (
+			<div className="space-y-6">
+				<PageHeader title={t('ard.view.title')} />
+				<TableLoadingState label={t('ard.loading')} />
+			</div>
+		);
 	}
 
 	if (ardQuery.isError || !ard) {
@@ -184,7 +191,7 @@ export function ArdViewPage() {
 			/>
 
 			<div>
-				<Link href="/ard" className="text-sm font-medium text-zinc-500 hover:text-zinc-700">
+				<Link href="/ard" className={cn(buttonVariants({ variant: 'surface' }))}>
 					{t('ard.flow.backToOverview')}
 				</Link>
 			</div>

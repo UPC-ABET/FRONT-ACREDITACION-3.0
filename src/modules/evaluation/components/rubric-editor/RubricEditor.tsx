@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Skeleton } from '@/shared/components/ui';
+import { Skeleton, TableErrorState } from '@/shared/components/ui';
 import { Toast } from '@/shared/components/ui/Toast';
 import { useI18n } from '@/providers';
 import { useRubricEditor } from '../../hooks/useRubricEditor';
@@ -62,15 +62,11 @@ export function RubricEditor({ rubricId, initialRubric }: RubricEditorProps) {
 	}
 
 	if (!rubric) {
-		return (
-			<div className="rounded-lg border border-red-200 bg-red-50 p-6 text-sm text-red-700">
-				{errorMessage || t('rubrics.editor.error.notFound')}
-			</div>
-		);
+		return <TableErrorState message={errorMessage || t('rubrics.editor.error.notFound')} />;
 	}
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-6">
 			<RubricHeader rubric={rubric} />
 
 			{!canEdit ? <ReadonlyBanner /> : null}

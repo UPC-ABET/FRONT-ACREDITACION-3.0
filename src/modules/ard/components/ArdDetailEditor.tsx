@@ -366,12 +366,9 @@ export function ArdDetailEditor({
 			</Dialog>
 
 			<div className="flex items-center justify-between">
-				<button
-					type="button"
-					onClick={onCancel}
-					className="text-sm font-medium text-zinc-500 hover:text-zinc-700">
+				<Button variant="surface" onClick={onCancel}>
 					{t('ard.actions.cancel')}
-				</button>
+				</Button>
 				<Button onClick={handleSave} disabled={!canSave} loading={bulk.isPending}>
 					{t('ard.actions.save')}
 				</Button>

@@ -2,13 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge, DataTable, Select, TableErrorState } from '@/shared/components';
+import { Badge, Card, DataTable, Select, TableErrorState } from '@/shared';
 import { useI18n } from '@/providers';
 import { TYPE_CODES } from '@/shared/constants';
 import { useNotificationCategories } from '../hooks/useEmailTemplates';
 import { useNotificationLogs, useNotificationStatuses } from '../hooks/useNotificationLogs';
 import type { CoreType, NotificationLog, NotificationLogFilters } from '../types';
-import { TabHeader } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 function statusVariant(code: string): 'success' | 'danger' | 'default' {
@@ -128,35 +127,38 @@ export function NotificationLogsTab() {
 
 	return (
 		<div className="space-y-6">
-			<TabHeader title={t('admin.notify.log.title')} description={t('admin.notify.log.subtitle')} />
-			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[280px_280px]">
-				<Select
-					name="category"
-					label={t('admin.notify.log.filter.category')}
-					placeholder={t('admin.notify.log.filter.categoryPlaceholder')}
-					isClearable
-					options={categoryOptions}
-					value={selectedCategory}
-					onChange={(_name, value) =>
-						setCategoryTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
-					}
-				/>
-				<Select
-					name="status"
-					label={t('admin.notify.log.filter.status')}
-					placeholder={t('admin.notify.log.filter.statusPlaceholder')}
-					isClearable
-					options={statusOptions}
-					value={selectedStatus}
-					onChange={(_name, value) =>
-						setStatusTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
-					}
-				/>
-			</div>
+			<Card>
+				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[280px_280px]">
+					<Select
+						name="category"
+						label={t('admin.notify.log.filter.category')}
+						placeholder={t('admin.notify.log.filter.categoryPlaceholder')}
+						isClearable
+						options={categoryOptions}
+						value={selectedCategory}
+						onChange={(_name, value) =>
+							setCategoryTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
+						}
+					/>
+					<Select
+						name="status"
+						label={t('admin.notify.log.filter.status')}
+						placeholder={t('admin.notify.log.filter.statusPlaceholder')}
+						isClearable
+						options={statusOptions}
+						value={selectedStatus}
+						onChange={(_name, value) =>
+							setStatusTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
+						}
+					/>
+				</div>
+			</Card>
 
 			<DataTable
 				columns={columns}
 				data={logs}
+				title={t('admin.notify.log.title')}
+				description={t('admin.notify.log.subtitle')}
 				isLoading={isLoading}
 				aria-label={t('admin.notify.log.title')}
 			/>

@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Input, Button, LoadingDialog, ErrorDialog } from '@/shared/components';
+import { Input, Button, Checkbox, LoadingDialog, ErrorDialog, Title } from '@/shared/components';
 import type { LoginPayload } from '@/modules/auth/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
 import { safeRedirect } from '@/shared/lib';
@@ -22,6 +23,7 @@ export default function LoginForm() {
 	const initialMicrosoftErrorKey = microsoftErrorKey(searchParams.get('error'));
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [rememberMe, setRememberMe] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [dialogOpen, setDialogOpen] = useState(initialMicrosoftErrorKey != null);
@@ -75,6 +77,13 @@ export default function LoginForm() {
 
 	return (
 		<form onSubmit={handleSubmit} className="space-y-6">
+			<div className="space-y-2 text-center">
+				<Title
+					title={t('login.title')}
+					className="justify-center [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-zinc-900"
+				/>
+			</div>
+
 			<div className="space-y-2">
 				{error && (
 					<div role="alert" className="text-sm text-red-600">
@@ -102,11 +111,14 @@ export default function LoginForm() {
 				</div>
 			</div>
 
-			<div className="flex items-center">
-				<label htmlFor="remember-me" className="flex items-center text-sm">
-					<input id="remember-me" type="checkbox" className="mr-2" /> {t('login.remember')}
-				</label>
-			</div>
+			<label htmlFor="remember-me" className="flex items-center gap-2 text-sm">
+				<Checkbox
+					id="remember-me"
+					checked={rememberMe}
+					onCheckedChange={(checked) => setRememberMe(checked)}
+				/>
+				{t('login.remember')}
+			</label>
 
 			<div className="space-y-3">
 				<Button type="submit" className="w-full">
@@ -124,14 +136,11 @@ export default function LoginForm() {
 					</svg>
 					{t('login.microsoft')}
 				</Button>
-				<div className="text-center">
-					<button
-						type="button"
-						onClick={() => router.push('/auth/forgot-password')}
-						className="inline-flex cursor-pointer items-center justify-center text-sm font-medium text-red-600 transition-colors hover:text-red-500">
-						{t('login.forgot')}
-					</button>
-				</div>
+				<Link
+					href="/auth/forgot-password"
+					className="block w-full cursor-pointer text-center text-sm font-medium text-red-600 transition-colors hover:text-red-500">
+					{t('login.forgot')}
+				</Link>
 			</div>
 
 			{loading && <LoadingDialog isOpen={loading} label={t('login.loading')} />}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Tabs } from '@/shared/components';
+import { Tabs } from '@/shared';
 import { useI18n } from '@/providers';
 import type { CoreType, NotificationConfig } from '../types';
 import { TRIGGER_FALLBACK_LABEL } from './adminLabels';
@@ -62,26 +62,12 @@ export function ConfigTabs({ triggers, statuses, configs }: Props) {
 				<p className="text-sm font-semibold uppercase tracking-wider text-zinc-500">
 					{t('ifcs.table.status')}
 				</p>
-				<div
-					role="tablist"
-					aria-label={t('ifcs.table.status')}
-					className="inline-flex flex-wrap gap-1 rounded-lg border border-zinc-200 bg-zinc-100 p-1.5">
-					{statusItems.map((s) => {
-						const active = s.id === activeStatus;
-						return (
-							<button
-								key={s.id}
-								role="tab"
-								aria-selected={active}
-								onClick={() => setActiveStatus(s.id)}
-								className={`min-h-[40px] whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold uppercase tracking-wider transition-colors ${
-									active ? 'bg-white text-red-700 shadow-sm' : 'text-zinc-600 hover:text-zinc-900'
-								}`}>
-								{s.label}
-							</button>
-						);
-					})}
-				</div>
+				<Tabs
+					tabs={statusItems}
+					activeTab={activeStatus}
+					onChange={setActiveStatus}
+					ariaLabel={t('ifcs.table.status')}
+				/>
 			</div>
 
 			<ConfigEditor

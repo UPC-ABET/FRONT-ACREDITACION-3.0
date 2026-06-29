@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useTabParam } from '@/shared';
 import Link from 'next/link';
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -32,7 +33,8 @@ export function GradeProjectsPage() {
 	const { user: authUser } = useAuth();
 	const { academicPeriodId: selectedPeriodId } = useABET();
 
-	const [activeTab, setActiveTab] = useState<RubricTab>('partial');
+	const [tabParam, setTab] = useTabParam('partial');
+	const activeTab: RubricTab = tabParam === 'final' ? 'final' : 'partial';
 	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -231,10 +233,6 @@ export function GradeProjectsPage() {
 		{ id: 'final' as const, label: t('projects.grade.tabs.final') },
 	];
 
-	const handleTabChange = (id: string) => {
-		setActiveTab(id as RubricTab);
-	};
-
 	return (
 		<div className="space-y-6">
 			<PageHeader title={t('projects.grade.title')} description={t('projects.grade.description')} />
@@ -242,7 +240,7 @@ export function GradeProjectsPage() {
 			<Tabs
 				tabs={tabs}
 				activeTab={activeTab}
-				onChange={handleTabChange}
+				onChange={setTab}
 				ariaLabel={t('projects.grade.tabs.ariaLabel')}
 			/>
 

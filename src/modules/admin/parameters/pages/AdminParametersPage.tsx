@@ -1,7 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { PageHeader, Tabs } from '@/shared/components';
+import { PageHeader, Tabs, useTabParam } from '@/shared';
 import { useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import { IfcCodesPage } from '../components/IfcCodesPage';
 import { IfcFieldsPage } from '../components/IfcFieldsPage';
@@ -11,12 +10,9 @@ const DEFAULT_TAB = 'ifc';
 const DEFAULT_IFC_SUB = 'codes';
 
 export default function AdminParametersPage() {
-	const router = useRouter();
-	const searchParams = useSearchParams();
 	const { t } = useI18n();
-
-	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
-	const activeSub = searchParams.get('sub') ?? DEFAULT_IFC_SUB;
+	const [activeTab, setTab] = useTabParam(DEFAULT_TAB, { clearParams: ['sub'] });
+	const [activeSub, setSub] = useTabParam(DEFAULT_IFC_SUB, { paramName: 'sub' });
 
 	useGlobalAcademicFiltersVisibilityOverride(
 		activeTab === 'ifc' ? { school: false, modality: false, period: false } : {},
@@ -31,19 +27,6 @@ export default function AdminParametersPage() {
 		{ id: 'codes', label: t('admin.parameters.ifc.tabs.codes') },
 		{ id: 'fields', label: t('admin.parameters.ifc.tabs.fields') },
 	];
-
-	const setTab = (id: string) => {
-		const next = new URLSearchParams(searchParams.toString());
-		next.set('tab', id);
-		next.delete('sub');
-		router.replace(`/admin/parameters?${next.toString()}`);
-	};
-
-	const setSub = (id: string) => {
-		const next = new URLSearchParams(searchParams.toString());
-		next.set('sub', id);
-		router.replace(`/admin/parameters?${next.toString()}`);
-	};
 
 	return (
 		<div className="space-y-6">

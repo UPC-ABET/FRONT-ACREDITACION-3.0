@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ExclamationTriangleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {
+	Alert,
 	Button,
 	Card,
 	LoadingDialog,
@@ -171,10 +172,10 @@ export function FindingsConsultPage() {
 			</Card>
 
 			{chartIncomplete && (
-				<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
+				<Alert variant="destructive" className="flex items-start gap-3 text-base">
 					<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
 					<p>{CONSULT_LABELS.chartIncomplete[lang]}</p>
-				</div>
+				</Alert>
 			)}
 
 			{!noSchools && !chartIncomplete && hasSearched && rows.length === 0 && !submitting && (

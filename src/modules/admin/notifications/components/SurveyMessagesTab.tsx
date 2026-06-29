@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Button, ConfirmDialog, DataTable, TableErrorState, Toast } from '@/shared/components';
+import { Button, ConfirmDialog, DataTable, TableErrorState, Toast } from '@/shared';
 import { useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getErrorMessage } from '@/shared/lib/apiError';
@@ -14,7 +14,7 @@ import {
 } from '../hooks/useSurveyMessages';
 import type { CoreType, SurveyMessage } from '../types';
 import { SurveyMessageEditor } from './SurveyMessageEditor';
-import { StatusBadge, TabHeader } from './shared';
+import { StatusBadge } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 type View = { mode: 'list' } | { mode: 'new' } | { mode: 'edit'; message: SurveyMessage };
@@ -130,13 +130,11 @@ export function SurveyMessagesTab() {
 
 	return (
 		<div className="space-y-6">
-			<TabHeader
-				title={t('admin.notify.survey.title')}
-				description={t('admin.notify.survey.subtitle')}
-			/>
 			<DataTable
 				columns={columns}
 				data={messages}
+				title={t('admin.notify.survey.title')}
+				description={t('admin.notify.survey.subtitle')}
 				aria-label={t('admin.notify.survey.title')}
 				isLoading={isLoading}
 				actions={[

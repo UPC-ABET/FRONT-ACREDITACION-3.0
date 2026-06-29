@@ -1,20 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
 import { EyeIcon } from '@heroicons/react/24/outline';
-import {
-	Button,
-	Card,
-	Select,
-	SubTitle,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-	Title,
-} from '@/shared/components';
+import { Button, Card, DataTable, Select, SubTitle, Title } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
 import {
 	useAccreditors,
@@ -22,6 +11,7 @@ import {
 	useProgramCommissionsDetailed,
 	useProgramOptions,
 } from '../hooks';
+import type { CourseOutcomeMappingFilterRow } from '../types';
 
 interface CourseOutcomeMappingListProps {
 	onView: (programCommissionId: number) => void;
@@ -111,10 +101,49 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 	const toValue = (option: { value: string | number } | null) =>
 		option ? Number(option.value) : null;
 
-	const renderNotice = (message: string) => (
-		<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-			<p className="text-sm text-zinc-500">{message}</p>
-		</div>
+	const columns = useMemo<ColumnDef<CourseOutcomeMappingFilterRow>[]>(
+		() => [
+			{
+				accessorKey: 'accreditorCode',
+				header: t('loads.courseOutcomeMappingMaintenance.col.accreditorCode'),
+				meta: { cellClassName: 'font-mono text-zinc-700' },
+			},
+			{
+				accessorKey: 'commissionCode',
+				header: t('loads.courseOutcomeMappingMaintenance.col.commissionCode'),
+				meta: { cellClassName: 'font-mono text-zinc-700' },
+			},
+			{
+				id: 'program',
+				header: t('loads.courseOutcomeMappingMaintenance.col.program'),
+				meta: { cellClassName: 'text-zinc-800' },
+				cell: ({ row }) => localized(row.original.programName, locale),
+			},
+			{
+				accessorKey: 'academicPeriodCode',
+				header: t('loads.courseOutcomeMappingMaintenance.col.academicPeriod'),
+				meta: { cellClassName: 'font-mono text-zinc-700' },
+			},
+			{
+				id: 'actions',
+				header: t('loads.courseOutcomeMappingMaintenance.col.actions'),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
+				cell: ({ row }) => (
+					<div className="flex items-center justify-end gap-1">
+						<Button
+							variant="ghost"
+							size="icon"
+							className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+							onClick={() => onView(row.original.programCommissionId)}
+							aria-label={t('loads.courseOutcomeMappingMaintenance.actions.view')}
+							title={t('loads.courseOutcomeMappingMaintenance.actions.view')}>
+							<EyeIcon className="h-5 w-5" />
+						</Button>
+					</div>
+				),
+			},
+		],
+		[t, locale, onView],
 	);
 
 	return (
@@ -172,84 +201,24 @@ export function CourseOutcomeMappingList({ onView }: CourseOutcomeMappingListPro
 					/>
 				</div>
 
-				{academicPeriodId == null ? (
-					renderNotice(t('loads.courseOutcomeMappingMaintenance.selectPeriod'))
-				) : detailedQuery.isError ? (
-					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm text-zinc-500">
-							{t('loads.courseOutcomeMappingMaintenance.error.loadFailed')}
-						</p>
-						<Button variant="surface" size="sm" onClick={() => detailedQuery.refetch()}>
-							{t('loads.courseOutcomeMappingMaintenance.retry')}
-						</Button>
-					</div>
-				) : detailedQuery.isLoading ? (
-					<div className="space-y-2" aria-busy>
-						{Array.from({ length: 6 }).map((_, index) => (
-							<div key={index} className="h-12 animate-pulse rounded-lg bg-zinc-100" />
-						))}
-					</div>
-				) : tableRows.length === 0 ? (
-					renderNotice(t('loads.courseOutcomeMappingMaintenance.empty'))
-				) : (
-					<div
-						className={
-							detailedQuery.isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'
-						}>
-						<div className="overflow-x-auto">
-							<Table>
-								<TableHeader>
-									<TableRow>
-										<TableHead>
-											{t('loads.courseOutcomeMappingMaintenance.col.accreditorCode')}
-										</TableHead>
-										<TableHead>
-											{t('loads.courseOutcomeMappingMaintenance.col.commissionCode')}
-										</TableHead>
-										<TableHead>{t('loads.courseOutcomeMappingMaintenance.col.program')}</TableHead>
-										<TableHead>
-											{t('loads.courseOutcomeMappingMaintenance.col.academicPeriod')}
-										</TableHead>
-										<TableHead className="text-right">
-											{t('loads.courseOutcomeMappingMaintenance.col.actions')}
-										</TableHead>
-									</TableRow>
-								</TableHeader>
-								<TableBody>
-									{tableRows.map((row) => (
-										<TableRow key={row.programCommissionId}>
-											<TableCell className="font-mono text-zinc-700">
-												{row.accreditorCode}
-											</TableCell>
-											<TableCell className="font-mono text-zinc-700">
-												{row.commissionCode}
-											</TableCell>
-											<TableCell className="text-zinc-800">
-												{localized(row.programName, locale)}
-											</TableCell>
-											<TableCell className="font-mono text-zinc-700">
-												{row.academicPeriodCode}
-											</TableCell>
-											<TableCell>
-												<div className="flex items-center justify-end gap-1">
-													<Button
-														variant="ghost"
-														size="icon"
-														className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-														onClick={() => onView(row.programCommissionId)}
-														aria-label={t('loads.courseOutcomeMappingMaintenance.actions.view')}
-														title={t('loads.courseOutcomeMappingMaintenance.actions.view')}>
-														<EyeIcon className="h-5 w-5" />
-													</Button>
-												</div>
-											</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
-							</Table>
-						</div>
-					</div>
-				)}
+				<DataTable
+					columns={columns}
+					data={tableRows}
+					showSearch={false}
+					showPagination={false}
+					aria-label={t('loads.courseOutcomeMappingMaintenance.title')}
+					isLoading={detailedQuery.isLoading}
+					errorMessage={
+						detailedQuery.isError
+							? t('loads.courseOutcomeMappingMaintenance.error.loadFailed')
+							: undefined
+					}
+					emptyMessage={
+						academicPeriodId == null
+							? t('loads.courseOutcomeMappingMaintenance.selectPeriod')
+							: t('loads.courseOutcomeMappingMaintenance.empty')
+					}
+				/>
 			</div>
 		</Card>
 	);

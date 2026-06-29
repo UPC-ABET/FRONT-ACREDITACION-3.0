@@ -1,11 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
-	ChevronLeftIcon,
-	ChevronRightIcon,
 	ExclamationTriangleIcon,
-	MagnifyingGlassIcon,
 	PencilSquareIcon,
 	PlusIcon,
 	TrashIcon,
@@ -14,18 +12,13 @@ import {
 	Button,
 	Card,
 	ConfirmDialog,
+	DataTable,
 	Dialog,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
 	SubTitle,
 	Title,
 	Toast,
@@ -44,41 +37,6 @@ import type {
 import { ProfessorMaintenanceCreateDialog, ProfessorMaintenanceEditDialog } from '@/modules';
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
-
-function RowActions({
-	onEdit,
-	onDelete,
-	editLabel,
-	deleteLabel,
-}: {
-	onEdit: () => void;
-	onDelete: () => void;
-	editLabel: string;
-	deleteLabel: string;
-}) {
-	return (
-		<div className="flex items-center justify-end gap-1">
-			<Button
-				variant="ghost"
-				size="icon"
-				className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-				onClick={onEdit}
-				aria-label={editLabel}
-				title={editLabel}>
-				<PencilSquareIcon className="h-5 w-5" />
-			</Button>
-			<Button
-				variant="ghost"
-				size="icon"
-				className="text-red-600 hover:bg-red-50"
-				onClick={onDelete}
-				aria-label={deleteLabel}
-				title={deleteLabel}>
-				<TrashIcon className="h-5 w-5" />
-			</Button>
-		</div>
-	);
-}
 
 export function ProfessorsMaintenance() {
 	const { t } = useI18n();
@@ -106,7 +64,7 @@ export function ProfessorsMaintenance() {
 		setPage(1);
 	};
 
-	const { data, isLoading, isFetching, isError, refetch } = useProfessorsMaintenance({
+	const { data, isLoading, isFetching, isError } = useProfessorsMaintenance({
 		page,
 		pageSize: PAGE_SIZE,
 		search: debouncedSearch,
@@ -167,165 +125,103 @@ export function ProfessorsMaintenance() {
 		setEditing(item);
 	};
 
-	const editLabel = t('loads.maintenance.actions.edit');
-	const deleteLabel = t('loads.maintenance.actions.delete');
+	const columns = useMemo<ColumnDef<ProfessorMaintenanceItem>[]>(
+		() => [
+			{
+				accessorKey: 'code',
+				header: t('loads.maintenance.col.code'),
+				meta: { cellClassName: 'font-mono text-zinc-800' },
+			},
+			{
+				accessorKey: 'firstName',
+				header: t('loads.maintenance.col.firstName'),
+				meta: { cellClassName: 'text-zinc-700' },
+			},
+			{
+				accessorKey: 'lastName',
+				header: t('loads.maintenance.col.lastName'),
+				meta: { cellClassName: 'text-zinc-700' },
+			},
+			{
+				id: 'email',
+				header: t('loads.maintenance.col.email'),
+				meta: { cellClassName: 'text-zinc-700' },
+				cell: ({ row }) => row.original.staffEmail ?? <span className="text-zinc-400">—</span>,
+			},
+			{
+				id: 'actions',
+				header: t('loads.maintenance.col.actions'),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
+				cell: ({ row }) => (
+					<div className="flex items-center justify-end gap-1">
+						<Button
+							variant="ghost"
+							size="icon"
+							className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+							onClick={() => openEdit(row.original)}
+							aria-label={t('loads.maintenance.actions.edit')}
+							title={t('loads.maintenance.actions.edit')}>
+							<PencilSquareIcon className="h-5 w-5" />
+						</Button>
+						<Button
+							variant="ghost"
+							size="icon"
+							className="text-red-600 hover:bg-red-50"
+							onClick={() => setPendingDelete(row.original)}
+							aria-label={t('loads.maintenance.actions.delete')}
+							title={t('loads.maintenance.actions.delete')}>
+							<TrashIcon className="h-5 w-5" />
+						</Button>
+					</div>
+				),
+			},
+		],
+		[t],
+	);
 
 	return (
 		<Card>
 			<div className="space-y-5">
-				<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-					<div className="space-y-1">
-						<Title
-							title={t('loads.maintenance.title')}
-							className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
-						/>
-						<SubTitle
-							name={t('loads.maintenance.subtitle')}
-							className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
-						/>
-					</div>
-					<div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-						<div className="relative w-full sm:max-w-xs">
-							<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-							<input
-								type="search"
-								value={search}
-								onChange={(event) => handleSearchChange(event.target.value)}
-								placeholder={t('loads.maintenance.searchPlaceholder')}
-								aria-label={t('loads.maintenance.searchPlaceholder')}
-								className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100"
-							/>
-						</div>
-						<Button
-							variant="primary"
-							size="sm"
-							className="w-full sm:w-auto"
-							onClick={() => {
-								setCreateError(null);
-								setCreating(true);
-							}}>
-							<PlusIcon className="h-4 w-4" />
-							<span>{t('loads.maintenance.actions.new')}</span>
-						</Button>
-					</div>
+				<div className="space-y-1">
+					<Title
+						title={t('loads.maintenance.title')}
+						className="[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900"
+					/>
+					<SubTitle
+						name={t('loads.maintenance.subtitle')}
+						className="[&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-gray-500"
+					/>
 				</div>
 
-				{isError ? (
-					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm text-zinc-500">{t('loads.maintenance.error.loadFailed')}</p>
-						<Button variant="surface" size="sm" onClick={() => refetch()}>
-							{t('loads.maintenance.retry')}
-						</Button>
-					</div>
-				) : isLoading ? (
-					<div className="space-y-2" aria-busy>
-						{Array.from({ length: 6 }).map((_, index) => (
-							<div key={index} className="h-12 animate-pulse rounded-lg bg-zinc-100" />
-						))}
-					</div>
-				) : items.length === 0 ? (
-					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm font-medium text-zinc-700">
-							{t('loads.maintenance.empty.title')}
-						</p>
-						<p className="text-sm text-zinc-500">{t('loads.maintenance.empty.subtitle')}</p>
-					</div>
-				) : (
-					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-						<div className="hidden overflow-x-auto md:block">
-							<Table>
-								<TableHeader>
-									<TableRow>
-										<TableHead>{t('loads.maintenance.col.code')}</TableHead>
-										<TableHead>{t('loads.maintenance.col.firstName')}</TableHead>
-										<TableHead>{t('loads.maintenance.col.lastName')}</TableHead>
-										<TableHead>{t('loads.maintenance.col.email')}</TableHead>
-										<TableHead className="text-right">
-											{t('loads.maintenance.col.actions')}
-										</TableHead>
-									</TableRow>
-								</TableHeader>
-								<TableBody>
-									{items.map((item) => (
-										<TableRow key={item.id}>
-											<TableCell className="font-mono text-zinc-800">{item.code}</TableCell>
-											<TableCell className="text-zinc-700">{item.firstName}</TableCell>
-											<TableCell className="text-zinc-700">{item.lastName}</TableCell>
-											<TableCell className="text-zinc-700">
-												{item.staffEmail ?? <span className="text-zinc-400">—</span>}
-											</TableCell>
-											<TableCell>
-												<RowActions
-													onEdit={() => openEdit(item)}
-													onDelete={() => setPendingDelete(item)}
-													editLabel={editLabel}
-													deleteLabel={deleteLabel}
-												/>
-											</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
-							</Table>
-						</div>
-
-						<ul className="space-y-3 md:hidden">
-							{items.map((item) => (
-								<li
-									key={item.id}
-									className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
-									<div className="flex items-start justify-between gap-3">
-										<div className="min-w-0">
-											<p className="font-mono text-xs text-zinc-400">{item.code}</p>
-											<p className="truncate font-medium text-zinc-900">
-												{item.firstName} {item.lastName}
-											</p>
-											{item.staffEmail && (
-												<p className="truncate text-sm text-zinc-500">{item.staffEmail}</p>
-											)}
-										</div>
-										<div className="shrink-0">
-											<RowActions
-												onEdit={() => openEdit(item)}
-												onDelete={() => setPendingDelete(item)}
-												editLabel={editLabel}
-												deleteLabel={deleteLabel}
-											/>
-										</div>
-									</div>
-								</li>
-							))}
-						</ul>
-					</div>
-				)}
-
-				{!isLoading && !isError && items.length > 0 && (
-					<div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
-						<p className="text-xs text-zinc-500">
-							{total} {t('loads.maintenance.results')}
-						</p>
-						<div className="flex items-center justify-center gap-3">
-							<Button
-								variant="surface"
-								size="sm"
-								disabled={page <= 1 || isFetching}
-								onClick={() => setPage((current) => Math.max(1, current - 1))}
-								aria-label={t('loads.maintenance.prev')}>
-								<ChevronLeftIcon className="h-4 w-4" />
-							</Button>
-							<span className="text-sm text-zinc-600">
-								{t('loads.maintenance.page')} {page} / {totalPages}
-							</span>
-							<Button
-								variant="surface"
-								size="sm"
-								disabled={page >= totalPages || isFetching}
-								onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-								aria-label={t('loads.maintenance.next')}>
-								<ChevronRightIcon className="h-4 w-4" />
-							</Button>
-						</div>
-					</div>
-				)}
+				<DataTable
+					columns={columns}
+					data={items}
+					searchPlaceholder={t('loads.maintenance.searchPlaceholder')}
+					searchValue={search}
+					onSearchChange={handleSearchChange}
+					aria-label={t('loads.maintenance.title')}
+					isLoading={isLoading}
+					errorMessage={isError ? t('loads.maintenance.error.loadFailed') : undefined}
+					emptyMessage={t('loads.maintenance.empty.title')}
+					serverPagination={{
+						page,
+						pageCount: totalPages,
+						total,
+						onPageChange: setPage,
+						isFetching,
+					}}
+					actions={[
+						{
+							label: t('loads.maintenance.actions.new'),
+							onClick: () => {
+								setCreateError(null);
+								setCreating(true);
+							},
+							icon: <PlusIcon className="h-4 w-4" />,
+							buttonProps: { variant: 'primary' },
+						},
+					]}
+				/>
 			</div>
 
 			{creating && (

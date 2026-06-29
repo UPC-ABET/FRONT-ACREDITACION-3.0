@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Button, ConfirmDialog, DataTable, TableErrorState, Toast } from '@/shared/components';
+import { Button, ConfirmDialog, DataTable, TableErrorState, Toast } from '@/shared';
 import { useI18n } from '@/providers';
 import { TYPE_CODES } from '@/shared/constants';
 import { useApiErrorToast } from '@/shared/hooks';
@@ -16,7 +16,7 @@ import {
 } from '../hooks/useEmailTemplates';
 import type { CoreType, EmailTemplate } from '../types';
 import { EmailTemplateEditor } from './EmailTemplateEditor';
-import { StatusBadge, TabHeader } from './shared';
+import { StatusBadge } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 type View = { mode: 'list' } | { mode: 'new' } | { mode: 'edit'; template: EmailTemplate };
@@ -145,13 +145,11 @@ export function UserTemplatesTab() {
 
 	return (
 		<div className="space-y-6">
-			<TabHeader
-				title={t('admin.notify.user.title')}
-				description={t('admin.notify.user.subtitle')}
-			/>
 			<DataTable
 				columns={columns}
 				data={userTemplates}
+				title={t('admin.notify.user.title')}
+				description={t('admin.notify.user.subtitle')}
 				searchPlaceholder={t('admin.notify.template.search')}
 				aria-label={t('admin.notify.user.title')}
 				isLoading={isLoading}

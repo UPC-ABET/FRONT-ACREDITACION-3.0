@@ -57,8 +57,7 @@ export function DeleteProjectDialog({
 						}
 					/>
 					<Button
-						variant="primary"
-						className="bg-red-600 hover:bg-red-700"
+						variant="danger"
 						disabled={deleteMutation.isPending}
 						onClick={() => {
 							if (!confirmTarget) return;

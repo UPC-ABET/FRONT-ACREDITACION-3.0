@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Button, Input, TextArea, Title } from '@/shared';
+import { Button, Card, Input, TableEmptyState, TextArea, Title } from '@/shared';
 import { useI18n } from '@/providers';
 import type { EnrolledStudentResponse } from '@/modules/academic';
 import type { Step1Data } from '../rubric-create-wizard/WizardStep1';
@@ -79,136 +79,137 @@ export function ProjectWizardStep2({
 	};
 
 	return (
-		<div className="space-y-8">
-			<section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4">
-				<Title
-					title={t('projects.create.step2.infoTitle')}
-					className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
-				/>
-
-				<div className="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm text-zinc-600">
-					<span className="font-medium text-zinc-800">{step1.periodCode}</span>
-					{' · '}
-					<span>{step1.courseName[loc]}</span>
-				</div>
-
+		<div className="space-y-6">
+			<Card title={t('projects.create.step2.infoTitle')}>
 				<div className="space-y-4">
-					<Input
-						label={t('projects.create.step2.fieldCode')}
-						placeholder={t('projects.create.step2.fieldCodePlaceholder')}
-						value={code}
-						onChange={(e) => setCode(e.target.value)}
-					/>
-					<Input
-						label={t('projects.create.step2.fieldName')}
-						placeholder={t('projects.create.step2.fieldNamePlaceholder')}
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-					/>
-					<TextArea
-						label={t('projects.create.step2.fieldDesc')}
-						placeholder={t('projects.create.step2.fieldDescPlaceholder')}
-						value={description}
-						onChange={(e) => setDescription(e.target.value)}
-						rows={3}
-					/>
-				</div>
-			</section>
-
-			<section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
-					<div className="flex items-center gap-3">
-						<Title
-							title={t('projects.create.step2.studentsTitle')}
-							className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
-						/>
-						{selectedStudents.length > 0 && (
-							<span className="text-xs text-zinc-400">{selectedStudents.length}</span>
-						)}
+					<div className="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm text-zinc-600">
+						<span className="font-medium text-zinc-800">{step1.periodCode}</span>
+						{' · '}
+						<span>{step1.courseName[loc]}</span>
 					</div>
-					<Button variant="primary" size="sm" onClick={() => setStudentModalOpen(true)}>
-						<PlusIcon className="h-4 w-4" />
-						{t('projects.create.step2.studentsAdd')}
-					</Button>
-				</div>
 
-				<div className="divide-y divide-zinc-100">
-					{selectedStudents.length === 0 ? (
-						<p className="px-6 py-8 text-center text-sm text-zinc-400">
-							{t('projects.create.step2.studentsEmpty')}
-						</p>
-					) : (
-						selectedStudents.map((s) => (
-							<div
-								key={s.studentSectionEnrollmentId}
-								className="flex items-center justify-between gap-4 px-6 py-4">
-								<div className="flex flex-col gap-0.5">
-									<span className="font-medium text-zinc-900 text-sm">
-										{s.firstName} {s.lastName}
-									</span>
-									<span className="text-xs font-mono text-zinc-400">{s.studentCode}</span>
-								</div>
-								<button
-									type="button"
-									onClick={() => removeStudent(s.studentSectionEnrollmentId)}
-									className="rounded-lg p-1.5 text-zinc-400 hover:bg-red-50 hover:text-red-600 transition-colors">
-									<XMarkIcon className="h-4 w-4" />
-								</button>
-							</div>
-						))
-					)}
-				</div>
-			</section>
-
-			<section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
-					<div className="flex items-center gap-3">
-						<Title
-							title={t('projects.create.step2.evaluatorsTitle')}
-							className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+					<div className="space-y-4">
+						<Input
+							label={t('projects.create.step2.fieldCode')}
+							placeholder={t('projects.create.step2.fieldCodePlaceholder')}
+							value={code}
+							onChange={(e) => setCode(e.target.value)}
 						/>
-						{evaluators.length > 0 && (
-							<span className="text-xs text-zinc-400">{evaluators.length}</span>
-						)}
+						<Input
+							label={t('projects.create.step2.fieldName')}
+							placeholder={t('projects.create.step2.fieldNamePlaceholder')}
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+						/>
+						<TextArea
+							label={t('projects.create.step2.fieldDesc')}
+							placeholder={t('projects.create.step2.fieldDescPlaceholder')}
+							value={description}
+							onChange={(e) => setDescription(e.target.value)}
+							rows={3}
+						/>
 					</div>
-					<Button variant="primary" size="sm" onClick={() => setEvaluatorModalOpen(true)}>
-						<PlusIcon className="h-4 w-4" />
-						{t('projects.create.step2.evaluatorsAdd')}
-					</Button>
 				</div>
+			</Card>
 
-				<div className="divide-y divide-zinc-100">
-					{evaluators.length === 0 ? (
-						<p className="px-6 py-8 text-center text-sm text-zinc-400">
-							{t('projects.create.step2.evaluatorsEmpty')}
-						</p>
-					) : (
-						evaluators.map((ev, idx) => (
-							<div
-								key={`${ev.professorId}-${ev.typeId}`}
-								className="flex items-center justify-between gap-4 px-6 py-4">
-								<div className="flex flex-col gap-1">
-									<div className="flex flex-wrap items-center gap-2">
-										<span className="font-medium text-zinc-900 text-sm">{ev.professorName}</span>
-										<span className="rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
-											{ev.typeName[loc] ?? ev.typeName.es}
+			<Card>
+				<div className="-m-4">
+					<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
+						<div className="flex items-center gap-3">
+							<Title
+								title={t('projects.create.step2.studentsTitle')}
+								className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+							/>
+							{selectedStudents.length > 0 && (
+								<span className="text-xs text-zinc-400">{selectedStudents.length}</span>
+							)}
+						</div>
+						<Button variant="primary" size="sm" onClick={() => setStudentModalOpen(true)}>
+							<PlusIcon className="h-4 w-4" />
+							{t('projects.create.step2.studentsAdd')}
+						</Button>
+					</div>
+
+					<div className="divide-y divide-zinc-100">
+						{selectedStudents.length === 0 ? (
+							<TableEmptyState message={t('projects.create.step2.studentsEmpty')} />
+						) : (
+							selectedStudents.map((s) => (
+								<div
+									key={s.studentSectionEnrollmentId}
+									className="flex items-center justify-between gap-4 px-6 py-4">
+									<div className="flex flex-col gap-0.5">
+										<span className="font-medium text-zinc-900 text-sm">
+											{s.firstName} {s.lastName}
 										</span>
+										<span className="text-xs font-mono text-zinc-400">{s.studentCode}</span>
 									</div>
-									{ev.professorEmail && (
-										<span className="text-xs text-zinc-400 truncate">{ev.professorEmail}</span>
-									)}
+									<Button
+										variant="ghost"
+										size="icon"
+										className="text-zinc-400 hover:bg-red-50 hover:text-red-600"
+										onClick={() => removeStudent(s.studentSectionEnrollmentId)}
+										aria-label={t('projects.create.step2.studentsAdd')}>
+										<XMarkIcon className="h-4 w-4" />
+									</Button>
 								</div>
-								<button
-									type="button"
-									onClick={() => removeEvaluator(idx)}
-									className="rounded-lg p-1.5 text-zinc-400 hover:bg-red-50 hover:text-red-600 transition-colors">
-									<XMarkIcon className="h-4 w-4" />
-								</button>
-							</div>
-						))
-					)}
+							))
+						)}
+					</div>
 				</div>
-			</section>
+			</Card>
+
+			<Card>
+				<div className="-m-4">
+					<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
+						<div className="flex items-center gap-3">
+							<Title
+								title={t('projects.create.step2.evaluatorsTitle')}
+								className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+							/>
+							{evaluators.length > 0 && (
+								<span className="text-xs text-zinc-400">{evaluators.length}</span>
+							)}
+						</div>
+						<Button variant="primary" size="sm" onClick={() => setEvaluatorModalOpen(true)}>
+							<PlusIcon className="h-4 w-4" />
+							{t('projects.create.step2.evaluatorsAdd')}
+						</Button>
+					</div>
+
+					<div className="divide-y divide-zinc-100">
+						{evaluators.length === 0 ? (
+							<TableEmptyState message={t('projects.create.step2.evaluatorsEmpty')} />
+						) : (
+							evaluators.map((ev, idx) => (
+								<div
+									key={`${ev.professorId}-${ev.typeId}`}
+									className="flex items-center justify-between gap-4 px-6 py-4">
+									<div className="flex flex-col gap-1">
+										<div className="flex flex-wrap items-center gap-2">
+											<span className="font-medium text-zinc-900 text-sm">{ev.professorName}</span>
+											<span className="rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
+												{ev.typeName[loc] ?? ev.typeName.es}
+											</span>
+										</div>
+										{ev.professorEmail && (
+											<span className="text-xs text-zinc-400 truncate">{ev.professorEmail}</span>
+										)}
+									</div>
+									<Button
+										variant="ghost"
+										size="icon"
+										className="text-zinc-400 hover:bg-red-50 hover:text-red-600"
+										onClick={() => removeEvaluator(idx)}
+										aria-label={t('projects.create.step2.evaluatorsAdd')}>
+										<XMarkIcon className="h-4 w-4" />
+									</Button>
+								</div>
+							))
+						)}
+					</div>
+				</div>
+			</Card>
 
 			<div className="flex justify-between">
 				<Button variant="secondary" onClick={onBack} disabled={isSubmitting}>

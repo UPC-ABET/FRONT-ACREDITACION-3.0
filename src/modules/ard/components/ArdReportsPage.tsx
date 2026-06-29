@@ -2,7 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { Download } from 'lucide-react';
-import { Alert, Button, Card, PageHeader, Skeleton, TableEmptyState } from '@/shared/components/ui';
+import {
+	Alert,
+	Button,
+	Card,
+	PageHeader,
+	TableEmptyState,
+	TableLoadingState,
+} from '@/shared/components/ui';
 import { getErrorMessage, triggerBlobDownload } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { useABET, useI18n } from '@/providers';
@@ -147,11 +154,7 @@ export function ArdReportsPage() {
 				) : schoolId === null ? (
 					<p className="text-sm italic text-zinc-500">{t('ard.reports.selectSchool')}</p>
 				) : loading ? (
-					<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-						<Skeleton className="h-10 w-full" />
-						<Skeleton className="h-10 w-full" />
-						<Skeleton className="h-10 w-full" />
-					</div>
+					<TableLoadingState label={t('ard.loading')} />
 				) : reportScope && reportScope.levels.length > 0 ? (
 					<>
 						<div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">

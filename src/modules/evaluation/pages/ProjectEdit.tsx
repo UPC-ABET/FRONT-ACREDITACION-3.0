@@ -5,9 +5,12 @@ import Link from 'next/link';
 import { ArrowLeftIcon, PencilIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
+	Card,
 	Input,
-	Skeleton,
+	PageHeader,
 	TableEmptyState,
+	TableErrorState,
+	TableLoadingState,
 	TextArea,
 	Title,
 	Toast,
@@ -109,14 +112,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	};
 
 	if (isLoading) {
-		return (
-			<div className="space-y-6">
-				<Skeleton className="h-8 w-48" />
-				<Skeleton className="h-40 w-full" />
-				<Skeleton className="h-48 w-full" />
-				<Skeleton className="h-48 w-full" />
-			</div>
-		);
+		return <TableLoadingState />;
 	}
 
 	if (isError || !data) {
@@ -128,9 +124,9 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 					<ArrowLeftIcon className="h-4 w-4" />
 					{t('projects.edit.backButton')}
 				</Link>
-				<div className="rounded-xl border border-red-200 bg-red-50 p-8 text-sm text-red-700 shadow-sm">
-					{isError && error instanceof Error ? error.message : t('projects.edit.error')}
-				</div>
+				<TableErrorState
+					message={isError && error instanceof Error ? error.message : t('projects.edit.error')}
+				/>
 			</div>
 		);
 	}
@@ -149,8 +145,8 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				{t('projects.edit.backButton')}
 			</Link>
 
-			<div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-				{isEditingHeader ? (
+			{isEditingHeader ? (
+				<Card>
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col gap-3">
 							<div className="flex flex-col gap-1">
@@ -195,7 +191,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 								{t('projects.edit.header.cancelButton')}
 							</Button>
 							<Button
-								variant="dark"
+								variant="primary"
 								size="sm"
 								onClick={handleSaveHeader}
 								loading={updateMutation.isPending}
@@ -204,173 +200,180 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 							</Button>
 						</div>
 					</div>
-				) : (
-					<div className="flex flex-col gap-4">
-						<div className="flex flex-wrap items-start justify-between gap-3">
-							<div className="space-y-1">
-								<Title
-									title={projectName}
-									className="[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-zinc-900"
-								/>
-								<span className="inline-flex items-center rounded-md border border-zinc-200 bg-zinc-100 px-2.5 py-1 font-mono text-xs font-medium text-zinc-600">
-									{project.code}
-								</span>
-							</div>
+				</Card>
+			) : (
+				<>
+					<PageHeader
+						title={projectName}
+						action={
 							<Button
 								variant="secondary"
 								size="sm"
-								className={'bg-transparent border border-zinc-200 hover:bg-zinc-100'}
+								className="bg-transparent border border-zinc-200 hover:bg-zinc-100"
 								onClick={enterEditMode}>
 								<PencilIcon className="h-4 w-4" />
 								{t('projects.edit.header.editButton')}
 							</Button>
-						</div>
+						}
+					/>
+					<Card>
+						<div className="flex flex-col gap-4">
+							<span className="inline-flex w-fit items-center rounded-md border border-zinc-200 bg-zinc-100 px-2.5 py-1 font-mono text-xs font-medium text-zinc-600">
+								{project.code}
+							</span>
 
-						<div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-zinc-600">
-							<div className="flex items-center gap-1.5">
-								<span className="font-medium text-zinc-400">
-									{t('projects.edit.header.course')}
-								</span>
-								<span>{courseName}</span>
-							</div>
-						</div>
-
-						{(() => {
-							const desc = project.description[locale as 'es' | 'en'] ?? project.description.es;
-							return desc ? (
-								<div className="flex items-start gap-1.5 text-sm text-zinc-600">
-									<span className="font-medium text-zinc-400 shrink-0">
-										{t('projects.edit.header.fieldDesc')}
+							<div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-zinc-600">
+								<div className="flex items-center gap-1.5">
+									<span className="font-medium text-zinc-400">
+										{t('projects.edit.header.course')}
 									</span>
-									<span className="text-zinc-500 leading-relaxed">{desc}</span>
+									<span>{courseName}</span>
 								</div>
-							) : null;
-						})()}
-					</div>
-				)}
-			</div>
+							</div>
 
-			<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
-					<div className="flex items-center gap-3">
-						<Title
-							title={t('projects.edit.students.title')}
-							className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
-						/>
-						<span className="text-xs text-zinc-400">{students.length}</span>
-					</div>
-					<Button variant="primary" size="sm" onClick={() => setStudentModalOpen(true)}>
-						<PlusIcon className="h-4 w-4" />
-						{t('projects.edit.students.addButton')}
-					</Button>
-				</div>
-
-				<div className="divide-y divide-zinc-100">
-					{students.length === 0 ? (
-						<TableEmptyState message={t('projects.edit.students.empty')} />
-					) : (
-						students.map((student) => (
-							<div key={student.id} className="flex items-center justify-between gap-4 px-6 py-4">
-								<div className="flex flex-col gap-0.5">
-									<span className="font-medium text-zinc-900">
-										{student.firstName} {student.lastName}
-									</span>
-									<div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-zinc-500">
-										<span className="font-mono">{student.studentCode}</span>
-										<span className="text-zinc-300">·</span>
-										<span>{student.email}</span>
+							{(() => {
+								const desc = project.description[locale as 'es' | 'en'] ?? project.description.es;
+								return desc ? (
+									<div className="flex items-start gap-1.5 text-sm text-zinc-600">
+										<span className="font-medium text-zinc-400 shrink-0">
+											{t('projects.edit.header.fieldDesc')}
+										</span>
+										<span className="text-zinc-500 leading-relaxed">{desc}</span>
 									</div>
-								</div>
+								) : null;
+							})()}
+						</div>
+					</Card>
+				</>
+			)}
 
-								<button
-									type="button"
-									onClick={() =>
-										removeStudentMutation.mutate(student.id, {
-											onSuccess: () => {
-												setStudentError(null);
-												showToast('success', t('projects.edit.students.removeSuccess'));
-											},
-											onError: () => {
-												setStudentError(t('projects.edit.students.removeError'));
-												showToast('error', t('projects.edit.students.removeError'));
-											},
-										})
-									}
-									disabled={removeStudentMutation.isPending}
-									className={cn(
-										buttonVariants({ variant: 'ghost', size: 'icon' }),
-										'text-zinc-400 hover:bg-red-50 hover:text-red-600',
-									)}
-									title={t('projects.edit.students.removeButton')}>
-									<XMarkIcon className="h-4 w-4" />
-								</button>
-							</div>
-						))
-					)}
-				</div>
-			</div>
-
-			<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-				<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
-					<div className="flex items-center gap-3">
-						<Title
-							title={t('projects.edit.evaluators.title')}
-							className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
-						/>
-						<span className="text-xs text-zinc-400">{evaluators?.length ?? 0}</span>
+			<Card>
+				<div className="-m-4">
+					<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
+						<div className="flex items-center gap-3">
+							<Title
+								title={t('projects.edit.students.title')}
+								className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+							/>
+							<span className="text-xs text-zinc-400">{students.length}</span>
+						</div>
+						<Button variant="primary" size="sm" onClick={() => setStudentModalOpen(true)}>
+							<PlusIcon className="h-4 w-4" />
+							{t('projects.edit.students.addButton')}
+						</Button>
 					</div>
-					<Button variant="primary" size="sm" onClick={() => setEvaluatorModalOpen(true)}>
-						<PlusIcon className="h-4 w-4" />
-						{t('projects.edit.evaluators.addButton')}
-					</Button>
-				</div>
 
-				<div className="divide-y divide-zinc-100">
-					{!evaluators?.length ? (
-						<TableEmptyState message={t('projects.edit.evaluators.empty')} />
-					) : (
-						evaluators.map((evaluator) => (
-							<div key={evaluator.id} className="flex items-center justify-between gap-4 px-6 py-4">
-								<div className="flex flex-col gap-1">
-									<div className="flex flex-wrap items-center gap-2">
+					<div className="divide-y divide-zinc-100">
+						{students.length === 0 ? (
+							<TableEmptyState message={t('projects.edit.students.empty')} />
+						) : (
+							students.map((student) => (
+								<div key={student.id} className="flex items-center justify-between gap-4 px-6 py-4">
+									<div className="flex flex-col gap-0.5">
 										<span className="font-medium text-zinc-900">
-											{evaluator.professorFirstName} {evaluator.professorLastName}
+											{student.firstName} {student.lastName}
 										</span>
-										<span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
-											{evaluator.evaluatorTypeName?.[locale as 'es' | 'en'] ??
-												evaluator.evaluatorTypeName?.es}
-										</span>
+										<div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-zinc-500">
+											<span className="font-mono">{student.studentCode}</span>
+											<span className="text-zinc-300">·</span>
+											<span>{student.email}</span>
+										</div>
 									</div>
-									<span className="text-xs text-zinc-500">{evaluator.professorEmail}</span>
-								</div>
 
-								<button
-									type="button"
-									onClick={() =>
-										removeEvaluatorMutation.mutate(evaluator.id, {
-											onSuccess: () => {
-												setEvaluatorError(null);
-												showToast('success', t('projects.edit.evaluators.removeSuccess'));
-											},
-											onError: () => {
-												setEvaluatorError(t('projects.edit.evaluators.removeError'));
-												showToast('error', t('projects.edit.evaluators.removeError'));
-											},
-										})
-									}
-									disabled={removeEvaluatorMutation.isPending}
-									className={cn(
-										buttonVariants({ variant: 'ghost', size: 'icon' }),
-										'text-zinc-400 hover:bg-red-50 hover:text-red-600',
-									)}
-									title={t('projects.edit.evaluators.removeButton')}>
-									<XMarkIcon className="h-4 w-4" />
-								</button>
-							</div>
-						))
-					)}
+									<button
+										type="button"
+										onClick={() =>
+											removeStudentMutation.mutate(student.id, {
+												onSuccess: () => {
+													setStudentError(null);
+													showToast('success', t('projects.edit.students.removeSuccess'));
+												},
+												onError: () => {
+													setStudentError(t('projects.edit.students.removeError'));
+													showToast('error', t('projects.edit.students.removeError'));
+												},
+											})
+										}
+										disabled={removeStudentMutation.isPending}
+										className={cn(
+											buttonVariants({ variant: 'ghost', size: 'icon' }),
+											'text-zinc-400 hover:bg-red-50 hover:text-red-600',
+										)}
+										title={t('projects.edit.students.removeButton')}>
+										<XMarkIcon className="h-4 w-4" />
+									</button>
+								</div>
+							))
+						)}
+					</div>
 				</div>
-			</div>
+			</Card>
+
+			<Card>
+				<div className="-m-4">
+					<div className="flex items-center justify-between border-b border-zinc-100 px-6 py-4">
+						<div className="flex items-center gap-3">
+							<Title
+								title={t('projects.edit.evaluators.title')}
+								className="[&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-zinc-900"
+							/>
+							<span className="text-xs text-zinc-400">{evaluators?.length ?? 0}</span>
+						</div>
+						<Button variant="primary" size="sm" onClick={() => setEvaluatorModalOpen(true)}>
+							<PlusIcon className="h-4 w-4" />
+							{t('projects.edit.evaluators.addButton')}
+						</Button>
+					</div>
+
+					<div className="divide-y divide-zinc-100">
+						{!evaluators?.length ? (
+							<TableEmptyState message={t('projects.edit.evaluators.empty')} />
+						) : (
+							evaluators.map((evaluator) => (
+								<div
+									key={evaluator.id}
+									className="flex items-center justify-between gap-4 px-6 py-4">
+									<div className="flex flex-col gap-1">
+										<div className="flex flex-wrap items-center gap-2">
+											<span className="font-medium text-zinc-900">
+												{evaluator.professorFirstName} {evaluator.professorLastName}
+											</span>
+											<span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
+												{evaluator.evaluatorTypeName?.[locale as 'es' | 'en'] ??
+													evaluator.evaluatorTypeName?.es}
+											</span>
+										</div>
+										<span className="text-xs text-zinc-500">{evaluator.professorEmail}</span>
+									</div>
+
+									<button
+										type="button"
+										onClick={() =>
+											removeEvaluatorMutation.mutate(evaluator.id, {
+												onSuccess: () => {
+													setEvaluatorError(null);
+													showToast('success', t('projects.edit.evaluators.removeSuccess'));
+												},
+												onError: () => {
+													setEvaluatorError(t('projects.edit.evaluators.removeError'));
+													showToast('error', t('projects.edit.evaluators.removeError'));
+												},
+											})
+										}
+										disabled={removeEvaluatorMutation.isPending}
+										className={cn(
+											buttonVariants({ variant: 'ghost', size: 'icon' }),
+											'text-zinc-400 hover:bg-red-50 hover:text-red-600',
+										)}
+										title={t('projects.edit.evaluators.removeButton')}>
+										<XMarkIcon className="h-4 w-4" />
+									</button>
+								</div>
+							))
+						)}
+					</div>
+				</div>
+			</Card>
 
 			<AddStudentModal
 				open={studentModalOpen}

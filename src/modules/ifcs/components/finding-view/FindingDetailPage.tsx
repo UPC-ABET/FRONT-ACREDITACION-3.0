@@ -9,8 +9,8 @@ import {
 	Card,
 	ErrorDialog,
 	LoadingDialog,
+	PageHeader,
 	SuccessDialog,
-	Title,
 	Toast,
 } from '@/shared/components';
 import { useGlobalAcademicFiltersLockOverride, useI18n } from '@/providers';
@@ -93,22 +93,17 @@ export default function FindingDetailPage() {
 	}
 
 	return (
-		<div className="w-full space-y-8">
-			<div className="flex flex-wrap items-center justify-between gap-3">
-				<div className="space-y-1.5">
-					<p className="text-sm font-semibold uppercase tracking-wider text-red-700">
-						{L.pageTitle[lang]}
-					</p>
-					<Title
-						title={data.finding.findingCode}
-						className="[&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-zinc-900 sm:[&_h2]:text-3xl"
-					/>
-				</div>
-				<Button variant="ghost" size="lg" onClick={() => router.push('/ifc-findings')}>
-					<ArrowLeftIcon className="h-5 w-5" />
-					{L.btnBack[lang]}
-				</Button>
-			</div>
+		<div className="space-y-6">
+			<PageHeader
+				title={data.finding.findingCode}
+				description={L.pageTitle[lang]}
+				action={
+					<Button variant="ghost" size="lg" onClick={() => router.push('/ifc-findings')}>
+						<ArrowLeftIcon className="h-5 w-5" />
+						{L.btnBack[lang]}
+					</Button>
+				}
+			/>
 
 			<FindingGeneralInfo
 				finding={data.finding}

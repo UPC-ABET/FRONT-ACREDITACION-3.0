@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowDownTrayIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { DataTable, PageHeader, TableEmptyState } from '@/shared/components/ui';
+import { Button, DataTable, PageHeader, TableEmptyState } from '@/shared/components/ui';
 import { buttonVariants } from '@/shared/components/ui/Button';
 import { cn } from '@/shared/lib/utils';
 import { tryTranslateReason } from '@/shared/utils';
@@ -152,20 +152,16 @@ export function ProjectsListPage() {
 				description={t('projects.list.description')}
 				action={
 					<>
-						<button
-							type="button"
+						<Button
+							variant="secondary"
 							onClick={() => {
 								setExportError(null);
 								setExportOpen(true);
 							}}
-							disabled={!selectedPeriodId || !schoolId}
-							className={cn(
-								buttonVariants({ variant: 'secondary', size: 'md' }),
-								'inline-flex items-center gap-1.5 disabled:pointer-events-none disabled:opacity-50',
-							)}>
+							disabled={!selectedPeriodId || !schoolId}>
 							<ArrowDownTrayIcon className="h-4 w-4" />
 							{t('projects.list.exportButton')}
-						</button>
+						</Button>
 						<Link
 							href="/academic-projects/projects/new"
 							className={cn(

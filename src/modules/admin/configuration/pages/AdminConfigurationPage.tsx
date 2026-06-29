@@ -1,7 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, PageHeader, Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs, useTabParam } from '@/shared';
 import { useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import { ChartHeadsConfigPage } from '@/modules/admin/chart-heads';
 import { PeriodsTab, ProgramCommissionsTab } from '../components';
@@ -9,11 +8,8 @@ import { PeriodsTab, ProgramCommissionsTab } from '../components';
 const DEFAULT_TAB = 'periods';
 
 export default function AdminConfigurationPage() {
-	const router = useRouter();
-	const searchParams = useSearchParams();
 	const { t } = useI18n();
-
-	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
+	const [activeTab, setTab] = useTabParam(DEFAULT_TAB);
 
 	useGlobalAcademicFiltersVisibilityOverride(
 		activeTab === 'periods' ? { school: false, modality: false, period: false } : { school: false },
@@ -25,14 +21,8 @@ export default function AdminConfigurationPage() {
 		{ id: 'chart-heads', label: t('admin.configuration.tabs.chartHeads') },
 	];
 
-	const setTab = (id: string) => {
-		const next = new URLSearchParams(searchParams.toString());
-		next.set('tab', id);
-		router.replace(`/admin/configuration?${next.toString()}`);
-	};
-
 	return (
-		<div className="w-full space-y-6">
+		<div className="space-y-6">
 			<PageHeader
 				title={t('admin.configuration.page.title')}
 				description={t('admin.configuration.page.subtitle')}
@@ -40,14 +30,11 @@ export default function AdminConfigurationPage() {
 
 			<Tabs tabs={topTabs} activeTab={activeTab} onChange={setTab} />
 
-			{activeTab === 'chart-heads' ? (
-				<ChartHeadsConfigPage />
-			) : (
-				<Card className="overflow-visible">
-					{activeTab === 'periods' && <PeriodsTab />}
-					{activeTab === 'program-commissions' && <ProgramCommissionsTab />}
-				</Card>
-			)}
+			<Card className="overflow-visible">
+				{activeTab === 'periods' && <PeriodsTab />}
+				{activeTab === 'program-commissions' && <ProgramCommissionsTab />}
+				{activeTab === 'chart-heads' && <ChartHeadsConfigPage />}
+			</Card>
 		</div>
 	);
 }

@@ -58,17 +58,15 @@ export default function ForgotPasswordForm() {
 
 	return (
 		<form onSubmit={handleSubmit} className="space-y-6">
-			<div className="space-y-3">
-				<div className="space-y-2 text-center">
-					<Title
-						title={t('forgotPassword.title')}
-						className="justify-center [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-zinc-900"
-					/>
-					<SubTitle
-						name={t('forgotPassword.subtitle')}
-						className="justify-center [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-600"
-					/>
-				</div>
+			<div className="space-y-2 text-center">
+				<Title
+					title={t('forgotPassword.title')}
+					className="justify-center [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-zinc-900"
+				/>
+				<SubTitle
+					name={t('forgotPassword.subtitle')}
+					className="justify-center [&_h3]:text-sm [&_h3]:font-normal [&_h3]:text-zinc-600"
+				/>
 			</div>
 
 			<div className="space-y-2">
