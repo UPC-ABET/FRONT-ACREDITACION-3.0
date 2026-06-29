@@ -476,7 +476,11 @@ function DetailComposer({
 		}
 	};
 
-	const canAdd = enrollmentStudentId !== null && courseId !== null && professorId !== null;
+	const canAdd =
+		enrollmentStudentId !== null &&
+		courseId !== null &&
+		professorId !== null &&
+		commentHasText(comments);
 
 	const submit = () => {
 		if (enrollmentStudentId === null || courseId === null || professorId === null) return;
@@ -532,6 +536,7 @@ function DetailComposer({
 			<I18nTextField
 				as="input"
 				layout="row"
+				required
 				label={t('ard.details.comment')}
 				value={comments}
 				onChange={setComments}

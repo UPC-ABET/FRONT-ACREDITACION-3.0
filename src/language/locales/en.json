@@ -55,8 +55,8 @@
 	"ard": {
 		"loading": "Loading…",
 		"overview": {
-			"title": "ARD — Teaching Meeting Records",
-			"description": "Register a new teaching meeting record (ARD).",
+			"title": "ARD — Delegate Meeting Records",
+			"description": "Register a new delegate meeting record (ARD).",
 			"created": "ARD {code} created. Continue by adding its details.",
 			"selectPeriod": "Select an academic period in the top bar to continue.",
 			"meetingDate": "Meeting date",

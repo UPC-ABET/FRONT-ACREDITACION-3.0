@@ -259,23 +259,24 @@ export function ArdOverviewPage() {
 				</div>
 			</Card>
 
-			<div className="flex items-center justify-between">
-				<h2 className="text-lg font-semibold text-zinc-900">{t('ard.overview.listTitle')}</h2>
-				<Button
-					onClick={() => void handleCreate()}
-					disabled={!filtersComplete || submitting}
-					loading={submitting}>
-					<Plus className="h-4 w-4" />
-					{t('ard.actions.new')}
-				</Button>
-			</div>
-
 			<DataTable
 				columns={columns}
 				data={rows}
 				searchValue={search}
 				onSearchChange={setSearch}
 				searchPlaceholder={t('ard.overview.searchPlaceholder')}
+				actions={[
+					{
+						label: t('ard.actions.new'),
+						onClick: () => void handleCreate(),
+						icon: <Plus className="h-4 w-4" />,
+						buttonProps: {
+							variant: 'primary',
+							disabled: !filtersComplete || submitting,
+							loading: submitting,
+						},
+					},
+				]}
 				isLoading={maintenanceQuery.isLoading}
 				errorMessage={maintenanceQuery.isError ? t('ard.table.error') : undefined}
 				emptyMessage={t('ard.overview.empty')}

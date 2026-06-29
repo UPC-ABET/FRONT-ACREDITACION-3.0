@@ -55,8 +55,8 @@
 	"ard": {
 		"loading": "Cargando…",
 		"overview": {
-			"title": "ARD — Actas de Reunión Docente",
-			"description": "Registra una nueva acta de reunión docente (ARD).",
+			"title": "ARD — Actas de Reunión de Delegados",
+			"description": "Registra una nueva acta de reunión de delegados (ARD).",
 			"created": "ARD {code} creada. Continúa agregando sus detalles.",
 			"selectPeriod": "Selecciona un periodo académico en la barra superior para continuar.",
 			"meetingDate": "Fecha de reunión",
