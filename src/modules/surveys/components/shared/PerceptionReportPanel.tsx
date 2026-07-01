@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Card, Button, Select, Toast } from '@/shared/components';
 import { ArrowDownTrayIcon, EyeIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
@@ -23,9 +23,17 @@ export interface PerceptionReportPanelProps {
 		campusId?: number;
 		lang?: 'es' | 'en';
 	};
+	/** Hide the panel's own generate button so a parent can trigger it via the ref instead. */
+	hideGenerateButton?: boolean;
+	/** Notifies the parent of the generate request's pending state (for an external button). */
+	onGeneratingChange?: (generating: boolean) => void;
 	generate: (
 		filters: PerceptionReportFilters & { programId?: number },
 	) => Promise<PerceptionReportResponse>;
+}
+
+export interface PerceptionReportPanelHandle {
+	generate: () => void;
 }
 
 const SURVEY_NUMBER_OPTIONS: OptionItem[] = [
@@ -51,12 +59,20 @@ function downloadBlob(blob: Blob, filename: string): void {
 	URL.revokeObjectURL(url);
 }
 
-export function PerceptionReportPanel({
-	programId,
-	showSurveyNumber = false,
-	externalFilters,
-	generate,
-}: PerceptionReportPanelProps) {
+export const PerceptionReportPanel = forwardRef<
+	PerceptionReportPanelHandle,
+	PerceptionReportPanelProps
+>(function PerceptionReportPanel(
+	{
+		programId,
+		showSurveyNumber = false,
+		externalFilters,
+		hideGenerateButton,
+		onGeneratingChange,
+		generate,
+	},
+	ref,
+) {
 	const { t, locale } = useI18n();
 	const [commission, setCommission] = useState<OptionItem | null>(null);
 	const [campus, setCampus] = useState<OptionItem | null>(null);
@@ -90,6 +106,12 @@ export function PerceptionReportPanel({
 		},
 	});
 	const result = generateMutation.data;
+
+	useImperativeHandle(ref, () => ({ generate: handleGenerate }));
+
+	useEffect(() => {
+		onGeneratingChange?.(generateMutation.isPending);
+	}, [generateMutation.isPending, onGeneratingChange]);
 
 	function handleGenerate() {
 		if (!programId) {
@@ -137,66 +159,70 @@ export function PerceptionReportPanel({
 
 	return (
 		<div className="space-y-6">
-			<Card className="p-5 space-y-4">
-				{!externalFilters && (
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<Select
-							name="commission"
-							label={t('surveys.perception.commission')}
-							placeholder={t('surveys.perception.allCommissions')}
-							isClearable
-							isSearchable
-							options={commissionOptions}
-							value={commission}
-							onChange={(_name, value) =>
-								setCommission(value && !Array.isArray(value) ? (value as OptionItem) : null)
-							}
-						/>
-						<Select
-							name="campus"
-							label={t('surveys.perception.campus')}
-							placeholder={t('surveys.perception.allCampuses')}
-							isClearable
-							isSearchable
-							options={campusOptions}
-							value={campus}
-							onChange={(_name, value) =>
-								setCampus(value && !Array.isArray(value) ? (value as OptionItem) : null)
-							}
-						/>
-						{showSurveyNumber && (
+			{(!hideGenerateButton || !externalFilters) && (
+				<Card className="p-5 space-y-4">
+					{!externalFilters && (
+						<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 							<Select
-								name="surveyNumbers"
-								label={t('surveys.perception.surveyNumber')}
-								placeholder={t('surveys.perception.allSurveyNumbers')}
-								isMulti
-								options={SURVEY_NUMBER_OPTIONS}
-								value={surveyNumbers}
+								name="commission"
+								label={t('surveys.perception.commission')}
+								placeholder={t('surveys.perception.allCommissions')}
+								isClearable
+								isSearchable
+								options={commissionOptions}
+								value={commission}
 								onChange={(_name, value) =>
-									setSurveyNumbers(Array.isArray(value) ? (value as OptionItem[]) : [])
+									setCommission(value && !Array.isArray(value) ? (value as OptionItem) : null)
 								}
 							/>
-						)}
-						<Select
-							name="language"
-							label={t('surveys.perception.language')}
-							options={languageOptions}
-							value={language}
-							onChange={(_name, value) =>
-								value && !Array.isArray(value) && setLanguage(value as OptionItem)
-							}
-						/>
-					</div>
-				)}
-				<div className="flex justify-end">
-					<Button
-						onClick={handleGenerate}
-						disabled={generateMutation.isPending}
-						loading={generateMutation.isPending}>
-						{t('surveys.perception.generate')}
-					</Button>
-				</div>
-			</Card>
+							<Select
+								name="campus"
+								label={t('surveys.perception.campus')}
+								placeholder={t('surveys.perception.allCampuses')}
+								isClearable
+								isSearchable
+								options={campusOptions}
+								value={campus}
+								onChange={(_name, value) =>
+									setCampus(value && !Array.isArray(value) ? (value as OptionItem) : null)
+								}
+							/>
+							{showSurveyNumber && (
+								<Select
+									name="surveyNumbers"
+									label={t('surveys.perception.surveyNumber')}
+									placeholder={t('surveys.perception.allSurveyNumbers')}
+									isMulti
+									options={SURVEY_NUMBER_OPTIONS}
+									value={surveyNumbers}
+									onChange={(_name, value) =>
+										setSurveyNumbers(Array.isArray(value) ? (value as OptionItem[]) : [])
+									}
+								/>
+							)}
+							<Select
+								name="language"
+								label={t('surveys.perception.language')}
+								options={languageOptions}
+								value={language}
+								onChange={(_name, value) =>
+									value && !Array.isArray(value) && setLanguage(value as OptionItem)
+								}
+							/>
+						</div>
+					)}
+					{!hideGenerateButton && (
+						<div className="flex justify-end">
+							<Button
+								onClick={handleGenerate}
+								disabled={generateMutation.isPending}
+								loading={generateMutation.isPending}>
+								{t('surveys.perception.generate')}
+							</Button>
+						</div>
+					)}
+				</Card>
+			)}
 
 			{result && result.reports.length > 0 && (
 				<Card className="p-5 space-y-3">
@@ -239,4 +265,4 @@ export function PerceptionReportPanel({
 			/>
 		</div>
 	);
-}
+});
