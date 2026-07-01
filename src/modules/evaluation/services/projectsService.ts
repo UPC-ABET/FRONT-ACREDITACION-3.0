@@ -36,14 +36,15 @@ export const projectsService = {
 	getByProfessor(
 		professorId: string | number,
 		params?: {
-			gradeTypeCode?: string;
+			evaluationStageCode?: string;
 			page?: number;
 			pageSize?: number;
 			search?: string;
 		},
 	): Promise<ApiResponse<ProjectByProfessorPaginatedResponse>> {
 		const qs = new URLSearchParams();
-		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
+		if (params?.evaluationStageCode != null)
+			qs.set('evaluationStageCode', params.evaluationStageCode);
 		if (params?.page != null) qs.set('page', String(params.page));
 		if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize));
 		if (params?.search) qs.set('search', params.search);

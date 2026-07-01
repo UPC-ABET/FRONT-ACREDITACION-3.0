@@ -23,9 +23,9 @@ import type { ProjectByProfessorResponse } from '../types';
 
 type RubricTab = 'partial' | 'final';
 
-const GRADE_TYPE_CODE: Record<RubricTab, string> = {
-	partial: TYPE_CODES.GRADE_TYPE.PARTIAL,
-	final: TYPE_CODES.GRADE_TYPE.FINAL,
+const EVALUATION_STAGE_CODE: Record<RubricTab, string> = {
+	partial: TYPE_CODES.EVALUATION_STAGE.PARTIAL,
+	final: TYPE_CODES.EVALUATION_STAGE.FINAL,
 };
 
 export function GradeProjectsPage() {
@@ -45,7 +45,6 @@ export function GradeProjectsPage() {
 	}, [search]);
 
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset to page 1 whenever the active tab or search term changes so paging starts fresh
 		setPage(1);
 	}, [activeTab, debouncedSearch]);
 
@@ -68,7 +67,7 @@ export function GradeProjectsPage() {
 	} = useProjectsByProfessor(
 		professor?.id,
 		{
-			gradeTypeCode: GRADE_TYPE_CODE[activeTab],
+			evaluationStageCode: EVALUATION_STAGE_CODE[activeTab],
 			page,
 			pageSize: DEFAULT_PAGE_SIZE,
 			search: debouncedSearch.trim() || undefined,

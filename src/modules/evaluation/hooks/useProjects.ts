@@ -4,7 +4,7 @@ import { projectsService } from '../services';
 import type { FilterProjectDto } from '../types';
 
 type ByProfessorParams = {
-	gradeTypeCode?: string;
+	evaluationStageCode?: string;
 	page?: number;
 	pageSize?: number;
 	search?: string;
