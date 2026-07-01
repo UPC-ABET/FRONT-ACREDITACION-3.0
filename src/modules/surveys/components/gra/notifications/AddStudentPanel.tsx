@@ -11,15 +11,10 @@ const SEARCH_DEBOUNCE_MS = 250;
 
 interface AddStudentPanelProps {
 	readonly programId: number;
-	readonly academicPeriodId: number;
 	readonly onStudentAdded?: () => void;
 }
 
-export function AddStudentPanel({
-	programId,
-	academicPeriodId,
-	onStudentAdded,
-}: AddStudentPanelProps) {
+export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelProps) {
 	const { t } = useI18n();
 	const { result, suggestions, loading, error, searchPrefix, selectSuggestion, add, reset } =
 		useGRAStudentSearch();
@@ -93,7 +88,6 @@ export function AddStudentPanel({
 			{
 				studentId: result.studentId,
 				programId: programId,
-				academicPeriodId: academicPeriodId,
 			},
 			() => {
 				setToast({

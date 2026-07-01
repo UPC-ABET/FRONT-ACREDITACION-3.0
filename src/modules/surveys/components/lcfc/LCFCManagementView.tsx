@@ -39,8 +39,6 @@ export function LCFCManagementView() {
 
 			<Card className="overflow-visible">
 				<div className="space-y-6">
-					{/* Commission and campus filters only apply to reports. Configuration and
-					    notifications are filtered by career only (no career selected = all careers). */}
 					<div
 						className={`grid grid-cols-1 gap-4 ${activeTab === 'reports' ? 'md:grid-cols-3' : ''}`}>
 						<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="" />

@@ -239,7 +239,6 @@ export async function searchStudentsByPrefix(codePrefix: string): Promise<Studen
 export async function addStudentToNotification(params: {
 	studentId: number;
 	programId: number;
-	academicPeriodId: number;
 	campusId?: number;
 	maxRegisterDate?: string;
 }) {
