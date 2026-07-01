@@ -1735,12 +1735,9 @@
 			},
 			"header": {
 				"academicPeriod": "Período académico",
-				"maxScore": "Puntaje máximo",
-				"units": {
-					"points": "puntos"
-				},
 				"editable": "Editable",
-				"readonly": "Solo lectura"
+				"readonly": "Solo lectura",
+				"rubricPrefix": "Rúbrica"
 			},
 			"performanceLevels": {
 				"title": "Niveles de desempeño",
@@ -1803,6 +1800,9 @@
 				"gradeTypeLabel": "Tipo de evaluación",
 				"gradeTypePlaceholder": "Selecciona un tipo",
 				"gradeTypeLoading": "Cargando tipos...",
+				"evaluationStageTypeLabel": "Etapa de evaluación",
+				"evaluationStageTypePlaceholder": "Selecciona una etapa",
+				"evaluationStageTypeLoading": "Cargando etapas...",
 				"rubricTypeLabel": "Tipo de rúbrica:",
 				"verifyingOutcomes": "Verificando outcomes del curso...",
 				"back": "Atrás",

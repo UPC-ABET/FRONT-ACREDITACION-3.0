@@ -12,7 +12,8 @@ import {
 import { performanceLevelsService } from '@/modules/academic/services';
 import { evaluationQueryKeys } from './queryKeys';
 import { PerformanceLevelResponse } from '@/modules/academic';
-import { TYPE_CODES } from '@/shared/constants';
+import { typesService } from '@/modules/core';
+import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 
 function unwrapApiData<T>(response: unknown): T | null {
 	if (!response || typeof response !== 'object') return null;
@@ -67,6 +68,7 @@ interface ApiRubricDetailData {
 		rubricTypeId: number;
 		rubricType?: { code?: string };
 		gradeType?: { name: { en: string; es: string } | string; code?: string };
+		evaluationStageType?: { name: { en: string; es: string } | string; code?: string };
 		studyPlanCourseId?: number;
 	};
 	course?: { id?: number; name?: { en: string; es: string } | string };
@@ -127,8 +129,17 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 
 			const academicPeriodId: number | undefined =
 				data.academicPeriod?.id != null ? Number(data.academicPeriod.id) : undefined;
+
+			const instrumentTypesRes = await typesService.getByGroupCode(
+				TYPE_GROUP_CODES.PERFORMANCE_LEVEL_INSTRUMENT,
+			);
+			const rubricInstrumentTypeId = instrumentTypesRes?.data?.find(
+				(type) => type.code === TYPE_CODES.PERFORMANCE_LEVEL_INSTRUMENT.RUBRIC,
+			)?.id;
+
 			const levelsRes = await performanceLevelsService.getByFilters({
 				isActive: true,
+				...(rubricInstrumentTypeId != null ? { instrumentTypeId: rubricInstrumentTypeId } : {}),
 				...(academicPeriodId != null ? { academicPeriodId: academicPeriodId } : {}),
 			});
 			logger.debug('[useRubricEditor] performance levels response', levelsRes);
@@ -218,6 +229,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 			}));
 
 			const gradeType = toI18nText(rubric.gradeType?.name);
+			const evaluationStageType = toI18nText(rubric.evaluationStageType?.name);
 
 			const prog = data.program;
 			const programName = toI18nText(prog?.name);
@@ -228,6 +240,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				id: String(rubric.id),
 				gradeTypeCode: rubric.gradeType?.code ?? '',
 				gradeType,
+				evaluationStageType,
 				isCapstone: rubric.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE,
 				program: {
 					id: String(prog?.id ?? ''),

@@ -42,6 +42,7 @@ export type CreateProjectDto = {
 export type CreateRubricFullDto = {
 	rubricTypeId: number;
 	gradeTypeId: number;
+	evaluationStageTypeId: number;
 	studyPlanCourseId: number;
 	isActive?: boolean;
 	extra?: Record<string, unknown>;
@@ -59,6 +60,7 @@ export type CreateRubricFullDto = {
 export type CreateRubricDto = {
 	rubricTypeId: number;
 	gradeTypeId: number;
+	evaluationStageTypeId: number;
 	studyPlanCourseId: number;
 };
 
@@ -95,6 +97,7 @@ export type ProjectPaginatedResponse = {
 export type FilterRubricDto = Partial<{
 	studyPlanCourseId: number;
 	gradeTypeId: number;
+	evaluationStageTypeId: number;
 	isActive: boolean;
 }>;
 
@@ -143,6 +146,7 @@ export type UpdateRubricQuestionDto = {
 export type UpdateRubricDto = {
 	rubricTypeId?: number;
 	gradeTypeId?: number;
+	evaluationStageTypeId?: number;
 	studyPlanCourseId?: number;
 	isActive?: boolean;
 	extra?: Record<string, unknown>;
@@ -391,10 +395,12 @@ export type RubricResponse = {
 	updatedAt: string | null;
 	rubricTypeId: number;
 	gradeTypeId: number;
+	evaluationStageTypeId: number;
 	studyPlanCourseId: number;
 	studyPlanCourse: StudyPlanCourseResponse;
 	gradeType: TypeResponse;
 	rubricType: TypeResponse;
+	evaluationStageType: TypeResponse;
 	isUsed: boolean;
 };
 
@@ -403,11 +409,13 @@ export type GetRubricByIdResponse = {
 		id: number;
 		rubricTypeId: number;
 		gradeTypeId: number;
+		evaluationStageTypeId: number;
 		studyPlanCourseId: number;
 		isActive: boolean;
 		createdAt: string;
 		rubricType: TypeResponse;
 		gradeType: TypeResponse;
+		evaluationStageType: TypeResponse;
 	};
 	course: CourseResponse;
 	academicPeriod: AcademicPeriodResponse;

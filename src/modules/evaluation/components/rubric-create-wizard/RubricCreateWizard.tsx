@@ -48,6 +48,7 @@ export function RubricCreateWizard() {
 			const body: CreateRubricFullDto = {
 				rubricTypeId: step2Data.rubricTypeId,
 				gradeTypeId: step2Data.gradeTypeId,
+				evaluationStageTypeId: step2Data.evaluationStageTypeId,
 				studyPlanCourseId: step1Data.studyPlanCourseId,
 				questions: questions as CreateRubricFullDto['questions'],
 			};

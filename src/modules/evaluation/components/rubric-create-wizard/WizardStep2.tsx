@@ -10,12 +10,16 @@ import { rubricsService } from '@/modules';
 import type { Step1Data } from './WizardStep1';
 
 const GRADE_TYPE_GROUP = TYPE_GROUP_CODES.GRADE_TYPE;
+const EVALUATION_STAGE_GROUP = TYPE_GROUP_CODES.EVALUATION_STAGE;
 const CAPSTONE_RUBRIC_CODE = TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 
 export interface Step2Data {
 	gradeTypeId: number;
 	gradeTypeCode: string;
 	gradeTypeName: { en: string; es: string };
+	evaluationStageTypeId: number;
+	evaluationStageTypeCode: string;
+	evaluationStageTypeName: { en: string; es: string };
 	rubricTypeId: number;
 	rubricTypeCode: string;
 	isCapstone: boolean;
@@ -33,12 +37,21 @@ type AnyOption = { label: string; value: string | number };
 export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 	const { t } = useI18n();
 	const [selectedGradeType, setSelectedGradeType] = useState<AnyOption | null>(null);
+	const [selectedEvaluationStage, setSelectedEvaluationStage] = useState<AnyOption | null>(null);
 
 	const { data: gradeTypes = [], isLoading: loadingGrade } = useTypesByGroupCode(GRADE_TYPE_GROUP);
+	const { data: evaluationStageTypes = [], isLoading: loadingEvaluationStage } =
+		useTypesByGroupCode(EVALUATION_STAGE_GROUP);
 
 	const selectedGradeTypeObj = useMemo(
 		() => gradeTypes.find((gt) => gt.id === Number(selectedGradeType?.value)) ?? null,
 		[gradeTypes, selectedGradeType?.value],
+	);
+
+	const selectedEvaluationStageObj = useMemo(
+		() =>
+			evaluationStageTypes.find((et) => et.id === Number(selectedEvaluationStage?.value)) ?? null,
+		[evaluationStageTypes, selectedEvaluationStage?.value],
 	);
 
 	const { data: resolvedType, isLoading: loadingResolve } = useQuery({
@@ -63,11 +76,14 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 	);
 
 	const handleNext = () => {
-		if (!selectedGradeTypeObj || !resolvedType) return;
+		if (!selectedGradeTypeObj || !selectedEvaluationStageObj || !resolvedType) return;
 		onNext({
 			gradeTypeId: selectedGradeTypeObj.id,
 			gradeTypeCode: selectedGradeTypeObj.code,
 			gradeTypeName: selectedGradeTypeObj.name,
+			evaluationStageTypeId: selectedEvaluationStageObj.id,
+			evaluationStageTypeCode: selectedEvaluationStageObj.code,
+			evaluationStageTypeName: selectedEvaluationStageObj.name,
 			rubricTypeId: resolvedType.id,
 			rubricTypeCode: resolvedType.code,
 			isCapstone,
@@ -80,8 +96,17 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 		value: gt.id,
 	}));
 
+	const evaluationStageOptions: AnyOption[] = evaluationStageTypes.map((et) => ({
+		label: et.name.es,
+		value: et.id,
+	}));
+
 	const canContinue =
-		!!selectedGradeType && !!resolvedType && !loadingResolve && !(isCapstone && loadingMappings);
+		!!selectedGradeType &&
+		!!selectedEvaluationStage &&
+		!!resolvedType &&
+		!loadingResolve &&
+		!(isCapstone && loadingMappings);
 
 	return (
 		<div className="space-y-6">
@@ -114,6 +139,20 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 				isDisabled={loadingGrade}
 				isSearchable
 				onChange={(_, v) => setSelectedGradeType(Array.isArray(v) ? (v[0] ?? null) : v)}
+			/>
+
+			<Select
+				label={t('rubrics.wizard.step2.evaluationStageTypeLabel')}
+				placeholder={
+					loadingEvaluationStage
+						? t('rubrics.wizard.step2.evaluationStageTypeLoading')
+						: t('rubrics.wizard.step2.evaluationStageTypePlaceholder')
+				}
+				options={evaluationStageOptions}
+				value={selectedEvaluationStage}
+				isDisabled={loadingEvaluationStage}
+				isSearchable
+				onChange={(_, v) => setSelectedEvaluationStage(Array.isArray(v) ? (v[0] ?? null) : v)}
 			/>
 
 			{loadingResolve && (
