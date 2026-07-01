@@ -239,14 +239,15 @@ export async function searchStudentsByPrefix(codePrefix: string): Promise<Studen
 export async function addStudentToNotification(params: {
 	studentId: number;
 	programId: number;
-	academicPeriodId: number;
 	campusId?: number;
 	maxRegisterDate?: string;
 }) {
 	return apiPost('gra/notification/save', {
 		studentId: params.studentId,
 		programId: params.programId,
-		campusId: params.campusId ?? 0,
+		// Only send campusId when one was actually chosen; otherwise let the backend resolve the
+		// student's default campus. Sending 0 made the backend fail with defaultCampusMissing.
+		...(params.campusId ? { campusId: params.campusId } : {}),
 		maxRegisterDate:
 			params.maxRegisterDate ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
 	});

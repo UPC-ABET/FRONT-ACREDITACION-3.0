@@ -185,7 +185,6 @@ export function useGRAStudentSearch() {
 			params: {
 				studentId: number;
 				programId: number;
-				academicPeriodId: number;
 				campusId?: number;
 				maxRegisterDate?: string;
 			},

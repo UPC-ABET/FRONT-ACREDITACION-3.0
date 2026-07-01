@@ -48,7 +48,6 @@ export function GRANotificationView({ programId }: GRANotificationViewProps) {
 				{activeTab === 'add' && (
 					<AddStudentPanel
 						programId={resolvedProgramId}
-						academicPeriodId={periodId}
 						onStudentAdded={() => setActiveTab('list')}
 					/>
 				)}
