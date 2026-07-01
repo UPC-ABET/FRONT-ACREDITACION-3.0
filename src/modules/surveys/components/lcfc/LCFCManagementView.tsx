@@ -39,32 +39,39 @@ export function LCFCManagementView() {
 
 			<Card className="overflow-visible">
 				<div className="space-y-6">
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+					{/* Commission and campus filters only apply to reports. Configuration and
+					    notifications are filtered by career only (no career selected = all careers). */}
+					<div
+						className={`grid grid-cols-1 gap-4 ${activeTab === 'reports' ? 'md:grid-cols-3' : ''}`}>
 						<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="" />
-						<Select
-							name="lcfc-commission"
-							label={t('surveys.perception.commission')}
-							placeholder={t('surveys.perception.allCommissions')}
-							isClearable
-							isSearchable
-							options={commissionOptions}
-							value={commission}
-							onChange={(_name, value) =>
-								setCommission(value && !Array.isArray(value) ? (value as OptionItem) : null)
-							}
-						/>
-						<Select
-							name="lcfc-campus"
-							label={t('surveys.perception.campus')}
-							placeholder={t('surveys.perception.allCampuses')}
-							isClearable
-							isSearchable
-							options={campusOptions}
-							value={campus}
-							onChange={(_name, value) =>
-								setCampus(value && !Array.isArray(value) ? (value as OptionItem) : null)
-							}
-						/>
+						{activeTab === 'reports' && (
+							<>
+								<Select
+									name="lcfc-commission"
+									label={t('surveys.perception.commission')}
+									placeholder={t('surveys.perception.allCommissions')}
+									isClearable
+									isSearchable
+									options={commissionOptions}
+									value={commission}
+									onChange={(_name, value) =>
+										setCommission(value && !Array.isArray(value) ? (value as OptionItem) : null)
+									}
+								/>
+								<Select
+									name="lcfc-campus"
+									label={t('surveys.perception.campus')}
+									placeholder={t('surveys.perception.allCampuses')}
+									isClearable
+									isSearchable
+									options={campusOptions}
+									value={campus}
+									onChange={(_name, value) =>
+										setCampus(value && !Array.isArray(value) ? (value as OptionItem) : null)
+									}
+								/>
+							</>
+						)}
 					</div>
 
 					{activeTab === 'reports' && (
