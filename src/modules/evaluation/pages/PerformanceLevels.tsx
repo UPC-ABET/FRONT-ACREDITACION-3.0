@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { PencilSquareIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
-	buttonVariants,
 	Card,
 	Dialog,
 	DialogContent,
@@ -24,7 +23,6 @@ import {
 } from '@/shared/components/ui';
 import { Select } from '@/shared/components/ui/Select';
 import { Input } from '@/shared/components/ui/Input';
-import { cn } from '@/shared/lib/utils';
 import { tryTranslate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import {
@@ -273,16 +271,10 @@ export function PerformanceLevelsPage() {
 
 					{selectedInstrument != null && (
 						<div className="flex justify-end">
-							<button
-								type="button"
-								onClick={handleClearFilters}
-								className={cn(
-									buttonVariants({ variant: 'warning', size: 'md' }),
-									'inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-red-100 hover:text-red-500',
-								)}>
+							<Button variant="secondary" onClick={handleClearFilters}>
 								<TrashIcon className="h-4 w-4" />
 								{t('performanceLevels.list.clearFilters')}
-							</button>
+							</Button>
 						</div>
 					)}
 				</div>
@@ -314,9 +306,7 @@ export function PerformanceLevelsPage() {
 								<TableHead>{t('performanceLevels.table.uniqueValue')}</TableHead>
 								<TableHead>{t('performanceLevels.table.scoreRange')}</TableHead>
 								<TableHead>{t('performanceLevels.table.color')}</TableHead>
-								<TableHead className="text-center">
-									{t('performanceLevels.table.actions')}
-								</TableHead>
+								<TableHead className="text-right">{t('performanceLevels.table.actions')}</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -361,22 +351,26 @@ export function PerformanceLevelsPage() {
 												<span className="text-xs text-zinc-500 font-mono">{color}</span>
 											</div>
 										</TableCell>
-										<TableCell className="text-center">
-											<div className="flex items-center justify-center gap-1">
-												<button
-													type="button"
+										<TableCell className="text-right">
+											<div className="flex items-center justify-end gap-1">
+												<Button
+													variant="ghost"
+													size="icon"
+													className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 													title={t('performanceLevels.table.edit')}
-													onClick={() => openEditModal(level)}
-													className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600">
-													<PencilSquareIcon className="h-4 w-4" />
-												</button>
-												<button
-													type="button"
+													aria-label={t('performanceLevels.table.edit')}
+													onClick={() => openEditModal(level)}>
+													<PencilSquareIcon className="h-5 w-5" />
+												</Button>
+												<Button
+													variant="ghost"
+													size="icon"
+													className="text-red-600 hover:bg-red-50"
 													title={t('performanceLevels.table.delete')}
-													onClick={() => setDeleteConfirm(level)}
-													className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600">
-													<TrashIcon className="h-4 w-4" />
-												</button>
+													aria-label={t('performanceLevels.table.delete')}
+													onClick={() => setDeleteConfirm(level)}>
+													<TrashIcon className="h-5 w-5" />
+												</Button>
 											</div>
 										</TableCell>
 									</TableRow>

@@ -27,6 +27,7 @@ export function useRoles() {
 	return useQuery({
 		queryKey: iamRolesKeys.list(),
 		queryFn: listRoles,
+		placeholderData: (previousData) => previousData,
 		staleTime: 0,
 	});
 }

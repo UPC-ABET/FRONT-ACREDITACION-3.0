@@ -1,23 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import {
-	ChevronLeftIcon,
-	ChevronRightIcon,
-	MagnifyingGlassIcon,
-	PlusIcon,
-	TrashIcon,
-} from '@heroicons/react/24/outline';
+import { useEffect, useMemo, useState } from 'react';
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
 	Button,
 	Card,
 	ConfirmDialog,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
+	DataTable,
 	SubTitle,
 	Title,
 	Toast,
@@ -69,7 +59,7 @@ export function ClassRepresentativesMaintenance() {
 		setPage(1);
 	};
 
-	const { data, isLoading, isFetching, isError, refetch } = useClassRepresentativesMaintenance({
+	const { data, isLoading, isFetching, isError } = useClassRepresentativesMaintenance({
 		academicPeriodId,
 		page,
 		pageSize: PAGE_SIZE,
@@ -115,8 +105,58 @@ export function ClassRepresentativesMaintenance() {
 		}
 	};
 
-	const removeLabel = t('loads.classRepresentativesMaintenance.actions.remove');
 	const noPeriodSelected = academicPeriodId == null;
+
+	const columns = useMemo<ColumnDef<ClassRepresentativeMaintenanceItem>[]>(
+		() => [
+			{
+				id: 'courseName',
+				header: t('loads.classRepresentativesMaintenance.col.courseName'),
+				meta: { cellClassName: 'font-medium text-zinc-900' },
+				cell: ({ row }) => localized(row.original.courseName, locale),
+			},
+			{
+				accessorKey: 'courseCode',
+				header: t('loads.classRepresentativesMaintenance.col.courseCode'),
+				meta: { cellClassName: 'font-mono text-zinc-700' },
+			},
+			{
+				accessorKey: 'sectionCode',
+				header: t('loads.classRepresentativesMaintenance.col.sectionCode'),
+				meta: { cellClassName: 'font-mono text-zinc-700' },
+			},
+			{
+				accessorKey: 'studentCode',
+				header: t('loads.classRepresentativesMaintenance.col.studentCode'),
+				meta: { cellClassName: 'font-mono text-zinc-700' },
+			},
+			{
+				id: 'studentName',
+				header: t('loads.classRepresentativesMaintenance.col.studentName'),
+				meta: { cellClassName: 'text-zinc-700' },
+				cell: ({ row }) => `${row.original.studentFirstName} ${row.original.studentLastName}`,
+			},
+			{
+				id: 'actions',
+				header: t('loads.classRepresentativesMaintenance.col.actions'),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
+				cell: ({ row }) => (
+					<div className="flex items-center justify-end">
+						<Button
+							variant="ghost"
+							size="icon"
+							className="text-red-600 hover:bg-red-50"
+							onClick={() => setPendingRemove(row.original)}
+							aria-label={t('loads.classRepresentativesMaintenance.actions.remove')}
+							title={t('loads.classRepresentativesMaintenance.actions.remove')}>
+							<TrashIcon className="h-5 w-5" />
+						</Button>
+					</div>
+				),
+			},
+		],
+		[t, locale],
+	);
 
 	return (
 		<Card>
@@ -132,184 +172,41 @@ export function ClassRepresentativesMaintenance() {
 					/>
 				</div>
 
-				<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-					<div className="relative w-full sm:max-w-xs">
-						<MagnifyingGlassIcon className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-						<input
-							type="search"
-							value={search}
-							onChange={(event) => handleSearchChange(event.target.value)}
-							placeholder={t('loads.classRepresentativesMaintenance.searchPlaceholder')}
-							aria-label={t('loads.classRepresentativesMaintenance.searchPlaceholder')}
-							disabled={noPeriodSelected}
-							className="w-full rounded-lg border border-zinc-200 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 disabled:bg-zinc-50 disabled:text-zinc-400"
-						/>
-					</div>
-					<Button
-						variant="primary"
-						size="sm"
-						className="w-full sm:w-auto"
-						disabled={noPeriodSelected}
-						onClick={() => {
-							setCreateError(null);
-							setCreating(true);
-						}}>
-						<PlusIcon className="h-4 w-4" />
-						<span>{t('loads.classRepresentativesMaintenance.actions.new')}</span>
-					</Button>
-				</div>
-
-				{noPeriodSelected ? (
-					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm text-zinc-500">
-							{t('loads.classRepresentativesMaintenance.selectPeriod')}
-						</p>
-					</div>
-				) : isError ? (
-					<div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm text-zinc-500">
-							{t('loads.classRepresentativesMaintenance.error.loadFailed')}
-						</p>
-						<Button variant="surface" size="sm" onClick={() => refetch()}>
-							{t('loads.classRepresentativesMaintenance.retry')}
-						</Button>
-					</div>
-				) : isLoading ? (
-					<div className="space-y-2" aria-busy>
-						{Array.from({ length: 6 }).map((_, index) => (
-							<div key={index} className="h-12 animate-pulse rounded-lg bg-zinc-100" />
-						))}
-					</div>
-				) : items.length === 0 ? (
-					<div className="flex flex-col items-center gap-1 rounded-lg border border-dashed border-zinc-200 bg-zinc-50 py-12 text-center">
-						<p className="text-sm font-medium text-zinc-700">
-							{t('loads.classRepresentativesMaintenance.empty.title')}
-						</p>
-						<p className="text-sm text-zinc-500">
-							{t('loads.classRepresentativesMaintenance.empty.subtitle')}
-						</p>
-					</div>
-				) : (
-					<div className={isFetching ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-						<div className="hidden overflow-x-auto md:block">
-							<Table>
-								<TableHeader>
-									<TableRow>
-										<TableHead>
-											{t('loads.classRepresentativesMaintenance.col.courseName')}
-										</TableHead>
-										<TableHead>
-											{t('loads.classRepresentativesMaintenance.col.courseCode')}
-										</TableHead>
-										<TableHead>
-											{t('loads.classRepresentativesMaintenance.col.sectionCode')}
-										</TableHead>
-										<TableHead>
-											{t('loads.classRepresentativesMaintenance.col.studentCode')}
-										</TableHead>
-										<TableHead>
-											{t('loads.classRepresentativesMaintenance.col.studentName')}
-										</TableHead>
-										<TableHead className="text-right">
-											{t('loads.classRepresentativesMaintenance.col.actions')}
-										</TableHead>
-									</TableRow>
-								</TableHeader>
-								<TableBody>
-									{items.map((item) => (
-										<TableRow key={item.id}>
-											<TableCell className="font-medium text-zinc-900">
-												{localized(item.courseName, locale)}
-											</TableCell>
-											<TableCell className="font-mono text-zinc-700">{item.courseCode}</TableCell>
-											<TableCell className="font-mono text-zinc-700">{item.sectionCode}</TableCell>
-											<TableCell className="font-mono text-zinc-700">{item.studentCode}</TableCell>
-											<TableCell className="text-zinc-700">
-												{item.studentFirstName} {item.studentLastName}
-											</TableCell>
-											<TableCell>
-												<div className="flex items-center justify-end">
-													<Button
-														variant="ghost"
-														size="icon"
-														className="text-red-600 hover:bg-red-50"
-														onClick={() => setPendingRemove(item)}
-														aria-label={removeLabel}
-														title={removeLabel}>
-														<TrashIcon className="h-4 w-4" />
-													</Button>
-												</div>
-											</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
-							</Table>
-						</div>
-
-						<ul className="space-y-3 md:hidden">
-							{items.map((item) => (
-								<li
-									key={item.id}
-									className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
-									<div className="flex items-start justify-between gap-3">
-										<div className="min-w-0 space-y-1">
-											<p className="truncate font-medium text-zinc-900">
-												{localized(item.courseName, locale)}
-											</p>
-											<p className="font-mono text-xs text-zinc-400">
-												{item.courseCode} · {item.sectionCode}
-											</p>
-											<p className="text-sm text-zinc-500">
-												{item.studentFirstName} {item.studentLastName}
-											</p>
-											<p className="font-mono text-xs text-zinc-400">{item.studentCode}</p>
-										</div>
-										<div className="shrink-0">
-											<Button
-												variant="ghost"
-												size="icon"
-												className="text-red-600 hover:bg-red-50"
-												onClick={() => setPendingRemove(item)}
-												aria-label={removeLabel}
-												title={removeLabel}>
-												<TrashIcon className="h-4 w-4" />
-											</Button>
-										</div>
-									</div>
-								</li>
-							))}
-						</ul>
-					</div>
-				)}
-
-				{!noPeriodSelected && !isLoading && !isError && items.length > 0 && (
-					<div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
-						<p className="text-xs text-zinc-500">
-							{total} {t('loads.classRepresentativesMaintenance.results')}
-						</p>
-						<div className="flex items-center justify-center gap-3">
-							<Button
-								variant="surface"
-								size="sm"
-								disabled={page <= 1 || isFetching}
-								onClick={() => setPage((current) => Math.max(1, current - 1))}
-								aria-label={t('loads.classRepresentativesMaintenance.prev')}>
-								<ChevronLeftIcon className="h-4 w-4" />
-							</Button>
-							<span className="text-sm text-zinc-600">
-								{t('loads.classRepresentativesMaintenance.page')} {page} / {totalPages}
-							</span>
-							<Button
-								variant="surface"
-								size="sm"
-								disabled={page >= totalPages || isFetching}
-								onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-								aria-label={t('loads.classRepresentativesMaintenance.next')}>
-								<ChevronRightIcon className="h-4 w-4" />
-							</Button>
-						</div>
-					</div>
-				)}
+				<DataTable
+					columns={columns}
+					data={items}
+					searchPlaceholder={t('loads.classRepresentativesMaintenance.searchPlaceholder')}
+					searchValue={search}
+					onSearchChange={handleSearchChange}
+					aria-label={t('loads.classRepresentativesMaintenance.title')}
+					isLoading={isLoading}
+					errorMessage={
+						isError ? t('loads.classRepresentativesMaintenance.error.loadFailed') : undefined
+					}
+					emptyMessage={
+						noPeriodSelected
+							? t('loads.classRepresentativesMaintenance.selectPeriod')
+							: t('loads.classRepresentativesMaintenance.empty.title')
+					}
+					serverPagination={{
+						page,
+						pageCount: totalPages,
+						total,
+						onPageChange: setPage,
+						isFetching,
+					}}
+					actions={[
+						{
+							label: t('loads.classRepresentativesMaintenance.actions.new'),
+							onClick: () => {
+								setCreateError(null);
+								setCreating(true);
+							},
+							icon: <PlusIcon className="h-4 w-4" />,
+							buttonProps: { variant: 'primary', disabled: noPeriodSelected },
+						},
+					]}
+				/>
 			</div>
 
 			{creating && (

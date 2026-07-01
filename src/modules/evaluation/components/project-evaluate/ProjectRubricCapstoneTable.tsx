@@ -176,16 +176,16 @@ export function ProjectRubricCapstoneTable({
 			)}
 
 			<div className="hidden w-full overflow-x-auto md:block">
-				<table className="w-full table-auto border-collapse text-sm">
+				<table className="w-full table-auto border-collapse text-[13px]">
 					<thead>
 						<tr className="border-b border-zinc-200 bg-zinc-50">
-							<th className="w-40 min-w-[14rem] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
+							<th className="w-40 min-w-[14rem] px-4 py-3 text-left text-[13px] font-semibold uppercase tracking-wider text-zinc-500">
 								{t('projects.evaluate.capstone.outcome')}
 							</th>
-							<th className="w-52 min-w-[16rem] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500">
+							<th className="w-52 min-w-[16rem] px-4 py-3 text-left text-[13px] font-semibold uppercase tracking-wider text-zinc-500">
 								{t('projects.evaluate.capstone.criteria')}
 							</th>
-							<th className="min-w-[12rem] px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-500 md:min-w-[14rem]">
+							<th className="min-w-[12rem] px-4 py-3 text-left text-[13px] font-semibold uppercase tracking-wider text-zinc-500 md:min-w-[14rem]">
 								{t('projects.evaluate.capstone.score')}
 							</th>
 						</tr>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ExclamationTriangleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {
+	Alert,
 	Button,
 	Card,
 	LoadingDialog,
@@ -16,12 +17,17 @@ import {
 import { useABET, useI18n, useSchoolSourceData, useSchoolSourceOverride } from '@/providers';
 import { resolveApiErrorContent, type ApiErrorContent } from '@/shared/utils/tryTranslate';
 import { TYPE_CODES } from '@/shared/constants';
-import { useFindingsList, useOrgScope } from '../../hooks';
+import { useFindingsList } from '../../hooks';
 import { deleteFinding } from '../../services/ifcFindingsService';
 import { getIfcSchools } from '../../services';
-import { optionsForLevel } from '../../services/scope';
-import type { FindingRow, ScopeTree, SelectionValue } from '../../types';
-import { ScopeDropdowns } from '../ScopeDropdowns';
+import {
+	optionsForLevel,
+	ScopeDropdowns,
+	useOrgScope,
+	type ScopeTree,
+	type SelectionValue,
+} from '@/modules/organization';
+import type { FindingRow } from '../../types';
 import { DeleteFindingModal } from '../shared/DeleteFindingModal';
 import { CONSULT_LABELS } from './consultLabels';
 import { FindingsTable } from './FindingsTable';
@@ -136,7 +142,10 @@ export function FindingsConsultPage() {
 
 	return (
 		<div className="space-y-6">
-			<PageHeader title={t('ifcFindings.page.title')} />
+			<PageHeader
+				title={t('ifcFindings.page.title')}
+				description={t('ifcFindings.page.subtitle')}
+			/>
 			<Card className={chartIncomplete ? 'hidden' : ''}>
 				{academicPeriodId === null ? (
 					<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>
@@ -166,10 +175,10 @@ export function FindingsConsultPage() {
 			</Card>
 
 			{chartIncomplete && (
-				<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
+				<Alert variant="destructive" className="flex items-start gap-3 text-base">
 					<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
 					<p>{CONSULT_LABELS.chartIncomplete[lang]}</p>
-				</div>
+				</Alert>
 			)}
 
 			{!noSchools && !chartIncomplete && hasSearched && rows.length === 0 && !submitting && (

@@ -245,6 +245,21 @@ export function apiUploadFormData<T = unknown>(
 	);
 }
 
+async function apiErrorFromResponse(res: Response): Promise<ApiError> {
+	const errorBody = await parseBody<unknown>(res).catch((e) => {
+		logger.warn('[api-client] Failed to parse error response body', {
+			status: res.status,
+			error: e,
+		});
+		return null;
+	});
+
+	const message =
+		(errorBody as { message?: string } | null)?.message ?? `${res.status} ${res.statusText}`;
+
+	return new ApiError(message, res.status, errorBody);
+}
+
 export async function apiPostBlobResponse(
 	path: string,
 	body: unknown,
@@ -260,8 +275,7 @@ export async function apiPostBlobResponse(
 	});
 
 	if (!res.ok) {
-		const text = await res.text().catch(() => res.statusText);
-		throw new ApiError(text || `HTTP ${res.status}`, res.status);
+		throw await apiErrorFromResponse(res);
 	}
 
 	return { blob: await res.blob(), response: res };
@@ -285,8 +299,7 @@ export async function apiGetBlobResponse(
 	});
 
 	if (!res.ok) {
-		const text = await res.text().catch(() => res.statusText);
-		throw new ApiError(text || `HTTP ${res.status}`, res.status);
+		throw await apiErrorFromResponse(res);
 	}
 
 	return { blob: await res.blob(), response: res };

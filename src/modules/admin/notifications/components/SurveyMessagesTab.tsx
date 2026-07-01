@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Button, ConfirmDialog, DataTable, TableErrorState, Toast } from '@/shared/components';
+import { Button, ConfirmDialog, DataTable, TableErrorState, Toast } from '@/shared';
 import { useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getErrorMessage } from '@/shared/lib/apiError';
@@ -14,7 +14,7 @@ import {
 } from '../hooks/useSurveyMessages';
 import type { CoreType, SurveyMessage } from '../types';
 import { SurveyMessageEditor } from './SurveyMessageEditor';
-import { StatusBadge, TabHeader } from './shared';
+import { StatusBadge } from './shared';
 import { localizedTypeName } from './localizedTypeName';
 
 type View = { mode: 'list' } | { mode: 'new' } | { mode: 'edit'; message: SurveyMessage };
@@ -22,7 +22,7 @@ type View = { mode: 'list' } | { mode: 'new' } | { mode: 'edit'; message: Survey
 export function SurveyMessagesTab() {
 	const { t, locale } = useI18n();
 	const { toast, showToast, clearToast } = useApiErrorToast();
-	const { data: messages = [], isLoading, isError, refetch } = useSurveyMessages();
+	const { data: messages = [], isLoading, isFetching, isError, refetch } = useSurveyMessages();
 	const { data: surveyTypes = [] } = useSurveyTypes();
 	const { remove } = useSurveyMessageMutations();
 
@@ -70,24 +70,26 @@ export function SurveyMessagesTab() {
 				id: 'actions',
 				header: t('admin.notify.survey.col.actions'),
 				cell: ({ row }) => (
-					<div className="flex items-center gap-1">
+					<div className="flex items-center justify-end gap-1">
 						<Button
 							variant="ghost"
-							size="sm"
+							size="icon"
+							className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 							onClick={() => setView({ mode: 'edit', message: row.original })}
 							aria-label={t('admin.notify.btn.edit')}>
-							<PencilSquareIcon className="h-4 w-4" />
+							<PencilSquareIcon className="h-5 w-5" />
 						</Button>
 						<Button
 							variant="ghost"
-							size="sm"
+							size="icon"
 							className="text-red-600 hover:bg-red-50"
 							onClick={() => setPendingDelete(row.original)}
 							aria-label={t('admin.notify.btn.delete')}>
-							<TrashIcon className="h-4 w-4" />
+							<TrashIcon className="h-5 w-5" />
 						</Button>
 					</div>
 				),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},
 		],
 		[t, locale, surveyTypeNameById],
@@ -128,15 +130,14 @@ export function SurveyMessagesTab() {
 
 	return (
 		<div className="space-y-6">
-			<TabHeader
-				title={t('admin.notify.survey.title')}
-				description={t('admin.notify.survey.subtitle')}
-			/>
 			<DataTable
 				columns={columns}
 				data={messages}
+				title={t('admin.notify.survey.title')}
+				description={t('admin.notify.survey.subtitle')}
 				aria-label={t('admin.notify.survey.title')}
 				isLoading={isLoading}
+				isFetching={isFetching}
 				actions={[
 					{
 						label: t('admin.notify.survey.create'),

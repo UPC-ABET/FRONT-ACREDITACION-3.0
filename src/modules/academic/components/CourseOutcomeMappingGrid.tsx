@@ -240,9 +240,11 @@ export function CourseOutcomeMappingGrid({
 		const isTrainingCourse = Object.keys(marks).length === 0;
 		return (
 			<tr key={course.studyPlanCourseId} className="border-t border-zinc-100">
-				<td className="px-3 py-2 font-mono text-xs text-zinc-600">{course.studyPlanCode}</td>
-				<td className="px-3 py-2 font-mono text-xs text-zinc-700">{course.courseCode}</td>
-				<td className="px-3 py-2 text-sm text-zinc-800">{localized(course.courseName, locale)}</td>
+				<td className="px-3 py-2 font-mono text-[13px] text-zinc-600">{course.studyPlanCode}</td>
+				<td className="px-3 py-2 font-mono text-[13px] text-zinc-700">{course.courseCode}</td>
+				<td className="px-3 py-2 text-[13px] text-zinc-800">
+					{localized(course.courseName, locale)}
+				</td>
 				<td className="border-l border-zinc-100 px-3 py-2 text-center">
 					{isTrainingCourse && formationType ? (
 						<CourseOutcomeMappingGlyph
@@ -281,7 +283,7 @@ export function CourseOutcomeMappingGrid({
 		<div className="overflow-x-auto">
 			<table className="w-full border-collapse text-left">
 				<thead>
-					<tr className="bg-zinc-50 text-xs font-semibold tracking-wide text-zinc-500 uppercase">
+					<tr className="bg-zinc-50 text-[13px] font-semibold tracking-wide text-zinc-500 uppercase">
 						<th rowSpan={2} className="px-3 py-2">
 							{t('loads.courseOutcomeMappingMaintenance.grid.studyPlanCode')}
 						</th>
@@ -302,7 +304,7 @@ export function CourseOutcomeMappingGrid({
 							</th>
 						)}
 					</tr>
-					<tr className="bg-zinc-50 text-xs font-semibold text-zinc-500">
+					<tr className="bg-zinc-50 text-[13px] font-semibold text-zinc-500">
 						{outcomes.map((outcome: CourseOutcomeMappingColumn) => (
 							<th
 								key={outcome.outcomeId}

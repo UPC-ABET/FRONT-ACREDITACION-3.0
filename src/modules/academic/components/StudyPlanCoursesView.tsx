@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
 import {
 	ArrowLeftIcon,
 	ExclamationTriangleIcon,
@@ -12,18 +13,13 @@ import {
 	Button,
 	Card,
 	ConfirmDialog,
+	DataTable,
 	Dialog,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
 	SubTitle,
 	Title,
 	Toast,
@@ -43,59 +39,6 @@ import { StudyPlanCourseCreateDialog, StudyPlanCourseEditDialog } from '@/module
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
 	if (!text) return '';
 	return text[locale as 'es' | 'en'] ?? text.es ?? text.en ?? '';
-}
-
-function CourseRows({
-	rows,
-	locale,
-	editLabel,
-	deleteLabel,
-	onEdit,
-	onDelete,
-}: {
-	rows: StudyPlanCourseRow[];
-	locale: string;
-	editLabel: string;
-	deleteLabel: string;
-	onEdit: (row: StudyPlanCourseRow) => void;
-	onDelete: (row: StudyPlanCourseRow) => void;
-}) {
-	return (
-		<>
-			{rows.map((row) => (
-				<TableRow key={row.id}>
-					<TableCell className="font-mono text-zinc-800">{row.courseCode}</TableCell>
-					<TableCell className="text-zinc-700">{localized(row.courseName, locale)}</TableCell>
-					<TableCell>
-						<span className="line-clamp-2 max-w-md text-sm text-zinc-500">
-							{localized(row.learningOutcome, locale)}
-						</span>
-					</TableCell>
-					<TableCell>
-						<div className="flex items-center justify-end gap-1">
-							<Button
-								variant="ghost"
-								size="icon"
-								onClick={() => onEdit(row)}
-								aria-label={editLabel}
-								title={editLabel}>
-								<PencilSquareIcon className="h-4 w-4" />
-							</Button>
-							<Button
-								variant="ghost"
-								size="icon"
-								className="text-red-600 hover:bg-red-50"
-								onClick={() => onDelete(row)}
-								aria-label={deleteLabel}
-								title={deleteLabel}>
-								<TrashIcon className="h-4 w-4" />
-							</Button>
-						</div>
-					</TableCell>
-				</TableRow>
-			))}
-		</>
-	);
 }
 
 export function StudyPlanCoursesView({
@@ -129,9 +72,6 @@ export function StudyPlanCoursesView({
 	);
 	const electives = data?.electives ?? [];
 	const isEmpty = sortedLevels.length === 0 && electives.length === 0;
-
-	const editLabel = t('loads.studyPlanCoursesView.actions.edit');
-	const deleteLabel = t('loads.studyPlanCoursesView.actions.delete');
 
 	const handleCreate = async (body: StudyPlanCourseCreate) => {
 		setCreateError(null);
@@ -182,34 +122,70 @@ export function StudyPlanCoursesView({
 		}
 	};
 
+	const columns = useMemo<ColumnDef<StudyPlanCourseRow>[]>(
+		() => [
+			{
+				accessorKey: 'courseCode',
+				header: t('loads.studyPlanCoursesView.col.courseCode'),
+				meta: { cellClassName: 'font-mono text-zinc-800' },
+			},
+			{
+				id: 'courseName',
+				header: t('loads.studyPlanCoursesView.col.courseName'),
+				meta: { cellClassName: 'text-zinc-700' },
+				cell: ({ row }) => localized(row.original.courseName, locale),
+			},
+			{
+				id: 'learningOutcome',
+				header: t('loads.studyPlanCoursesView.col.learningOutcome'),
+				cell: ({ row }) => (
+					<span className="line-clamp-2 max-w-md text-zinc-500">
+						{localized(row.original.learningOutcome, locale)}
+					</span>
+				),
+			},
+			{
+				id: 'actions',
+				header: t('loads.studyPlanCoursesView.col.actions'),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
+				cell: ({ row }) => (
+					<div className="flex items-center justify-end gap-1">
+						<Button
+							variant="ghost"
+							size="icon"
+							className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+							onClick={() => {
+								setEditError(null);
+								setEditing(row.original);
+							}}
+							aria-label={t('loads.studyPlanCoursesView.actions.edit')}
+							title={t('loads.studyPlanCoursesView.actions.edit')}>
+							<PencilSquareIcon className="h-5 w-5" />
+						</Button>
+						<Button
+							variant="ghost"
+							size="icon"
+							className="text-red-600 hover:bg-red-50"
+							onClick={() => setPendingDelete(row.original)}
+							aria-label={t('loads.studyPlanCoursesView.actions.delete')}
+							title={t('loads.studyPlanCoursesView.actions.delete')}>
+							<TrashIcon className="h-5 w-5" />
+						</Button>
+					</div>
+				),
+			},
+		],
+		[t, locale],
+	);
+
 	const renderCoursesTable = (rows: StudyPlanCourseRow[]) => (
-		<div className="overflow-x-auto">
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead>{t('loads.studyPlanCoursesView.col.courseCode')}</TableHead>
-						<TableHead>{t('loads.studyPlanCoursesView.col.courseName')}</TableHead>
-						<TableHead>{t('loads.studyPlanCoursesView.col.learningOutcome')}</TableHead>
-						<TableHead className="text-right">
-							{t('loads.studyPlanCoursesView.col.actions')}
-						</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					<CourseRows
-						rows={rows}
-						locale={locale}
-						editLabel={editLabel}
-						deleteLabel={deleteLabel}
-						onEdit={(row) => {
-							setEditError(null);
-							setEditing(row);
-						}}
-						onDelete={(row) => setPendingDelete(row)}
-					/>
-				</TableBody>
-			</Table>
-		</div>
+		<DataTable
+			columns={columns}
+			data={rows}
+			showSearch={false}
+			showPagination={false}
+			aria-label={t('loads.studyPlanCoursesView.title')}
+		/>
 	);
 
 	return (

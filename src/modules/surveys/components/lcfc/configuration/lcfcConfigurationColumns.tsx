@@ -38,23 +38,26 @@ export function buildLCFCConfigurationColumns({
 			header: t('surveys.lcfc.config.colActions'),
 			cell: ({ row }) => (
 				// NOSONAR — cell renderers are render functions, not React components
-				<div className="flex gap-2">
+				<div className="flex items-center justify-end gap-1">
 					<Button
-						size="sm"
-						variant="surface"
+						size="icon"
+						variant="ghost"
+						className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 						onClick={() => onEdit(row.original)}
 						aria-label={t('surveys.lcfc.config.actionEdit')}>
-						<PencilSquareIcon className="h-4 w-4" />
+						<PencilSquareIcon className="h-5 w-5" />
 					</Button>
 					<Button
-						size="sm"
-						variant="warning"
+						size="icon"
+						variant="ghost"
+						className="text-red-600 hover:bg-red-50"
 						onClick={() => onDelete(row.original.id)}
 						aria-label={t('surveys.lcfc.config.actionDelete')}>
-						<TrashIcon className="h-4 w-4" />
+						<TrashIcon className="h-5 w-5" />
 					</Button>
 				</div>
 			),
+			meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 		},
 	];
 }

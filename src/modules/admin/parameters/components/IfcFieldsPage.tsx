@@ -6,11 +6,11 @@ import {
 	Button,
 	Card,
 	ConfirmDialog,
-	LoadingDialog,
 	SubTitle,
 	SuccessDialog,
 	TableEmptyState,
 	TableErrorState,
+	TableLoadingState,
 	Title,
 	Toast,
 } from '@/shared';
@@ -165,7 +165,7 @@ export function IfcFieldsPage() {
 					/>
 				</div>
 
-				{loading && <LoadingDialog isOpen label={t('loading.default')} />}
+				{loading && <TableLoadingState label={t('loading.default')} />}
 
 				{!loading && error && (
 					<TableErrorState

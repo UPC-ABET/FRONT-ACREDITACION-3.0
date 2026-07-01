@@ -9,11 +9,11 @@ import {
 	Card,
 	ErrorDialog,
 	LoadingDialog,
+	PageHeader,
 	SuccessDialog,
-	Title,
 	Toast,
 } from '@/shared/components';
-import { useI18n } from '@/providers';
+import { useGlobalAcademicFiltersLockOverride, useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib';
 import { resolveApiErrorContent, tryTranslateReason, type ApiErrorContent } from '@/shared/utils';
 import {
@@ -34,6 +34,8 @@ export default function FindingDetailPage() {
 	const router = useRouter();
 	const params = useParams<{ id: string }>();
 	const id = Number(params?.id);
+
+	useGlobalAcademicFiltersLockOverride({ school: true, modality: true, period: true });
 
 	const { data, isLoading, error, refetch } = useFindingDetail(id);
 	const { data: languages = ['es', 'en'] } = useQuery({
@@ -91,22 +93,17 @@ export default function FindingDetailPage() {
 	}
 
 	return (
-		<div className="w-full space-y-8">
-			<div className="flex flex-wrap items-center justify-between gap-3">
-				<div className="space-y-1.5">
-					<p className="text-sm font-semibold uppercase tracking-wider text-red-700">
-						{L.pageTitle[lang]}
-					</p>
-					<Title
-						title={data.finding.findingCode}
-						className="[&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-zinc-900 sm:[&_h2]:text-3xl"
-					/>
-				</div>
-				<Button variant="ghost" size="lg" onClick={() => router.push('/ifc-findings')}>
-					<ArrowLeftIcon className="h-5 w-5" />
-					{L.btnBack[lang]}
-				</Button>
-			</div>
+		<div className="space-y-6">
+			<PageHeader
+				title={data.finding.findingCode}
+				description={L.pageTitle[lang]}
+				action={
+					<Button variant="ghost" size="lg" onClick={() => router.push('/ifc-findings')}>
+						<ArrowLeftIcon className="h-5 w-5" />
+						{L.btnBack[lang]}
+					</Button>
+				}
+			/>
 
 			<FindingGeneralInfo
 				finding={data.finding}

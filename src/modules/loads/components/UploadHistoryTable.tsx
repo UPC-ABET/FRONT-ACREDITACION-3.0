@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Eye, Undo2 } from 'lucide-react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Button, DataTable } from '@/shared/components';
+import { Badge, Button, DataTable } from '@/shared/components';
 import { useABET, useI18n } from '@/providers';
 import { DEFAULT_PAGE_SIZE, TYPE_CODES } from '@/shared/constants';
 import { useUploadHistory } from '../hooks';
@@ -17,20 +17,9 @@ interface UploadHistoryTableProps {
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
-const STATUS_STYLE: Record<string, { dot: string; pill: string }> = {
-	[TYPE_CODES.UPLOAD_STATUS.COMPLETED]: {
-		dot: 'bg-emerald-500',
-		pill: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
-	},
-	[TYPE_CODES.UPLOAD_STATUS.ROLLED_BACK]: {
-		dot: 'bg-gray-400',
-		pill: 'bg-gray-50 text-gray-600 ring-gray-500/20',
-	},
-};
-
-const FALLBACK_STATUS_STYLE = {
-	dot: 'bg-gray-300',
-	pill: 'bg-gray-50 text-gray-600 ring-gray-500/20',
+const STATUS_VARIANT: Record<string, 'success' | 'default'> = {
+	[TYPE_CODES.UPLOAD_STATUS.COMPLETED]: 'success',
+	[TYPE_CODES.UPLOAD_STATUS.ROLLED_BACK]: 'default',
 };
 
 function formatDate(iso: string | null | undefined, locale: 'es' | 'en'): string {
@@ -88,14 +77,11 @@ export default function UploadHistoryTable({
 				id: 'status',
 				header: t('uploadHistory.table.col.status'),
 				cell: ({ row }) => {
-					const palette = STATUS_STYLE[row.original.status.code] ?? FALLBACK_STATUS_STYLE;
 					const statusLabel = row.original.status.name[locale] ?? row.original.status.code;
 					return (
-						<span
-							className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${palette.pill}`}>
-							<span aria-hidden className={`h-1.5 w-1.5 rounded-full ${palette.dot}`} />
+						<Badge variant={STATUS_VARIANT[row.original.status.code] ?? 'default'}>
 							{statusLabel}
-						</span>
+						</Badge>
 					);
 				},
 			},
@@ -122,9 +108,9 @@ export default function UploadHistoryTable({
 							<span className="text-zinc-900">{log.loadedRows ?? 0}</span>
 							<span className="text-zinc-400"> / {log.totalRows ?? 0}</span>
 							{hasErrors && (
-								<span className="ml-2 inline-flex items-center rounded-full bg-red-50 px-1.5 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 tabular-nums">
+								<Badge variant="danger" className="ml-2 tabular-nums">
 									{log.errorRows}
-								</span>
+								</Badge>
 							)}
 						</>
 					);

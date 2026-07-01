@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PlusIcon, TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
-	buttonVariants,
+	Card,
 	Dialog,
 	DialogContent,
 	DialogFooter,
@@ -12,9 +12,12 @@ import {
 	DialogTitle,
 	DialogClose,
 	I18nTextField,
+	Input,
 	PageHeader,
+	TableEmptyState,
+	TableErrorState,
+	TableLoadingState,
 } from '@/shared/components/ui';
-import { cn } from '@/shared/lib/utils';
 import { Toggle } from '@/shared/components/ui/Toggle';
 import { useI18n } from '@/providers';
 import { TypeOption } from '@/modules/core';
@@ -150,35 +153,22 @@ export function EvaluatorTypesPage() {
 				title={t('academicProjects.evaluators.title')}
 				description={t('academicProjects.evaluators.description')}
 				action={
-					<button
-						type="button"
-						onClick={openCreate}
-						disabled={typeGroupId == null}
-						className={cn(
-							buttonVariants({ variant: 'primary', size: 'md' }),
-							'inline-flex items-center gap-1.5 disabled:pointer-events-none disabled:opacity-50',
-						)}>
+					<Button variant="primary" onClick={openCreate} disabled={typeGroupId == null}>
 						<PlusIcon className="h-4 w-4" />
 						{t('academicProjects.evaluators.addButton')}
-					</button>
+					</Button>
 				}
 			/>
 
-			<div className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-				{isLoading ? (
-					<div className="px-6 py-10 text-center text-sm text-zinc-400 animate-pulse">
-						{t('academicProjects.evaluators.loading')}
-					</div>
-				) : isError ? (
-					<div className="px-6 py-10 text-center text-sm text-red-500">
-						{t('academicProjects.evaluators.error')}
-					</div>
-				) : types.length === 0 ? (
-					<div className="px-6 py-10 text-center text-sm text-zinc-400">
-						{t('academicProjects.evaluators.empty')}
-					</div>
-				) : (
-					<ul className="divide-y divide-zinc-100">
+			{isLoading ? (
+				<TableLoadingState label={t('academicProjects.evaluators.loading')} />
+			) : isError ? (
+				<TableErrorState message={t('academicProjects.evaluators.error')} />
+			) : types.length === 0 ? (
+				<TableEmptyState message={t('academicProjects.evaluators.empty')} />
+			) : (
+				<Card>
+					<ul className="-m-4 divide-y divide-zinc-100">
 						{types.map((type) => {
 							const canEvaluate = type.extra?.canEvaluate === true;
 							const maxEvaluators = type.extra?.maxEvaluators as number | undefined;
@@ -204,28 +194,32 @@ export function EvaluatorTypesPage() {
 										</div>
 									</div>
 									<div className="flex items-center gap-2">
-										<button
-											type="button"
+										<Button
+											variant="ghost"
+											size="icon"
+											className="text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
 											onClick={() => openEdit(type)}
-											className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 transition-colors">
+											aria-label={t('academicProjects.evaluators.editTitle')}>
 											<PencilSquareIcon className="h-4 w-4" />
-										</button>
-										<button
-											type="button"
+										</Button>
+										<Button
+											variant="ghost"
+											size="icon"
+											className="text-zinc-400 hover:bg-red-50 hover:text-red-600"
 											onClick={() => {
 												setDeleteTarget({ id: type.id, label });
 												setDeleteError(null);
 											}}
-											className="rounded-lg p-1.5 text-zinc-400 hover:bg-red-50 hover:text-red-600 transition-colors">
+											aria-label={t('academicProjects.evaluators.deleteTitle')}>
 											<TrashIcon className="h-4 w-4" />
-										</button>
+										</Button>
 									</div>
 								</li>
 							);
 						})}
 					</ul>
-				)}
-			</div>
+				</Card>
+			)}
 
 			{/* Edit modal */}
 			<Dialog
@@ -248,21 +242,14 @@ export function EvaluatorTypesPage() {
 									onChange={(val) => setEditState((s) => s && { ...s, canEvaluate: val })}
 								/>
 							</div>
-							<div className="flex flex-col gap-1">
-								<label className="text-sm text-zinc-700">
-									{t('academicProjects.evaluators.maxEvaluatorsLabel')}
-								</label>
-								<input
-									type="number"
-									min={1}
-									value={editState.maxEvaluators}
-									onChange={(e) =>
-										setEditState((s) => s && { ...s, maxEvaluators: e.target.value })
-									}
-									placeholder={t('academicProjects.evaluators.maxEvaluatorsPlaceholder')}
-									className="rounded-lg border border-zinc-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-300"
-								/>
-							</div>
+							<Input
+								type="number"
+								min={1}
+								label={t('academicProjects.evaluators.maxEvaluatorsLabel')}
+								value={editState.maxEvaluators}
+								onChange={(e) => setEditState((s) => s && { ...s, maxEvaluators: e.target.value })}
+								placeholder={t('academicProjects.evaluators.maxEvaluatorsPlaceholder')}
+							/>
 							{editError && <p className="text-xs text-red-600">{editError}</p>}
 						</div>
 					)}
@@ -310,19 +297,14 @@ export function EvaluatorTypesPage() {
 							</span>
 							<Toggle checked={createCanEvaluate} onChange={setCreateCanEvaluate} />
 						</div>
-						<div className="flex flex-col gap-1">
-							<label className="text-sm text-zinc-700">
-								{t('academicProjects.evaluators.maxEvaluatorsLabel')}
-							</label>
-							<input
-								type="number"
-								min={1}
-								value={createMaxEvaluators}
-								onChange={(e) => setCreateMaxEvaluators(e.target.value)}
-								placeholder={t('academicProjects.evaluators.maxEvaluatorsPlaceholder')}
-								className="rounded-lg border border-zinc-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-300"
-							/>
-						</div>
+						<Input
+							type="number"
+							min={1}
+							label={t('academicProjects.evaluators.maxEvaluatorsLabel')}
+							value={createMaxEvaluators}
+							onChange={(e) => setCreateMaxEvaluators(e.target.value)}
+							placeholder={t('academicProjects.evaluators.maxEvaluatorsPlaceholder')}
+						/>
 						{createError && <p className="text-xs text-red-600">{createError}</p>}
 					</div>
 					<DialogFooter>
@@ -370,8 +352,7 @@ export function EvaluatorTypesPage() {
 							}
 						/>
 						<Button
-							variant="primary"
-							className="bg-red-600 hover:bg-red-700"
+							variant="danger"
 							onClick={handleDelete}
 							disabled={deleteTypeMutation.isPending}
 							loading={deleteTypeMutation.isPending}>

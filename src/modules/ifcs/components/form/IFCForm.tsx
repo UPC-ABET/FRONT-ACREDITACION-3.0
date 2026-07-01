@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
-import { Button, Card, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
+import { Button, Card, LoadingDialog, PageHeader, SuccessDialog, Toast } from '@/shared/components';
 import {
 	resolveApiErrorContent,
 	tryTranslateReason,
@@ -13,7 +13,6 @@ import { useIFCFormState } from '../../hooks/useIFCFormState';
 import { validateIFCForm } from '../../schemas';
 import { createIFC, patchIFC } from '../../services/ifcsService';
 import type { CriticalityOption, IFCField, IFCPrefill, IFCViewPayload } from '../../types';
-import { IFCPageTitle } from '../shared/IFCPageTitle';
 import { IFCLearningOutcomeReached } from '../shared/IFCLearningOutcomeReached';
 import { IFCOutcomeResults } from '../shared/IFCOutcomeResults';
 import { PreviousActionsTable } from '../shared/PreviousActionsTable';
@@ -123,25 +122,28 @@ export function IFCForm(props: Props) {
 		}
 	}
 
+	const courseName = props.prefill.courseName?.[lang] ?? '';
+	const crumbs = [
+		props.prefill.areaLabel?.[lang] ?? '',
+		props.prefill.subareaLabel?.[lang] ?? '',
+		props.prefill.academicPeriodCode,
+	]
+		.filter(Boolean)
+		.join(' - ');
+
 	return (
-		<div className="w-full space-y-8">
+		<div className="space-y-6">
+			<PageHeader title={courseName || '-'} description={crumbs || undefined} />
+
 			<Card>
-				<div className="space-y-4">
-					<IFCPageTitle
-						area={props.prefill.areaLabel}
-						subarea={props.prefill.subareaLabel}
-						course={props.prefill.courseName}
-						period={props.prefill.academicPeriodCode}
-					/>
-					<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-4">
-						<p className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-							{FORM_LABELS.coordinator[lang]}
-						</p>
-						<p className="mt-1.5 text-base text-zinc-900">
-							{props.prefill.coordinatorName ?? '—'}
-							{props.prefill.coordinatorCode && <> ({props.prefill.coordinatorCode})</>}
-						</p>
-					</div>
+				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-4">
+					<p className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+						{FORM_LABELS.coordinator[lang]}
+					</p>
+					<p className="mt-1.5 text-base text-zinc-900">
+						{props.prefill.coordinatorName ?? '—'}
+						{props.prefill.coordinatorCode && <> ({props.prefill.coordinatorCode})</>}
+					</p>
 				</div>
 			</Card>
 

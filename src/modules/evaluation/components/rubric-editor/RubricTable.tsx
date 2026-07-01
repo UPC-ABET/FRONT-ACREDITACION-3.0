@@ -48,12 +48,12 @@ export function RubricTable({
 
 	return (
 		<div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm">
-			<table className="w-full min-w-[640px] table-fixed border-collapse text-sm">
+			<table className="w-full min-w-[640px] table-fixed border-collapse text-[13px]">
 				<thead>
 					<tr className="border-b border-zinc-200 bg-zinc-50">
 						{canEdit ? <th className="w-8 border-r border-zinc-100 p-2" /> : null}
 
-						<th className="w-56 p-2 text-left text-xs font-semibold uppercase tracking-wide text-zinc-600">
+						<th className="w-56 p-2 text-left text-[13px] font-semibold uppercase tracking-wider text-zinc-600">
 							{questionLabelPrefix}
 						</th>
 
@@ -61,7 +61,7 @@ export function RubricTable({
 							<th
 								key={colIndex}
 								className={cn(
-									'w-[200px] border-l border-zinc-100 p-2 text-left text-xs font-semibold uppercase tracking-wide text-zinc-600 transition-colors duration-300',
+									'w-[200px] border-l border-zinc-100 p-2 text-left text-[13px] font-semibold uppercase tracking-wider text-zinc-600 transition-colors duration-300',
 									hoveredCol === colIndex && 'bg-red-50',
 								)}>
 								<div className="flex items-center justify-between gap-2">

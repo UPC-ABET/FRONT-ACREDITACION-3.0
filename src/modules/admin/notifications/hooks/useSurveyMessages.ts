@@ -20,6 +20,7 @@ export function useSurveyMessages() {
 	return useQuery({
 		queryKey: surveyMessagesKeys.list(),
 		queryFn: listSurveyMessages,
+		placeholderData: (previousData) => previousData,
 		staleTime: 0,
 	});
 }

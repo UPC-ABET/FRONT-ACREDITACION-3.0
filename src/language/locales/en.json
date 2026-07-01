@@ -1,4 +1,9 @@
 {
+	"organization": {
+		"scope": {
+			"level": "Level"
+		}
+	},
 	"nav": {
 		"home": "Home",
 		"ifcs": "IFCs",
@@ -7,6 +12,11 @@
 			"label": "IFC",
 			"overview": "Overview",
 			"findings": "Findings"
+		},
+		"ard": {
+			"label": "ARD",
+			"overview": "Overview",
+			"reports": "Reports"
 		},
 		"rubrics": "Rubrics",
 		"rubricsList": "Rubrics",
@@ -41,6 +51,97 @@
 		"academicProjects": {
 			"label": "Academic Projects",
 			"evaluators": "Evaluators"
+		}
+	},
+	"ard": {
+		"loading": "Loading…",
+		"overview": {
+			"title": "ARD — Delegate Meeting Records",
+			"description": "Register a new delegate meeting record (ARD).",
+			"created": "ARD {code} created. Continue by adding its details.",
+			"selectPeriod": "Select an academic period in the top bar to continue.",
+			"meetingDate": "Meeting date",
+			"campus": "Campus",
+			"program": "Program",
+			"listTitle": "Records",
+			"searchPlaceholder": "Search by code…",
+			"empty": "No ARDs found for the selected filters.",
+			"edit": {
+				"title": "Edit meeting date"
+			},
+			"delete": {
+				"title": "Delete ARD",
+				"message": "Delete ARD {code} and all its details? This is permanent and cannot be undone."
+			}
+		},
+		"reports": {
+			"title": "ARD — Reports",
+			"description": "Select the program, area and sub-area to export the report.",
+			"selectPeriod": "Select an academic period in the top bar to continue.",
+			"selectSchool": "Select a school in the top bar to load its programs.",
+			"noScope": "No organizational scope is available for the selected school.",
+			"export": "Export",
+			"exportFailed": "The report could not be generated. Please try again."
+		},
+		"participants": {
+			"invited": {
+				"add": "Add invited student",
+				"dialogTitle": "Add invited student",
+				"studentLabel": "Student",
+				"studentPlaceholder": "Search by code or name…",
+				"alreadyAdded": "This student is already in the participant list."
+			}
+		},
+		"details": {
+			"student": "Student",
+			"course": "Course",
+			"professor": "Professor",
+			"comment": "Comment"
+		},
+		"flow": {
+			"backToOverview": "Back to overview"
+		},
+		"view": {
+			"title": "ARD",
+			"description": "Meeting record details.",
+			"notFound": "This ARD could not be found.",
+			"noDetails": "This ARD has no details yet.",
+			"exportAttendance": "Export attendance",
+			"exportFailed": "The attendance report could not be generated. Please try again."
+		},
+		"edit": {
+			"description": "Add, edit or remove the meeting details, then save.",
+			"detailsTitle": "Details",
+			"addRow": "Add detail",
+			"editRow": "Edit detail",
+			"addToList": "Add",
+			"updateRow": "Update",
+			"empty": "No details yet. Add a detail or an invited student.",
+			"periodMismatch": "Select this ARD's academic period in the top bar to edit its details."
+		},
+		"table": {
+			"code": "Code",
+			"fullName": "Full name",
+			"course": "Course",
+			"professor": "Professor",
+			"meetingDate": "Meeting date",
+			"campus": "Campus",
+			"program": "Program",
+			"details": "Details",
+			"createdAt": "Created",
+			"actions": "Actions",
+			"error": "Could not load the data."
+		},
+		"actions": {
+			"new": "New",
+			"cancel": "Cancel",
+			"edit": "Edit",
+			"delete": "Delete",
+			"save": "Save",
+			"view": "View"
+		},
+		"errors": {
+			"deleteFailed": "The ARD could not be deleted."
 		}
 	},
 	"scraping": {
@@ -252,6 +353,7 @@
 	"ifcs": {
 		"page": {
 			"title": "End of Course Report",
+			"subtitle": "Manage the end-of-course reports for the selected period.",
 			"period": "Academic Period",
 			"selectPeriod": "Select an academic period in the top bar to continue.",
 			"noSchools": "No schools are available for the selected period yet. The organization chart may not have been uploaded. Please contact the administrator.",
@@ -263,7 +365,7 @@
 			"course": "Course",
 			"coordinator": "Professor",
 			"status": "Status",
-			"actions": "Options",
+			"actions": "Actions",
 			"statusFilter": "Status",
 			"empty": "No IFCs",
 			"actionView": "View",
@@ -361,14 +463,15 @@
 	},
 	"ifcFindings": {
 		"page": {
-			"title": "Findings"
+			"title": "Findings",
+			"subtitle": "Review the findings recorded across end-of-course reports."
 		},
 		"col": {
 			"criticality": "Criticality",
 			"code": "Code",
 			"period": "Academic Period",
 			"description": "Description",
-			"actions": "Options"
+			"actions": "Actions"
 		},
 		"action": {
 			"view": "View",
@@ -1218,8 +1321,18 @@
 			"courseNotInStudyPlan": "The section's course does not belong to the student's study plan.",
 			"studyPlanPeriodMismatch": "The student is not enrolled in the same study plan and period as the section."
 		},
-		"classRepresentativeAssign": {
+		"classRepresentative": {
 			"studentNotEnrolledInSection": "This student is not enrolled in this section."
+		},
+		"ard": {
+			"notFound": "The ARD could not be found.",
+			"createFailed": "The ARD could not be created.",
+			"updateFailed": "The ARD could not be updated.",
+			"detailsFailed": "The details could not be saved.",
+			"detailsRequired": "Add at least one detail before saving.",
+			"duplicateArd": "An ARD already exists for this period, campus, program and meeting date.",
+			"duplicateDetail": "Some details are repeated (same student, course and professor).",
+			"noDataToExport": "There are no ARDs matching the selected filters to export."
 		},
 		"studyPlan": {
 			"inUse": "This study plan cannot be deleted because it is in use.",
@@ -1919,6 +2032,7 @@
 			"error": "Could not load the project.",
 			"notFound": "Project not found.",
 			"backButton": "Back",
+			"subtitle": "Evaluate the project against its assigned rubric.",
 			"docReadOnly": "Your role is DOCENTE. You can view the project and its grades, but you cannot grade.",
 			"readOnlyNoPermission": "Your evaluator role does not have permission to grade this project. You are in read-only mode.",
 			"notAssigned": "You are not assigned as an evaluator for this project.",
@@ -1965,6 +2079,7 @@
 			"loading": "Loading project...",
 			"error": "Could not load the project.",
 			"backButton": "Back to projects",
+			"subtitle": "Edit the project information.",
 			"header": {
 				"course": "Course",
 				"rubricType": "Rubric type",

@@ -51,6 +51,7 @@ export function BannerManagementView() {
 			<ScrapeRunHistory
 				data={runs}
 				isLoading={runsQuery.isLoading}
+				isFetching={runsQuery.isFetching}
 				errorMessage={runsQuery.isError ? t('banner.history.error') : undefined}
 				emptyMessage={historyEmptyMessage}
 				locale={locale}

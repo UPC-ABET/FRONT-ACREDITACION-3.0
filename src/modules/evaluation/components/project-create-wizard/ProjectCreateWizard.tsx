@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
-import { Toast, SubTitle, Title } from '@/shared';
+import { PageHeader, Toast } from '@/shared';
 import { tryTranslateReason } from '@/shared/utils/tryTranslate';
 import { projectsService } from '@/modules';
 import { WizardStepIndicator } from '../rubric-create-wizard/WizardStepIndicator';
@@ -66,17 +66,8 @@ export function ProjectCreateWizard() {
 	];
 
 	return (
-		<div className="space-y-8">
-			<div>
-				<Title
-					title={t('projects.create.title')}
-					className="[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-zinc-900"
-				/>
-				<SubTitle
-					name={t('projects.create.subtitle')}
-					className="mt-2 [&_h3]:text-base [&_h3]:font-normal [&_h3]:text-zinc-600"
-				/>
-			</div>
+		<div className="space-y-6">
+			<PageHeader title={t('projects.create.title')} description={t('projects.create.subtitle')} />
 
 			<WizardStepIndicator steps={steps} currentStep={currentStep} />
 

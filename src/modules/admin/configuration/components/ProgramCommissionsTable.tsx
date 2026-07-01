@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Trash2 } from 'lucide-react';
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
 	Button,
@@ -21,6 +21,7 @@ import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import { useProgramCommissions, useUnassociateProgramCommission } from '../hooks';
 import type { ProgramCommissionAssociation } from '../types';
+import AssociateProgramCommissionDialog from './AssociateProgramCommissionDialog';
 
 interface ProgramCommissionsTableProps {
 	academicPeriodId: number;
@@ -30,13 +31,14 @@ export default function ProgramCommissionsTable({
 	academicPeriodId,
 }: ProgramCommissionsTableProps) {
 	const { t, locale } = useI18n();
-	const { data: rows, isLoading, error } = useProgramCommissions(academicPeriodId);
+	const { data: rows, isLoading, isFetching, error } = useProgramCommissions(academicPeriodId);
 	const { data: programs } = usePrograms({ isActive: true });
 	const { data: commissions } = useCommissions({ isActive: true });
 	const { data: commissionTypes } = useTypesByGroupCode(TYPE_GROUP_CODES.COMMISSION_TYPE);
 	const unassociate = useUnassociateProgramCommission(academicPeriodId);
 	const { showToast } = useApiErrorToast();
 	const [confirm, setConfirm] = useState<ProgramCommissionAssociation | null>(null);
+	const [dialogOpen, setDialogOpen] = useState(false);
 
 	const programById = useMemo(() => {
 		const map = new Map<number, { code: string; label: string }>();
@@ -131,16 +133,16 @@ export default function ProgramCommissionsTable({
 					</span>
 				),
 				cell: ({ row }) => (
-					<Button
-						variant="secondary"
-						size="sm"
-						onClick={() => setConfirm(row.original)}
-						aria-label={t('admin.configuration.programCommissions.table.unassociate')}>
-						<Trash2 className="h-3.5 w-3.5" />
-						<span className="hidden sm:inline">
-							{t('admin.configuration.programCommissions.table.unassociate')}
-						</span>
-					</Button>
+					<div className="flex items-center justify-end gap-1">
+						<Button
+							variant="ghost"
+							size="icon"
+							className="text-red-600 hover:bg-red-50"
+							onClick={() => setConfirm(row.original)}
+							aria-label={t('admin.configuration.programCommissions.table.unassociate')}>
+							<TrashIcon className="h-5 w-5" />
+						</Button>
+					</div>
 				),
 				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},
@@ -157,9 +159,24 @@ export default function ProgramCommissionsTable({
 				description={t('admin.configuration.programCommissions.table.description')}
 				showSearch={false}
 				isLoading={isLoading}
+				isFetching={isFetching}
 				errorMessage={error?.message}
 				emptyMessage={t('admin.configuration.programCommissions.table.empty')}
 				aria-label={t('admin.configuration.programCommissions.table.title')}
+				actions={[
+					{
+						label: t('admin.configuration.programCommissions.associateButton'),
+						onClick: () => setDialogOpen(true),
+						icon: <PlusIcon className="h-4 w-4" />,
+						buttonProps: { variant: 'primary' },
+					},
+				]}
+			/>
+
+			<AssociateProgramCommissionDialog
+				open={dialogOpen}
+				onOpenChange={setDialogOpen}
+				academicPeriodId={academicPeriodId}
 			/>
 
 			<Dialog

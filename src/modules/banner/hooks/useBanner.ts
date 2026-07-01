@@ -60,6 +60,7 @@ export function useBannerScrapeRuns(periodId: number | null) {
 	return useQuery({
 		queryKey: bannerQueryKeys.scrapeRuns(periodId ?? 0),
 		queryFn: listBannerScrapeRuns,
+		placeholderData: (previousData) => previousData,
 		enabled: Boolean(periodId),
 		refetchInterval: (query) =>
 			(query.state.data ?? []).some((run) => !isTerminalScrapeStatus(run.status))

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { CheckCircleIcon, HashtagIcon } from '@heroicons/react/24/outline';
-import { Button, Input, SubTitle, Title } from '@/shared';
+import { Button, Card, Input, SubTitle, Title } from '@/shared';
 import { useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib';
 import { validatePrefixValue } from '../schemas';
@@ -52,61 +52,63 @@ export function PrefixParameterCard({ parameter, onSaved, onError, onSuccess }: 
 	const description = parameter.description?.[lang] ?? parameter.description?.es ?? '';
 
 	return (
-		<div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
-			<div className="flex items-start gap-4 border-b border-zinc-100 bg-zinc-50/60 px-6 py-5">
-				<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-700">
-					<HashtagIcon className="h-6 w-6" aria-hidden="true" />
-				</div>
-				<div className="flex-1">
-					<div className="flex flex-wrap items-center gap-2">
-						<Title
-							title={name}
-							className="[&_h2]:text-base [&_h2]:font-bold [&_h2]:text-zinc-900"
-						/>
-						<code className="rounded bg-zinc-100 px-2 py-0.5 text-xs font-mono text-zinc-600">
-							{parameter.code}
-						</code>
+		<Card>
+			<div className="space-y-6">
+				<div className="flex items-start gap-4">
+					<div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-700">
+						<HashtagIcon className="h-6 w-6" aria-hidden="true" />
 					</div>
-					{description && (
-						<SubTitle
-							name={description}
-							className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:leading-relaxed [&_h3]:text-zinc-500"
-						/>
-					)}
+					<div className="flex-1">
+						<div className="flex flex-wrap items-center gap-2">
+							<Title
+								title={name}
+								className="[&_h2]:text-base [&_h2]:font-bold [&_h2]:text-zinc-900"
+							/>
+							<code className="rounded bg-zinc-100 px-2 py-0.5 text-xs font-mono text-zinc-600">
+								{parameter.code}
+							</code>
+						</div>
+						{description && (
+							<SubTitle
+								name={description}
+								className="mt-1 [&_h3]:text-sm [&_h3]:font-normal [&_h3]:leading-relaxed [&_h3]:text-zinc-500"
+							/>
+						)}
+					</div>
 				</div>
-			</div>
 
-			<div className="grid gap-5 px-6 py-6 md:grid-cols-[1fr_auto] md:items-end">
-				<div className="space-y-2">
-					<Input
-						label={t('admin.params.field.value')}
-						value={value}
-						onChange={(e) => setValue(e.target.value)}
-						placeholder={t('admin.params.field.valuePlaceholder')}
-						maxLength={32}
-						aria-invalid={validationError}
-					/>
-					<p className="flex items-center gap-2 text-xs text-zinc-500">
-						<CheckCircleIcon className="h-4 w-4 text-zinc-400" aria-hidden="true" />
-						{t('admin.params.field.prefixHint')}
-					</p>
-				</div>
-				<div className="flex flex-wrap items-center gap-2 md:justify-end">
-					{dirty && (
-						<Button variant="ghost" size="lg" disabled={saving} onClick={handleReset}>
-							{t('admin.params.btn.reset')}
+				<div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-end">
+					<div className="space-y-2">
+						<Input
+							label={t('admin.params.field.value')}
+							value={value}
+							onChange={(e) => setValue(e.target.value)}
+							placeholder={t('admin.params.field.valuePlaceholder')}
+							maxLength={32}
+							aria-invalid={validationError}
+						/>
+						<p className="flex items-center gap-2 text-xs text-zinc-500">
+							<CheckCircleIcon className="h-4 w-4 text-zinc-400" aria-hidden="true" />
+							{t('admin.params.field.prefixHint')}
+						</p>
+					</div>
+					<div className="flex flex-wrap items-center gap-2 md:justify-end">
+						{dirty && (
+							<Button variant="ghost" size="lg" disabled={saving} onClick={handleReset}>
+								{t('admin.params.btn.reset')}
+							</Button>
+						)}
+						<Button
+							variant="primary"
+							size="lg"
+							disabled={!dirty || validationError || saving}
+							onClick={handleSave}
+							loading={saving}>
+							{t('admin.params.btn.save')}
 						</Button>
-					)}
-					<Button
-						variant="primary"
-						size="lg"
-						disabled={!dirty || validationError || saving}
-						onClick={handleSave}
-						loading={saving}>
-						{t('admin.params.btn.save')}
-					</Button>
+					</div>
 				</div>
 			</div>
-		</div>
+		</Card>
 	);
 }

@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Badge, Button, SubTitle, Title, Toggle } from '@/shared/components';
+import { Badge, Button, Card, SubTitle, Title, Toggle } from '@/shared';
 import { useI18n } from '@/providers';
 
 export function TabHeader({ title, description }: { title: string; description?: string }) {
@@ -52,12 +52,14 @@ export function FormSection({
 
 export function EditorCard({ title, children }: { title?: string; children: ReactNode }) {
 	return (
-		<div className="space-y-8 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-			{title && (
-				<Title title={title} className="[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-zinc-900" />
-			)}
-			{children}
-		</div>
+		<Card className="overflow-visible">
+			<div className="space-y-8">
+				{title && (
+					<Title title={title} className="[&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-zinc-900" />
+				)}
+				{children}
+			</div>
+		</Card>
 	);
 }
 
@@ -87,10 +89,12 @@ export function EditorShell({
 
 export function EditorActions({ left, children }: { left?: ReactNode; children: ReactNode }) {
 	return (
-		<div className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-zinc-50/60 p-5 sm:flex-row sm:items-center sm:justify-between">
-			<div className="flex items-center gap-3">{left}</div>
-			<div className="flex flex-wrap items-center justify-end gap-2">{children}</div>
-		</div>
+		<Card className="bg-zinc-50/60">
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex items-center gap-3">{left}</div>
+				<div className="flex flex-wrap items-center justify-end gap-2">{children}</div>
+			</div>
+		</Card>
 	);
 }
 

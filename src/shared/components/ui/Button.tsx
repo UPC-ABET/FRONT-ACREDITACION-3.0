@@ -11,6 +11,7 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				primary: 'bg-red-600 text-white hover:bg-red-400 focus-visible:ring-red-500',
+				danger: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
 				secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 focus-visible:ring-gray-400',
 				ghost: 'bg-transparent text-current hover:bg-gray-100/20 focus-visible:ring-gray-400',
 				dark: 'bg-zinc-900 text-white hover:bg-zinc-800 focus-visible:ring-zinc-600',

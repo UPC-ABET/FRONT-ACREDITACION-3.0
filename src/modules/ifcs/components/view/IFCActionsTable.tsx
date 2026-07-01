@@ -27,7 +27,7 @@ export function IFCActionsTable({ findings }: Props) {
 				header: VIEW_LABELS.colDescription[lang],
 				accessorFn: (row) => row.description?.[lang] ?? row.description?.es ?? '',
 				cell: ({ row }) => (
-					<span className="whitespace-pre-line text-base leading-relaxed">
+					<span className="whitespace-pre-line leading-relaxed">
 						{row.original.description?.[lang] ?? row.original.description?.es ?? ''}
 					</span>
 				),

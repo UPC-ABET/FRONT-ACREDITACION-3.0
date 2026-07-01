@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
 	Sidebar,
@@ -24,6 +23,7 @@ import {
 	AcademicCapIcon,
 	BriefcaseIcon,
 	CircleStackIcon,
+	ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth, useI18n } from '@/providers';
 import { useLogout } from '@/modules/auth/hooks';
@@ -88,6 +88,15 @@ export function AppSidebar() {
 			children: [
 				{ name: t('nav.ifc.overview'), href: '/ifcs' },
 				{ name: t('nav.ifc.findings'), href: '/ifc-findings' },
+			],
+		},
+
+		{
+			name: t('nav.ard.label'),
+			icon: ChatBubbleLeftRightIcon,
+			children: [
+				{ name: t('nav.ard.overview'), href: '/ard' },
+				{ name: t('nav.ard.reports'), href: '/ard/reports' },
 			],
 		},
 
@@ -157,17 +166,19 @@ export function AppSidebar() {
 						return (
 							<div key={item.name}>
 								{!item.children && item.externalHref ? (
-									<a href={item.externalHref} target="_blank" rel="noopener noreferrer">
-										<SidebarItem label={item.name} icon={<item.icon className="h-5 w-5" />} />
-									</a>
+									<SidebarItem
+										label={item.name}
+										icon={<item.icon className="h-5 w-5" />}
+										href={item.externalHref}
+										external
+									/>
 								) : !item.children ? (
-									<Link href={item.href ?? '#'}>
-										<SidebarItem
-											label={item.name}
-											icon={<item.icon className="h-5 w-5" />}
-											active={isActive(item.href)}
-										/>
-									</Link>
+									<SidebarItem
+										label={item.name}
+										icon={<item.icon className="h-5 w-5" />}
+										href={item.href ?? '#'}
+										active={isActive(item.href)}
+									/>
 								) : (
 									<SidebarNavGroup
 										label={item.name}
@@ -175,9 +186,13 @@ export function AppSidebar() {
 										active={childActive}
 										defaultOpen={childActive}>
 										{item.children.map((child) => (
-											<Link key={child.name} href={child.href}>
-												<SidebarItem label={child.name} icon={null} active={isActive(child.href)} />
-											</Link>
+											<SidebarItem
+												key={child.name}
+												label={child.name}
+												icon={null}
+												href={child.href}
+												active={isActive(child.href)}
+											/>
 										))}
 									</SidebarNavGroup>
 								)}
@@ -188,12 +203,11 @@ export function AppSidebar() {
 			</SidebarContent>
 
 			<SidebarFooter>
-				<button type="button" onClick={handleLogout} className="w-full text-left">
-					<SidebarItem
-						label={t('nav.logout')}
-						icon={<ArrowRightStartOnRectangleIcon className="h-5 w-5" />}
-					/>
-				</button>
+				<SidebarItem
+					label={t('nav.logout')}
+					icon={<ArrowRightStartOnRectangleIcon className="h-5 w-5" />}
+					onClick={handleLogout}
+				/>
 			</SidebarFooter>
 		</Sidebar>
 	);

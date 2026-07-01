@@ -33,7 +33,7 @@ export function ScopeDropdowns({ scope, selections, onSelect }: Props) {
 					? (taggedOptions[0].tag!.name[lang] ??
 						taggedOptions[0].tag!.name.es ??
 						taggedOptions[0].tag!.code)
-					: `${t('ifcs.scope.level')} ${level.levelNum}`;
+					: `${t('organization.scope.level')} ${level.levelNum}`;
 
 			const dropdownOptions: DropdownOption[] = [
 				{ value: 'ALL', label: allLabel },

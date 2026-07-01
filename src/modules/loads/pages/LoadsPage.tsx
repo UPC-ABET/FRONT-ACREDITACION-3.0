@@ -4,7 +4,8 @@ import { useMemo, useState } from 'react';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import type { TypeOption } from '@/modules/core';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
-import { Card, PageHeader, Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs, TableEmptyState } from '@/shared/components';
+import { useTabParam } from '@/shared';
 import { useABET, useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import {
 	hasUploadMaintenance,
@@ -19,7 +20,7 @@ export default function LoadsPage() {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const [typeCode, setTypeCode] = useState<string | null>(null);
-	const [activeTab, setActiveTab] = useState<LoadsTab>('upload');
+	const [activeTab, setActiveTab] = useTabParam('upload');
 
 	const { data: uploadTypes } = useTypesByGroupCode(TYPE_GROUP_CODES.UPLOAD_TYPE);
 
@@ -35,7 +36,7 @@ export default function LoadsPage() {
 	const maintenanceAvailable = selectedType ? hasUploadMaintenance(selectedType.code) : false;
 
 	// Fall back to the upload tab when the selected type has no maintenance view.
-	const effectiveTab: LoadsTab = maintenanceAvailable ? activeTab : 'upload';
+	const effectiveTab: LoadsTab = maintenanceAvailable ? (activeTab as LoadsTab) : 'upload';
 
 	const tabs = useMemo(() => {
 		const list = [{ id: 'upload', label: t('loads.tabs.upload') }];
@@ -58,15 +59,13 @@ export default function LoadsPage() {
 			</Card>
 
 			{!selectedType ? (
-				<p className="rounded-md border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-sm text-gray-500">
-					{t('loads.upload.selectBoth')}
-				</p>
+				<TableEmptyState message={t('loads.upload.selectBoth')} />
 			) : (
 				<div className="space-y-6">
 					<Tabs
 						tabs={tabs}
 						activeTab={effectiveTab}
-						onChange={(id) => setActiveTab(id as LoadsTab)}
+						onChange={setActiveTab}
 						ariaLabel={t('loads.tabs.label')}
 					/>
 
@@ -81,9 +80,7 @@ export default function LoadsPage() {
 									academicPeriodId={academicPeriodId}
 								/>
 							) : (
-								<p className="rounded-md border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-sm text-gray-500">
-									{t('loads.upload.selectBoth')}
-								</p>
+								<TableEmptyState message={t('loads.upload.selectBoth')} />
 							)}
 						</div>
 					)}

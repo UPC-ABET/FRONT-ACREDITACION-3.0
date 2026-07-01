@@ -216,18 +216,18 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 						className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 text-center transition-colors ${
 							isDraggingFile
 								? 'border-red-500 bg-red-50'
-								: 'border-gray-300 bg-gray-50 hover:border-red-400 hover:bg-red-50/40'
+								: 'border-zinc-300 bg-zinc-50 hover:border-red-400 hover:bg-red-50/40'
 						}`}>
 						<Upload
-							className={cn('mb-2 h-6 w-6', isDraggingFile ? 'text-red-500' : 'text-gray-400')}
+							className={cn('mb-2 h-6 w-6', isDraggingFile ? 'text-red-500' : 'text-zinc-400')}
 						/>
 						<span
 							className={`text-sm font-medium ${
-								isDraggingFile ? 'text-red-700' : 'text-gray-700'
+								isDraggingFile ? 'text-red-700' : 'text-zinc-700'
 							}`}>
 							{file ? file.name : t('loads.upload.dropzone')}
 						</span>
-						<span className="mt-1 text-xs text-gray-400">.xlsx</span>
+						<span className="mt-1 text-xs text-zinc-400">.xlsx</span>
 					</div>
 					<input
 						id={fileInputId}

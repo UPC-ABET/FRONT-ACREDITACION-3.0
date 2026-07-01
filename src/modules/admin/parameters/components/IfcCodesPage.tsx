@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import {
 	Card,
-	LoadingDialog,
 	SubTitle,
 	SuccessDialog,
 	TableErrorState,
+	TableLoadingState,
 	Title,
 	Toast,
-} from '@/shared/components';
+} from '@/shared';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { useParameter } from '../hooks/useParameter';
@@ -50,7 +50,7 @@ export function IfcCodesPage() {
 					/>
 				</div>
 
-				{loading && <LoadingDialog isOpen label={t('loading.default')} />}
+				{loading && <TableLoadingState label={t('loading.default')} />}
 
 				{!loading && loadError && <TableErrorState message={tryTranslate(t, loadError)} />}
 

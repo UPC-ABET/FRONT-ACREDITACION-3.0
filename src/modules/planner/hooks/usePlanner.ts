@@ -55,6 +55,7 @@ export function usePlannerScrapeRuns(periodId: number | null) {
 	return useQuery({
 		queryKey: plannerQueryKeys.scrapeRuns(periodId ?? 0),
 		queryFn: listPlannerScrapeRuns,
+		placeholderData: (previousData) => previousData,
 		enabled: Boolean(periodId),
 		refetchInterval: (query) =>
 			(query.state.data ?? []).some((run) => !isTerminalPlannerScrapeStatus(run.status))

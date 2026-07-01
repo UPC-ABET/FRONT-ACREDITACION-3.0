@@ -259,6 +259,7 @@ const { schoolId, modalityTypeId, academicPeriodId } = useABET();
 ## Styling
 
 - **Tailwind only.** No inline `style={}` attributes. Use CSS variables in `globals.css` if needed (e.g., `--login-bg`), then reference via `bg-[image:var(--login-bg)]`.
+- **Neutral palette is `zinc-*`, app-wide.** Never use `gray-*` for neutrals — it reads as a different shade next to every other screen.
 - `globals.css` uses `@source not "../../*.md"` to prevent Tailwind from scanning markdown files for class patterns.
 - CSS variable naming: `--brand`, `--brand-border`, `--login-bg`, `--background`, `--foreground`.
 - Use `cn()` from `@/shared/lib/utils` for conditional class merging.
@@ -272,6 +273,7 @@ const { schoolId, modalityTypeId, academicPeriodId } = useABET();
 Shared, domain-agnostic components: `Button`, `Card`, `Select`, `Input`, `Toast`, `Dialog`, `Table`, `Skeleton`, etc.
 
 - **`title=` attribute**: Only on icon-only buttons. Never on text buttons or to explain disabled state.
+- **Buttons are always the shared `<Button>`.** Don't build a raw `<button className=...>` or a `<Link className={cn(buttonVariants(...))}>` for a normal action — pass a real `<Button>` (or, for a navigating action, a `<Link>` only where a Button can't be used). Pick the variant by intent: `primary` for the main action, `secondary`/`surface`/`ghost` for neutral, and **`danger` for destructive actions** (delete/remove confirms). Never style a destructive button with a `className="bg-red-600 ..."` override or the amber `warning` variant.
 - **`Select` styles**: Memoized via `useMemo([size, error])` for reference stability.
 - Components use `PascalCase.tsx` file names.
 
@@ -283,12 +285,15 @@ Live in their module's `components/` folder. Organized into subfolders by featur
 
 Top-level pages follow one consistent shell so card usage is uniform across the app:
 
-- **Page shell**: `<div className="space-y-6">` wrapping a `<PageHeader>` then the content. Never wrap the whole page (including its title) in a single `<Card>` — the page title is a real `h1`, not a card header.
-- **`PageHeader`** (`@/shared/components/ui`): renders the `h1` (`text-3xl`) + optional `description` + optional `action` slot (buttons/links on the right). Use it for every page title. Every top-level page (one route) has **exactly one** `PageHeader` — title then subtitle.
-- **Tabs go directly under the `PageHeader`, before any card.** Order is always title → subtitle → `Tabs` → card content. Never put a card above the tabs.
+- **Page shell**: `<div className="space-y-6">` wrapping a `<PageHeader>` then the content. Never wrap the whole page (including its title) in a single `<Card>` — the page title is a real `h1`, not a card header. The shell spacing is always `space-y-6` (not `space-y-8`) and the root has no `w-full`.
+- **`PageHeader`** (`@/shared/components/ui`): renders the `h1` (`text-3xl`) + optional `description` + optional `action` slot (buttons/links on the right). Use it for every page title. Every top-level page (one route) has **exactly one** `PageHeader` — title then subtitle. **This applies to detail, form, wizard, and editor pages too** — never hand-roll a page title with `Title`/`SubTitle` (which render `h2`/`h3`), and never style an `h2` up to `text-3xl` to fake a page heading. A detail/form page with no `PageHeader` is the "no `h1`" bug.
+- **Tabs go directly under the `PageHeader`, before any card.** Order is always title → subtitle → `Tabs` → card content. Never put a card above the tabs, and never render the `Tabs` (or the `PageHeader`) **inside** a `<Card>` — the tabs live in the page shell, outside every card.
+- **Tab state lives in the URL**, via the shared `useTabParam(defaultTab, { clearParams })` hook (`@/shared`). Never keep the active tab in `useState`, and never hand-roll a `<nav>`/`<button role="tab">` strip — use the shared `<Tabs>` primitive.
 - **Tab content carries no page header.** A component rendered as tab content (or otherwise nested inside a page that already has a `PageHeader`) must not add its own `PageHeader` — the page header plus the active tab label already name it. A second page-level title is the double-title bug. If the tab content needs an action (e.g. a "New" button), put it in a right-aligned action row, not a header. (A `DataTable`'s `title`/`description` props count as a title — omit them when the page header already covers it.)
 - **Filters in a `<Card>`**: filter bars (selects + clear button) go inside a `<Card>`, not bare. `Select` menus portal to `document.body`, so the Card's `overflow-hidden` does not clip them.
-- **Results region is one box**: the `Table`/`DataTable` primitive already renders its own bordered box, so it needs no extra wrapper. For the non-table states use the shared placeholders so every state shares the same box shape: `TableLoadingState`, `TableEmptyState`, `TableErrorState`. Never hand-roll a `rounded-xl border ... bg-white shadow-sm` loading div.
+- **Results region is one box**: the `Table`/`DataTable` primitive already renders its own bordered box, so it needs no extra wrapper. For the non-table states use the shared placeholders so every state shares the same box shape: `TableLoadingState`, `TableEmptyState`, `TableErrorState` (or `DataTable`'s built-in `isLoading`/`emptyMessage`/`errorMessage`). Never hand-roll a `rounded-xl border ... bg-white shadow-sm` loading/empty/error div, a dashed-border empty box, or an `animate-pulse` text "spinner". `LoadingDialog` is for blocking mutation modals only — never for in-page content loading.
+- **One table stack**: list/tabular data uses the shared `DataTable` (it brings search, pagination, and the loading/empty/error states). Don't hand-roll a `<Table>` + manual search `<input>` + manual pagination + manual states — that is a second, divergent table system.
+- **Never hand-roll a `<Card>` equivalent.** A `rounded-xl border border-zinc-200 bg-white shadow-sm` wrapper is just `<Card>` — use the primitive. Status pills are `<Badge>`; alert/banner boxes are `<Alert variant="default|destructive|warning|success">` — never a hand-rolled `bg-red-50 border ...` div.
 - **Embedded widgets** (maintenance views rendered inside a tab page) are the exception: they are self-contained `<Card>` sections with their own `h2` header, not top-level pages.
 
 ---
@@ -320,6 +325,7 @@ Top-level pages follow one consistent shell so card usage is uniform across the 
 - **No docblocks on barrel files.** Barrel `index.ts` files are pure re-exports, nothing else.
 - **No empty placeholder files.** Don't create folders/files until they have content.
 - **Use descriptive variable names.** Never abbreviate (`controlHeight`, not `h`; `fontSize`, not `fs`).
+- **Named exports for components and pages** — no `export default function Page()`. Import shared code from the `@/shared` barrel, not deep paths like `@/shared/components`.
 
 ---
 

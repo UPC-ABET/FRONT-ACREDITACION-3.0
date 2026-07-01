@@ -150,7 +150,7 @@ export function EvaluationCoursesPage() {
 						<TableRow>
 							<TableHead>{t('evaluationCourses.list.columns.course')}</TableHead>
 							<TableHead>{t('evaluationCourses.list.columns.period')}</TableHead>
-							<TableHead className="w-20 text-center">
+							<TableHead className="w-20 text-right">
 								{t('evaluationCourses.list.columns.actions')}
 							</TableHead>
 						</TableRow>
@@ -165,14 +165,16 @@ export function EvaluationCoursesPage() {
 									<span className="text-zinc-600">{selectedPeriodCode}</span>
 								</TableCell>
 								<TableCell>
-									<div className="flex justify-center">
-										<button
-											type="button"
+									<div className="flex items-center justify-end gap-1">
+										<Button
+											variant="ghost"
+											size="icon"
+											className="text-red-600 hover:bg-red-50"
 											onClick={() => setConfirmTarget(spc)}
 											title={t('evaluationCourses.list.removeButton')}
-											className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600">
-											<TrashIcon className="h-4 w-4" />
-										</button>
+											aria-label={t('evaluationCourses.list.removeButton')}>
+											<TrashIcon className="h-5 w-5" />
+										</Button>
 									</div>
 								</TableCell>
 							</TableRow>

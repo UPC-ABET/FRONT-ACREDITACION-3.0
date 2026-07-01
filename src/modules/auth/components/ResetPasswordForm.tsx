@@ -7,10 +7,7 @@ import {
 	Input,
 	LoadingDialog,
 	ErrorDialog,
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
+	SuccessDialog,
 	SubTitle,
 	Title,
 } from '@/shared/components';
@@ -109,19 +106,12 @@ export default function ResetPasswordForm() {
 				message={errorDialogMessage}
 			/>
 
-			<Dialog open={successOpen} onOpenChange={setSuccessOpen}>
-				<DialogContent showCloseButton={false} className="max-w-sm">
-					<div className="space-y-4">
-						<DialogHeader className="items-center">
-							<DialogTitle>{t('resetPassword.success.title')}</DialogTitle>
-						</DialogHeader>
-						<p className="text-center text-sm text-zinc-600">{successMessage}</p>
-						<Button type="button" className="w-full" onClick={() => router.push('/auth/login')}>
-							{t('resetPassword.success.goToLogin')}
-						</Button>
-					</div>
-				</DialogContent>
-			</Dialog>
+			<SuccessDialog
+				isOpen={successOpen}
+				onClose={() => router.push('/auth/login')}
+				title={t('resetPassword.success.title')}
+				message={successMessage}
+			/>
 		</form>
 	);
 }

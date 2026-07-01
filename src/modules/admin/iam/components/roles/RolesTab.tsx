@@ -24,7 +24,7 @@ export function RolesTab() {
 	const { t, locale } = useI18n();
 	const { mode, editId, openCreate, openEdit, backToList } = useIamView('roles');
 	const { toast, showToast, clearToast } = useApiErrorToast();
-	const { data: roles = [], isLoading, isError, refetch } = useRoles();
+	const { data: roles = [], isLoading, isFetching, isError, refetch } = useRoles();
 	const deleteRole = useDeleteRole();
 
 	const [pendingDelete, setPendingDelete] = useState<AdminRole | null>(null);
@@ -71,26 +71,28 @@ export function RolesTab() {
 				id: 'actions',
 				header: t('admin.iam.roles.col.actions'),
 				cell: ({ row }) => (
-					<div className="flex items-center gap-1">
+					<div className="flex items-center justify-end gap-1">
 						<Button
 							variant="ghost"
-							size="sm"
+							size="icon"
+							className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 							onClick={() => openEdit(row.original.id)}
 							title={t('admin.iam.actions.edit')}
 							aria-label={t('admin.iam.actions.edit')}>
-							<PencilSquareIcon className="h-4 w-4" />
+							<PencilSquareIcon className="h-5 w-5" />
 						</Button>
 						<Button
 							variant="ghost"
-							size="sm"
+							size="icon"
 							className="text-red-600 hover:bg-red-50"
 							onClick={() => setPendingDelete(row.original)}
 							title={t('admin.iam.actions.delete')}
 							aria-label={t('admin.iam.actions.delete')}>
-							<TrashIcon className="h-4 w-4" />
+							<TrashIcon className="h-5 w-5" />
 						</Button>
 					</div>
 				),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},
 		],
 		[t, locale, openEdit],
@@ -155,6 +157,7 @@ export function RolesTab() {
 				searchPlaceholder={t('admin.iam.roles.search')}
 				aria-label={t('admin.iam.roles.title')}
 				isLoading={isLoading}
+				isFetching={isFetching}
 				actions={[
 					{
 						label: t('admin.iam.roles.create'),

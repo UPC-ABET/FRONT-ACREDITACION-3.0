@@ -17,7 +17,7 @@ import { ModuleTypeFormDialog } from './ModuleTypeFormDialog';
 export function ModulesTab() {
 	const { t, locale } = useI18n();
 	const { toast, showToast, clearToast } = useApiErrorToast();
-	const { data: modules = [], isLoading, isError, refetch } = useModules();
+	const { data: modules = [], isLoading, isFetching, isError, refetch } = useModules();
 	const { data: typeGroups } = useTypeGroups({ code: TYPE_GROUP_CODES.IAM_MODULE });
 	const { remove } = useModuleTypeMutations();
 
@@ -84,26 +84,28 @@ export function ModulesTab() {
 				id: 'actions',
 				header: t('admin.iam.modules.col.actions'),
 				cell: ({ row }) => (
-					<div className="flex items-center gap-1">
+					<div className="flex items-center justify-end gap-1">
 						<Button
 							variant="ghost"
-							size="sm"
+							size="icon"
+							className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 							onClick={() => openEdit(row.original)}
 							title={t('admin.iam.actions.edit')}
 							aria-label={t('admin.iam.actions.edit')}>
-							<PencilSquareIcon className="h-4 w-4" />
+							<PencilSquareIcon className="h-5 w-5" />
 						</Button>
 						<Button
 							variant="ghost"
-							size="sm"
+							size="icon"
 							className="text-red-600 hover:bg-red-50"
 							onClick={() => setPendingDelete(row.original)}
 							title={t('admin.iam.actions.delete')}
 							aria-label={t('admin.iam.actions.delete')}>
-							<TrashIcon className="h-4 w-4" />
+							<TrashIcon className="h-5 w-5" />
 						</Button>
 					</div>
 				),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},
 		],
 		[t, locale],
@@ -128,6 +130,7 @@ export function ModulesTab() {
 				searchPlaceholder={t('admin.iam.modules.search')}
 				aria-label={t('admin.iam.modules.title')}
 				isLoading={isLoading}
+				isFetching={isFetching}
 				actions={[
 					{
 						label: t('admin.iam.modules.create'),

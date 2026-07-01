@@ -2,7 +2,7 @@
 
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { Button, I18nTextField, Select, Title } from '@/shared';
+import { Button, Card, I18nTextField, Select, TableEmptyState, Title } from '@/shared';
 import type { FormAction, FormFinding } from '@/modules';
 import { FORM_LABELS } from '@/modules';
 
@@ -41,55 +41,55 @@ export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete 
 			</div>
 
 			{actions.length === 0 && (
-				<div className="rounded-lg border border-dashed border-zinc-200 bg-white py-10 text-center text-base italic text-zinc-500">
-					{FORM_LABELS.sectionActions[lang]} — {FORM_LABELS.btnAddAction[lang].toLowerCase()}
-				</div>
+				<TableEmptyState
+					message={`${FORM_LABELS.sectionActions[lang]} — ${FORM_LABELS.btnAddAction[lang].toLowerCase()}`}
+				/>
 			)}
 
 			<div className="space-y-4">
 				{actions.map((a, idx) => {
 					const selectedFinding = findingOptions.find((o) => o.value === a.findingTempId);
 					return (
-						<div
-							key={a.tempId}
-							className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
-							<div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/60 px-5 py-3">
-								<span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-zinc-700">
-									<span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700">
-										{idx + 1}
+						<Card key={a.tempId}>
+							<div className="-m-4">
+								<div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/60 px-5 py-3">
+									<span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-zinc-700">
+										<span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700">
+											{idx + 1}
+										</span>
+										{FORM_LABELS.actionPlaceholder[lang]}
 									</span>
-									{FORM_LABELS.actionPlaceholder[lang]}
-								</span>
-								<Button
-									variant="ghost"
-									size="md"
-									onClick={() => onDelete(a.tempId)}
-									aria-label={FORM_LABELS.btnDelete[lang]}
-									title={FORM_LABELS.btnDelete[lang]}
-									className="text-zinc-500 hover:text-red-600">
-									<TrashIcon className="h-5 w-5" />
-								</Button>
-							</div>
+									<Button
+										variant="ghost"
+										size="md"
+										onClick={() => onDelete(a.tempId)}
+										aria-label={FORM_LABELS.btnDelete[lang]}
+										title={FORM_LABELS.btnDelete[lang]}
+										className="text-zinc-500 hover:text-red-600">
+										<TrashIcon className="h-5 w-5" />
+									</Button>
+								</div>
 
-							<div className="space-y-5 p-5">
-								<Select
-									label={FORM_LABELS.colFinding[lang]}
-									value={selectedFinding ?? null}
-									options={findingOptions}
-									onChange={(_, opt) => {
-										const v = (opt as { value?: string } | null)?.value ?? '';
-										onUpdate(a.tempId, { findingTempId: v });
-									}}
-								/>
+								<div className="space-y-5 p-5">
+									<Select
+										label={FORM_LABELS.colFinding[lang]}
+										value={selectedFinding ?? null}
+										options={findingOptions}
+										onChange={(_, opt) => {
+											const v = (opt as { value?: string } | null)?.value ?? '';
+											onUpdate(a.tempId, { findingTempId: v });
+										}}
+									/>
 
-								<I18nTextField
-									label={FORM_LABELS.colDescription[lang]}
-									required
-									value={a.description}
-									onChange={(next) => onUpdate(a.tempId, { description: next })}
-								/>
+									<I18nTextField
+										label={FORM_LABELS.colDescription[lang]}
+										required
+										value={a.description}
+										onChange={(next) => onUpdate(a.tempId, { description: next })}
+									/>
+								</div>
 							</div>
-						</div>
+						</Card>
 					);
 				})}
 			</div>

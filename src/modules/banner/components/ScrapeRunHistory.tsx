@@ -10,6 +10,7 @@ import type { ScrapeRunSummary } from '../types';
 interface ScrapeRunHistoryProps {
 	data: ScrapeRunSummary[];
 	isLoading: boolean;
+	isFetching?: boolean;
 	errorMessage?: string;
 	emptyMessage?: string;
 	locale: 'es' | 'en';
@@ -19,6 +20,7 @@ interface ScrapeRunHistoryProps {
 export function ScrapeRunHistory({
 	data,
 	isLoading,
+	isFetching,
 	errorMessage,
 	emptyMessage,
 	locale,
@@ -92,6 +94,7 @@ export function ScrapeRunHistory({
 			data={data}
 			title={t('banner.history.title')}
 			isLoading={isLoading}
+			isFetching={isFetching}
 			errorMessage={errorMessage}
 			emptyMessage={emptyMessage}
 			showSearch={false}

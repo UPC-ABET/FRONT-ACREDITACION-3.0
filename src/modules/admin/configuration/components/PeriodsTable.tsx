@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
-import { CheckCircle2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { CheckCircleIcon, PlusIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Button, DataTable } from '@/shared/components';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
@@ -11,6 +11,7 @@ import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import { useActivatePeriod, useConfigurationPeriods } from '../hooks';
 import type { ConfigurationPeriod } from '../types';
+import OpenPeriodDialog from './OpenPeriodDialog';
 
 const ACTIVE_TONE = 'bg-emerald-50 text-emerald-700 ring-emerald-600/20';
 const INACTIVE_TONE = 'bg-gray-50 text-gray-600 ring-gray-500/20';
@@ -28,10 +29,11 @@ function formatDate(iso: string, locale: 'es' | 'en'): string {
 
 export default function PeriodsTable() {
 	const { t, locale } = useI18n();
-	const { data: periods, isLoading, error } = useConfigurationPeriods();
+	const { data: periods, isLoading, isFetching, error } = useConfigurationPeriods();
 	const { data: modalities } = useTypesByGroupCode(TYPE_GROUP_CODES.PROGRAM_MODALITY);
 	const activate = useActivatePeriod();
 	const { showToast } = useApiErrorToast();
+	const [dialogOpen, setDialogOpen] = useState(false);
 
 	const modalityNameById = useMemo(() => {
 		const map = new Map<number, string>();
@@ -62,7 +64,7 @@ export default function PeriodsTable() {
 				id: 'code',
 				header: t('admin.configuration.periods.table.col.code'),
 				cell: ({ row }) => row.original.code,
-				meta: { cellClassName: 'font-mono text-xs text-zinc-700' },
+				meta: { cellClassName: 'font-mono text-zinc-700' },
 			},
 			{
 				id: 'modality',
@@ -104,16 +106,17 @@ export default function PeriodsTable() {
 				),
 				cell: ({ row }) =>
 					row.original.isActive ? null : (
-						<Button
-							variant="secondary"
-							size="sm"
-							onClick={() => handleActivate(row.original)}
-							disabled={activate.isPending}>
-							<CheckCircle2 className="h-3.5 w-3.5" />
-							<span className="hidden sm:inline">
-								{t('admin.configuration.periods.table.activate')}
-							</span>
-						</Button>
+						<div className="flex items-center justify-end gap-1">
+							<Button
+								variant="ghost"
+								size="icon"
+								className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+								onClick={() => handleActivate(row.original)}
+								disabled={activate.isPending}
+								aria-label={t('admin.configuration.periods.table.activate')}>
+								<CheckCircleIcon className="h-5 w-5" />
+							</Button>
+						</div>
 					),
 				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},
@@ -123,16 +126,29 @@ export default function PeriodsTable() {
 	);
 
 	return (
-		<DataTable<ConfigurationPeriod, unknown>
-			columns={columns}
-			data={periods ?? []}
-			title={t('admin.configuration.periods.table.title')}
-			description={t('admin.configuration.periods.table.description')}
-			showSearch={false}
-			isLoading={isLoading}
-			errorMessage={error?.message}
-			emptyMessage={t('admin.configuration.periods.table.empty')}
-			aria-label={t('admin.configuration.periods.table.title')}
-		/>
+		<>
+			<DataTable<ConfigurationPeriod, unknown>
+				columns={columns}
+				data={periods ?? []}
+				title={t('admin.configuration.periods.table.title')}
+				description={t('admin.configuration.periods.table.description')}
+				showSearch={false}
+				isLoading={isLoading}
+				isFetching={isFetching}
+				errorMessage={error?.message}
+				emptyMessage={t('admin.configuration.periods.table.empty')}
+				aria-label={t('admin.configuration.periods.table.title')}
+				actions={[
+					{
+						label: t('admin.configuration.periods.openButton'),
+						onClick: () => setDialogOpen(true),
+						icon: <PlusIcon className="h-4 w-4" />,
+						buttonProps: { variant: 'primary' },
+					},
+				]}
+			/>
+
+			<OpenPeriodDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+		</>
 	);
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useI18n } from '@/providers';
-import { Card, Title } from '@/shared/components';
+import { Card, SubTitle } from '@/shared/components';
 import { IFC_SHARED_LABELS } from '@/modules';
 import type { ProgramGroup } from '@/modules';
 
@@ -16,9 +16,9 @@ export function IFCOutcomeResults({ outcomeResult }: Props) {
 			<div className="space-y-6">
 				{outcomeResult.map((program) => (
 					<div key={program.programCode} className="space-y-3">
-						<Title
-							title={program.programName?.[lang] ?? program.programName?.es ?? ''}
-							className="[&_h2]:text-sm [&_h2]:font-bold [&_h2]:uppercase [&_h2]:tracking-wider [&_h2]:text-red-700"
+						<SubTitle
+							name={program.programName?.[lang] ?? program.programName?.es ?? ''}
+							className="[&_h3]:text-sm [&_h3]:font-bold [&_h3]:uppercase [&_h3]:tracking-wider [&_h3]:text-red-700"
 						/>
 
 						<div className="space-y-4 border-l-2 border-zinc-200 pl-4">

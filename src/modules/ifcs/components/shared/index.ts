@@ -1,4 +1,3 @@
-export * from './IFCPageTitle';
 export * from './IFCOutcomeResults';
 export * from './IFCLearningOutcomeReached';
 export * from './SubmitConfirmModal';

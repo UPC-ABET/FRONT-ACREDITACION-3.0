@@ -9,6 +9,7 @@ export function useConfigurationPeriods() {
 	return useQuery<ConfigurationPeriod[], Error>({
 		queryKey: configurationKeys.periodsList(),
 		queryFn: listPeriods,
+		placeholderData: (previousData) => previousData,
 	});
 }
 

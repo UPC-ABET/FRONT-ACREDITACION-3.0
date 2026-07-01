@@ -1,7 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, PageHeader, Tabs } from '@/shared/components';
+import { Card, PageHeader, Tabs, useTabParam } from '@/shared';
 import { useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import { NotificationConfigPage } from '@/modules/admin/notifications';
 import { SurveyMessagesTab } from '@/modules/admin/notifications';
@@ -11,11 +10,8 @@ import { NotificationLogsTab } from '@/modules/admin/notifications';
 const DEFAULT_TAB = 'ifc';
 
 export default function AdminNotificationsPage() {
-	const router = useRouter();
-	const searchParams = useSearchParams();
 	const { t } = useI18n();
-
-	const activeTab = searchParams.get('tab') ?? DEFAULT_TAB;
+	const [activeTab, setTab] = useTabParam(DEFAULT_TAB);
 
 	useGlobalAcademicFiltersVisibilityOverride(
 		activeTab === 'survey' ? {} : { school: false, modality: false, period: false },
@@ -27,12 +23,6 @@ export default function AdminNotificationsPage() {
 		{ id: 'user', label: t('admin.notifications.tabs.user') },
 		{ id: 'logs', label: t('admin.notifications.tabs.logs') },
 	];
-
-	const setTab = (id: string) => {
-		const next = new URLSearchParams(searchParams.toString());
-		next.set('tab', id);
-		router.replace(`/admin/notifications?${next.toString()}`);
-	};
 
 	return (
 		<div className="space-y-6">

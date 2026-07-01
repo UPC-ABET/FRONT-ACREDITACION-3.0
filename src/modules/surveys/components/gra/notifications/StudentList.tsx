@@ -130,14 +130,18 @@ export function StudentList({ programId, academicPeriodId, surveyProgramId }: St
 				header: t('surveys.gra.notifications.columns.actions'),
 				// NOSONAR — cell renderers are render functions, not React components
 				cell: ({ row }) => (
-					<Button
-						size="sm"
-						variant="warning"
-						onClick={() => setDeleteId(row.original.notificationId)}
-						aria-label={t('surveys.gra.notifications.delete')}>
-						<TrashIcon className="h-4 w-4" />
-					</Button>
+					<div className="flex items-center justify-end gap-1">
+						<Button
+							size="icon"
+							variant="ghost"
+							className="text-red-600 hover:bg-red-50"
+							onClick={() => setDeleteId(row.original.notificationId)}
+							aria-label={t('surveys.gra.notifications.delete')}>
+							<TrashIcon className="h-5 w-5" />
+						</Button>
+					</div>
 				),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},
 		],
 		[t],

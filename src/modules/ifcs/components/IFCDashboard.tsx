@@ -9,6 +9,7 @@ import {
 	MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import {
+	Alert,
 	Button,
 	Card,
 	PageHeader,
@@ -16,6 +17,7 @@ import {
 	Skeleton,
 	SuccessDialog,
 	TableEmptyState,
+	TableLoadingState,
 	Toast,
 } from '@/shared/components';
 import { useABET, useI18n, useSchoolSourceData, useSchoolSourceOverride } from '@/providers';
@@ -26,16 +28,21 @@ import { ORG_LABELS } from '../constants';
 import {
 	useIFCList,
 	useIfcNotify,
-	useOrgScope,
 	usePdfDownload,
 	useStatusReportDownload,
 	useStatusTypes,
 } from '../hooks';
+import {
+	optionsForLevel,
+	ScopeDropdowns,
+	useOrgScope,
+	type ScopeTree,
+	type SelectionValue,
+} from '@/modules/organization';
 import { getIfcSchools } from '../services';
-import { effectiveStatus, optionsForLevel } from '../services/scope';
-import type { IFCStatusFilter, ScopeTree, SelectionValue } from '../types';
+import { effectiveStatus } from '../services/scope';
+import type { IFCStatusFilter } from '../types';
 import { IFCTable } from './IFCTable';
-import { ScopeDropdowns } from './ScopeDropdowns';
 
 function formatTemplate(template: string, vars: Record<string, string | number>): string {
 	let out = template;
@@ -263,7 +270,7 @@ export function IFCDashboard() {
 
 	return (
 		<div className="space-y-6">
-			<PageHeader title={t('ifcs.page.title')} />
+			<PageHeader title={t('ifcs.page.title')} description={t('ifcs.page.subtitle')} />
 			<Card className={chartIncomplete ? 'hidden' : ''}>
 				{academicPeriodId === null ? (
 					<p className="text-sm italic text-zinc-500">{t('ifcs.page.selectPeriod')}</p>
@@ -344,20 +351,14 @@ export function IFCDashboard() {
 			</Card>
 
 			{chartIncomplete && (
-				<div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-5 text-base text-red-800">
+				<Alert variant="destructive" className="flex items-start gap-3 text-base">
 					<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
 					<p>{ORG_LABELS.chartIncomplete[lang]}</p>
-				</div>
+				</Alert>
 			)}
 
 			{!noSchools && !chartIncomplete && listLoading && (
-				<div className="space-y-3">
-					<Skeleton className="h-10 w-full" />
-					<Skeleton className="h-10 w-full" />
-					<Skeleton className="h-10 w-full" />
-					<Skeleton className="h-10 w-full" />
-					<Skeleton className="h-10 w-full" />
-				</div>
+				<TableLoadingState label={t('loading.default')} />
 			)}
 
 			{!noSchools && !chartIncomplete && !listLoading && (
