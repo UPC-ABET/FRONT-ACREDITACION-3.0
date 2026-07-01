@@ -15,23 +15,27 @@ export function SurveyMetricsSummary({ summary }: SurveyMetricsSummaryProps) {
 	const { t } = useI18n();
 
 	return (
-		<Card className="grid grid-cols-2 gap-3 p-4 md:grid-cols-4">
-			<MetricBox label={t('surveys.shared.totalSurveys')} value={summary.totalSurveys} />
-			<MetricBox
-				label={t('surveys.shared.completed')}
-				value={summary.completed ?? 0}
-				color="text-green-700"
-			/>
-			<MetricBox
-				label={t('surveys.shared.pending')}
-				value={summary.pending ?? 0}
-				color="text-amber-600"
-			/>
-			<MetricBox
-				label={t('surveys.shared.completionRate')}
-				value={`${summary.completionRatePct ?? 0}%`}
-				color="text-blue-700"
-			/>
+		<Card>
+			{/* The grid must live on an element INSIDE Card: Card wraps its children in its own
+			    block <div>, so grid classes on Card's className never reach these boxes. */}
+			<div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+				<MetricBox label={t('surveys.shared.totalSurveys')} value={summary.totalSurveys} />
+				<MetricBox
+					label={t('surveys.shared.completed')}
+					value={summary.completed ?? 0}
+					color="text-green-700"
+				/>
+				<MetricBox
+					label={t('surveys.shared.pending')}
+					value={summary.pending ?? 0}
+					color="text-amber-600"
+				/>
+				<MetricBox
+					label={t('surveys.shared.completionRate')}
+					value={`${summary.completionRatePct ?? 0}%`}
+					color="text-blue-700"
+				/>
+			</div>
 		</Card>
 	);
 }
