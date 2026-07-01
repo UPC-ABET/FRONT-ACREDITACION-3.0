@@ -83,6 +83,10 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 
 	async function handleAdd() {
 		if (!result) return;
+		if (!programId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
+			return;
+		}
 		setAdding(true);
 		await add(
 			{
