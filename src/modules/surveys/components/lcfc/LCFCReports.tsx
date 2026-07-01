@@ -97,6 +97,7 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 			<PerceptionReportPanel
 				ref={panelRef}
 				hideGenerateButton
+				requireCommission
 				onGeneratingChange={setGenerating}
 				programId={programId || undefined}
 				generate={async (filters) => {

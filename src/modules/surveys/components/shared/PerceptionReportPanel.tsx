@@ -25,6 +25,8 @@ export interface PerceptionReportPanelProps {
 	};
 	/** Hide the panel's own generate button so a parent can trigger it via the ref instead. */
 	hideGenerateButton?: boolean;
+	/** Require a commission to be selected before generating. */
+	requireCommission?: boolean;
 	/** Notifies the parent of the generate request's pending state (for an external button). */
 	onGeneratingChange?: (generating: boolean) => void;
 	generate: (
@@ -68,6 +70,7 @@ export const PerceptionReportPanel = forwardRef<
 		showSurveyNumber = false,
 		externalFilters,
 		hideGenerateButton,
+		requireCommission,
 		onGeneratingChange,
 		generate,
 	},
@@ -118,6 +121,15 @@ export const PerceptionReportPanel = forwardRef<
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
 			return;
 		}
+		const resolvedCommissionId = externalFilters
+			? externalFilters.commissionId
+			: commission
+				? Number(commission.value)
+				: undefined;
+		if (requireCommission && !resolvedCommissionId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.perception.commissionRequired') });
+			return;
+		}
 		const resolvedLang: 'es' | 'en' = externalFilters
 			? (externalFilters.lang ?? (locale === 'en' ? 'en' : 'es'))
 			: language.value === 'en'
@@ -125,11 +137,7 @@ export const PerceptionReportPanel = forwardRef<
 				: 'es';
 		generateMutation.mutate({
 			programId,
-			commissionId: externalFilters
-				? externalFilters.commissionId
-				: commission
-					? Number(commission.value)
-					: undefined,
+			commissionId: resolvedCommissionId,
 			campusId: externalFilters
 				? externalFilters.campusId
 				: campus

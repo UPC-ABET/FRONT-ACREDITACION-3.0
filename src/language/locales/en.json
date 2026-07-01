@@ -2437,6 +2437,7 @@
 		"perception": {
 			"commission": "Commission",
 			"allCommissions": "All commissions",
+			"commissionRequired": "Select a commission.",
 			"campus": "Campus",
 			"allCampuses": "All campuses",
 			"surveyNumber": "Survey number",
