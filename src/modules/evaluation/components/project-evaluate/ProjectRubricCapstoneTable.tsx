@@ -9,6 +9,8 @@ import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import { performanceLevelsService } from '@/modules/academic/services';
+import { useTypesByGroupCode } from '@/modules/core/hooks';
+import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import { useCapstoneEvaluation } from '../../hooks/useCapstoneEvaluation';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 import { CapstoneRubricRow } from './CapstoneRubricRow';
@@ -86,13 +88,27 @@ export function ProjectRubricCapstoneTable({
 		});
 	};
 
+	const { data: instrumentTypes = [] } = useTypesByGroupCode(
+		TYPE_GROUP_CODES.PERFORMANCE_LEVEL_INSTRUMENT,
+	);
+	const rubricInstrumentTypeId = instrumentTypes.find(
+		(type) => type.code === TYPE_CODES.PERFORMANCE_LEVEL_INSTRUMENT.RUBRIC,
+	)?.id;
+
 	const { data: rawLevels = [], isLoading: isLoadingLevels } = useQuery({
-		queryKey: ['performance-levels', { academicPeriodId: academicPeriodId, isActive: true }],
+		queryKey: [
+			'performance-levels',
+			{ academicPeriodId, isActive: true, instrumentTypeId: rubricInstrumentTypeId },
+		],
 		queryFn: () =>
 			performanceLevelsService
-				.getByFilters({ academicPeriodId: academicPeriodId!, isActive: true })
+				.getByFilters({
+					academicPeriodId: academicPeriodId!,
+					isActive: true,
+					instrumentTypeId: rubricInstrumentTypeId,
+				})
 				.then((r) => r.data),
-		enabled: academicPeriodId != null,
+		enabled: academicPeriodId != null && rubricInstrumentTypeId != null,
 	});
 
 	const performanceLevels = useMemo<PerformanceLevel[]>(

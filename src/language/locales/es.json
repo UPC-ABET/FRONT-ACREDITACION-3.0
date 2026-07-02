@@ -1800,9 +1800,9 @@
 				"gradeTypeLabel": "Tipo de evaluación",
 				"gradeTypePlaceholder": "Selecciona un tipo",
 				"gradeTypeLoading": "Cargando tipos...",
-				"evaluationStageTypeLabel": "Etapa de evaluación",
-				"evaluationStageTypePlaceholder": "Selecciona una etapa",
-				"evaluationStageTypeLoading": "Cargando etapas...",
+				"competencyScopeTypeLabel": "Alcance de competencia",
+				"competencyScopeTypePlaceholder": "Selecciona un alcance",
+				"competencyScopeTypeLoading": "Cargando alcances...",
 				"rubricTypeLabel": "Tipo de rúbrica:",
 				"verifyingOutcomes": "Verificando outcomes del curso...",
 				"back": "Atrás",
@@ -2019,9 +2019,9 @@
 				"grade": "Evaluar"
 			},
 			"tabs": {
-				"partial": "Rúbrica Parcial",
-				"final": "Rúbrica Final",
-				"ariaLabel": "Tipo de rúbrica"
+				"partial": "Única competencia",
+				"final": "Múltiple competencia",
+				"ariaLabel": "Alcance de competencia"
 			},
 			"filters": {
 				"academicPeriod": "Período Académico"
@@ -2032,14 +2032,12 @@
 			"error": "No fue posible cargar el proyecto.",
 			"notFound": "Proyecto no encontrado.",
 			"backButton": "Volver",
-			"subtitle": "Evalúe el proyecto según la rúbrica asignada.",
 			"docReadOnly": "Tu rol es DOCENTE. Puedes ver el proyecto y las calificaciones, pero no puedes calificar.",
 			"readOnlyNoPermission": "Tu rol de evaluador no tiene permisos para calificar este proyecto. Estás en modo lectura.",
 			"notAssigned": "No estás asignado como evaluador en este proyecto.",
 			"header": {
 				"course": "Curso",
-				"rubric": "Rúbrica",
-				"gradeType": "Tipo de nota"
+				"rubric": "Rúbrica"
 			},
 			"students": {
 				"title": "Estudiantes",

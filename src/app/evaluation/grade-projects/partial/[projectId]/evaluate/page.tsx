@@ -12,6 +12,9 @@ interface Params {
 export default async function Page({ params }: Params) {
 	const { projectId } = await params;
 	return (
-		<ProjectEvaluatePage projectId={projectId} gradeTypeCode={TYPE_CODES.GRADE_TYPE.PARTIAL} />
+		<ProjectEvaluatePage
+			projectId={projectId}
+			competencyScopeCode={TYPE_CODES.COMPETENCY_SCOPE.SINGLE}
+		/>
 	);
 }

@@ -14,6 +14,7 @@ import { evaluationQueryKeys } from './queryKeys';
 import { PerformanceLevelResponse } from '@/modules/academic';
 import { typesService } from '@/modules/core';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
+import { COMPETENCY_SCOPE_LABELS } from '../constants';
 
 function unwrapApiData<T>(response: unknown): T | null {
 	if (!response || typeof response !== 'object') return null;
@@ -68,7 +69,7 @@ interface ApiRubricDetailData {
 		rubricTypeId: number;
 		rubricType?: { code?: string };
 		gradeType?: { name: { en: string; es: string } | string; code?: string };
-		evaluationStageType?: { name: { en: string; es: string } | string; code?: string };
+		competencyScopeType?: { name: { en: string; es: string } | string; code?: string };
 		studyPlanCourseId?: number;
 	};
 	course?: { id?: number; name?: { en: string; es: string } | string };
@@ -229,7 +230,10 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 			}));
 
 			const gradeType = toI18nText(rubric.gradeType?.name);
-			const evaluationStageType = toI18nText(rubric.evaluationStageType?.name);
+			const competencyScopeCode = rubric.competencyScopeType?.code;
+			const competencyScopeType =
+				(competencyScopeCode ? COMPETENCY_SCOPE_LABELS[competencyScopeCode] : undefined) ??
+				toI18nText(rubric.competencyScopeType?.name);
 
 			const prog = data.program;
 			const programName = toI18nText(prog?.name);
@@ -240,7 +244,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				id: String(rubric.id),
 				gradeTypeCode: rubric.gradeType?.code ?? '',
 				gradeType,
-				evaluationStageType,
+				competencyScopeType,
 				isCapstone: rubric.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE,
 				program: {
 					id: String(prog?.id ?? ''),

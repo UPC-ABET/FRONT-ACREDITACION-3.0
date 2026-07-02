@@ -1800,9 +1800,9 @@
 				"gradeTypeLabel": "Evaluation type",
 				"gradeTypePlaceholder": "Select a type",
 				"gradeTypeLoading": "Loading types...",
-				"evaluationStageTypeLabel": "Evaluation stage",
-				"evaluationStageTypePlaceholder": "Select a stage",
-				"evaluationStageTypeLoading": "Loading stages...",
+				"competencyScopeTypeLabel": "Competency scope",
+				"competencyScopeTypePlaceholder": "Select a scope",
+				"competencyScopeTypeLoading": "Loading scopes...",
 				"rubricTypeLabel": "Rubric type:",
 				"verifyingOutcomes": "Verifying course outcomes...",
 				"back": "Back",
@@ -2019,9 +2019,9 @@
 				"grade": "Evaluate"
 			},
 			"tabs": {
-				"partial": "Partial Rubric",
-				"final": "Final Rubric",
-				"ariaLabel": "Rubric type"
+				"partial": "Single competency",
+				"final": "Multiple competency",
+				"ariaLabel": "Competency scope"
 			},
 			"filters": {
 				"academicPeriod": "Academic Period"
@@ -2032,14 +2032,12 @@
 			"error": "Could not load the project.",
 			"notFound": "Project not found.",
 			"backButton": "Back",
-			"subtitle": "Evaluate the project against its assigned rubric.",
 			"docReadOnly": "Your role is DOCENTE. You can view the project and its grades, but you cannot grade.",
 			"readOnlyNoPermission": "Your evaluator role does not have permission to grade this project. You are in read-only mode.",
 			"notAssigned": "You are not assigned as an evaluator for this project.",
 			"header": {
 				"course": "Course",
-				"rubric": "Rubric",
-				"gradeType": "Grade type"
+				"rubric": "Rubric"
 			},
 			"students": {
 				"title": "Students",

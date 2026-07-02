@@ -36,15 +36,15 @@ export const projectsService = {
 	getByProfessor(
 		professorId: string | number,
 		params?: {
-			evaluationStageCode?: string;
+			competencyScopeCode?: string;
 			page?: number;
 			pageSize?: number;
 			search?: string;
 		},
 	): Promise<ApiResponse<ProjectByProfessorPaginatedResponse>> {
 		const qs = new URLSearchParams();
-		if (params?.evaluationStageCode != null)
-			qs.set('evaluationStageCode', params.evaluationStageCode);
+		if (params?.competencyScopeCode != null)
+			qs.set('competencyScopeCode', params.competencyScopeCode);
 		if (params?.page != null) qs.set('page', String(params.page));
 		if (params?.pageSize != null) qs.set('pageSize', String(params.pageSize));
 		if (params?.search) qs.set('search', params.search);
@@ -59,14 +59,15 @@ export const projectsService = {
 	getDetails(
 		projectId: string | number,
 		params?: {
-			gradeTypeCode?: string;
+			competencyScopeCode?: string;
 			rubricTypeCode?: string;
 			isEvaluationMode?: boolean;
 		},
 	): Promise<ApiResponse<ProjectDetailsResponse>> {
 		const qs = new URLSearchParams();
 		if (params?.isEvaluationMode) qs.set('isEvaluationMode', String(params.isEvaluationMode));
-		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
+		if (params?.competencyScopeCode != null)
+			qs.set('competencyScopeCode', params.competencyScopeCode);
 		if (params?.rubricTypeCode != null) qs.set('rubricTypeCode', params.rubricTypeCode);
 		return apiGet(`/projects/project/${projectId}?${qs.toString()}`);
 	},

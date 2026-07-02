@@ -30,7 +30,7 @@ export function RubricHeader({ rubric }: RubricHeaderProps) {
 				<span className="text-zinc-300">|</span>
 
 				<span>
-					{t('rubrics.editor.header.rubricPrefix')} {rubric.evaluationStageType[locale]}
+					{t('rubrics.editor.header.rubricPrefix')}: {rubric.competencyScopeType[locale]}
 				</span>
 
 				<span className="text-zinc-300">|</span>

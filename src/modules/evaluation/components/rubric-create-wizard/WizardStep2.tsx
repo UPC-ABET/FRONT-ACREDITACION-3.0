@@ -7,19 +7,20 @@ import { useI18n } from '@/providers';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { useCourseOutcomeMappings } from '@/modules/academic/hooks';
 import { rubricsService } from '@/modules';
+import { COMPETENCY_SCOPE_LABELS } from '../../constants';
 import type { Step1Data } from './WizardStep1';
 
 const GRADE_TYPE_GROUP = TYPE_GROUP_CODES.GRADE_TYPE;
-const EVALUATION_STAGE_GROUP = TYPE_GROUP_CODES.EVALUATION_STAGE;
+const COMPETENCY_SCOPE_GROUP = TYPE_GROUP_CODES.COMPETENCY_SCOPE;
 const CAPSTONE_RUBRIC_CODE = TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 
 export interface Step2Data {
 	gradeTypeId: number;
 	gradeTypeCode: string;
 	gradeTypeName: { en: string; es: string };
-	evaluationStageTypeId: number;
-	evaluationStageTypeCode: string;
-	evaluationStageTypeName: { en: string; es: string };
+	competencyScopeTypeId: number;
+	competencyScopeTypeCode: string;
+	competencyScopeTypeName: { en: string; es: string };
 	rubricTypeId: number;
 	rubricTypeCode: string;
 	isCapstone: boolean;
@@ -37,21 +38,21 @@ type AnyOption = { label: string; value: string | number };
 export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 	const { t } = useI18n();
 	const [selectedGradeType, setSelectedGradeType] = useState<AnyOption | null>(null);
-	const [selectedEvaluationStage, setSelectedEvaluationStage] = useState<AnyOption | null>(null);
+	const [selectedCompetencyScope, setSelectedCompetencyScope] = useState<AnyOption | null>(null);
 
 	const { data: gradeTypes = [], isLoading: loadingGrade } = useTypesByGroupCode(GRADE_TYPE_GROUP);
-	const { data: evaluationStageTypes = [], isLoading: loadingEvaluationStage } =
-		useTypesByGroupCode(EVALUATION_STAGE_GROUP);
+	const { data: competencyScopeTypes = [], isLoading: loadingCompetencyScope } =
+		useTypesByGroupCode(COMPETENCY_SCOPE_GROUP);
 
 	const selectedGradeTypeObj = useMemo(
 		() => gradeTypes.find((gt) => gt.id === Number(selectedGradeType?.value)) ?? null,
 		[gradeTypes, selectedGradeType?.value],
 	);
 
-	const selectedEvaluationStageObj = useMemo(
+	const selectedCompetencyScopeObj = useMemo(
 		() =>
-			evaluationStageTypes.find((et) => et.id === Number(selectedEvaluationStage?.value)) ?? null,
-		[evaluationStageTypes, selectedEvaluationStage?.value],
+			competencyScopeTypes.find((et) => et.id === Number(selectedCompetencyScope?.value)) ?? null,
+		[competencyScopeTypes, selectedCompetencyScope?.value],
 	);
 
 	const { data: resolvedType, isLoading: loadingResolve } = useQuery({
@@ -76,14 +77,14 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 	);
 
 	const handleNext = () => {
-		if (!selectedGradeTypeObj || !selectedEvaluationStageObj || !resolvedType) return;
+		if (!selectedGradeTypeObj || !selectedCompetencyScopeObj || !resolvedType) return;
 		onNext({
 			gradeTypeId: selectedGradeTypeObj.id,
 			gradeTypeCode: selectedGradeTypeObj.code,
 			gradeTypeName: selectedGradeTypeObj.name,
-			evaluationStageTypeId: selectedEvaluationStageObj.id,
-			evaluationStageTypeCode: selectedEvaluationStageObj.code,
-			evaluationStageTypeName: selectedEvaluationStageObj.name,
+			competencyScopeTypeId: selectedCompetencyScopeObj.id,
+			competencyScopeTypeCode: selectedCompetencyScopeObj.code,
+			competencyScopeTypeName: selectedCompetencyScopeObj.name,
 			rubricTypeId: resolvedType.id,
 			rubricTypeCode: resolvedType.code,
 			isCapstone,
@@ -96,14 +97,14 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 		value: gt.id,
 	}));
 
-	const evaluationStageOptions: AnyOption[] = evaluationStageTypes.map((et) => ({
-		label: et.name.es,
+	const competencyScopeOptions: AnyOption[] = competencyScopeTypes.map((et) => ({
+		label: COMPETENCY_SCOPE_LABELS[et.code]?.es ?? et.name.es,
 		value: et.id,
 	}));
 
 	const canContinue =
 		!!selectedGradeType &&
-		!!selectedEvaluationStage &&
+		!!selectedCompetencyScope &&
 		!!resolvedType &&
 		!loadingResolve &&
 		!(isCapstone && loadingMappings);
@@ -142,17 +143,17 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 			/>
 
 			<Select
-				label={t('rubrics.wizard.step2.evaluationStageTypeLabel')}
+				label={t('rubrics.wizard.step2.competencyScopeTypeLabel')}
 				placeholder={
-					loadingEvaluationStage
-						? t('rubrics.wizard.step2.evaluationStageTypeLoading')
-						: t('rubrics.wizard.step2.evaluationStageTypePlaceholder')
+					loadingCompetencyScope
+						? t('rubrics.wizard.step2.competencyScopeTypeLoading')
+						: t('rubrics.wizard.step2.competencyScopeTypePlaceholder')
 				}
-				options={evaluationStageOptions}
-				value={selectedEvaluationStage}
-				isDisabled={loadingEvaluationStage}
+				options={competencyScopeOptions}
+				value={selectedCompetencyScope}
+				isDisabled={loadingCompetencyScope}
 				isSearchable
-				onChange={(_, v) => setSelectedEvaluationStage(Array.isArray(v) ? (v[0] ?? null) : v)}
+				onChange={(_, v) => setSelectedCompetencyScope(Array.isArray(v) ? (v[0] ?? null) : v)}
 			/>
 
 			{loadingResolve && (

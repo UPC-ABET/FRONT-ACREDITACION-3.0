@@ -23,9 +23,9 @@ import type { ProjectByProfessorResponse } from '../types';
 
 type RubricTab = 'partial' | 'final';
 
-const EVALUATION_STAGE_CODE: Record<RubricTab, string> = {
-	partial: TYPE_CODES.EVALUATION_STAGE.PARTIAL,
-	final: TYPE_CODES.EVALUATION_STAGE.FINAL,
+const COMPETENCY_SCOPE_CODE: Record<RubricTab, string> = {
+	partial: TYPE_CODES.COMPETENCY_SCOPE.SINGLE,
+	final: TYPE_CODES.COMPETENCY_SCOPE.MULTIPLE,
 };
 
 export function GradeProjectsPage() {
@@ -67,7 +67,7 @@ export function GradeProjectsPage() {
 	} = useProjectsByProfessor(
 		professor?.id,
 		{
-			evaluationStageCode: EVALUATION_STAGE_CODE[activeTab],
+			competencyScopeCode: COMPETENCY_SCOPE_CODE[activeTab],
 			page,
 			pageSize: DEFAULT_PAGE_SIZE,
 			search: debouncedSearch.trim() || undefined,
