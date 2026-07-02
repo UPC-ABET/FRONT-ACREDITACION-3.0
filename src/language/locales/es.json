@@ -1786,30 +1786,30 @@
 				"courseSelectProgramFirst": "Selecciona una carrera primero",
 				"next": "Siguiente",
 				"verifying": "Verificando...",
+				"rubricTypeLabel": "Tipo de rúbrica:",
+				"verifyingOutcomes": "Verificando outcomes del curso...",
 				"error": {
 					"loadPrograms": "No se pudieron cargar las carreras.",
 					"loadCourses": "No se pudieron cargar los cursos.",
 					"noSchool": "No se pudo obtener la escuela del usuario.",
 					"noStudyPlan": "No se encontró una malla curricular para este curso y periodo.",
-					"studyPlan": "Error al obtener datos de la malla curricular."
+					"studyPlan": "Error al obtener datos de la malla curricular.",
+					"verifyOutcomes": "Error al verificar los outcomes del curso."
 				}
 			},
 			"step2": {
 				"title": "Tipo de evaluación",
-				"subtitle": "Selecciona el tipo de evaluación. El tipo de rúbrica se determinará automáticamente.",
+				"subtitle": "Selecciona el tipo de evaluación.",
 				"gradeTypeLabel": "Tipo de evaluación",
 				"gradeTypePlaceholder": "Selecciona un tipo",
 				"gradeTypeLoading": "Cargando tipos...",
 				"competencyScopeTypeLabel": "Alcance de competencia",
 				"competencyScopeTypePlaceholder": "Selecciona un alcance",
 				"competencyScopeTypeLoading": "Cargando alcances...",
-				"rubricTypeLabel": "Tipo de rúbrica:",
-				"verifyingOutcomes": "Verificando outcomes del curso...",
 				"back": "Atrás",
 				"next": "Siguiente",
 				"error": {
-					"loadTypes": "No se pudieron cargar los tipos de evaluación.",
-					"verifyOutcomes": "Error al verificar los outcomes del curso."
+					"loadTypes": "No se pudieron cargar los tipos de evaluación."
 				}
 			},
 			"step3": {

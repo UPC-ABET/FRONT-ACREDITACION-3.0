@@ -1786,30 +1786,30 @@
 				"courseSelectProgramFirst": "Select a major first",
 				"next": "Next",
 				"verifying": "Verifying...",
+				"rubricTypeLabel": "Rubric type:",
+				"verifyingOutcomes": "Verifying course outcomes...",
 				"error": {
 					"loadPrograms": "Could not load majors.",
 					"loadCourses": "Could not load courses.",
 					"noSchool": "Could not retrieve school from user session.",
 					"noStudyPlan": "No study plan found for this course and period.",
-					"studyPlan": "Error retrieving study plan data."
+					"studyPlan": "Error retrieving study plan data.",
+					"verifyOutcomes": "Error verifying course outcomes."
 				}
 			},
 			"step2": {
 				"title": "Evaluation type",
-				"subtitle": "Select the evaluation type. The rubric type will be determined automatically.",
+				"subtitle": "Select the evaluation type.",
 				"gradeTypeLabel": "Evaluation type",
 				"gradeTypePlaceholder": "Select a type",
 				"gradeTypeLoading": "Loading types...",
 				"competencyScopeTypeLabel": "Competency scope",
 				"competencyScopeTypePlaceholder": "Select a scope",
 				"competencyScopeTypeLoading": "Loading scopes...",
-				"rubricTypeLabel": "Rubric type:",
-				"verifyingOutcomes": "Verifying course outcomes...",
 				"back": "Back",
 				"next": "Next",
 				"error": {
-					"loadTypes": "Could not load evaluation types.",
-					"verifyOutcomes": "Error verifying course outcomes."
+					"loadTypes": "Could not load evaluation types."
 				}
 			},
 			"step3": {

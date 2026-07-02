@@ -20,15 +20,20 @@ export const rubricsService = {
 		return apiGet(`/rubrics/get-all${query ? `?${query}` : ''}`);
 	},
 
-	resolveType(
+	resolveType(studyPlanCourseId: number): Promise<ApiResponse<RubricTypeResolution>> {
+		const qs = new URLSearchParams({ studyPlanCourseId: String(studyPlanCourseId) });
+		return apiGet(`/rubrics/resolve-type?${qs.toString()}`);
+	},
+
+	resolveCompetencyScope(
 		studyPlanCourseId: number,
-		gradeTypeId: number,
-	): Promise<ApiResponse<RubricTypeResolution>> {
+		rubricTypeId: number,
+	): Promise<ApiResponse<RubricTypeResolution[]>> {
 		const qs = new URLSearchParams({
 			studyPlanCourseId: String(studyPlanCourseId),
-			gradeTypeId: String(gradeTypeId),
+			rubricTypeId: String(rubricTypeId),
 		});
-		return apiGet(`/rubrics/resolve-type?${qs.toString()}`);
+		return apiGet(`/rubrics/resolve-competency-scope?${qs.toString()}`);
 	},
 
 	getById(rubricId: string | number): Promise<ApiResponse<GetRubricByIdResponse>> {

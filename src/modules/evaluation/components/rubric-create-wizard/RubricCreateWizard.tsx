@@ -46,7 +46,7 @@ export function RubricCreateWizard() {
 		if (!step1Data || !step2Data) return;
 		try {
 			const body: CreateRubricFullDto = {
-				rubricTypeId: step2Data.rubricTypeId,
+				rubricTypeId: step1Data.rubricTypeId,
 				gradeTypeId: step2Data.gradeTypeId,
 				competencyScopeTypeId: step2Data.competencyScopeTypeId,
 				studyPlanCourseId: step1Data.studyPlanCourseId,
@@ -77,7 +77,7 @@ export function RubricCreateWizard() {
 	];
 
 	const useCapstoneEditor =
-		step2Data?.isCapstone && step2Data?.gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
+		step1Data?.isCapstone && step2Data?.gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
 
 	return (
 		<div className="space-y-6">

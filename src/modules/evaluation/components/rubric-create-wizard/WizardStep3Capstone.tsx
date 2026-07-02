@@ -45,7 +45,7 @@ function newLocalCriteria(): LocalCriteria {
 }
 
 export function WizardStep3Capstone({
-	step2,
+	step1,
 	onBack,
 	onSubmit,
 	isSubmitting,
@@ -59,7 +59,7 @@ export function WizardStep3Capstone({
 		data: fetchedOutcomes = [],
 		isLoading: loadingOutcomes,
 		isError: loadErrored,
-	} = useOutcomes(step2.capstoneOutcomeIds);
+	} = useOutcomes(step1.capstoneOutcomeIds);
 
 	useEffect(() => {
 		if (outcomesInitialized || loadingOutcomes || !fetchedOutcomes.length) return;

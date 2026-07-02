@@ -1,10 +1,18 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Select, Button, SubTitle, Title } from '@/shared/components/ui';
+import { useQuery } from '@tanstack/react-query';
+import { Select, Button, Badge, SubTitle, Title } from '@/shared/components/ui';
 import { useI18n, useABET } from '@/providers';
-import { useAcademicPeriods, useStudyPlanCourses, usePrograms } from '@/modules/academic/hooks';
+import {
+	useAcademicPeriods,
+	useStudyPlanCourses,
+	usePrograms,
+	useCourseOutcomeMappings,
+} from '@/modules/academic/hooks';
 import { StudyPlanCourseResponse } from '@/modules/academic';
+import { rubricsService } from '@/modules';
+import { TYPE_CODES } from '@/shared';
 
 export interface Step1Data {
 	periodId: number;
@@ -13,6 +21,10 @@ export interface Step1Data {
 	studyPlanAcademicPeriodId: number;
 	courseName: { en: string; es: string };
 	periodCode: string;
+	rubricTypeId: number;
+	rubricTypeCode: string;
+	isCapstone: boolean;
+	capstoneOutcomeIds: number[];
 }
 
 interface WizardStep1Props {
@@ -62,8 +74,26 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 		{ enabled: !!academicPeriodId && !!selectedProgramId },
 	);
 
+	const { data: resolvedType, isLoading: loadingResolve } = useQuery({
+		queryKey: ['rubrics', 'resolve-type', selectedSpc?.id],
+		queryFn: () => rubricsService.resolveType(selectedSpc!.id).then((r) => r.data),
+		enabled: !!selectedSpc,
+	});
+
+	const isCapstone = resolvedType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
+
+	const { data: mappings = [], isLoading: loadingMappings } = useCourseOutcomeMappings(
+		{ studyPlanCourseId: selectedSpc?.id ?? 0, isActive: true },
+		{ enabled: isCapstone && !!selectedSpc },
+	);
+
+	const capstoneOutcomeIds = useMemo(
+		() => (isCapstone ? mappings.map((m) => m.outcomeId) : []),
+		[isCapstone, mappings],
+	);
+
 	const handleNext = () => {
-		if (!academicPeriodId || !selectedSpc) return;
+		if (!academicPeriodId || !selectedSpc || !resolvedType) return;
 		const period = periods.find((p) => p.id === academicPeriodId);
 		if (!period) return;
 		onNext({
@@ -73,6 +103,10 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 			studyPlanAcademicPeriodId: selectedSpc.studyPlanAcademicPeriodId,
 			courseName: getSpcCourseName(selectedSpc),
 			periodCode: period.code,
+			rubricTypeId: resolvedType.id,
+			rubricTypeCode: resolvedType.code,
+			isCapstone,
+			capstoneOutcomeIds,
 		});
 	};
 
@@ -94,7 +128,12 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 		[spcList, locale],
 	);
 
-	const canContinue = !!academicPeriodId && !!selectedSpc;
+	const canContinue =
+		!!academicPeriodId &&
+		!!selectedSpc &&
+		!!resolvedType &&
+		!loadingResolve &&
+		!(isCapstone && loadingMappings);
 
 	return (
 		<div className="space-y-6">
@@ -157,6 +196,21 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 					}}
 				/>
 			</div>
+
+			{loadingResolve && (
+				<p className="text-sm text-zinc-500">{t('rubrics.wizard.step1.verifyingOutcomes')}</p>
+			)}
+
+			{resolvedType && (
+				<div className="flex items-center gap-3">
+					<span className="text-sm text-zinc-600">{t('rubrics.wizard.step1.rubricTypeLabel')}</span>
+					{isCapstone ? (
+						<Badge variant="success">Capstone</Badge>
+					) : (
+						<Badge variant="outline">No Capstone</Badge>
+					)}
+				</div>
+			)}
 
 			<div className="flex justify-end">
 				<Button variant="primary" disabled={!canContinue} onClick={handleNext}>
