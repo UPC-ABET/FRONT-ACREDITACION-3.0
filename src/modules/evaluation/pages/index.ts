@@ -7,6 +7,5 @@ export * from './RubricsList';
 export * from './PerformanceLevels';
 export * from './EvaluationCourses';
 export * from './ProjectCreate';
-export { MultipleCompetencyConsolePage } from './MultipleCompetencyConsole';
 export * from './EvaluatorTypesPage';
 export * from './SemaphoreReports';

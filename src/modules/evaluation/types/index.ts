@@ -7,7 +7,6 @@ export * from './rubricDetail';
 export * from './rubricEditor';
 export * from './rubricListRow';
 export * from './rubricQuestion';
-export * from './capstone';
 export * from './semaphoreReport';
 
 export type EvaluationScorePayload = {

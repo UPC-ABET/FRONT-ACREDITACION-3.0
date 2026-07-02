@@ -3689,41 +3689,6 @@
 			"running": "Revirtiendo"
 		}
 	},
-	"capstone": {
-		"title": "Consola de Evaluación Capstone (Notas RB)",
-		"subtitle": "Evaluación directa en plataforma para Sistemas, Software y Ciencias.",
-		"projects": {
-			"title": "Proyectos asignados",
-			"description": "Proyectos de fin de carrera en los que tú eres evaluador.",
-			"loading": "Cargando proyectos...",
-			"empty": "No tienes proyectos Capstone asignados este ciclo."
-		},
-		"students": {
-			"title": "Alumnos del proyecto",
-			"description": "Selecciona un alumno para abrir su matriz de evaluación."
-		},
-		"rubric": {
-			"loading": "Cargando rúbrica..."
-		},
-		"card": {
-			"gradedOf": "de",
-			"students": "alumnos calificados"
-		},
-		"slider": {
-			"outcome": "Outcome"
-		},
-		"matrix": {
-			"title": "Evaluación de {{name}} ({{code}})",
-			"description": "Desliza el puntaje de cada criterio. La suma debe equivaler a 20.",
-			"invalidRubric": "Esta rúbrica tiene una suma máxima de {{actual}} en lugar de {{expected}} — revisa su configuración.",
-			"sumLabel": "Suma total",
-			"observationLabel": "Observación",
-			"observationPlaceholder": "Feedback cualitativo del evaluador (mínimo 50 caracteres).",
-			"observationHint": "Requiere al menos {{min}} caracteres para guardar.",
-			"save": "Guardar evaluación",
-			"saving": "Guardando..."
-		}
-	},
 	"academicProjects": {
 		"evaluators": {
 			"title": "Roles de evaluador",

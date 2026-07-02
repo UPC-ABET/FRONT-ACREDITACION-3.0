@@ -3688,41 +3688,6 @@
 			"running": "Rolling back"
 		}
 	},
-	"capstone": {
-		"title": "Capstone Evaluation Console (RB grades)",
-		"subtitle": "Direct in-platform evaluation for Systems, Software, and Sciences.",
-		"projects": {
-			"title": "Assigned projects",
-			"description": "Capstone projects where you are an evaluator.",
-			"loading": "Loading projects...",
-			"empty": "You have no Capstone projects assigned this term."
-		},
-		"students": {
-			"title": "Project students",
-			"description": "Pick a student to open the evaluation matrix."
-		},
-		"rubric": {
-			"loading": "Loading rubric..."
-		},
-		"card": {
-			"gradedOf": "of",
-			"students": "students graded"
-		},
-		"slider": {
-			"outcome": "Outcome"
-		},
-		"matrix": {
-			"title": "Evaluation for {{name}} ({{code}})",
-			"description": "Slide each criterion's score. The total must equal 20.",
-			"invalidRubric": "This rubric's maximum sums to {{actual}} instead of {{expected}} — check its configuration.",
-			"sumLabel": "Running total",
-			"observationLabel": "Observation",
-			"observationPlaceholder": "Evaluator qualitative feedback (minimum 50 chars).",
-			"observationHint": "At least {{min}} characters are required to save.",
-			"save": "Save evaluation",
-			"saving": "Saving..."
-		}
-	},
 	"academicProjects": {
 		"evaluators": {
 			"title": "Evaluator roles",
