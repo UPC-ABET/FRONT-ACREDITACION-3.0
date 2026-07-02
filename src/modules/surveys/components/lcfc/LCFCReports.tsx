@@ -1,17 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { getErrorMessage } from '@/shared/lib';
-import { PerceptionReportPanel } from '../shared/PerceptionReportPanel';
+import {
+	PerceptionReportPanel,
+	type PerceptionReportPanelHandle,
+} from '../shared/PerceptionReportPanel';
 import { SurveyMetricsSummary } from '../shared/SurveyMetricsSummary';
 import {
 	downloadLCFCSurveys,
-	downloadLCFCReportPdf,
 	generateLCFCPerceptionPdf,
 	generateLCFCDashboard,
 } from '../../services';
@@ -31,7 +33,8 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 		msg: '',
 	});
 	const [downloading, setDownloading] = useState(false);
-	const [downloadingPdf, setDownloadingPdf] = useState(false);
+	const [generating, setGenerating] = useState(false);
+	const panelRef = useRef<PerceptionReportPanelHandle>(null);
 
 	const dashboardMutation = useMutation({
 		mutationFn: () =>
@@ -60,21 +63,6 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 		}
 	}
 
-	async function handleDownloadPdf() {
-		if (!academicPeriodId) {
-			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
-			return;
-		}
-		setDownloadingPdf(true);
-		try {
-			await downloadLCFCReportPdf(programId || 0, locale);
-		} catch (error) {
-			setToast({ open: true, type: 'error', msg: tryTranslate(t, (error as Error).message) });
-		} finally {
-			setDownloadingPdf(false);
-		}
-	}
-
 	if (!academicPeriodId) {
 		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
@@ -96,12 +84,10 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 						{t('surveys.shared.downloadExcel')}
 					</Button>
 					<Button
-						variant="surface"
-						onClick={handleDownloadPdf}
-						disabled={downloadingPdf}
-						loading={downloadingPdf}>
-						<ArrowDownTrayIcon className="h-4 w-4 mr-1" />
-						{t('surveys.shared.downloadPdf')}
+						onClick={() => panelRef.current?.generate()}
+						disabled={generating}
+						loading={generating}>
+						{t('surveys.perception.generate')}
 					</Button>
 				</div>
 			</div>
@@ -109,6 +95,10 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 			{dashboard && <SurveyMetricsSummary summary={dashboard.summary} />}
 
 			<PerceptionReportPanel
+				ref={panelRef}
+				hideGenerateButton
+				requireCommission
+				onGeneratingChange={setGenerating}
 				programId={programId || undefined}
 				generate={async (filters) => {
 					dashboardMutation.mutate();
