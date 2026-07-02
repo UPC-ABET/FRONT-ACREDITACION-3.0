@@ -23,11 +23,8 @@ export interface PerceptionReportPanelProps {
 		campusId?: number;
 		lang?: 'es' | 'en';
 	};
-	/** Hide the panel's own generate button so a parent can trigger it via the ref instead. */
 	hideGenerateButton?: boolean;
-	/** Require a commission to be selected before generating. */
 	requireCommission?: boolean;
-	/** Notifies the parent of the generate request's pending state (for an external button). */
 	onGeneratingChange?: (generating: boolean) => void;
 	generate: (
 		filters: PerceptionReportFilters & { programId?: number },
