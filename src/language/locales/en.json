@@ -1764,7 +1764,7 @@
 				},
 				"step2": {
 					"label": "Evaluation",
-					"description": "Type and rubric"
+					"description": "Type and scope"
 				},
 				"step3": {
 					"label": "Rubric",
@@ -1798,9 +1798,9 @@
 				}
 			},
 			"step2": {
-				"title": "Evaluation type",
-				"subtitle": "Select the evaluation type.",
-				"gradeTypeLabel": "Evaluation type",
+				"title": "Grade type and scope",
+				"subtitle": "Select the grade type and competency scope.",
+				"gradeTypeLabel": "Grade Type",
 				"gradeTypePlaceholder": "Select a type",
 				"gradeTypeLoading": "Loading types...",
 				"competencyScopeTypeLabel": "Competency scope",

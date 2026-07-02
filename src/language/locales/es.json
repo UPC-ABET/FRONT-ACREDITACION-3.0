@@ -1764,7 +1764,7 @@
 				},
 				"step2": {
 					"label": "Evaluación",
-					"description": "Tipo y rúbrica"
+					"description": "Tipo y alcance"
 				},
 				"step3": {
 					"label": "Rúbrica",
@@ -1798,9 +1798,9 @@
 				}
 			},
 			"step2": {
-				"title": "Tipo de evaluación",
-				"subtitle": "Selecciona el tipo de evaluación.",
-				"gradeTypeLabel": "Tipo de evaluación",
+				"title": "Tipo de nota y alcance",
+				"subtitle": "Selecciona el tipo de nota y el alcance de competencia.",
+				"gradeTypeLabel": "Tipo de Nota",
 				"gradeTypePlaceholder": "Selecciona un tipo",
 				"gradeTypeLoading": "Cargando tipos...",
 				"competencyScopeTypeLabel": "Alcance de competencia",
