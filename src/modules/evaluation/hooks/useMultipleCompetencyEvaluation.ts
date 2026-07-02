@@ -23,7 +23,7 @@ type Selections = Record<number, Record<number, number | null>>;
 // criteriaId → selected uniqueValue (duplicate mode)
 type DupSelections = Record<number, number | null>;
 
-interface UseCapstoneEvaluationParams {
+interface UseMultipleCompetencyEvaluationParams {
 	outcomes: OutcomeRow[];
 	questions: RubricQuestionDetailsResponse[];
 	students: ProjectDetailsStudentResponse[];
@@ -38,7 +38,7 @@ interface UseCapstoneEvaluationParams {
 	onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function useCapstoneEvaluation({
+export function useMultipleCompetencyEvaluation({
 	outcomes,
 	questions,
 	students,
@@ -51,7 +51,7 @@ export function useCapstoneEvaluation({
 	commissions,
 	activeCommissionId,
 	onDirtyChange,
-}: UseCapstoneEvaluationParams) {
+}: UseMultipleCompetencyEvaluationParams) {
 	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
 
@@ -114,11 +114,9 @@ export function useCapstoneEvaluation({
 
 	// Sync when data arrives after mount (React Query stale-while-revalidate)
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- reseed grid from server data when the query revalidates
 		setSelections(initialSelections);
 	}, [initialSelections]);
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- reseed duplicate grid from server data when the query revalidates
 		setDupSelections(initialDupSelections);
 	}, [initialDupSelections]);
 

@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
-import { useNonCapstoneRubricTable } from '../../hooks/useNonCapstoneRubricTable';
+import { useSingleCompetencyRubricTable } from '../../hooks/useSingleCompetencyRubricTable';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 import { DuplicateGradesToggle } from './DuplicateGradesToggle';
 import { SingleCompetencyRubricRow } from './SingleCompetencyRubricRow';
 import { SingleCompetencyScoreInput } from './SingleCompetencyScoreInput';
 import { SingleCompetencyValidationMessages } from './SingleCompetencyValidationMessages';
-import { fmtNum, validateScore } from './nonCapstoneRubricUtils';
+import { fmtNum, validateScore } from './singleCompetencyRubricUtils';
 
 interface ProjectRubricSingleCompetencyTableProps {
 	questions: RubricQuestionDetailsResponse[];
@@ -55,7 +55,7 @@ export function ProjectRubricSingleCompetencyTable({
 		handleDupScore,
 		handleSave,
 		t,
-	} = useNonCapstoneRubricTable({
+	} = useSingleCompetencyRubricTable({
 		questions,
 		students,
 		evaluatorId,

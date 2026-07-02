@@ -25,17 +25,6 @@ export const rubricsService = {
 		return apiGet(`/rubrics/resolve-type?${qs.toString()}`);
 	},
 
-	resolveCompetencyScope(
-		studyPlanCourseId: number,
-		rubricTypeId: number,
-	): Promise<ApiResponse<RubricTypeResolution[]>> {
-		const qs = new URLSearchParams({
-			studyPlanCourseId: String(studyPlanCourseId),
-			rubricTypeId: String(rubricTypeId),
-		});
-		return apiGet(`/rubrics/resolve-competency-scope?${qs.toString()}`);
-	},
-
 	getById(rubricId: string | number): Promise<ApiResponse<GetRubricByIdResponse>> {
 		return apiGet(`/rubrics/get-by-id/${rubricId}`);
 	},

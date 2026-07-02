@@ -12,7 +12,7 @@ import type { Step1Data } from './WizardStep1';
 import type { Step2Data } from './WizardStep2';
 import { MAX_COLS, MAX_QUESTIONS, TARGET_SUM } from '../../constants';
 
-export interface NonCapstonePayloadQuestion {
+export interface SingleCompetencyPayloadQuestion {
 	question: { es: string; en: string };
 	criterias: { criteria: { es: string; en: string }; minValue: number; maxValue: number }[];
 }
@@ -21,7 +21,7 @@ interface WizardStep3SingleCompetencyProps {
 	step1: Step1Data;
 	step2: Step2Data;
 	onBack: () => void;
-	onSubmit: (questions: NonCapstonePayloadQuestion[]) => Promise<void>;
+	onSubmit: (questions: SingleCompetencyPayloadQuestion[]) => Promise<void>;
 	isSubmitting: boolean;
 }
 
@@ -209,17 +209,17 @@ export function WizardStep3SingleCompetency({
 		const items: { message: string; type: 'error' | 'warning' }[] = [];
 		if (!isFilled)
 			items.push({
-				message: t('rubrics.editor.nonCapstone.validation.allFieldsRequired'),
+				message: t('rubrics.editor.singleCompetency.validation.allFieldsRequired'),
 				type: 'warning',
 			});
 		if (!continuousValid)
 			items.push({
-				message: t('rubrics.editor.nonCapstone.validation.continuityRequired'),
+				message: t('rubrics.editor.singleCompetency.validation.continuityRequired'),
 				type: 'error',
 			});
 		if (!sumValid)
 			items.push({
-				message: t('rubrics.editor.nonCapstone.validation.totalMustBe20').replace(
+				message: t('rubrics.editor.singleCompetency.validation.totalMustBe20').replace(
 					'{{total}}',
 					String(total),
 				),
@@ -227,7 +227,7 @@ export function WizardStep3SingleCompetency({
 			});
 		if (!rangeValid)
 			items.push({
-				message: t('rubrics.editor.nonCapstone.validation.minMustBeLessThanMax'),
+				message: t('rubrics.editor.singleCompetency.validation.minMustBeLessThanMax'),
 				type: 'error',
 			});
 		return items;
@@ -254,7 +254,7 @@ export function WizardStep3SingleCompetency({
 			<div className="flex items-center justify-end gap-2">
 				{columnCount >= MAX_COLS && (
 					<p className="text-xs text-zinc-500" role="status">
-						{t('rubrics.editor.nonCapstone.tooltips.maxCols')}
+						{t('rubrics.editor.singleCompetency.tooltips.maxCols')}
 					</p>
 				)}
 				<Button
@@ -263,7 +263,7 @@ export function WizardStep3SingleCompetency({
 					disabled={columnCount >= MAX_COLS}
 					onClick={handleAddColumn}>
 					<PlusIcon className="mr-1 h-4 w-4" />
-					{t('rubrics.editor.nonCapstone.criteria.addCriteria')}
+					{t('rubrics.editor.singleCompetency.criteria.addCriteria')}
 				</Button>
 			</div>
 
@@ -272,12 +272,12 @@ export function WizardStep3SingleCompetency({
 				columnCount={columnCount}
 				canEdit={true}
 				locale={locale}
-				questionLabelPrefix={t('rubrics.editor.nonCapstone.question.label')}
-				questionPlaceholder={t('rubrics.editor.nonCapstone.question.placeholder')}
-				criteriaHeader={t('rubrics.editor.nonCapstone.criteria.label')}
-				criteriaPlaceholder={t('rubrics.editor.nonCapstone.criteria.placeholder')}
-				minScoreLabel={t('rubrics.editor.nonCapstone.score.minScoreLabel')}
-				maxScoreLabel={t('rubrics.editor.nonCapstone.score.maxScoreLabel')}
+				questionLabelPrefix={t('rubrics.editor.singleCompetency.question.label')}
+				questionPlaceholder={t('rubrics.editor.singleCompetency.question.placeholder')}
+				criteriaHeader={t('rubrics.editor.singleCompetency.criteria.label')}
+				criteriaPlaceholder={t('rubrics.editor.singleCompetency.criteria.placeholder')}
+				minScoreLabel={t('rubrics.editor.singleCompetency.score.minScoreLabel')}
+				maxScoreLabel={t('rubrics.editor.singleCompetency.score.maxScoreLabel')}
 				onDeleteColumn={handleDeleteColumn}
 				onDeleteRow={handleDeleteRow}
 				onQuestionTextChange={handleQuestionTextChange}
@@ -289,23 +289,24 @@ export function WizardStep3SingleCompetency({
 			{questions.length < MAX_QUESTIONS && (
 				<Button type="button" variant="primary" onClick={handleAddRow}>
 					<PlusIcon className="mr-1 h-4 w-4" />
-					{t('rubrics.editor.nonCapstone.question.addQuestion')}
+					{t('rubrics.editor.singleCompetency.question.addQuestion')}
 				</Button>
 			)}
 
 			<ValidationMessages
 				items={validationItems}
 				successMessage={
-					canSave ? t('rubrics.editor.nonCapstone.validation.validationComplete') : undefined
+					canSave ? t('rubrics.editor.singleCompetency.validation.validationComplete') : undefined
 				}
 			/>
 
 			<div className="flex flex-wrap items-center justify-between gap-4">
 				<div className="flex items-center gap-4">
 					<span className="text-sm text-zinc-600">
-						{t('rubrics.editor.nonCapstone.totalScore')}:{' '}
+						{t('rubrics.editor.singleCompetency.totalScore')}:{' '}
 						<span className={cn('font-semibold', sumValid ? 'text-emerald-600' : 'text-red-600')}>
-							{total.toFixed(1)} / {TARGET_SUM.toFixed(1)} {t('rubrics.editor.nonCapstone.points')}
+							{total.toFixed(1)} / {TARGET_SUM.toFixed(1)}{' '}
+							{t('rubrics.editor.singleCompetency.points')}
 						</span>
 					</span>
 				</div>

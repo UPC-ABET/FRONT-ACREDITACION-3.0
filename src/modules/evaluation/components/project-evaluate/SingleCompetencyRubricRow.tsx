@@ -3,8 +3,8 @@
 import { JSX } from 'react';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 import { SingleCompetencyScoreInput } from './SingleCompetencyScoreInput';
-import { fmtNum, validateScore } from './nonCapstoneRubricUtils';
-import type { Scores, DupScores } from './nonCapstoneRubricUtils';
+import { fmtNum, validateScore } from './singleCompetencyRubricUtils';
+import type { Scores, DupScores } from './singleCompetencyRubricUtils';
 
 interface SingleCompetencyRubricRowProps {
 	question: RubricQuestionDetailsResponse;

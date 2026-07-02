@@ -1,15 +1,15 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Select, Button, SubTitle, Title, TYPE_GROUP_CODES } from '@/shared';
+import { Select, Button, SubTitle, Title, TYPE_GROUP_CODES, TYPE_CODES } from '@/shared';
 import { useI18n } from '@/providers';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
-import { rubricsService } from '@/modules';
+import { useCourseOutcomeMappings } from '@/modules/academic/hooks';
 import { COMPETENCY_SCOPE_LABELS } from '../../constants';
 import type { Step1Data } from './WizardStep1';
 
 const GRADE_TYPE_GROUP = TYPE_GROUP_CODES.GRADE_TYPE;
+const COMPETENCY_SCOPE_GROUP = TYPE_GROUP_CODES.COMPETENCY_SCOPE;
 
 export interface Step2Data {
 	gradeTypeId: number;
@@ -18,6 +18,8 @@ export interface Step2Data {
 	competencyScopeTypeId: number;
 	competencyScopeTypeCode: string;
 	competencyScopeTypeName: { en: string; es: string };
+	useMultipleCompetencyEditor: boolean;
+	outcomeIds: number[];
 }
 
 interface WizardStep2Props {
@@ -35,14 +37,8 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 
 	const { data: gradeTypes = [], isLoading: loadingGrade } = useTypesByGroupCode(GRADE_TYPE_GROUP);
 
-	const { data: competencyScopeTypes = [], isLoading: loadingCompetencyScope } = useQuery({
-		queryKey: ['rubrics', 'resolve-competency-scope', step1.studyPlanCourseId, step1.rubricTypeId],
-		queryFn: () =>
-			rubricsService
-				.resolveCompetencyScope(step1.studyPlanCourseId, step1.rubricTypeId)
-				.then((r) => r.data),
-		enabled: !!step1.studyPlanCourseId && !!step1.rubricTypeId,
-	});
+	const { data: competencyScopeTypes = [], isLoading: loadingCompetencyScope } =
+		useTypesByGroupCode(COMPETENCY_SCOPE_GROUP);
 
 	const selectedGradeTypeObj = useMemo(
 		() => gradeTypes.find((gt) => gt.id === Number(selectedGradeType?.value)) ?? null,
@@ -55,6 +51,27 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 		[competencyScopeTypes, selectedCompetencyScope?.value],
 	);
 
+	const useMultipleCompetencyEditor =
+		step1.isCapstone && selectedCompetencyScopeObj?.code === TYPE_CODES.COMPETENCY_SCOPE.MULTIPLE;
+
+	const { data: outcomeTypes = [] } = useTypesByGroupCode(TYPE_GROUP_CODES.OUTCOME_TYPE, {
+		enabled: useMultipleCompetencyEditor,
+	});
+	const verificationOutcomeTypeId = outcomeTypes.find(
+		(ot) => ot.code === TYPE_CODES.OUTCOME_TYPE.VERIFICATION,
+	)?.id;
+
+	const { data: mappings = [], isLoading: loadingMappings } = useCourseOutcomeMappings(
+		{
+			studyPlanCourseId: step1.studyPlanCourseId,
+			isActive: true,
+			outcomeTypeId: verificationOutcomeTypeId,
+		},
+		{ enabled: useMultipleCompetencyEditor && verificationOutcomeTypeId != null },
+	);
+
+	const outcomeIds = useMemo(() => mappings.map((m) => m.outcomeId), [mappings]);
+
 	const handleNext = () => {
 		if (!selectedGradeTypeObj || !selectedCompetencyScopeObj) return;
 		onNext({
@@ -64,6 +81,8 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 			competencyScopeTypeId: selectedCompetencyScopeObj.id,
 			competencyScopeTypeCode: selectedCompetencyScopeObj.code,
 			competencyScopeTypeName: selectedCompetencyScopeObj.name,
+			useMultipleCompetencyEditor: Boolean(useMultipleCompetencyEditor),
+			outcomeIds: useMultipleCompetencyEditor ? outcomeIds : [],
 		});
 	};
 
@@ -77,7 +96,10 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 		value: et.id,
 	}));
 
-	const canContinue = !!selectedGradeType && !!selectedCompetencyScope;
+	const canContinue =
+		!!selectedGradeType &&
+		!!selectedCompetencyScope &&
+		!(useMultipleCompetencyEditor && loadingMappings);
 
 	return (
 		<div className="space-y-6">

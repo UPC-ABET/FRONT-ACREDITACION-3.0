@@ -1678,7 +1678,7 @@
 			"criteria": {
 				"saving": "Guardando criterio..."
 			},
-			"capstone": {
+			"multipleCompetency": {
 				"saveRubric": "Guardar rúbrica",
 				"saving": "Guardando rúbrica...",
 				"saveError": "Error al guardar la rúbrica.",
@@ -1700,7 +1700,7 @@
 					"criteriaPlaceholder": "Ingrese la descripción del criterio"
 				}
 			},
-			"nonCapstone": {
+			"singleCompetency": {
 				"totalScore": "Puntaje total",
 				"points": "puntos",
 				"saveRubric": "Guardar rúbrica",
@@ -1816,7 +1816,7 @@
 				"back": "Atrás",
 				"submit": "Crear rúbrica",
 				"submitting": "Creando rúbrica...",
-				"capstone": {
+				"multipleCompetency": {
 					"title": "Criterios por outcome",
 					"subtitle": "Define los niveles de evaluación para cada outcome.",
 					"criteriaLabel": "Criterio",
@@ -2064,7 +2064,7 @@
 				"noRubric": "No hay rúbrica configurada para esta carrera.",
 				"missingStatus": "Selecciona la asistencia de todos los estudiantes para continuar."
 			},
-			"capstone": {
+			"multipleCompetency": {
 				"outcome": "Outcome",
 				"criteria": "Criterios",
 				"loadingLevels": "Cargando niveles de desempeño...",

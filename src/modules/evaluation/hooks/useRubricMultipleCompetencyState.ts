@@ -29,12 +29,15 @@ export function updateOutcomeCriteria(
 	};
 }
 
-interface UseRubricCapstoneStateOptions {
+interface UseRubricMultipleCompetencyStateOptions {
 	rubric: RubricDetail;
 	queryKey: readonly unknown[];
 }
 
-export function useRubricCapstoneState({ rubric, queryKey }: UseRubricCapstoneStateOptions) {
+export function useRubricMultipleCompetencyState({
+	rubric,
+	queryKey,
+}: UseRubricMultipleCompetencyStateOptions) {
 	const queryClient = useQueryClient();
 
 	const [activeCommissionId, setActiveCommissionId] = useState(

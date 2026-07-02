@@ -5,7 +5,7 @@ import { useI18n } from '@/providers';
 import { rubricsService } from '../services';
 import type { RubricQuestion } from '../types';
 
-interface UseRubricNonCapstoneSaveOptions {
+interface UseRubricSingleCompetencySaveOptions {
 	rubricId: string;
 	questions: RubricQuestion[];
 	canEdit: boolean;
@@ -17,7 +17,7 @@ interface UseRubricNonCapstoneSaveOptions {
 	saveSuccessMessage: string;
 }
 
-export function useRubricNonCapstoneSave({
+export function useRubricSingleCompetencySave({
 	rubricId,
 	questions,
 	canEdit,
@@ -27,7 +27,7 @@ export function useRubricNonCapstoneSave({
 	rangeValid,
 	onNotify,
 	saveSuccessMessage,
-}: UseRubricNonCapstoneSaveOptions) {
+}: UseRubricSingleCompetencySaveOptions) {
 	const { t } = useI18n();
 	const [isSaving, setIsSaving] = useState(false);
 
@@ -55,7 +55,7 @@ export function useRubricNonCapstoneSave({
 			});
 			onNotify('success', saveSuccessMessage);
 		} catch {
-			onNotify('error', t('rubrics.editor.nonCapstone.saveError'));
+			onNotify('error', t('rubrics.editor.singleCompetency.saveError'));
 		} finally {
 			setIsSaving(false);
 		}

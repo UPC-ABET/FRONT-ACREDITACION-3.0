@@ -4,7 +4,7 @@ import { Spinner } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import type { RubricCriteriaDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
-import { PLSelector, type PerformanceLevel } from './CapstonePerformanceLevelSelector';
+import { PLSelector, type PerformanceLevel } from './MultipleCompetencyPerformanceLevelSelector';
 
 interface MultipleCompetencyRubricRowProps {
 	criteria: RubricCriteriaDetailsResponse;
@@ -70,9 +70,11 @@ export function MultipleCompetencyRubricRow({
 
 			<td className="px-4 py-4">
 				{isLoadingLevels ? (
-					<Spinner size="sm" aria-label={t('projects.evaluate.capstone.loadingLevels')} />
+					<Spinner size="sm" aria-label={t('projects.evaluate.multipleCompetency.loadingLevels')} />
 				) : !performanceLevels.length ? (
-					<p className="text-xs text-zinc-400">{t('projects.evaluate.capstone.noLevels')}</p>
+					<p className="text-xs text-zinc-400">
+						{t('projects.evaluate.multipleCompetency.noLevels')}
+					</p>
 				) : duplicateMode ? (
 					<PLSelector
 						levels={performanceLevels}

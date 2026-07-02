@@ -7,9 +7,9 @@ import { useI18n } from '@/providers';
 import { RubricTable } from './RubricTable';
 import type { RubricDetail } from '../../types';
 import { MAX_COLS, MAX_QUESTIONS, TARGET_SUM } from '../../constants';
-import { useRubricNonCapstoneState } from '../../hooks/useRubricNonCapstoneState';
-import { useRubricNonCapstoneValidation } from '../../hooks/useRubricNonCapstoneValidation';
-import { useRubricNonCapstoneSave } from '../../hooks/useRubricNonCapstoneSave';
+import { useRubricSingleCompetencyState } from '../../hooks/useRubricSingleCompetencyState';
+import { useRubricSingleCompetencyValidation } from '../../hooks/useRubricSingleCompetencyValidation';
+import { useRubricSingleCompetencySave } from '../../hooks/useRubricSingleCompetencySave';
 import { cn } from '@/shared/lib/utils';
 
 function ValidationMessages({
@@ -80,12 +80,12 @@ export function RubricEditorSingleCompetency({
 		handleCriteriaTextChange,
 		handleCriteriaMinChange,
 		handleCriteriaMaxChange,
-	} = useRubricNonCapstoneState({ rubric, queryKey, locale });
+	} = useRubricSingleCompetencyState({ rubric, queryKey, locale });
 
 	const { isFilled, continuousValid, sumValid, rangeValid, total, validationItems } =
-		useRubricNonCapstoneValidation(questions);
+		useRubricSingleCompetencyValidation(questions);
 
-	const { isSaving, handleSave } = useRubricNonCapstoneSave({
+	const { isSaving, handleSave } = useRubricSingleCompetencySave({
 		rubricId,
 		questions,
 		canEdit,
@@ -103,7 +103,7 @@ export function RubricEditorSingleCompetency({
 				<div className="flex items-center justify-end gap-2">
 					{columnCount >= MAX_COLS && (
 						<p className="text-xs text-zinc-500" role="status">
-							{t('rubrics.editor.nonCapstone.tooltips.maxCols')}
+							{t('rubrics.editor.singleCompetency.tooltips.maxCols')}
 						</p>
 					)}
 					<Button
@@ -112,7 +112,7 @@ export function RubricEditorSingleCompetency({
 						disabled={columnCount >= MAX_COLS}
 						onClick={handleAddColumn}>
 						<PlusIcon className="mr-1 h-4 w-4" />
-						{t('rubrics.editor.nonCapstone.criteria.addCriteria')}
+						{t('rubrics.editor.singleCompetency.criteria.addCriteria')}
 					</Button>
 				</div>
 			) : null}
@@ -122,12 +122,12 @@ export function RubricEditorSingleCompetency({
 				columnCount={columnCount}
 				canEdit={canEdit}
 				locale={locale}
-				questionLabelPrefix={t('rubrics.editor.nonCapstone.question.label')}
-				questionPlaceholder={t('rubrics.editor.nonCapstone.question.placeholder')}
-				criteriaHeader={t('rubrics.editor.nonCapstone.criteria.label')}
-				criteriaPlaceholder={t('rubrics.editor.nonCapstone.criteria.placeholder')}
-				minScoreLabel={t('rubrics.editor.nonCapstone.score.minScoreLabel')}
-				maxScoreLabel={t('rubrics.editor.nonCapstone.score.maxScoreLabel')}
+				questionLabelPrefix={t('rubrics.editor.singleCompetency.question.label')}
+				questionPlaceholder={t('rubrics.editor.singleCompetency.question.placeholder')}
+				criteriaHeader={t('rubrics.editor.singleCompetency.criteria.label')}
+				criteriaPlaceholder={t('rubrics.editor.singleCompetency.criteria.placeholder')}
+				minScoreLabel={t('rubrics.editor.singleCompetency.score.minScoreLabel')}
+				maxScoreLabel={t('rubrics.editor.singleCompetency.score.maxScoreLabel')}
 				onDeleteColumn={handleDeleteColumn}
 				onDeleteRow={handleDeleteRow}
 				onQuestionTextChange={handleQuestionTextChange}
@@ -139,7 +139,7 @@ export function RubricEditorSingleCompetency({
 			{canEdit && questions.length < MAX_QUESTIONS ? (
 				<Button type="button" variant="primary" onClick={handleAddRow}>
 					<PlusIcon className="mr-1 h-4 w-4" />
-					{t('rubrics.editor.nonCapstone.question.addQuestion')}
+					{t('rubrics.editor.singleCompetency.question.addQuestion')}
 				</Button>
 			) : null}
 
@@ -147,16 +147,17 @@ export function RubricEditorSingleCompetency({
 				items={validationItems}
 				successMessage={
 					isFilled && continuousValid && sumValid && rangeValid
-						? t('rubrics.editor.nonCapstone.validation.validationComplete')
+						? t('rubrics.editor.singleCompetency.validation.validationComplete')
 						: undefined
 				}
 			/>
 
 			<div className="flex flex-wrap items-center justify-between gap-4">
 				<span className="text-sm text-zinc-600">
-					{t('rubrics.editor.nonCapstone.totalScore')}:{' '}
+					{t('rubrics.editor.singleCompetency.totalScore')}:{' '}
 					<span className={cn('font-semibold', sumValid ? 'text-emerald-600' : 'text-red-600')}>
-						{total.toFixed(1)} / {TARGET_SUM.toFixed(1)} {t('rubrics.editor.nonCapstone.points')}
+						{total.toFixed(1)} / {TARGET_SUM.toFixed(1)}{' '}
+						{t('rubrics.editor.singleCompetency.points')}
 					</span>
 				</span>
 
@@ -168,7 +169,7 @@ export function RubricEditorSingleCompetency({
 					}
 					onClick={() => void handleSave()}
 					loading={isSaving}>
-					{t('rubrics.editor.nonCapstone.saveRubric')}
+					{t('rubrics.editor.singleCompetency.saveRubric')}
 				</Button>
 			</div>
 		</div>

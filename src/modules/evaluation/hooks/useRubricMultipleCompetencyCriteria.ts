@@ -2,17 +2,17 @@
 
 import { useState } from 'react';
 import type { CriteriaItem, RubricDetail } from '../types';
-import { updateOutcomeCriteria } from './useRubricCapstoneState';
+import { updateOutcomeCriteria } from './useRubricMultipleCompetencyState';
 
-interface UseRubricCapstoneCriteriaOptions {
+interface UseRubricMultipleCompetencyCriteriaOptions {
 	locale: string;
 	mergeRubric: (fn: (prev: RubricDetail) => RubricDetail) => void;
 }
 
-export function useRubricCapstoneCriteria({
+export function useRubricMultipleCompetencyCriteria({
 	locale,
 	mergeRubric,
-}: UseRubricCapstoneCriteriaOptions) {
+}: UseRubricMultipleCompetencyCriteriaOptions) {
 	const [savingKey, setSavingKey] = useState<string | null>(null);
 
 	const handleAddCriteria = (commissionId: string, outcomeId: string) => {

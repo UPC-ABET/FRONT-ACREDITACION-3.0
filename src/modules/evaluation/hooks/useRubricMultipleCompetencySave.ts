@@ -4,9 +4,9 @@ import { useCallback, useMemo, useState } from 'react';
 import { useI18n } from '@/providers';
 import { rubricsService } from '../services';
 import type { CriteriaItem, RubricDetail } from '../types';
-import { verificationOutcomes } from '../utils/capstoneUtils';
+import { verificationOutcomes } from '../utils/multipleCompetencyUtils';
 
-interface UseRubricCapstoneSaveOptions {
+interface UseRubricMultipleCompetencySaveOptions {
 	rubricId: string;
 	draftRubric: RubricDetail;
 	canEdit: boolean;
@@ -14,13 +14,13 @@ interface UseRubricCapstoneSaveOptions {
 	saveSuccessMessage: string;
 }
 
-export function useRubricCapstoneSave({
+export function useRubricMultipleCompetencySave({
 	rubricId,
 	draftRubric,
 	canEdit,
 	onNotify,
 	saveSuccessMessage,
-}: UseRubricCapstoneSaveOptions) {
+}: UseRubricMultipleCompetencySaveOptions) {
 	const { t, locale } = useI18n();
 	const [isSaving, setIsSaving] = useState(false);
 
@@ -81,7 +81,7 @@ export function useRubricCapstoneSave({
 			await rubricsService.update(rubricId, { questions });
 			onNotify('success', saveSuccessMessage);
 		} catch {
-			onNotify('error', t('rubrics.editor.capstone.saveError'));
+			onNotify('error', t('rubrics.editor.multipleCompetency.saveError'));
 		} finally {
 			setIsSaving(false);
 		}

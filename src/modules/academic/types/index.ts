@@ -571,6 +571,7 @@ export type StudyPlanCourseFilters = {
 export type CourseOutcomeMappingFilters = {
 	studyPlanCourseId?: number;
 	isActive?: boolean;
+	outcomeTypeId?: number;
 };
 
 export type ClassRepresentativeMaintenanceItem = {

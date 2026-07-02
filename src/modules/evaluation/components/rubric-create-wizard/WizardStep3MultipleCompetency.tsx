@@ -12,7 +12,7 @@ import type { OutcomeWithCriteria, CriteriaItem } from '../../types';
 import type { Step1Data } from './WizardStep1';
 import type { Step2Data } from './WizardStep2';
 
-export interface CapstonePayloadQuestion {
+export interface MultipleCompetencyPayloadQuestion {
 	outcomeId: number;
 	question: { es: string; en: string };
 	criterias: { criteria: { es: string; en: string }; minValue: number; maxValue: number }[];
@@ -36,7 +36,7 @@ interface WizardStep3MultipleCompetencyProps {
 	step1: Step1Data;
 	step2: Step2Data;
 	onBack: () => void;
-	onSubmit: (questions: CapstonePayloadQuestion[]) => Promise<void>;
+	onSubmit: (questions: MultipleCompetencyPayloadQuestion[]) => Promise<void>;
 	isSubmitting: boolean;
 }
 
@@ -45,7 +45,7 @@ function newLocalCriteria(): LocalCriteria {
 }
 
 export function WizardStep3MultipleCompetency({
-	step1,
+	step2,
 	onBack,
 	onSubmit,
 	isSubmitting,
@@ -57,12 +57,12 @@ export function WizardStep3MultipleCompetency({
 
 	const {
 		data: fetchedOutcomes = [],
-		isLoading: loadingOutcomes,
+		isLoading,
 		isError: loadErrored,
-	} = useOutcomes(step1.capstoneOutcomeIds);
+	} = useOutcomes(step2.outcomeIds);
 
 	useEffect(() => {
-		if (outcomesInitialized || loadingOutcomes || !fetchedOutcomes.length) return;
+		if (outcomesInitialized || isLoading || !fetchedOutcomes.length) return;
 
 		const loaded: LocalOutcome[] = fetchedOutcomes.map((o) => {
 			const commission = o.programCommission?.commission;
@@ -84,7 +84,7 @@ export function WizardStep3MultipleCompetency({
 		setActiveCommissionId(loaded[0]?.commissionId ?? '');
 		setOutcomesInitialized(true);
 		/* eslint-enable react-hooks/set-state-in-effect */
-	}, [fetchedOutcomes, outcomesInitialized, loadingOutcomes]);
+	}, [fetchedOutcomes, outcomesInitialized, isLoading]);
 
 	const commissionTabs = useMemo(() => {
 		const map = new Map<
@@ -176,7 +176,7 @@ export function WizardStep3MultipleCompetency({
 		);
 	};
 
-	if (loadingOutcomes) {
+	if (isLoading) {
 		return (
 			<div className="space-y-4">
 				<Skeleton className="h-10 w-full" />
@@ -189,7 +189,7 @@ export function WizardStep3MultipleCompetency({
 	if (loadErrored) {
 		return (
 			<p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-				{t('rubrics.wizard.step3.capstone.error.loadOutcomes')}
+				{t('rubrics.wizard.step3.multipleCompetency.error.loadOutcomes')}
 			</p>
 		);
 	}
@@ -201,7 +201,9 @@ export function WizardStep3MultipleCompetency({
 					commissions={commissionTabs}
 					activeCommissionId={activeCommissionId}
 					onCommissionChange={setActiveCommissionId}
-					checkboxTooltipIncomplete={t('rubrics.wizard.step3.capstone.commissionTooltipIncomplete')}
+					checkboxTooltipIncomplete={t(
+						'rubrics.wizard.step3.multipleCompetency.commissionTooltipIncomplete',
+					)}
 				/>
 			)}
 
@@ -216,20 +218,20 @@ export function WizardStep3MultipleCompetency({
 							key={outcomeId}
 							outcome={outcomeView}
 							canEdit={true}
-							emptyMessage={t('rubrics.wizard.step3.capstone.emptyOutcome')}
-							emptyMessageWithHint={t('rubrics.wizard.step3.capstone.emptyOutcomeHint')}
+							emptyMessage={t('rubrics.wizard.step3.multipleCompetency.emptyOutcome')}
+							emptyMessageWithHint={t('rubrics.wizard.step3.multipleCompetency.emptyOutcomeHint')}
 							onAdd={() => addCriteria(outcomeId)}>
 							{localOutcome.criteria.map((c, ci) => (
 								<div
 									key={c.id}
 									className="flex flex-wrap items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50/80 px-3 py-2">
 									<span className="shrink-0 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-										{t('rubrics.wizard.step3.capstone.criteriaLabel')} {ci + 1}
+										{t('rubrics.wizard.step3.multipleCompetency.criteriaLabel')} {ci + 1}
 									</span>
 									<div className="min-w-[12rem] flex-1">
 										<Input
 											value={c.text[locale]}
-											placeholder={t('rubrics.wizard.step3.capstone.criteriaPlaceholder')}
+											placeholder={t('rubrics.wizard.step3.multipleCompetency.criteriaPlaceholder')}
 											onChange={(e) => setCriteriaText(outcomeId, ci, e.target.value)}
 											className="w-full"
 										/>
@@ -243,7 +245,7 @@ export function WizardStep3MultipleCompetency({
 										onClick={() => deleteCriteria(outcomeId, ci)}>
 										<TrashIcon className="h-5 w-5 text-zinc-500" aria-hidden />
 										<span className="sr-only">
-											{t('rubrics.wizard.step3.capstone.deleteCriteria')}
+											{t('rubrics.wizard.step3.multipleCompetency.deleteCriteria')}
 										</span>
 									</Button>
 								</div>
@@ -257,7 +259,7 @@ export function WizardStep3MultipleCompetency({
 				<ul className="space-y-1 text-sm">
 					<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
 						<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
-						{t('rubrics.wizard.step3.capstone.validation.incomplete')}
+						{t('rubrics.wizard.step3.multipleCompetency.validation.incomplete')}
 					</li>
 				</ul>
 			)}
@@ -265,7 +267,7 @@ export function WizardStep3MultipleCompetency({
 			{allFilled && (
 				<p className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
 					<CheckCircleIcon className="h-4 w-4 shrink-0 text-emerald-500" />
-					{t('rubrics.wizard.step3.capstone.validation.complete')}
+					{t('rubrics.wizard.step3.multipleCompetency.validation.complete')}
 				</p>
 			)}
 

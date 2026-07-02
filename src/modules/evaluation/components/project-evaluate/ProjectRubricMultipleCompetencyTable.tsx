@@ -11,11 +11,11 @@ import { useI18n } from '@/providers';
 import { performanceLevelsService } from '@/modules/academic/services';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
-import { useCapstoneEvaluation } from '../../hooks/useCapstoneEvaluation';
+import { useMultipleCompetencyEvaluation } from '../../hooks/useMultipleCompetencyEvaluation';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 import { MultipleCompetencyRubricRow } from './MultipleCompetencyRubricRow';
 import { DuplicateGradesToggle } from './DuplicateGradesToggle';
-import { PLSelector, type PerformanceLevel } from './CapstonePerformanceLevelSelector';
+import { PLSelector, type PerformanceLevel } from './MultipleCompetencyPerformanceLevelSelector';
 
 type OutcomeRow = {
 	id: number;
@@ -132,7 +132,7 @@ export function ProjectRubricMultipleCompetencyTable({
 		handleSelect,
 		handleDupSelect,
 		handleSave,
-	} = useCapstoneEvaluation({
+	} = useMultipleCompetencyEvaluation({
 		outcomes,
 		questions,
 		students,
@@ -196,13 +196,13 @@ export function ProjectRubricMultipleCompetencyTable({
 					<thead>
 						<tr className="border-b border-zinc-200 bg-zinc-50">
 							<th className="w-40 min-w-[14rem] px-4 py-3 text-left text-[13px] font-semibold uppercase tracking-wider text-zinc-500">
-								{t('projects.evaluate.capstone.outcome')}
+								{t('projects.evaluate.multipleCompetency.outcome')}
 							</th>
 							<th className="w-52 min-w-[16rem] px-4 py-3 text-left text-[13px] font-semibold uppercase tracking-wider text-zinc-500">
-								{t('projects.evaluate.capstone.criteria')}
+								{t('projects.evaluate.multipleCompetency.criteria')}
 							</th>
 							<th className="min-w-[12rem] px-4 py-3 text-left text-[13px] font-semibold uppercase tracking-wider text-zinc-500 md:min-w-[14rem]">
-								{t('projects.evaluate.capstone.score')}
+								{t('projects.evaluate.multipleCompetency.score')}
 							</th>
 						</tr>
 					</thead>
@@ -257,7 +257,7 @@ export function ProjectRubricMultipleCompetencyTable({
 								className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left">
 								<div>
 									<p className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-										{t('projects.evaluate.capstone.outcome')}
+										{t('projects.evaluate.multipleCompetency.outcome')}
 									</p>
 									<p className="text-sm font-semibold text-zinc-800">{outcome.code}</p>
 								</div>
@@ -284,11 +284,11 @@ export function ProjectRubricMultipleCompetencyTable({
 												{isLoadingLevels ? (
 													<Spinner
 														size="sm"
-														aria-label={t('projects.evaluate.capstone.loadingLevels')}
+														aria-label={t('projects.evaluate.multipleCompetency.loadingLevels')}
 													/>
 												) : !performanceLevels.length ? (
 													<p className="text-xs text-zinc-400">
-														{t('projects.evaluate.capstone.noLevels')}
+														{t('projects.evaluate.multipleCompetency.noLevels')}
 													</p>
 												) : duplicateMode ? (
 													<PLSelector
@@ -348,7 +348,7 @@ export function ProjectRubricMultipleCompetencyTable({
 							{!allFilled && !hasMissingStatus && (
 								<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
 									<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
-									{t('projects.evaluate.capstone.fillAll')}
+									{t('projects.evaluate.multipleCompetency.fillAll')}
 								</li>
 							)}
 						</ul>

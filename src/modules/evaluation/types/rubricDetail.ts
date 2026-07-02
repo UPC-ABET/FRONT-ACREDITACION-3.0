@@ -7,6 +7,7 @@ export type RubricDetail = {
 	gradeTypeCode: 'TF' | 'TP' | string;
 	gradeType: { en: string; es: string };
 	competencyScopeType: { en: string; es: string };
+	competencyScopeCode: string;
 	isCapstone: boolean;
 	program: { id: string; code: string; name: { en: string; es: string } };
 	course: { id: string; code: string; name: { en: string; es: string } };

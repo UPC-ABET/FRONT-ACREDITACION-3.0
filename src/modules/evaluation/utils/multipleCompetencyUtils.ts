@@ -4,7 +4,7 @@ export function verificationOutcomes(commission: CommissionTab) {
 	return commission.outcomes.filter((outcome) => outcome.outcomeType === 'verificacion');
 }
 
-/** In capstone rubrics, questions are the leaf items — criteria are never used. */
+/** In multiple-competency rubrics, questions are the leaf items — criteria are never used. */
 function outcomeHasQuestions(outcome: OutcomeWithCriteria): boolean {
 	return outcome.questions.some(
 		(q) => q.questionText.en.trim().length > 0 || q.questionText.es.trim().length > 0,
@@ -35,7 +35,7 @@ export function commissionIsPartial(commission: CommissionTab): boolean {
 	return commissionHasAnyQuestions(commission) && !commissionIsFullyComplete(commission);
 }
 
-export function canSaveCapstone(commissions: CommissionTab[]): boolean {
+export function canSaveMultipleCompetency(commissions: CommissionTab[]): boolean {
 	const hasComplete = commissions.some(commissionIsFullyComplete);
 	const hasPartial = commissions.some(commissionIsPartial);
 	return hasComplete && !hasPartial;

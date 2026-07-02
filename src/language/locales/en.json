@@ -1678,7 +1678,7 @@
 			"criteria": {
 				"saving": "Saving criterion..."
 			},
-			"capstone": {
+			"multipleCompetency": {
 				"saveRubric": "Save rubric",
 				"saving": "Saving rubric...",
 				"saveError": "Error saving the rubric.",
@@ -1700,7 +1700,7 @@
 					"criteriaPlaceholder": "Enter the criterion description"
 				}
 			},
-			"nonCapstone": {
+			"singleCompetency": {
 				"totalScore": "Total score",
 				"points": "points",
 				"saveRubric": "Save rubric",
@@ -1816,7 +1816,7 @@
 				"back": "Back",
 				"submit": "Create rubric",
 				"submitting": "Creating rubric...",
-				"capstone": {
+				"multipleCompetency": {
 					"title": "Criteria by outcome",
 					"subtitle": "Define performance levels for each course outcome.",
 					"criteriaLabel": "Criterion",
@@ -2064,7 +2064,7 @@
 				"noRubric": "No rubric configured for this career.",
 				"missingStatus": "Select the attendance status for all students to continue."
 			},
-			"capstone": {
+			"multipleCompetency": {
 				"outcome": "Outcome",
 				"criteria": "Criteria",
 				"loadingLevels": "Loading performance levels...",

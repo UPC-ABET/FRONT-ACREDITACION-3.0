@@ -9,9 +9,9 @@ import {
 	type Scores,
 	type DupScores,
 	type CriteriaScoreEntry,
-} from '../components/project-evaluate/nonCapstoneRubricUtils';
+} from '../components/project-evaluate/singleCompetencyRubricUtils';
 
-interface UseNonCapstoneRubricTableOptions {
+interface UseSingleCompetencyRubricTableOptions {
 	questions: RubricQuestionDetailsResponse[];
 	students: ProjectDetailsStudentResponse[];
 	evaluatorId: number;
@@ -22,7 +22,7 @@ interface UseNonCapstoneRubricTableOptions {
 	onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function useNonCapstoneRubricTable({
+export function useSingleCompetencyRubricTable({
 	questions,
 	students,
 	evaluatorId,
@@ -31,7 +31,7 @@ export function useNonCapstoneRubricTable({
 	qualifStatuses,
 	nrNaTypeIds,
 	onDirtyChange,
-}: UseNonCapstoneRubricTableOptions) {
+}: UseSingleCompetencyRubricTableOptions) {
 	const { t, locale } = useI18n();
 	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 
@@ -81,7 +81,6 @@ export function useNonCapstoneRubricTable({
 	const [dupScores, setDupScores] = useState<DupScores>(initialDupScores);
 
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- reseed scores from server data when the query revalidates
 		setScores(initialScores);
 	}, [initialScores]);
 

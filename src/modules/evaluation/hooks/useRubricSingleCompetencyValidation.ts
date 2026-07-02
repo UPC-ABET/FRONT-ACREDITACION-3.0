@@ -43,7 +43,7 @@ function isAllFilled(questions: RubricQuestion[], locale: string): boolean {
 	);
 }
 
-export function useRubricNonCapstoneValidation(questions: RubricQuestion[]) {
+export function useRubricSingleCompetencyValidation(questions: RubricQuestion[]) {
 	const { t, locale } = useI18n();
 
 	const total = useMemo(() => computeTotal(questions), [questions]);
@@ -69,17 +69,17 @@ export function useRubricNonCapstoneValidation(questions: RubricQuestion[]) {
 		const items: { message: string; type: 'error' | 'warning' }[] = [];
 		if (!isFilled)
 			items.push({
-				message: t('rubrics.editor.nonCapstone.validation.allFieldsRequired'),
+				message: t('rubrics.editor.singleCompetency.validation.allFieldsRequired'),
 				type: 'warning',
 			});
 		if (!continuousValid)
 			items.push({
-				message: t('rubrics.editor.nonCapstone.validation.continuityRequired'),
+				message: t('rubrics.editor.singleCompetency.validation.continuityRequired'),
 				type: 'error',
 			});
 		if (!sumValid)
 			items.push({
-				message: t('rubrics.editor.nonCapstone.validation.totalMustBe20').replace(
+				message: t('rubrics.editor.singleCompetency.validation.totalMustBe20').replace(
 					'{{total}}',
 					String(total),
 				),
@@ -87,7 +87,7 @@ export function useRubricNonCapstoneValidation(questions: RubricQuestion[]) {
 			});
 		if (!rangeValid)
 			items.push({
-				message: t('rubrics.editor.nonCapstone.validation.minMustBeLessThanMax'),
+				message: t('rubrics.editor.singleCompetency.validation.minMustBeLessThanMax'),
 				type: 'error',
 			});
 		return items;

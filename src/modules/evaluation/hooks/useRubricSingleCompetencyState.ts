@@ -34,17 +34,17 @@ function buildShape(from: RubricQuestion[] | null | undefined): {
 	return { questions, columnCount };
 }
 
-interface UseRubricNonCapstoneStateOptions {
+interface UseRubricSingleCompetencyStateOptions {
 	rubric: RubricDetail;
 	queryKey: readonly unknown[];
 	locale: string;
 }
 
-export function useRubricNonCapstoneState({
+export function useRubricSingleCompetencyState({
 	rubric,
 	queryKey,
 	locale,
-}: UseRubricNonCapstoneStateOptions) {
+}: UseRubricSingleCompetencyStateOptions) {
 	const queryClient = useQueryClient();
 
 	const [questions, setQuestions] = useState<RubricQuestion[]>(
@@ -55,10 +55,10 @@ export function useRubricNonCapstoneState({
 	useEffect(() => {
 		const { questions: q, columnCount: c } = buildShape(rubric.questions);
 		// Re-sync local editable draft when switching between different rubrics (keyed on rubric.id).
-		/* eslint-disable react-hooks/set-state-in-effect -- reseed editable rubric draft when the target rubric changes */
+
 		setQuestions(q);
 		setColumnCount(c);
-		/* eslint-enable react-hooks/set-state-in-effect */
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- key on rubric.id only; reseeding on every rubric.questions change would clobber in-progress edits
 	}, [rubric.id]);
 

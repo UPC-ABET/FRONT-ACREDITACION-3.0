@@ -9,6 +9,7 @@ import { useRubricEditor } from '../../hooks/useRubricEditor';
 import { RubricHeader } from './RubricHeader';
 import { ReadonlyBanner } from './ReadonlyBanner';
 import { RubricDetail } from '../../types';
+import { TYPE_CODES } from '@/shared/constants';
 
 const RubricEditorMultipleCompetency = dynamic(
 	() => import('./RubricEditorMultipleCompetency').then((m) => m.RubricEditorMultipleCompetency),
@@ -71,7 +72,7 @@ export function RubricEditor({ rubricId, initialRubric }: RubricEditorProps) {
 
 			{!canEdit ? <ReadonlyBanner /> : null}
 
-			{rubric.isCapstone && rubric.gradeTypeCode === 'TG205-T002' ? (
+			{rubric.isCapstone && rubric.competencyScopeCode === TYPE_CODES.COMPETENCY_SCOPE.MULTIPLE ? (
 				<RubricEditorMultipleCompetency
 					rubric={rubric}
 					rubricId={rubricId}

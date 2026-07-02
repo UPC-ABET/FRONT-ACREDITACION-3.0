@@ -13,13 +13,12 @@ import { WizardStep1, type Step1Data } from './WizardStep1';
 import { WizardStep2, type Step2Data } from './WizardStep2';
 import {
 	WizardStep3SingleCompetency,
-	type NonCapstonePayloadQuestion,
+	type SingleCompetencyPayloadQuestion,
 } from './WizardStep3SingleCompetency';
 import {
 	WizardStep3MultipleCompetency,
-	type CapstonePayloadQuestion,
+	type MultipleCompetencyPayloadQuestion,
 } from './WizardStep3MultipleCompetency';
-import { TYPE_CODES } from '@/shared';
 
 export function RubricCreateWizard() {
 	const router = useRouter();
@@ -47,7 +46,7 @@ export function RubricCreateWizard() {
 	};
 
 	const handleSubmit = async (
-		questions: NonCapstonePayloadQuestion[] | CapstonePayloadQuestion[],
+		questions: SingleCompetencyPayloadQuestion[] | MultipleCompetencyPayloadQuestion[],
 	) => {
 		if (!step1Data || !step2Data) return;
 		try {
@@ -82,8 +81,7 @@ export function RubricCreateWizard() {
 		},
 	];
 
-	const useCapstoneEditor =
-		step1Data?.isCapstone && step2Data?.gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
+	const useMultipleCompetencyEditor = Boolean(step2Data?.useMultipleCompetencyEditor);
 
 	return (
 		<div className="space-y-6">
@@ -105,7 +103,7 @@ export function RubricCreateWizard() {
 				{currentStep === 3 &&
 					step1Data &&
 					step2Data &&
-					(useCapstoneEditor ? (
+					(useMultipleCompetencyEditor ? (
 						<WizardStep3MultipleCompetency
 							step1={step1Data}
 							step2={step2Data}

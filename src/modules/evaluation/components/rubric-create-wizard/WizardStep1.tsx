@@ -4,12 +4,7 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Select, Button, Badge, SubTitle, Title } from '@/shared/components/ui';
 import { useI18n, useABET } from '@/providers';
-import {
-	useAcademicPeriods,
-	useStudyPlanCourses,
-	usePrograms,
-	useCourseOutcomeMappings,
-} from '@/modules/academic/hooks';
+import { useAcademicPeriods, useStudyPlanCourses, usePrograms } from '@/modules/academic/hooks';
 import { StudyPlanCourseResponse } from '@/modules/academic';
 import { rubricsService } from '@/modules';
 import { TYPE_CODES } from '@/shared';
@@ -24,7 +19,6 @@ export interface Step1Data {
 	rubricTypeId: number;
 	rubricTypeCode: string;
 	isCapstone: boolean;
-	capstoneOutcomeIds: number[];
 }
 
 interface WizardStep1Props {
@@ -82,16 +76,6 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 
 	const isCapstone = resolvedType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 
-	const { data: mappings = [], isLoading: loadingMappings } = useCourseOutcomeMappings(
-		{ studyPlanCourseId: selectedSpc?.id ?? 0, isActive: true },
-		{ enabled: isCapstone && !!selectedSpc },
-	);
-
-	const capstoneOutcomeIds = useMemo(
-		() => (isCapstone ? mappings.map((m) => m.outcomeId) : []),
-		[isCapstone, mappings],
-	);
-
 	const handleNext = () => {
 		if (!academicPeriodId || !selectedSpc || !resolvedType) return;
 		const period = periods.find((p) => p.id === academicPeriodId);
@@ -106,7 +90,6 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 			rubricTypeId: resolvedType.id,
 			rubricTypeCode: resolvedType.code,
 			isCapstone,
-			capstoneOutcomeIds,
 		});
 	};
 
@@ -128,12 +111,7 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 		[spcList, locale],
 	);
 
-	const canContinue =
-		!!academicPeriodId &&
-		!!selectedSpc &&
-		!!resolvedType &&
-		!loadingResolve &&
-		!(isCapstone && loadingMappings);
+	const canContinue = !!academicPeriodId && !!selectedSpc && !!resolvedType && !loadingResolve;
 
 	return (
 		<div className="space-y-6">

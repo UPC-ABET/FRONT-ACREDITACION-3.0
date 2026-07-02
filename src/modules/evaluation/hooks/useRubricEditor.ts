@@ -245,6 +245,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 				gradeTypeCode: rubric.gradeType?.code ?? '',
 				gradeType,
 				competencyScopeType,
+				competencyScopeCode: competencyScopeCode ?? '',
 				isCapstone: rubric.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE,
 				program: {
 					id: String(prog?.id ?? ''),
