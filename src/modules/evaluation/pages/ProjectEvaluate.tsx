@@ -197,8 +197,8 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 	const courseName = course?.name[locale as 'es' | 'en'] ?? course?.name.es ?? '—';
 
 	const isCapstone = activeItem?.rubric?.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
-	const isFinal = competencyScopeCode === TYPE_CODES.COMPETENCY_SCOPE.MULTIPLE;
-	const isCapstoneFinal = isCapstone && isFinal;
+	const isMultiple = competencyScopeCode === TYPE_CODES.COMPETENCY_SCOPE.MULTIPLE;
+	const isCapstoneMultiple = isCapstone && isMultiple;
 
 	return (
 		<div className="space-y-6">
@@ -357,7 +357,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 					{!activeItem?.rubric ? (
 						<TableEmptyState message={t('projects.evaluate.rubric.noRubric')} />
-					) : isCapstoneFinal ? (
+					) : isCapstoneMultiple ? (
 						<ProjectRubricMultipleCompetencyTable
 							outcomes={activeItem.outcomes}
 							questions={activeItem.questions}
