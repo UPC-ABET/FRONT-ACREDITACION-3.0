@@ -12,7 +12,7 @@ function outcomeHasQuestions(outcome: OutcomeWithCriteria): boolean {
 }
 
 /** An outcome is considered complete when all its questions have non-empty text
- *  in at least one locale. For locale-aware save validation see RubricEditorCapstone. */
+ *  in at least one locale. For locale-aware save validation see RubricEditorMultipleCompetency. */
 function outcomeIsFullyComplete(outcome: OutcomeWithCriteria): boolean {
 	return (
 		outcome.questions.length > 0 &&

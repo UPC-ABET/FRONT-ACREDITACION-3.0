@@ -7,12 +7,12 @@ import { localizedText } from '@/shared/utils';
 import { useNonCapstoneRubricTable } from '../../hooks/useNonCapstoneRubricTable';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 import { DuplicateGradesToggle } from './DuplicateGradesToggle';
-import { NonCapstoneRubricRow } from './NonCapstoneRubricRow';
-import { NonCapstoneScoreInput } from './NonCapstoneScoreInput';
-import { NonCapstoneValidationMessages } from './NonCapstoneValidationMessages';
+import { SingleCompetencyRubricRow } from './SingleCompetencyRubricRow';
+import { SingleCompetencyScoreInput } from './SingleCompetencyScoreInput';
+import { SingleCompetencyValidationMessages } from './SingleCompetencyValidationMessages';
 import { fmtNum, validateScore } from './nonCapstoneRubricUtils';
 
-interface ProjectRubricNonCapstoneTableProps {
+interface ProjectRubricSingleCompetencyTableProps {
 	questions: RubricQuestionDetailsResponse[];
 	students: ProjectDetailsStudentResponse[];
 	evaluatorId: number;
@@ -25,7 +25,7 @@ interface ProjectRubricNonCapstoneTableProps {
 	onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function ProjectRubricNonCapstoneTable({
+export function ProjectRubricSingleCompetencyTable({
 	questions,
 	students,
 	evaluatorId,
@@ -36,7 +36,7 @@ export function ProjectRubricNonCapstoneTable({
 	readOnly = false,
 	disableDuplicate = false,
 	onDirtyChange,
-}: ProjectRubricNonCapstoneTableProps) {
+}: ProjectRubricSingleCompetencyTableProps) {
 	const {
 		locale,
 		isPending,
@@ -111,7 +111,7 @@ export function ProjectRubricNonCapstoneTable({
 							const range = ranges[q.id] ?? { min: 0, max: 0 };
 
 							return (
-								<NonCapstoneRubricRow
+								<SingleCompetencyRubricRow
 									key={q.id}
 									question={q}
 									range={range}
@@ -182,7 +182,7 @@ export function ProjectRubricNonCapstoneTable({
 									</div>
 
 									{duplicateMode ? (
-										<NonCapstoneScoreInput
+										<SingleCompetencyScoreInput
 											value={dupScores[question.id] ?? ''}
 											min={range.min}
 											max={range.max}
@@ -204,7 +204,7 @@ export function ProjectRubricNonCapstoneTable({
 															<span className="min-w-0 truncate text-xs font-medium text-zinc-700">
 																{student.firstName} {student.lastName}
 															</span>
-															<NonCapstoneScoreInput
+															<SingleCompetencyScoreInput
 																value={score}
 																min={range.min}
 																max={range.max}
@@ -226,7 +226,7 @@ export function ProjectRubricNonCapstoneTable({
 
 			{!readOnly && (
 				<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
-					<NonCapstoneValidationMessages
+					<SingleCompetencyValidationMessages
 						items={[
 							...(hasMissingStatus
 								? [

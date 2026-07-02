@@ -3,7 +3,7 @@
 import { useI18n } from '@/providers';
 import type { CapstoneProject } from '../../types/capstone';
 
-interface CapstoneProjectCardProps {
+interface MultipleCompetencyProjectCardProps {
 	project: CapstoneProject;
 	selected?: boolean;
 	onSelect: (project: CapstoneProject) => void;
@@ -11,11 +11,11 @@ interface CapstoneProjectCardProps {
 
 const SVG_RADIUS = 22;
 
-export default function CapstoneProjectCard({
+export default function MultipleCompetencyProjectCard({
 	project,
 	selected,
 	onSelect,
-}: CapstoneProjectCardProps) {
+}: MultipleCompetencyProjectCardProps) {
 	const { t } = useI18n();
 	const pct =
 		project.totalStudents > 0

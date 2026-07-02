@@ -32,7 +32,7 @@ interface LocalOutcome {
 	_commissionMeta?: { code: string; name: { en: string; es: string } };
 }
 
-interface WizardStep3CapstoneProps {
+interface WizardStep3MultipleCompetencyProps {
 	step1: Step1Data;
 	step2: Step2Data;
 	onBack: () => void;
@@ -44,12 +44,12 @@ function newLocalCriteria(): LocalCriteria {
 	return { id: `temp-${Date.now()}-${Math.random()}`, text: { en: '', es: '' } };
 }
 
-export function WizardStep3Capstone({
+export function WizardStep3MultipleCompetency({
 	step1,
 	onBack,
 	onSubmit,
 	isSubmitting,
-}: WizardStep3CapstoneProps) {
+}: WizardStep3MultipleCompetencyProps) {
 	const { t, locale } = useI18n();
 	const [outcomes, setOutcomes] = useState<LocalOutcome[]>([]);
 	const [activeCommissionId, setActiveCommissionId] = useState('');

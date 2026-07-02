@@ -13,7 +13,7 @@ import { useRubricCapstoneState } from '../../hooks/useRubricCapstoneState';
 import { useRubricCapstoneCriteria } from '../../hooks/useRubricCapstoneCriteria';
 import { useRubricCapstoneSave } from '../../hooks/useRubricCapstoneSave';
 
-interface RubricEditorCapstoneProps {
+interface RubricEditorMultipleCompetencyProps {
 	rubric: RubricDetail;
 	rubricId: string;
 	canEdit: boolean;
@@ -22,14 +22,14 @@ interface RubricEditorCapstoneProps {
 	messages: { autosaveRetry: string; saveSuccess: string };
 }
 
-export function RubricEditorCapstone({
+export function RubricEditorMultipleCompetency({
 	rubric,
 	rubricId,
 	canEdit,
 	queryKey,
 	onNotify,
 	messages,
-}: RubricEditorCapstoneProps) {
+}: RubricEditorMultipleCompetencyProps) {
 	const { t, locale } = useI18n();
 
 	const { draftRubric, activeCommissionId, setActiveCommissionId, activeCommission, mergeRubric } =

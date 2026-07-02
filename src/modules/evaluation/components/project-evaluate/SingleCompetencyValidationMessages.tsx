@@ -4,7 +4,7 @@ import { JSX } from 'react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { cn } from '@/shared/lib/utils';
 
-export function NonCapstoneValidationMessages({
+export function SingleCompetencyValidationMessages({
 	items,
 }: {
 	items: { message: string; type: 'error' | 'warning' }[];

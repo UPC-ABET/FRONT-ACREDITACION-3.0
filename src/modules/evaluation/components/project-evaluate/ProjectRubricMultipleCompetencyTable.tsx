@@ -13,7 +13,7 @@ import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import { useCapstoneEvaluation } from '../../hooks/useCapstoneEvaluation';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
-import { CapstoneRubricRow } from './CapstoneRubricRow';
+import { MultipleCompetencyRubricRow } from './MultipleCompetencyRubricRow';
 import { DuplicateGradesToggle } from './DuplicateGradesToggle';
 import { PLSelector, type PerformanceLevel } from './CapstonePerformanceLevelSelector';
 
@@ -31,7 +31,7 @@ type CommissionRow = {
 	outcomeIds: number[];
 };
 
-interface ProjectRubricCapstoneTableProps {
+interface ProjectRubricMultipleCompetencyTableProps {
 	outcomes: OutcomeRow[];
 	questions: RubricQuestionDetailsResponse[];
 	students: ProjectDetailsStudentResponse[];
@@ -47,7 +47,7 @@ interface ProjectRubricCapstoneTableProps {
 	commissions?: CommissionRow[];
 }
 
-export function ProjectRubricCapstoneTable({
+export function ProjectRubricMultipleCompetencyTable({
 	outcomes,
 	questions,
 	students,
@@ -61,7 +61,7 @@ export function ProjectRubricCapstoneTable({
 	disableDuplicate = false,
 	onDirtyChange,
 	commissions = [],
-}: ProjectRubricCapstoneTableProps) {
+}: ProjectRubricMultipleCompetencyTableProps) {
 	const { t, locale } = useI18n();
 
 	const [activeCommissionId, setActiveCommissionId] = useState<number | null>(
@@ -215,7 +215,7 @@ export function ProjectRubricCapstoneTable({
 								outcome.description[locale as 'es' | 'en'] ?? outcome.description.es;
 
 							return criterias.map((criteria, idx) => (
-								<CapstoneRubricRow
+								<MultipleCompetencyRubricRow
 									key={criteria.id}
 									criteria={criteria}
 									criterias={criterias}

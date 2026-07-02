@@ -2,11 +2,11 @@
 
 import { JSX } from 'react';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
-import { NonCapstoneScoreInput } from './NonCapstoneScoreInput';
+import { SingleCompetencyScoreInput } from './SingleCompetencyScoreInput';
 import { fmtNum, validateScore } from './nonCapstoneRubricUtils';
 import type { Scores, DupScores } from './nonCapstoneRubricUtils';
 
-interface NonCapstoneRubricRowProps {
+interface SingleCompetencyRubricRowProps {
 	question: RubricQuestionDetailsResponse;
 	range: { min: number; max: number };
 	locale: string;
@@ -23,7 +23,7 @@ interface NonCapstoneRubricRowProps {
 	onScore: (qId: number, stIdx: number, val: string) => void;
 }
 
-export function NonCapstoneRubricRow({
+export function SingleCompetencyRubricRow({
 	question: q,
 	range,
 	locale,
@@ -38,7 +38,7 @@ export function NonCapstoneRubricRow({
 	readOnly,
 	onDupScore,
 	onScore,
-}: NonCapstoneRubricRowProps): JSX.Element {
+}: SingleCompetencyRubricRowProps): JSX.Element {
 	const questionText = q.text[locale as 'es' | 'en'] ?? q.text.es;
 
 	return (
@@ -70,7 +70,7 @@ export function NonCapstoneRubricRow({
 			<td className="px-4 py-4 text-center">
 				{duplicateMode ? (
 					<div className="flex justify-center">
-						<NonCapstoneScoreInput
+						<SingleCompetencyScoreInput
 							value={dupScores[q.id] ?? ''}
 							min={range.min}
 							max={range.max}
@@ -91,7 +91,7 @@ export function NonCapstoneRubricRow({
 										<span className="min-w-0 truncate text-xs font-medium text-zinc-700">
 											{st.firstName} {st.lastName}
 										</span>
-										<NonCapstoneScoreInput
+										<SingleCompetencyScoreInput
 											value={val}
 											min={range.min}
 											max={range.max}

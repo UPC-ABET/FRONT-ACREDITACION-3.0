@@ -17,7 +17,7 @@ export interface NonCapstonePayloadQuestion {
 	criterias: { criteria: { es: string; en: string }; minValue: number; maxValue: number }[];
 }
 
-interface WizardStep3NonCapstoneProps {
+interface WizardStep3SingleCompetencyProps {
 	step1: Step1Data;
 	step2: Step2Data;
 	onBack: () => void;
@@ -106,11 +106,11 @@ function ValidationMessages({
 	);
 }
 
-export function WizardStep3NonCapstone({
+export function WizardStep3SingleCompetency({
 	onBack,
 	onSubmit,
 	isSubmitting,
-}: WizardStep3NonCapstoneProps) {
+}: WizardStep3SingleCompetencyProps) {
 	const { t, locale } = useI18n();
 
 	const [questions, setQuestions] = useState<RubricQuestion[]>([

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button, Card, LoadingState, PageHeader, TableEmptyState } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { CapstoneProjectCard, RubricEvaluationMatrix } from '../components/capstone';
+import { MultipleCompetencyProjectCard, RubricEvaluationMatrix } from '../components/capstone';
 import {
 	useCapstoneProjects,
 	useCapstoneRubric,
@@ -11,12 +11,15 @@ import {
 } from '../hooks/useCapstone';
 import type { CapstoneProject } from '../types/capstone';
 
-interface CapstoneConsolePageProps {
+interface MultipleCompetencyConsolePageProps {
 	professorId: number;
 	studentsByProject: Record<number, Array<{ id: number; code: string; name: string }>>;
 }
 
-export function CapstoneConsolePage({ professorId, studentsByProject }: CapstoneConsolePageProps) {
+export function MultipleCompetencyConsolePage({
+	professorId,
+	studentsByProject,
+}: MultipleCompetencyConsolePageProps) {
 	const { t } = useI18n();
 	const { data: projects, isLoading: loadingProjects } = useCapstoneProjects(professorId);
 	const [selectedProject, setSelectedProject] = useState<CapstoneProject | null>(null);
@@ -41,7 +44,7 @@ export function CapstoneConsolePage({ professorId, studentsByProject }: Capstone
 				)}
 				<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 					{(projects ?? []).map((p) => (
-						<CapstoneProjectCard
+						<MultipleCompetencyProjectCard
 							key={p.id}
 							project={p}
 							selected={selectedProject?.id === p.id}

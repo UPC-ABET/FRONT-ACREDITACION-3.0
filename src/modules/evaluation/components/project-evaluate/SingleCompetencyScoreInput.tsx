@@ -12,7 +12,7 @@ interface ScoreInputProps {
 	disabled?: boolean;
 }
 
-export function NonCapstoneScoreInput({
+export function SingleCompetencyScoreInput({
 	value,
 	min,
 	max,

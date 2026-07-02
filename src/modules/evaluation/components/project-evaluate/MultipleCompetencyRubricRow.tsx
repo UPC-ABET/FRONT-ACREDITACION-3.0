@@ -6,7 +6,7 @@ import { useI18n } from '@/providers';
 import type { RubricCriteriaDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
 import { PLSelector, type PerformanceLevel } from './CapstonePerformanceLevelSelector';
 
-interface CapstoneRubricRowProps {
+interface MultipleCompetencyRubricRowProps {
 	criteria: RubricCriteriaDetailsResponse;
 	criterias: RubricCriteriaDetailsResponse[];
 	idx: number;
@@ -26,7 +26,7 @@ interface CapstoneRubricRowProps {
 	onDupSelect: (criteriaId: number, value: number) => void;
 }
 
-export function CapstoneRubricRow({
+export function MultipleCompetencyRubricRow({
 	criteria,
 	criterias,
 	idx,
@@ -44,7 +44,7 @@ export function CapstoneRubricRow({
 	readOnly,
 	onSelect,
 	onDupSelect,
-}: CapstoneRubricRowProps) {
+}: MultipleCompetencyRubricRowProps) {
 	const { t } = useI18n();
 	const criteriaDesc = criteria.text[locale as 'es' | 'en'] ?? criteria.text.es;
 	const isFirstInOutcome = idx === 0;

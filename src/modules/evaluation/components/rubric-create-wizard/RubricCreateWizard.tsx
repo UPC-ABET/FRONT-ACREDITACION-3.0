@@ -11,8 +11,14 @@ import type { CreateRubricFullDto } from '@/modules';
 import { WizardStepIndicator } from './WizardStepIndicator';
 import { WizardStep1, type Step1Data } from './WizardStep1';
 import { WizardStep2, type Step2Data } from './WizardStep2';
-import { WizardStep3NonCapstone, type NonCapstonePayloadQuestion } from './WizardStep3NonCapstone';
-import { WizardStep3Capstone, type CapstonePayloadQuestion } from './WizardStep3Capstone';
+import {
+	WizardStep3SingleCompetency,
+	type NonCapstonePayloadQuestion,
+} from './WizardStep3SingleCompetency';
+import {
+	WizardStep3MultipleCompetency,
+	type CapstonePayloadQuestion,
+} from './WizardStep3MultipleCompetency';
 import { TYPE_CODES } from '@/shared';
 
 export function RubricCreateWizard() {
@@ -100,7 +106,7 @@ export function RubricCreateWizard() {
 					step1Data &&
 					step2Data &&
 					(useCapstoneEditor ? (
-						<WizardStep3Capstone
+						<WizardStep3MultipleCompetency
 							step1={step1Data}
 							step2={step2Data}
 							onBack={() => setCurrentStep(2)}
@@ -108,7 +114,7 @@ export function RubricCreateWizard() {
 							isSubmitting={createRubricFull.isPending}
 						/>
 					) : (
-						<WizardStep3NonCapstone
+						<WizardStep3SingleCompetency
 							step1={step1Data}
 							step2={step2Data}
 							onBack={() => setCurrentStep(2)}

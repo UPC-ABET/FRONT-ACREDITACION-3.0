@@ -50,7 +50,7 @@ function ValidationMessages({
 	);
 }
 
-interface RubricEditorNonCapstoneProps {
+interface RubricEditorSingleCompetencyProps {
 	rubric: RubricDetail;
 	rubricId: string;
 	canEdit: boolean;
@@ -59,14 +59,14 @@ interface RubricEditorNonCapstoneProps {
 	messages: { autosaveRetry: string; saveSuccess: string };
 }
 
-export function RubricEditorNonCapstone({
+export function RubricEditorSingleCompetency({
 	rubric,
 	rubricId,
 	canEdit,
 	queryKey,
 	onNotify,
 	messages,
-}: RubricEditorNonCapstoneProps) {
+}: RubricEditorSingleCompetencyProps) {
 	const { t, locale } = useI18n();
 
 	const {

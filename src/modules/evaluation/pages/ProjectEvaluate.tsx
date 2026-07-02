@@ -19,8 +19,8 @@ import { useTabParam } from '@/shared';
 import { useAuth, useI18n } from '@/providers';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
-import { ProjectRubricNonCapstoneTable } from '../components/project-evaluate/ProjectRubricNonCapstoneTable';
-import { ProjectRubricCapstoneTable } from '../components/project-evaluate/ProjectRubricCapstoneTable';
+import { ProjectRubricSingleCompetencyTable } from '../components/project-evaluate/ProjectRubricSingleCompetencyTable';
+import { ProjectRubricMultipleCompetencyTable } from '../components/project-evaluate/ProjectRubricMultipleCompetencyTable';
 import { TYPE_CODES } from '@/shared/constants';
 
 interface ProjectEvaluatePageProps {
@@ -358,7 +358,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 					{!activeItem?.rubric ? (
 						<TableEmptyState message={t('projects.evaluate.rubric.noRubric')} />
 					) : isCapstoneFinal ? (
-						<ProjectRubricCapstoneTable
+						<ProjectRubricMultipleCompetencyTable
 							outcomes={activeItem.outcomes}
 							questions={activeItem.questions}
 							students={activeStudents}
@@ -376,7 +376,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 							commissions={activeItem.commissions}
 						/>
 					) : activeItem.questions.length > 0 ? (
-						<ProjectRubricNonCapstoneTable
+						<ProjectRubricSingleCompetencyTable
 							questions={activeItem.questions}
 							students={activeStudents}
 							evaluatorId={evaluatorId}
