@@ -1532,7 +1532,8 @@
 				"defaultCourseSectionMissing": "No se encontró una sección de curso por defecto. Contacte al administrador.",
 				"emptyStudentCode": "Código de alumno vacío.",
 				"studentNotFound": "No se encontró un alumno con ese código.",
-				"alreadyInList": "El alumno ya está en la lista de GRA."
+				"alreadyInList": "El alumno ya está en la lista de GRA.",
+				"programRequired": "Selecciona una carrera antes de agregar un alumno."
 			},
 			"lcfc": {
 				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado.",
@@ -2436,6 +2437,7 @@
 		"perception": {
 			"commission": "Comisión",
 			"allCommissions": "Todas las comisiones",
+			"commissionRequired": "Selecciona una comisión.",
 			"campus": "Sede",
 			"allCampuses": "Todas las sedes",
 			"surveyNumber": "Número de encuesta",

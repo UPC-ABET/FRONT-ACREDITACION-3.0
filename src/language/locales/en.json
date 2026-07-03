@@ -1532,7 +1532,8 @@
 				"defaultCourseSectionMissing": "No default course section was found. Contact the administrator.",
 				"emptyStudentCode": "Empty student code.",
 				"studentNotFound": "No student found with that code.",
-				"alreadyInList": "The student is already in the GRA list."
+				"alreadyInList": "The student is already in the GRA list.",
+				"programRequired": "Select a career before adding a student."
 			},
 			"lcfc": {
 				"tokenNotFound": "The survey link is invalid or has expired.",
@@ -2435,6 +2436,7 @@
 		"perception": {
 			"commission": "Commission",
 			"allCommissions": "All commissions",
+			"commissionRequired": "Select a commission.",
 			"campus": "Campus",
 			"allCampuses": "All campuses",
 			"surveyNumber": "Survey number",
