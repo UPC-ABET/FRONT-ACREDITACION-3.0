@@ -44,9 +44,12 @@ export function GradeProjectsPage() {
 		return () => clearTimeout(timer);
 	}, [search]);
 
-	useEffect(() => {
+	const resetPageKey = `${activeTab}:${debouncedSearch}`;
+	const [trackedResetPageKey, setTrackedResetPageKey] = useState(resetPageKey);
+	if (resetPageKey !== trackedResetPageKey) {
+		setTrackedResetPageKey(resetPageKey);
 		setPage(1);
-	}, [activeTab, debouncedSearch]);
+	}
 
 	const userId = authUser?.id ?? null;
 	const professorEnabled = userId != null;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useSubmitEvaluation } from './useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../types';
 
@@ -113,12 +113,17 @@ export function useMultipleCompetencyEvaluation({
 	const [dupSelections, setDupSelections] = useState<DupSelections>(initialDupSelections);
 
 	// Sync when data arrives after mount (React Query stale-while-revalidate)
-	useEffect(() => {
+	const [trackedInitialSelections, setTrackedInitialSelections] = useState(initialSelections);
+	if (initialSelections !== trackedInitialSelections) {
+		setTrackedInitialSelections(initialSelections);
 		setSelections(initialSelections);
-	}, [initialSelections]);
-	useEffect(() => {
+	}
+	const [trackedInitialDupSelections, setTrackedInitialDupSelections] =
+		useState(initialDupSelections);
+	if (initialDupSelections !== trackedInitialDupSelections) {
+		setTrackedInitialDupSelections(initialDupSelections);
 		setDupSelections(initialDupSelections);
-	}, [initialDupSelections]);
+	}
 
 	const hasMissingStatus = useMemo(
 		() => students.some((st) => qualifStatuses[st.id] == null),

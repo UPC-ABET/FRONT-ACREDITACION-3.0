@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { RubricDetail, RubricQuestion, QuestionCriteria } from '../types';
 import { MAX_COLS, MAX_QUESTIONS } from '../constants';
@@ -52,15 +52,15 @@ export function useRubricSingleCompetencyState({
 	);
 	const [columnCount, setColumnCount] = useState(() => buildShape(rubric.questions).columnCount);
 
-	useEffect(() => {
+	// Re-sync local editable draft when switching between different rubrics (keyed on rubric.id).
+	// Intentionally keyed on rubric.id only; reseeding on every rubric.questions change would clobber in-progress edits.
+	const [trackedRubricId, setTrackedRubricId] = useState(rubric.id);
+	if (rubric.id !== trackedRubricId) {
+		setTrackedRubricId(rubric.id);
 		const { questions: q, columnCount: c } = buildShape(rubric.questions);
-		// Re-sync local editable draft when switching between different rubrics (keyed on rubric.id).
-
 		setQuestions(q);
 		setColumnCount(c);
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- key on rubric.id only; reseeding on every rubric.questions change would clobber in-progress edits
-	}, [rubric.id]);
+	}
 
 	const update = useCallback(
 		(next: RubricQuestion[]) => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useI18n } from '@/providers';
 import { useSubmitEvaluation } from './useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../types';
@@ -80,9 +80,11 @@ export function useSingleCompetencyRubricTable({
 	const [scores, setScores] = useState<Scores>(initialScores);
 	const [dupScores, setDupScores] = useState<DupScores>(initialDupScores);
 
-	useEffect(() => {
+	const [trackedInitialScores, setTrackedInitialScores] = useState(initialScores);
+	if (initialScores !== trackedInitialScores) {
+		setTrackedInitialScores(initialScores);
 		setScores(initialScores);
-	}, [initialScores]);
+	}
 
 	const ranges = useMemo(() => {
 		const result: Record<number, { min: number; max: number }> = {};
