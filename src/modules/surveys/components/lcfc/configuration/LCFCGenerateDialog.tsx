@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import {
 	Button,
 	Dialog,
@@ -9,6 +9,7 @@ import {
 	DialogTitle,
 	DialogFooter,
 	Checkbox,
+	Input,
 	LoadingState,
 } from '@/shared/components';
 import { SparklesIcon } from '@heroicons/react/24/outline';
@@ -45,6 +46,17 @@ export function LCFCGenerateDialog({
 	onConfirm,
 }: LCFCGenerateDialogProps) {
 	const { t } = useI18n();
+	const [search, setSearch] = useState('');
+
+	const filteredGroups = useMemo(() => {
+		const term = search.trim().toLowerCase();
+		if (!term) return courseGroups;
+		return courseGroups.filter(
+			(group) =>
+				toStr(group.courseName, '').toLowerCase().includes(term) ||
+				group.sections.some((s) => toStr(s.sectionCode, '').toLowerCase().includes(term)),
+		);
+	}, [courseGroups, search]);
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -52,12 +64,23 @@ export function LCFCGenerateDialog({
 				<DialogHeader>
 					<DialogTitle>{t('surveys.lcfc.config.generateDialogTitle')}</DialogTitle>
 				</DialogHeader>
+				{!loadingSections && courseGroups.length > 0 && (
+					<Input
+						value={search}
+						onChange={(event) => setSearch(event.target.value)}
+						placeholder={t('surveys.lcfc.config.searchCoursePlaceholder')}
+					/>
+				)}
 				<div className="space-y-3 py-2 max-h-96 overflow-y-auto">
 					{loadingSections ? (
 						<LoadingState size="sm" />
 					) : courseGroups.length === 0 ? (
 						<p className="text-sm text-zinc-500 italic">
 							{t('surveys.lcfc.config.noSectionsAvailable')}
+						</p>
+					) : filteredGroups.length === 0 ? (
+						<p className="text-sm text-zinc-500 italic">
+							{t('surveys.lcfc.config.noSearchResults')}
 						</p>
 					) : (
 						<>
@@ -72,7 +95,7 @@ export function LCFCGenerateDialog({
 							</label>
 
 							{/* Course groups */}
-							{courseGroups.map((group) => {
+							{filteredGroups.map((group) => {
 								const groupAllSelected = group.sections.every((s) =>
 									selectedSectionIds.has(s.courseSectionId),
 								);
