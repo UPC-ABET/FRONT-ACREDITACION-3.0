@@ -173,13 +173,9 @@ export function SurveyForm({
 								<div key={outcome.outcomeId} className="px-6 py-5">
 									<div className="mb-3">
 										<p className="text-sm font-bold text-zinc-800">
-											{outcome.code ? (
-												<>
-													<span className="text-red-600">{outcome.code}</span>
-													{outcome.specificCompetence ? ` — ${outcome.specificCompetence}` : ''}
-												</>
-											) : (
-												outcome.specificCompetence
+											{t('surveys.student.competenceQuestion').replace(
+												'{{number}}',
+												outcome.specificCompetence ?? '',
 											)}
 										</p>
 										{outcome.generalCompetence && (
