@@ -1,9 +1,9 @@
 'use client';
 
-import type { SemaphoreLevelLegendDto } from '../../types';
+import type { PerformanceLevelLegendDto } from '../../types';
 
-interface SemaphoreLegendProps {
-	readonly legend: SemaphoreLevelLegendDto[];
+interface PerformanceLevelLegendProps {
+	readonly legend: PerformanceLevelLegendDto[];
 }
 
 function tint(hex: string, alphaHex: string): string {
@@ -12,7 +12,7 @@ function tint(hex: string, alphaHex: string): string {
 	return clean;
 }
 
-export function SemaphoreLegend({ legend }: SemaphoreLegendProps) {
+export function PerformanceLevelLegend({ legend }: PerformanceLevelLegendProps) {
 	return (
 		<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
 			{legend.map((level) => (

@@ -12,7 +12,7 @@
 		"performanceLevels": "Niveles de Desempeño",
 		"projects": "Proyectos Académicos",
 		"gradeProjects": "Calificar Proyectos",
-		"semaphoreReports": "Reportes Semáforo",
+		"performanceReports": "Reportes de Control y Verificación",
 		"evaluation": {
 			"label": "Evaluación"
 		},
@@ -1235,6 +1235,16 @@
 	},
 	"error": {
 		"generic": "Ocurrió un error inesperado.",
+		"academicPeriodRequired": "Selecciona un periodo académico para generar el reporte.",
+		"semaphoreReport": {
+			"notFound": "No se encontró el reporte solicitado.",
+			"noData": "No hay datos para los filtros seleccionados.",
+			"invalidFilter": "Los filtros seleccionados no son válidos.",
+			"thresholdNotFound": "No se encontró la configuración de niveles de desempeño para el periodo.",
+			"generateFailed": "No se pudo generar el reporte.",
+			"pdfFailed": "No se pudo generar el PDF del reporte.",
+			"excelFailed": "No se pudo generar el Excel del reporte."
+		},
 		"chart": {
 			"hasIfc": "Un coordinador de curso dependiente tiene un IFC para su curso en este período.",
 			"readOnlyNode": "Este nodo es de solo lectura y no puede modificarse.",
@@ -3717,9 +3727,9 @@
 			"maxInvalid": "El máximo debe ser un número mayor a 0."
 		}
 	},
-	"semaphoreReports": {
-		"title": "Reportes Semáforo",
-		"subtitle": "Cumplimiento de Student Outcomes (ABET) por curso y outcome, clasificado en semáforo.",
+	"performanceReports": {
+		"title": "Reportes de Control y Verificación",
+		"subtitle": "Cumplimiento de Student Outcomes (ABET) por curso y outcome, clasificado por niveles de desempeño.",
 		"selectPeriod": "Selecciona un periodo académico en la barra superior para ver el reporte.",
 		"empty": "No hay datos para los filtros seleccionados.",
 		"downloadPdf": "Descargar PDF",
@@ -3742,7 +3752,13 @@
 			"language": "Idioma del reporte",
 			"languageEs": "Español",
 			"languageEn": "Inglés",
+			"rubrics": "Rúbricas",
+			"allRubrics": "Todas las rúbricas",
+			"rubricsHint": "Solo aplica a Verificación (RV). Si no seleccionas ninguna, se incluyen todas las rúbricas.",
 			"clear": "Limpiar filtros"
+		},
+		"chart": {
+			"title": "Alumnos por nivel de desempeño y outcome"
 		},
 		"metadata": {
 			"program": "Carrera",
@@ -3757,12 +3773,15 @@
 			"outcomeName": "Nombre del outcome",
 			"campus": "Sede",
 			"totalStudents": "Total alumnos",
+			"levelLowest": "Nivel más bajo",
+			"levelMiddle": "Nivel intermedio",
+			"levelHighest": "Nivel más alto",
 			"critical": "Crítico",
 			"yes": "Sí",
 			"no": "No",
-			"status": "Semáforo",
+			"status": "Nivel de desempeño",
 			"searchPlaceholder": "Buscar por curso u outcome...",
-			"ariaLabel": "Reporte semáforo por curso y outcome",
+			"ariaLabel": "Reporte por curso y outcome",
 			"cycle": "Ciclo"
 		}
 	}

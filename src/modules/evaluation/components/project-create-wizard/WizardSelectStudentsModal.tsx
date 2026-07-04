@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import {
 	Dialog,
@@ -16,6 +16,10 @@ import { useI18n } from '@/providers';
 import { cn } from '@/shared/lib/utils';
 import { useEnrolledStudents } from '@/modules/academic';
 import type { EnrolledStudentResponse } from '@/modules/academic';
+
+// Stable empty reference: a `[]` fallback inline would be a new array every render, defeating the
+// `students` identity check used by the render-time state sync below.
+const EMPTY_STUDENTS: EnrolledStudentResponse[] = [];
 
 interface WizardSelectStudentsModalProps {
 	open: boolean;
@@ -39,29 +43,35 @@ export function WizardSelectStudentsModal({
 	const [draft, setDraft] = useState<Map<number, EnrolledStudentResponse>>(new Map());
 	const [search, setSearch] = useState('');
 
-	const { data: students = [], isLoading } = useEnrolledStudents(
+	const { data, isLoading } = useEnrolledStudents(
 		courseId,
 		{ isActive: true, studyPlanAcademicPeriodId },
 		{ enabled: open },
 	);
+	const students = data ?? EMPTY_STUDENTS;
 
-	useEffect(() => {
-		/* eslint-disable react-hooks/set-state-in-effect -- sync the selection draft to the fetched students / incoming selectedIds when the modal opens, and reset it when it closes */
-		if (!open) {
+	// Render-time state sync (no effect): reseed the selection draft from the fetched students /
+	// incoming selectedIds when the modal opens or the students load, and reset it when it closes.
+	// Guarded so it runs once per change and converges — the repo's convention over setState-in-effect.
+	const [syncSource, setSyncSource] = useState<{
+		open: boolean;
+		students: EnrolledStudentResponse[];
+	}>({ open, students });
+	if (syncSource.open !== open || syncSource.students !== students) {
+		setSyncSource({ open, students });
+		if (open) {
+			setDraft(
+				new Map(
+					students
+						.filter((s) => selectedIds.has(s.studentSectionEnrollmentId))
+						.map((s) => [s.studentSectionEnrollmentId, s]),
+				),
+			);
+		} else {
 			setSearch('');
 			setDraft(new Map());
-			return;
 		}
-		setDraft(
-			new Map(
-				students
-					.filter((s) => selectedIds.has(s.studentSectionEnrollmentId))
-					.map((s) => [s.studentSectionEnrollmentId, s]),
-			),
-		);
-		/* eslint-enable react-hooks/set-state-in-effect */
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- re-run only when the modal opens or the fetched students change; selectedIds is the initial seed, not a re-trigger
-	}, [open, students]);
+	}
 
 	const filtered = useMemo(() => {
 		const term = search.trim().toLowerCase();

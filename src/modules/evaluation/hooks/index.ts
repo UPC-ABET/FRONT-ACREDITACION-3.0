@@ -9,6 +9,6 @@ export * from './useRubricSingleCompetencySave';
 export * from './useRubricMultipleCompetencyState';
 export * from './useRubricMultipleCompetencyCriteria';
 export * from './useRubricMultipleCompetencySave';
-export * from './useSemaphoreReports';
-export * from './useSemaphoreReportFilters';
+export * from './usePerformanceReports';
+export * from './usePerformanceReportFilters';
 export * from './queryKeys';

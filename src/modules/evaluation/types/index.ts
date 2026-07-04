@@ -7,7 +7,7 @@ export * from './rubricDetail';
 export * from './rubricEditor';
 export * from './rubricListRow';
 export * from './rubricQuestion';
-export * from './semaphoreReport';
+export * from './performanceReport';
 
 export type EvaluationScorePayload = {
 	rubricQuestionCriteriaId: number;

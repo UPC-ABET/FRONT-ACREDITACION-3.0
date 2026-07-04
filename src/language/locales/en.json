@@ -23,7 +23,7 @@
 		"evaluationCourses": "Courses to Grade",
 		"projects": "Academic Projects",
 		"gradeProjects": "Grade Projects",
-		"semaphoreReports": "Semaphore Reports",
+		"performanceReports": "Control & Verification Reports",
 		"evaluation": {
 			"label": "Evaluation"
 		},
@@ -1235,6 +1235,16 @@
 	},
 	"error": {
 		"generic": "An unexpected error occurred.",
+		"academicPeriodRequired": "Select an academic period to generate the report.",
+		"semaphoreReport": {
+			"notFound": "The requested report was not found.",
+			"noData": "No data for the selected filters.",
+			"invalidFilter": "The selected filters are not valid.",
+			"thresholdNotFound": "No performance-level configuration was found for the period.",
+			"generateFailed": "The report could not be generated.",
+			"pdfFailed": "The report PDF could not be generated.",
+			"excelFailed": "The report Excel could not be generated."
+		},
 		"chart": {
 			"hasIfc": "A descendant course coordinator has an IFC for its course in this period.",
 			"readOnlyNode": "This node is read-only and cannot be modified.",
@@ -3716,9 +3726,9 @@
 			"maxInvalid": "Maximum must be a number greater than 0."
 		}
 	},
-	"semaphoreReports": {
-		"title": "Semaphore Reports",
-		"subtitle": "Student Outcome (ABET) achievement by course and outcome, classified as a traffic light.",
+	"performanceReports": {
+		"title": "Control & Verification Reports",
+		"subtitle": "Student Outcome (ABET) achievement by course and outcome, classified by performance level.",
 		"selectPeriod": "Select an academic period in the top bar to view the report.",
 		"empty": "No data for the selected filters.",
 		"downloadPdf": "Download PDF",
@@ -3741,7 +3751,13 @@
 			"language": "Report language",
 			"languageEs": "Spanish",
 			"languageEn": "English",
+			"rubrics": "Rubrics",
+			"allRubrics": "All rubrics",
+			"rubricsHint": "Applies to Verification (RV) only. Leave empty to include every rubric.",
 			"clear": "Clear filters"
+		},
+		"chart": {
+			"title": "Students by performance level and outcome"
 		},
 		"metadata": {
 			"program": "Program",
@@ -3756,12 +3772,15 @@
 			"outcomeName": "Outcome name",
 			"campus": "Campus",
 			"totalStudents": "Total students",
+			"levelLowest": "Lowest level",
+			"levelMiddle": "Middle level",
+			"levelHighest": "Highest level",
 			"critical": "Critical",
 			"yes": "Yes",
 			"no": "No",
-			"status": "Traffic light",
+			"status": "Performance level",
 			"searchPlaceholder": "Search by course or outcome...",
-			"ariaLabel": "Semaphore report by course and outcome",
+			"ariaLabel": "Report by course and outcome",
 			"cycle": "Cycle"
 		}
 	}

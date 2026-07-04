@@ -10,9 +10,10 @@ import {
 	useProgramOptions,
 } from '@/modules/academic';
 import { outcomesService } from '@/modules/accreditation';
-import type { SemaphoreFilterDto, SemaphoreReportLang } from '../types';
+import { rubricsService } from '../services';
+import type { PerformanceReportFilterDto, PerformanceReportLang } from '../types';
 
-export type SemaphoreFilterOption = {
+export type PerformanceReportFilterOption = {
 	value: number;
 	label: string;
 };
@@ -23,7 +24,7 @@ function toOptionValue(option: SelectedOption): number | null {
 	return option ? Number(option.value) : null;
 }
 
-export function useSemaphoreReportFilters() {
+export function usePerformanceReportFilters() {
 	const { locale } = useI18n();
 	const { academicPeriodId, modalityTypeId } = useABET();
 
@@ -32,7 +33,9 @@ export function useSemaphoreReportFilters() {
 	const [programId, setProgramId] = useState<number | null>(null);
 	const [outcomeId, setOutcomeId] = useState<number | null>(null);
 	const [campusId, setCampusId] = useState<number | null>(null);
-	const [lang, setLang] = useState<SemaphoreReportLang>(locale === 'en' ? 'en' : 'es');
+	// RV only: rubrics whose grades feed the report. Empty = all rubrics.
+	const [rubricIds, setRubricIds] = useState<number[]>([]);
+	const [lang, setLang] = useState<PerformanceReportLang>(locale === 'en' ? 'en' : 'es');
 	const [syncedPeriodId, setSyncedPeriodId] = useState(academicPeriodId);
 
 	// The report is scoped to the active period (header). When it changes, the cascade
@@ -43,6 +46,7 @@ export function useSemaphoreReportFilters() {
 		setCommissionId(null);
 		setProgramId(null);
 		setOutcomeId(null);
+		setRubricIds([]);
 	}
 
 	const accreditorsQuery = useAccreditors();
@@ -58,13 +62,13 @@ export function useSemaphoreReportFilters() {
 	);
 
 	const campusesQuery = useQuery({
-		queryKey: ['evaluation', 'semaphore-reports', 'campuses'],
+		queryKey: ['evaluation', 'performance-reports', 'campuses'],
 		queryFn: () => campusesService.getAll().then((response) => response.data ?? []),
 		staleTime: Infinity,
 	});
 
 	const outcomesQuery = useQuery({
-		queryKey: ['evaluation', 'semaphore-reports', 'outcomes', programId, academicPeriodId],
+		queryKey: ['evaluation', 'performance-reports', 'outcomes', programId, academicPeriodId],
 		queryFn: () =>
 			outcomesService
 				.maintenanceList({
@@ -76,7 +80,24 @@ export function useSemaphoreReportFilters() {
 		enabled: programId != null && academicPeriodId != null,
 	});
 
-	const accreditorOptions = useMemo<SemaphoreFilterOption[]>(
+	// RV-only rubric selector. Scoped to the chosen program and active period (the report
+	// still ignores rubricIds for RC). Empty selection = all rubrics.
+	const rubricsQuery = useQuery({
+		queryKey: ['evaluation', 'performance-reports', 'rubrics', programId, academicPeriodId],
+		queryFn: () =>
+			rubricsService
+				.getAll({ programId: programId! })
+				.then((response) =>
+					(response.data ?? []).filter(
+						(rubric) =>
+							rubric.studyPlanCourse?.studyPlanAcademicPeriod?.academicPeriodId ===
+							academicPeriodId,
+					),
+				),
+		enabled: programId != null && academicPeriodId != null,
+	});
+
+	const accreditorOptions = useMemo<PerformanceReportFilterOption[]>(
 		() =>
 			(accreditorsQuery.data ?? []).map((accreditor) => ({
 				value: accreditor.id,
@@ -85,7 +106,7 @@ export function useSemaphoreReportFilters() {
 		[accreditorsQuery.data, locale],
 	);
 
-	const commissionOptions = useMemo<SemaphoreFilterOption[]>(
+	const commissionOptions = useMemo<PerformanceReportFilterOption[]>(
 		() =>
 			(commissionsQuery.data ?? []).map((commission) => ({
 				value: commission.id,
@@ -94,7 +115,7 @@ export function useSemaphoreReportFilters() {
 		[commissionsQuery.data, locale],
 	);
 
-	const programOptions = useMemo<SemaphoreFilterOption[]>(
+	const programOptions = useMemo<PerformanceReportFilterOption[]>(
 		() =>
 			(programsQuery.data ?? []).map((program) => ({
 				value: program.id,
@@ -103,7 +124,7 @@ export function useSemaphoreReportFilters() {
 		[programsQuery.data, locale],
 	);
 
-	const outcomeOptions = useMemo<SemaphoreFilterOption[]>(
+	const outcomeOptions = useMemo<PerformanceReportFilterOption[]>(
 		() =>
 			(outcomesQuery.data ?? []).map((outcome) => ({
 				value: outcome.id,
@@ -112,13 +133,26 @@ export function useSemaphoreReportFilters() {
 		[outcomesQuery.data, locale],
 	);
 
-	const campusOptions = useMemo<SemaphoreFilterOption[]>(
+	const campusOptions = useMemo<PerformanceReportFilterOption[]>(
 		() =>
 			(campusesQuery.data ?? []).map((campus) => ({
 				value: campus.id,
 				label: localizedText(campus.name, locale) || campus.code,
 			})),
 		[campusesQuery.data, locale],
+	);
+
+	// Prefix each rubric with its course so the flat list reads grouped by course.
+	const rubricOptions = useMemo<PerformanceReportFilterOption[]>(
+		() =>
+			(rubricsQuery.data ?? []).map((rubric) => {
+				const course = rubric.studyPlanCourse?.course;
+				const courseLabel = course ? `${course.code} - ${localizedText(course.name, locale)}` : '';
+				const gradeType = localizedText(rubric.gradeType?.name, locale) || rubric.gradeType?.code;
+				const label = [courseLabel, gradeType].filter(Boolean).join(' · ');
+				return { value: rubric.id, label: label || `#${rubric.id}` };
+			}),
+		[rubricsQuery.data, locale],
 	);
 
 	// The cascade resolves a single program-commission for the active period; the report API
@@ -128,19 +162,23 @@ export function useSemaphoreReportFilters() {
 		return detailedQuery.data?.[0]?.programCommissionId;
 	}, [programId, detailedQuery.data]);
 
-	const filters = useMemo<SemaphoreFilterDto>(
+	const filters = useMemo<PerformanceReportFilterDto>(
 		() => ({
 			programCommissionId,
 			outcomeId: outcomeId ?? undefined,
 			campusId: campusId ?? undefined,
 			modalityTypeId: modalityTypeId ?? undefined,
+			rubricIds: rubricIds.length > 0 ? rubricIds : undefined,
 			lang,
 		}),
-		[programCommissionId, outcomeId, campusId, modalityTypeId, lang],
+		[programCommissionId, outcomeId, campusId, modalityTypeId, rubricIds, lang],
 	);
 
 	const hasActiveFilters =
-		accreditorId != null || campusId != null || lang !== (locale === 'en' ? 'en' : 'es');
+		accreditorId != null ||
+		campusId != null ||
+		rubricIds.length > 0 ||
+		lang !== (locale === 'en' ? 'en' : 'es');
 
 	function reset() {
 		setAccreditorId(null);
@@ -148,6 +186,7 @@ export function useSemaphoreReportFilters() {
 		setProgramId(null);
 		setOutcomeId(null);
 		setCampusId(null);
+		setRubricIds([]);
 		setLang(locale === 'en' ? 'en' : 'es');
 	}
 
@@ -167,6 +206,7 @@ export function useSemaphoreReportFilters() {
 	function handleProgramChange(option: SelectedOption) {
 		setProgramId(toOptionValue(option));
 		setOutcomeId(null);
+		setRubricIds([]);
 	}
 
 	return {
@@ -176,23 +216,27 @@ export function useSemaphoreReportFilters() {
 		programId,
 		outcomeId,
 		campusId,
+		rubricIds,
 		lang,
 		accreditorOptions,
 		commissionOptions,
 		programOptions,
 		outcomeOptions,
 		campusOptions,
+		rubricOptions,
 		isLoadingPrograms: programsQuery.isLoading,
 		isLoadingOutcomes: outcomesQuery.isLoading,
+		isLoadingRubrics: rubricsQuery.isLoading,
 		hasActiveFilters,
 		onAccreditorChange: handleAccreditorChange,
 		onCommissionChange: handleCommissionChange,
 		onProgramChange: handleProgramChange,
 		onOutcomeChange: (option: SelectedOption) => setOutcomeId(toOptionValue(option)),
 		onCampusChange: (option: SelectedOption) => setCampusId(toOptionValue(option)),
+		onRubricsChange: (ids: number[]) => setRubricIds(ids),
 		onLangChange: setLang,
 		reset,
 	};
 }
 
-export type SemaphoreReportFiltersState = ReturnType<typeof useSemaphoreReportFilters>;
+export type PerformanceReportFiltersState = ReturnType<typeof usePerformanceReportFilters>;

@@ -4,52 +4,53 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type { SemaphoreCourseOutcomeSummaryDto, SemaphoreLevelLegendDto } from '../../types';
+import type { PerformanceCourseOutcomeSummaryDto, PerformanceLevelLegendDto } from '../../types';
 
-interface SemaphoreSummaryTableProps {
-	readonly rows: SemaphoreCourseOutcomeSummaryDto[];
-	readonly legend: SemaphoreLevelLegendDto[];
+interface PerformanceReportTableProps {
+	readonly rows: PerformanceCourseOutcomeSummaryDto[];
+	readonly legend: PerformanceLevelLegendDto[];
 	readonly isLoading: boolean;
 	readonly errorMessage?: string;
 	readonly emptyMessage: string;
 }
 
-export function SemaphoreSummaryTable({
+export function PerformanceReportTable({
 	rows,
 	legend,
 	isLoading,
 	errorMessage,
 	emptyMessage,
-}: SemaphoreSummaryTableProps) {
+}: PerformanceReportTableProps) {
 	const { t } = useI18n();
 
-	// legend always arrives ordered rojo -> amarillo -> verde, matching studentsRed/Yellow/Green.
-	const [redLevel, yellowLevel, greenLevel] = legend;
+	// legend arrives ordered lowest -> middle -> highest, matching studentsRed/Yellow/Green.
+	// Column headers are taken from legend[i].name so the UI never speaks of colors.
+	const [lowestLevel, middleLevel, highestLevel] = legend;
 
-	const columns = useMemo<ColumnDef<SemaphoreCourseOutcomeSummaryDto>[]>(
+	const columns = useMemo<ColumnDef<PerformanceCourseOutcomeSummaryDto>[]>(
 		() => [
-			{ accessorKey: 'sede', header: t('semaphoreReports.table.campus') },
-			{ accessorKey: 'cicloAcademico', header: t('semaphoreReports.table.cycle') },
+			{ accessorKey: 'sede', header: t('performanceReports.table.campus') },
+			{ accessorKey: 'cicloAcademico', header: t('performanceReports.table.cycle') },
 			{
 				accessorKey: 'courseCode',
-				header: t('semaphoreReports.table.courseCode'),
+				header: t('performanceReports.table.courseCode'),
 				cell: ({ row }) => <span className="font-mono">{row.original.courseCode}</span>,
 			},
-			{ accessorKey: 'courseName', header: t('semaphoreReports.table.courseName') },
+			{ accessorKey: 'courseName', header: t('performanceReports.table.courseName') },
 			{
 				accessorKey: 'outcomeCode',
-				header: t('semaphoreReports.table.outcomeCode'),
+				header: t('performanceReports.table.outcomeCode'),
 				cell: ({ row }) => <span className="font-mono">{row.original.outcomeCode}</span>,
 			},
-			{ accessorKey: 'outcomeName', header: t('semaphoreReports.table.outcomeName') },
+			{ accessorKey: 'outcomeName', header: t('performanceReports.table.outcomeName') },
 			{
 				accessorKey: 'totalStudents',
-				header: t('semaphoreReports.table.totalStudents'),
+				header: t('performanceReports.table.totalStudents'),
 				meta: { cellClassName: 'text-right tabular-nums', headerClassName: 'text-right' },
 			},
 			{
-				id: 'red',
-				header: redLevel?.name ?? '',
+				id: 'levelLowest',
+				header: lowestLevel?.name || t('performanceReports.table.levelLowest'),
 				cell: ({ row }) => (
 					<>
 						{row.original.studentsRed}{' '}
@@ -59,8 +60,8 @@ export function SemaphoreSummaryTable({
 				meta: { cellClassName: 'text-right tabular-nums', headerClassName: 'text-right' },
 			},
 			{
-				id: 'yellow',
-				header: yellowLevel?.name ?? '',
+				id: 'levelMiddle',
+				header: middleLevel?.name || t('performanceReports.table.levelMiddle'),
 				cell: ({ row }) => (
 					<>
 						{row.original.studentsYellow}{' '}
@@ -72,8 +73,8 @@ export function SemaphoreSummaryTable({
 				meta: { cellClassName: 'text-right tabular-nums', headerClassName: 'text-right' },
 			},
 			{
-				id: 'green',
-				header: greenLevel?.name ?? '',
+				id: 'levelHighest',
+				header: highestLevel?.name || t('performanceReports.table.levelHighest'),
 				cell: ({ row }) => (
 					<>
 						{row.original.studentsGreen}{' '}
@@ -86,12 +87,12 @@ export function SemaphoreSummaryTable({
 			},
 			{
 				accessorKey: 'isCritical',
-				header: t('semaphoreReports.table.critical'),
+				header: t('performanceReports.table.critical'),
 				cell: ({ row }) => (
 					<span className={row.original.isCritical ? 'font-bold text-red-600' : undefined}>
 						{row.original.isCritical
-							? t('semaphoreReports.table.yes')
-							: t('semaphoreReports.table.no')}
+							? t('performanceReports.table.yes')
+							: t('performanceReports.table.no')}
 					</span>
 				),
 				enableGlobalFilter: false,
@@ -109,7 +110,7 @@ export function SemaphoreSummaryTable({
 				enableGlobalFilter: false,
 			},
 		],
-		[t, redLevel, yellowLevel, greenLevel],
+		[t, lowestLevel, middleLevel, highestLevel],
 	);
 
 	return (
@@ -119,8 +120,8 @@ export function SemaphoreSummaryTable({
 			isLoading={isLoading}
 			errorMessage={errorMessage}
 			emptyMessage={emptyMessage}
-			searchPlaceholder={t('semaphoreReports.table.searchPlaceholder')}
-			aria-label={t('semaphoreReports.table.ariaLabel')}
+			searchPlaceholder={t('performanceReports.table.searchPlaceholder')}
+			aria-label={t('performanceReports.table.ariaLabel')}
 		/>
 	);
 }

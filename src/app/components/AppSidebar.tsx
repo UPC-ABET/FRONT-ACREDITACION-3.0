@@ -72,7 +72,7 @@ export function AppSidebar() {
 			icon: ClipboardDocumentCheckIcon,
 			children: [
 				{ name: t('nav.gradeProjects'), href: '/evaluation/grade-projects' },
-				{ name: t('nav.semaphoreReports'), href: '/evaluation/semaphore-reports' },
+				{ name: t('nav.performanceReports'), href: '/evaluation/performance-reports' },
 			],
 		},
 		{

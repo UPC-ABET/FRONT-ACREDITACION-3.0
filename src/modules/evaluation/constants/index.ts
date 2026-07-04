@@ -1,3 +1,3 @@
 export * from './limits';
-export * from './semaphore';
+export * from './performanceReports';
 export * from './competencyScope';
