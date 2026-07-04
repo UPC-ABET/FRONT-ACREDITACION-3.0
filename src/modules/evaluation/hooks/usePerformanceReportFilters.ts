@@ -10,7 +10,8 @@ import {
 	useProgramOptions,
 } from '@/modules/academic';
 import { outcomesService } from '@/modules/accreditation';
-import { rubricsService } from '../services';
+import { TYPE_GROUP_CODES } from '@/shared';
+import { useTypesByGroupCode } from '@/modules/core/hooks';
 import type { PerformanceReportFilterDto, PerformanceReportLang } from '../types';
 
 export type PerformanceReportFilterOption = {
@@ -33,8 +34,8 @@ export function usePerformanceReportFilters() {
 	const [programId, setProgramId] = useState<number | null>(null);
 	const [outcomeId, setOutcomeId] = useState<number | null>(null);
 	const [campusId, setCampusId] = useState<number | null>(null);
-	// RV only: rubrics whose grades feed the report. Empty = all rubrics.
-	const [rubricIds, setRubricIds] = useState<number[]>([]);
+	// RV only: grade types (core.types group TG205) whose grades feed the report. Empty = all.
+	const [gradeTypeIds, setGradeTypeIds] = useState<number[]>([]);
 	const [lang, setLang] = useState<PerformanceReportLang>(locale === 'en' ? 'en' : 'es');
 	const [syncedPeriodId, setSyncedPeriodId] = useState(academicPeriodId);
 
@@ -46,7 +47,6 @@ export function usePerformanceReportFilters() {
 		setCommissionId(null);
 		setProgramId(null);
 		setOutcomeId(null);
-		setRubricIds([]);
 	}
 
 	const accreditorsQuery = useAccreditors();
@@ -80,22 +80,10 @@ export function usePerformanceReportFilters() {
 		enabled: programId != null && academicPeriodId != null,
 	});
 
-	// RV-only rubric selector. Scoped to the chosen program and active period (the report
-	// still ignores rubricIds for RC). Empty selection = all rubrics.
-	const rubricsQuery = useQuery({
-		queryKey: ['evaluation', 'performance-reports', 'rubrics', programId, academicPeriodId],
-		queryFn: () =>
-			rubricsService
-				.getAll({ programId: programId! })
-				.then((response) =>
-					(response.data ?? []).filter(
-						(rubric) =>
-							rubric.studyPlanCourse?.studyPlanAcademicPeriod?.academicPeriodId ===
-							academicPeriodId,
-					),
-				),
-		enabled: programId != null && academicPeriodId != null,
-	});
+	// RV-only "grade type" selector (core.types group TG205, e.g. PA/TA/EA1). Unlike rubrics,
+	// grade types are global catalog entries, so this list is period/program independent. The
+	// report still ignores it for RC. Empty selection = all grade types.
+	const gradeTypesQuery = useTypesByGroupCode(TYPE_GROUP_CODES.GRADE_TYPE);
 
 	const accreditorOptions = useMemo<PerformanceReportFilterOption[]>(
 		() =>
@@ -142,17 +130,17 @@ export function usePerformanceReportFilters() {
 		[campusesQuery.data, locale],
 	);
 
-	// Prefix each rubric with its course so the flat list reads grouped by course.
-	const rubricOptions = useMemo<PerformanceReportFilterOption[]>(
+	// Grade types show their human-readable name (e.g. "PA"), never the id. The description is
+	// appended when present so codes like "TB2" are easier to recognize.
+	const gradeTypeOptions = useMemo<PerformanceReportFilterOption[]>(
 		() =>
-			(rubricsQuery.data ?? []).map((rubric) => {
-				const course = rubric.studyPlanCourse?.course;
-				const courseLabel = course ? `${course.code} - ${localizedText(course.name, locale)}` : '';
-				const gradeType = localizedText(rubric.gradeType?.name, locale) || rubric.gradeType?.code;
-				const label = [courseLabel, gradeType].filter(Boolean).join(' · ');
-				return { value: rubric.id, label: label || `#${rubric.id}` };
+			(gradeTypesQuery.data ?? []).map((gradeType) => {
+				const name = localizedText(gradeType.name, locale) || gradeType.code;
+				const description = localizedText(gradeType.description, locale);
+				const label = description ? `${name} — ${description}` : name;
+				return { value: gradeType.id, label };
 			}),
-		[rubricsQuery.data, locale],
+		[gradeTypesQuery.data, locale],
 	);
 
 	// The cascade resolves a single program-commission for the active period; the report API
@@ -168,16 +156,16 @@ export function usePerformanceReportFilters() {
 			outcomeId: outcomeId ?? undefined,
 			campusId: campusId ?? undefined,
 			modalityTypeId: modalityTypeId ?? undefined,
-			rubricIds: rubricIds.length > 0 ? rubricIds : undefined,
+			gradeTypeIds: gradeTypeIds.length > 0 ? gradeTypeIds : undefined,
 			lang,
 		}),
-		[programCommissionId, outcomeId, campusId, modalityTypeId, rubricIds, lang],
+		[programCommissionId, outcomeId, campusId, modalityTypeId, gradeTypeIds, lang],
 	);
 
 	const hasActiveFilters =
 		accreditorId != null ||
 		campusId != null ||
-		rubricIds.length > 0 ||
+		gradeTypeIds.length > 0 ||
 		lang !== (locale === 'en' ? 'en' : 'es');
 
 	function reset() {
@@ -186,7 +174,7 @@ export function usePerformanceReportFilters() {
 		setProgramId(null);
 		setOutcomeId(null);
 		setCampusId(null);
-		setRubricIds([]);
+		setGradeTypeIds([]);
 		setLang(locale === 'en' ? 'en' : 'es');
 	}
 
@@ -206,7 +194,6 @@ export function usePerformanceReportFilters() {
 	function handleProgramChange(option: SelectedOption) {
 		setProgramId(toOptionValue(option));
 		setOutcomeId(null);
-		setRubricIds([]);
 	}
 
 	return {
@@ -216,24 +203,24 @@ export function usePerformanceReportFilters() {
 		programId,
 		outcomeId,
 		campusId,
-		rubricIds,
+		gradeTypeIds,
 		lang,
 		accreditorOptions,
 		commissionOptions,
 		programOptions,
 		outcomeOptions,
 		campusOptions,
-		rubricOptions,
+		gradeTypeOptions,
 		isLoadingPrograms: programsQuery.isLoading,
 		isLoadingOutcomes: outcomesQuery.isLoading,
-		isLoadingRubrics: rubricsQuery.isLoading,
+		isLoadingGradeTypes: gradeTypesQuery.isLoading,
 		hasActiveFilters,
 		onAccreditorChange: handleAccreditorChange,
 		onCommissionChange: handleCommissionChange,
 		onProgramChange: handleProgramChange,
 		onOutcomeChange: (option: SelectedOption) => setOutcomeId(toOptionValue(option)),
 		onCampusChange: (option: SelectedOption) => setCampusId(toOptionValue(option)),
-		onRubricsChange: (ids: number[]) => setRubricIds(ids),
+		onGradeTypesChange: (ids: number[]) => setGradeTypeIds(ids),
 		onLangChange: setLang,
 		reset,
 	};

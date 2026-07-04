@@ -3751,9 +3751,9 @@
 			"language": "Report language",
 			"languageEs": "Spanish",
 			"languageEn": "English",
-			"rubrics": "Rubrics",
-			"allRubrics": "All rubrics",
-			"rubricsHint": "Applies to Verification (RV) only. Leave empty to include every rubric.",
+			"gradeTypes": "Grade type",
+			"allGradeTypes": "All grade types",
+			"gradeTypesHint": "Applies to Verification (RV) only. Leave empty to include every grade type.",
 			"clear": "Clear filters"
 		},
 		"chart": {

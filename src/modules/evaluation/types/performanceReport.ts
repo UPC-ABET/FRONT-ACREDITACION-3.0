@@ -10,7 +10,11 @@ export type PerformanceReportFilterDto = {
 	outcomeId?: number;
 	campusId?: number;
 	modalityTypeId?: number;
-	// RV only: limits the report to grades produced by the selected rubrics. Ignored by RC.
+	// RV only: limits the report to grades whose rubric belongs to one of the selected grade
+	// types (core.types group TG205). Empty/omitted = all grade types. Ignored by RC.
+	gradeTypeIds?: number[];
+	// RV only, DEPRECATED: legacy filter by rubric id. Kept for backend compatibility but no
+	// longer surfaced in the UI (rubrics have no human-readable name); prefer gradeTypeIds.
 	rubricIds?: number[];
 	lang?: PerformanceReportLang;
 };

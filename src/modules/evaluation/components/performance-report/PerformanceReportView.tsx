@@ -38,10 +38,11 @@ export function PerformanceReportView({
 		msg: '',
 	});
 
-	// rubricIds only apply to RV; strip them for RC so its cache key doesn't churn on an
+	// gradeTypeIds only apply to RV; strip them for RC so its cache key doesn't churn on an
 	// input the backend ignores.
 	const effectiveFilters = useMemo<PerformanceReportFilterDto>(
-		() => (kind === PERFORMANCE_REPORT_KINDS.RV ? filters : { ...filters, rubricIds: undefined }),
+		() =>
+			kind === PERFORMANCE_REPORT_KINDS.RV ? filters : { ...filters, gradeTypeIds: undefined },
 		[kind, filters],
 	);
 

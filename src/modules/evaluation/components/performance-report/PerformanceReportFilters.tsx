@@ -37,8 +37,8 @@ function asSingle<T>(value: T | T[] | null): T | null {
 
 export function PerformanceReportFilters({ state, kind }: PerformanceReportFiltersProps) {
 	const { t } = useI18n();
-	// The rubric selector only applies to RV (RC grades are the course weighted average).
-	const showRubricFilter = kind === PERFORMANCE_REPORT_KINDS.RV;
+	// The grade-type selector only applies to RV (RC grades are the course weighted average).
+	const showGradeTypeFilter = kind === PERFORMANCE_REPORT_KINDS.RV;
 	const canClear = state.hasActiveFilters || state.programId != null;
 
 	const languageOptions: PerformanceReportFilterOption[] = [
@@ -113,27 +113,27 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 						if (single) state.onLangChange(single.value === 1 ? 'en' : 'es');
 					}}
 				/>
-				{showRubricFilter && (
+				{showGradeTypeFilter && (
 					<Select
-						name="rubrics"
-						label={t('performanceReports.filters.rubrics')}
-						placeholder={t('performanceReports.filters.allRubrics')}
+						name="gradeTypes"
+						label={t('performanceReports.filters.gradeTypes')}
+						placeholder={t('performanceReports.filters.allGradeTypes')}
 						isMulti
 						isClearable
 						isSearchable
-						isDisabled={state.programId == null || state.isLoadingRubrics}
-						options={state.rubricOptions}
-						value={selectedOptions(state.rubricOptions, state.rubricIds)}
+						isDisabled={state.isLoadingGradeTypes}
+						options={state.gradeTypeOptions}
+						value={selectedOptions(state.gradeTypeOptions, state.gradeTypeIds)}
 						onChange={(_name, value) =>
-							state.onRubricsChange(
+							state.onGradeTypesChange(
 								Array.isArray(value) ? value.map((option) => Number(option.value)) : [],
 							)
 						}
 					/>
 				)}
 			</div>
-			{showRubricFilter && (
-				<p className="text-xs text-zinc-500">{t('performanceReports.filters.rubricsHint')}</p>
+			{showGradeTypeFilter && (
+				<p className="text-xs text-zinc-500">{t('performanceReports.filters.gradeTypesHint')}</p>
 			)}
 			{canClear && (
 				<div className="flex justify-end">
