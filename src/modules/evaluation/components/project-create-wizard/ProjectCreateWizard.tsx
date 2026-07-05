@@ -39,6 +39,7 @@ export function ProjectCreateWizard() {
 				name: { es: formData.name, en: formData.name },
 				description: { es: formData.description, en: formData.description },
 				studyPlanCourseId: step1Data.studyPlanCourseId,
+				projectGroupId: formData.projectGroupId,
 				studentSectionEnrollmentIds: formData.studentEnrollmentIds,
 				evaluators: formData.evaluators,
 			};

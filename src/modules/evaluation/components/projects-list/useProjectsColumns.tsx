@@ -56,6 +56,30 @@ export function useProjectsColumns({ setConfirmTarget, setDeleteError }: UseProj
 				},
 			},
 			{
+				id: 'group',
+				header: t('projects.list.table.group'),
+				cell: ({ row }) => {
+					const group = row.original.projectGroup;
+					if (!group) {
+						return <span className="text-zinc-400">{t('projects.list.table.noGroup')}</span>;
+					}
+					return (
+						<div className="flex flex-col gap-0.5">
+							<span className="inline-flex w-fit items-center rounded-md border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-mono text-xs font-medium text-zinc-700">
+								{group.code}
+							</span>
+							<span className="text-xs text-zinc-500">
+								{group.name[locale as 'es' | 'en'] ?? group.name.es}
+							</span>
+						</div>
+					);
+				},
+				meta: {
+					headerClassName: 'w-[15%] !whitespace-normal',
+					cellClassName: '!whitespace-normal',
+				},
+			},
+			{
 				id: 'evaluators',
 				header: t('projects.list.table.evaluators'),
 				cell: ({ row }) => {

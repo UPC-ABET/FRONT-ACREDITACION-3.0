@@ -64,6 +64,10 @@ export function AppSidebar() {
 			icon: AcademicCapIcon,
 			children: [
 				{ name: t('nav.academicProjects.evaluators'), href: '/academic-projects/evaluators' },
+				{
+					name: t('nav.academicProjects.projectGroups'),
+					href: '/academic-projects/project-groups',
+				},
 				{ name: t('nav.projects'), href: '/academic-projects/projects' },
 			],
 		},

@@ -50,7 +50,8 @@
 		"banner": "Scraping",
 		"academicProjects": {
 			"label": "Academic Projects",
-			"evaluators": "Evaluators"
+			"evaluators": "Evaluators",
+			"projectGroups": "Project groups"
 		}
 	},
 	"ard": {
@@ -1486,7 +1487,8 @@
 			"rollbackBlockedOutcomeRefs": "Can't roll back: other data depends on these outcomes (articulation, findings, surveys or grades). Remove it first.",
 			"rollbackBlockedSectionRefs": "Can't roll back: there are enrollments or surveys linked to these sections. Remove them first.",
 			"rollbackBlockedEnrollmentRefs": "Can't roll back: there are student-section enrollments or surveys linked to these enrollments. Remove them first.",
-			"rollbackBlockedSectionEnrollmentRefs": "Can't roll back: there are grades or projects linked to these section enrollments. Remove them first."
+			"rollbackBlockedSectionEnrollmentRefs": "Can't roll back: there are grades or projects linked to these section enrollments. Remove them first.",
+			"projectGroupCodeRequired": "A new project must provide the project group code."
 		},
 		"chartHeads": {
 			"configureFailed": "Could not save the org chart configuration.",
@@ -1532,7 +1534,9 @@
 			"invalidGradeTypeCode": "The grade type does not exist.",
 			"hasEvaluations": "The project cannot be deleted because it already has evaluations.",
 			"activeRubricNotFound": "No active rubric found for the project.",
-			"rubricContextError": "Error resolving the project rubric context."
+			"rubricContextError": "Error resolving the project rubric context.",
+			"projectGroupNotFound": "The selected project group does not exist.",
+			"projectGroupPeriodMismatch": "The group belongs to a different academic period than the project."
 		},
 		"projectEvaluator": {
 			"duplicateEvaluatorType": "An evaluator with this role type already exists in the project."
@@ -1584,6 +1588,16 @@
 			"criteriaOverlap": "Two or more criteria have overlapping score ranges.",
 			"criteriaInvalidRange": "The minimum score cannot be greater than the maximum in a criteria.",
 			"criteriaTotalNot20": "The sum of maximum criteria scores must equal 20."
+		},
+		"projectGroup": {
+			"codeExists": "A group with that code already exists in this program and period.",
+			"notFound": "The project group does not exist.",
+			"academicPeriodNotFound": "The academic period does not exist.",
+			"programNotFound": "The program does not exist.",
+			"hasProjects": "Cannot delete: the group has associated projects.",
+			"createFailed": "Could not create the project group.",
+			"updateFailed": "Could not update the project group.",
+			"deleteFailed": "Could not delete the project group."
 		}
 	},
 	"table": {
@@ -1967,7 +1981,14 @@
 				},
 				"back": "Back",
 				"submit": "Create Project",
-				"submitting": "Creating..."
+				"submitting": "Creating...",
+				"fieldGroup": "Project group (virtual company)",
+				"fieldGroupPlaceholder": "Select a group",
+				"fieldGroupLoading": "Loading groups...",
+				"fieldGroupNoOptions": "No groups for this program. Create a new one.",
+				"fieldGroupSelectCourseFirst": "Select a course first",
+				"fieldGroupNew": "New group",
+				"fieldGroupRequired": "You must select a project group."
 			}
 		},
 		"list": {
@@ -1992,7 +2013,8 @@
 			"filters": {
 				"academicPeriod": "Academic Period",
 				"program": "Program",
-				"course": "Course"
+				"course": "Course",
+				"group": "Project group"
 			},
 			"table": {
 				"code": "Code",
@@ -2003,7 +2025,9 @@
 				"actions": "Actions",
 				"view": "View",
 				"edit": "Edit",
-				"delete": "Delete"
+				"delete": "Delete",
+				"group": "Group",
+				"noGroup": "No group"
 			},
 			"deleteModal": {
 				"title": "Delete project?",
@@ -2105,7 +2129,10 @@
 				"saveError": "Could not update the project.",
 				"fieldCode": "Code",
 				"fieldName": "Name",
-				"fieldDesc": "Description"
+				"fieldDesc": "Description",
+				"group": "Group",
+				"fieldGroup": "Project group",
+				"fieldGroupPlaceholder": "Select a group"
 			},
 			"students": {
 				"title": "Students",
@@ -3094,7 +3121,8 @@
 				"fileTypeInvalid": "Only .xlsx files are allowed",
 				"templateDownloadFailed": "Failed to download the template",
 				"webScrapingFailed": "Could not generate the Excel from scraping.",
-				"generic": "An error occurred during the upload"
+				"generic": "An error occurred during the upload",
+				"projectGroupCodeRequired": "A new project must provide the project group code."
 			}
 		},
 		"maintenance": {
@@ -3789,6 +3817,42 @@
 			"searchPlaceholder": "Search by course or outcome...",
 			"ariaLabel": "Report by course and outcome",
 			"cycle": "Cycle"
+		}
+	},
+	"projectGroups": {
+		"title": "Project groups",
+		"description": "Manage the virtual companies that group the projects of each program.",
+		"addButton": "New group",
+		"selectProgram": "Select a program to see its project groups.",
+		"loading": "Loading groups...",
+		"error": "Could not load project groups.",
+		"empty": "There are no project groups for this program.",
+		"inactive": "Inactive",
+		"filters": {
+			"program": "Program"
+		},
+		"create": {
+			"title": "Create project group"
+		},
+		"edit": {
+			"title": "Edit project group"
+		},
+		"delete": {
+			"title": "Delete project group",
+			"confirm": "Are you sure you want to delete the group \"{{name}}\"?",
+			"error": "Could not delete the project group."
+		},
+		"form": {
+			"code": "Code",
+			"codePlaceholder": "e.g. G01",
+			"codeRequired": "Code is required.",
+			"name": "Name",
+			"nameRequired": "Name is required.",
+			"nameHint": "If you leave the name empty, the code will be used.",
+			"description": "Description",
+			"active": "Active",
+			"saveError": "Could not save the project group.",
+			"createError": "Could not create the project group."
 		}
 	}
 }

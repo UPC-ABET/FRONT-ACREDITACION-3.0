@@ -8,6 +8,7 @@ import {
 	Card,
 	Input,
 	PageHeader,
+	Select,
 	TableEmptyState,
 	TableErrorState,
 	TableLoadingState,
@@ -20,6 +21,7 @@ import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import {
 	useProjectDetails,
+	useProjectGroups,
 	useUpdateProject,
 	useRemoveProjectStudent,
 	useRemoveProjectEvaluator,
@@ -42,6 +44,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	const [draftCode, setDraftCode] = useState('');
 	const [draftName, setDraftName] = useState('');
 	const [draftDesc, setDraftDesc] = useState('');
+	const [draftGroupId, setDraftGroupId] = useState<number | undefined>(undefined);
 
 	const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
@@ -63,6 +66,22 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	const removeStudentMutation = useRemoveProjectStudent(projectId);
 	const removeEvaluatorMutation = useRemoveProjectEvaluator(projectId);
 
+	const projectPeriodId = data?.academicPeriod?.id;
+	const { data: projectGroups = [] } = useProjectGroups(
+		{ academicPeriodId: projectPeriodId, isActive: true },
+		{ enabled: isEditingHeader && projectPeriodId != null },
+	);
+
+	const groupOptions = useMemo(
+		() =>
+			projectGroups.map((g) => ({
+				label: `${g.code} — ${g.name[locale as 'es' | 'en'] ?? g.name.es}`,
+				value: g.id,
+			})),
+		[projectGroups, locale],
+	);
+	const selectedGroupOption = groupOptions.find((o) => o.value === draftGroupId) ?? null;
+
 	const existingEvaluatorTypeCounts = useMemo(() => {
 		const counts = new Map<number, number>();
 		for (const e of data?.evaluators ?? []) {
@@ -76,7 +95,8 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 		const loc = locale as 'es' | 'en';
 		setDraftCode(data.project.code);
 		setDraftName(data.project.name[loc] ?? data.project.name.es);
-		setDraftDesc(data.project.description[loc] ?? data.project.description.es);
+		setDraftDesc(data.project.description?.[loc] ?? data.project.description?.es ?? '');
+		setDraftGroupId(data.project.projectGroup?.id);
 		setIsEditingHeader(true);
 	};
 
@@ -95,11 +115,16 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				en: string;
 			};
 		}
-		if (draftDesc.trim() !== (data.project.description[loc] ?? data.project.description.es)) {
+		if (
+			draftDesc.trim() !== (data.project.description?.[loc] ?? data.project.description?.es ?? '')
+		) {
 			body.description = {
 				[loc]: draftDesc.trim(),
-				[other]: data.project.description[other],
+				[other]: data.project.description?.[other] ?? '',
 			} as { es: string; en: string };
+		}
+		if (draftGroupId != null && draftGroupId !== data.project.projectGroup?.id) {
+			body.projectGroupId = draftGroupId;
 		}
 
 		updateMutation.mutate(body, {
@@ -180,6 +205,21 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 									rows={3}
 								/>
 							</div>
+							<div className="flex flex-col gap-1">
+								<Select
+									label={t('projects.edit.header.fieldGroup')}
+									placeholder={t('projects.edit.header.fieldGroupPlaceholder')}
+									options={groupOptions}
+									value={selectedGroupOption}
+									isSearchable
+									isClearable
+									isDisabled={updateMutation.isPending}
+									onChange={(_, opt) => {
+										const single = Array.isArray(opt) ? (opt[0] ?? null) : opt;
+										setDraftGroupId(single ? Number(single.value) : undefined);
+									}}
+								/>
+							</div>
 						</div>
 
 						<div className="flex items-center justify-end gap-2 border-t border-zinc-100 pt-4">
@@ -230,10 +270,25 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 									</span>
 									<span>{courseName}</span>
 								</div>
+								<div className="flex items-center gap-1.5">
+									<span className="font-medium text-zinc-400">
+										{t('projects.edit.header.group')}
+									</span>
+									{project.projectGroup ? (
+										<span>
+											{project.projectGroup.code} —{' '}
+											{project.projectGroup.name[locale as 'es' | 'en'] ??
+												project.projectGroup.name.es}
+										</span>
+									) : (
+										<span className="text-zinc-400">{t('projects.list.table.noGroup')}</span>
+									)}
+								</div>
 							</div>
 
 							{(() => {
-								const desc = project.description[locale as 'es' | 'en'] ?? project.description.es;
+								const desc =
+									project.description?.[locale as 'es' | 'en'] ?? project.description?.es;
 								return desc ? (
 									<div className="flex items-start gap-1.5 text-sm text-zinc-600">
 										<span className="font-medium text-zinc-400 shrink-0">

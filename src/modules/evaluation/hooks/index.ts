@@ -1,5 +1,6 @@
 export * from './useEvaluations';
 export * from './useProjects';
+export * from './useProjectGroups';
 export * from './useQualificationStatus';
 export * from './useRubricEditor';
 export * from './useRubrics';

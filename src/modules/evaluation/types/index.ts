@@ -8,6 +8,7 @@ export * from './rubricEditor';
 export * from './rubricListRow';
 export * from './rubricQuestion';
 export * from './performanceReport';
+export * from './projectGroup';
 
 export type EvaluationScorePayload = {
 	rubricQuestionCriteriaId: number;
@@ -28,6 +29,8 @@ export type CreateProjectFullDto = {
 	code: string;
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
+	studyPlanCourseId: number;
+	projectGroupId: number;
 	studentSectionEnrollmentIds?: number[];
 	evaluators?: { professorId: number; evaluatorTypeId: number }[];
 };
@@ -80,6 +83,7 @@ export type FilterProjectDto = Partial<{
 	courseId: number;
 	studentId: number;
 	professorId: number;
+	projectGroupId: number;
 	search: string;
 	page: number;
 	pageSize: number;
@@ -124,6 +128,7 @@ export type UpdateProjectDto = Partial<{
 	code: string;
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
+	projectGroupId: number;
 }>;
 
 type I18nText = { es: string; en: string };
@@ -162,6 +167,7 @@ import {
 } from '@/modules/academic';
 import { CommissionResponse, OutcomeResponse } from '@/modules/accreditation';
 import { TypeResponse } from '@/modules/core';
+import type { ProjectGroup } from './projectGroup';
 
 export type RubricScoreResponse = {
 	id: number;
@@ -337,7 +343,8 @@ export type ProjectDetailsResponse = {
 		id: number;
 		code: string;
 		name: { en: string; es: string };
-		description: { en: string; es: string };
+		description?: { en: string; es: string } | null;
+		projectGroup?: ProjectGroup | null;
 	};
 	academicPeriod: {
 		id: number;
@@ -383,6 +390,7 @@ export type ProjectResponse = BaseEntity & {
 	description?: { en: string; es: string };
 	hasEvaluations?: boolean;
 	courseName?: { en: string; es: string };
+	projectGroup?: ProjectGroup | null;
 	students?: ProjectStudentResponse[];
 	evaluators?: ProjectEvaluatorResponse[];
 };

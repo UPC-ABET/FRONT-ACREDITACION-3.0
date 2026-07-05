@@ -7,6 +7,8 @@ const evaluatorSchema = z.object({
 });
 
 export const createProjectFullSchema = createProjectSchema.extend({
+	studyPlanCourseId: z.number(),
+	projectGroupId: z.number({ message: 'projects.create.step2.fieldGroupRequired' }),
 	studentSectionEnrollmentIds: z.array(z.number()).optional(),
 	evaluators: z.array(evaluatorSchema).optional(),
 });

@@ -11,6 +11,7 @@ import { TYPE_CODES } from '@/shared';
 
 export interface Step1Data {
 	periodId: number;
+	programId: number;
 	courseId: number;
 	studyPlanCourseId: number;
 	studyPlanAcademicPeriodId: number;
@@ -77,11 +78,12 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 	const isCapstone = resolvedType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 
 	const handleNext = () => {
-		if (!academicPeriodId || !selectedSpc || !resolvedType) return;
+		if (!academicPeriodId || !selectedProgramId || !selectedSpc || !resolvedType) return;
 		const period = periods.find((p) => p.id === academicPeriodId);
 		if (!period) return;
 		onNext({
 			periodId: period.id,
+			programId: selectedProgramId,
 			courseId: selectedSpc.course?.id ?? selectedSpc.courseId,
 			studyPlanCourseId: selectedSpc.id,
 			studyPlanAcademicPeriodId: selectedSpc.studyPlanAcademicPeriodId,

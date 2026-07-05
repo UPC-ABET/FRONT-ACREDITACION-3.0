@@ -50,7 +50,8 @@
 		"banner": "Scraping",
 		"academicProjects": {
 			"label": "Proyectos Académicos",
-			"evaluators": "Evaluadores"
+			"evaluators": "Evaluadores",
+			"projectGroups": "Grupos de proyecto"
 		}
 	},
 	"ard": {
@@ -1486,7 +1487,8 @@
 			"rollbackBlockedOutcomeRefs": "No se puede revertir: hay datos que dependen de estos outcomes (articulación, hallazgos, encuestas o notas). Elimínelos primero.",
 			"rollbackBlockedSectionRefs": "No se puede revertir: hay matrículas o encuestas asociadas a estas secciones. Elimínelas primero.",
 			"rollbackBlockedEnrollmentRefs": "No se puede revertir: hay alumnos por sección o encuestas asociadas a estas matrículas. Elimínelos primero.",
-			"rollbackBlockedSectionEnrollmentRefs": "No se puede revertir: hay notas o proyectos asociados a estas matrículas de sección. Elimínelos primero."
+			"rollbackBlockedSectionEnrollmentRefs": "No se puede revertir: hay notas o proyectos asociados a estas matrículas de sección. Elimínelos primero.",
+			"projectGroupCodeRequired": "El proyecto nuevo debe indicar el código del grupo de proyecto."
 		},
 		"chartHeads": {
 			"configureFailed": "No se pudo guardar la configuración del organigrama.",
@@ -1532,7 +1534,9 @@
 			"invalidGradeTypeCode": "El tipo de nota no existe.",
 			"hasEvaluations": "No se puede eliminar el proyecto porque ya tiene evaluaciones registradas.",
 			"activeRubricNotFound": "No se encontró rúbrica activa para el proyecto.",
-			"rubricContextError": "Error al resolver el contexto de rúbrica del proyecto."
+			"rubricContextError": "Error al resolver el contexto de rúbrica del proyecto.",
+			"projectGroupNotFound": "El grupo de proyecto seleccionado no existe.",
+			"projectGroupPeriodMismatch": "El grupo pertenece a un periodo académico distinto al del proyecto."
 		},
 		"projectEvaluator": {
 			"duplicateEvaluatorType": "Ya existe un evaluador con ese tipo de rol en el proyecto."
@@ -1584,6 +1588,16 @@
 			"criteriaOverlap": "Dos o más criterios tienen rangos de puntaje solapados.",
 			"criteriaInvalidRange": "El puntaje mínimo no puede ser mayor al máximo en un criterio.",
 			"criteriaTotalNot20": "La suma de los puntajes máximos de los criterios debe ser 20."
+		},
+		"projectGroup": {
+			"codeExists": "Ya existe un grupo con ese código en la carrera y periodo.",
+			"notFound": "El grupo de proyecto no existe.",
+			"academicPeriodNotFound": "El periodo académico no existe.",
+			"programNotFound": "La carrera no existe.",
+			"hasProjects": "No se puede eliminar: el grupo tiene proyectos asociados.",
+			"createFailed": "No se pudo crear el grupo de proyecto.",
+			"updateFailed": "No se pudo actualizar el grupo de proyecto.",
+			"deleteFailed": "No se pudo eliminar el grupo de proyecto."
 		}
 	},
 	"table": {
@@ -1967,7 +1981,14 @@
 				},
 				"back": "Atrás",
 				"submit": "Crear Proyecto",
-				"submitting": "Creando..."
+				"submitting": "Creando...",
+				"fieldGroup": "Grupo de proyecto (empresa virtual)",
+				"fieldGroupPlaceholder": "Selecciona un grupo",
+				"fieldGroupLoading": "Cargando grupos...",
+				"fieldGroupNoOptions": "No hay grupos para esta carrera. Crea uno nuevo.",
+				"fieldGroupSelectCourseFirst": "Selecciona primero el curso",
+				"fieldGroupNew": "Nuevo grupo",
+				"fieldGroupRequired": "Debes seleccionar un grupo de proyecto."
 			}
 		},
 		"list": {
@@ -1992,7 +2013,8 @@
 			"filters": {
 				"academicPeriod": "Período Académico",
 				"program": "Carrera",
-				"course": "Curso"
+				"course": "Curso",
+				"group": "Grupo de proyecto"
 			},
 			"table": {
 				"code": "Código",
@@ -2003,7 +2025,9 @@
 				"actions": "Acciones",
 				"view": "Ver",
 				"edit": "Editar",
-				"delete": "Eliminar"
+				"delete": "Eliminar",
+				"group": "Grupo",
+				"noGroup": "Sin grupo"
 			},
 			"deleteModal": {
 				"title": "¿Eliminar proyecto?",
@@ -2105,7 +2129,10 @@
 				"saveError": "No se pudo actualizar el proyecto.",
 				"fieldCode": "Código",
 				"fieldName": "Nombre",
-				"fieldDesc": "Descripción"
+				"fieldDesc": "Descripción",
+				"group": "Grupo",
+				"fieldGroup": "Grupo de proyecto",
+				"fieldGroupPlaceholder": "Selecciona un grupo"
 			},
 			"students": {
 				"title": "Estudiantes",
@@ -3095,7 +3122,8 @@
 				"fileTypeInvalid": "Solo se permiten archivos .xlsx",
 				"templateDownloadFailed": "No se pudo descargar la plantilla",
 				"webScrapingFailed": "No se pudo generar el Excel desde el scraping.",
-				"generic": "Ocurrió un error durante la carga"
+				"generic": "Ocurrió un error durante la carga",
+				"projectGroupCodeRequired": "El proyecto nuevo debe indicar el código del grupo de proyecto."
 			}
 		},
 		"maintenance": {
@@ -3790,6 +3818,42 @@
 			"searchPlaceholder": "Buscar por curso u outcome...",
 			"ariaLabel": "Reporte por curso y outcome",
 			"cycle": "Ciclo"
+		}
+	},
+	"projectGroups": {
+		"title": "Grupos de proyecto",
+		"description": "Gestiona las empresas virtuales que agrupan los proyectos de cada carrera.",
+		"addButton": "Nuevo grupo",
+		"selectProgram": "Selecciona una carrera para ver sus grupos de proyecto.",
+		"loading": "Cargando grupos...",
+		"error": "No se pudieron cargar los grupos de proyecto.",
+		"empty": "No hay grupos de proyecto para esta carrera.",
+		"inactive": "Inactivo",
+		"filters": {
+			"program": "Carrera"
+		},
+		"create": {
+			"title": "Crear grupo de proyecto"
+		},
+		"edit": {
+			"title": "Editar grupo de proyecto"
+		},
+		"delete": {
+			"title": "Eliminar grupo de proyecto",
+			"confirm": "¿Seguro que deseas eliminar el grupo \"{{name}}\"?",
+			"error": "No se pudo eliminar el grupo de proyecto."
+		},
+		"form": {
+			"code": "Código",
+			"codePlaceholder": "Ej: G01",
+			"codeRequired": "El código es obligatorio.",
+			"name": "Nombre",
+			"nameRequired": "El nombre es obligatorio.",
+			"nameHint": "Si dejas el nombre vacío se usará el código.",
+			"description": "Descripción",
+			"active": "Activo",
+			"saveError": "No se pudo guardar el grupo de proyecto.",
+			"createError": "No se pudo crear el grupo de proyecto."
 		}
 	}
 }
