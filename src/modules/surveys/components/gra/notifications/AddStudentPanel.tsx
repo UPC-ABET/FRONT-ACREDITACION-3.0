@@ -9,6 +9,10 @@ import { useGRAStudentSearch } from '../../../hooks';
 
 const SEARCH_DEBOUNCE_MS = 250;
 
+function hasSections(sections: string[] | undefined): sections is string[] {
+	return Boolean(sections && sections.length > 0);
+}
+
 interface AddStudentPanelProps {
 	readonly programId: number;
 	readonly onStudentAdded?: () => void;
@@ -151,7 +155,7 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 									<span className="font-medium text-zinc-800 truncate">{student.name}</span>
 									<div className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-500 truncate">
 										<span className="font-mono">{student.code}</span>
-										{student.sections && student.sections.length > 0 && (
+										{hasSections(student.sections) && (
 											<>
 												<span>·</span>
 												<span>
@@ -209,7 +213,7 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 								{t('surveys.gra.notifications.studentSection')}
 							</span>
 							<span className="font-medium text-zinc-800">
-								{result.sections && result.sections.length > 0
+								{hasSections(result.sections)
 									? result.sections.join(', ')
 									: t('surveys.gra.notifications.noSection')}
 							</span>
