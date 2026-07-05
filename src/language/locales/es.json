@@ -2361,6 +2361,8 @@
 				"studentName": "Nombre",
 				"studentCode": "Código",
 				"studentCareer": "Carrera",
+				"studentSection": "Sección",
+				"noSection": "Sin sección activa",
 				"adding": "Agregando...",
 				"addButton": "Agregar a Notificación",
 				"toast": {
