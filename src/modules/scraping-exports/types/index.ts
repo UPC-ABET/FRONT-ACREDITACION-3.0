@@ -4,4 +4,5 @@ export type ScrapingExportKind =
 	| 'docentes'
 	| 'secciones'
 	| 'alumnosMatriculados'
-	| 'alumnosSecciones';
+	| 'alumnosSecciones'
+	| 'notasRc';
