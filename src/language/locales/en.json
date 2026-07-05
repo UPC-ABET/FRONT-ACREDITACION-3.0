@@ -2365,6 +2365,8 @@
 				"studentName": "Name",
 				"studentCode": "Code",
 				"studentCareer": "Program",
+				"studentSection": "Section",
+				"noSection": "No active section",
 				"adding": "Adding...",
 				"addButton": "Add to Notification"
 			},

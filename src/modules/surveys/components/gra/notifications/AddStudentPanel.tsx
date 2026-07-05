@@ -144,12 +144,23 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 								aria-selected={index === activeIndex}>
 								<button
 									type="button"
-									className={`w-full text-left px-3 py-2 text-sm flex justify-between gap-2 ${
+									className={`w-full text-left px-3 py-2 text-sm flex flex-col gap-0.5 ${
 										index === activeIndex ? 'bg-zinc-100' : 'hover:bg-zinc-50'
 									}`}
 									onMouseDown={() => handleSelect(student)}>
-									<span className="font-mono text-zinc-700">{student.code}</span>
-									<span className="text-zinc-500 truncate">{student.name}</span>
+									<span className="font-medium text-zinc-800 truncate">{student.name}</span>
+									<div className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-500 truncate">
+										<span className="font-mono">{student.code}</span>
+										{student.sections && student.sections.length > 0 && (
+											<>
+												<span>·</span>
+												<span>
+													{t('surveys.gra.notifications.studentSection')}{' '}
+													{student.sections.join(', ')}
+												</span>
+											</>
+										)}
+									</div>
 								</button>
 							</li>
 						))}
@@ -192,6 +203,16 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 								{t('surveys.gra.notifications.studentCareer')}
 							</span>
 							<span className="font-medium text-zinc-800">{result.career}</span>
+						</div>
+						<div>
+							<span className="text-xs text-zinc-500 block">
+								{t('surveys.gra.notifications.studentSection')}
+							</span>
+							<span className="font-medium text-zinc-800">
+								{result.sections && result.sections.length > 0
+									? result.sections.join(', ')
+									: t('surveys.gra.notifications.noSection')}
+							</span>
 						</div>
 					</div>
 

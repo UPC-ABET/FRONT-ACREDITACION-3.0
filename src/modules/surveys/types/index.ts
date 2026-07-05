@@ -102,6 +102,7 @@ export interface StudentSearchResult {
 	email: string;
 	career: string;
 	cycle?: string;
+	sections?: string[];
 }
 
 export interface EmailTemplate {
@@ -552,6 +553,7 @@ export interface BackendStudent {
 	email?: string;
 	programName?: string;
 	programId?: number;
+	sections?: string[];
 }
 
 export interface BackendEmailTemplate {
