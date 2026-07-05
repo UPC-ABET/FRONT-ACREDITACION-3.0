@@ -55,7 +55,12 @@ function PerformanceLevelForm({
 	const set = (key: keyof PerformanceLevelFormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
 		onChange({
 			...form,
-			[key]: e.target.type === 'number' ? Number(e.target.value) : e.target.value,
+			[key]:
+				e.target.type === 'number'
+					? e.target.value === ''
+						? ''
+						: Number(e.target.value)
+					: e.target.value,
 		});
 
 	const selectedInstrument =
