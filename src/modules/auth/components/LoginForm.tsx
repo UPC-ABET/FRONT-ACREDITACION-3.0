@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { LockClosedIcon, UserIcon } from '@heroicons/react/24/outline';
 import { Input, Button, Checkbox, LoadingDialog, ErrorDialog, Title } from '@/shared/components';
 import type { LoginPayload } from '@/modules/auth/types';
 import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
@@ -94,19 +95,23 @@ export default function LoginForm() {
 				<div>
 					<Input
 						id="email"
+						label={t('login.user.label')}
 						value={email}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
 						placeholder={t('login.user.placeholder')}
+						trailingIcon={<UserIcon className="h-5 w-5" />}
 					/>
 				</div>
 
 				<div>
 					<Input
 						id="password"
+						label={t('login.password.label')}
 						type="password"
 						value={password}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
 						placeholder={t('login.password.placeholder')}
+						trailingIcon={<LockClosedIcon className="h-5 w-5" />}
 					/>
 				</div>
 			</div>

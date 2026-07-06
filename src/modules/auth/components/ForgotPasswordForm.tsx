@@ -45,7 +45,7 @@ export default function ForgotPasswordForm() {
 		setLoading(true);
 		try {
 			const message = await requestForgotPassword(normalizedEmail);
-			setSuccessMessage(message);
+			setSuccessMessage(message ? t(message) : t('forgotPassword.success.defaultMessage'));
 			setSuccessOpen(true);
 		} catch (err: unknown) {
 			const errMessage = err instanceof Error ? err.message : '';

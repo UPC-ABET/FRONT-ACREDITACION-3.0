@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { LockClosedIcon } from '@heroicons/react/24/outline';
 import {
 	Button,
 	Input,
@@ -13,6 +14,7 @@ import {
 } from '@/shared/components';
 import { requestResetPassword } from '@/modules/auth/services';
 import { useI18n } from '@/providers';
+import { tryTranslate } from '@/shared/utils';
 
 export default function ResetPasswordForm() {
 	const { t } = useI18n();
@@ -46,11 +48,8 @@ export default function ResetPasswordForm() {
 			setSuccessOpen(true);
 		} catch (err: unknown) {
 			const errMessage = err instanceof Error ? err.message : '';
-			const translated = errMessage ? t(errMessage) : '';
 			setErrorDialogMessage(
-				translated && translated !== errMessage
-					? translated
-					: errMessage || t('resetPassword.error.requestFailed'),
+				errMessage ? tryTranslate(t, errMessage) : t('resetPassword.error.requestFailed'),
 			);
 			setErrorDialogOpen(true);
 		} finally {
@@ -74,17 +73,21 @@ export default function ResetPasswordForm() {
 			<div className="space-y-3">
 				<Input
 					id="password"
+					label={t('resetPassword.form.passwordLabel')}
 					type="password"
 					value={password}
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
 					placeholder={t('resetPassword.form.passwordPlaceholder')}
+					trailingIcon={<LockClosedIcon className="h-5 w-5" />}
 				/>
 				<Input
 					id="confirmPassword"
+					label={t('resetPassword.form.confirmPasswordLabel')}
 					type="password"
 					value={confirmPassword}
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
 					placeholder={t('resetPassword.form.confirmPasswordPlaceholder')}
+					trailingIcon={<LockClosedIcon className="h-5 w-5" />}
 				/>
 				{error && (
 					<p role="alert" className="text-sm text-red-600">

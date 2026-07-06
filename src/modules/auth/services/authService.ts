@@ -40,7 +40,7 @@ export const requestForgotPassword = async (email: string): Promise<string> => {
 		code: number;
 		message: string;
 		data?: { message?: string };
-	}>('/auth/forgot-password', {
+	}>(`${USERS_BASE_PATH}/request-password-reset`, {
 		method: 'POST',
 		body: { email },
 	});
@@ -57,8 +57,6 @@ export const requestResetPassword = async (
 	password: string,
 	confirmPassword: string,
 ): Promise<string> => {
-	await new Promise((resolve) => setTimeout(resolve, 500));
-
 	if (!token) {
 		throw new ApiError('resetPassword.error.invalidToken');
 	}
@@ -69,5 +67,18 @@ export const requestResetPassword = async (
 		throw new ApiError('resetPassword.error.passwordMismatch');
 	}
 
-	return 'resetPassword.success.defaultMessage';
+	const { response, body } = await requestJson<{
+		code: number;
+		message: string;
+		data?: { message?: string };
+	}>(`${USERS_BASE_PATH}/reset-password`, {
+		method: 'POST',
+		body: { token, password },
+	});
+
+	if (!response.ok) {
+		throw new ApiError(body?.message ?? 'resetPassword.error.requestFailed', response.status);
+	}
+
+	return body?.data?.message ?? body?.message ?? 'resetPassword.success.defaultMessage';
 };

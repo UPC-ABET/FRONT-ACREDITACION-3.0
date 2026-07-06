@@ -205,6 +205,7 @@ function adaptStudent(student: BackendStudent, fallbackCode = ''): StudentSearch
 		name,
 		email: student.email ?? '',
 		career: student.programName ?? '',
+		sections: student.sections ?? [],
 	};
 }
 
