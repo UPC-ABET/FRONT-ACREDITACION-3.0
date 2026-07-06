@@ -3,11 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button, TextArea, Toast } from '@/shared/components';
-import {
-	CheckCircleIcon,
-	ExclamationTriangleIcon,
-	ArrowLeftIcon,
-} from '@heroicons/react/24/outline';
+import { CheckCircleIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import type { SurveyCommissionGroup, SurveyTokenVerification } from '../../types';
@@ -146,14 +142,6 @@ export function SurveyForm({
 			</div>
 
 			<div className="max-w-3xl mx-auto px-6 py-8 space-y-8">
-				<div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
-					<ExclamationTriangleIcon className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-					<div className="text-sm text-amber-800">
-						<strong>{t('surveys.student.instructionsTitle')}</strong>{' '}
-						{t('surveys.student.instructionsBody')}
-					</div>
-				</div>
-
 				{error && (
 					<div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
 						{tryTranslate(t, error)}
