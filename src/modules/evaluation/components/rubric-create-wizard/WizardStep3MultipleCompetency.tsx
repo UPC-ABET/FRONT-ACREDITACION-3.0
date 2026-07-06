@@ -116,7 +116,7 @@ export function WizardStep3MultipleCompetency({
 				id: String(o.outcomeId),
 				outcomeCode: o.outcomeName[locale as 'es' | 'en'] ?? o.outcomeName.es,
 				outcomeDescription: o.outcomeDescription,
-				outcomeType: 'verificacion',
+				outcomeType: 'verification',
 				questions: [
 					{
 						id: String(o.outcomeId),

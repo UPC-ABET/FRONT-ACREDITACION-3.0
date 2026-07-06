@@ -20,7 +20,6 @@ export type CreateProjectGroupDto = {
 	code: string;
 	name: I18nText;
 	description?: I18nText;
-	academicPeriodId: number;
 	programId: number;
 	isActive?: boolean;
 	extra?: Record<string, unknown>;
@@ -30,7 +29,6 @@ export type UpdateProjectGroupDto = Partial<CreateProjectGroupDto>;
 
 export type FilterProjectGroupDto = {
 	code?: string;
-	academicPeriodId?: number;
 	programId?: number;
 	isActive?: boolean;
 };

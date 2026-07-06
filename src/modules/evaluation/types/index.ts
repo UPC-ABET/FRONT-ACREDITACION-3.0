@@ -128,7 +128,7 @@ export type UpdateProjectDto = Partial<{
 	code: string;
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
-	projectGroupId: number;
+	projectGroupId: number | null;
 }>;
 
 type I18nText = { es: string; en: string };

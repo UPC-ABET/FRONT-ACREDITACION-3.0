@@ -71,7 +71,6 @@ export function ProjectsListPage() {
 
 	const { data: groups = [] } = useProjectGroups(
 		{
-			academicPeriodId: selectedPeriodId ?? undefined,
 			programId: selectedProgram?.value,
 			isActive: true,
 		},

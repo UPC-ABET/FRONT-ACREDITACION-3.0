@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
-// Numeric fields allow '' so the input can be cleared without snapping back to 0.
-const numericField = z.union([z.number(), z.literal('')]);
+// Numeric fields allow '' so the input can be cleared without snapping back to 0, but negative
+// values are never valid.
+const numericField = z
+	.union([z.number(), z.literal('')])
+	.refine((v) => v === '' || v >= 0, { message: 'performanceLevels.form.minZeroError' });
 
 export const performanceLevelFormSchema = z.object({
 	instrumentTypeId: z.number().int().positive(),

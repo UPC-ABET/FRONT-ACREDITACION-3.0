@@ -14,7 +14,7 @@ const EXPORTS: Record<ScrapingExportKind, { path: string; fallbackFileName: stri
 		fallbackFileName: 'AlumnoSeccion.xlsx',
 	},
 	notasRc: {
-		path: '/scraping/exports/notas-rc',
+		path: '/scraping/exports/grades-rc',
 		fallbackFileName: 'NotasRC.xlsx',
 	},
 };

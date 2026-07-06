@@ -276,7 +276,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 								{t('projects.evaluate.header.rubric')}
 							</span>
 							<Badge variant={isCapstone ? 'success' : 'outline'}>
-								{isCapstone ? 'Capstone' : 'No Capstone'}
+								{isCapstone ? t('rubrics.badges.capstone') : t('rubrics.badges.noCapstone')}
 							</Badge>
 						</div>
 					)}

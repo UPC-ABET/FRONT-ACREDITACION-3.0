@@ -1667,6 +1667,10 @@
 		"action": "Ir al inicio"
 	},
 	"rubrics": {
+		"badges": {
+			"capstone": "Capstone",
+			"noCapstone": "No Capstone"
+		},
 		"list": {
 			"title": "Rúbricas",
 			"description": "Listado de rúbricas.",
@@ -1919,6 +1923,7 @@
 			"saving": "Guardando...",
 			"deleting": "Eliminando...",
 			"saveError": "Ocurrió un error al guardar.",
+			"minZeroError": "El valor no puede ser negativo.",
 			"instrument": "Instrumento",
 			"instrumentPlaceholder": "Seleccionar instrumento",
 			"nameEs": "Nombre (ES)",

@@ -19,11 +19,29 @@ interface PerformanceReportTableProps {
 // Rows for the same outcome are grouped: the outcome code/name is printed once for the first
 // row of the group and blanked on the following ones. Grouping is evaluated over the current
 // page's row model, so a group that starts at the top of a page still shows its outcome.
+//
+// Cached per page-rows array (identity), so the O(n) scan runs once per page render instead of
+// once per cell — mirrors the columns/sortedRows memoization already used in this file.
+const firstOfGroupCache = new WeakMap<object, Set<string>>();
+
+function firstOfGroupIds(
+	pageRows: ReturnType<Table<SummaryRow>['getRowModel']>['rows'],
+): Set<string> {
+	const cached = firstOfGroupCache.get(pageRows);
+	if (cached) return cached;
+
+	const ids = new Set<string>();
+	pageRows.forEach((pageRow, index) => {
+		if (index === 0 || pageRow.original.outcomeCode !== pageRows[index - 1].original.outcomeCode) {
+			ids.add(pageRow.id);
+		}
+	});
+	firstOfGroupCache.set(pageRows, ids);
+	return ids;
+}
+
 function isFirstOfOutcomeGroup(row: { id: string }, table: Table<SummaryRow>): boolean {
-	const pageRows = table.getRowModel().rows;
-	const position = pageRows.findIndex((pageRow) => pageRow.id === row.id);
-	if (position <= 0) return true;
-	return pageRows[position - 1].original.outcomeCode !== pageRows[position].original.outcomeCode;
+	return firstOfGroupIds(table.getRowModel().rows).has(row.id);
 }
 
 export function PerformanceReportTable({
@@ -55,8 +73,8 @@ export function PerformanceReportTable({
 				cell: ({ row, table }: CellContext<SummaryRow, unknown>) =>
 					isFirstOfOutcomeGroup(row, table) ? row.original.outcomeName : null,
 			},
-			{ accessorKey: 'sede', header: t('performanceReports.table.campus') },
-			{ accessorKey: 'cicloAcademico', header: t('performanceReports.table.cycle') },
+			{ accessorKey: 'campus', header: t('performanceReports.table.campus') },
+			{ accessorKey: 'academicPeriodCycle', header: t('performanceReports.table.cycle') },
 			{
 				accessorKey: 'courseCode',
 				header: t('performanceReports.table.courseCode'),
@@ -140,7 +158,7 @@ export function PerformanceReportTable({
 		return [...rows].sort(
 			(a, b) =>
 				collator.compare(a.outcomeCode, b.outcomeCode) ||
-				collator.compare(a.sede, b.sede) ||
+				collator.compare(a.campus, b.campus) ||
 				collator.compare(a.courseCode, b.courseCode),
 		);
 	}, [rows]);

@@ -10,6 +10,6 @@ export type OutcomeWithCriteria = {
 	id: string;
 	outcomeCode: string;
 	outcomeDescription: { en: string; es: string };
-	outcomeType: 'verificacion' | 'control';
+	outcomeType: 'verification' | 'control';
 	questions: OutcomeQuestion[];
 };

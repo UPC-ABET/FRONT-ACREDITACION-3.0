@@ -68,7 +68,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 
 	const projectPeriodId = data?.academicPeriod?.id;
 	const { data: projectGroups = [] } = useProjectGroups(
-		{ academicPeriodId: projectPeriodId, isActive: true },
+		{ isActive: true },
 		{ enabled: isEditingHeader && projectPeriodId != null },
 	);
 
@@ -123,8 +123,8 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				[other]: data.project.description?.[other] ?? '',
 			} as { es: string; en: string };
 		}
-		if (draftGroupId != null && draftGroupId !== data.project.projectGroup?.id) {
-			body.projectGroupId = draftGroupId;
+		if (draftGroupId !== data.project.projectGroup?.id) {
+			body.projectGroupId = draftGroupId ?? null;
 		}
 
 		updateMutation.mutate(body, {

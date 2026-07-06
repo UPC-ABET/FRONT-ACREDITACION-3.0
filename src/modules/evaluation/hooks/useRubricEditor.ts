@@ -188,7 +188,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 							id: String(outcome.id),
 							outcomeCode: outcome.code ?? '',
 							outcomeDescription,
-							outcomeType: 'verificacion' as const,
+							outcomeType: 'verification' as const,
 							questions: [
 								{
 									id: firstApiQuestion ? String(firstApiQuestion.id) : `temp-${outcomeId}`,
@@ -200,7 +200,7 @@ export function useRubricEditor({ rubricId, initialRubric }: UseRubricEditorOpti
 					})
 					.filter((o): o is OutcomeWithCriteria => o !== null);
 
-				const verification = outcomes.filter((o) => o.outcomeType === 'verificacion');
+				const verification = outcomes.filter((o) => o.outcomeType === 'verification');
 				const commissionName = toI18nText(commission.name);
 
 				return {

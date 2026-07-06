@@ -185,9 +185,9 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 				<div className="flex items-center gap-3">
 					<span className="text-sm text-zinc-600">{t('rubrics.wizard.step1.rubricTypeLabel')}</span>
 					{isCapstone ? (
-						<Badge variant="success">Capstone</Badge>
+						<Badge variant="success">{t('rubrics.badges.capstone')}</Badge>
 					) : (
-						<Badge variant="outline">No Capstone</Badge>
+						<Badge variant="outline">{t('rubrics.badges.noCapstone')}</Badge>
 					)}
 				</div>
 			)}

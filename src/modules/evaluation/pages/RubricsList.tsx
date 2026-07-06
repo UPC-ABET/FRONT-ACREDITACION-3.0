@@ -203,9 +203,9 @@ export function RubricsListPage() {
 									</TableCell>
 									<TableCell>
 										{row.isCapstone ? (
-											<Badge variant="success">Capstone</Badge>
+											<Badge variant="success">{t('rubrics.badges.capstone')}</Badge>
 										) : (
-											<Badge variant="outline">No Capstone</Badge>
+											<Badge variant="outline">{t('rubrics.badges.noCapstone')}</Badge>
 										)}
 									</TableCell>
 									<TableCell>

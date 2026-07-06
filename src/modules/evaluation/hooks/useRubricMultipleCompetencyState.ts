@@ -20,7 +20,7 @@ export function updateOutcomeCriteria(
 				if (!q) return outcome;
 				return { ...outcome, questions: [{ ...q, criteria: updater(q.criteria) }] };
 			});
-			const verification = outcomes.filter((o) => o.outcomeType === 'verificacion');
+			const verification = outcomes.filter((o) => o.outcomeType === 'verification');
 			const isComplete =
 				verification.length > 0 &&
 				verification.every((o) => (o.questions[0]?.criteria.length ?? 0) > 0);

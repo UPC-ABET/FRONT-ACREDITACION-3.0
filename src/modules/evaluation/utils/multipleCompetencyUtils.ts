@@ -1,7 +1,7 @@
 import type { CommissionTab, OutcomeWithCriteria } from '../types';
 
 export function verificationOutcomes(commission: CommissionTab) {
-	return commission.outcomes.filter((outcome) => outcome.outcomeType === 'verificacion');
+	return commission.outcomes.filter((outcome) => outcome.outcomeType === 'verification');
 }
 
 /** In multiple-competency rubrics, questions are the leaf items — criteria are never used. */

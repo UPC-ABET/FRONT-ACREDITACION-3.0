@@ -70,7 +70,7 @@ export function ProjectGroupsPage() {
 		isLoading,
 		isError,
 	} = useProjectGroups(
-		{ academicPeriodId: academicPeriodId ?? undefined, programId: selectedProgram?.value },
+		{ programId: selectedProgram?.value },
 		{ enabled: !!academicPeriodId && !!schoolId && !!selectedProgram },
 	);
 
@@ -146,7 +146,6 @@ export function ProjectGroupsPage() {
 				code: form.code.trim(),
 				name: { es, en },
 				...(hasDesc ? { description: { es: descEs, en: descEn } } : {}),
-				academicPeriodId,
 				programId: selectedProgram.value,
 				isActive: form.isActive,
 			},

@@ -27,7 +27,7 @@ function toOptionValue(option: SelectedOption): number | null {
 
 export function usePerformanceReportFilters() {
 	const { locale } = useI18n();
-	const { academicPeriodId, modalityTypeId } = useABET();
+	const { academicPeriodId } = useABET();
 
 	const [accreditorId, setAccreditorId] = useState<number | null>(null);
 	const [commissionId, setCommissionId] = useState<number | null>(null);
@@ -40,7 +40,10 @@ export function usePerformanceReportFilters() {
 	const [syncedPeriodId, setSyncedPeriodId] = useState(academicPeriodId);
 
 	// The report is scoped to the active period (header). When it changes, the cascade
-	// selections no longer apply, so reset them.
+	// selections no longer apply, so reset them. This runs during render (React's documented
+	// "adjust state on prop change" pattern), not in a useEffect: a useEffect would render once
+	// with the stale filters before the reset commits, flashing outcomes/programs from the
+	// previous period. Do not "fix" this into a useEffect.
 	if (academicPeriodId !== syncedPeriodId) {
 		setSyncedPeriodId(academicPeriodId);
 		setAccreditorId(null);
@@ -155,11 +158,10 @@ export function usePerformanceReportFilters() {
 			programCommissionId,
 			outcomeId: outcomeId ?? undefined,
 			campusId: campusId ?? undefined,
-			modalityTypeId: modalityTypeId ?? undefined,
 			gradeTypeIds: gradeTypeIds.length > 0 ? gradeTypeIds : undefined,
 			lang,
 		}),
-		[programCommissionId, outcomeId, campusId, modalityTypeId, gradeTypeIds, lang],
+		[programCommissionId, outcomeId, campusId, gradeTypeIds, lang],
 	);
 
 	const hasActiveFilters =

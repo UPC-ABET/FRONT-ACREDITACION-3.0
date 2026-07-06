@@ -20,14 +20,13 @@ export function useProjectGroups(
 	});
 }
 
-/** Project form selector: valid groups for (period, program). */
+/** Project form selector: valid groups for (period, program). The academic period is scoped via
+ * the X-Academic-Period-Id header (set globally in apiClient), not sent in the filter body. */
 export function useProjectGroupOptions(academicPeriodId?: number, programId?: number) {
 	return useQuery({
-		queryKey: projectGroupsQueryKeys.list({ academicPeriodId, programId, isActive: true }),
+		queryKey: projectGroupsQueryKeys.list({ programId, isActive: true }),
 		queryFn: () =>
-			projectGroupsService
-				.getByFilters({ academicPeriodId, programId, isActive: true })
-				.then((r) => r.data),
+			projectGroupsService.getByFilters({ programId, isActive: true }).then((r) => r.data),
 		enabled: !!academicPeriodId && !!programId,
 	});
 }

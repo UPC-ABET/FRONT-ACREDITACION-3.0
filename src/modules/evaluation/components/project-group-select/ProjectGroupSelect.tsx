@@ -83,7 +83,6 @@ export function ProjectGroupSelect({
 			{
 				code: code.trim(),
 				name: { es, en },
-				academicPeriodId,
 				programId,
 			},
 			{

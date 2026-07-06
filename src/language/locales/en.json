@@ -1667,6 +1667,10 @@
 		"action": "Go home"
 	},
 	"rubrics": {
+		"badges": {
+			"capstone": "Capstone",
+			"noCapstone": "No Capstone"
+		},
 		"list": {
 			"title": "Rubrics",
 			"description": "List of rubrics.",
@@ -1919,6 +1923,7 @@
 			"saving": "Saving...",
 			"deleting": "Deleting...",
 			"saveError": "An error occurred while saving.",
+			"minZeroError": "Value cannot be negative.",
 			"instrument": "Instrument",
 			"instrumentPlaceholder": "Select instrument",
 			"nameEs": "Name (ES)",
