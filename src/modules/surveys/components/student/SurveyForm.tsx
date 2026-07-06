@@ -160,60 +160,57 @@ export function SurveyForm({
 					</div>
 				)}
 
-				{outcomes.map((group) => (
-					<div
-						key={group.commissionId}
-						className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden">
-						<div className="bg-red-600 px-6 py-3">
-							<h2 className="text-white font-bold text-sm">{group.commissionName}</h2>
-						</div>
+				{outcomes.map((group) =>
+					group.outcomes.map((outcome) => (
+						<div
+							key={`${group.commissionId}-${outcome.outcomeId}`}
+							className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden">
+							<div className="bg-red-600 px-6 py-3">
+								<h2 className="text-white font-bold text-sm">
+									{t('surveys.student.competenceQuestion').replace(
+										'{{number}}',
+										outcome.specificCompetence ?? '',
+									)}
+								</h2>
+							</div>
 
-						<div className="divide-y divide-zinc-100">
-							{group.outcomes.map((outcome) => (
-								<div key={outcome.outcomeId} className="px-6 py-5">
-									<div className="mb-3">
-										<p className="text-sm font-bold text-zinc-800">
-											{t('surveys.student.competenceQuestion').replace(
-												'{{number}}',
-												outcome.specificCompetence ?? '',
-											)}
+							<div className="px-6 py-5">
+								<div className="mb-3">
+									{outcome.generalCompetence && (
+										<p className="text-xs text-zinc-500 mt-0.5">
+											{t('surveys.student.generalPrefix')} {outcome.generalCompetence}
 										</p>
-										{outcome.generalCompetence && (
-											<p className="text-xs text-zinc-500 mt-0.5">
-												{t('surveys.student.generalPrefix')} {outcome.generalCompetence}
-											</p>
-										)}
-										{outcome.description && (
-											<p className="text-xs text-zinc-500 mt-1 leading-relaxed">
-												{outcome.description}
-											</p>
-										)}
-									</div>
+									)}
+									{outcome.description && (
+										<p className="text-xs text-zinc-500 mt-1 leading-relaxed">
+											{outcome.description}
+										</p>
+									)}
+								</div>
 
-									<div className="flex flex-wrap gap-2">
-										{SCORE_OPTIONS.map((s) => {
-											const selected = outcome.score === s;
-											return (
-												<button
-													key={s}
-													onClick={() => onScoreChange(group.commissionId, outcome.outcomeId, s)}
-													className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl border-2 text-xs font-medium transition-all
+								<div className="flex flex-wrap gap-2">
+									{SCORE_OPTIONS.map((s) => {
+										const selected = outcome.score === s;
+										return (
+											<button
+												key={s}
+												onClick={() => onScoreChange(group.commissionId, outcome.outcomeId, s)}
+												className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl border-2 text-xs font-medium transition-all
                             ${
 															selected
 																? 'border-red-600 bg-red-600 text-white'
 																: 'border-zinc-200 bg-white text-zinc-600 hover:border-red-400 hover:text-red-600'
 														}`}>
-													<span className="text-base font-bold leading-none">{s}</span>
-													<span className="text-[10px] leading-none">{scoreLabels[s]}</span>
-												</button>
-											);
-										})}
-									</div>
+												<span className="text-base font-bold leading-none">{s}</span>
+												<span className="text-[10px] leading-none">{scoreLabels[s]}</span>
+											</button>
+										);
+									})}
 								</div>
-							))}
+							</div>
 						</div>
-					</div>
-				))}
+					)),
+				)}
 
 				<div className="bg-white rounded-2xl shadow-sm border border-zinc-200 px-6 py-5">
 					<TextArea
