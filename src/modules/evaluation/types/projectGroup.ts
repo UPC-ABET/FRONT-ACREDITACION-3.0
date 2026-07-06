@@ -9,7 +9,7 @@ export type ProjectGroup = {
 	programId: number;
 	isActive: boolean;
 	extra?: Record<string, unknown>;
-	// Presentes en get-by-filters (join): útiles para mostrar carrera/periodo en tablas.
+	// Present in get-by-filters (join): useful for displaying program/period in tables.
 	program?: { id: number; code: string; name: I18nText };
 	academicPeriod?: { id: number; code: string };
 	createdAt: string;

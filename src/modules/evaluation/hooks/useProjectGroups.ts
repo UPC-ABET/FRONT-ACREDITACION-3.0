@@ -20,7 +20,7 @@ export function useProjectGroups(
 	});
 }
 
-/** Selector para el formulario de proyecto: grupos válidos para (periodo, carrera). */
+/** Project form selector: valid groups for (period, program). */
 export function useProjectGroupOptions(academicPeriodId?: number, programId?: number) {
 	return useQuery({
 		queryKey: projectGroupsQueryKeys.list({ academicPeriodId, programId, isActive: true }),

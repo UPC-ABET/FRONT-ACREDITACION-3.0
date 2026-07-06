@@ -27,7 +27,7 @@ interface ProjectGroupSelectProps {
 	onChange: (id: number | undefined) => void;
 	error?: string;
 	disabled?: boolean;
-	/** Permite crear un grupo al vuelo (requiere periodo + carrera). */
+	/** Allows creating a group on the fly (requires period + program). */
 	allowQuickCreate?: boolean;
 }
 
