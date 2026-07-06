@@ -30,8 +30,7 @@ export function RubricHeader({ rubric }: RubricHeaderProps) {
 				<span className="text-zinc-300">|</span>
 
 				<span>
-					{t('rubrics.editor.header.maxScore')}: {rubric.maxScore.toFixed(1)}{' '}
-					{t('rubrics.editor.header.units.points')}
+					{t('rubrics.editor.header.rubricPrefix')}: {rubric.competencyScopeType[locale]}
 				</span>
 
 				<span className="text-zinc-300">|</span>

@@ -20,14 +20,8 @@ export const rubricsService = {
 		return apiGet(`/rubrics/get-all${query ? `?${query}` : ''}`);
 	},
 
-	resolveType(
-		studyPlanCourseId: number,
-		gradeTypeId: number,
-	): Promise<ApiResponse<RubricTypeResolution>> {
-		const qs = new URLSearchParams({
-			studyPlanCourseId: String(studyPlanCourseId),
-			gradeTypeId: String(gradeTypeId),
-		});
+	resolveType(studyPlanCourseId: number): Promise<ApiResponse<RubricTypeResolution>> {
+		const qs = new URLSearchParams({ studyPlanCourseId: String(studyPlanCourseId) });
 		return apiGet(`/rubrics/resolve-type?${qs.toString()}`);
 	},
 

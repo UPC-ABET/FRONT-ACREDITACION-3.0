@@ -7,5 +7,6 @@ export * from './RubricsList';
 export * from './PerformanceLevels';
 export * from './EvaluationCourses';
 export * from './ProjectCreate';
-export { CapstoneConsolePage } from './CapstoneConsole';
 export * from './EvaluatorTypesPage';
+export * from './ProjectGroupsPage';
+export * from './PerformanceReports';

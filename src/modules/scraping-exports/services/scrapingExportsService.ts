@@ -13,6 +13,10 @@ const EXPORTS: Record<ScrapingExportKind, { path: string; fallbackFileName: stri
 		path: '/scraping/exports/alumnos-secciones',
 		fallbackFileName: 'AlumnoSeccion.xlsx',
 	},
+	notasRc: {
+		path: '/scraping/exports/grades-rc',
+		fallbackFileName: 'NotasRC.xlsx',
+	},
 };
 
 export const SCRAPING_EXPORT_KINDS = Object.keys(EXPORTS) as ScrapingExportKind[];

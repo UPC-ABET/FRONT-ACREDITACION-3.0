@@ -14,22 +14,28 @@ type SelectChangeHandler = (value: string | undefined, opt: AnyOption | AnyOptio
 interface ProjectsListFiltersProps {
 	programOptions: SelectOption[];
 	courseOptions: SelectOption[];
+	groupOptions: SelectOption[];
 	selectedProgram: SelectOption | null;
 	selectedCourse: SelectOption | null;
+	selectedGroup: SelectOption | null;
 	selectedPeriodId: number | null;
 	onProgramChange: SelectChangeHandler;
 	onCourseChange: SelectChangeHandler;
+	onGroupChange: SelectChangeHandler;
 	onClearFilters: () => void;
 }
 
 export function ProjectsListFilters({
 	programOptions,
 	courseOptions,
+	groupOptions,
 	selectedProgram,
 	selectedCourse,
+	selectedGroup,
 	selectedPeriodId,
 	onProgramChange,
 	onCourseChange,
+	onGroupChange,
 	onClearFilters,
 }: ProjectsListFiltersProps) {
 	const { t } = useI18n();
@@ -37,7 +43,7 @@ export function ProjectsListFilters({
 	return (
 		<Card>
 			<div className="space-y-4">
-				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 					<Select
 						label={t('projects.list.filters.program')}
 						options={programOptions}
@@ -54,9 +60,18 @@ export function ProjectsListFilters({
 						isDisabled={!selectedProgram}
 						onChange={onCourseChange}
 					/>
+					<Select
+						label={t('projects.list.filters.group')}
+						options={groupOptions}
+						value={selectedGroup}
+						isClearable
+						isSearchable
+						isDisabled={!selectedProgram}
+						onChange={onGroupChange}
+					/>
 				</div>
 
-				{(selectedProgram || selectedCourse) && (
+				{(selectedProgram || selectedCourse || selectedGroup) && (
 					<div className="flex justify-end">
 						<button
 							type="button"

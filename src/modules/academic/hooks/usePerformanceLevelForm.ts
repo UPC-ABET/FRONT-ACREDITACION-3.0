@@ -11,15 +11,15 @@ const EMPTY_FORM: PerformanceLevelFormState = {
 	nameEs: '',
 	nameEn: '',
 	code: '',
-	uniqueValue: 0,
-	minScore: 0,
-	maxScore: 0,
-	maxValue: 0,
+	uniqueValue: '',
+	minScore: '',
+	maxScore: '',
+	maxValue: '',
 	color: DEFAULT_PERFORMANCE_LEVEL_COLOR,
 };
 
-function round2(n: number): number {
-	return Number(n.toFixed(2));
+function round2(n: number | ''): number {
+	return Number((Number(n) || 0).toFixed(2));
 }
 
 function levelToForm(level: PerformanceLevelResponse): PerformanceLevelFormState {

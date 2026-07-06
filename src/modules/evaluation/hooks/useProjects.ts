@@ -4,14 +4,14 @@ import { projectsService } from '../services';
 import type { FilterProjectDto } from '../types';
 
 type ByProfessorParams = {
-	gradeTypeCode?: string;
+	competencyScopeCode?: string;
 	page?: number;
 	pageSize?: number;
 	search?: string;
 };
 
 type DetailsParams = {
-	gradeTypeCode?: string;
+	competencyScopeCode?: string;
 	rubricTypeCode?: string;
 	isEvaluationMode?: boolean;
 };

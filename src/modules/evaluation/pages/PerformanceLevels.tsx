@@ -36,6 +36,7 @@ import {
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '@/modules/academic/constants';
+import { performanceLevelFormSchema } from '@/modules/academic/schemas';
 import type { PerformanceLevelFormState } from '@/modules/academic/schemas';
 import { PerformanceLevelResponse } from '@/modules/academic';
 
@@ -55,7 +56,12 @@ function PerformanceLevelForm({
 	const set = (key: keyof PerformanceLevelFormState) => (e: React.ChangeEvent<HTMLInputElement>) =>
 		onChange({
 			...form,
-			[key]: e.target.type === 'number' ? Number(e.target.value) : e.target.value,
+			[key]:
+				e.target.type === 'number'
+					? e.target.value === ''
+						? ''
+						: Number(e.target.value)
+					: e.target.value,
 		});
 
 	const selectedInstrument =
@@ -103,6 +109,7 @@ function PerformanceLevelForm({
 				label={t('performanceLevels.form.minScore')}
 				type="number"
 				step="0.01"
+				min="0"
 				value={form.minScore}
 				onChange={set('minScore')}
 				required
@@ -111,6 +118,7 @@ function PerformanceLevelForm({
 				label={t('performanceLevels.form.maxScore')}
 				type="number"
 				step="0.01"
+				min="0"
 				value={form.maxScore}
 				onChange={set('maxScore')}
 				required
@@ -119,6 +127,7 @@ function PerformanceLevelForm({
 				label={t('performanceLevels.form.maxValue')}
 				type="number"
 				step="0.01"
+				min="0"
 				value={form.maxValue}
 				onChange={set('maxValue')}
 				required
@@ -147,6 +156,7 @@ export function PerformanceLevelsPage() {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [editingLevel, setEditingLevel] = useState<PerformanceLevelResponse | null>(null);
 	const [deleteConfirm, setDeleteConfirm] = useState<PerformanceLevelResponse | null>(null);
+	const [formError, setFormError] = useState<string | null>(null);
 	const { form, setForm, resetForm, populateForm, toDto } = usePerformanceLevelForm();
 
 	const { data: academicPeriods = [] } = useAcademicPeriods({});
@@ -193,12 +203,14 @@ export function PerformanceLevelsPage() {
 	function openCreateModal() {
 		setEditingLevel(null);
 		resetForm();
+		setFormError(null);
 		setModalOpen(true);
 	}
 
 	function openEditModal(level: PerformanceLevelResponse) {
 		setEditingLevel(level);
 		populateForm(level);
+		setFormError(null);
 		setModalOpen(true);
 	}
 
@@ -209,6 +221,13 @@ export function PerformanceLevelsPage() {
 	}
 
 	async function handleSubmit() {
+		const result = performanceLevelFormSchema.safeParse(form);
+		if (!result.success) {
+			setFormError(tryTranslate(t, result.error.issues[0].message));
+			return;
+		}
+		setFormError(null);
+
 		if (editingLevel) {
 			await updateMutation.mutateAsync({ id: editingLevel.id, ...toDto() });
 		} else {
@@ -402,6 +421,7 @@ export function PerformanceLevelsPage() {
 						instrumentTypeOptions={instrumentTypeOptions}
 					/>
 
+					{formError && <p className="text-sm text-red-600 mt-2">{formError}</p>}
 					{createMutation.isError && (
 						<p className="text-sm text-red-600 mt-2">
 							{createMutation.error?.message || t('performanceLevels.form.saveError')}

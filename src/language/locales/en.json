@@ -23,6 +23,7 @@
 		"evaluationCourses": "Courses to Grade",
 		"projects": "Academic Projects",
 		"gradeProjects": "Grade Projects",
+		"performanceReports": "Control & Verification Reports",
 		"evaluation": {
 			"label": "Evaluation"
 		},
@@ -49,7 +50,8 @@
 		"banner": "Scraping",
 		"academicProjects": {
 			"label": "Academic Projects",
-			"evaluators": "Evaluators"
+			"evaluators": "Evaluators",
+			"projectGroups": "Project groups"
 		}
 	},
 	"ard": {
@@ -173,6 +175,10 @@
 				"alumnosSecciones": {
 					"title": "Students by section",
 					"description": "Student-to-section relationship."
+				},
+				"notasRc": {
+					"title": "Grades RC",
+					"description": "Grades by grade type and qualification status (from Banner)."
 				}
 			}
 		},
@@ -1242,6 +1248,16 @@
 	},
 	"error": {
 		"generic": "An unexpected error occurred.",
+		"academicPeriodRequired": "Select an academic period to generate the report.",
+		"semaphoreReport": {
+			"notFound": "The requested report was not found.",
+			"noData": "No data for the selected filters.",
+			"invalidFilter": "The selected filters are not valid.",
+			"thresholdNotFound": "No performance-level configuration was found for the period.",
+			"generateFailed": "The report could not be generated.",
+			"pdfFailed": "The report PDF could not be generated.",
+			"excelFailed": "The report Excel could not be generated."
+		},
 		"chart": {
 			"hasIfc": "A descendant course coordinator has an IFC for its course in this period.",
 			"readOnlyNode": "This node is read-only and cannot be modified.",
@@ -1483,7 +1499,8 @@
 			"rollbackBlockedOutcomeRefs": "Can't roll back: other data depends on these outcomes (articulation, findings, surveys or grades). Remove it first.",
 			"rollbackBlockedSectionRefs": "Can't roll back: there are enrollments or surveys linked to these sections. Remove them first.",
 			"rollbackBlockedEnrollmentRefs": "Can't roll back: there are student-section enrollments or surveys linked to these enrollments. Remove them first.",
-			"rollbackBlockedSectionEnrollmentRefs": "Can't roll back: there are grades or projects linked to these section enrollments. Remove them first."
+			"rollbackBlockedSectionEnrollmentRefs": "Can't roll back: there are grades or projects linked to these section enrollments. Remove them first.",
+			"projectGroupCodeRequired": "A new project must provide the project group code."
 		},
 		"chartHeads": {
 			"configureFailed": "Could not save the org chart configuration.",
@@ -1529,7 +1546,9 @@
 			"invalidGradeTypeCode": "The grade type does not exist.",
 			"hasEvaluations": "The project cannot be deleted because it already has evaluations.",
 			"activeRubricNotFound": "No active rubric found for the project.",
-			"rubricContextError": "Error resolving the project rubric context."
+			"rubricContextError": "Error resolving the project rubric context.",
+			"projectGroupNotFound": "The selected project group does not exist.",
+			"projectGroupPeriodMismatch": "The group belongs to a different academic period than the project."
 		},
 		"projectEvaluator": {
 			"duplicateEvaluatorType": "An evaluator with this role type already exists in the project."
@@ -1581,6 +1600,16 @@
 			"criteriaOverlap": "Two or more criteria have overlapping score ranges.",
 			"criteriaInvalidRange": "The minimum score cannot be greater than the maximum in a criteria.",
 			"criteriaTotalNot20": "The sum of maximum criteria scores must equal 20."
+		},
+		"projectGroup": {
+			"codeExists": "A group with that code already exists in this program and period.",
+			"notFound": "The project group does not exist.",
+			"academicPeriodNotFound": "The academic period does not exist.",
+			"programNotFound": "The program does not exist.",
+			"hasProjects": "Cannot delete: the group has associated projects.",
+			"createFailed": "Could not create the project group.",
+			"updateFailed": "Could not update the project group.",
+			"deleteFailed": "Could not delete the project group."
 		}
 	},
 	"table": {
@@ -1638,6 +1667,10 @@
 		"action": "Go home"
 	},
 	"rubrics": {
+		"badges": {
+			"capstone": "Capstone",
+			"noCapstone": "No Capstone"
+		},
 		"list": {
 			"title": "Rubrics",
 			"description": "List of rubrics.",
@@ -1690,7 +1723,7 @@
 			"criteria": {
 				"saving": "Saving criterion..."
 			},
-			"capstone": {
+			"multipleCompetency": {
 				"saveRubric": "Save rubric",
 				"saving": "Saving rubric...",
 				"saveError": "Error saving the rubric.",
@@ -1712,7 +1745,7 @@
 					"criteriaPlaceholder": "Enter the criterion description"
 				}
 			},
-			"nonCapstone": {
+			"singleCompetency": {
 				"totalScore": "Total score",
 				"points": "points",
 				"saveRubric": "Save rubric",
@@ -1747,12 +1780,9 @@
 			},
 			"header": {
 				"academicPeriod": "Academic period",
-				"maxScore": "Maximum score",
-				"units": {
-					"points": "points"
-				},
 				"editable": "Editable",
-				"readonly": "Read only"
+				"readonly": "Read only",
+				"rubricPrefix": "Rubric"
 			},
 			"performanceLevels": {
 				"title": "Performance Levels",
@@ -1779,7 +1809,7 @@
 				},
 				"step2": {
 					"label": "Evaluation",
-					"description": "Type and rubric"
+					"description": "Type and scope"
 				},
 				"step3": {
 					"label": "Rubric",
@@ -1801,34 +1831,37 @@
 				"courseSelectProgramFirst": "Select a major first",
 				"next": "Next",
 				"verifying": "Verifying...",
+				"rubricTypeLabel": "Rubric type:",
+				"verifyingOutcomes": "Verifying course outcomes...",
 				"error": {
 					"loadPrograms": "Could not load majors.",
 					"loadCourses": "Could not load courses.",
 					"noSchool": "Could not retrieve school from user session.",
 					"noStudyPlan": "No study plan found for this course and period.",
-					"studyPlan": "Error retrieving study plan data."
+					"studyPlan": "Error retrieving study plan data.",
+					"verifyOutcomes": "Error verifying course outcomes."
 				}
 			},
 			"step2": {
-				"title": "Evaluation type",
-				"subtitle": "Select the evaluation type. The rubric type will be determined automatically.",
-				"gradeTypeLabel": "Evaluation type",
+				"title": "Grade type and scope",
+				"subtitle": "Select the grade type and competency scope.",
+				"gradeTypeLabel": "Grade Type",
 				"gradeTypePlaceholder": "Select a type",
 				"gradeTypeLoading": "Loading types...",
-				"rubricTypeLabel": "Rubric type:",
-				"verifyingOutcomes": "Verifying course outcomes...",
+				"competencyScopeTypeLabel": "Competency scope",
+				"competencyScopeTypePlaceholder": "Select a scope",
+				"competencyScopeTypeLoading": "Loading scopes...",
 				"back": "Back",
 				"next": "Next",
 				"error": {
-					"loadTypes": "Could not load evaluation types.",
-					"verifyOutcomes": "Error verifying course outcomes."
+					"loadTypes": "Could not load evaluation types."
 				}
 			},
 			"step3": {
 				"back": "Back",
 				"submit": "Create rubric",
 				"submitting": "Creating rubric...",
-				"capstone": {
+				"multipleCompetency": {
 					"title": "Criteria by outcome",
 					"subtitle": "Define performance levels for each course outcome.",
 					"criteriaLabel": "Criterion",
@@ -1890,6 +1923,7 @@
 			"saving": "Saving...",
 			"deleting": "Deleting...",
 			"saveError": "An error occurred while saving.",
+			"minZeroError": "Value cannot be negative.",
 			"instrument": "Instrument",
 			"instrumentPlaceholder": "Select instrument",
 			"nameEs": "Name (ES)",
@@ -1964,7 +1998,14 @@
 				},
 				"back": "Back",
 				"submit": "Create Project",
-				"submitting": "Creating..."
+				"submitting": "Creating...",
+				"fieldGroup": "Project group (virtual company)",
+				"fieldGroupPlaceholder": "Select a group",
+				"fieldGroupLoading": "Loading groups...",
+				"fieldGroupNoOptions": "No groups for this program. Create a new one.",
+				"fieldGroupSelectCourseFirst": "Select a course first",
+				"fieldGroupNew": "New group",
+				"fieldGroupRequired": "You must select a project group."
 			}
 		},
 		"list": {
@@ -1989,7 +2030,8 @@
 			"filters": {
 				"academicPeriod": "Academic Period",
 				"program": "Program",
-				"course": "Course"
+				"course": "Course",
+				"group": "Project group"
 			},
 			"table": {
 				"code": "Code",
@@ -2000,7 +2042,9 @@
 				"actions": "Actions",
 				"view": "View",
 				"edit": "Edit",
-				"delete": "Delete"
+				"delete": "Delete",
+				"group": "Group",
+				"noGroup": "No group"
 			},
 			"deleteModal": {
 				"title": "Delete project?",
@@ -2031,9 +2075,9 @@
 				"grade": "Evaluate"
 			},
 			"tabs": {
-				"partial": "Partial Rubric",
-				"final": "Final Rubric",
-				"ariaLabel": "Rubric type"
+				"partial": "Single competency",
+				"final": "Multiple competency",
+				"ariaLabel": "Competency scope"
 			},
 			"filters": {
 				"academicPeriod": "Academic Period"
@@ -2044,14 +2088,12 @@
 			"error": "Could not load the project.",
 			"notFound": "Project not found.",
 			"backButton": "Back",
-			"subtitle": "Evaluate the project against its assigned rubric.",
 			"docReadOnly": "Your role is DOCENTE. You can view the project and its grades, but you cannot grade.",
 			"readOnlyNoPermission": "Your evaluator role does not have permission to grade this project. You are in read-only mode.",
 			"notAssigned": "You are not assigned as an evaluator for this project.",
 			"header": {
 				"course": "Course",
-				"rubric": "Rubric",
-				"gradeType": "Grade type"
+				"rubric": "Rubric"
 			},
 			"students": {
 				"title": "Students",
@@ -2078,7 +2120,7 @@
 				"noRubric": "No rubric configured for this career.",
 				"missingStatus": "Select the attendance status for all students to continue."
 			},
-			"capstone": {
+			"multipleCompetency": {
 				"outcome": "Outcome",
 				"criteria": "Criteria",
 				"loadingLevels": "Loading performance levels...",
@@ -2104,7 +2146,10 @@
 				"saveError": "Could not update the project.",
 				"fieldCode": "Code",
 				"fieldName": "Name",
-				"fieldDesc": "Description"
+				"fieldDesc": "Description",
+				"group": "Group",
+				"fieldGroup": "Project group",
+				"fieldGroupPlaceholder": "Select a group"
 			},
 			"students": {
 				"title": "Students",
@@ -3093,7 +3138,8 @@
 				"fileTypeInvalid": "Only .xlsx files are allowed",
 				"templateDownloadFailed": "Failed to download the template",
 				"webScrapingFailed": "Could not generate the Excel from scraping.",
-				"generic": "An error occurred during the upload"
+				"generic": "An error occurred during the upload",
+				"projectGroupCodeRequired": "A new project must provide the project group code."
 			}
 		},
 		"maintenance": {
@@ -3706,41 +3752,6 @@
 			"running": "Rolling back"
 		}
 	},
-	"capstone": {
-		"title": "Capstone Evaluation Console (RB grades)",
-		"subtitle": "Direct in-platform evaluation for Systems, Software, and Sciences.",
-		"projects": {
-			"title": "Assigned projects",
-			"description": "Capstone projects where you are an evaluator.",
-			"loading": "Loading projects...",
-			"empty": "You have no Capstone projects assigned this term."
-		},
-		"students": {
-			"title": "Project students",
-			"description": "Pick a student to open the evaluation matrix."
-		},
-		"rubric": {
-			"loading": "Loading rubric..."
-		},
-		"card": {
-			"gradedOf": "of",
-			"students": "students graded"
-		},
-		"slider": {
-			"outcome": "Outcome"
-		},
-		"matrix": {
-			"title": "Evaluation for {{name}} ({{code}})",
-			"description": "Slide each criterion's score. The total must equal 20.",
-			"invalidRubric": "This rubric's maximum sums to {{actual}} instead of {{expected}} — check its configuration.",
-			"sumLabel": "Running total",
-			"observationLabel": "Observation",
-			"observationPlaceholder": "Evaluator qualitative feedback (minimum 50 chars).",
-			"observationHint": "At least {{min}} characters are required to save.",
-			"save": "Save evaluation",
-			"saving": "Saving..."
-		}
-	},
 	"academicProjects": {
 		"evaluators": {
 			"title": "Evaluator roles",
@@ -3765,6 +3776,100 @@
 			"maxEvaluatorsLabel": "Maximum evaluators",
 			"maxEvaluatorsPlaceholder": "No limit",
 			"maxInvalid": "Maximum must be a number greater than 0."
+		}
+	},
+	"performanceReports": {
+		"title": "Control & Verification Reports",
+		"subtitle": "Student Outcome (ABET) achievement by course and outcome, classified by performance level.",
+		"selectPeriod": "Select an academic period in the top bar to view the report.",
+		"empty": "No data for the selected filters.",
+		"downloadPdf": "Download PDF",
+		"downloadExcel": "Download Excel",
+		"tabs": {
+			"rc": "RC — Control",
+			"rv": "RV — Verification"
+		},
+		"filters": {
+			"accreditor": "Accreditor",
+			"allAccreditors": "All accreditors",
+			"commission": "Commission",
+			"allCommissions": "All commissions",
+			"program": "Program",
+			"allPrograms": "All programs",
+			"outcome": "Outcome",
+			"allOutcomes": "All outcomes",
+			"campus": "Campus",
+			"allCampuses": "All campuses",
+			"language": "Report language",
+			"languageEs": "Spanish",
+			"languageEn": "English",
+			"gradeTypes": "Grade type",
+			"allGradeTypes": "All grade types",
+			"gradeTypesHint": "Applies to Verification (RV) only. Leave empty to include every grade type.",
+			"clear": "Clear filters"
+		},
+		"chart": {
+			"title": "Students by performance level and outcome"
+		},
+		"metadata": {
+			"program": "Program",
+			"commission": "Commission",
+			"accreditor": "Accreditor",
+			"period": "Cycle"
+		},
+		"table": {
+			"courseCode": "Course code",
+			"courseName": "Course",
+			"outcomeCode": "Outcome",
+			"outcomeName": "Outcome name",
+			"campus": "Campus",
+			"totalStudents": "Total students",
+			"levelLowest": "Lowest level",
+			"levelMiddle": "Middle level",
+			"levelHighest": "Highest level",
+			"critical": "Critical",
+			"yes": "Yes",
+			"no": "No",
+			"status": "Performance level",
+			"searchPlaceholder": "Search by course or outcome...",
+			"ariaLabel": "Report by course and outcome",
+			"cycle": "Cycle"
+		}
+	},
+	"projectGroups": {
+		"title": "Project groups",
+		"description": "Manage the virtual companies that group the projects of each program.",
+		"addButton": "New group",
+		"selectProgram": "Select a program to see its project groups.",
+		"loading": "Loading groups...",
+		"error": "Could not load project groups.",
+		"empty": "There are no project groups for this program.",
+		"inactive": "Inactive",
+		"filters": {
+			"program": "Program"
+		},
+		"create": {
+			"title": "Create project group"
+		},
+		"edit": {
+			"title": "Edit project group"
+		},
+		"delete": {
+			"title": "Delete project group",
+			"confirm": "Are you sure you want to delete the group \"{{name}}\"?",
+			"error": "Could not delete the project group."
+		},
+		"form": {
+			"code": "Code",
+			"codePlaceholder": "e.g. G01",
+			"codeRequired": "Code is required.",
+			"name": "Name",
+			"nameRequired": "Name is required.",
+			"nameHint": "If you leave the name empty, the code will be used.",
+			"description": "Description",
+			"active": "Active",
+			"saveError": "Could not save the project group.",
+			"createError": "Could not create the project group."
 		}
 	}
 }

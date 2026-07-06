@@ -12,6 +12,7 @@
 		"performanceLevels": "Niveles de Desempeño",
 		"projects": "Proyectos Académicos",
 		"gradeProjects": "Calificar Proyectos",
+		"performanceReports": "Reportes de Control y Verificación",
 		"evaluation": {
 			"label": "Evaluación"
 		},
@@ -49,7 +50,8 @@
 		"banner": "Scraping",
 		"academicProjects": {
 			"label": "Proyectos Académicos",
-			"evaluators": "Evaluadores"
+			"evaluators": "Evaluadores",
+			"projectGroups": "Grupos de proyecto"
 		}
 	},
 	"ard": {
@@ -173,6 +175,10 @@
 				"alumnosSecciones": {
 					"title": "Alumnos por sección",
 					"description": "Relación de alumno y sección."
+				},
+				"notasRc": {
+					"title": "Notas RC",
+					"description": "Notas por tipo de nota y estado de calificación (de Banner)."
 				}
 			}
 		},
@@ -1242,6 +1248,16 @@
 	},
 	"error": {
 		"generic": "Ocurrió un error inesperado.",
+		"academicPeriodRequired": "Selecciona un periodo académico para generar el reporte.",
+		"semaphoreReport": {
+			"notFound": "No se encontró el reporte solicitado.",
+			"noData": "No hay datos para los filtros seleccionados.",
+			"invalidFilter": "Los filtros seleccionados no son válidos.",
+			"thresholdNotFound": "No se encontró la configuración de niveles de desempeño para el periodo.",
+			"generateFailed": "No se pudo generar el reporte.",
+			"pdfFailed": "No se pudo generar el PDF del reporte.",
+			"excelFailed": "No se pudo generar el Excel del reporte."
+		},
 		"chart": {
 			"hasIfc": "Un coordinador de curso dependiente tiene un IFC para su curso en este período.",
 			"readOnlyNode": "Este nodo es de solo lectura y no puede modificarse.",
@@ -1483,7 +1499,8 @@
 			"rollbackBlockedOutcomeRefs": "No se puede revertir: hay datos que dependen de estos outcomes (articulación, hallazgos, encuestas o notas). Elimínelos primero.",
 			"rollbackBlockedSectionRefs": "No se puede revertir: hay matrículas o encuestas asociadas a estas secciones. Elimínelas primero.",
 			"rollbackBlockedEnrollmentRefs": "No se puede revertir: hay alumnos por sección o encuestas asociadas a estas matrículas. Elimínelos primero.",
-			"rollbackBlockedSectionEnrollmentRefs": "No se puede revertir: hay notas o proyectos asociados a estas matrículas de sección. Elimínelos primero."
+			"rollbackBlockedSectionEnrollmentRefs": "No se puede revertir: hay notas o proyectos asociados a estas matrículas de sección. Elimínelos primero.",
+			"projectGroupCodeRequired": "El proyecto nuevo debe indicar el código del grupo de proyecto."
 		},
 		"chartHeads": {
 			"configureFailed": "No se pudo guardar la configuración del organigrama.",
@@ -1529,7 +1546,9 @@
 			"invalidGradeTypeCode": "El tipo de nota no existe.",
 			"hasEvaluations": "No se puede eliminar el proyecto porque ya tiene evaluaciones registradas.",
 			"activeRubricNotFound": "No se encontró rúbrica activa para el proyecto.",
-			"rubricContextError": "Error al resolver el contexto de rúbrica del proyecto."
+			"rubricContextError": "Error al resolver el contexto de rúbrica del proyecto.",
+			"projectGroupNotFound": "El grupo de proyecto seleccionado no existe.",
+			"projectGroupPeriodMismatch": "El grupo pertenece a un periodo académico distinto al del proyecto."
 		},
 		"projectEvaluator": {
 			"duplicateEvaluatorType": "Ya existe un evaluador con ese tipo de rol en el proyecto."
@@ -1581,6 +1600,16 @@
 			"criteriaOverlap": "Dos o más criterios tienen rangos de puntaje solapados.",
 			"criteriaInvalidRange": "El puntaje mínimo no puede ser mayor al máximo en un criterio.",
 			"criteriaTotalNot20": "La suma de los puntajes máximos de los criterios debe ser 20."
+		},
+		"projectGroup": {
+			"codeExists": "Ya existe un grupo con ese código en la carrera y periodo.",
+			"notFound": "El grupo de proyecto no existe.",
+			"academicPeriodNotFound": "El periodo académico no existe.",
+			"programNotFound": "La carrera no existe.",
+			"hasProjects": "No se puede eliminar: el grupo tiene proyectos asociados.",
+			"createFailed": "No se pudo crear el grupo de proyecto.",
+			"updateFailed": "No se pudo actualizar el grupo de proyecto.",
+			"deleteFailed": "No se pudo eliminar el grupo de proyecto."
 		}
 	},
 	"table": {
@@ -1638,6 +1667,10 @@
 		"action": "Ir al inicio"
 	},
 	"rubrics": {
+		"badges": {
+			"capstone": "Capstone",
+			"noCapstone": "No Capstone"
+		},
 		"list": {
 			"title": "Rúbricas",
 			"description": "Listado de rúbricas.",
@@ -1690,7 +1723,7 @@
 			"criteria": {
 				"saving": "Guardando criterio..."
 			},
-			"capstone": {
+			"multipleCompetency": {
 				"saveRubric": "Guardar rúbrica",
 				"saving": "Guardando rúbrica...",
 				"saveError": "Error al guardar la rúbrica.",
@@ -1712,7 +1745,7 @@
 					"criteriaPlaceholder": "Ingrese la descripción del criterio"
 				}
 			},
-			"nonCapstone": {
+			"singleCompetency": {
 				"totalScore": "Puntaje total",
 				"points": "puntos",
 				"saveRubric": "Guardar rúbrica",
@@ -1747,12 +1780,9 @@
 			},
 			"header": {
 				"academicPeriod": "Período académico",
-				"maxScore": "Puntaje máximo",
-				"units": {
-					"points": "puntos"
-				},
 				"editable": "Editable",
-				"readonly": "Solo lectura"
+				"readonly": "Solo lectura",
+				"rubricPrefix": "Rúbrica"
 			},
 			"performanceLevels": {
 				"title": "Niveles de desempeño",
@@ -1779,7 +1809,7 @@
 				},
 				"step2": {
 					"label": "Evaluación",
-					"description": "Tipo y rúbrica"
+					"description": "Tipo y alcance"
 				},
 				"step3": {
 					"label": "Rúbrica",
@@ -1801,34 +1831,37 @@
 				"courseSelectProgramFirst": "Selecciona una carrera primero",
 				"next": "Siguiente",
 				"verifying": "Verificando...",
+				"rubricTypeLabel": "Tipo de rúbrica:",
+				"verifyingOutcomes": "Verificando outcomes del curso...",
 				"error": {
 					"loadPrograms": "No se pudieron cargar las carreras.",
 					"loadCourses": "No se pudieron cargar los cursos.",
 					"noSchool": "No se pudo obtener la escuela del usuario.",
 					"noStudyPlan": "No se encontró una malla curricular para este curso y periodo.",
-					"studyPlan": "Error al obtener datos de la malla curricular."
+					"studyPlan": "Error al obtener datos de la malla curricular.",
+					"verifyOutcomes": "Error al verificar los outcomes del curso."
 				}
 			},
 			"step2": {
-				"title": "Tipo de evaluación",
-				"subtitle": "Selecciona el tipo de evaluación. El tipo de rúbrica se determinará automáticamente.",
-				"gradeTypeLabel": "Tipo de evaluación",
+				"title": "Tipo de nota y alcance",
+				"subtitle": "Selecciona el tipo de nota y el alcance de competencia.",
+				"gradeTypeLabel": "Tipo de Nota",
 				"gradeTypePlaceholder": "Selecciona un tipo",
 				"gradeTypeLoading": "Cargando tipos...",
-				"rubricTypeLabel": "Tipo de rúbrica:",
-				"verifyingOutcomes": "Verificando outcomes del curso...",
+				"competencyScopeTypeLabel": "Alcance de competencia",
+				"competencyScopeTypePlaceholder": "Selecciona un alcance",
+				"competencyScopeTypeLoading": "Cargando alcances...",
 				"back": "Atrás",
 				"next": "Siguiente",
 				"error": {
-					"loadTypes": "No se pudieron cargar los tipos de evaluación.",
-					"verifyOutcomes": "Error al verificar los outcomes del curso."
+					"loadTypes": "No se pudieron cargar los tipos de evaluación."
 				}
 			},
 			"step3": {
 				"back": "Atrás",
 				"submit": "Crear rúbrica",
 				"submitting": "Creando rúbrica...",
-				"capstone": {
+				"multipleCompetency": {
 					"title": "Criterios por outcome",
 					"subtitle": "Define los niveles de evaluación para cada outcome.",
 					"criteriaLabel": "Criterio",
@@ -1890,6 +1923,7 @@
 			"saving": "Guardando...",
 			"deleting": "Eliminando...",
 			"saveError": "Ocurrió un error al guardar.",
+			"minZeroError": "El valor no puede ser negativo.",
 			"instrument": "Instrumento",
 			"instrumentPlaceholder": "Seleccionar instrumento",
 			"nameEs": "Nombre (ES)",
@@ -1964,7 +1998,14 @@
 				},
 				"back": "Atrás",
 				"submit": "Crear Proyecto",
-				"submitting": "Creando..."
+				"submitting": "Creando...",
+				"fieldGroup": "Grupo de proyecto (empresa virtual)",
+				"fieldGroupPlaceholder": "Selecciona un grupo",
+				"fieldGroupLoading": "Cargando grupos...",
+				"fieldGroupNoOptions": "No hay grupos para esta carrera. Crea uno nuevo.",
+				"fieldGroupSelectCourseFirst": "Selecciona primero el curso",
+				"fieldGroupNew": "Nuevo grupo",
+				"fieldGroupRequired": "Debes seleccionar un grupo de proyecto."
 			}
 		},
 		"list": {
@@ -1989,7 +2030,8 @@
 			"filters": {
 				"academicPeriod": "Período Académico",
 				"program": "Carrera",
-				"course": "Curso"
+				"course": "Curso",
+				"group": "Grupo de proyecto"
 			},
 			"table": {
 				"code": "Código",
@@ -2000,7 +2042,9 @@
 				"actions": "Acciones",
 				"view": "Ver",
 				"edit": "Editar",
-				"delete": "Eliminar"
+				"delete": "Eliminar",
+				"group": "Grupo",
+				"noGroup": "Sin grupo"
 			},
 			"deleteModal": {
 				"title": "¿Eliminar proyecto?",
@@ -2031,9 +2075,9 @@
 				"grade": "Evaluar"
 			},
 			"tabs": {
-				"partial": "Rúbrica Parcial",
-				"final": "Rúbrica Final",
-				"ariaLabel": "Tipo de rúbrica"
+				"partial": "Única competencia",
+				"final": "Múltiple competencia",
+				"ariaLabel": "Alcance de competencia"
 			},
 			"filters": {
 				"academicPeriod": "Período Académico"
@@ -2044,14 +2088,12 @@
 			"error": "No fue posible cargar el proyecto.",
 			"notFound": "Proyecto no encontrado.",
 			"backButton": "Volver",
-			"subtitle": "Evalúe el proyecto según la rúbrica asignada.",
 			"docReadOnly": "Tu rol es DOCENTE. Puedes ver el proyecto y las calificaciones, pero no puedes calificar.",
 			"readOnlyNoPermission": "Tu rol de evaluador no tiene permisos para calificar este proyecto. Estás en modo lectura.",
 			"notAssigned": "No estás asignado como evaluador en este proyecto.",
 			"header": {
 				"course": "Curso",
-				"rubric": "Rúbrica",
-				"gradeType": "Tipo de nota"
+				"rubric": "Rúbrica"
 			},
 			"students": {
 				"title": "Estudiantes",
@@ -2078,7 +2120,7 @@
 				"noRubric": "No hay rúbrica configurada para esta carrera.",
 				"missingStatus": "Selecciona la asistencia de todos los estudiantes para continuar."
 			},
-			"capstone": {
+			"multipleCompetency": {
 				"outcome": "Outcome",
 				"criteria": "Criterios",
 				"loadingLevels": "Cargando niveles de desempeño...",
@@ -2104,7 +2146,10 @@
 				"saveError": "No se pudo actualizar el proyecto.",
 				"fieldCode": "Código",
 				"fieldName": "Nombre",
-				"fieldDesc": "Descripción"
+				"fieldDesc": "Descripción",
+				"group": "Grupo",
+				"fieldGroup": "Grupo de proyecto",
+				"fieldGroupPlaceholder": "Selecciona un grupo"
 			},
 			"students": {
 				"title": "Estudiantes",
@@ -3094,7 +3139,8 @@
 				"fileTypeInvalid": "Solo se permiten archivos .xlsx",
 				"templateDownloadFailed": "No se pudo descargar la plantilla",
 				"webScrapingFailed": "No se pudo generar el Excel desde el scraping.",
-				"generic": "Ocurrió un error durante la carga"
+				"generic": "Ocurrió un error durante la carga",
+				"projectGroupCodeRequired": "El proyecto nuevo debe indicar el código del grupo de proyecto."
 			}
 		},
 		"maintenance": {
@@ -3707,41 +3753,6 @@
 			"running": "Revirtiendo"
 		}
 	},
-	"capstone": {
-		"title": "Consola de Evaluación Capstone (Notas RB)",
-		"subtitle": "Evaluación directa en plataforma para Sistemas, Software y Ciencias.",
-		"projects": {
-			"title": "Proyectos asignados",
-			"description": "Proyectos de fin de carrera en los que tú eres evaluador.",
-			"loading": "Cargando proyectos...",
-			"empty": "No tienes proyectos Capstone asignados este ciclo."
-		},
-		"students": {
-			"title": "Alumnos del proyecto",
-			"description": "Selecciona un alumno para abrir su matriz de evaluación."
-		},
-		"rubric": {
-			"loading": "Cargando rúbrica..."
-		},
-		"card": {
-			"gradedOf": "de",
-			"students": "alumnos calificados"
-		},
-		"slider": {
-			"outcome": "Outcome"
-		},
-		"matrix": {
-			"title": "Evaluación de {{name}} ({{code}})",
-			"description": "Desliza el puntaje de cada criterio. La suma debe equivaler a 20.",
-			"invalidRubric": "Esta rúbrica tiene una suma máxima de {{actual}} en lugar de {{expected}} — revisa su configuración.",
-			"sumLabel": "Suma total",
-			"observationLabel": "Observación",
-			"observationPlaceholder": "Feedback cualitativo del evaluador (mínimo 50 caracteres).",
-			"observationHint": "Requiere al menos {{min}} caracteres para guardar.",
-			"save": "Guardar evaluación",
-			"saving": "Guardando..."
-		}
-	},
 	"academicProjects": {
 		"evaluators": {
 			"title": "Roles de evaluador",
@@ -3766,6 +3777,100 @@
 			"maxEvaluatorsLabel": "Máximo de evaluadores",
 			"maxEvaluatorsPlaceholder": "Sin límite",
 			"maxInvalid": "El máximo debe ser un número mayor a 0."
+		}
+	},
+	"performanceReports": {
+		"title": "Reportes de Control y Verificación",
+		"subtitle": "Cumplimiento de Student Outcomes (ABET) por curso y outcome, clasificado por niveles de desempeño.",
+		"selectPeriod": "Selecciona un periodo académico en la barra superior para ver el reporte.",
+		"empty": "No hay datos para los filtros seleccionados.",
+		"downloadPdf": "Descargar PDF",
+		"downloadExcel": "Descargar Excel",
+		"tabs": {
+			"rc": "RC — Control",
+			"rv": "RV — Verificación"
+		},
+		"filters": {
+			"accreditor": "Acreditador",
+			"allAccreditors": "Todos los acreditadores",
+			"commission": "Comisión",
+			"allCommissions": "Todas las comisiones",
+			"program": "Carrera",
+			"allPrograms": "Todas las carreras",
+			"outcome": "Outcome",
+			"allOutcomes": "Todos los outcomes",
+			"campus": "Sede",
+			"allCampuses": "Todas las sedes",
+			"language": "Idioma del reporte",
+			"languageEs": "Español",
+			"languageEn": "Inglés",
+			"gradeTypes": "Tipo de nota",
+			"allGradeTypes": "Todos los tipos de nota",
+			"gradeTypesHint": "Solo aplica a Verificación (RV). Si no seleccionas ninguno, se incluyen todos los tipos de nota.",
+			"clear": "Limpiar filtros"
+		},
+		"chart": {
+			"title": "Alumnos por nivel de desempeño y outcome"
+		},
+		"metadata": {
+			"program": "Carrera",
+			"commission": "Comisión",
+			"accreditor": "Acreditador",
+			"period": "Ciclo"
+		},
+		"table": {
+			"courseCode": "Código curso",
+			"courseName": "Curso",
+			"outcomeCode": "Outcome",
+			"outcomeName": "Nombre del outcome",
+			"campus": "Sede",
+			"totalStudents": "Total alumnos",
+			"levelLowest": "Nivel más bajo",
+			"levelMiddle": "Nivel intermedio",
+			"levelHighest": "Nivel más alto",
+			"critical": "Crítico",
+			"yes": "Sí",
+			"no": "No",
+			"status": "Nivel de desempeño",
+			"searchPlaceholder": "Buscar por curso u outcome...",
+			"ariaLabel": "Reporte por curso y outcome",
+			"cycle": "Ciclo"
+		}
+	},
+	"projectGroups": {
+		"title": "Grupos de proyecto",
+		"description": "Gestiona las empresas virtuales que agrupan los proyectos de cada carrera.",
+		"addButton": "Nuevo grupo",
+		"selectProgram": "Selecciona una carrera para ver sus grupos de proyecto.",
+		"loading": "Cargando grupos...",
+		"error": "No se pudieron cargar los grupos de proyecto.",
+		"empty": "No hay grupos de proyecto para esta carrera.",
+		"inactive": "Inactivo",
+		"filters": {
+			"program": "Carrera"
+		},
+		"create": {
+			"title": "Crear grupo de proyecto"
+		},
+		"edit": {
+			"title": "Editar grupo de proyecto"
+		},
+		"delete": {
+			"title": "Eliminar grupo de proyecto",
+			"confirm": "¿Seguro que deseas eliminar el grupo \"{{name}}\"?",
+			"error": "No se pudo eliminar el grupo de proyecto."
+		},
+		"form": {
+			"code": "Código",
+			"codePlaceholder": "Ej: G01",
+			"codeRequired": "El código es obligatorio.",
+			"name": "Nombre",
+			"nameRequired": "El nombre es obligatorio.",
+			"nameHint": "Si dejas el nombre vacío se usará el código.",
+			"description": "Descripción",
+			"active": "Activo",
+			"saveError": "No se pudo guardar el grupo de proyecto.",
+			"createError": "No se pudo crear el grupo de proyecto."
 		}
 	}
 }

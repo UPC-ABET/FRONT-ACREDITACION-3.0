@@ -64,13 +64,20 @@ export function AppSidebar() {
 			icon: AcademicCapIcon,
 			children: [
 				{ name: t('nav.academicProjects.evaluators'), href: '/academic-projects/evaluators' },
+				{
+					name: t('nav.academicProjects.projectGroups'),
+					href: '/academic-projects/project-groups',
+				},
 				{ name: t('nav.projects'), href: '/academic-projects/projects' },
 			],
 		},
 		{
 			name: t('nav.evaluation.label'),
 			icon: ClipboardDocumentCheckIcon,
-			children: [{ name: t('nav.gradeProjects'), href: '/evaluation/grade-projects' }],
+			children: [
+				{ name: t('nav.gradeProjects'), href: '/evaluation/grade-projects' },
+				{ name: t('nav.performanceReports'), href: '/evaluation/performance-reports' },
+			],
 		},
 		{
 			name: t('nav.portfolio'),

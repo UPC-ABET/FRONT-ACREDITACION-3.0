@@ -1,25 +1,25 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Select, Button, Badge, SubTitle, Title, TYPE_GROUP_CODES, TYPE_CODES } from '@/shared';
+import { Select, Button, SubTitle, Title, TYPE_GROUP_CODES, TYPE_CODES } from '@/shared';
 import { useI18n } from '@/providers';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { useCourseOutcomeMappings } from '@/modules/academic/hooks';
-import { rubricsService } from '@/modules';
+import { COMPETENCY_SCOPE_LABELS } from '../../constants';
 import type { Step1Data } from './WizardStep1';
 
 const GRADE_TYPE_GROUP = TYPE_GROUP_CODES.GRADE_TYPE;
-const CAPSTONE_RUBRIC_CODE = TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
+const COMPETENCY_SCOPE_GROUP = TYPE_GROUP_CODES.COMPETENCY_SCOPE;
 
 export interface Step2Data {
 	gradeTypeId: number;
 	gradeTypeCode: string;
 	gradeTypeName: { en: string; es: string };
-	rubricTypeId: number;
-	rubricTypeCode: string;
-	isCapstone: boolean;
-	capstoneOutcomeIds: number[];
+	competencyScopeTypeId: number;
+	competencyScopeTypeCode: string;
+	competencyScopeTypeName: { en: string; es: string };
+	useMultipleCompetencyEditor: boolean;
+	outcomeIds: number[];
 }
 
 interface WizardStep2Props {
@@ -33,45 +33,56 @@ type AnyOption = { label: string; value: string | number };
 export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 	const { t } = useI18n();
 	const [selectedGradeType, setSelectedGradeType] = useState<AnyOption | null>(null);
+	const [selectedCompetencyScope, setSelectedCompetencyScope] = useState<AnyOption | null>(null);
 
 	const { data: gradeTypes = [], isLoading: loadingGrade } = useTypesByGroupCode(GRADE_TYPE_GROUP);
+
+	const { data: competencyScopeTypes = [], isLoading: loadingCompetencyScope } =
+		useTypesByGroupCode(COMPETENCY_SCOPE_GROUP);
 
 	const selectedGradeTypeObj = useMemo(
 		() => gradeTypes.find((gt) => gt.id === Number(selectedGradeType?.value)) ?? null,
 		[gradeTypes, selectedGradeType?.value],
 	);
 
-	const { data: resolvedType, isLoading: loadingResolve } = useQuery({
-		queryKey: ['rubrics', 'resolve-type', step1.studyPlanCourseId, selectedGradeTypeObj?.id],
-		queryFn: () =>
-			rubricsService
-				.resolveType(step1.studyPlanCourseId, selectedGradeTypeObj!.id)
-				.then((r) => r.data),
-		enabled: !!selectedGradeTypeObj,
-	});
+	const selectedCompetencyScopeObj = useMemo(
+		() =>
+			competencyScopeTypes.find((et) => et.id === Number(selectedCompetencyScope?.value)) ?? null,
+		[competencyScopeTypes, selectedCompetencyScope?.value],
+	);
 
-	const isCapstone = resolvedType?.code === CAPSTONE_RUBRIC_CODE;
+	const useMultipleCompetencyEditor =
+		step1.isCapstone && selectedCompetencyScopeObj?.code === TYPE_CODES.COMPETENCY_SCOPE.MULTIPLE;
+
+	const { data: outcomeTypes = [] } = useTypesByGroupCode(TYPE_GROUP_CODES.OUTCOME_TYPE, {
+		enabled: useMultipleCompetencyEditor,
+	});
+	const verificationOutcomeTypeId = outcomeTypes.find(
+		(ot) => ot.code === TYPE_CODES.OUTCOME_TYPE.VERIFICATION,
+	)?.id;
 
 	const { data: mappings = [], isLoading: loadingMappings } = useCourseOutcomeMappings(
-		{ studyPlanCourseId: step1.studyPlanCourseId, isActive: true },
-		{ enabled: isCapstone },
+		{
+			studyPlanCourseId: step1.studyPlanCourseId,
+			isActive: true,
+			outcomeTypeId: verificationOutcomeTypeId,
+		},
+		{ enabled: useMultipleCompetencyEditor && verificationOutcomeTypeId != null },
 	);
 
-	const capstoneOutcomeIds = useMemo(
-		() => (isCapstone ? mappings.map((m) => m.outcomeId) : []),
-		[isCapstone, mappings],
-	);
+	const outcomeIds = useMemo(() => mappings.map((m) => m.outcomeId), [mappings]);
 
 	const handleNext = () => {
-		if (!selectedGradeTypeObj || !resolvedType) return;
+		if (!selectedGradeTypeObj || !selectedCompetencyScopeObj) return;
 		onNext({
 			gradeTypeId: selectedGradeTypeObj.id,
 			gradeTypeCode: selectedGradeTypeObj.code,
 			gradeTypeName: selectedGradeTypeObj.name,
-			rubricTypeId: resolvedType.id,
-			rubricTypeCode: resolvedType.code,
-			isCapstone,
-			capstoneOutcomeIds,
+			competencyScopeTypeId: selectedCompetencyScopeObj.id,
+			competencyScopeTypeCode: selectedCompetencyScopeObj.code,
+			competencyScopeTypeName: selectedCompetencyScopeObj.name,
+			useMultipleCompetencyEditor: Boolean(useMultipleCompetencyEditor),
+			outcomeIds: useMultipleCompetencyEditor ? outcomeIds : [],
 		});
 	};
 
@@ -80,8 +91,15 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 		value: gt.id,
 	}));
 
+	const competencyScopeOptions: AnyOption[] = competencyScopeTypes.map((et) => ({
+		label: COMPETENCY_SCOPE_LABELS[et.code]?.es ?? et.name.es,
+		value: et.id,
+	}));
+
 	const canContinue =
-		!!selectedGradeType && !!resolvedType && !loadingResolve && !(isCapstone && loadingMappings);
+		!!selectedGradeType &&
+		!!selectedCompetencyScope &&
+		!(useMultipleCompetencyEditor && loadingMappings);
 
 	return (
 		<div className="space-y-6">
@@ -116,21 +134,19 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 				onChange={(_, v) => setSelectedGradeType(Array.isArray(v) ? (v[0] ?? null) : v)}
 			/>
 
-			{loadingResolve && (
-				<p className="text-sm text-zinc-500">{t('rubrics.wizard.step2.verifyingOutcomes')}</p>
-			)}
-
-			{resolvedType && (
-				<div className="flex items-center gap-3">
-					<span className="text-sm text-zinc-600">{t('rubrics.wizard.step2.rubricTypeLabel')}</span>
-					{isCapstone ? (
-						<Badge variant="success">Capstone</Badge>
-					) : (
-						<Badge variant="outline">No Capstone</Badge>
-					)}
-					<span className="text-xs text-zinc-500">{resolvedType.name.es}</span>
-				</div>
-			)}
+			<Select
+				label={t('rubrics.wizard.step2.competencyScopeTypeLabel')}
+				placeholder={
+					loadingCompetencyScope
+						? t('rubrics.wizard.step2.competencyScopeTypeLoading')
+						: t('rubrics.wizard.step2.competencyScopeTypePlaceholder')
+				}
+				options={competencyScopeOptions}
+				value={selectedCompetencyScope}
+				isDisabled={loadingCompetencyScope}
+				isSearchable
+				onChange={(_, v) => setSelectedCompetencyScope(Array.isArray(v) ? (v[0] ?? null) : v)}
+			/>
 
 			<div className="flex justify-between">
 				<Button variant="secondary" onClick={onBack}>

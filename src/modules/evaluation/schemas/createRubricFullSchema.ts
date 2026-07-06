@@ -4,6 +4,7 @@ import { rubricQuestionSchema } from './questionSchema';
 export const createRubricFullSchema = z.object({
 	rubricTypeId: z.number(),
 	gradeTypeId: z.number(),
+	competencyScopeTypeId: z.number(),
 	studyPlanCourseId: z.number(),
 	questions: z.array(rubricQuestionSchema),
 });

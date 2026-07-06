@@ -11,9 +11,14 @@ import type { CreateRubricFullDto } from '@/modules';
 import { WizardStepIndicator } from './WizardStepIndicator';
 import { WizardStep1, type Step1Data } from './WizardStep1';
 import { WizardStep2, type Step2Data } from './WizardStep2';
-import { WizardStep3NonCapstone, type NonCapstonePayloadQuestion } from './WizardStep3NonCapstone';
-import { WizardStep3Capstone, type CapstonePayloadQuestion } from './WizardStep3Capstone';
-import { TYPE_CODES } from '@/shared';
+import {
+	WizardStep3SingleCompetency,
+	type SingleCompetencyPayloadQuestion,
+} from './WizardStep3SingleCompetency';
+import {
+	WizardStep3MultipleCompetency,
+	type MultipleCompetencyPayloadQuestion,
+} from './WizardStep3MultipleCompetency';
 
 export function RubricCreateWizard() {
 	const router = useRouter();
@@ -41,13 +46,14 @@ export function RubricCreateWizard() {
 	};
 
 	const handleSubmit = async (
-		questions: NonCapstonePayloadQuestion[] | CapstonePayloadQuestion[],
+		questions: SingleCompetencyPayloadQuestion[] | MultipleCompetencyPayloadQuestion[],
 	) => {
 		if (!step1Data || !step2Data) return;
 		try {
 			const body: CreateRubricFullDto = {
-				rubricTypeId: step2Data.rubricTypeId,
+				rubricTypeId: step1Data.rubricTypeId,
 				gradeTypeId: step2Data.gradeTypeId,
+				competencyScopeTypeId: step2Data.competencyScopeTypeId,
 				studyPlanCourseId: step1Data.studyPlanCourseId,
 				questions: questions as CreateRubricFullDto['questions'],
 			};
@@ -75,8 +81,7 @@ export function RubricCreateWizard() {
 		},
 	];
 
-	const useCapstoneEditor =
-		step2Data?.isCapstone && step2Data?.gradeTypeCode === TYPE_CODES.GRADE_TYPE.FINAL;
+	const useMultipleCompetencyEditor = Boolean(step2Data?.useMultipleCompetencyEditor);
 
 	return (
 		<div className="space-y-6">
@@ -98,8 +103,8 @@ export function RubricCreateWizard() {
 				{currentStep === 3 &&
 					step1Data &&
 					step2Data &&
-					(useCapstoneEditor ? (
-						<WizardStep3Capstone
+					(useMultipleCompetencyEditor ? (
+						<WizardStep3MultipleCompetency
 							step1={step1Data}
 							step2={step2Data}
 							onBack={() => setCurrentStep(2)}
@@ -107,7 +112,7 @@ export function RubricCreateWizard() {
 							isSubmitting={createRubricFull.isPending}
 						/>
 					) : (
-						<WizardStep3NonCapstone
+						<WizardStep3SingleCompetency
 							step1={step1Data}
 							step2={step2Data}
 							onBack={() => setCurrentStep(2)}

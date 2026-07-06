@@ -9,14 +9,15 @@ import { useRubricEditor } from '../../hooks/useRubricEditor';
 import { RubricHeader } from './RubricHeader';
 import { ReadonlyBanner } from './ReadonlyBanner';
 import { RubricDetail } from '../../types';
+import { TYPE_CODES } from '@/shared/constants';
 
-const RubricEditorCapstone = dynamic(
-	() => import('./RubricEditorCapstone').then((m) => m.RubricEditorCapstone),
+const RubricEditorMultipleCompetency = dynamic(
+	() => import('./RubricEditorMultipleCompetency').then((m) => m.RubricEditorMultipleCompetency),
 	{ loading: () => <Skeleton className="h-96 w-full" />, ssr: false },
 );
 
-const RubricEditorNonCapstone = dynamic(
-	() => import('./RubricEditorNonCapstone').then((m) => m.RubricEditorNonCapstone),
+const RubricEditorSingleCompetency = dynamic(
+	() => import('./RubricEditorSingleCompetency').then((m) => m.RubricEditorSingleCompetency),
 	{ loading: () => <Skeleton className="h-96 w-full" />, ssr: false },
 );
 
@@ -71,8 +72,8 @@ export function RubricEditor({ rubricId, initialRubric }: RubricEditorProps) {
 
 			{!canEdit ? <ReadonlyBanner /> : null}
 
-			{rubric.isCapstone && rubric.gradeTypeCode === 'TG205-T002' ? (
-				<RubricEditorCapstone
+			{rubric.isCapstone && rubric.competencyScopeCode === TYPE_CODES.COMPETENCY_SCOPE.MULTIPLE ? (
+				<RubricEditorMultipleCompetency
 					rubric={rubric}
 					rubricId={rubricId}
 					canEdit={canEdit}
@@ -81,7 +82,7 @@ export function RubricEditor({ rubricId, initialRubric }: RubricEditorProps) {
 					messages={messages}
 				/>
 			) : (
-				<RubricEditorNonCapstone
+				<RubricEditorSingleCompetency
 					rubric={rubric}
 					rubricId={rubricId}
 					canEdit={canEdit}

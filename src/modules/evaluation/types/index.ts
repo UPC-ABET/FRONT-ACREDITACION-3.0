@@ -7,7 +7,8 @@ export * from './rubricDetail';
 export * from './rubricEditor';
 export * from './rubricListRow';
 export * from './rubricQuestion';
-export * from './capstone';
+export * from './performanceReport';
+export * from './projectGroup';
 
 export type EvaluationScorePayload = {
 	rubricQuestionCriteriaId: number;
@@ -28,6 +29,8 @@ export type CreateProjectFullDto = {
 	code: string;
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
+	studyPlanCourseId: number;
+	projectGroupId: number;
 	studentSectionEnrollmentIds?: number[];
 	evaluators?: { professorId: number; evaluatorTypeId: number }[];
 };
@@ -41,6 +44,7 @@ export type CreateProjectDto = {
 export type CreateRubricFullDto = {
 	rubricTypeId: number;
 	gradeTypeId: number;
+	competencyScopeTypeId: number;
 	studyPlanCourseId: number;
 	isActive?: boolean;
 	extra?: Record<string, unknown>;
@@ -58,6 +62,7 @@ export type CreateRubricFullDto = {
 export type CreateRubricDto = {
 	rubricTypeId: number;
 	gradeTypeId: number;
+	competencyScopeTypeId: number;
 	studyPlanCourseId: number;
 };
 
@@ -78,6 +83,7 @@ export type FilterProjectDto = Partial<{
 	courseId: number;
 	studentId: number;
 	professorId: number;
+	projectGroupId: number;
 	search: string;
 	page: number;
 	pageSize: number;
@@ -94,6 +100,7 @@ export type ProjectPaginatedResponse = {
 export type FilterRubricDto = Partial<{
 	studyPlanCourseId: number;
 	gradeTypeId: number;
+	competencyScopeTypeId: number;
 	isActive: boolean;
 }>;
 
@@ -121,6 +128,7 @@ export type UpdateProjectDto = Partial<{
 	code: string;
 	name: { en: string; es: string };
 	description?: { en: string; es: string };
+	projectGroupId: number | null;
 }>;
 
 type I18nText = { es: string; en: string };
@@ -142,6 +150,7 @@ export type UpdateRubricQuestionDto = {
 export type UpdateRubricDto = {
 	rubricTypeId?: number;
 	gradeTypeId?: number;
+	competencyScopeTypeId?: number;
 	studyPlanCourseId?: number;
 	isActive?: boolean;
 	extra?: Record<string, unknown>;
@@ -158,6 +167,7 @@ import {
 } from '@/modules/academic';
 import { CommissionResponse, OutcomeResponse } from '@/modules/accreditation';
 import { TypeResponse } from '@/modules/core';
+import type { ProjectGroup } from './projectGroup';
 
 export type RubricScoreResponse = {
 	id: number;
@@ -250,8 +260,6 @@ export type ProjectDetailsStudentResponse = {
 	email: string;
 	studentCode: string;
 	studyPlanCourseId: number | null;
-	totalGrade: number | null;
-	evaluations: StudentEvaluationResponse[] | undefined;
 };
 
 export type ProjectDetailsEvaluatorResponse = {
@@ -290,12 +298,53 @@ export type RubricQuestionDetailsResponse = {
 	criterias: RubricCriteriaDetailsResponse[];
 };
 
+type ProjectRubricTypeRef = { id: number; code: string; name: { en: string; es: string } };
+
+export type ProjectRubricItemStudentResponse = {
+	projectStudentId: number;
+	totalGrade: number | null;
+	evaluationStatuses: StudentEvaluationResponse[];
+};
+
+export type ProjectRubricItemResponse = {
+	gradeType: ProjectRubricTypeRef;
+	competencyScopeType: ProjectRubricTypeRef;
+	rubric: null | {
+		id: number;
+		rubricTypeId: number;
+		gradeTypeId: number;
+		competencyScopeTypeId: number;
+		studyPlanCourseId: number;
+		isActive: boolean;
+		createdAt: string;
+		rubricType: ProjectRubricTypeRef;
+		gradeType: ProjectRubricTypeRef;
+		competencyScopeType: ProjectRubricTypeRef;
+	};
+	commissions: Array<{
+		id: number;
+		code: string;
+		name: { es: string; en: string };
+		outcomeIds: number[];
+	}>;
+	outcomes: {
+		id: number;
+		code: string;
+		name: { en: string; es: string };
+		description: { en: string; es: string };
+		questionIds: number[];
+	}[];
+	questions: RubricQuestionDetailsResponse[];
+	students: ProjectRubricItemStudentResponse[];
+};
+
 export type ProjectDetailsResponse = {
 	project: {
 		id: number;
 		code: string;
 		name: { en: string; es: string };
-		description: { en: string; es: string };
+		description?: { en: string; es: string } | null;
+		projectGroup?: ProjectGroup | null;
 	};
 	academicPeriod: {
 		id: number;
@@ -313,30 +362,7 @@ export type ProjectDetailsResponse = {
 	rubrics: Array<{
 		studyPlanCourseId: number;
 		programName?: { es: string; en: string };
-		rubric: null | {
-			id: number;
-			rubricTypeId: number;
-			gradeTypeId: number;
-			studyPlanCourseId: number;
-			isActive: boolean;
-			createdAt: string;
-			rubricType: { id: number; code: string; name: { en: string; es: string } };
-			gradeType: { id: number; code: string; name: { en: string; es: string } };
-		};
-		commissions: Array<{
-			id: number;
-			code: string;
-			name: { es: string; en: string };
-			outcomeIds: number[];
-		}>;
-		outcomes: {
-			id: number;
-			code: string;
-			name: { en: string; es: string };
-			description: { en: string; es: string };
-			questionIds: number[];
-		}[];
-		questions: RubricQuestionDetailsResponse[];
+		items: ProjectRubricItemResponse[];
 	}>;
 };
 
@@ -364,6 +390,7 @@ export type ProjectResponse = BaseEntity & {
 	description?: { en: string; es: string };
 	hasEvaluations?: boolean;
 	courseName?: { en: string; es: string };
+	projectGroup?: ProjectGroup | null;
 	students?: ProjectStudentResponse[];
 	evaluators?: ProjectEvaluatorResponse[];
 };
@@ -390,10 +417,12 @@ export type RubricResponse = {
 	updatedAt: string | null;
 	rubricTypeId: number;
 	gradeTypeId: number;
+	competencyScopeTypeId: number;
 	studyPlanCourseId: number;
 	studyPlanCourse: StudyPlanCourseResponse;
 	gradeType: TypeResponse;
 	rubricType: TypeResponse;
+	competencyScopeType: TypeResponse;
 	isUsed: boolean;
 };
 
@@ -402,11 +431,13 @@ export type GetRubricByIdResponse = {
 		id: number;
 		rubricTypeId: number;
 		gradeTypeId: number;
+		competencyScopeTypeId: number;
 		studyPlanCourseId: number;
 		isActive: boolean;
 		createdAt: string;
 		rubricType: TypeResponse;
 		gradeType: TypeResponse;
+		competencyScopeType: TypeResponse;
 	};
 	course: CourseResponse;
 	academicPeriod: AcademicPeriodResponse;

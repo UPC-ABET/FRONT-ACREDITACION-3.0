@@ -11,7 +11,7 @@ import { useI18n, useABET } from '@/providers';
 import { usePrograms, useStudyPlanCourses } from '@/modules/academic/hooks';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { DEFAULT_PAGE_SIZE, TYPE_GROUP_CODES } from '@/shared/constants';
-import { useDeleteProject, useExportProjectGrades, useProjects } from '../hooks';
+import { useDeleteProject, useExportProjectGrades, useProjects, useProjectGroups } from '../hooks';
 import type { ProjectResponse } from '../types';
 import { ProjectsListFilters } from '../components/projects-list/ProjectsListFilters';
 import { useProjectsColumns } from '../components/projects-list/useProjectsColumns';
@@ -32,14 +32,16 @@ export function ProjectsListPage() {
 
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
+	const [selectedGroup, setSelectedGroup] = useState<SelectOption | null>(null);
 	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
 
 	useEffect(() => {
-		/* eslint-disable react-hooks/set-state-in-effect -- clear the program/course filters when the global school/period/modality context changes so stale selections aren't queried */
+		/* eslint-disable react-hooks/set-state-in-effect -- clear the program/course/group filters when the global school/period/modality context changes so stale selections aren't queried */
 		setSelectedProgram(null);
 		setSelectedCourse(null);
+		setSelectedGroup(null);
 		/* eslint-enable react-hooks/set-state-in-effect */
 	}, [schoolId, selectedPeriodId, modalityTypeId]);
 
@@ -49,9 +51,9 @@ export function ProjectsListPage() {
 	}, [search]);
 
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset to page 1 whenever the program/course filter or search term changes so paging starts fresh
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset to page 1 whenever the program/course/group filter or search term changes so paging starts fresh
 		setPage(1);
-	}, [selectedProgram?.value, selectedCourse?.value, debouncedSearch]);
+	}, [selectedProgram?.value, selectedCourse?.value, selectedGroup?.value, debouncedSearch]);
 
 	const { data: programs = [] } = usePrograms(
 		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
@@ -67,6 +69,14 @@ export function ProjectsListPage() {
 		{ enabled: !!selectedPeriodId && !!selectedProgram && !!schoolId },
 	);
 
+	const { data: groups = [] } = useProjectGroups(
+		{
+			programId: selectedProgram?.value,
+			isActive: true,
+		},
+		{ enabled: !!selectedPeriodId && !!schoolId && !!selectedProgram },
+	);
+
 	const {
 		data: projectsData,
 		isLoading,
@@ -77,6 +87,7 @@ export function ProjectsListPage() {
 		{
 			...(selectedProgram ? { programId: selectedProgram.value } : {}),
 			...(selectedCourse ? { courseId: selectedCourse.value } : {}),
+			...(selectedGroup ? { projectGroupId: selectedGroup.value } : {}),
 			...(debouncedSearch.trim() ? { search: debouncedSearch.trim() } : {}),
 			page,
 			pageSize: DEFAULT_PAGE_SIZE,
@@ -105,13 +116,27 @@ export function ProjectsListPage() {
 		[evaluableSpcList, locale],
 	);
 
+	const groupOptions = useMemo(
+		() =>
+			groups.map((g) => ({
+				label: `${g.code} — ${g.name[locale as 'es' | 'en'] ?? g.name.es}`,
+				value: g.id,
+			})),
+		[groups, locale],
+	);
+
 	const handleProgramChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
 		setSelectedProgram(toSelectOption(opt));
 		setSelectedCourse(null);
+		setSelectedGroup(null);
 	};
 
 	const handleCourseChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
 		setSelectedCourse(toSelectOption(opt));
+	};
+
+	const handleGroupChange = (_: string | undefined, opt: AnyOption | AnyOption[] | null) => {
+		setSelectedGroup(toSelectOption(opt));
 	};
 
 	const [confirmTarget, setConfirmTarget] = useState<ProjectResponse | null>(null);
@@ -141,6 +166,7 @@ export function ProjectsListPage() {
 	const handleClearFilters = () => {
 		setSelectedProgram(null);
 		setSelectedCourse(null);
+		setSelectedGroup(null);
 	};
 
 	const columns = useProjectsColumns({ setConfirmTarget, setDeleteError });
@@ -178,11 +204,14 @@ export function ProjectsListPage() {
 			<ProjectsListFilters
 				programOptions={programOptions}
 				courseOptions={courseOptions}
+				groupOptions={groupOptions}
 				selectedProgram={selectedProgram}
 				selectedCourse={selectedCourse}
+				selectedGroup={selectedGroup}
 				selectedPeriodId={selectedPeriodId}
 				onProgramChange={handleProgramChange}
 				onCourseChange={handleCourseChange}
+				onGroupChange={handleGroupChange}
 				onClearFilters={handleClearFilters}
 			/>
 

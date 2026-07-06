@@ -7,11 +7,13 @@ import { useI18n } from '@/providers';
 import type { EnrolledStudentResponse } from '@/modules/academic';
 import type { Step1Data } from '../rubric-create-wizard/WizardStep1';
 import { WizardSelectStudentsModal, WizardSelectEvaluatorModal } from '@/modules';
+import { ProjectGroupSelect } from '../project-group-select/ProjectGroupSelect';
 
 export interface ProjectFormData {
 	code: string;
 	name: string;
 	description: string;
+	projectGroupId: number;
 	studentEnrollmentIds: number[];
 	evaluators: { professorId: number; evaluatorTypeId: number }[];
 }
@@ -44,6 +46,8 @@ export function ProjectWizardStep2({
 	const [code, setCode] = useState('');
 	const [name, setName] = useState('');
 	const [description, setDescription] = useState('');
+	const [projectGroupId, setProjectGroupId] = useState<number | undefined>(undefined);
+	const [groupError, setGroupError] = useState<string | undefined>(undefined);
 
 	const [selectedStudents, setSelectedStudents] = useState<EnrolledStudentResponse[]>([]);
 	const [studentModalOpen, setStudentModalOpen] = useState(false);
@@ -62,14 +66,20 @@ export function ProjectWizardStep2({
 	const removeEvaluator = (idx: number) =>
 		setEvaluators((prev) => prev.filter((_, i) => i !== idx));
 
-	const canSubmit = code.trim().length > 0 && name.trim().length > 0 && !isSubmitting;
+	const canSubmit =
+		code.trim().length > 0 && name.trim().length > 0 && projectGroupId != null && !isSubmitting;
 
 	const handleSubmit = async () => {
+		if (projectGroupId == null) {
+			setGroupError(t('projects.create.step2.fieldGroupRequired'));
+			return;
+		}
 		if (!canSubmit) return;
 		await onSubmit({
 			code: code.trim(),
 			name: name.trim(),
 			description: description.trim(),
+			projectGroupId,
 			studentEnrollmentIds: selectedStudents.map((s) => s.studentSectionEnrollmentId),
 			evaluators: evaluators.map((e) => ({
 				professorId: e.professorId,
@@ -107,6 +117,16 @@ export function ProjectWizardStep2({
 							value={description}
 							onChange={(e) => setDescription(e.target.value)}
 							rows={3}
+						/>
+						<ProjectGroupSelect
+							academicPeriodId={step1.periodId}
+							programId={step1.programId}
+							value={projectGroupId}
+							onChange={(id) => {
+								setProjectGroupId(id);
+								if (id != null) setGroupError(undefined);
+							}}
+							error={groupError}
 						/>
 					</div>
 				</div>
