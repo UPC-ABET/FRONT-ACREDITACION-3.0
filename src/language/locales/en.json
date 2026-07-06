@@ -2539,8 +2539,6 @@
 			"studentLabel": "Student",
 			"progressLabel": "Progress",
 			"progressText": "{{answered}} of {{total}} answered ({{pct}}%)",
-			"instructionsTitle": "Instructions:",
-			"instructionsBody": "Evaluate each competence by selecting a score from 1 to 5. All fields are required. Once submitted, the survey cannot be modified.",
 			"generalPrefix": "General:",
 			"competenceQuestion": "Having completed the course, to what extent do you consider that this course contributed to the development of ABET competency {{number}}?",
 			"backToList": "Back to my surveys",
@@ -2549,11 +2547,11 @@
 			"submitButton": "Submit Survey",
 			"submittingButton": "Submitting...",
 			"score": {
-				"1": "Insufficient",
-				"2": "Regular",
-				"3": "Good",
-				"4": "Very Good",
-				"5": "Excellent"
+				"1": "Not at all",
+				"2": "A little",
+				"3": "Moderately",
+				"4": "Considerably",
+				"5": "Completely"
 			},
 			"error": {
 				"incomplete": "Please complete all survey outcomes before submitting.",

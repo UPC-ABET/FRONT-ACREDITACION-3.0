@@ -2540,8 +2540,6 @@
 			"studentLabel": "Estudiante",
 			"progressLabel": "Progreso",
 			"progressText": "{{answered}} de {{total}} respondidos ({{pct}}%)",
-			"instructionsTitle": "Instrucciones:",
-			"instructionsBody": "Evalúa cada competencia seleccionando un puntaje del 1 al 5. Todos los campos son obligatorios. Una vez enviada, la encuesta no podrá modificarse.",
 			"generalPrefix": "General:",
 			"competenceQuestion": "Habiendo culminado el curso, ¿En qué medida consideras que este curso contribuyó al desarrollo de la competencia ABET {{number}}?",
 			"backToList": "Volver a mis encuestas",
@@ -2550,11 +2548,11 @@
 			"submitButton": "Enviar Encuesta",
 			"submittingButton": "Enviando...",
 			"score": {
-				"1": "Insuficiente",
-				"2": "Regular",
-				"3": "Bueno",
-				"4": "Muy Bueno",
-				"5": "Excelente"
+				"1": "Nada",
+				"2": "Poco",
+				"3": "Suficiente",
+				"4": "Bastante",
+				"5": "Totalmente"
 			},
 			"error": {
 				"incomplete": "Por favor, completa todos los outcomes antes de enviar.",
