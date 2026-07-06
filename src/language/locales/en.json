@@ -1159,10 +1159,12 @@
 			"placeholder": "Select school"
 		},
 		"user": {
-			"placeholder": "User"
+			"label": "User",
+			"placeholder": "Enter your user"
 		},
 		"password": {
-			"placeholder": "Password"
+			"label": "Password",
+			"placeholder": "******"
 		},
 		"remember": "Remember me",
 		"submit": "Sign in",
@@ -1202,7 +1204,9 @@
 		"subtitle": "Enter and confirm your new password.",
 		"loading": "Updating password...",
 		"form": {
+			"passwordLabel": "New password",
 			"passwordPlaceholder": "New password",
+			"confirmPasswordLabel": "Confirm password",
 			"confirmPasswordPlaceholder": "Confirm new password",
 			"submit": "Change password"
 		},
@@ -1230,7 +1234,11 @@
 	},
 	"success": {
 		"ok": "Operation successful",
-		"created": "Record created successfully"
+		"created": "Record created successfully",
+		"user": {
+			"passwordResetRequested": "If the email is registered, you will receive a password reset link.",
+			"passwordResetCompleted": "Your password has been updated successfully."
+		}
 	},
 	"error": {
 		"generic": "An unexpected error occurred.",
@@ -1376,7 +1384,11 @@
 			"deleteFailed": "Could not delete the user",
 			"linkedToStaff": "Cannot delete: the user is linked to a staff member.",
 			"linkedToStudent": "Cannot delete: the user is linked to a student.",
-			"hasActivityHistory": "Cannot delete: the user has activity history (uploads or notifications)."
+			"hasActivityHistory": "Cannot delete: the user has activity history (uploads or notifications).",
+			"invalidPasswordResetToken": "The password reset link is invalid or has expired. Please request a new link and try again.",
+			"passwordResetMailFailed": "The password reset email could not be sent. Please try again.",
+			"passwordResetTokenExpired": "The recovery link expired. Request a new one.",
+			"passwordResetTokenAlreadyUsed": "This recovery link has already been used. Request a new one."
 		},
 		"ifc": {
 			"notFound": "IFC not found",

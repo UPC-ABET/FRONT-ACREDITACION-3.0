@@ -6,7 +6,6 @@ import { ChevronRightIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/outli
 import { useScreen } from '@/shared/hooks';
 import { useI18n } from '@/providers';
 import { Button } from '@/shared/components';
-import { cn } from '@/shared/lib/utils';
 
 type SidebarContextType = {
 	open: boolean;
@@ -66,17 +65,16 @@ function Sidebar({
 				<button
 					type="button"
 					aria-label={t('sidebar.close')}
-					className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm"
+					className="fixed inset-0 bg-black/60 z-[35] md:hidden backdrop-blur-sm"
 					onClick={toggle}
 				/>
 			)}
 			<aside
-				className={cn(
+				className={[
 					'fixed sm:relative z-40 flex flex-col h-screen',
 					'transition-all duration-300 ease-in-out',
 					'bg-zinc-900',
 					'border-r border-zinc-800',
-					'shadow-[4px_0_24px_rgba(0,0,0,0.4)]',
 					isMobile
 						? open
 							? 'w-64 translate-x-0'
@@ -85,10 +83,25 @@ function Sidebar({
 							? 'w-64'
 							: 'w-20',
 					className,
-				)}>
-				<div className="absolute top-0 left-0 right-0 h-[3px] bg-[linear-gradient(90deg,var(--brand)_0%,var(--brand-light)_60%,var(--brand)_100%)] shadow-[0_0_12px_var(--brand-glow)]" />
+				].join(' ')}
+				style={{
+					boxShadow: '4px 0 24px rgba(0,0,0,0.4)',
+				}}>
+				<div
+					className="absolute top-0 left-0 right-0 h-[3px]"
+					style={{
+						background: 'linear-gradient(90deg, #C8102E 0%, #FF2D4E 60%, #C8102E 100%)',
+						boxShadow: '0 0 12px rgba(200,16,46,0.7)',
+					}}
+				/>
 
-				<div className="absolute inset-0 pointer-events-none opacity-[0.025] bg-sidebar-noise" />
+				<div
+					className="absolute inset-0 pointer-events-none opacity-[0.025]"
+					style={{
+						backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+						backgroundSize: '128px 128px',
+					}}
+				/>
 
 				{children}
 			</aside>
@@ -104,13 +117,19 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 
 	return (
 		<div
-			className={cn(
+			className={[
 				'relative w-full border-b border-zinc-700 flex items-center justify-center',
 				open ? 'h-28 py-3 px-4' : 'h-20 px-2 py-2',
 				'transition-all duration-300',
 				className,
-			)}>
-			<div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_120%,var(--brand-haze)_0%,transparent_70%)]" />
+			].join(' ')}>
+			<div
+				className="absolute inset-0 pointer-events-none"
+				style={{
+					background:
+						'radial-gradient(ellipse at 50% 120%, rgba(200,16,46,0.12) 0%, transparent 70%)',
+				}}
+			/>
 
 			{open ? (
 				<Image
@@ -119,11 +138,11 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 					width={515}
 					height={484}
 					priority
-					className={cn(
+					className={[
 						'w-full h-full transition-all duration-300 relative z-10',
 						'object-contain scale-100',
-						'brightness-0 invert',
-					)}
+					].join(' ')}
+					style={{ filter: 'brightness(0) invert(1)' }}
 				/>
 			) : (
 				<button
@@ -140,12 +159,12 @@ export function SidebarHeader({ className = '' }: { className?: string }) {
 					size="icon"
 					onClick={toggle}
 					aria-label={t('sidebar.close')}
-					className={cn(
+					className={[
 						'absolute top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center transition-all z-20',
 						'text-zinc-100 hover:text-white',
 						'hover:bg-zinc-700/60',
 						'right-3',
-					)}>
+					].join(' ')}>
 					<Bars3BottomLeftIcon className="h-[18px] w-[18px] transition-transform duration-200 rotate-180" />
 				</Button>
 			)}
@@ -177,7 +196,10 @@ export function SidebarFooter({
 }) {
 	return (
 		<div
-			className={`px-2.5 py-3 border-t border-zinc-700 bg-[linear-gradient(to_top,rgba(0,0,0,0.3),transparent)] ${className}`}>
+			className={`px-2.5 py-3 border-t border-zinc-700 ${className}`}
+			style={{
+				background: 'linear-gradient(to top, rgba(0,0,0,0.3), transparent)',
+			}}>
 			{children}
 		</div>
 	);
@@ -198,7 +220,7 @@ export function SidebarGroup({
 		<div className={`mt-1 ${className}`}>
 			{label && open && (
 				<div className="flex items-center gap-2 px-2.5 mb-2 mt-1">
-					<div className="w-3 h-px bg-[var(--brand)] opacity-80 flex-shrink-0" />
+					<div className="w-3 h-px bg-[#C8102E] opacity-80 flex-shrink-0" />
 					<p className="text-[9px] font-bold uppercase tracking-[0.14em] text-zinc-500">{label}</p>
 				</div>
 			)}
@@ -230,7 +252,7 @@ export function SidebarItem({
 	external?: boolean;
 	className?: string;
 }) {
-	const { open } = useSidebar();
+	const { open, setOpen, isMobile } = useSidebar();
 	const hasIcon = icon !== null && icon !== undefined;
 
 	const badgeStyles = {
@@ -239,28 +261,35 @@ export function SidebarItem({
 		neutral: 'bg-zinc-700/60 text-zinc-300 border border-zinc-600/50',
 	};
 
-	const itemClassName = cn(
-		'relative w-full text-left flex items-center px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
+	const itemClassName = [
+		'relative flex items-center px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
 		hasIcon ? 'gap-3' : 'gap-0',
-		active
-			? 'bg-[linear-gradient(135deg,var(--brand)_0%,var(--brand-dark)_100%)] shadow-[0_4px_12px_var(--brand-shadow),inset_0_1px_0_rgba(255,255,255,0.15)]'
-			: 'hover:bg-zinc-800/70',
+		active ? '' : 'hover:bg-zinc-800/70',
 		className,
-	);
+	].join(' ');
+	const itemStyle = active
+		? {
+				background: 'linear-gradient(135deg, rgba(200,16,46,1) 0%, rgba(180,10,36,1) 100%)',
+				boxShadow: '0 4px 12px rgba(200,16,46,0.4), inset 0 1px 0 rgba(255,255,255,0.15)',
+			}
+		: undefined;
 	const itemTitle = !open ? label : undefined;
 
 	const content = (
 		<>
 			{active && (
-				<div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-white" />
+				<div
+					className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
+					style={{ background: '#fff' }}
+				/>
 			)}
 
 			{hasIcon && (
 				<div
-					className={cn(
+					className={[
 						'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all',
 						active ? 'bg-white/20' : 'bg-zinc-800 group-hover:bg-zinc-700',
-					)}>
+					].join(' ')}>
 					<span className={active ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-200'}>
 						{icon}
 					</span>
@@ -271,18 +300,18 @@ export function SidebarItem({
 				<>
 					<div className="flex flex-col flex-1 min-w-0">
 						<span
-							className={cn(
+							className={[
 								'text-[13px] font-semibold leading-tight whitespace-normal break-words',
 								active ? 'text-white' : 'text-zinc-300 group-hover:text-white',
-							)}>
+							].join(' ')}>
 							{label}
 						</span>
 						{sublabel && (
 							<span
-								className={cn(
+								className={[
 									'text-[10.5px] whitespace-normal break-words',
 									active ? 'text-white/80' : 'text-zinc-500',
-								)}>
+								].join(' ')}>
 								{sublabel}
 							</span>
 						)}
@@ -308,20 +337,33 @@ export function SidebarItem({
 					target="_blank"
 					rel="noopener noreferrer"
 					title={itemTitle}
-					className={itemClassName}>
+					className={itemClassName}
+					style={itemStyle}>
 					{content}
 				</a>
 			);
 		}
 		return (
-			<Link href={href} title={itemTitle} className={itemClassName}>
+			<Link
+				href={href}
+				title={itemTitle}
+				className={itemClassName}
+				style={itemStyle}
+				onClick={() => {
+					if (isMobile) setOpen(false);
+				}}>
 				{content}
 			</Link>
 		);
 	}
 
 	return (
-		<button type="button" onClick={onClick} title={itemTitle} className={itemClassName}>
+		<button
+			type="button"
+			onClick={onClick}
+			title={itemTitle}
+			className={itemClassName}
+			style={itemStyle}>
 			{content}
 		</button>
 	);
@@ -361,19 +403,19 @@ export function SidebarNavGroup({
 					if (open) setExpanded((p) => !p);
 				}}
 				aria-expanded={open ? expanded : undefined}
-				className={cn(
+				className={[
 					'relative w-full text-left flex items-center gap-3 px-2.5 py-2 rounded-lg cursor-pointer transition-all duration-150 group',
 					active ? 'bg-red-500/10' : 'hover:bg-zinc-800/70',
-				)}>
+				].join(' ')}>
 				{active && (
 					<div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-red-600 rounded-r-full" />
 				)}
 
 				<div
-					className={cn(
+					className={[
 						'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all',
 						active ? 'bg-red-500/20' : 'bg-zinc-800 group-hover:bg-zinc-700',
-					)}>
+					].join(' ')}>
 					<span className={active ? 'text-red-500' : 'text-zinc-400 group-hover:text-zinc-200'}>
 						{icon}
 					</span>
@@ -382,10 +424,10 @@ export function SidebarNavGroup({
 				{open && (
 					<>
 						<span
-							className={cn(
+							className={[
 								'text-[13px] font-semibold flex-1 truncate',
 								active ? 'text-white' : 'text-zinc-300 group-hover:text-white',
-							)}>
+							].join(' ')}>
 							{label}
 						</span>
 						{badge !== undefined && (
@@ -399,11 +441,11 @@ export function SidebarNavGroup({
 							</span>
 						)}
 						<ChevronRightIcon
-							className={cn(
+							className={[
 								'h-3.5 w-3.5 transition-transform duration-200 flex-shrink-0',
 								expanded ? 'rotate-90' : '',
 								active ? 'text-red-500' : 'text-zinc-600',
-							)}
+							].join(' ')}
 						/>
 					</>
 				)}
@@ -411,10 +453,11 @@ export function SidebarNavGroup({
 
 			{open && (
 				<div
-					className={cn(
-						'ml-5 pl-3 flex flex-col gap-0.5 overflow-hidden transition-all duration-200 border-l border-white/20',
+					className={[
+						'ml-5 pl-3 flex flex-col gap-0.5 overflow-hidden transition-all duration-200',
 						expanded ? 'max-h-[500px] mt-0.5 mb-1' : 'max-h-0',
-					)}>
+					].join(' ')}
+					style={{ borderLeft: '1px solid rgba(255,255,255,0.2)' }}>
 					{children}
 				</div>
 			)}

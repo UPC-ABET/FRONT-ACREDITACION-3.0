@@ -2,7 +2,7 @@
 
 import { Bars3BottomLeftIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useSidebar, Button, LanguageSwitcher } from '@/shared/components';
-import { useAuth, useI18n } from '@/providers';
+import { useAuth, useGlobalAcademicFiltersVisibility, useI18n } from '@/providers';
 import { useScreen } from '@/shared/hooks';
 import { DEFAULT_USER_INITIALS } from '@/shared/constants';
 import type { NavbarProps } from '@/shared/types';
@@ -50,6 +50,9 @@ function Navbar({ userName, userRole, userInitials, filtersSlot }: NavbarProps) 
 	const { t, locale } = useI18n();
 	const { isMobile, isTablet } = useScreen();
 	const { roles, user } = useAuth();
+	const globalFiltersVisibility = useGlobalAcademicFiltersVisibility();
+	const visibleFilterCount = Object.values(globalFiltersVisibility).filter(Boolean).length;
+	const hasVisibleFilters = visibleFilterCount > 0;
 
 	const resolvedUserName =
 		userName ??
@@ -85,7 +88,7 @@ function Navbar({ userName, userRole, userInitials, filtersSlot }: NavbarProps) 
 	if (isMobile) {
 		return (
 			<nav className={`${navClass} flex flex-col overflow-visible`}>
-				<div className="flex h-[64px] items-center gap-3 px-4">
+				<div className="flex h-[56px] items-center gap-3 px-4">
 					{menuBtn}
 					<div className="min-w-0 flex-1" />
 					<LanguageSwitcher />
@@ -95,7 +98,9 @@ function Navbar({ userName, userRole, userInitials, filtersSlot }: NavbarProps) 
 						role={resolvedUserRole}
 					/>
 				</div>
-				<div className="h-[92px] px-4 pb-4">{filtersSlot?.('mobile')}</div>
+				{hasVisibleFilters && (
+					<div className="min-h-[76px] px-4 pb-3">{filtersSlot?.('mobile')}</div>
+				)}
 			</nav>
 		);
 	}

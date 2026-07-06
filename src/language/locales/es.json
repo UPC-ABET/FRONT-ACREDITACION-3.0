@@ -1159,10 +1159,12 @@
 			"placeholder": "Selecciona escuela"
 		},
 		"user": {
-			"placeholder": "Usuario"
+			"label": "Usuario",
+			"placeholder": "Ingresa tu usuario"
 		},
 		"password": {
-			"placeholder": "Contraseña"
+			"label": "Contraseña",
+			"placeholder": "******"
 		},
 		"remember": "Recuerdame",
 		"submit": "Iniciar sesión",
@@ -1202,7 +1204,9 @@
 		"subtitle": "Ingresa y confirma tu nueva contrasena.",
 		"loading": "Actualizando contrasena...",
 		"form": {
+			"passwordLabel": "Nueva contraseña",
 			"passwordPlaceholder": "Nueva contraseña",
+			"confirmPasswordLabel": "Confirmar contraseña",
 			"confirmPasswordPlaceholder": "Confirmar nueva contraseña",
 			"submit": "Cambiar contraseña"
 		},
@@ -1230,7 +1234,11 @@
 	},
 	"success": {
 		"ok": "Operación exitosa",
-		"created": "Registro creado exitosamente"
+		"created": "Registro creado exitosamente",
+		"user": {
+			"passwordResetRequested": "Si el correo está registrado, recibirás un enlace para restablecer tu contraseña.",
+			"passwordResetCompleted": "Tu contraseña fue actualizada correctamente."
+		}
 	},
 	"error": {
 		"generic": "Ocurrió un error inesperado.",
@@ -1376,7 +1384,11 @@
 			"deleteFailed": "No se pudo eliminar el usuario",
 			"linkedToStaff": "No se puede eliminar: el usuario está vinculado a un docente.",
 			"linkedToStudent": "No se puede eliminar: el usuario está vinculado a un estudiante.",
-			"hasActivityHistory": "No se puede eliminar: el usuario tiene historial de actividad (cargas o notificaciones)."
+			"hasActivityHistory": "No se puede eliminar: el usuario tiene historial de actividad (cargas o notificaciones).",
+			"invalidPasswordResetToken": "El enlace para restablecer la contraseña no es válido o ha expirado. Solicita un nuevo enlace e inténtalo nuevamente.",
+			"passwordResetMailFailed": "No se pudo enviar el correo de restablecimiento de contraseña. Inténtalo nuevamente.",
+			"passwordResetTokenExpired": "El enlace de recuperación expiró. Solicita uno nuevo.",
+			"passwordResetTokenAlreadyUsed": "Este enlace de recuperación ya fue utilizado. Solicita uno nuevo."
 		},
 		"ifc": {
 			"notFound": "IFC no encontrado",
