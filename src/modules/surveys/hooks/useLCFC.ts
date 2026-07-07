@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
 import type {
@@ -9,6 +9,7 @@ import type {
 	LCFCConfigStatus,
 	LCFCConfigUpdateRequest,
 	LCFCEmailParam,
+	LCFCNotificationJobStatus,
 	LCFCNotificationSendRequest,
 } from '../types';
 import {
@@ -21,6 +22,7 @@ import {
 	updateLCFCConfig,
 	deleteLCFCConfig,
 	getLCFCEmailParams,
+	getLCFCNotificationStatus,
 	sendLCFCNotification,
 } from '../services';
 import type { AvailableSection, GenerateConfigResult, CloneConfigResult } from '../types';
@@ -157,6 +159,9 @@ export function useLCFCNotification() {
 	const [loading, setLoading] = useState(false);
 	const [sending, setSending] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [jobId, setJobId] = useState<string | null>(null);
+	const [status, setStatus] = useState<LCFCNotificationJobStatus | null>(null);
+	const onSuccessRef = useRef<(() => void) | undefined>(undefined);
 
 	const loadParams = useCallback(async () => {
 		setLoading(true);
@@ -173,19 +178,62 @@ export function useLCFCNotification() {
 		async (request: LCFCNotificationSendRequest, onSuccess?: () => void) => {
 			setSending(true);
 			setError(null);
+			setStatus({ progressPct: 0, emailsSent: 0, emailsFailed: 0 });
+			onSuccessRef.current = onSuccess;
 			try {
-				await sendLCFCNotification(request, locale);
-				onSuccess?.();
+				const result = await sendLCFCNotification(request, locale);
+				if (!result.jobId) {
+					throw new Error('error.survey.lcfc.notificationJobNotFound');
+				}
+				setJobId(result.jobId);
 			} catch (e) {
 				setError(getErrorMessage(e));
-			} finally {
+				setJobId(null);
+				onSuccessRef.current = undefined;
 				setSending(false);
 			}
 		},
 		[locale],
 	);
 
-	return { params, loading, sending, error, loadParams, send };
+	useEffect(() => {
+		if (!jobId || !sending) return;
+
+		const activeJobId = jobId;
+		let cancelled = false;
+
+		async function pollStatus() {
+			try {
+				const nextStatus = await getLCFCNotificationStatus(activeJobId);
+				if (cancelled) return;
+				setStatus(nextStatus);
+				if (nextStatus.progressPct >= 100) {
+					setSending(false);
+					setJobId(null);
+					onSuccessRef.current?.();
+					onSuccessRef.current = undefined;
+				}
+			} catch (e) {
+				if (cancelled) return;
+				setError(getErrorMessage(e));
+				setSending(false);
+				setJobId(null);
+				onSuccessRef.current = undefined;
+			}
+		}
+
+		void pollStatus();
+		const intervalId = setInterval(() => {
+			void pollStatus();
+		}, 1000);
+
+		return () => {
+			cancelled = true;
+			clearInterval(intervalId);
+		};
+	}, [jobId, sending]);
+
+	return { params, loading, sending, error, status, jobId, loadParams, send };
 }
 
 export function useLCFCAvailableSections() {

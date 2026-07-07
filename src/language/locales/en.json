@@ -1569,7 +1569,22 @@
 				"tokenNotFound": "The survey link is invalid or has expired.",
 				"noCourseSections": "No course sections found for the selected program and period.",
 				"noProgramOutcomes": "The selected program has no registered outcomes. Register them first in Outcomes Maintenance.",
-				"configNotFound": "The requested LCFC configuration was not found."
+				"configNotFound": "The requested LCFC configuration was not found.",
+				"seedMissing": "Base data required to send LCFC surveys is missing. Contact the administrator.",
+				"noActiveCourses": "There are no active LCFC courses for the selected period.",
+				"noMatchingSections": "No active sections match the selected filters.",
+				"noEnrolledStudents": "There are no enrolled students in the selected sections.",
+				"notificationJobNotFound": "The send process was not found. Please try again.",
+				"processFailed": "The notification send could not be prepared.",
+				"completeFailed": "The LCFC survey could not be completed.",
+				"tokenExpired": "The survey link has expired.",
+				"alreadyCompleted": "This survey has already been answered.",
+				"noScores": "At least one score is required.",
+				"invalidScore": "The entered score is not valid.",
+				"noPending": "There are no pending surveys for this link.",
+				"programNotInSchool": "The selected program does not belong to the active school.",
+				"notLatestPeriod": "LCFC can only be configured for the latest academic period.",
+				"noPreviousPeriod": "No previous period was found to clone the configuration."
 			},
 			"ppp": {
 				"noActiveConfig": "There is no PPP configuration for the selected program and period. Go to the Configuration tab and generate it from the program outcomes.",
@@ -2295,6 +2310,19 @@
 				"colActions": "Actions",
 				"resendRow": "Resend",
 				"sending": "Sending...",
+				"progress": {
+					"title": "Sending LCFC notifications",
+					"completedTitle": "Send completed",
+					"failedTitle": "Send could not be completed",
+					"preparing": "Preparing the send for {{target}}.",
+					"sending": "Processing the send for {{target}}.",
+					"progressLabel": "Progress",
+					"progressValue": "{{percentage}}%",
+					"sent": "Sent",
+					"failed": "Failed",
+					"targetAll": "all active courses",
+					"targetSection": "{{course}} - section {{section}}"
+				},
 				"toast": {
 					"required": "Complete all fields before sending.",
 					"sent": "Notifications sent successfully."

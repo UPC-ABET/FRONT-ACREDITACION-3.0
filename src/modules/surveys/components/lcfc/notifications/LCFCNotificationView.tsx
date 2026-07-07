@@ -2,9 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button, Toast, Toggle } from '@/shared/components';
+import { tryTranslate } from '@/shared';
 import { PaperAirplaneIcon, BellAlertIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
 import { useLCFCNotification, useLCFCConfiguration } from '../../../hooks';
+import type { LCFCCourse } from '../../../types';
+import { LCFCNotificationProgressDialog } from './LCFCNotificationProgressDialog';
 
 interface LCFCNotificationViewProps {
 	programId?: number;
@@ -13,12 +16,14 @@ interface LCFCNotificationViewProps {
 export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
-	const { sending, error: sendError, send } = useLCFCNotification();
+	const { sending, error: sendError, status: sendStatus, send } = useLCFCNotification();
 	const { courses, load: loadCourses } = useLCFCConfiguration();
 
 	const [resend, setResend] = useState(false);
 	// courseSectionId currently being (re)sent, for the per-row spinner; 0 = the "send all" button.
 	const [sendingSectionId, setSendingSectionId] = useState<number | null>(null);
+	const [progressDialogOpen, setProgressDialogOpen] = useState(false);
+	const [progressTargetLabel, setProgressTargetLabel] = useState('');
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -34,12 +39,10 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 
 	React.useEffect(() => {
 		if (sendError) {
-			/* eslint-disable react-hooks/set-state-in-effect -- syncing the hook's async send error into dismissible toast state and clearing the in-flight spinner id; neither is derivable during render */
-			setToast({ open: true, type: 'error', msg: sendError });
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, sendError) });
 			setSendingSectionId(null);
-			/* eslint-enable react-hooks/set-state-in-effect */
 		}
-	}, [sendError]);
+	}, [sendError, t]);
 
 	// Build the request shared by "send all" and per-row resend. The deadline is configured
 	// in the Configuration tab and applied by the backend, so it isn't sent here. The survey
@@ -66,15 +69,24 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	function handleSendAll() {
 		if (!requireValid()) return;
 		setSendingSectionId(0);
+		setProgressTargetLabel(t('surveys.lcfc.notifications.progress.targetAll'));
+		setProgressDialogOpen(true);
 		send(buildRequest(), () => {
 			setSendingSectionId(null);
 			setToast({ open: true, type: 'success', msg: t('surveys.lcfc.notifications.toast.sent') });
 		});
 	}
 
-	function handleResendSection(courseSectionId: number) {
+	function handleResendSection(course: LCFCCourse) {
 		if (!requireValid()) return;
+		const courseSectionId = course.courseSectionId as number;
 		setSendingSectionId(courseSectionId);
+		setProgressTargetLabel(
+			t('surveys.lcfc.notifications.progress.targetSection')
+				.replace('{{course}}', course.courseName)
+				.replace('{{section}}', course.sectionCode ?? course.code),
+		);
+		setProgressDialogOpen(true);
 		// Per-row action always resends (reuses token + refreshes deadline) for that section.
 		send(buildRequest(courseSectionId, true), () => {
 			setSendingSectionId(null);
@@ -156,7 +168,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 											className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 											disabled={!isValid || sending}
 											loading={sending && sendingSectionId === course.courseSectionId}
-											onClick={() => handleResendSection(course.courseSectionId as number)}
+											onClick={() => handleResendSection(course)}
 											aria-label={t('surveys.lcfc.notifications.resendRow')}>
 											<BellAlertIcon className="h-5 w-5" />
 										</Button>
@@ -173,6 +185,15 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 				type={toast.type}
 				message={toast.msg}
 				onClose={() => setToast({ ...toast, open: false })}
+			/>
+
+			<LCFCNotificationProgressDialog
+				open={progressDialogOpen}
+				sending={sending}
+				status={sendStatus}
+				error={sendError ? tryTranslate(t, sendError) : null}
+				targetLabel={progressTargetLabel || t('surveys.lcfc.notifications.progress.targetAll')}
+				onOpenChange={setProgressDialogOpen}
 			/>
 		</div>
 	);

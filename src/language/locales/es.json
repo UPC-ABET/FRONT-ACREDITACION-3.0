@@ -1569,7 +1569,22 @@
 				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado.",
 				"noCourseSections": "No se encontraron secciones de curso para la carrera y período seleccionados.",
 				"noProgramOutcomes": "La carrera seleccionada no tiene outcomes registrados. Regístralos primero en Mantenimiento de Outcomes.",
-				"configNotFound": "No se encontró la configuración LCFC indicada."
+				"configNotFound": "No se encontró la configuración LCFC indicada.",
+				"seedMissing": "Faltan datos base para enviar encuestas LCFC. Contacta al administrador.",
+				"noActiveCourses": "No hay cursos LCFC activos para el período seleccionado.",
+				"noMatchingSections": "No se encontraron secciones activas que coincidan con los filtros seleccionados.",
+				"noEnrolledStudents": "No hay estudiantes matriculados en las secciones seleccionadas.",
+				"notificationJobNotFound": "No se encontró el proceso de envío. Vuelve a intentarlo.",
+				"processFailed": "No se pudo preparar el envío de notificaciones.",
+				"completeFailed": "No se pudo completar la encuesta LCFC.",
+				"tokenExpired": "El enlace de la encuesta ha expirado.",
+				"alreadyCompleted": "Esta encuesta ya fue respondida.",
+				"noScores": "Debes registrar al menos un puntaje.",
+				"invalidScore": "El puntaje ingresado no es válido.",
+				"noPending": "No hay encuestas pendientes para este enlace.",
+				"programNotInSchool": "La carrera seleccionada no pertenece a la escuela activa.",
+				"notLatestPeriod": "LCFC solo se puede configurar para el período académico más reciente.",
+				"noPreviousPeriod": "No se encontró un período anterior para clonar la configuración."
 			},
 			"ppp": {
 				"noActiveConfig": "No hay configuración PPP para la carrera y período seleccionados. Ve a la pestaña Configuración y genera la configuración a partir de los outcomes de la carrera.",
@@ -2295,6 +2310,19 @@
 				"colActions": "Acciones",
 				"resendRow": "Reenviar",
 				"sending": "Enviando...",
+				"progress": {
+					"title": "Enviando notificaciones LCFC",
+					"completedTitle": "Envío finalizado",
+					"failedTitle": "No se pudo completar el envío",
+					"preparing": "Preparando el envío para {{target}}.",
+					"sending": "Procesando el envío para {{target}}.",
+					"progressLabel": "Progreso",
+					"progressValue": "{{percentage}}%",
+					"sent": "Enviados",
+					"failed": "Fallidos",
+					"targetAll": "todos los cursos activos",
+					"targetSection": "{{course}} - sección {{section}}"
+				},
 				"toast": {
 					"required": "Completa todos los campos antes de enviar.",
 					"sent": "Notificaciones enviadas exitosamente."

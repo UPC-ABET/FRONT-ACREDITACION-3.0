@@ -13,6 +13,8 @@ import type {
 	LCFCConfigStatus,
 	LCFCConfigUpdateRequest,
 	LCFCNotificationSendRequest,
+	LCFCNotificationSendResponse,
+	LCFCNotificationJobStatus,
 	LCFCEmailParam,
 	DashboardResponse,
 	AvailableSection,
@@ -185,8 +187,11 @@ export async function changeLCFCConfigStatus(configId: number, newStatus: LCFCCo
 	});
 }
 
-export async function sendLCFCNotification(request: LCFCNotificationSendRequest, lang = 'es') {
-	return apiPost('lcfc/notification/send', {
+export async function sendLCFCNotification(
+	request: LCFCNotificationSendRequest,
+	lang = 'es',
+): Promise<LCFCNotificationSendResponse> {
+	const res = await apiPost('lcfc/notification/send', {
 		programId: request.programId,
 		campusId: request.campusId,
 		courseSectionId: request.courseSectionId,
@@ -195,6 +200,17 @@ export async function sendLCFCNotification(request: LCFCNotificationSendRequest,
 		resend: request.resend,
 		lang,
 	});
+	return getApiData<LCFCNotificationSendResponse>(res);
+}
+
+export async function getLCFCNotificationStatus(jobId: string): Promise<LCFCNotificationJobStatus> {
+	const res = await apiGet(`lcfc/notification/status/${encodeURIComponent(jobId)}`);
+	const data = getApiData<LCFCNotificationJobStatus>(res);
+	return {
+		progressPct: data?.progressPct ?? 0,
+		emailsSent: data?.emailsSent ?? 0,
+		emailsFailed: data?.emailsFailed ?? 0,
+	};
 }
 
 export async function getLCFCEmailParams(): Promise<LCFCEmailParam[]> {

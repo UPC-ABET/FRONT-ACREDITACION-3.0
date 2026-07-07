@@ -228,6 +228,17 @@ export interface LCFCNotificationSendRequest {
 	resend?: boolean;
 }
 
+export interface LCFCNotificationSendResponse {
+	accepted: boolean;
+	jobId: string;
+}
+
+export interface LCFCNotificationJobStatus {
+	progressPct: number;
+	emailsSent: number;
+	emailsFailed: number;
+}
+
 export interface PPPNotificationSendRequest {
 	academicPeriodId: number;
 	programId: number;
