@@ -24,6 +24,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	const [sendingSectionId, setSendingSectionId] = useState<number | null>(null);
 	const [progressDialogOpen, setProgressDialogOpen] = useState(false);
 	const [progressTargetLabel, setProgressTargetLabel] = useState('');
+	const [sendErrorDismissed, setSendErrorDismissed] = useState(false);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -36,13 +37,6 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		// With no program selected we still load every configured course across all programs.
 		if (academicPeriodId) loadCourses(academicPeriodId, programId);
 	}, [academicPeriodId, programId, loadCourses]);
-
-	React.useEffect(() => {
-		if (sendError) {
-			setToast({ open: true, type: 'error', msg: tryTranslate(t, sendError) });
-			setSendingSectionId(null);
-		}
-	}, [sendError, t]);
 
 	// Build the request shared by "send all" and per-row resend. The deadline is configured
 	// in the Configuration tab and applied by the backend, so it isn't sent here. The survey
@@ -68,18 +62,24 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 
 	function handleSendAll() {
 		if (!requireValid()) return;
+		setSendErrorDismissed(false);
 		setSendingSectionId(0);
 		setProgressTargetLabel(t('surveys.lcfc.notifications.progress.targetAll'));
 		setProgressDialogOpen(true);
-		send(buildRequest(), () => {
-			setSendingSectionId(null);
-			setToast({ open: true, type: 'success', msg: t('surveys.lcfc.notifications.toast.sent') });
-		});
+		send(
+			buildRequest(),
+			() => {
+				setSendingSectionId(null);
+				setToast({ open: true, type: 'success', msg: t('surveys.lcfc.notifications.toast.sent') });
+			},
+			() => setSendingSectionId(null),
+		);
 	}
 
 	function handleResendSection(course: LCFCCourse) {
 		if (!requireValid()) return;
 		const courseSectionId = course.courseSectionId as number;
+		setSendErrorDismissed(false);
 		setSendingSectionId(courseSectionId);
 		setProgressTargetLabel(
 			t('surveys.lcfc.notifications.progress.targetSection')
@@ -88,10 +88,14 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		);
 		setProgressDialogOpen(true);
 		// Per-row action always resends (reuses token + refreshes deadline) for that section.
-		send(buildRequest(courseSectionId, true), () => {
-			setSendingSectionId(null);
-			setToast({ open: true, type: 'success', msg: t('surveys.lcfc.notifications.toast.sent') });
-		});
+		send(
+			buildRequest(courseSectionId, true),
+			() => {
+				setSendingSectionId(null);
+				setToast({ open: true, type: 'success', msg: t('surveys.lcfc.notifications.toast.sent') });
+			},
+			() => setSendingSectionId(null),
+		);
 	}
 
 	if (!academicPeriodId) {
@@ -99,6 +103,11 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	}
 
 	const activeCourses = courses.filter((c) => c.isActive && c.courseSectionId);
+	const translatedSendError = sendError ? tryTranslate(t, sendError) : '';
+	const visibleToast =
+		sendError && !sendErrorDismissed
+			? { open: true, type: 'error' as const, msg: translatedSendError }
+			: toast;
 
 	return (
 		<div className="space-y-6">
@@ -181,17 +190,23 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 			)}
 
 			<Toast
-				isOpen={toast.open}
-				type={toast.type}
-				message={toast.msg}
-				onClose={() => setToast({ ...toast, open: false })}
+				isOpen={visibleToast.open}
+				type={visibleToast.type}
+				message={visibleToast.msg}
+				onClose={() => {
+					if (sendError && !sendErrorDismissed) {
+						setSendErrorDismissed(true);
+						return;
+					}
+					setToast({ ...toast, open: false });
+				}}
 			/>
 
 			<LCFCNotificationProgressDialog
 				open={progressDialogOpen}
 				sending={sending}
 				status={sendStatus}
-				error={sendError ? tryTranslate(t, sendError) : null}
+				error={translatedSendError || null}
 				targetLabel={progressTargetLabel || t('surveys.lcfc.notifications.progress.targetAll')}
 				onOpenChange={setProgressDialogOpen}
 			/>

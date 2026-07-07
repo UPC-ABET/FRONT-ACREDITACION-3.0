@@ -162,6 +162,7 @@ export function useLCFCNotification() {
 	const [jobId, setJobId] = useState<string | null>(null);
 	const [status, setStatus] = useState<LCFCNotificationJobStatus | null>(null);
 	const onSuccessRef = useRef<(() => void) | undefined>(undefined);
+	const onErrorRef = useRef<(() => void) | undefined>(undefined);
 
 	const loadParams = useCallback(async () => {
 		setLoading(true);
@@ -175,11 +176,12 @@ export function useLCFCNotification() {
 	}, []);
 
 	const send = useCallback(
-		async (request: LCFCNotificationSendRequest, onSuccess?: () => void) => {
+		async (request: LCFCNotificationSendRequest, onSuccess?: () => void, onError?: () => void) => {
 			setSending(true);
 			setError(null);
 			setStatus({ progressPct: 0, emailsSent: 0, emailsFailed: 0 });
 			onSuccessRef.current = onSuccess;
+			onErrorRef.current = onError;
 			try {
 				const result = await sendLCFCNotification(request, locale);
 				if (!result.jobId) {
@@ -190,6 +192,8 @@ export function useLCFCNotification() {
 				setError(getErrorMessage(e));
 				setJobId(null);
 				onSuccessRef.current = undefined;
+				onErrorRef.current?.();
+				onErrorRef.current = undefined;
 				setSending(false);
 			}
 		},
@@ -219,6 +223,8 @@ export function useLCFCNotification() {
 				setSending(false);
 				setJobId(null);
 				onSuccessRef.current = undefined;
+				onErrorRef.current?.();
+				onErrorRef.current = undefined;
 			}
 		}
 
