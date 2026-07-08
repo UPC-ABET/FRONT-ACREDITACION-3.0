@@ -2320,6 +2320,9 @@
 					"progressValue": "{{percentage}}%",
 					"sent": "Enviados",
 					"failed": "Fallidos",
+					"skippedAlreadySent": "Ya notificados",
+					"skippedCompleted": "Ya completadas",
+					"resendHint": "No se envió ningún correo porque estos estudiantes ya fueron notificados. Activa \"Reenviar a quienes ya recibieron\" para volver a enviarles la encuesta.",
 					"targetAll": "todos los cursos activos",
 					"targetSection": "{{course}} - sección {{section}}"
 				},

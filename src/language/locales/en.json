@@ -2320,6 +2320,9 @@
 					"progressValue": "{{percentage}}%",
 					"sent": "Sent",
 					"failed": "Failed",
+					"skippedAlreadySent": "Already notified",
+					"skippedCompleted": "Already completed",
+					"resendHint": "No emails were sent because these students were already notified. Turn on \"Resend to those who already received it\" to send the survey again.",
 					"targetAll": "all active courses",
 					"targetSection": "{{course}} - section {{section}}"
 				},
