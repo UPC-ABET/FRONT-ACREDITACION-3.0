@@ -1700,6 +1700,7 @@
 				"course": "Curso"
 			},
 			"columns": {
+				"program": "Carrera",
 				"course": "Curso",
 				"period": "Período Académico",
 				"gradeType": "Tipo de Evaluación",

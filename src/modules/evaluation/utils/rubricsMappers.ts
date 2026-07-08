@@ -12,6 +12,7 @@ export function mapRubricToRow(rubric: RubricResponse): RubricListRow {
 
 	return {
 		id: rubric.id,
+		programLabel: rubric.programName ?? empty,
 		courseLabel: course?.name ?? empty,
 		periodLabel: studyPlanAcademicPeriod?.academicPeriod.code ?? empty,
 		gradeTypeLabel: gradeType

@@ -424,6 +424,7 @@ export type RubricResponse = {
 	rubricType: TypeResponse;
 	competencyScopeType: TypeResponse;
 	isUsed: boolean;
+	programName?: { en: string; es: string };
 };
 
 export type GetRubricByIdResponse = {

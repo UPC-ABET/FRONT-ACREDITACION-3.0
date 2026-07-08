@@ -180,6 +180,7 @@ export function RubricsListPage() {
 					<Table>
 						<TableHeader>
 							<TableRow>
+								<TableHead>{t('rubrics.list.columns.program')}</TableHead>
 								<TableHead>{t('rubrics.list.columns.course')}</TableHead>
 								<TableHead>{t('rubrics.list.columns.period')}</TableHead>
 								<TableHead>{t('rubrics.list.columns.gradeType')}</TableHead>
@@ -192,6 +193,9 @@ export function RubricsListPage() {
 						<TableBody>
 							{items.map((row) => (
 								<TableRow key={row.id}>
+									<TableCell>
+										<span className="text-zinc-700">{row.programLabel[locale]}</span>
+									</TableCell>
 									<TableCell>
 										<span className="font-medium text-zinc-900">{row.courseLabel[locale]}</span>
 									</TableCell>
@@ -224,23 +228,23 @@ export function RubricsListPage() {
 												}
 												className={cn(
 													buttonVariants({ variant: 'ghost', size: 'icon' }),
-													'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900',
+													'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700',
 												)}>
 												{row.canEdit ? (
-													<PencilSquareIcon className="h-5 w-5" />
+													<PencilSquareIcon className="h-4 w-4" />
 												) : (
-													<EyeIcon className="h-5 w-5" />
+													<EyeIcon className="h-4 w-4" />
 												)}
 											</Link>
 											<Button
 												variant="ghost"
 												size="icon"
-												className="text-red-600 hover:bg-red-50"
+												className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 												disabled={!row.canEdit}
 												onClick={() => setConfirmTarget(row)}
 												aria-label={t('rubrics.list.actions.delete')}
 												title={t('rubrics.list.actions.delete')}>
-												<TrashIcon className="h-5 w-5" />
+												<TrashIcon className="h-4 w-4" />
 											</Button>
 										</div>
 									</TableCell>

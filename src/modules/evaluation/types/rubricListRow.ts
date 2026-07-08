@@ -2,6 +2,7 @@ import { RubricResponse } from '.';
 
 export type RubricListRow = {
 	id: number;
+	programLabel: { en: string; es: string };
 	courseLabel: { en: string; es: string };
 	periodLabel: string;
 	gradeTypeLabel: { en: string; es: string };
