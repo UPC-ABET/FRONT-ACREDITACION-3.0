@@ -375,20 +375,20 @@ export function PerformanceLevelsPage() {
 												<Button
 													variant="ghost"
 													size="icon"
-													className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+													className="text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
 													title={t('performanceLevels.table.edit')}
 													aria-label={t('performanceLevels.table.edit')}
 													onClick={() => openEditModal(level)}>
-													<PencilSquareIcon className="h-5 w-5" />
+													<PencilSquareIcon className="h-4 w-4" />
 												</Button>
 												<Button
 													variant="ghost"
 													size="icon"
-													className="text-red-600 hover:bg-red-50"
+													className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 													title={t('performanceLevels.table.delete')}
 													aria-label={t('performanceLevels.table.delete')}
 													onClick={() => setDeleteConfirm(level)}>
-													<TrashIcon className="h-5 w-5" />
+													<TrashIcon className="h-4 w-4" />
 												</Button>
 											</div>
 										</TableCell>

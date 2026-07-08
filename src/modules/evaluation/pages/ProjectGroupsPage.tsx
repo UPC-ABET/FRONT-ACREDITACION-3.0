@@ -232,7 +232,7 @@ export function ProjectGroupsPage() {
 										<Button
 											variant="ghost"
 											size="icon"
-											className="text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+											className="text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
 											onClick={() => openEdit(group)}
 											aria-label={t('projectGroups.edit.title')}>
 											<PencilSquareIcon className="h-4 w-4" />
@@ -240,7 +240,7 @@ export function ProjectGroupsPage() {
 										<Button
 											variant="ghost"
 											size="icon"
-											className="text-zinc-400 hover:bg-red-50 hover:text-red-600"
+											className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 											onClick={() => {
 												setDeleteTarget(group);
 												setDeleteError(null);

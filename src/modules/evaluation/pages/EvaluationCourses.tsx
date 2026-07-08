@@ -119,6 +119,7 @@ export function EvaluationCoursesPage() {
 						}
 						options={programOptions}
 						value={selectedProgramOpt}
+						isClearable
 						isDisabled={loadingPrograms || programs.length === 0}
 						isSearchable
 						onChange={(_, v) => {
@@ -169,11 +170,11 @@ export function EvaluationCoursesPage() {
 										<Button
 											variant="ghost"
 											size="icon"
-											className="text-red-600 hover:bg-red-50"
+											className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 											onClick={() => setConfirmTarget(spc)}
 											title={t('evaluationCourses.list.removeButton')}
 											aria-label={t('evaluationCourses.list.removeButton')}>
-											<TrashIcon className="h-5 w-5" />
+											<TrashIcon className="h-4 w-4" />
 										</Button>
 									</div>
 								</TableCell>

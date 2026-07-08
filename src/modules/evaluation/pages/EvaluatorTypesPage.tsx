@@ -197,7 +197,7 @@ export function EvaluatorTypesPage() {
 										<Button
 											variant="ghost"
 											size="icon"
-											className="text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+											className="text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
 											onClick={() => openEdit(type)}
 											aria-label={t('academicProjects.evaluators.editTitle')}>
 											<PencilSquareIcon className="h-4 w-4" />
@@ -205,7 +205,7 @@ export function EvaluatorTypesPage() {
 										<Button
 											variant="ghost"
 											size="icon"
-											className="text-zinc-400 hover:bg-red-50 hover:text-red-600"
+											className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 											onClick={() => {
 												setDeleteTarget({ id: type.id, label });
 												setDeleteError(null);

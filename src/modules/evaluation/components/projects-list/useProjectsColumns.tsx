@@ -157,7 +157,7 @@ export function useProjectsColumns({ setConfirmTarget, setDeleteError }: UseProj
 					<div className="flex justify-center gap-1">
 						<Link
 							href={`/academic-projects/projects/${row.original.id}/edit`}
-							className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
+							className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
 							title={t('projects.list.table.edit')}>
 							<PencilIcon className="h-4 w-4" />
 						</Link>
@@ -168,7 +168,7 @@ export function useProjectsColumns({ setConfirmTarget, setDeleteError }: UseProj
 								setDeleteError(null);
 							}}
 							disabled={!!row.original.hasEvaluations}
-							className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:pointer-events-none disabled:opacity-30"
+							className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600 disabled:pointer-events-none disabled:opacity-50"
 							title={t('projects.list.table.delete')}>
 							<TrashIcon className="h-4 w-4" />
 						</button>
