@@ -1891,7 +1891,7 @@
 						"loadOutcomes": "Could not load course outcomes."
 					},
 					"validation": {
-						"incomplete": "Complete the description of all criteria in all commissions.",
+						"incomplete": "Complete every criterion for at least one commission to continue. If you started filling in another commission, finish it or leave its criteria empty.",
 						"complete": "Rubric ready to save"
 					}
 				}

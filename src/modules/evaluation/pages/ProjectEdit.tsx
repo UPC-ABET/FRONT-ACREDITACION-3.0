@@ -254,7 +254,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				<>
 					<PageHeader
 						title={projectName}
-						description={t('projects.edit.subtitle')}
+						description={project.code}
 						action={
 							<Button
 								variant="secondary"
@@ -268,10 +268,6 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 					/>
 					<Card>
 						<div className="flex flex-col gap-4">
-							<span className="inline-flex w-fit items-center rounded-md border border-zinc-200 bg-zinc-100 px-2.5 py-1 font-mono text-xs font-medium text-zinc-600">
-								{project.code}
-							</span>
-
 							<div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-zinc-600">
 								<div className="flex items-center gap-1.5">
 									<span className="font-medium text-zinc-400">

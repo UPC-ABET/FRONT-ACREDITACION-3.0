@@ -1891,7 +1891,7 @@
 						"loadOutcomes": "No se pudieron cargar los outcomes del curso."
 					},
 					"validation": {
-						"incomplete": "Completa la descripción de todos los criterios en todas las comisiones.",
+						"incomplete": "Completa todos los criterios de al menos una comisión para continuar. Si empezaste a llenar otra comisión, complétala o deja sus criterios vacíos.",
 						"complete": "Rúbrica lista para guardar"
 					}
 				}
