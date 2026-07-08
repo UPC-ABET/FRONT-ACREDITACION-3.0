@@ -40,6 +40,15 @@ export function LCFCNotificationProgressDialog({
 	const percentage = clampPercentage(status?.progressPct);
 	const filledSegments = Math.ceil((percentage / 100) * PROGRESS_SEGMENTS);
 	const completed = !sending && !error && percentage >= 100;
+	const skippedAlreadySent = status?.skippedAlreadySent ?? 0;
+	const skippedAlreadyCompleted = status?.skippedAlreadyCompleted ?? 0;
+	// Everything was skipped because those students were already notified: without this hint
+	// the dialog reads "finished, 0 sent" and looks like a silent failure.
+	const showResendHint =
+		completed &&
+		(status?.emailsSent ?? 0) === 0 &&
+		(status?.emailsFailed ?? 0) === 0 &&
+		skippedAlreadySent > 0;
 	const titleKey = error
 		? 'surveys.lcfc.notifications.progress.failedTitle'
 		: completed
@@ -113,6 +122,31 @@ export function LCFCNotificationProgressDialog({
 							</p>
 						</div>
 					</div>
+
+					{(skippedAlreadySent > 0 || skippedAlreadyCompleted > 0) && (
+						<div className="grid grid-cols-2 gap-3">
+							<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+								<p className="text-xs font-medium uppercase text-zinc-500">
+									{t('surveys.lcfc.notifications.progress.skippedAlreadySent')}
+								</p>
+								<p className="mt-1 text-2xl font-semibold text-zinc-900">{skippedAlreadySent}</p>
+							</div>
+							<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+								<p className="text-xs font-medium uppercase text-zinc-500">
+									{t('surveys.lcfc.notifications.progress.skippedCompleted')}
+								</p>
+								<p className="mt-1 text-2xl font-semibold text-zinc-900">
+									{skippedAlreadyCompleted}
+								</p>
+							</div>
+						</div>
+					)}
+
+					{showResendHint && (
+						<p className="text-sm text-amber-700">
+							{t('surveys.lcfc.notifications.progress.resendHint')}
+						</p>
+					)}
 
 					{error && <p className="text-sm font-medium text-red-700">{error}</p>}
 				</div>

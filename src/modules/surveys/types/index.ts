@@ -237,6 +237,8 @@ export interface LCFCNotificationJobStatus {
 	progressPct: number;
 	emailsSent: number;
 	emailsFailed: number;
+	skippedAlreadySent?: number;
+	skippedAlreadyCompleted?: number;
 }
 
 export interface PPPNotificationSendRequest {

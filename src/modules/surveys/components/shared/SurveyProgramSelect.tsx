@@ -28,7 +28,13 @@ export function SurveyProgramSelect({ value, onChange }: Props) {
 		queryKey: programsQueryKeys.bySchoolModality(schoolId, modalityTypeId),
 		queryFn: () =>
 			programsService
-				.getByFilters({ isActive: true, schoolFilter: true })
+				// modalityTypeId keeps the list in sync with the global Regular/EPE selector;
+				// it was already part of the query key but never sent to the backend.
+				.getByFilters({
+					isActive: true,
+					schoolFilter: true,
+					modalityTypeId: modalityTypeId ?? undefined,
+				})
 				.then((r) => r.data ?? []),
 		enabled: schoolId != null && modalityTypeId != null,
 	});
