@@ -16,12 +16,7 @@ import {
 	TableHeader,
 	TableLoadingState,
 	TableRow,
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-	DialogClose,
+	DeleteConfirmDialog,
 } from '@/shared/components/ui';
 import { tryTranslate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
@@ -190,43 +185,22 @@ export function EvaluationCoursesPage() {
 				onSuccess={() => void refetch()}
 			/>
 
-			<Dialog
+			<DeleteConfirmDialog
 				open={!!confirmTarget}
 				onOpenChange={(open) => {
 					if (!open) setConfirmTarget(null);
-				}}>
-				<DialogContent className="sm:max-w-sm">
-					<DialogHeader>
-						<DialogTitle>{t('evaluationCourses.confirm.title')}</DialogTitle>
-					</DialogHeader>
-
-					<p className="text-sm text-zinc-600">
-						{t('evaluationCourses.confirm.body').replace(
-							'{{course}}',
-							confirmTarget ? courseName(confirmTarget) : '',
-						)}
-					</p>
-
-					<DialogFooter>
-						<DialogClose
-							render={
-								<Button variant="secondary" disabled={enableEvaluation.isPending}>
-									{t('dialog.close')}
-								</Button>
-							}
-						/>
-						<Button
-							variant="primary"
-							className="bg-red-600 hover:bg-red-700"
-							disabled={enableEvaluation.isPending}
-							onClick={() => confirmTarget && handleRemove(confirmTarget)}>
-							{enableEvaluation.isPending
-								? t('evaluationCourses.confirm.removing')
-								: t('evaluationCourses.confirm.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+				}}
+				title={t('evaluationCourses.confirm.title')}
+				description={t('evaluationCourses.confirm.body').replace(
+					'{{course}}',
+					confirmTarget ? courseName(confirmTarget) : '',
+				)}
+				isPending={enableEvaluation.isPending}
+				cancelLabel={t('dialog.close')}
+				confirmLabel={t('evaluationCourses.confirm.confirm')}
+				pendingLabel={t('evaluationCourses.confirm.removing')}
+				onConfirm={() => confirmTarget && handleRemove(confirmTarget)}
+			/>
 		</div>
 	);
 }

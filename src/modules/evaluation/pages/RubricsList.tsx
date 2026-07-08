@@ -19,12 +19,7 @@ import {
 	TableHeader,
 	TableLoadingState,
 	TableRow,
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-	DialogClose,
+	DeleteConfirmDialog,
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { tryTranslate } from '@/shared/utils';
@@ -32,15 +27,8 @@ import { useI18n, useABET } from '@/providers';
 import { usePrograms, useStudyPlanCourses } from '@/modules/academic/hooks';
 import { useRubrics, useDeleteRubric } from '../hooks';
 import { mapRubricToRow } from '../utils/rubricsMappers';
+import { toSelectOption, type SelectOption, type AnyOption } from '../utils/selectOption';
 import type { RubricListRow } from '../types';
-
-type SelectOption = { label: string; value: number };
-type AnyOption = { label: string; value: string | number };
-
-function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | null {
-	const single = Array.isArray(opt) ? (opt[0] ?? null) : opt;
-	return single ? { label: single.label, value: Number(single.value) } : null;
-}
 
 export function RubricsListPage() {
 	const { locale, t } = useI18n();
@@ -255,47 +243,29 @@ export function RubricsListPage() {
 				</div>
 			)}
 
-			<Dialog
+			<DeleteConfirmDialog
 				open={!!confirmTarget}
 				onOpenChange={(open) => {
 					if (!open) setConfirmTarget(null);
-				}}>
-				<DialogContent className="sm:max-w-sm">
-					<DialogHeader>
-						<DialogTitle>{t('rubrics.list.deleteModal.title')}</DialogTitle>
-					</DialogHeader>
-					<p className="text-sm text-zinc-600">
-						{t('rubrics.list.deleteModal.body').replace(
-							'{{course}}',
-							confirmTarget ? confirmTarget.courseLabel[locale] : '',
-						)}
-					</p>
-					<DialogFooter>
-						<DialogClose
-							render={
-								<Button variant="secondary" disabled={deleteMutation.isPending}>
-									{t('dialog.close')}
-								</Button>
-							}
-						/>
-						<Button
-							variant="danger"
-							disabled={deleteMutation.isPending}
-							onClick={() => {
-								if (confirmTarget) {
-									deleteMutation.mutate(confirmTarget.id, {
-										onSuccess: () => setConfirmTarget(null),
-										onError: () => setConfirmTarget(null),
-									});
-								}
-							}}>
-							{deleteMutation.isPending
-								? t('rubrics.list.deleteModal.deleting')
-								: t('rubrics.list.deleteModal.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+				}}
+				title={t('rubrics.list.deleteModal.title')}
+				description={t('rubrics.list.deleteModal.body').replace(
+					'{{course}}',
+					confirmTarget ? confirmTarget.courseLabel[locale] : '',
+				)}
+				isPending={deleteMutation.isPending}
+				cancelLabel={t('dialog.close')}
+				confirmLabel={t('rubrics.list.deleteModal.confirm')}
+				pendingLabel={t('rubrics.list.deleteModal.deleting')}
+				onConfirm={() => {
+					if (confirmTarget) {
+						deleteMutation.mutate(confirmTarget.id, {
+							onSuccess: () => setConfirmTarget(null),
+							onError: () => setConfirmTarget(null),
+						});
+					}
+				}}
+			/>
 		</div>
 	);
 }

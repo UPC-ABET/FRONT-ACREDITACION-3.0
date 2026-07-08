@@ -35,12 +35,6 @@ export type CreateProjectFullDto = {
 	evaluators?: { professorId: number; evaluatorTypeId: number }[];
 };
 
-export type CreateProjectDto = {
-	code: string;
-	name: { en: string; es: string };
-	description?: { en: string; es: string };
-};
-
 export type CreateRubricFullDto = {
 	rubricTypeId: number;
 	gradeTypeId: number;
@@ -57,19 +51,6 @@ export type CreateRubricFullDto = {
 			maxValue: number;
 		}>;
 	}>;
-};
-
-export type CreateRubricDto = {
-	rubricTypeId: number;
-	gradeTypeId: number;
-	competencyScopeTypeId: number;
-	studyPlanCourseId: number;
-};
-
-export type EvaluationScoreDto = {
-	rubricQuestionCriteriaId: number;
-	score: number;
-	commentaries?: string;
 };
 
 export type FilterProjectDto = Partial<{
@@ -97,31 +78,11 @@ export type ProjectPaginatedResponse = {
 	totalPages: number;
 };
 
-export type FilterRubricDto = Partial<{
-	studyPlanCourseId: number;
-	gradeTypeId: number;
-	competencyScopeTypeId: number;
-	isActive: boolean;
-}>;
-
 export type GetAllRubricsParams = {
 	schoolId?: number;
 	academicPeriodId?: number;
 	programId?: number;
 	courseId?: number;
-};
-
-export type FinalizeEvaluationDto = {
-	projectId: number;
-	evaluatorId: number;
-	isPa?: boolean;
-};
-
-export type SubmitEvaluationDto = {
-	projectStudentId: number;
-	projectEvaluatorId: number;
-	observation?: string;
-	scores: EvaluationScoreDto[];
 };
 
 export type UpdateProjectDto = Partial<{
@@ -455,26 +416,3 @@ export type RubricTypeResolution = {
 	code: string;
 	name: { es: string; en: string };
 };
-
-export interface CreateEvaluationPayload {
-	projectStudentId: number;
-	projectEvaluatorId: number;
-	rubricId?: number;
-	observation?: { es: string; en: string };
-	scores?: Array<{ rubricQuestionCriteriaId: number; score: number }>;
-	qualificationStatusTypeId?: number | null;
-}
-
-export interface UpdateEvaluationPayload {
-	observation?: { es: string; en: string };
-	scores?: Array<{ rubricQuestionCriteriaId: number; score: number }>;
-	qualificationStatusTypeId?: number | null;
-}
-
-export interface EvaluationFilters {
-	projectStudentId?: number;
-	projectEvaluatorId?: number;
-	rubricId?: number;
-	qualificationStatusTypeId?: number;
-	isActive?: boolean;
-}

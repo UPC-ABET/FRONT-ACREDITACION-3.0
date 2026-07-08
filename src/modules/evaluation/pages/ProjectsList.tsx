@@ -17,14 +17,7 @@ import { ProjectsListFilters } from '../components/projects-list/ProjectsListFil
 import { useProjectsColumns } from '../components/projects-list/useProjectsColumns';
 import { ExportGradesDialog } from '../components/projects-list/ExportGradesDialog';
 import { DeleteProjectDialog } from '../components/projects-list/DeleteProjectDialog';
-
-type SelectOption = { label: string; value: number };
-type AnyOption = { label: string; value: string | number };
-
-function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | null {
-	const single = Array.isArray(opt) ? (opt[0] ?? null) : opt;
-	return single ? { label: single.label, value: Number(single.value) } : null;
-}
+import { toSelectOption, type SelectOption, type AnyOption } from '../utils/selectOption';
 
 export function ProjectsListPage() {
 	const { t, locale } = useI18n();

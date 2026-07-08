@@ -5,6 +5,7 @@ import { PencilSquareIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outli
 import {
 	Button,
 	Card,
+	DeleteConfirmDialog,
 	Dialog,
 	DialogContent,
 	DialogFooter,
@@ -450,39 +451,30 @@ export function PerformanceLevelsPage() {
 				</DialogContent>
 			</Dialog>
 
-			<Dialog open={deleteConfirm != null} onOpenChange={() => setDeleteConfirm(null)}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<DialogTitle>{t('performanceLevels.delete.title')}</DialogTitle>
-						<DialogDescription>
-							{t('performanceLevels.delete.description')}{' '}
-							<strong>
-								{deleteConfirm?.name?.[locale as 'es' | 'en'] ?? deleteConfirm?.code ?? ''}
-							</strong>
-						</DialogDescription>
-					</DialogHeader>
-
-					{deleteMutation.isError && (
-						<p className="text-sm text-red-600">
-							{deleteMutation.error?.message || t('performanceLevels.form.saveError')}
-						</p>
-					)}
-
-					<DialogFooter>
-						<Button
-							variant="secondary"
-							onClick={() => setDeleteConfirm(null)}
-							disabled={isMutating}>
-							{t('performanceLevels.delete.cancel')}
-						</Button>
-						<Button variant="primary" onClick={handleDelete} disabled={isMutating}>
-							{isMutating
-								? t('performanceLevels.form.deleting')
-								: t('performanceLevels.delete.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+			<DeleteConfirmDialog
+				open={deleteConfirm != null}
+				onOpenChange={() => setDeleteConfirm(null)}
+				contentClassName="sm:max-w-md"
+				title={t('performanceLevels.delete.title')}
+				description={
+					<>
+						{t('performanceLevels.delete.description')}{' '}
+						<strong>
+							{deleteConfirm?.name?.[locale as 'es' | 'en'] ?? deleteConfirm?.code ?? ''}
+						</strong>
+					</>
+				}
+				error={
+					deleteMutation.isError
+						? deleteMutation.error?.message || t('performanceLevels.form.saveError')
+						: null
+				}
+				isPending={isMutating}
+				cancelLabel={t('performanceLevels.delete.cancel')}
+				confirmLabel={t('performanceLevels.delete.confirm')}
+				pendingLabel={t('performanceLevels.form.deleting')}
+				onConfirm={handleDelete}
+			/>
 		</div>
 	);
 }

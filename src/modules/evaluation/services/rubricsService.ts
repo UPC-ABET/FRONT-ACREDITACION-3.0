@@ -1,9 +1,7 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost, apiPatch, apiDelete } from '@/shared/lib';
 import type {
-	CreateRubricDto,
 	CreateRubricFullDto,
-	FilterRubricDto,
 	GetAllRubricsParams,
 	UpdateRubricDto,
 	GetRubricByIdResponse,
@@ -29,10 +27,6 @@ export const rubricsService = {
 		return apiGet(`/rubrics/get-by-id/${rubricId}`);
 	},
 
-	create(body: CreateRubricDto): Promise<ApiResponse<RubricResponse>> {
-		return apiPost('/rubrics/create', body);
-	},
-
 	createFull(body: CreateRubricFullDto): Promise<ApiResponse<RubricResponse>> {
 		return apiPost('/rubrics/create-full', body);
 	},
@@ -43,9 +37,5 @@ export const rubricsService = {
 
 	delete(id: string | number): Promise<ApiResponse<RubricResponse>> {
 		return apiDelete(`/rubrics/delete/${id}`);
-	},
-
-	getByFilters(filters: FilterRubricDto): Promise<ApiResponse<RubricResponse[]>> {
-		return apiPost('/rubrics/get-by-filters', filters);
 	},
 };

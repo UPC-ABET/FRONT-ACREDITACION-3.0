@@ -11,6 +11,7 @@ export * from './LazySelect';
 export * from './Button';
 export * from './Chart';
 export * from './FeedbackDialog';
+export * from './DeleteConfirmDialog';
 export * from './Toggle';
 export * from './TextArea';
 export * from './I18nTextField';

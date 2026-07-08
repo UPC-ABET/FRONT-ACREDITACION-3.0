@@ -1,12 +1,10 @@
 import { ApiResponse } from '@/shared';
 import { apiGet, apiPost, apiPatch, apiDelete, apiGetBlobResponse } from '@/shared/lib';
 import type {
-	CreateProjectDto,
 	CreateProjectFullDto,
 	FilterProjectDto,
 	UpdateProjectDto,
 	ProjectByProfessorPaginatedResponse,
-	ProjectByProfessorResponse,
 	ProjectDetailsResponse,
 	ProjectEvaluatorResponse,
 	ProjectPaginatedResponse,
@@ -15,22 +13,8 @@ import type {
 } from '../types';
 
 export const projectsService = {
-	create(body: CreateProjectDto): Promise<ApiResponse<ProjectResponse>> {
-		return apiPost('/projects/create', body);
-	},
-
 	createFull(body: CreateProjectFullDto): Promise<ApiResponse<ProjectResponse>> {
 		return apiPost('/projects/create-full', body);
-	},
-
-	getByEvaluator(
-		evaluatorId: string | number,
-		params?: { gradeTypeCode?: string },
-	): Promise<ApiResponse<ProjectByProfessorResponse[]>> {
-		const qs = new URLSearchParams();
-		if (params?.gradeTypeCode != null) qs.set('gradeTypeCode', params.gradeTypeCode);
-		const query = qs.toString();
-		return apiGet(`/projects/evaluator/${evaluatorId}${query ? `?${query}` : ''}`);
 	},
 
 	getByProfessor(
@@ -50,10 +34,6 @@ export const projectsService = {
 		if (params?.search) qs.set('search', params.search);
 		const query = qs.toString();
 		return apiGet(`/projects/professor/${professorId}${query ? `?${query}` : ''}`);
-	},
-
-	getById(projectId: string | number): Promise<ApiResponse<ProjectResponse>> {
-		return apiGet(`/projects/project/${projectId}`);
 	},
 
 	getDetails(
@@ -80,21 +60,8 @@ export const projectsService = {
 		return apiDelete(`/projects/delete/${id}`);
 	},
 
-	getAll(): Promise<ApiResponse<ProjectResponse[]>> {
-		return apiGet('/projects/get-all');
-	},
-
 	getByFilters(filters: FilterProjectDto = {}): Promise<ApiResponse<ProjectPaginatedResponse>> {
 		return apiPost('/projects/get-by-filters', filters);
-	},
-
-	addStudents(
-		projectId: string | number,
-		studentSectionEnrollmentIds: number[],
-	): Promise<ApiResponse<ProjectResponse>> {
-		return apiPost(`/projects/project/${projectId}/students`, {
-			studentSectionEnrollmentIds: studentSectionEnrollmentIds,
-		});
 	},
 
 	createStudent(body: {
@@ -107,15 +74,6 @@ export const projectsService = {
 
 	removeStudent(projectStudentId: number): Promise<ApiResponse<void>> {
 		return apiDelete(`/project-students/delete/${projectStudentId}`);
-	},
-
-	addEvaluators(
-		projectId: string | number,
-		professorIds: number[],
-	): Promise<ApiResponse<ProjectResponse>> {
-		return apiPost(`/projects/project/${projectId}/evaluators`, {
-			evaluatorProfessorIds: professorIds,
-		});
 	},
 
 	removeEvaluator(projectEvaluatorId: number): Promise<ApiResponse<void>> {
