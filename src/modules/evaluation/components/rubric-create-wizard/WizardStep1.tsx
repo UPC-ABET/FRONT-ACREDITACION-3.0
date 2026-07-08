@@ -1,12 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Select, Button, Badge, SubTitle, Title } from '@/shared/components/ui';
 import { useI18n, useABET } from '@/providers';
 import { useAcademicPeriods, useStudyPlanCourses, usePrograms } from '@/modules/academic/hooks';
 import { StudyPlanCourseResponse } from '@/modules/academic';
-import { rubricsService } from '@/modules';
+import { useResolveRubricType } from '../../hooks';
 import { TYPE_CODES } from '@/shared';
 
 export interface Step1Data {
@@ -69,11 +68,7 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 		{ enabled: !!academicPeriodId && !!selectedProgramId },
 	);
 
-	const { data: resolvedType, isLoading: loadingResolve } = useQuery({
-		queryKey: ['rubrics', 'resolve-type', selectedSpc?.id],
-		queryFn: () => rubricsService.resolveType(selectedSpc!.id).then((r) => r.data),
-		enabled: !!selectedSpc,
-	});
+	const { data: resolvedType, isLoading: loadingResolve } = useResolveRubricType(selectedSpc?.id);
 
 	const isCapstone = resolvedType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 

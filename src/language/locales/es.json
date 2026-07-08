@@ -2177,6 +2177,12 @@
 				"addError": "No se pudo agregar el estudiante.",
 				"removeError": "No se pudo eliminar el estudiante.",
 				"removeSuccess": "Estudiante eliminado correctamente.",
+				"removeConfirm": {
+					"title": "Eliminar estudiante",
+					"body": "¿Seguro que deseas eliminar a {{name}} de este proyecto?",
+					"confirm": "Eliminar",
+					"removing": "Eliminando..."
+				},
 				"modal": {
 					"title": "Agregar estudiantes",
 					"searchPlaceholder": "Buscar por nombre, código o correo...",
@@ -2200,6 +2206,12 @@
 				"adding": "Agregando...",
 				"addError": "No se pudo agregar el evaluador.",
 				"removeError": "No se pudo eliminar el evaluador.",
+				"removeConfirm": {
+					"title": "Eliminar evaluador",
+					"body": "¿Seguro que deseas eliminar a {{name}} como evaluador de este proyecto?",
+					"confirm": "Eliminar",
+					"removing": "Eliminando..."
+				},
 				"modal": {
 					"title": "Agregar evaluador",
 					"searchPlaceholder": "Buscar por nombre o apellido...",

@@ -6,6 +6,7 @@ import { ArrowLeftIcon, PencilIcon, PlusIcon, XMarkIcon } from '@heroicons/react
 import {
 	Button,
 	Card,
+	DeleteConfirmDialog,
 	Input,
 	PageHeader,
 	Select,
@@ -39,6 +40,14 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	const [, setEvaluatorError] = useState<string | null>(null);
 	const [evaluatorModalOpen, setEvaluatorModalOpen] = useState(false);
 	const [studentModalOpen, setStudentModalOpen] = useState(false);
+	const [removeStudentTarget, setRemoveStudentTarget] = useState<{
+		id: number;
+		label: string;
+	} | null>(null);
+	const [removeEvaluatorTarget, setRemoveEvaluatorTarget] = useState<{
+		id: number;
+		label: string;
+	} | null>(null);
 
 	const [isEditingHeader, setIsEditingHeader] = useState(false);
 	const [draftCode, setDraftCode] = useState('');
@@ -339,21 +348,14 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 									<button
 										type="button"
 										onClick={() =>
-											removeStudentMutation.mutate(student.id, {
-												onSuccess: () => {
-													setStudentError(null);
-													showToast('success', t('projects.edit.students.removeSuccess'));
-												},
-												onError: () => {
-													setStudentError(t('projects.edit.students.removeError'));
-													showToast('error', t('projects.edit.students.removeError'));
-												},
+											setRemoveStudentTarget({
+												id: student.id,
+												label: `${student.firstName} ${student.lastName}`.trim(),
 											})
 										}
-										disabled={removeStudentMutation.isPending}
 										className={cn(
 											buttonVariants({ variant: 'ghost', size: 'icon' }),
-											'text-zinc-400 hover:bg-red-50 hover:text-red-600',
+											'text-zinc-500 hover:bg-red-50 hover:text-red-600',
 										)}
 										title={t('projects.edit.students.removeButton')}>
 										<XMarkIcon className="h-4 w-4" />
@@ -405,21 +407,15 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 									<button
 										type="button"
 										onClick={() =>
-											removeEvaluatorMutation.mutate(evaluator.id, {
-												onSuccess: () => {
-													setEvaluatorError(null);
-													showToast('success', t('projects.edit.evaluators.removeSuccess'));
-												},
-												onError: () => {
-													setEvaluatorError(t('projects.edit.evaluators.removeError'));
-													showToast('error', t('projects.edit.evaluators.removeError'));
-												},
+											setRemoveEvaluatorTarget({
+												id: evaluator.id,
+												label:
+													`${evaluator.professorFirstName} ${evaluator.professorLastName}`.trim(),
 											})
 										}
-										disabled={removeEvaluatorMutation.isPending}
 										className={cn(
 											buttonVariants({ variant: 'ghost', size: 'icon' }),
-											'text-zinc-400 hover:bg-red-50 hover:text-red-600',
+											'text-zinc-500 hover:bg-red-50 hover:text-red-600',
 										)}
 										title={t('projects.edit.evaluators.removeButton')}>
 										<XMarkIcon className="h-4 w-4" />
@@ -447,6 +443,68 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				projectNumericId={project.id}
 				existingEvaluatorTypeCounts={existingEvaluatorTypeCounts}
 				onSuccess={() => showToast('success', t('projects.edit.evaluators.modal.successMessage'))}
+			/>
+
+			<DeleteConfirmDialog
+				open={!!removeStudentTarget}
+				onOpenChange={(open) => {
+					if (!open) setRemoveStudentTarget(null);
+				}}
+				title={t('projects.edit.students.removeConfirm.title')}
+				description={t('projects.edit.students.removeConfirm.body').replace(
+					'{{name}}',
+					removeStudentTarget?.label ?? '',
+				)}
+				isPending={removeStudentMutation.isPending}
+				cancelLabel={t('dialog.close')}
+				confirmLabel={t('projects.edit.students.removeConfirm.confirm')}
+				pendingLabel={t('projects.edit.students.removeConfirm.removing')}
+				onConfirm={() => {
+					if (!removeStudentTarget) return;
+					removeStudentMutation.mutate(removeStudentTarget.id, {
+						onSuccess: () => {
+							setStudentError(null);
+							setRemoveStudentTarget(null);
+							showToast('success', t('projects.edit.students.removeSuccess'));
+						},
+						onError: () => {
+							setStudentError(t('projects.edit.students.removeError'));
+							setRemoveStudentTarget(null);
+							showToast('error', t('projects.edit.students.removeError'));
+						},
+					});
+				}}
+			/>
+
+			<DeleteConfirmDialog
+				open={!!removeEvaluatorTarget}
+				onOpenChange={(open) => {
+					if (!open) setRemoveEvaluatorTarget(null);
+				}}
+				title={t('projects.edit.evaluators.removeConfirm.title')}
+				description={t('projects.edit.evaluators.removeConfirm.body').replace(
+					'{{name}}',
+					removeEvaluatorTarget?.label ?? '',
+				)}
+				isPending={removeEvaluatorMutation.isPending}
+				cancelLabel={t('dialog.close')}
+				confirmLabel={t('projects.edit.evaluators.removeConfirm.confirm')}
+				pendingLabel={t('projects.edit.evaluators.removeConfirm.removing')}
+				onConfirm={() => {
+					if (!removeEvaluatorTarget) return;
+					removeEvaluatorMutation.mutate(removeEvaluatorTarget.id, {
+						onSuccess: () => {
+							setEvaluatorError(null);
+							setRemoveEvaluatorTarget(null);
+							showToast('success', t('projects.edit.evaluators.removeSuccess'));
+						},
+						onError: () => {
+							setEvaluatorError(t('projects.edit.evaluators.removeError'));
+							setRemoveEvaluatorTarget(null);
+							showToast('error', t('projects.edit.evaluators.removeError'));
+						},
+					});
+				}}
 			/>
 
 			<Toast

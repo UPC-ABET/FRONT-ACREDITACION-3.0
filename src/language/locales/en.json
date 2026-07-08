@@ -2177,6 +2177,12 @@
 				"addError": "Could not add the student.",
 				"removeError": "Could not remove the student.",
 				"removeSuccess": "Student removed successfully.",
+				"removeConfirm": {
+					"title": "Remove student",
+					"body": "Are you sure you want to remove {{name}} from this project?",
+					"confirm": "Remove",
+					"removing": "Removing..."
+				},
 				"modal": {
 					"title": "Add students",
 					"searchPlaceholder": "Search by name, code or email...",
@@ -2200,6 +2206,12 @@
 				"adding": "Adding...",
 				"addError": "Could not add the evaluator.",
 				"removeError": "Could not remove the evaluator.",
+				"removeConfirm": {
+					"title": "Remove evaluator",
+					"body": "Are you sure you want to remove {{name}} as an evaluator from this project?",
+					"confirm": "Remove",
+					"removing": "Removing..."
+				},
 				"modal": {
 					"title": "Add evaluator",
 					"searchPlaceholder": "Search by name or lastname...",

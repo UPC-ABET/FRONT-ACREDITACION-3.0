@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { triggerBrowserDownload } from '@/shared/utils/triggerBrowserDownload';
 import { projectsService } from '../services';
-import type { FilterProjectDto } from '../types';
+import type { CreateProjectFullDto, FilterProjectDto } from '../types';
 
 type ByProfessorParams = {
 	competencyScopeCode?: string;
@@ -52,6 +52,52 @@ export function useProjectDetails(projectId: string | number | undefined, params
 		queryKey: projectsQueryKeys.details(projectId!, params),
 		queryFn: () => projectsService.getDetails(projectId!, params).then((r) => r.data),
 		enabled: projectId != null,
+	});
+}
+
+export function useCreateProjectFull() {
+	return useMutation({
+		mutationFn: (body: CreateProjectFullDto) =>
+			projectsService.createFull(body).then((r) => r.data),
+	});
+}
+
+export function useAddProjectStudents(projectId: string, projectNumericId: number) {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (students: { studentSectionEnrollmentId: number }[]) =>
+			Promise.all(
+				students.map((student) =>
+					projectsService.createStudent({
+						projectId: projectNumericId,
+						studentSectionEnrollmentId: student.studentSectionEnrollmentId,
+						isActive: true,
+					}),
+				),
+			),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: projectsQueryKeys.details(projectId, { isEvaluationMode: false }),
+			});
+		},
+	});
+}
+
+export function useCreateProjectEvaluator(projectId: string, projectNumericId: number) {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (body: { professorId: number; evaluatorTypeId: number }) =>
+			projectsService.createEvaluator({
+				projectId: projectNumericId,
+				professorId: body.professorId,
+				evaluatorTypeId: body.evaluatorTypeId,
+				isActive: true,
+			}),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: projectsQueryKeys.details(projectId, { isEvaluationMode: false }),
+			});
+		},
 	});
 }
 

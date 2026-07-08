@@ -5,6 +5,8 @@ import type { CreateRubricFullDto, GetAllRubricsParams } from '../types';
 export const rubricsQueryKeys = {
 	all: ['rubrics'] as const,
 	filtered: (params: GetAllRubricsParams) => ['rubrics', 'filtered', params] as const,
+	resolveType: (studyPlanCourseId: number) =>
+		['rubrics', 'resolve-type', studyPlanCourseId] as const,
 };
 
 export function useRubrics(params: GetAllRubricsParams = {}) {
@@ -15,6 +17,14 @@ export function useRubrics(params: GetAllRubricsParams = {}) {
 			return response.data;
 		},
 		enabled: !!params.academicPeriodId,
+	});
+}
+
+export function useResolveRubricType(studyPlanCourseId: number | undefined) {
+	return useQuery({
+		queryKey: rubricsQueryKeys.resolveType(studyPlanCourseId!),
+		queryFn: () => rubricsService.resolveType(studyPlanCourseId!).then((r) => r.data),
+		enabled: studyPlanCourseId != null,
 	});
 }
 

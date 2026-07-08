@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import {
 	Dialog,
@@ -17,8 +16,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { useI18n } from '@/providers';
 import { useProfessorsByFilters } from '@/modules/academic';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
-import { projectsService } from '../../services';
-import { projectsQueryKeys } from '../../hooks';
+import { useCreateProjectEvaluator } from '../../hooks';
 import type { ProfessorSearchResponse } from '@/modules/academic';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { cn } from '@/shared/lib/utils';
@@ -43,7 +41,6 @@ export function AddEvaluatorModal({
 	existingEvaluatorTypeCounts,
 }: AddEvaluatorModalProps) {
 	const { t, locale } = useI18n();
-	const queryClient = useQueryClient();
 
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -99,28 +96,21 @@ export function AddEvaluatorModal({
 		[evaluatorTypes, locale, existingEvaluatorTypeCounts],
 	);
 
-	const createMutation = useMutation({
-		mutationFn: () =>
-			projectsService.createEvaluator({
-				projectId: projectNumericId,
-				professorId: selectedProfessor!.id,
-				evaluatorTypeId: selectedRoleId!,
-				isActive: true,
-			}),
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: projectsQueryKeys.details(projectId, { isEvaluationMode: false }),
-			});
-			onOpenChange(false);
-			onSuccess?.();
-		},
-		onError: () => setSubmitError(t('projects.edit.evaluators.modal.errorMessage')),
-	});
+	const createMutation = useCreateProjectEvaluator(projectId, projectNumericId);
 
 	const handleConfirm = () => {
 		if (!selectedProfessor || !selectedRoleId) return;
 		setSubmitError(null);
-		createMutation.mutate();
+		createMutation.mutate(
+			{ professorId: selectedProfessor.id, evaluatorTypeId: selectedRoleId },
+			{
+				onSuccess: () => {
+					onOpenChange(false);
+					onSuccess?.();
+				},
+				onError: () => setSubmitError(t('projects.edit.evaluators.modal.errorMessage')),
+			},
+		);
 	};
 
 	const professorDisplayName = (p: ProfessorSearchResponse) => {
