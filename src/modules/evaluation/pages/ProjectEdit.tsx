@@ -84,7 +84,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	const groupOptions = useMemo(
 		() =>
 			projectGroups.map((g) => ({
-				label: `${g.code} — ${g.name[locale as 'es' | 'en'] ?? g.name.es}`,
+				label: `${g.code} — ${g.name[locale as 'es' | 'en'] ?? g.name.es}${g.program ? ` (${g.program.code})` : ''}`,
 				value: g.id,
 			})),
 		[projectGroups, locale],
