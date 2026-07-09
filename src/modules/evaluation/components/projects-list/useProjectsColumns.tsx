@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useI18n } from '@/providers';
 import type { ProjectResponse } from '../../types';
@@ -159,7 +159,7 @@ export function useProjectsColumns({ setConfirmTarget, setDeleteError }: UseProj
 							href={`/academic-projects/projects/${row.original.id}/edit`}
 							className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
 							title={t('projects.list.table.edit')}>
-							<PencilIcon className="h-4 w-4" />
+							<PencilSquareIcon className="h-4 w-4" />
 						</Link>
 						<button
 							type="button"
