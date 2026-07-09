@@ -17,6 +17,7 @@ export function useRubrics(params: GetAllRubricsParams = {}) {
 			return response.data;
 		},
 		enabled: !!params.academicPeriodId,
+		placeholderData: (prev) => prev,
 	});
 }
 

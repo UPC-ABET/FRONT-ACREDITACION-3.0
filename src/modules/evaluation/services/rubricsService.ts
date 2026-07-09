@@ -5,15 +5,18 @@ import type {
 	GetAllRubricsParams,
 	UpdateRubricDto,
 	GetRubricByIdResponse,
+	RubricPaginatedResponse,
 	RubricResponse,
 	RubricTypeResolution,
 } from '../types';
 
 export const rubricsService = {
-	getAll(params?: GetAllRubricsParams): Promise<ApiResponse<RubricResponse[]>> {
+	getAll(params?: GetAllRubricsParams): Promise<ApiResponse<RubricPaginatedResponse>> {
 		const qs = new URLSearchParams();
 		if (params?.programId) qs.set('programId', String(params.programId));
 		if (params?.courseId) qs.set('courseId', String(params.courseId));
+		if (params?.page) qs.set('page', String(params.page));
+		if (params?.pageSize) qs.set('pageSize', String(params.pageSize));
 		const query = qs.toString();
 		return apiGet(`/rubrics/get-all${query ? `?${query}` : ''}`);
 	},
