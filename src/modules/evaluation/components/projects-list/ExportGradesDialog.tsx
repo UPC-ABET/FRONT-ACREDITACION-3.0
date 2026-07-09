@@ -66,6 +66,7 @@ export function ExportGradesDialog({
 							const single = Array.isArray(opt) ? opt[0] : opt;
 							if (single) setSelectedGradeTypeId(Number(single.value));
 						}}
+						isSearchable
 					/>
 					{exportError && <p className="text-xs text-red-600">{exportError}</p>}
 				</div>

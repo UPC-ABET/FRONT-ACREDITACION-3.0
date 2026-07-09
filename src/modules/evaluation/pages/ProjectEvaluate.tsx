@@ -320,6 +320,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 															}
 															isDisabled={isLoadingStatuses}
 															isClearable
+															isSearchable
 															placeholder="—"
 															onChange={(_, val) => {
 																const opt = Array.isArray(val) ? (val[0] ?? null) : val;

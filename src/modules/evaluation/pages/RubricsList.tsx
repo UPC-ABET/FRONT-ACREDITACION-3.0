@@ -128,6 +128,7 @@ export function RubricsListPage() {
 							options={programOptions}
 							value={selectedProgram}
 							isClearable
+							isSearchable
 							isDisabled={!selectedPeriodId}
 							onChange={(_, opt) => {
 								setSelectedProgram(toSelectOption(opt as AnyOption | AnyOption[] | null));
@@ -139,6 +140,7 @@ export function RubricsListPage() {
 							options={courseOptions}
 							value={selectedCourse}
 							isClearable
+							isSearchable
 							isDisabled={!selectedProgram}
 							onChange={(_, opt) =>
 								setSelectedCourse(toSelectOption(opt as AnyOption | AnyOption[] | null))

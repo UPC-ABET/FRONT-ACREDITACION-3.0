@@ -106,6 +106,7 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 					label={t('performanceReports.filters.language')}
 					options={languageOptions}
 					value={selectedLanguage}
+					isSearchable
 					onChange={(_name, value) => {
 						const single = asSingle(value);
 						if (single) state.onLangChange(single.value === 1 ? 'en' : 'es');

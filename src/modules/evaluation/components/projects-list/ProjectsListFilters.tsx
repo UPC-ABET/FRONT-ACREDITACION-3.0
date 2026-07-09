@@ -47,6 +47,7 @@ export function ProjectsListFilters({
 						options={programOptions}
 						value={selectedProgram}
 						isClearable
+						isSearchable
 						isDisabled={!selectedPeriodId}
 						onChange={onProgramChange}
 					/>
@@ -55,6 +56,7 @@ export function ProjectsListFilters({
 						options={courseOptions}
 						value={selectedCourse}
 						isClearable
+						isSearchable
 						isDisabled={!selectedProgram}
 						onChange={onCourseChange}
 					/>

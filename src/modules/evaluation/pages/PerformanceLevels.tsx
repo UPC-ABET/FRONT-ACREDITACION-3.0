@@ -74,6 +74,7 @@ function PerformanceLevelForm({
 				label={t('performanceLevels.form.instrument')}
 				options={instrumentTypeOptions}
 				value={selectedInstrument}
+				isSearchable
 				placeholder={t('performanceLevels.form.instrumentPlaceholder')}
 				onChange={(_name, val) => {
 					const opt = val as OptionItem | null;
@@ -284,6 +285,7 @@ export function PerformanceLevelsPage() {
 							options={instrumentTypeOptions}
 							value={selectedInstrument}
 							isClearable
+							isSearchable
 							placeholder={t('performanceLevels.list.allInstruments')}
 							onChange={(_name, val) => setSelectedInstrument(val as OptionItem | null)}
 						/>

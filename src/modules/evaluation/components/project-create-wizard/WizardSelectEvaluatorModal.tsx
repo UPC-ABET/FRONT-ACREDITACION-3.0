@@ -213,6 +213,7 @@ export function WizardSelectEvaluatorModal({
 							const single = Array.isArray(opt) ? opt[0] : opt;
 							setSelectedTypeId(single ? Number(single.value) : null);
 						}}
+						isSearchable
 						isDisabled={loadingTypes || typeOptions.length === 0}
 					/>
 

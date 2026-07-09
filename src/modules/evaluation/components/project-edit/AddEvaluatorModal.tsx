@@ -211,6 +211,7 @@ export function AddEvaluatorModal({
 							const single = Array.isArray(opt) ? opt[0] : opt;
 							setSelectedRoleId(single ? Number(single.value) : null);
 						}}
+						isSearchable
 						isDisabled={loadingRoles || roleOptions.length === 0}
 					/>
 
