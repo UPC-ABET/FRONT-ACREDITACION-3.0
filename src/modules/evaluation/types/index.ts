@@ -109,6 +109,16 @@ export type GetAllRubricsParams = {
 	academicPeriodId?: number;
 	programId?: number;
 	courseId?: number;
+	page?: number;
+	pageSize?: number;
+};
+
+export type RubricPaginatedResponse = {
+	items: RubricResponse[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
 };
 
 export type FinalizeEvaluationDto = {
