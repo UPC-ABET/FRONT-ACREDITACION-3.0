@@ -123,28 +123,32 @@ export function RubricEditorMultipleCompetency({
 				</div>
 			) : null}
 
-			<CommissionValidator
-				commissions={draftRubric.commissions}
-				locale={locale}
-				labelComplete={t('rubrics.editor.multipleCompetency.validation.validationComplete')}
-				labelIncomplete={t('rubrics.editor.multipleCompetency.validation.validationIncomplete')}
-			/>
+			{canEdit && (
+				<CommissionValidator
+					commissions={draftRubric.commissions}
+					locale={locale}
+					labelComplete={t('rubrics.editor.multipleCompetency.validation.validationComplete')}
+					labelIncomplete={t('rubrics.editor.multipleCompetency.validation.validationIncomplete')}
+				/>
+			)}
 
-			<div className="flex flex-col items-end gap-2">
-				{!saveAllowed && (
-					<p className="text-xs text-zinc-500" role="status">
-						{t('rubrics.editor.multipleCompetency.tooltips.saveDisabled')}
-					</p>
-				)}
-				<Button
-					type="button"
-					variant="primary"
-					disabled={!canEdit || !saveAllowed || isSaving}
-					onClick={() => void handleSave()}
-					loading={isSaving}>
-					{t('rubrics.editor.multipleCompetency.saveRubric')}
-				</Button>
-			</div>
+			{canEdit && (
+				<div className="flex flex-col items-end gap-2">
+					{!saveAllowed && (
+						<p className="text-xs text-zinc-500" role="status">
+							{t('rubrics.editor.multipleCompetency.tooltips.saveDisabled')}
+						</p>
+					)}
+					<Button
+						type="button"
+						variant="primary"
+						disabled={!saveAllowed || isSaving}
+						onClick={() => void handleSave()}
+						loading={isSaving}>
+						{t('rubrics.editor.multipleCompetency.saveRubric')}
+					</Button>
+				</div>
+			)}
 		</div>
 	);
 }

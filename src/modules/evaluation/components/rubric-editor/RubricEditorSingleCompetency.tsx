@@ -143,14 +143,16 @@ export function RubricEditorSingleCompetency({
 				</Button>
 			) : null}
 
-			<ValidationMessages
-				items={validationItems}
-				successMessage={
-					isFilled && continuousValid && sumValid && rangeValid
-						? t('rubrics.editor.singleCompetency.validation.validationComplete')
-						: undefined
-				}
-			/>
+			{canEdit && (
+				<ValidationMessages
+					items={validationItems}
+					successMessage={
+						isFilled && continuousValid && sumValid && rangeValid
+							? t('rubrics.editor.singleCompetency.validation.validationComplete')
+							: undefined
+					}
+				/>
+			)}
 
 			<div className="flex flex-wrap items-center justify-between gap-4">
 				<span className="text-sm text-zinc-600">
@@ -161,16 +163,16 @@ export function RubricEditorSingleCompetency({
 					</span>
 				</span>
 
-				<Button
-					type="button"
-					variant="primary"
-					disabled={
-						!canEdit || !isFilled || !continuousValid || !sumValid || !rangeValid || isSaving
-					}
-					onClick={() => void handleSave()}
-					loading={isSaving}>
-					{t('rubrics.editor.singleCompetency.saveRubric')}
-				</Button>
+				{canEdit && (
+					<Button
+						type="button"
+						variant="primary"
+						disabled={!isFilled || !continuousValid || !sumValid || !rangeValid || isSaving}
+						onClick={() => void handleSave()}
+						loading={isSaving}>
+						{t('rubrics.editor.singleCompetency.saveRubric')}
+					</Button>
+				)}
 			</div>
 		</div>
 	);

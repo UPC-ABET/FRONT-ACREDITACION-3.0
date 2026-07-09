@@ -7,7 +7,6 @@ import { Toast } from '@/shared/components/ui/Toast';
 import { useI18n } from '@/providers';
 import { useRubricEditor } from '../../hooks/useRubricEditor';
 import { RubricHeader } from './RubricHeader';
-import { ReadonlyBanner } from './ReadonlyBanner';
 import { RubricDetail } from '../../types';
 import { TYPE_CODES } from '@/shared/constants';
 
@@ -69,8 +68,6 @@ export function RubricEditor({ rubricId, initialRubric }: RubricEditorProps) {
 	return (
 		<div className="space-y-6">
 			<RubricHeader rubric={rubric} />
-
-			{!canEdit ? <ReadonlyBanner /> : null}
 
 			{rubric.isCapstone && rubric.competencyScopeCode === TYPE_CODES.COMPETENCY_SCOPE.MULTIPLE ? (
 				<RubricEditorMultipleCompetency
