@@ -6,6 +6,7 @@ import { ArrowLeftIcon, EyeIcon, ExclamationTriangleIcon } from '@heroicons/reac
 import {
 	Alert,
 	AlertDescription,
+	Button,
 	ErrorDialog,
 	PageHeader,
 	Skeleton,
@@ -14,7 +15,6 @@ import {
 	TableErrorState,
 	Tabs,
 } from '@/shared/components/ui';
-import { cn } from '@/shared/lib/utils';
 import { useTabParam } from '@/shared';
 import { useAuth, useI18n } from '@/providers';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
@@ -304,40 +304,6 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 						/>
 					)}
 
-					{!isReadOnly && (
-						<div className="flex flex-col gap-2">
-							{incompleteDirtyLabels.length > 0 && (
-								<Alert variant="warning" className="flex items-center gap-3">
-									<ExclamationTriangleIcon className="h-5 w-5 shrink-0 text-yellow-600" />
-									<AlertDescription>
-										{t('projects.evaluate.saveAll.incompleteWarning')}:{' '}
-										{incompleteDirtyLabels.join(', ')}
-									</AlertDescription>
-								</Alert>
-							)}
-							<div className="flex justify-end">
-								<button
-									type="button"
-									disabled={dirtyTabs.size === 0 || isSavingAll}
-									onClick={() => void handleSaveAll()}
-									className={cn(
-										'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-										dirtyTabs.size > 0 && !isSavingAll
-											? 'bg-red-600 text-white hover:bg-red-700'
-											: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
-									)}>
-									{t('projects.evaluate.saveAll.button')}
-									{isSavingAll && (
-										<span
-											aria-hidden="true"
-											className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-0.125em]"
-										/>
-									)}
-								</button>
-							</div>
-						</div>
-					)}
-
 					{activeItems.length === 0 && (
 						<TableEmptyState message={t('projects.evaluate.rubric.noRubric')} />
 					)}
@@ -368,6 +334,29 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 							}
 						/>
 					))}
+
+					{!isReadOnly && (
+						<div className="flex flex-col gap-2">
+							{incompleteDirtyLabels.length > 0 && (
+								<Alert variant="warning" className="flex items-center gap-3">
+									<ExclamationTriangleIcon className="h-5 w-5 shrink-0 text-yellow-600" />
+									<AlertDescription>
+										{t('projects.evaluate.saveAll.incompleteWarning')}:{' '}
+										{incompleteDirtyLabels.join(', ')}
+									</AlertDescription>
+								</Alert>
+							)}
+							<div className="flex justify-end">
+								<Button
+									variant="danger"
+									loading={isSavingAll}
+									disabled={dirtyTabs.size === 0 || isSavingAll}
+									onClick={() => void handleSaveAll()}>
+									{t('projects.evaluate.saveAll.button')}
+								</Button>
+							</div>
+						</div>
+					)}
 				</div>
 			) : null}
 

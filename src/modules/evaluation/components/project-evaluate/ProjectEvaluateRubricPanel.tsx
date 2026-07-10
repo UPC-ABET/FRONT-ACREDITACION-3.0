@@ -172,6 +172,7 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 													onChange={(_, val) => {
 														const opt = Array.isArray(val) ? (val[0] ?? null) : val;
 														setHasLocalStatusEdits(true);
+														handleDirtyChange(true);
 														setQualifStatuses((prev) => ({
 															...prev,
 															[student.id]: opt ? Number(opt.value) : null,
@@ -223,6 +224,7 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 					onDirtyChange={handleDirtyChange}
 					commissions={item.commissions}
 					initialObservation={initialObservation}
+					attendanceDirty={hasLocalStatusEdits}
 				/>
 			) : item.questions.length > 0 ? (
 				<ProjectRubricSingleCompetencyTable
@@ -238,6 +240,7 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 					disableDuplicate={disableDuplicate}
 					onDirtyChange={handleDirtyChange}
 					initialObservation={initialObservation}
+					attendanceDirty={hasLocalStatusEdits}
 				/>
 			) : null}
 		</div>

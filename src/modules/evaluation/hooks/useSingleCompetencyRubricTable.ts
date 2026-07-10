@@ -21,6 +21,9 @@ interface UseSingleCompetencyRubricTableOptions {
 	nrNaTypeIds: Set<number>;
 	onDirtyChange?: (isDirty: boolean) => void;
 	initialObservation?: string;
+	/** True when the parent panel has unsaved attendance edits — these aren't tracked by this
+	 * hook's own isDirty, but must still unlock saving so they get submitted. */
+	attendanceDirty?: boolean;
 }
 
 export function useSingleCompetencyRubricTable({
@@ -33,6 +36,7 @@ export function useSingleCompetencyRubricTable({
 	nrNaTypeIds,
 	onDirtyChange,
 	initialObservation,
+	attendanceDirty = false,
 }: UseSingleCompetencyRubricTableOptions) {
 	const { t, locale } = useI18n();
 	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
@@ -154,7 +158,7 @@ export function useSingleCompetencyRubricTable({
 		return false;
 	}, [questions, students.length, duplicateMode, scores, dupScores, ranges, msgNaN, msgRange]);
 
-	const canSave = allFilled && !hasErrors && isDirty;
+	const canSave = allFilled && !hasErrors && (isDirty || attendanceDirty);
 
 	const handleScore = (qId: number, stIdx: number, val: string): void => {
 		markDirty();
@@ -237,6 +241,13 @@ export function useSingleCompetencyRubricTable({
 		const entries = [...studentPayloads.entries()].filter(([, s]) => s.length > 0);
 		if (entries.length === 0) return;
 
+		const trimmedObservation = observation.trim();
+		// Stored/read as a localized record ({ es, en }); keep the write shape in sync with
+		// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textarea.
+		const observationPayload = trimmedObservation
+			? { es: trimmedObservation, en: trimmedObservation }
+			: undefined;
+
 		// Errors propagate to the caller, which owns the save-all feedback dialogs.
 		await Promise.all(
 			entries.map(([projectStudentId, criteriaScores]) =>
@@ -244,7 +255,7 @@ export function useSingleCompetencyRubricTable({
 					projectStudentId,
 					projectEvaluatorId: evaluatorId,
 					rubricId: rubricId,
-					observation: observation.trim() || undefined,
+					observation: observationPayload,
 					scores: criteriaScores,
 					qualificationStatusTypeId: qualifStatuses[projectStudentId],
 				}),

@@ -2122,7 +2122,7 @@
 				"unsavedChanges": "Cambios sin guardar"
 			},
 			"saveAll": {
-				"button": "Guardar todo",
+				"button": "Guardar",
 				"successTitle": "Calificaciones guardadas",
 				"successMessage": "Se guardaron correctamente las calificaciones de todas las pestañas con cambios.",
 				"incompleteWarning": "No se guardaron por estar incompletas o con errores",

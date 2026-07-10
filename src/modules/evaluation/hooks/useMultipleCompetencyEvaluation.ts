@@ -37,6 +37,9 @@ interface UseMultipleCompetencyEvaluationParams {
 	activeCommissionId: number | null;
 	onDirtyChange?: (isDirty: boolean) => void;
 	initialObservation?: string;
+	/** True when the parent panel has unsaved attendance edits — these aren't tracked by this
+	 * hook's own isDirty, but must still unlock saving so they get submitted. */
+	attendanceDirty?: boolean;
 }
 
 export function useMultipleCompetencyEvaluation({
@@ -53,6 +56,7 @@ export function useMultipleCompetencyEvaluation({
 	activeCommissionId,
 	onDirtyChange,
 	initialObservation,
+	attendanceDirty = false,
 }: UseMultipleCompetencyEvaluationParams) {
 	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
@@ -238,6 +242,13 @@ export function useMultipleCompetencyEvaluation({
 		const entries = [...studentScores.entries()];
 		if (entries.length === 0) return;
 
+		const trimmedObservation = observation.trim();
+		// Stored/read as a localized record ({ es, en }); keep the write shape in sync with
+		// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textarea.
+		const observationPayload = trimmedObservation
+			? { es: trimmedObservation, en: trimmedObservation }
+			: undefined;
+
 		// Errors propagate to the caller, which owns the save-all feedback dialogs.
 		await Promise.all(
 			entries.map(([projectStudentId, scores]) =>
@@ -245,7 +256,7 @@ export function useMultipleCompetencyEvaluation({
 					projectStudentId,
 					projectEvaluatorId: evaluatorId,
 					rubricId: rubricId,
-					observation: observation.trim() || undefined,
+					observation: observationPayload,
 					scores,
 					qualificationStatusTypeId: qualifStatuses[projectStudentId],
 				}),
@@ -255,7 +266,7 @@ export function useMultipleCompetencyEvaluation({
 		onDirtyChange?.(false);
 	};
 
-	const canSave = allFilled && isDirty;
+	const canSave = allFilled && (isDirty || attendanceDirty);
 
 	return {
 		isPending,

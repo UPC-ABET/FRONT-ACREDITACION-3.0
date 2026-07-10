@@ -50,6 +50,7 @@ interface ProjectRubricMultipleCompetencyTableProps {
 	onDirtyChange?: (isDirty: boolean) => void;
 	commissions?: CommissionRow[];
 	initialObservation?: string;
+	attendanceDirty?: boolean;
 }
 
 export const ProjectRubricMultipleCompetencyTable = forwardRef<
@@ -71,6 +72,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		onDirtyChange,
 		commissions = [],
 		initialObservation,
+		attendanceDirty,
 	},
 	ref,
 ) {
@@ -164,6 +166,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		activeCommissionId,
 		onDirtyChange,
 		initialObservation,
+		attendanceDirty,
 	});
 
 	useImperativeHandle(ref, () => ({ isDirty, canSave, isPending, save: handleSave }), [

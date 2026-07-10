@@ -28,6 +28,7 @@ interface ProjectRubricSingleCompetencyTableProps {
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
 	initialObservation?: string;
+	attendanceDirty?: boolean;
 }
 
 export const ProjectRubricSingleCompetencyTable = forwardRef<
@@ -46,6 +47,7 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		disableDuplicate = false,
 		onDirtyChange,
 		initialObservation,
+		attendanceDirty,
 	},
 	ref,
 ) {
@@ -80,6 +82,7 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		nrNaTypeIds,
 		onDirtyChange,
 		initialObservation,
+		attendanceDirty,
 	});
 
 	useImperativeHandle(ref, () => ({ isDirty, canSave, isPending, save: handleSave }), [
