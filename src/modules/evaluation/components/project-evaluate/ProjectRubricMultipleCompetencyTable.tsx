@@ -45,6 +45,7 @@ interface ProjectRubricMultipleCompetencyTableProps {
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
 	commissions?: CommissionRow[];
+	initialObservation?: string;
 }
 
 export function ProjectRubricMultipleCompetencyTable({
@@ -61,6 +62,7 @@ export function ProjectRubricMultipleCompetencyTable({
 	disableDuplicate = false,
 	onDirtyChange,
 	commissions = [],
+	initialObservation,
 }: ProjectRubricMultipleCompetencyTableProps) {
 	const { t, locale } = useI18n();
 
@@ -135,6 +137,8 @@ export function ProjectRubricMultipleCompetencyTable({
 		handleSelect,
 		handleDupSelect,
 		handleSave,
+		observation,
+		handleObservationChange,
 	} = useMultipleCompetencyEvaluation({
 		outcomes,
 		questions,
@@ -148,6 +152,7 @@ export function ProjectRubricMultipleCompetencyTable({
 		commissions,
 		activeCommissionId,
 		onDirtyChange,
+		initialObservation,
 	});
 
 	return (
@@ -356,6 +361,24 @@ export function ProjectRubricMultipleCompetencyTable({
 							)}
 						</ul>
 					)}
+
+					<div>
+						<label htmlFor="observation" className="mb-1 block text-sm font-medium text-zinc-700">
+							{t('projects.evaluate.rubric.observation')}
+							<span className="ml-1 font-normal text-zinc-400">
+								({t('projects.evaluate.rubric.observationOptional')})
+							</span>
+						</label>
+						<textarea
+							id="observation"
+							value={observation}
+							onChange={(e) => handleObservationChange(e.target.value)}
+							placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
+							rows={3}
+							className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 transition-colors"
+						/>
+					</div>
+
 					<div className="flex justify-end">
 						<button
 							type="button"

@@ -24,6 +24,7 @@ interface ProjectRubricSingleCompetencyTableProps {
 	readOnly?: boolean;
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
+	initialObservation?: string;
 }
 
 export function ProjectRubricSingleCompetencyTable({
@@ -37,6 +38,7 @@ export function ProjectRubricSingleCompetencyTable({
 	readOnly = false,
 	disableDuplicate = false,
 	onDirtyChange,
+	initialObservation,
 }: ProjectRubricSingleCompetencyTableProps) {
 	const {
 		locale,
@@ -57,6 +59,8 @@ export function ProjectRubricSingleCompetencyTable({
 		handleScore,
 		handleDupScore,
 		handleSave,
+		observation,
+		handleObservationChange,
 		t,
 	} = useSingleCompetencyRubricTable({
 		questions,
@@ -67,6 +71,7 @@ export function ProjectRubricSingleCompetencyTable({
 		qualifStatuses,
 		nrNaTypeIds,
 		onDirtyChange,
+		initialObservation,
 	});
 
 	const [openQuestionIds, setOpenQuestionIds] = useState<Set<number>>(new Set());
@@ -247,6 +252,24 @@ export function ProjectRubricSingleCompetencyTable({
 								: []),
 						]}
 					/>
+
+					<div>
+						<label htmlFor="observation" className="mb-1 block text-sm font-medium text-zinc-700">
+							{t('projects.evaluate.rubric.observation')}
+							<span className="ml-1 font-normal text-zinc-400">
+								({t('projects.evaluate.rubric.observationOptional')})
+							</span>
+						</label>
+						<textarea
+							id="observation"
+							value={observation}
+							onChange={(e) => handleObservationChange(e.target.value)}
+							placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
+							rows={3}
+							className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 transition-colors"
+						/>
+					</div>
+
 					<div className="flex justify-end">
 						<button
 							type="button"

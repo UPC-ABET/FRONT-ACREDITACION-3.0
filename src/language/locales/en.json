@@ -2136,7 +2136,10 @@
 				"noRubric": "No rubric configured for this career.",
 				"missingStatus": "Select the attendance status for all students to continue.",
 				"saveSuccessTitle": "Grade saved",
-				"saveSuccessMessage": "The project grade was saved successfully."
+				"saveSuccessMessage": "The project grade was saved successfully.",
+				"observation": "Observation",
+				"observationPlaceholder": "Add observation",
+				"observationOptional": "Optional"
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",

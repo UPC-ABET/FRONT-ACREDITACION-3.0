@@ -20,6 +20,7 @@ interface UseSingleCompetencyRubricTableOptions {
 	qualifStatuses: Record<number, number | null>;
 	nrNaTypeIds: Set<number>;
 	onDirtyChange?: (isDirty: boolean) => void;
+	initialObservation?: string;
 }
 
 export function useSingleCompetencyRubricTable({
@@ -31,6 +32,7 @@ export function useSingleCompetencyRubricTable({
 	qualifStatuses,
 	nrNaTypeIds,
 	onDirtyChange,
+	initialObservation,
 }: UseSingleCompetencyRubricTableOptions) {
 	const { t, locale } = useI18n();
 	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
@@ -39,6 +41,11 @@ export function useSingleCompetencyRubricTable({
 	const [isDirty, setIsDirty] = useState(false);
 	const [showSuccessModal, setShowSuccessModal] = useState(false);
 	const closeSuccessModal = () => setShowSuccessModal(false);
+	const [observation, setObservation] = useState(initialObservation ?? '');
+	const handleObservationChange = (value: string) => {
+		markDirty();
+		setObservation(value);
+	};
 
 	const markDirty = () => {
 		if (!isDirty) {
@@ -237,7 +244,7 @@ export function useSingleCompetencyRubricTable({
 						projectStudentId,
 						projectEvaluatorId: evaluatorId,
 						rubricId: rubricId,
-						observation: { es: '', en: '' },
+						observation: observation.trim() || undefined,
 						scores: criteriaScores,
 						qualificationStatusTypeId: qualifStatuses[projectStudentId],
 					}),
@@ -271,6 +278,8 @@ export function useSingleCompetencyRubricTable({
 		handleScore,
 		handleDupScore,
 		handleSave,
+		observation,
+		handleObservationChange,
 		t,
 	};
 }

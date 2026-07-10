@@ -165,6 +165,15 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		setQualifStatuses(initialQualifStatuses);
 	}
 
+	const initialObservation = useMemo(() => {
+		for (const s of activeItem?.students ?? []) {
+			if (s.observation != null) {
+				return s.observation[locale as 'es' | 'en'] ?? s.observation.es ?? '';
+			}
+		}
+		return '';
+	}, [activeItem?.students, locale]);
+
 	if (isLoading) {
 		return (
 			<div className="space-y-6">
@@ -375,6 +384,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 								handleDirtyChange(effectiveStudyPlanCourseId!, effectiveGradeTypeId!, dirty)
 							}
 							commissions={activeItem.commissions}
+							initialObservation={initialObservation}
 						/>
 					) : activeItem.questions.length > 0 ? (
 						<ProjectRubricSingleCompetencyTable
@@ -390,6 +400,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 							onDirtyChange={(dirty) =>
 								handleDirtyChange(effectiveStudyPlanCourseId!, effectiveGradeTypeId!, dirty)
 							}
+							initialObservation={initialObservation}
 						/>
 					) : null}
 				</div>

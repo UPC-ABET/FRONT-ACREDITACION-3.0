@@ -2136,7 +2136,10 @@
 				"noRubric": "No hay rúbrica configurada para esta carrera.",
 				"missingStatus": "Selecciona la asistencia de todos los estudiantes para continuar.",
 				"saveSuccessTitle": "Calificación guardada",
-				"saveSuccessMessage": "La calificación del proyecto se guardó correctamente."
+				"saveSuccessMessage": "La calificación del proyecto se guardó correctamente.",
+				"observation": "Observaciones",
+				"observationPlaceholder": "Agregar observación",
+				"observationOptional": "Opcional"
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",

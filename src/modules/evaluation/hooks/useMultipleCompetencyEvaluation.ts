@@ -36,6 +36,7 @@ interface UseMultipleCompetencyEvaluationParams {
 	commissions: CommissionRow[];
 	activeCommissionId: number | null;
 	onDirtyChange?: (isDirty: boolean) => void;
+	initialObservation?: string;
 }
 
 export function useMultipleCompetencyEvaluation({
@@ -51,11 +52,17 @@ export function useMultipleCompetencyEvaluation({
 	commissions,
 	activeCommissionId,
 	onDirtyChange,
+	initialObservation,
 }: UseMultipleCompetencyEvaluationParams) {
 	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
 	const [showSuccessModal, setShowSuccessModal] = useState(false);
 	const closeSuccessModal = () => setShowSuccessModal(false);
+	const [observation, setObservation] = useState(initialObservation ?? '');
+	const handleObservationChange = (value: string) => {
+		markDirty();
+		setObservation(value);
+	};
 
 	const markDirty = () => {
 		if (!isDirty) {
@@ -239,7 +246,7 @@ export function useMultipleCompetencyEvaluation({
 						projectStudentId,
 						projectEvaluatorId: evaluatorId,
 						rubricId: rubricId,
-						observation: { es: '', en: '' },
+						observation: observation.trim() || undefined,
 						scores,
 						qualificationStatusTypeId: qualifStatuses[projectStudentId],
 					}),
@@ -271,5 +278,7 @@ export function useMultipleCompetencyEvaluation({
 		handleSelect,
 		handleDupSelect,
 		handleSave,
+		observation,
+		handleObservationChange,
 	};
 }

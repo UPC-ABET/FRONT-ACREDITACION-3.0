@@ -20,7 +20,7 @@ export type SubmitEvaluationPayload = {
 	projectStudentId: number;
 	projectEvaluatorId: number;
 	rubricId: number;
-	observation: { es: string; en: string };
+	observation?: string | Record<string, string> | null;
 	scores: EvaluationScorePayload[];
 	qualificationStatusTypeId?: number | null;
 };
@@ -275,6 +275,7 @@ export type ProjectRubricItemStudentResponse = {
 	projectStudentId: number;
 	totalGrade: number | null;
 	evaluationStatuses: StudentEvaluationResponse[];
+	observation?: Record<string, string> | null;
 };
 
 export type ProjectRubricItemResponse = {
