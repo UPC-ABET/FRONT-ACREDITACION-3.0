@@ -2,6 +2,7 @@
 
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Badge, Card, Select, TableEmptyState } from '@/shared/components/ui';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { TYPE_CODES } from '@/shared/constants';
 import { ProjectRubricSingleCompetencyTable } from './ProjectRubricSingleCompetencyTable';
 import { ProjectRubricMultipleCompetencyTable } from './ProjectRubricMultipleCompetencyTable';
@@ -29,7 +30,6 @@ interface ProjectEvaluateRubricPanelProps {
 	isReadOnly: boolean;
 	disableDuplicate: boolean;
 	isMultipleScope: boolean;
-	locale: string;
 	t: (key: string) => string;
 	onDirtyChange: (isDirty: boolean) => void;
 }
@@ -51,7 +51,6 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 		isReadOnly,
 		disableDuplicate,
 		isMultipleScope,
-		locale,
 		t,
 		onDirtyChange,
 	},
@@ -107,14 +106,13 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 		onDirtyChange(isDirty);
 	};
 
-	const initialObservation = useMemo(() => {
-		for (const s of item.students) {
-			if (s.observation != null) {
-				return s.observation[locale as 'es' | 'en'] ?? s.observation.es ?? '';
-			}
-		}
-		return '';
-	}, [item, locale]);
+	const initialObservation = useMemo<I18nValue>(() => {
+		const withObservation = item.students.find((s) => s.observation != null);
+		return {
+			es: withObservation?.observation?.es ?? '',
+			en: withObservation?.observation?.en ?? '',
+		};
+	}, [item]);
 
 	const isCapstone = item.rubric?.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 	const isCapstoneMultiple = isCapstone && isMultipleScope;

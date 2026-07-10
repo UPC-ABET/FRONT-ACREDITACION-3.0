@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Button, Card, Input, TableEmptyState, TextArea, Title } from '@/shared';
+import { Button, Card, I18nTextField, Input, TableEmptyState, Title } from '@/shared';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { useI18n } from '@/providers';
 import type { EnrolledStudentResponse } from '@/modules/academic';
 import type { Step1Data } from '../rubric-create-wizard/WizardStep1';
@@ -11,8 +12,8 @@ import { ProjectGroupSelect } from '../project-group-select/ProjectGroupSelect';
 
 export interface ProjectFormData {
 	code: string;
-	name: string;
-	description: string;
+	name: I18nValue;
+	description: I18nValue;
 	projectGroupId: number;
 	studentEnrollmentIds: number[];
 	evaluators: { professorId: number; evaluatorTypeId: number }[];
@@ -44,8 +45,8 @@ export function ProjectWizardStep2({
 	const loc = locale as 'es' | 'en';
 
 	const [code, setCode] = useState('');
-	const [name, setName] = useState('');
-	const [description, setDescription] = useState('');
+	const [name, setName] = useState<I18nValue>({});
+	const [description, setDescription] = useState<I18nValue>({});
 	const [projectGroupId, setProjectGroupId] = useState<number | undefined>(undefined);
 	const [groupError, setGroupError] = useState<string | undefined>(undefined);
 
@@ -66,8 +67,8 @@ export function ProjectWizardStep2({
 	const removeEvaluator = (idx: number) =>
 		setEvaluators((prev) => prev.filter((_, i) => i !== idx));
 
-	const canSubmit =
-		code.trim().length > 0 && name.trim().length > 0 && projectGroupId != null && !isSubmitting;
+	const hasName = Object.values(name).some((v) => v.trim().length > 0);
+	const canSubmit = code.trim().length > 0 && hasName && projectGroupId != null && !isSubmitting;
 
 	const handleSubmit = async () => {
 		if (projectGroupId == null) {
@@ -75,10 +76,14 @@ export function ProjectWizardStep2({
 			return;
 		}
 		if (!canSubmit) return;
+		const nameEs = name.es?.trim() || name.en?.trim() || '';
+		const nameEn = name.en?.trim() || nameEs;
+		const descEs = description.es?.trim() ?? '';
+		const descEn = description.en?.trim() ?? descEs;
 		await onSubmit({
 			code: code.trim(),
-			name: name.trim(),
-			description: description.trim(),
+			name: { es: nameEs, en: nameEn },
+			description: { es: descEs, en: descEn },
 			projectGroupId,
 			studentEnrollmentIds: selectedStudents.map((s) => s.studentSectionEnrollmentId),
 			evaluators: evaluators.map((e) => ({
@@ -99,23 +104,32 @@ export function ProjectWizardStep2({
 					</div>
 
 					<div className="space-y-4">
-						<Input
-							label={t('projects.create.step2.fieldCode')}
-							placeholder={t('projects.create.step2.fieldCodePlaceholder')}
-							value={code}
-							onChange={(e) => setCode(e.target.value)}
-						/>
-						<Input
+						<div className="space-y-2">
+							<label htmlFor="project-code" className="block text-base font-semibold text-zinc-900">
+								{t('projects.create.step2.fieldCode')}
+							</label>
+							<Input
+								id="project-code"
+								placeholder={t('projects.create.step2.fieldCodePlaceholder')}
+								value={code}
+								onChange={(e) => setCode(e.target.value)}
+							/>
+						</div>
+						<I18nTextField
+							as="input"
+							layout="row"
 							label={t('projects.create.step2.fieldName')}
 							placeholder={t('projects.create.step2.fieldNamePlaceholder')}
+							required
 							value={name}
-							onChange={(e) => setName(e.target.value)}
+							onChange={setName}
 						/>
-						<TextArea
+						<I18nTextField
+							layout="row"
 							label={t('projects.create.step2.fieldDesc')}
 							placeholder={t('projects.create.step2.fieldDescPlaceholder')}
 							value={description}
-							onChange={(e) => setDescription(e.target.value)}
+							onChange={setDescription}
 							rows={3}
 						/>
 						<ProjectGroupSelect

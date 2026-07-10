@@ -327,7 +327,6 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 							isReadOnly={isReadOnly}
 							disableDuplicate={careerIds.length > 1}
 							isMultipleScope={isMultiple}
-							locale={locale}
 							t={t}
 							onDirtyChange={(dirty) =>
 								handleDirtyChange(panel.studyPlanCourseId, panel.gradeTypeId, dirty)

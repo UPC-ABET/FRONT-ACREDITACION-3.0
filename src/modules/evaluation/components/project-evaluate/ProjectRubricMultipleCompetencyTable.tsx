@@ -4,7 +4,8 @@ import { forwardRef, useImperativeHandle, useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ExclamationTriangleIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import { Spinner } from '@/shared/components/ui';
+import { I18nTextField, Spinner } from '@/shared/components/ui';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
 import { useI18n } from '@/providers';
@@ -49,7 +50,7 @@ interface ProjectRubricMultipleCompetencyTableProps {
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
 	commissions?: CommissionRow[];
-	initialObservation?: string;
+	initialObservation?: I18nValue;
 	attendanceDirty?: boolean;
 }
 
@@ -86,8 +87,6 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		setTrackedRubricId(rubricId);
 		setActiveCommissionId(commissions[0]?.id ?? null);
 	}
-
-	const observationId = `observation-${rubricId}`;
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 	const [openOutcomeIds, setOpenOutcomeIds] = useState<Set<number>>(new Set());
@@ -383,22 +382,14 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 						</ul>
 					)}
 
-					<div>
-						<label htmlFor={observationId} className="mb-1 block text-sm font-medium text-zinc-700">
-							{t('projects.evaluate.rubric.observation')}
-							<span className="ml-1 font-normal text-zinc-400">
-								({t('projects.evaluate.rubric.observationOptional')})
-							</span>
-						</label>
-						<textarea
-							id={observationId}
-							value={observation}
-							onChange={(e) => handleObservationChange(e.target.value)}
-							placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
-							rows={3}
-							className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 transition-colors"
-						/>
-					</div>
+					<I18nTextField
+						layout="row"
+						label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
+						placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
+						value={observation}
+						onChange={handleObservationChange}
+						rows={3}
+					/>
 				</div>
 			)}
 		</div>

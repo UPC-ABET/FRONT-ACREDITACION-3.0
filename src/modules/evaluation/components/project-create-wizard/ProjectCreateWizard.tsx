@@ -35,8 +35,8 @@ export function ProjectCreateWizard() {
 		try {
 			const project = await createProjectFull.mutateAsync({
 				code: formData.code,
-				name: { es: formData.name, en: formData.name },
-				description: { es: formData.description, en: formData.description },
+				name: { es: formData.name.es ?? '', en: formData.name.en ?? '' },
+				description: { es: formData.description.es ?? '', en: formData.description.en ?? '' },
 				studyPlanCourseId: step1Data.studyPlanCourseId,
 				projectGroupId: formData.projectGroupId,
 				studentSectionEnrollmentIds: formData.studentEnrollmentIds,

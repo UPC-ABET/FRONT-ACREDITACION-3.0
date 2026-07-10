@@ -7,16 +7,17 @@ import {
 	Button,
 	Card,
 	DeleteConfirmDialog,
+	I18nTextField,
 	Input,
 	PageHeader,
 	Select,
 	TableEmptyState,
 	TableErrorState,
 	TableLoadingState,
-	TextArea,
 	Title,
 	Toast,
 } from '@/shared/components/ui';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { interpolate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import {
@@ -50,8 +51,8 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 
 	const [isEditingHeader, setIsEditingHeader] = useState(false);
 	const [draftCode, setDraftCode] = useState('');
-	const [draftName, setDraftName] = useState('');
-	const [draftDesc, setDraftDesc] = useState('');
+	const [draftName, setDraftName] = useState<I18nValue>({});
+	const [draftDesc, setDraftDesc] = useState<I18nValue>({});
 	const [draftGroupId, setDraftGroupId] = useState<number | undefined>(undefined);
 
 	const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -100,37 +101,39 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 
 	const enterEditMode = () => {
 		if (!data) return;
-		const loc = locale as 'es' | 'en';
 		setDraftCode(data.project.code);
-		setDraftName(data.project.name[loc] ?? data.project.name.es);
-		setDraftDesc(data.project.description?.[loc] ?? data.project.description?.es ?? '');
+		setDraftName({ es: data.project.name.es ?? '', en: data.project.name.en ?? '' });
+		setDraftDesc({
+			es: data.project.description?.es ?? '',
+			en: data.project.description?.en ?? '',
+		});
 		setDraftGroupId(data.project.projectGroup?.id);
 		setIsEditingHeader(true);
 	};
 
 	const handleSaveHeader = () => {
 		if (!data) return;
-		const loc = locale as 'es' | 'en';
-		const other = loc === 'es' ? 'en' : 'es';
 		const body: Parameters<typeof updateMutation.mutate>[0] = {};
 
 		if (draftCode.trim() !== data.project.code) {
 			body.code = draftCode.trim();
 		}
-		if (draftName.trim() !== (data.project.name[loc] ?? data.project.name.es)) {
-			body.name = { [loc]: draftName.trim(), [other]: data.project.name[other] } as {
-				es: string;
-				en: string;
-			};
+
+		const nameEs = draftName.es?.trim() || draftName.en?.trim() || '';
+		const nameEn = draftName.en?.trim() || nameEs;
+		if (nameEs !== (data.project.name.es ?? '') || nameEn !== (data.project.name.en ?? '')) {
+			body.name = { es: nameEs, en: nameEn };
 		}
+
+		const descEs = draftDesc.es?.trim() ?? '';
+		const descEn = draftDesc.en?.trim() || descEs;
 		if (
-			draftDesc.trim() !== (data.project.description?.[loc] ?? data.project.description?.es ?? '')
+			descEs !== (data.project.description?.es ?? '') ||
+			descEn !== (data.project.description?.en ?? '')
 		) {
-			body.description = {
-				[loc]: draftDesc.trim(),
-				[other]: data.project.description?.[other] ?? '',
-			} as { es: string; en: string };
+			body.description = { es: descEs, en: descEn };
 		}
+
 		if (draftGroupId !== data.project.projectGroup?.id) {
 			body.projectGroupId = draftGroupId ?? null;
 		}
@@ -182,37 +185,36 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				<Card>
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col gap-3">
-							<div className="flex flex-col gap-1">
-								<label className="text-xs font-medium text-zinc-500">
+							<div className="space-y-2">
+								<label
+									htmlFor="project-edit-code"
+									className="block text-base font-semibold text-zinc-900">
 									{t('projects.edit.header.fieldCode')}
 								</label>
 								<Input
+									id="project-edit-code"
 									value={draftCode}
 									onChange={(e) => setDraftCode(e.target.value)}
 									disabled={updateMutation.isPending}
 								/>
 							</div>
-							<div className="flex flex-col gap-1">
-								<label className="text-xs font-medium text-zinc-500">
-									{t('projects.edit.header.fieldName')}
-								</label>
-								<Input
-									value={draftName}
-									onChange={(e) => setDraftName(e.target.value)}
-									disabled={updateMutation.isPending}
-								/>
-							</div>
-							<div className="flex flex-col gap-1">
-								<label className="text-xs font-medium text-zinc-500">
-									{t('projects.edit.header.fieldDesc')}
-								</label>
-								<TextArea
-									value={draftDesc}
-									onChange={(e) => setDraftDesc(e.target.value)}
-									disabled={updateMutation.isPending}
-									rows={3}
-								/>
-							</div>
+							<I18nTextField
+								as="input"
+								layout="row"
+								label={t('projects.edit.header.fieldName')}
+								required
+								value={draftName}
+								onChange={setDraftName}
+								disabled={updateMutation.isPending}
+							/>
+							<I18nTextField
+								layout="row"
+								label={t('projects.edit.header.fieldDesc')}
+								value={draftDesc}
+								onChange={setDraftDesc}
+								rows={3}
+								disabled={updateMutation.isPending}
+							/>
 							<div className="flex flex-col gap-1">
 								<Select
 									label={t('projects.edit.header.fieldGroup')}

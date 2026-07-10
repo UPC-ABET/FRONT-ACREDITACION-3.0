@@ -2,6 +2,8 @@
 
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { I18nTextField } from '@/shared/components/ui';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
 import { useSingleCompetencyRubricTable } from '../../hooks/useSingleCompetencyRubricTable';
@@ -27,7 +29,7 @@ interface ProjectRubricSingleCompetencyTableProps {
 	readOnly?: boolean;
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
-	initialObservation?: string;
+	initialObservation?: I18nValue;
 	attendanceDirty?: boolean;
 }
 
@@ -91,8 +93,6 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		isPending,
 		handleSave,
 	]);
-
-	const observationId = `observation-${rubricId}`;
 
 	const [openQuestionIds, setOpenQuestionIds] = useState<Set<number>>(new Set());
 
@@ -273,22 +273,14 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 						]}
 					/>
 
-					<div>
-						<label htmlFor={observationId} className="mb-1 block text-sm font-medium text-zinc-700">
-							{t('projects.evaluate.rubric.observation')}
-							<span className="ml-1 font-normal text-zinc-400">
-								({t('projects.evaluate.rubric.observationOptional')})
-							</span>
-						</label>
-						<textarea
-							id={observationId}
-							value={observation}
-							onChange={(e) => handleObservationChange(e.target.value)}
-							placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
-							rows={3}
-							className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 transition-colors"
-						/>
-					</div>
+					<I18nTextField
+						layout="row"
+						label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
+						placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
+						value={observation}
+						onChange={handleObservationChange}
+						rows={3}
+					/>
 				</div>
 			)}
 		</div>

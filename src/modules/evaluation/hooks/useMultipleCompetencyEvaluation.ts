@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { useSubmitEvaluation } from './useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../types';
 
@@ -36,7 +37,7 @@ interface UseMultipleCompetencyEvaluationParams {
 	commissions: CommissionRow[];
 	activeCommissionId: number | null;
 	onDirtyChange?: (isDirty: boolean) => void;
-	initialObservation?: string;
+	initialObservation?: I18nValue;
 	/** True when the parent panel has unsaved attendance edits — these aren't tracked by this
 	 * hook's own isDirty, but must still unlock saving so they get submitted. */
 	attendanceDirty?: boolean;
@@ -60,8 +61,8 @@ export function useMultipleCompetencyEvaluation({
 }: UseMultipleCompetencyEvaluationParams) {
 	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
-	const [observation, setObservation] = useState(initialObservation ?? '');
-	const handleObservationChange = (value: string) => {
+	const [observation, setObservation] = useState<I18nValue>(initialObservation ?? {});
+	const handleObservationChange = (value: I18nValue) => {
 		markDirty();
 		setObservation(value);
 	};
@@ -242,12 +243,12 @@ export function useMultipleCompetencyEvaluation({
 		const entries = [...studentScores.entries()];
 		if (entries.length === 0) return;
 
-		const trimmedObservation = observation.trim();
+		const observationEs = observation.es?.trim() ?? '';
+		const observationEn = observation.en?.trim() ?? '';
 		// Stored/read as a localized record ({ es, en }); keep the write shape in sync with
-		// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textarea.
-		const observationPayload = trimmedObservation
-			? { es: trimmedObservation, en: trimmedObservation }
-			: undefined;
+		// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textareas.
+		const observationPayload =
+			observationEs || observationEn ? { es: observationEs, en: observationEn } : undefined;
 
 		// Errors propagate to the caller, which owns the save-all feedback dialogs.
 		await Promise.all(
