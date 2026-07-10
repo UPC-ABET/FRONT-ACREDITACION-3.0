@@ -33,10 +33,12 @@ export function useSingleCompetencyRubricTable({
 	onDirtyChange,
 }: UseSingleCompetencyRubricTableOptions) {
 	const { t, locale } = useI18n();
-	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
+	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 	const [isDirty, setIsDirty] = useState(false);
+	const [showSuccessModal, setShowSuccessModal] = useState(false);
+	const closeSuccessModal = () => setShowSuccessModal(false);
 
 	const markDirty = () => {
 		if (!isDirty) {
@@ -145,7 +147,7 @@ export function useSingleCompetencyRubricTable({
 		return false;
 	}, [questions, students.length, duplicateMode, scores, dupScores, ranges, msgNaN, msgRange]);
 
-	const canSave = allFilled && !hasErrors;
+	const canSave = allFilled && !hasErrors && isDirty;
 
 	const handleScore = (qId: number, stIdx: number, val: string): void => {
 		markDirty();
@@ -164,7 +166,7 @@ export function useSingleCompetencyRubricTable({
 			return score >= min && score <= max;
 		});
 
-	const handleSave = (): void => {
+	const handleSave = async (): Promise<void> => {
 		const studentPayloads = new Map<number, CriteriaScoreEntry[]>();
 
 		for (const q of questions) {
@@ -226,28 +228,26 @@ export function useSingleCompetencyRubricTable({
 		}
 
 		const entries = [...studentPayloads.entries()].filter(([, s]) => s.length > 0);
-		let remaining = entries.length;
+		if (entries.length === 0) return;
 
-		for (const [projectStudentId, criteriaScores] of entries) {
-			submitEvaluation(
-				{
-					projectStudentId,
-					projectEvaluatorId: evaluatorId,
-					rubricId: rubricId,
-					observation: { es: '', en: '' },
-					scores: criteriaScores,
-					qualificationStatusTypeId: qualifStatuses[projectStudentId],
-				},
-				{
-					onSuccess: () => {
-						remaining -= 1;
-						if (remaining === 0) {
-							setIsDirty(false);
-							onDirtyChange?.(false);
-						}
-					},
-				},
+		try {
+			await Promise.all(
+				entries.map(([projectStudentId, criteriaScores]) =>
+					submitEvaluation({
+						projectStudentId,
+						projectEvaluatorId: evaluatorId,
+						rubricId: rubricId,
+						observation: { es: '', en: '' },
+						scores: criteriaScores,
+						qualificationStatusTypeId: qualifStatuses[projectStudentId],
+					}),
+				),
 			);
+			setIsDirty(false);
+			onDirtyChange?.(false);
+			setShowSuccessModal(true);
+		} catch {
+			// Errors are surfaced via the mutation's own error state; nothing further to do here.
 		}
 	};
 
@@ -265,6 +265,9 @@ export function useSingleCompetencyRubricTable({
 		allFilled,
 		hasErrors,
 		canSave,
+		isDirty,
+		showSuccessModal,
+		closeSuccessModal,
 		handleScore,
 		handleDupScore,
 		handleSave,

@@ -52,8 +52,10 @@ export function useMultipleCompetencyEvaluation({
 	activeCommissionId,
 	onDirtyChange,
 }: UseMultipleCompetencyEvaluationParams) {
-	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
+	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
+	const [showSuccessModal, setShowSuccessModal] = useState(false);
+	const closeSuccessModal = () => setShowSuccessModal(false);
 
 	const markDirty = () => {
 		if (!isDirty) {
@@ -200,7 +202,7 @@ export function useMultipleCompetencyEvaluation({
 		}));
 	};
 
-	const handleSave = () => {
+	const handleSave = async (): Promise<void> => {
 		const studentScores = new Map<
 			number,
 			{ rubricQuestionCriteriaId: number; score: number; commentaries: Record<string, string> }[]
@@ -228,30 +230,30 @@ export function useMultipleCompetencyEvaluation({
 		}
 
 		const entries = [...studentScores.entries()];
-		let remaining = entries.length;
+		if (entries.length === 0) return;
 
-		for (const [projectStudentId, scores] of entries) {
-			submitEvaluation(
-				{
-					projectStudentId: projectStudentId,
-					projectEvaluatorId: evaluatorId,
-					rubricId: rubricId,
-					observation: { es: '', en: '' },
-					scores,
-					qualificationStatusTypeId: qualifStatuses[projectStudentId],
-				},
-				{
-					onSuccess: () => {
-						remaining -= 1;
-						if (remaining === 0) {
-							setIsDirty(false);
-							onDirtyChange?.(false);
-						}
-					},
-				},
+		try {
+			await Promise.all(
+				entries.map(([projectStudentId, scores]) =>
+					submitEvaluation({
+						projectStudentId,
+						projectEvaluatorId: evaluatorId,
+						rubricId: rubricId,
+						observation: { es: '', en: '' },
+						scores,
+						qualificationStatusTypeId: qualifStatuses[projectStudentId],
+					}),
+				),
 			);
+			setIsDirty(false);
+			onDirtyChange?.(false);
+			setShowSuccessModal(true);
+		} catch {
+			// Errors are surfaced via the mutation's own error state; nothing further to do here.
 		}
 	};
+
+	const canSave = allFilled && isDirty;
 
 	return {
 		isPending,
@@ -262,6 +264,10 @@ export function useMultipleCompetencyEvaluation({
 		hasMissingStatus,
 		commissionFillStatus,
 		allFilled,
+		canSave,
+		isDirty,
+		showSuccessModal,
+		closeSuccessModal,
 		handleSelect,
 		handleDupSelect,
 		handleSave,

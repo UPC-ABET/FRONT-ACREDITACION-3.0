@@ -2134,7 +2134,9 @@
 				"readOnly": "Solo lectura",
 				"saving": "Guardando...",
 				"noRubric": "No hay rúbrica configurada para esta carrera.",
-				"missingStatus": "Selecciona la asistencia de todos los estudiantes para continuar."
+				"missingStatus": "Selecciona la asistencia de todos los estudiantes para continuar.",
+				"saveSuccessTitle": "Calificación guardada",
+				"saveSuccessMessage": "La calificación del proyecto se guardó correctamente."
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",

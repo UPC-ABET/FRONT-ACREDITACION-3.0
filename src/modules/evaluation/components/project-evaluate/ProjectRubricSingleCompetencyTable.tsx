@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { SuccessDialog } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
 import { useSingleCompetencyRubricTable } from '../../hooks/useSingleCompetencyRubricTable';
@@ -51,6 +52,8 @@ export function ProjectRubricSingleCompetencyTable({
 		allFilled,
 		hasErrors,
 		canSave,
+		showSuccessModal,
+		closeSuccessModal,
 		handleScore,
 		handleDupScore,
 		handleSave,
@@ -248,7 +251,7 @@ export function ProjectRubricSingleCompetencyTable({
 						<button
 							type="button"
 							disabled={!canSave || isPending || readOnly}
-							onClick={handleSave}
+							onClick={() => void handleSave()}
 							className={cn(
 								'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
 								canSave && !isPending && !readOnly
@@ -268,6 +271,13 @@ export function ProjectRubricSingleCompetencyTable({
 					</div>
 				</div>
 			)}
+
+			<SuccessDialog
+				isOpen={showSuccessModal}
+				onClose={closeSuccessModal}
+				title={t('projects.evaluate.rubric.saveSuccessTitle')}
+				message={t('projects.evaluate.rubric.saveSuccessMessage')}
+			/>
 		</div>
 	);
 }

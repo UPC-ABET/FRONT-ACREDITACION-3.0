@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ExclamationTriangleIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import { Spinner } from '@/shared/components/ui';
+import { Spinner, SuccessDialog } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
 import { useI18n } from '@/providers';
@@ -129,6 +129,9 @@ export function ProjectRubricMultipleCompetencyTable({
 		hasMissingStatus,
 		commissionFillStatus,
 		allFilled,
+		canSave,
+		showSuccessModal,
+		closeSuccessModal,
 		handleSelect,
 		handleDupSelect,
 		handleSave,
@@ -356,14 +359,14 @@ export function ProjectRubricMultipleCompetencyTable({
 					<div className="flex justify-end">
 						<button
 							type="button"
-							disabled={!allFilled || isPending || readOnly}
+							disabled={!canSave || isPending || readOnly}
 							className={cn(
 								'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-								allFilled && !isPending && !readOnly
+								canSave && !isPending && !readOnly
 									? 'bg-red-600 text-white hover:bg-red-700'
 									: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
 							)}
-							onClick={handleSave}>
+							onClick={() => void handleSave()}>
 							{readOnly
 								? t('projects.evaluate.rubric.readOnly')
 								: t('projects.evaluate.rubric.saveButton')}
@@ -377,6 +380,13 @@ export function ProjectRubricMultipleCompetencyTable({
 					</div>
 				</div>
 			)}
+
+			<SuccessDialog
+				isOpen={showSuccessModal}
+				onClose={closeSuccessModal}
+				title={t('projects.evaluate.rubric.saveSuccessTitle')}
+				message={t('projects.evaluate.rubric.saveSuccessMessage')}
+			/>
 		</div>
 	);
 }

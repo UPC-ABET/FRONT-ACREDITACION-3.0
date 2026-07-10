@@ -2134,7 +2134,9 @@
 				"readOnly": "Read only",
 				"saving": "Saving...",
 				"noRubric": "No rubric configured for this career.",
-				"missingStatus": "Select the attendance status for all students to continue."
+				"missingStatus": "Select the attendance status for all students to continue.",
+				"saveSuccessTitle": "Grade saved",
+				"saveSuccessMessage": "The project grade was saved successfully."
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",
