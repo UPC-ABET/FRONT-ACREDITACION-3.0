@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import { SuccessDialog } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
 import { useSingleCompetencyRubricTable } from '../../hooks/useSingleCompetencyRubricTable';
-import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
+import type {
+	RubricQuestionDetailsResponse,
+	ProjectDetailsStudentResponse,
+	RubricTableHandle,
+} from '../../types';
 import { DuplicateGradesToggle } from './DuplicateGradesToggle';
 import { SingleCompetencyRubricRow } from './SingleCompetencyRubricRow';
 import { SingleCompetencyScoreInput } from './SingleCompetencyScoreInput';
@@ -27,19 +30,25 @@ interface ProjectRubricSingleCompetencyTableProps {
 	initialObservation?: string;
 }
 
-export function ProjectRubricSingleCompetencyTable({
-	questions,
-	students,
-	evaluatorId,
-	rubricId,
-	projectId,
-	qualifStatuses,
-	nrNaTypeIds,
-	readOnly = false,
-	disableDuplicate = false,
-	onDirtyChange,
-	initialObservation,
-}: ProjectRubricSingleCompetencyTableProps) {
+export const ProjectRubricSingleCompetencyTable = forwardRef<
+	RubricTableHandle,
+	ProjectRubricSingleCompetencyTableProps
+>(function ProjectRubricSingleCompetencyTable(
+	{
+		questions,
+		students,
+		evaluatorId,
+		rubricId,
+		projectId,
+		qualifStatuses,
+		nrNaTypeIds,
+		readOnly = false,
+		disableDuplicate = false,
+		onDirtyChange,
+		initialObservation,
+	},
+	ref,
+) {
 	const {
 		locale,
 		isPending,
@@ -54,8 +63,7 @@ export function ProjectRubricSingleCompetencyTable({
 		allFilled,
 		hasErrors,
 		canSave,
-		showSuccessModal,
-		closeSuccessModal,
+		isDirty,
 		handleScore,
 		handleDupScore,
 		handleSave,
@@ -73,6 +81,15 @@ export function ProjectRubricSingleCompetencyTable({
 		onDirtyChange,
 		initialObservation,
 	});
+
+	useImperativeHandle(ref, () => ({ isDirty, canSave, isPending, save: handleSave }), [
+		isDirty,
+		canSave,
+		isPending,
+		handleSave,
+	]);
+
+	const observationId = `observation-${rubricId}`;
 
 	const [openQuestionIds, setOpenQuestionIds] = useState<Set<number>>(new Set());
 
@@ -254,14 +271,14 @@ export function ProjectRubricSingleCompetencyTable({
 					/>
 
 					<div>
-						<label htmlFor="observation" className="mb-1 block text-sm font-medium text-zinc-700">
+						<label htmlFor={observationId} className="mb-1 block text-sm font-medium text-zinc-700">
 							{t('projects.evaluate.rubric.observation')}
 							<span className="ml-1 font-normal text-zinc-400">
 								({t('projects.evaluate.rubric.observationOptional')})
 							</span>
 						</label>
 						<textarea
-							id="observation"
+							id={observationId}
 							value={observation}
 							onChange={(e) => handleObservationChange(e.target.value)}
 							placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
@@ -269,38 +286,8 @@ export function ProjectRubricSingleCompetencyTable({
 							className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 transition-colors"
 						/>
 					</div>
-
-					<div className="flex justify-end">
-						<button
-							type="button"
-							disabled={!canSave || isPending || readOnly}
-							onClick={() => void handleSave()}
-							className={cn(
-								'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-								canSave && !isPending && !readOnly
-									? 'bg-red-600 text-white hover:bg-red-700'
-									: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
-							)}>
-							{readOnly
-								? t('projects.evaluate.rubric.readOnly')
-								: t('projects.evaluate.rubric.saveButton')}
-							{isPending && (
-								<span
-									aria-hidden="true"
-									className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-0.125em]"
-								/>
-							)}
-						</button>
-					</div>
 				</div>
 			)}
-
-			<SuccessDialog
-				isOpen={showSuccessModal}
-				onClose={closeSuccessModal}
-				title={t('projects.evaluate.rubric.saveSuccessTitle')}
-				message={t('projects.evaluate.rubric.saveSuccessMessage')}
-			/>
 		</div>
 	);
-}
+});

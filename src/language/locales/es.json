@@ -2121,6 +2121,14 @@
 			"tabs": {
 				"unsavedChanges": "Cambios sin guardar"
 			},
+			"saveAll": {
+				"button": "Guardar todo",
+				"successTitle": "Calificaciones guardadas",
+				"successMessage": "Se guardaron correctamente las calificaciones de todas las pestañas con cambios.",
+				"incompleteWarning": "No se guardaron por estar incompletas o con errores",
+				"errorTitle": "No se pudo guardar",
+				"errorMessage": "Ocurrió un error al guardar las calificaciones. Tus cambios siguen en pantalla; vuelve a intentarlo."
+			},
 			"rubric": {
 				"question": "Pregunta",
 				"criteria": "Criterios",

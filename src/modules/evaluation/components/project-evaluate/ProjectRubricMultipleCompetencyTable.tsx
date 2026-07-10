@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { forwardRef, useImperativeHandle, useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ExclamationTriangleIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import { Spinner, SuccessDialog } from '@/shared/components/ui';
+import { Spinner } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
 import { useI18n } from '@/providers';
@@ -12,7 +12,11 @@ import { performanceLevelsService } from '@/modules/academic/services';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import { useMultipleCompetencyEvaluation } from '../../hooks/useMultipleCompetencyEvaluation';
-import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
+import type {
+	RubricQuestionDetailsResponse,
+	ProjectDetailsStudentResponse,
+	RubricTableHandle,
+} from '../../types';
 import { MultipleCompetencyRubricRow } from './MultipleCompetencyRubricRow';
 import { DuplicateGradesToggle } from './DuplicateGradesToggle';
 import { PLSelector, type PerformanceLevel } from './MultipleCompetencyPerformanceLevelSelector';
@@ -48,22 +52,28 @@ interface ProjectRubricMultipleCompetencyTableProps {
 	initialObservation?: string;
 }
 
-export function ProjectRubricMultipleCompetencyTable({
-	outcomes,
-	questions,
-	students,
-	academicPeriodId,
-	evaluatorId,
-	rubricId,
-	projectId,
-	qualifStatuses,
-	nrNaTypeIds,
-	readOnly = false,
-	disableDuplicate = false,
-	onDirtyChange,
-	commissions = [],
-	initialObservation,
-}: ProjectRubricMultipleCompetencyTableProps) {
+export const ProjectRubricMultipleCompetencyTable = forwardRef<
+	RubricTableHandle,
+	ProjectRubricMultipleCompetencyTableProps
+>(function ProjectRubricMultipleCompetencyTable(
+	{
+		outcomes,
+		questions,
+		students,
+		academicPeriodId,
+		evaluatorId,
+		rubricId,
+		projectId,
+		qualifStatuses,
+		nrNaTypeIds,
+		readOnly = false,
+		disableDuplicate = false,
+		onDirtyChange,
+		commissions = [],
+		initialObservation,
+	},
+	ref,
+) {
 	const { t, locale } = useI18n();
 
 	const [activeCommissionId, setActiveCommissionId] = useState<number | null>(
@@ -74,6 +84,8 @@ export function ProjectRubricMultipleCompetencyTable({
 		setTrackedRubricId(rubricId);
 		setActiveCommissionId(commissions[0]?.id ?? null);
 	}
+
+	const observationId = `observation-${rubricId}`;
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 	const [openOutcomeIds, setOpenOutcomeIds] = useState<Set<number>>(new Set());
@@ -132,8 +144,7 @@ export function ProjectRubricMultipleCompetencyTable({
 		commissionFillStatus,
 		allFilled,
 		canSave,
-		showSuccessModal,
-		closeSuccessModal,
+		isDirty,
 		handleSelect,
 		handleDupSelect,
 		handleSave,
@@ -154,6 +165,13 @@ export function ProjectRubricMultipleCompetencyTable({
 		onDirtyChange,
 		initialObservation,
 	});
+
+	useImperativeHandle(ref, () => ({ isDirty, canSave, isPending, save: handleSave }), [
+		isDirty,
+		canSave,
+		isPending,
+		handleSave,
+	]);
 
 	return (
 		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
@@ -363,14 +381,14 @@ export function ProjectRubricMultipleCompetencyTable({
 					)}
 
 					<div>
-						<label htmlFor="observation" className="mb-1 block text-sm font-medium text-zinc-700">
+						<label htmlFor={observationId} className="mb-1 block text-sm font-medium text-zinc-700">
 							{t('projects.evaluate.rubric.observation')}
 							<span className="ml-1 font-normal text-zinc-400">
 								({t('projects.evaluate.rubric.observationOptional')})
 							</span>
 						</label>
 						<textarea
-							id="observation"
+							id={observationId}
 							value={observation}
 							onChange={(e) => handleObservationChange(e.target.value)}
 							placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
@@ -378,38 +396,8 @@ export function ProjectRubricMultipleCompetencyTable({
 							className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-200 transition-colors"
 						/>
 					</div>
-
-					<div className="flex justify-end">
-						<button
-							type="button"
-							disabled={!canSave || isPending || readOnly}
-							className={cn(
-								'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-								canSave && !isPending && !readOnly
-									? 'bg-red-600 text-white hover:bg-red-700'
-									: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
-							)}
-							onClick={() => void handleSave()}>
-							{readOnly
-								? t('projects.evaluate.rubric.readOnly')
-								: t('projects.evaluate.rubric.saveButton')}
-							{isPending && (
-								<span
-									aria-hidden="true"
-									className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-0.125em]"
-								/>
-							)}
-						</button>
-					</div>
 				</div>
 			)}
-
-			<SuccessDialog
-				isOpen={showSuccessModal}
-				onClose={closeSuccessModal}
-				title={t('projects.evaluate.rubric.saveSuccessTitle')}
-				message={t('projects.evaluate.rubric.saveSuccessMessage')}
-			/>
 		</div>
 	);
-}
+});

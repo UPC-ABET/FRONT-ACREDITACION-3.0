@@ -39,8 +39,6 @@ export function useSingleCompetencyRubricTable({
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 	const [isDirty, setIsDirty] = useState(false);
-	const [showSuccessModal, setShowSuccessModal] = useState(false);
-	const closeSuccessModal = () => setShowSuccessModal(false);
 	const [observation, setObservation] = useState(initialObservation ?? '');
 	const handleObservationChange = (value: string) => {
 		markDirty();
@@ -89,10 +87,12 @@ export function useSingleCompetencyRubricTable({
 	const [scores, setScores] = useState<Scores>(initialScores);
 	const [dupScores, setDupScores] = useState<DupScores>(initialDupScores);
 
+	// Reseed from the server only while there is nothing unsaved to overwrite: a refetch
+	// triggered by saving another tab must not discard this tab's in-progress edits.
 	const [trackedInitialScores, setTrackedInitialScores] = useState(initialScores);
 	if (initialScores !== trackedInitialScores) {
 		setTrackedInitialScores(initialScores);
-		setScores(initialScores);
+		if (!isDirty) setScores(initialScores);
 	}
 
 	const ranges = useMemo(() => {
@@ -237,25 +237,21 @@ export function useSingleCompetencyRubricTable({
 		const entries = [...studentPayloads.entries()].filter(([, s]) => s.length > 0);
 		if (entries.length === 0) return;
 
-		try {
-			await Promise.all(
-				entries.map(([projectStudentId, criteriaScores]) =>
-					submitEvaluation({
-						projectStudentId,
-						projectEvaluatorId: evaluatorId,
-						rubricId: rubricId,
-						observation: observation.trim() || undefined,
-						scores: criteriaScores,
-						qualificationStatusTypeId: qualifStatuses[projectStudentId],
-					}),
-				),
-			);
-			setIsDirty(false);
-			onDirtyChange?.(false);
-			setShowSuccessModal(true);
-		} catch {
-			// Errors are surfaced via the mutation's own error state; nothing further to do here.
-		}
+		// Errors propagate to the caller, which owns the save-all feedback dialogs.
+		await Promise.all(
+			entries.map(([projectStudentId, criteriaScores]) =>
+				submitEvaluation({
+					projectStudentId,
+					projectEvaluatorId: evaluatorId,
+					rubricId: rubricId,
+					observation: observation.trim() || undefined,
+					scores: criteriaScores,
+					qualificationStatusTypeId: qualifStatuses[projectStudentId],
+				}),
+			),
+		);
+		setIsDirty(false);
+		onDirtyChange?.(false);
 	};
 
 	return {
@@ -273,8 +269,6 @@ export function useSingleCompetencyRubricTable({
 		hasErrors,
 		canSave,
 		isDirty,
-		showSuccessModal,
-		closeSuccessModal,
 		handleScore,
 		handleDupScore,
 		handleSave,

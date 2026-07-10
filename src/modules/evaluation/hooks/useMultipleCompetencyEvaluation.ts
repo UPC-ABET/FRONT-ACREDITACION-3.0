@@ -56,8 +56,6 @@ export function useMultipleCompetencyEvaluation({
 }: UseMultipleCompetencyEvaluationParams) {
 	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
-	const [showSuccessModal, setShowSuccessModal] = useState(false);
-	const closeSuccessModal = () => setShowSuccessModal(false);
 	const [observation, setObservation] = useState(initialObservation ?? '');
 	const handleObservationChange = (value: string) => {
 		markDirty();
@@ -121,17 +119,18 @@ export function useMultipleCompetencyEvaluation({
 	const [selections, setSelections] = useState<Selections>(initialSelections);
 	const [dupSelections, setDupSelections] = useState<DupSelections>(initialDupSelections);
 
-	// Sync when data arrives after mount (React Query stale-while-revalidate)
+	// Sync when data arrives after mount (React Query stale-while-revalidate), but never
+	// overwrite unsaved edits — a refetch caused by saving another tab must leave them intact.
 	const [trackedInitialSelections, setTrackedInitialSelections] = useState(initialSelections);
 	if (initialSelections !== trackedInitialSelections) {
 		setTrackedInitialSelections(initialSelections);
-		setSelections(initialSelections);
+		if (!isDirty) setSelections(initialSelections);
 	}
 	const [trackedInitialDupSelections, setTrackedInitialDupSelections] =
 		useState(initialDupSelections);
 	if (initialDupSelections !== trackedInitialDupSelections) {
 		setTrackedInitialDupSelections(initialDupSelections);
-		setDupSelections(initialDupSelections);
+		if (!isDirty) setDupSelections(initialDupSelections);
 	}
 
 	const hasMissingStatus = useMemo(
@@ -239,25 +238,21 @@ export function useMultipleCompetencyEvaluation({
 		const entries = [...studentScores.entries()];
 		if (entries.length === 0) return;
 
-		try {
-			await Promise.all(
-				entries.map(([projectStudentId, scores]) =>
-					submitEvaluation({
-						projectStudentId,
-						projectEvaluatorId: evaluatorId,
-						rubricId: rubricId,
-						observation: observation.trim() || undefined,
-						scores,
-						qualificationStatusTypeId: qualifStatuses[projectStudentId],
-					}),
-				),
-			);
-			setIsDirty(false);
-			onDirtyChange?.(false);
-			setShowSuccessModal(true);
-		} catch {
-			// Errors are surfaced via the mutation's own error state; nothing further to do here.
-		}
+		// Errors propagate to the caller, which owns the save-all feedback dialogs.
+		await Promise.all(
+			entries.map(([projectStudentId, scores]) =>
+				submitEvaluation({
+					projectStudentId,
+					projectEvaluatorId: evaluatorId,
+					rubricId: rubricId,
+					observation: observation.trim() || undefined,
+					scores,
+					qualificationStatusTypeId: qualifStatuses[projectStudentId],
+				}),
+			),
+		);
+		setIsDirty(false);
+		onDirtyChange?.(false);
 	};
 
 	const canSave = allFilled && isDirty;
@@ -273,8 +268,6 @@ export function useMultipleCompetencyEvaluation({
 		allFilled,
 		canSave,
 		isDirty,
-		showSuccessModal,
-		closeSuccessModal,
 		handleSelect,
 		handleDupSelect,
 		handleSave,

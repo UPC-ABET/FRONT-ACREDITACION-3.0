@@ -338,6 +338,13 @@ export type ProjectDetailsResponse = {
 	}>;
 };
 
+export type RubricTableHandle = {
+	isDirty: boolean;
+	canSave: boolean;
+	isPending: boolean;
+	save: () => Promise<void>;
+};
+
 export type ProjectEvaluatorResponse = {
 	id: number;
 	extra?: Record<string, unknown>;
