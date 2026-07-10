@@ -137,6 +137,7 @@ interface DataTableProps<TData, TValue> {
 	emptyMessage?: string;
 	tableClassName?: string;
 	'aria-label'?: string;
+	getRowClassName?: (row: TData) => string | undefined;
 }
 
 const SKELETON_ROW_COUNT = 5;
@@ -162,6 +163,7 @@ export function DataTable<TData, TValue>({
 	emptyMessage,
 	tableClassName,
 	'aria-label': ariaLabel,
+	getRowClassName,
 }: DataTableProps<TData, TValue>) {
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [globalFilter, setGlobalFilter] = React.useState('');
@@ -343,7 +345,7 @@ export function DataTable<TData, TValue>({
 						</TableRow>
 					) : hasRows ? (
 						table.getRowModel().rows.map((row) => (
-							<TableRow key={row.id}>
+							<TableRow key={row.id} className={getRowClassName?.(row.original)}>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id} className={cell.column.columnDef.meta?.cellClassName}>
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}

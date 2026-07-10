@@ -254,6 +254,11 @@ export function GradeProjectsPage() {
 				<DataTable
 					columns={columns}
 					data={projects}
+					getRowClassName={(project) =>
+						project.evaluationDate
+							? 'graded-row !bg-emerald-50 [&.graded-row:hover]:!bg-emerald-100/70'
+							: undefined
+					}
 					isLoading={isLoadingProjects}
 					errorMessage={
 						isErrorProjects
