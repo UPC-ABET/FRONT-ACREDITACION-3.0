@@ -168,7 +168,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 	// The evaluation covers all students on the project regardless of career, so there is a
 	// single shared observation — not one per career/gradeType tab.
-	const initialObservation = getInitialObservation(rubrics);
+	const initialObservation = useMemo(() => getInitialObservation(rubrics), [rubrics]);
 
 	const [observation, setObservation] = useState<I18nValue>(initialObservation);
 	const [observationDirty, setObservationDirty] = useState(false);
