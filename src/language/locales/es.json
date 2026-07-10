@@ -2124,8 +2124,7 @@
 			"saveAll": {
 				"button": "Guardar",
 				"successTitle": "Calificaciones guardadas",
-				"successMessage": "Se guardaron correctamente las calificaciones de todas las pestañas con cambios.",
-				"incompleteWarning": "No se guardaron por estar incompletas o con errores",
+				"successMessage": "Se guardaron correctamente las calificaciones.",
 				"errorTitle": "No se pudo guardar",
 				"errorMessage": "Ocurrió un error al guardar las calificaciones. Tus cambios siguen en pantalla; vuelve a intentarlo."
 			},

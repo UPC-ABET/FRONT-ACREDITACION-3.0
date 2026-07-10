@@ -2124,8 +2124,7 @@
 			"saveAll": {
 				"button": "Save",
 				"successTitle": "Grades saved",
-				"successMessage": "Grades for all changed tabs were saved successfully.",
-				"incompleteWarning": "Not saved because they are incomplete or have errors",
+				"successMessage": "Grades were saved successfully.",
 				"errorTitle": "Could not save",
 				"errorMessage": "An error occurred while saving the grades. Your changes are still on screen; please try again."
 			},

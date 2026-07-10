@@ -32,6 +32,13 @@ interface ProjectEvaluateRubricPanelProps {
 	isMultipleScope: boolean;
 	t: (key: string) => string;
 	onDirtyChange: (isDirty: boolean) => void;
+	/** Shared across every panel — the evaluation covers all students on the project regardless
+	 * of career, so there is a single observation, owned and edited by the page. */
+	observation: I18nValue;
+	observationDirty: boolean;
+	/** Reports this rubric's validation messages (same text as before) so the page can render
+	 * them once, aggregated across every career/gradeType, instead of nested per rubric. */
+	onIncompleteChange?: (items: { message: string; type: 'warning' | 'error' }[]) => void;
 }
 
 export const ProjectEvaluateRubricPanel = forwardRef<
@@ -53,6 +60,9 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 		isMultipleScope,
 		t,
 		onDirtyChange,
+		observation,
+		observationDirty,
+		onIncompleteChange,
 	},
 	ref,
 ) {
@@ -105,14 +115,6 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 		if (!isDirty) setHasLocalStatusEdits(false);
 		onDirtyChange(isDirty);
 	};
-
-	const initialObservation = useMemo<I18nValue>(() => {
-		const withObservation = item.students.find((s) => s.observation != null);
-		return {
-			es: withObservation?.observation?.es ?? '',
-			en: withObservation?.observation?.en ?? '',
-		};
-	}, [item]);
 
 	const isCapstone = item.rubric?.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 	const isCapstoneMultiple = isCapstone && isMultipleScope;
@@ -221,8 +223,9 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 					disableDuplicate={disableDuplicate}
 					onDirtyChange={handleDirtyChange}
 					commissions={item.commissions}
-					initialObservation={initialObservation}
-					attendanceDirty={hasLocalStatusEdits}
+					observation={observation}
+					attendanceDirty={hasLocalStatusEdits || observationDirty}
+					onIncompleteChange={onIncompleteChange}
 				/>
 			) : item.questions.length > 0 ? (
 				<ProjectRubricSingleCompetencyTable
@@ -237,8 +240,9 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 					readOnly={isReadOnly}
 					disableDuplicate={disableDuplicate}
 					onDirtyChange={handleDirtyChange}
-					initialObservation={initialObservation}
-					attendanceDirty={hasLocalStatusEdits}
+					observation={observation}
+					attendanceDirty={hasLocalStatusEdits || observationDirty}
+					onIncompleteChange={onIncompleteChange}
 				/>
 			) : null}
 		</div>

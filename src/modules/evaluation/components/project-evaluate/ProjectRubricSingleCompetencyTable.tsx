@@ -1,8 +1,7 @@
 'use client';
 
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import { I18nTextField } from '@/shared/components/ui';
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
@@ -15,7 +14,6 @@ import type {
 import { DuplicateGradesToggle } from './DuplicateGradesToggle';
 import { SingleCompetencyRubricRow } from './SingleCompetencyRubricRow';
 import { SingleCompetencyScoreInput } from './SingleCompetencyScoreInput';
-import { SingleCompetencyValidationMessages } from './SingleCompetencyValidationMessages';
 import { fmtNum, validateScore } from './singleCompetencyRubricUtils';
 
 interface ProjectRubricSingleCompetencyTableProps {
@@ -29,8 +27,11 @@ interface ProjectRubricSingleCompetencyTableProps {
 	readOnly?: boolean;
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
-	initialObservation?: I18nValue;
+	observation: I18nValue;
 	attendanceDirty?: boolean;
+	/** Reports this rubric's validation messages (same text as before) so the page can render
+	 * them once, aggregated across every career/gradeType, instead of nested per rubric. */
+	onIncompleteChange?: (items: { message: string; type: 'warning' | 'error' }[]) => void;
 }
 
 export const ProjectRubricSingleCompetencyTable = forwardRef<
@@ -48,8 +49,9 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		readOnly = false,
 		disableDuplicate = false,
 		onDirtyChange,
-		initialObservation,
+		observation,
 		attendanceDirty,
+		onIncompleteChange,
 	},
 	ref,
 ) {
@@ -71,8 +73,6 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		handleScore,
 		handleDupScore,
 		handleSave,
-		observation,
-		handleObservationChange,
 		t,
 	} = useSingleCompetencyRubricTable({
 		questions,
@@ -83,7 +83,7 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		qualifStatuses,
 		nrNaTypeIds,
 		onDirtyChange,
-		initialObservation,
+		observation,
 		attendanceDirty,
 	});
 
@@ -93,6 +93,22 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		isPending,
 		handleSave,
 	]);
+
+	useEffect(() => {
+		if (readOnly) return;
+		const items: { message: string; type: 'warning' | 'error' }[] = [];
+		if (hasMissingStatus) {
+			items.push({ message: t('projects.evaluate.rubric.missingStatus'), type: 'warning' });
+		}
+		if (!allFilled && !hasMissingStatus) {
+			items.push({ message: t('projects.evaluate.rubric.fillAll'), type: 'warning' });
+		}
+		if (hasErrors) {
+			items.push({ message: t('projects.evaluate.rubric.errorRange'), type: 'error' });
+		}
+		onIncompleteChange?.(items);
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- onIncompleteChange is a page-level setter; including it would re-fire on every page render
+	}, [hasMissingStatus, allFilled, hasErrors, readOnly, t]);
 
 	const [openQuestionIds, setOpenQuestionIds] = useState<Set<number>>(new Set());
 
@@ -251,38 +267,6 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 					);
 				})}
 			</div>
-
-			{!readOnly && (
-				<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
-					<SingleCompetencyValidationMessages
-						items={[
-							...(hasMissingStatus
-								? [
-										{
-											message: t('projects.evaluate.rubric.missingStatus'),
-											type: 'warning' as const,
-										},
-									]
-								: []),
-							...(!allFilled && !hasMissingStatus
-								? [{ message: t('projects.evaluate.rubric.fillAll'), type: 'warning' as const }]
-								: []),
-							...(hasErrors
-								? [{ message: t('projects.evaluate.rubric.errorRange'), type: 'error' as const }]
-								: []),
-						]}
-					/>
-
-					<I18nTextField
-						layout="row"
-						label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
-						placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
-						value={observation}
-						onChange={handleObservationChange}
-						rows={3}
-					/>
-				</div>
-			)}
 		</div>
 	);
 });

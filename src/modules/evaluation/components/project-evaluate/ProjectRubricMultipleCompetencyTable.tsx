@@ -1,10 +1,10 @@
 'use client';
 
-import { forwardRef, useImperativeHandle, useState, useMemo } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ExclamationTriangleIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import { I18nTextField, Spinner } from '@/shared/components/ui';
+import { Spinner } from '@/shared/components/ui';
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
@@ -50,8 +50,11 @@ interface ProjectRubricMultipleCompetencyTableProps {
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
 	commissions?: CommissionRow[];
-	initialObservation?: I18nValue;
+	observation: I18nValue;
 	attendanceDirty?: boolean;
+	/** Reports this rubric's validation messages (same text as before) so the page can render
+	 * them once, aggregated across every career/gradeType, instead of nested per rubric. */
+	onIncompleteChange?: (items: { message: string; type: 'warning' | 'error' }[]) => void;
 }
 
 export const ProjectRubricMultipleCompetencyTable = forwardRef<
@@ -72,8 +75,9 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		disableDuplicate = false,
 		onDirtyChange,
 		commissions = [],
-		initialObservation,
+		observation,
 		attendanceDirty,
+		onIncompleteChange,
 	},
 	ref,
 ) {
@@ -149,8 +153,6 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		handleSelect,
 		handleDupSelect,
 		handleSave,
-		observation,
-		handleObservationChange,
 	} = useMultipleCompetencyEvaluation({
 		outcomes,
 		questions,
@@ -164,7 +166,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		commissions,
 		activeCommissionId,
 		onDirtyChange,
-		initialObservation,
+		observation,
 		attendanceDirty,
 	});
 
@@ -174,6 +176,22 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		isPending,
 		handleSave,
 	]);
+
+	useEffect(() => {
+		if (readOnly) return;
+		const items: { message: string; type: 'warning' | 'error' }[] = [];
+		if (hasMissingStatus) {
+			items.push({ message: t('projects.evaluate.rubric.missingStatus'), type: 'warning' });
+		}
+		if (!allFilled && !hasMissingStatus) {
+			items.push({
+				message: t('projects.evaluate.multipleCompetency.fillAll'),
+				type: 'warning',
+			});
+		}
+		onIncompleteChange?.(items);
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- onIncompleteChange is a page-level setter; including it would re-fire on every page render
+	}, [hasMissingStatus, allFilled, readOnly, t]);
 
 	return (
 		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
@@ -362,36 +380,6 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 					);
 				})}
 			</div>
-
-			{!readOnly && (
-				<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
-					{(hasMissingStatus || !allFilled) && (
-						<ul className="space-y-1 text-sm">
-							{hasMissingStatus && (
-								<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
-									<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
-									{t('projects.evaluate.rubric.missingStatus')}
-								</li>
-							)}
-							{!allFilled && !hasMissingStatus && (
-								<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
-									<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
-									{t('projects.evaluate.multipleCompetency.fillAll')}
-								</li>
-							)}
-						</ul>
-					)}
-
-					<I18nTextField
-						layout="row"
-						label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
-						placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
-						value={observation}
-						onChange={handleObservationChange}
-						rows={3}
-					/>
-				</div>
-			)}
 		</div>
 	);
 });

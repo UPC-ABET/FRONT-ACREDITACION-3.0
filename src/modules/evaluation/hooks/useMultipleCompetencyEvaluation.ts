@@ -37,9 +37,12 @@ interface UseMultipleCompetencyEvaluationParams {
 	commissions: CommissionRow[];
 	activeCommissionId: number | null;
 	onDirtyChange?: (isDirty: boolean) => void;
-	initialObservation?: I18nValue;
-	/** True when the parent panel has unsaved attendance edits — these aren't tracked by this
-	 * hook's own isDirty, but must still unlock saving so they get submitted. */
+	/** Shared across every career/gradeType tab — the evaluation covers all students on the
+	 * project, so there is a single observation, not one per tab, edited once at the page level. */
+	observation: I18nValue;
+	/** True when the parent panel has unsaved attendance edits, or the shared observation
+	 * changed elsewhere — neither is tracked by this hook's own isDirty, but both must still
+	 * unlock saving so they get submitted. */
 	attendanceDirty?: boolean;
 }
 
@@ -56,16 +59,11 @@ export function useMultipleCompetencyEvaluation({
 	commissions,
 	activeCommissionId,
 	onDirtyChange,
-	initialObservation,
+	observation,
 	attendanceDirty = false,
 }: UseMultipleCompetencyEvaluationParams) {
 	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
-	const [observation, setObservation] = useState<I18nValue>(initialObservation ?? {});
-	const handleObservationChange = (value: I18nValue) => {
-		markDirty();
-		setObservation(value);
-	};
 
 	const markDirty = () => {
 		if (!isDirty) {
@@ -283,7 +281,5 @@ export function useMultipleCompetencyEvaluation({
 		handleSelect,
 		handleDupSelect,
 		handleSave,
-		observation,
-		handleObservationChange,
 	};
 }
