@@ -13,7 +13,7 @@ import {
 	DeleteConfirmDialog,
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
-import { tryTranslate } from '@/shared/utils';
+import { interpolate, tryTranslate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import { usePrograms, useStudyPlanCourses } from '@/modules/academic/hooks';
 import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
@@ -187,10 +187,9 @@ export function RubricsListPage() {
 					if (!open) setConfirmTarget(null);
 				}}
 				title={t('rubrics.list.deleteModal.title')}
-				description={t('rubrics.list.deleteModal.body').replace(
-					'{{course}}',
-					confirmTarget ? confirmTarget.courseLabel[locale] : '',
-				)}
+				description={interpolate(t('rubrics.list.deleteModal.body'), {
+					course: confirmTarget ? confirmTarget.courseLabel[locale] : '',
+				})}
 				isPending={deleteMutation.isPending}
 				cancelLabel={t('dialog.close')}
 				confirmLabel={t('rubrics.list.deleteModal.confirm')}

@@ -21,7 +21,7 @@ import {
 	TableLoadingState,
 } from '@/shared/components/ui';
 import { Toggle } from '@/shared/components/ui/Toggle';
-import { tryTranslateReason } from '@/shared/utils';
+import { interpolate, tryTranslateReason } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import { usePrograms } from '@/modules/academic/hooks';
 import {
@@ -316,10 +316,9 @@ export function ProjectGroupsPage() {
 				}}
 				contentClassName="sm:max-w-md"
 				title={t('projectGroups.delete.title')}
-				description={t('projectGroups.delete.confirm').replace(
-					'{{name}}',
-					deleteTarget ? (deleteTarget.name[loc] ?? deleteTarget.name.es) : '',
-				)}
+				description={interpolate(t('projectGroups.delete.confirm'), {
+					name: deleteTarget ? (deleteTarget.name[loc] ?? deleteTarget.name.es) : '',
+				})}
 				error={deleteError}
 				isPending={deleteMutation.isPending}
 				cancelLabel={t('dialog.actions.cancel')}

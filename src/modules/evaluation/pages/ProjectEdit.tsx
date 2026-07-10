@@ -16,9 +16,8 @@ import {
 	TextArea,
 	Title,
 	Toast,
-	buttonVariants,
 } from '@/shared/components/ui';
-import { cn } from '@/shared/lib/utils';
+import { interpolate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import {
 	useProjectDetails,
@@ -341,21 +340,20 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 										</div>
 									</div>
 
-									<button
-										type="button"
+									<Button
+										variant="ghost"
+										size="icon"
+										className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 										onClick={() =>
 											setRemoveStudentTarget({
 												id: student.id,
 												label: `${student.firstName} ${student.lastName}`.trim(),
 											})
 										}
-										className={cn(
-											buttonVariants({ variant: 'ghost', size: 'icon' }),
-											'text-zinc-500 hover:bg-red-50 hover:text-red-600',
-										)}
+										aria-label={t('projects.edit.students.removeButton')}
 										title={t('projects.edit.students.removeButton')}>
 										<XMarkIcon className="h-4 w-4" />
-									</button>
+									</Button>
 								</div>
 							))
 						)}
@@ -400,8 +398,10 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 										<span className="text-xs text-zinc-500">{evaluator.professorEmail}</span>
 									</div>
 
-									<button
-										type="button"
+									<Button
+										variant="ghost"
+										size="icon"
+										className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 										onClick={() =>
 											setRemoveEvaluatorTarget({
 												id: evaluator.id,
@@ -409,13 +409,10 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 													`${evaluator.professorFirstName} ${evaluator.professorLastName}`.trim(),
 											})
 										}
-										className={cn(
-											buttonVariants({ variant: 'ghost', size: 'icon' }),
-											'text-zinc-500 hover:bg-red-50 hover:text-red-600',
-										)}
+										aria-label={t('projects.edit.evaluators.removeButton')}
 										title={t('projects.edit.evaluators.removeButton')}>
 										<XMarkIcon className="h-4 w-4" />
-									</button>
+									</Button>
 								</div>
 							))
 						)}
@@ -447,10 +444,9 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 					if (!open) setRemoveStudentTarget(null);
 				}}
 				title={t('projects.edit.students.removeConfirm.title')}
-				description={t('projects.edit.students.removeConfirm.body').replace(
-					'{{name}}',
-					removeStudentTarget?.label ?? '',
-				)}
+				description={interpolate(t('projects.edit.students.removeConfirm.body'), {
+					name: removeStudentTarget?.label ?? '',
+				})}
 				isPending={removeStudentMutation.isPending}
 				cancelLabel={t('dialog.close')}
 				confirmLabel={t('projects.edit.students.removeConfirm.confirm')}
@@ -478,10 +474,9 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 					if (!open) setRemoveEvaluatorTarget(null);
 				}}
 				title={t('projects.edit.evaluators.removeConfirm.title')}
-				description={t('projects.edit.evaluators.removeConfirm.body').replace(
-					'{{name}}',
-					removeEvaluatorTarget?.label ?? '',
-				)}
+				description={interpolate(t('projects.edit.evaluators.removeConfirm.body'), {
+					name: removeEvaluatorTarget?.label ?? '',
+				})}
 				isPending={removeEvaluatorMutation.isPending}
 				cancelLabel={t('dialog.close')}
 				confirmLabel={t('projects.edit.evaluators.removeConfirm.confirm')}

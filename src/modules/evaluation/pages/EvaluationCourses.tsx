@@ -18,7 +18,7 @@ import {
 	TableRow,
 	DeleteConfirmDialog,
 } from '@/shared/components/ui';
-import { tryTranslate } from '@/shared/utils';
+import { interpolate, tryTranslate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import {
 	useAcademicPeriods,
@@ -191,10 +191,9 @@ export function EvaluationCoursesPage() {
 					if (!open) setConfirmTarget(null);
 				}}
 				title={t('evaluationCourses.confirm.title')}
-				description={t('evaluationCourses.confirm.body').replace(
-					'{{course}}',
-					confirmTarget ? courseName(confirmTarget) : '',
-				)}
+				description={interpolate(t('evaluationCourses.confirm.body'), {
+					course: confirmTarget ? courseName(confirmTarget) : '',
+				})}
 				isPending={enableEvaluation.isPending}
 				cancelLabel={t('dialog.close')}
 				confirmLabel={t('evaluationCourses.confirm.confirm')}

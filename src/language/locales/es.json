@@ -2149,7 +2149,6 @@
 			"loading": "Cargando proyecto...",
 			"error": "No fue posible cargar el proyecto.",
 			"backButton": "Volver a proyectos",
-			"subtitle": "Edite la información del proyecto.",
 			"header": {
 				"course": "Curso",
 				"rubricType": "Tipo de rúbrica",

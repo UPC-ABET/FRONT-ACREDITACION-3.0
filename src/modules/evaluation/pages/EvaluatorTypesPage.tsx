@@ -20,6 +20,7 @@ import {
 	TableLoadingState,
 } from '@/shared/components/ui';
 import { Toggle } from '@/shared/components/ui/Toggle';
+import { interpolate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import { TypeOption } from '@/modules/core';
 import {
@@ -186,10 +187,9 @@ export function EvaluatorTypesPage() {
 											</span>
 											{maxEvaluators != null && (
 												<span>
-													{t('academicProjects.evaluators.maxLabel').replace(
-														'{{max}}',
-														String(maxEvaluators),
-													)}
+													{interpolate(t('academicProjects.evaluators.maxLabel'), {
+														max: maxEvaluators,
+													})}
 												</span>
 											)}
 										</div>
@@ -335,10 +335,9 @@ export function EvaluatorTypesPage() {
 				}}
 				contentClassName="sm:max-w-md"
 				title={t('academicProjects.evaluators.deleteTitle')}
-				description={t('academicProjects.evaluators.deleteConfirm').replace(
-					'{{name}}',
-					deleteTarget?.label ?? '',
-				)}
+				description={interpolate(t('academicProjects.evaluators.deleteConfirm'), {
+					name: deleteTarget?.label ?? '',
+				})}
 				error={deleteError}
 				isPending={deleteTypeMutation.isPending}
 				cancelLabel={t('dialog.actions.cancel')}

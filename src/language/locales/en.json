@@ -2149,7 +2149,6 @@
 			"loading": "Loading project...",
 			"error": "Could not load the project.",
 			"backButton": "Back to projects",
-			"subtitle": "Edit the project information.",
 			"header": {
 				"course": "Course",
 				"rubricType": "Rubric type",
