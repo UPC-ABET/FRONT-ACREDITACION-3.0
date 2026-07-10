@@ -45,7 +45,7 @@ interface ProjectRubricMultipleCompetencyTableProps {
 	rubricId: number;
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
-	nrNaTypeIds: Set<number>;
+	nonAttendanceTypeIds: Set<number>;
 	readOnly?: boolean;
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
@@ -70,7 +70,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		rubricId,
 		projectId,
 		qualifStatuses,
-		nrNaTypeIds,
+		nonAttendanceTypeIds,
 		readOnly = false,
 		disableDuplicate = false,
 		onDirtyChange,
@@ -161,7 +161,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		rubricId,
 		projectId,
 		qualifStatuses,
-		nrNaTypeIds,
+		nonAttendanceTypeIds,
 		duplicateMode,
 		commissions,
 		activeCommissionId,
@@ -275,7 +275,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 									dupSelections={dupSelections}
 									selections={selections}
 									students={students}
-									nrNaTypeIds={nrNaTypeIds}
+									nonAttendanceTypeIds={nonAttendanceTypeIds}
 									qualifStatuses={qualifStatuses}
 									readOnly={readOnly}
 									onSelect={handleSelect}
@@ -348,7 +348,8 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 													<div className="flex flex-col gap-3">
 														{students
 															.filter(
-																(student) => !nrNaTypeIds.has(qualifStatuses[student.id] ?? -1),
+																(student) =>
+																	!nonAttendanceTypeIds.has(qualifStatuses[student.id] ?? -1),
 															)
 															.map((student) => {
 																const current = selections[criterion.id]?.[student.id] ?? null;

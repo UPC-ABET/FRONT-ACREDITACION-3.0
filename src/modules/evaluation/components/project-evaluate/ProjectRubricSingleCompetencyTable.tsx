@@ -23,7 +23,7 @@ interface ProjectRubricSingleCompetencyTableProps {
 	rubricId: number;
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
-	nrNaTypeIds: Set<number>;
+	nonAttendanceTypeIds: Set<number>;
 	readOnly?: boolean;
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
@@ -45,7 +45,7 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		rubricId,
 		projectId,
 		qualifStatuses,
-		nrNaTypeIds,
+		nonAttendanceTypeIds,
 		readOnly = false,
 		disableDuplicate = false,
 		onDirtyChange,
@@ -81,7 +81,7 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		rubricId,
 		projectId,
 		qualifStatuses,
-		nrNaTypeIds,
+		nonAttendanceTypeIds,
 		onDirtyChange,
 		observation,
 		attendanceDirty,
@@ -164,7 +164,7 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 									dupScores={dupScores}
 									scores={scores}
 									students={students}
-									nrNaTypeIds={nrNaTypeIds}
+									nonAttendanceTypeIds={nonAttendanceTypeIds}
 									qualifStatuses={qualifStatuses}
 									msgNaN={msgNaN}
 									msgRange={msgRange}
@@ -238,7 +238,10 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 										<div className="flex flex-col gap-2">
 											{students
 												.map((student, studentIndex) => ({ student, studentIndex }))
-												.filter(({ student }) => !nrNaTypeIds.has(qualifStatuses[student.id] ?? -1))
+												.filter(
+													({ student }) =>
+														!nonAttendanceTypeIds.has(qualifStatuses[student.id] ?? -1),
+												)
 												.map(({ student, studentIndex }) => {
 													const score = scores[question.id]?.[studentIndex] ?? '';
 													return (

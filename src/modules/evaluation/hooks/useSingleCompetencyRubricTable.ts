@@ -19,7 +19,7 @@ interface UseSingleCompetencyRubricTableOptions {
 	rubricId: number;
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
-	nrNaTypeIds: Set<number>;
+	nonAttendanceTypeIds: Set<number>;
 	onDirtyChange?: (isDirty: boolean) => void;
 	/** Shared across every career/gradeType tab — the evaluation covers all students on the
 	 * project, so there is a single observation, not one per tab, edited once at the page level. */
@@ -37,7 +37,7 @@ export function useSingleCompetencyRubricTable({
 	rubricId,
 	projectId,
 	qualifStatuses,
-	nrNaTypeIds,
+	nonAttendanceTypeIds,
 	onDirtyChange,
 	observation,
 	attendanceDirty = false,
@@ -119,13 +119,13 @@ export function useSingleCompetencyRubricTable({
 	const allFilled = useMemo(() => {
 		if (!questions.length) return false;
 		if (hasMissingStatus) return false;
-		const hasGraded = students.some((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1));
+		const hasGraded = students.some((st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1));
 		for (const q of questions) {
 			if (duplicateMode) {
 				if (hasGraded && !dupScores[q.id]?.trim()) return false;
 			} else {
 				for (let stIdx = 0; stIdx < students.length; stIdx++) {
-					if (nrNaTypeIds.has(qualifStatuses[students[stIdx].id] ?? -1)) continue;
+					if (nonAttendanceTypeIds.has(qualifStatuses[students[stIdx].id] ?? -1)) continue;
 					if (!scores[q.id]?.[stIdx]?.trim()) return false;
 				}
 			}
@@ -138,7 +138,7 @@ export function useSingleCompetencyRubricTable({
 		scores,
 		dupScores,
 		qualifStatuses,
-		nrNaTypeIds,
+		nonAttendanceTypeIds,
 		hasMissingStatus,
 	]);
 
@@ -191,9 +191,9 @@ export function useSingleCompetencyRubricTable({
 				const matchedCriteria = !isNaN(dupScore) ? findMatchingCriteria(q, dupScore) : undefined;
 
 				for (const st of students) {
-					const isNrNa = nrNaTypeIds.has(qualifStatuses[st.id] ?? -1);
+					const isNonAttendance = nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1);
 					const existing: CriteriaScoreEntry[] = studentPayloads.get(st.id) ?? [];
-					if (isNrNa) {
+					if (isNonAttendance) {
 						existing.push({
 							rubricQuestionCriteriaId: lowestCriteria.id,
 							score: 0,
@@ -211,9 +211,9 @@ export function useSingleCompetencyRubricTable({
 				}
 			} else {
 				students.forEach((st, stIdx) => {
-					const isNrNa = nrNaTypeIds.has(qualifStatuses[st.id] ?? -1);
+					const isNonAttendance = nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1);
 					const existing: CriteriaScoreEntry[] = studentPayloads.get(st.id) ?? [];
-					if (isNrNa) {
+					if (isNonAttendance) {
 						existing.push({
 							rubricQuestionCriteriaId: lowestCriteria.id,
 							score: 0,

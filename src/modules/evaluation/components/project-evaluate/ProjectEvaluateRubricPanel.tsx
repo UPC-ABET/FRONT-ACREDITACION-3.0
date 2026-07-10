@@ -24,7 +24,7 @@ interface ProjectEvaluateRubricPanelProps {
 	evaluatorId: number;
 	projectId: string | number;
 	academicPeriodId: number | null;
-	nrNaTypeIds: Set<number>;
+	nonAttendanceTypeIds: Set<number>;
 	statusOptions: StatusOption[];
 	isLoadingStatuses: boolean;
 	isReadOnly: boolean;
@@ -52,7 +52,7 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 		evaluatorId,
 		projectId,
 		academicPeriodId,
-		nrNaTypeIds,
+		nonAttendanceTypeIds,
 		statusOptions,
 		isLoadingStatuses,
 		isReadOnly,
@@ -218,7 +218,7 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 					rubricId={item.rubric.id}
 					projectId={projectId}
 					qualifStatuses={qualifStatuses}
-					nrNaTypeIds={nrNaTypeIds}
+					nonAttendanceTypeIds={nonAttendanceTypeIds}
 					readOnly={isReadOnly}
 					disableDuplicate={disableDuplicate}
 					onDirtyChange={handleDirtyChange}
@@ -236,7 +236,7 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 					rubricId={item.rubric.id}
 					projectId={projectId}
 					qualifStatuses={qualifStatuses}
-					nrNaTypeIds={nrNaTypeIds}
+					nonAttendanceTypeIds={nonAttendanceTypeIds}
 					readOnly={isReadOnly}
 					disableDuplicate={disableDuplicate}
 					onDirtyChange={handleDirtyChange}

@@ -32,7 +32,7 @@ interface UseMultipleCompetencyEvaluationParams {
 	rubricId: number;
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
-	nrNaTypeIds: Set<number>;
+	nonAttendanceTypeIds: Set<number>;
 	duplicateMode: boolean;
 	commissions: CommissionRow[];
 	activeCommissionId: number | null;
@@ -54,7 +54,7 @@ export function useMultipleCompetencyEvaluation({
 	rubricId,
 	projectId,
 	qualifStatuses,
-	nrNaTypeIds,
+	nonAttendanceTypeIds,
 	duplicateMode,
 	commissions,
 	activeCommissionId,
@@ -144,7 +144,9 @@ export function useMultipleCompetencyEvaluation({
 	// Per-commission fill status for tab indicators
 	const commissionFillStatus = useMemo((): Record<number, 'complete' | 'partial' | 'empty'> => {
 		if (commissions.length === 0) return {};
-		const gradedStudents = students.filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1));
+		const gradedStudents = students.filter(
+			(st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1),
+		);
 		const result: Record<number, 'complete' | 'partial' | 'empty'> = {};
 		for (const commission of commissions) {
 			const commOutcomes = outcomes.filter((o) => commission.outcomeIds.includes(o.id));
@@ -165,12 +167,22 @@ export function useMultipleCompetencyEvaluation({
 				total === 0 ? 'empty' : filled === total ? 'complete' : filled > 0 ? 'partial' : 'empty';
 		}
 		return result;
-	}, [commissions, outcomes, questionByOutcome, selections, students, qualifStatuses, nrNaTypeIds]);
+	}, [
+		commissions,
+		outcomes,
+		questionByOutcome,
+		selections,
+		students,
+		qualifStatuses,
+		nonAttendanceTypeIds,
+	]);
 
 	const allFilled = useMemo(() => {
 		if (!allCriteriaIds.length || !students.length) return false;
 		if (hasMissingStatus) return false;
-		const gradedStudents = students.filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1));
+		const gradedStudents = students.filter(
+			(st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1),
+		);
 		for (const cId of allCriteriaIds) {
 			if (duplicateMode) {
 				if (gradedStudents.length > 0 && dupSelections[cId] == null) return false;
@@ -188,7 +200,7 @@ export function useMultipleCompetencyEvaluation({
 		selections,
 		dupSelections,
 		qualifStatuses,
-		nrNaTypeIds,
+		nonAttendanceTypeIds,
 		hasMissingStatus,
 	]);
 
@@ -218,12 +230,12 @@ export function useMultipleCompetencyEvaluation({
 		>();
 
 		for (const st of students) {
-			const isNrNa = nrNaTypeIds.has(qualifStatuses[st.id] ?? -1);
+			const isNonAttendance = nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1);
 			for (const outcome of outcomes) {
 				const q = questionByOutcome.get(outcome.id);
 				for (const c of q?.criterias ?? []) {
 					let score: number | null;
-					if (isNrNa) {
+					if (isNonAttendance) {
 						score = 0;
 					} else if (duplicateMode) {
 						score = dupSelections[c.id] ?? null;

@@ -32,8 +32,32 @@ interface ProjectEvaluatePageProps {
 	competencyScopeCode: string;
 }
 
+const EMPTY_OBSERVATION: I18nValue = { es: '', en: '' };
+
 function dirtyKey(studyPlanCourseId: number, gradeTypeId: number): string {
 	return `${studyPlanCourseId}:${gradeTypeId}`;
+}
+
+function getInitialObservation(
+	rubrics: {
+		items: {
+			students: { observation?: I18nValue | null }[];
+		}[];
+	}[],
+): I18nValue {
+	for (const rubricEntry of rubrics) {
+		for (const item of rubricEntry.items) {
+			const withObservation = item.students.find((student) => student.observation != null);
+			if (withObservation?.observation) {
+				return {
+					es: withObservation.observation.es ?? '',
+					en: withObservation.observation.en ?? '',
+				};
+			}
+		}
+	}
+
+	return EMPTY_OBSERVATION;
 }
 
 export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectEvaluatePageProps) {
@@ -49,12 +73,12 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 	});
 	const { statusTypes, isLoading: isLoadingStatuses } = useQualificationStatusTypes();
 
-	const nrNaTypeIds = useMemo(() => {
-		const nrNaCodes = new Set<string>([
-			TYPE_CODES.QUALIFICATION_STATUS.NR,
-			TYPE_CODES.QUALIFICATION_STATUS.NA,
-		]);
-		return new Set(statusTypes.filter((s) => nrNaCodes.has(s.code)).map((s) => s.id));
+	const nonAttendanceTypeIds = useMemo(() => {
+		return new Set(
+			statusTypes
+				.filter((status) => status.code !== TYPE_CODES.QUALIFICATION_STATUS.ASISTIO)
+				.map((status) => status.id),
+		);
 	}, [statusTypes]);
 
 	const myEvaluatorEntries = useMemo(
@@ -144,20 +168,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 	// The evaluation covers all students on the project regardless of career, so there is a
 	// single shared observation — not one per career/gradeType tab.
-	const initialObservation = useMemo<I18nValue>(() => {
-		for (const rubricEntry of rubrics) {
-			for (const item of rubricEntry.items) {
-				const withObservation = item.students.find((s) => s.observation != null);
-				if (withObservation) {
-					return {
-						es: withObservation.observation?.es ?? '',
-						en: withObservation.observation?.en ?? '',
-					};
-				}
-			}
-		}
-		return { es: '', en: '' };
-	}, [rubrics]);
+	const initialObservation = getInitialObservation(rubrics);
 
 	const [observation, setObservation] = useState<I18nValue>(initialObservation);
 	const [observationDirty, setObservationDirty] = useState(false);
@@ -401,7 +412,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 							evaluatorId={evaluatorId}
 							projectId={projectId}
 							academicPeriodId={data.academicPeriod?.id ?? null}
-							nrNaTypeIds={nrNaTypeIds}
+							nonAttendanceTypeIds={nonAttendanceTypeIds}
 							statusOptions={statusOptions}
 							isLoadingStatuses={isLoadingStatuses}
 							isReadOnly={isReadOnly}
