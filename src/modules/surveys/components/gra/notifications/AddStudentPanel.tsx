@@ -9,10 +9,6 @@ import { useGRAStudentSearch } from '../../../hooks';
 
 const SEARCH_DEBOUNCE_MS = 250;
 
-function hasSections(sections: string[] | undefined): sections is string[] {
-	return Boolean(sections && sections.length > 0);
-}
-
 interface AddStudentPanelProps {
 	readonly programId: number;
 	readonly onStudentAdded?: () => void;
@@ -116,11 +112,7 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 
 	return (
 		<div className="space-y-4">
-			<h4 className="text-sm font-bold text-zinc-700">
-				{t('surveys.gra.notifications.addStudentTitle')}
-			</h4>
-
-			<div className="relative" ref={wrapperRef}>
+			<div ref={wrapperRef}>
 				<Input
 					placeholder={t('surveys.gra.notifications.studentCodePlaceholder')}
 					value={studentCode}
@@ -135,11 +127,13 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 					aria-autocomplete="list"
 					aria-activedescendant={activeOptionId}
 				/>
+				{/* In normal flow (not absolutely positioned) so it isn't clipped by the
+				    surrounding Dialog's overflow-y-auto. */}
 				{dropdownOpen && (
 					<ul
 						id={listboxId}
 						role="listbox"
-						className="absolute z-50 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg max-h-56 overflow-y-auto">
+						className="mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-sm max-h-56 overflow-y-auto">
 						{suggestions.map((student, index) => (
 							<li
 								key={student.studentId}
@@ -155,13 +149,10 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 									<span className="font-medium text-zinc-800 truncate">{student.name}</span>
 									<div className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-500 truncate">
 										<span className="font-mono">{student.code}</span>
-										{hasSections(student.sections) && (
+										{student.career && (
 											<>
 												<span>·</span>
-												<span>
-													{t('surveys.gra.notifications.studentSection')}{' '}
-													{student.sections.join(', ')}
-												</span>
+												<span>{student.career}</span>
 											</>
 										)}
 									</div>
@@ -171,7 +162,7 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 					</ul>
 				)}
 				{showDropdown && !loading && suggestions.length === 0 && studentCode.trim().length > 0 && (
-					<div className="absolute z-50 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg px-3 py-2 text-sm text-zinc-400">
+					<div className="mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-sm px-3 py-2 text-sm text-zinc-400">
 						{t('surveys.gra.notifications.studentNotFound')}
 					</div>
 				)}
@@ -207,16 +198,6 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 								{t('surveys.gra.notifications.studentCareer')}
 							</span>
 							<span className="font-medium text-zinc-800">{result.career}</span>
-						</div>
-						<div>
-							<span className="text-xs text-zinc-500 block">
-								{t('surveys.gra.notifications.studentSection')}
-							</span>
-							<span className="font-medium text-zinc-800">
-								{hasSections(result.sections)
-									? result.sections.join(', ')
-									: t('surveys.gra.notifications.noSection')}
-							</span>
 						</div>
 					</div>
 

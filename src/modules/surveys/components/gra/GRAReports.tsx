@@ -10,17 +10,15 @@ import { getErrorMessage } from '@/shared/lib';
 import { PerceptionReportPanel } from '../shared/PerceptionReportPanel';
 import { CommissionCampusFilters } from '../shared/CommissionCampusFilters';
 import { SurveyMetricsSummary } from '../shared/SurveyMetricsSummary';
+import { AllProgramsSelect } from '../shared/AllProgramsSelect';
 import { useSurveyFilterOptions } from '../../hooks';
 import { downloadGRASurveys, generateGRAPerceptionPdf, generateGRADashboard } from '../../services';
 import type { OptionItem } from '../../types';
 
-interface GRAReportsProps {
-	readonly programId?: number;
-}
-
-export function GRAReports({ programId }: GRAReportsProps) {
+export function GRAReports() {
 	const { t, locale } = useI18n();
 	const { academicPeriodId } = useABET();
+	const [programId, setProgramId] = useState(0);
 	const [commission, setCommission] = useState<OptionItem | null>(null);
 	const [campus, setCampus] = useState<OptionItem | null>(null);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
@@ -79,6 +77,8 @@ export function GRAReports({ programId }: GRAReportsProps) {
 					{t('surveys.shared.downloadExcel')}
 				</Button>
 			</div>
+
+			<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="max-w-xs" />
 
 			<CommissionCampusFilters
 				commissionOptions={commissionOptions}

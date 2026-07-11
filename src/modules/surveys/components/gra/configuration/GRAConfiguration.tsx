@@ -1,17 +1,15 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useABET, useI18n } from '@/providers';
 import { useGRACompetences } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
+import { AllProgramsSelect } from '../../shared/AllProgramsSelect';
 
-interface GRAConfigurationProps {
-	programId?: number;
-}
-
-export function GRAConfiguration({ programId }: GRAConfigurationProps) {
+export function GRAConfiguration() {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
+	const [programId, setProgramId] = useState(0);
 	const {
 		competences,
 		loading: compLoading,
@@ -31,37 +29,43 @@ export function GRAConfiguration({ programId }: GRAConfigurationProps) {
 		return null;
 	}
 
-	if (!programId) {
-		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectProgram')}</p>;
-	}
-
 	return (
 		<div className="space-y-8">
-			{/* Specific competences */}
-			<CompetenceCRUD
-				cycleId={academicPeriodId}
-				programId={programId}
-				competenceType="specific"
-				competences={competences}
-				loading={compLoading}
-				error={compError}
-				onLoad={loadComp}
-				onSave={saveComp}
-				onDelete={removeComp}
-			/>
+			<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="max-w-xs" />
 
-			{/* General competences */}
-			<CompetenceCRUD
-				cycleId={academicPeriodId}
-				programId={programId}
-				competenceType="general"
-				competences={competences}
-				loading={compLoading}
-				error={compError}
-				onLoad={loadComp}
-				onSave={saveComp}
-				onDelete={removeComp}
-			/>
+			{!programId && (
+				<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectProgram')}</p>
+			)}
+
+			{programId > 0 && (
+				<>
+					{/* Specific competences */}
+					<CompetenceCRUD
+						cycleId={academicPeriodId}
+						programId={programId}
+						competenceType="specific"
+						competences={competences}
+						loading={compLoading}
+						error={compError}
+						onLoad={loadComp}
+						onSave={saveComp}
+						onDelete={removeComp}
+					/>
+
+					{/* General competences */}
+					<CompetenceCRUD
+						cycleId={academicPeriodId}
+						programId={programId}
+						competenceType="general"
+						competences={competences}
+						loading={compLoading}
+						error={compError}
+						onLoad={loadComp}
+						onSave={saveComp}
+						onDelete={removeComp}
+					/>
+				</>
+			)}
 		</div>
 	);
 }

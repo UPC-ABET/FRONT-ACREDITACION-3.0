@@ -1563,7 +1563,9 @@
 				"emptyStudentCode": "Código de alumno vacío.",
 				"studentNotFound": "No se encontró un alumno con ese código.",
 				"alreadyInList": "El alumno ya está en la lista de GRA.",
-				"programRequired": "Selecciona una carrera antes de agregar un alumno."
+				"programRequired": "Selecciona una carrera antes de agregar un alumno.",
+				"notificationJobNotFound": "No se encontró el proceso de envío. Vuelve a intentarlo.",
+				"alreadyResponded": "El estudiante ya respondió la encuesta, no se puede reenviar."
 			},
 			"lcfc": {
 				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado.",
@@ -2407,7 +2409,6 @@
 				"downloadLabel": "Descargar Plantilla GRA",
 				"tabs": {
 					"list": "Estudiantes Notificados",
-					"add": "Agregar Estudiante",
 					"upload": "Carga Masiva",
 					"email": "Plantilla de Correo"
 				},
@@ -2422,16 +2423,33 @@
 				"deleteTitle": "Eliminar estudiante",
 				"deleteBody": "¿Deseas eliminar este estudiante de la notificación?",
 				"delete": "Eliminar",
+				"resend": "Reenviar notificación",
+				"addStudent": "Agregar Estudiante",
 				"sendDialog": {
 					"title": "Enviar encuesta GRA",
 					"bodyBefore": "Se enviará la encuesta a ",
 					"bodyEmphasis": "todos",
-					"bodyAfter": " los estudiantes registrados para el período y carrera actuales.",
-					"urlLabel": "URL base de la encuesta",
-					"urlPlaceholder": "https://tu-dominio.com/encuesta/gra",
+					"bodyAfter": " los estudiantes pendientes del período y carrera actuales.",
+					"summaryLoading": "Calculando resumen del envío...",
+					"summaryEmpty": "No hay estudiantes pendientes de notificar.",
+					"summaryPrograms": "Carreras a notificar",
+					"summaryStudents": "Estudiantes a notificar",
+					"summaryByProgramTitle": "Estudiantes por carrera",
 					"confirm": "Confirmar envío",
 					"sending": "Enviando...",
 					"templateLabel": "Plantilla de correo"
+				},
+				"progress": {
+					"title": "Enviando notificaciones GRA",
+					"completedTitle": "Envío finalizado",
+					"failedTitle": "No se pudo completar el envío",
+					"preparing": "Preparando el envío.",
+					"sending": "Procesando el envío.",
+					"progressLabel": "Progreso",
+					"progressValue": "{{percentage}}%",
+					"sent": "Enviados",
+					"failed": "Fallidos",
+					"errorDetails": "Detalle de errores"
 				},
 				"status": {
 					"sent": "Enviado",
@@ -2443,20 +2461,19 @@
 				"uploadTitle": "Carga masiva de estudiantes GRA",
 				"uploadDesc": "Sube un archivo Excel con los datos de los estudiantes a notificar.",
 				"addStudentTitle": "Agregar Estudiante Individual",
-				"studentNotFound": "El estudiante no se encontró para el código ingresado.",
-				"studentCodePlaceholder": "Código del estudiante (ej: 2020001)",
+				"studentNotFound": "No se encontró ningún estudiante para la búsqueda ingresada.",
+				"studentCodePlaceholder": "Código o nombre del estudiante (ej: 2020001 o Juan Pérez)",
 				"searchStudent": "Buscar estudiante",
 				"studentName": "Nombre",
 				"studentCode": "Código",
 				"studentCareer": "Carrera",
-				"studentSection": "Sección",
-				"noSection": "Sin sección activa",
 				"adding": "Agregando...",
 				"addButton": "Agregar a Notificación",
 				"toast": {
 					"studentAdded": "{{name}} agregado exitosamente.",
 					"studentDeleted": "Estudiante eliminado de la notificación.",
-					"surveySent": "Encuestas enviadas exitosamente."
+					"surveySent": "Encuestas enviadas exitosamente.",
+					"resent": "Notificación reenviada exitosamente."
 				}
 			},
 			"management": {

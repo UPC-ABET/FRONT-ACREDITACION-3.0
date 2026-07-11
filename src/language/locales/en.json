@@ -1563,7 +1563,9 @@
 				"emptyStudentCode": "Empty student code.",
 				"studentNotFound": "No student found with that code.",
 				"alreadyInList": "The student is already in the GRA list.",
-				"programRequired": "Select a career before adding a student."
+				"programRequired": "Select a career before adding a student.",
+				"notificationJobNotFound": "The send process could not be found. Please try again.",
+				"alreadyResponded": "The student already responded to the survey; it can't be resent."
 			},
 			"lcfc": {
 				"tokenNotFound": "The survey link is invalid or has expired.",
@@ -2407,7 +2409,6 @@
 				"downloadLabel": "Download GRA Template",
 				"tabs": {
 					"list": "Notified Students",
-					"add": "Add Student",
 					"upload": "Bulk Upload",
 					"email": "Email Template"
 				},
@@ -2422,16 +2423,33 @@
 				"deleteTitle": "Remove student",
 				"deleteBody": "Do you want to remove this student from the notification?",
 				"delete": "Remove",
+				"resend": "Resend notification",
+				"addStudent": "Add Student",
 				"sendDialog": {
 					"title": "Send GRA survey",
 					"bodyBefore": "The survey will be sent to ",
 					"bodyEmphasis": "all",
-					"bodyAfter": " registered students for the current period and program.",
-					"urlLabel": "Survey base URL",
-					"urlPlaceholder": "https://your-domain.com/survey/gra",
+					"bodyAfter": " pending students for the current period and program.",
+					"summaryLoading": "Calculating send summary...",
+					"summaryEmpty": "No students pending notification.",
+					"summaryPrograms": "Programs to notify",
+					"summaryStudents": "Students to notify",
+					"summaryByProgramTitle": "Students by program",
 					"confirm": "Confirm send",
 					"sending": "Sending...",
 					"templateLabel": "Email template"
+				},
+				"progress": {
+					"title": "Sending GRA notifications",
+					"completedTitle": "Send finished",
+					"failedTitle": "The send could not be completed",
+					"preparing": "Preparing the send.",
+					"sending": "Processing the send.",
+					"progressLabel": "Progress",
+					"progressValue": "{{percentage}}%",
+					"sent": "Sent",
+					"failed": "Failed",
+					"errorDetails": "Error details"
 				},
 				"status": {
 					"sent": "Sent",
@@ -2441,20 +2459,19 @@
 				"toast": {
 					"studentDeleted": "Student removed from notification.",
 					"surveySent": "Surveys sent successfully.",
-					"studentAdded": "{{name}} added successfully."
+					"studentAdded": "{{name}} added successfully.",
+					"resent": "Notification resent successfully."
 				},
 				"periodLabel": "Academic Period",
 				"periodPlaceholder": "Select a period",
 				"uploadTitle": "Bulk upload of GRA students",
 				"uploadDesc": "Upload an Excel file with the data of the students to notify.",
 				"addStudentTitle": "Add Individual Student",
-				"studentCodePlaceholder": "Student code (e.g. 2020001)",
+				"studentCodePlaceholder": "Student code or name (e.g. 2020001 or John Doe)",
 				"searchStudent": "Search student",
 				"studentName": "Name",
 				"studentCode": "Code",
 				"studentCareer": "Program",
-				"studentSection": "Section",
-				"noSection": "No active section",
 				"adding": "Adding...",
 				"addButton": "Add to Notification"
 			},

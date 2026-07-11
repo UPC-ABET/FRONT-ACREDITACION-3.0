@@ -3,25 +3,21 @@
 import React, { useState } from 'react';
 import { Tabs } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
-import { AddStudentPanel } from './AddStudentPanel';
 import { StudentList } from './StudentList';
 import { FileUploadPanel } from '../../shared/FileUploadPanel';
 import { UploadResultSummary } from '../../shared/UploadResultSummary';
+import { AllProgramsSelect } from '../../shared/AllProgramsSelect';
 import { useGRAUpload } from '../../../hooks';
 
-interface GRANotificationViewProps {
-	programId?: number;
-}
-
-export function GRANotificationView({ programId }: GRANotificationViewProps) {
+export function GRANotificationView() {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const [activeTab, setActiveTab] = useState('list');
+	const [programId, setProgramId] = useState(0);
 	const { loading, error, success, result, downloadTemplate, upload } = useGRAUpload();
 
 	const NOTIFICATION_TABS = [
 		{ id: 'list', label: t('surveys.gra.notifications.tabs.list') },
-		{ id: 'add', label: t('surveys.gra.notifications.tabs.add') },
 		{ id: 'upload', label: t('surveys.gra.notifications.tabs.upload') },
 	];
 
@@ -36,20 +32,11 @@ export function GRANotificationView({ programId }: GRANotificationViewProps) {
 		<div className="space-y-6">
 			<Tabs tabs={NOTIFICATION_TABS} activeTab={activeTab} onChange={setActiveTab} />
 
+			<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="max-w-xs" />
+
 			<div className="pt-2">
 				{activeTab === 'list' && (
-					<StudentList
-						programId={resolvedProgramId}
-						academicPeriodId={periodId}
-						surveyProgramId={programId}
-					/>
-				)}
-
-				{activeTab === 'add' && (
-					<AddStudentPanel
-						programId={resolvedProgramId}
-						onStudentAdded={() => setActiveTab('list')}
-					/>
+					<StudentList programId={resolvedProgramId} academicPeriodId={periodId} />
 				)}
 
 				{activeTab === 'upload' && (

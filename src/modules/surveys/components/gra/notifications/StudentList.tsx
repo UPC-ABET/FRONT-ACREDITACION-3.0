@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 import {
 	DataTable,
@@ -11,14 +11,21 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogFooter,
-	Input,
 	Toast,
 } from '@/shared/components';
-import { TrashIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import {
+	TrashIcon,
+	PaperAirplaneIcon,
+	UserPlusIcon,
+	BellAlertIcon,
+} from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
-import { useGRAStudents, useGRAEmail } from '../../../hooks';
-import { SurveyTemplateSelect } from '../../shared/SurveyTemplateSelect';
+import { getErrorMessage } from '@/shared/lib';
+import { useGRAStudents, useGRASendNotifications } from '../../../hooks';
+import { AddStudentPanel } from './AddStudentPanel';
+import { GRANotificationProgressDialog } from './GRANotificationProgressDialog';
+import { SURVEY_BASE_URL, resendGRANotification } from '../../../services';
 import type { GRAStudent, GRAEmailSendRequest } from '../../../types';
 import {
 	NOTIFICATION_STATUS,
@@ -28,18 +35,26 @@ import {
 interface StudentListProps {
 	readonly programId: number;
 	readonly academicPeriodId: number;
-	/** Original (unresolved) programId for template filtering */
-	readonly surveyProgramId?: number;
 }
 
-export function StudentList({ programId, academicPeriodId, surveyProgramId }: StudentListProps) {
-	const { t } = useI18n();
+export function StudentList({ programId, academicPeriodId }: StudentListProps) {
+	const { t, locale } = useI18n();
 	const { students, error, load, remove } = useGRAStudents();
-	const { sending, send } = useGRAEmail();
+	const {
+		summary,
+		loadingSummary,
+		loadSummary,
+		sending,
+		status,
+		error: sendError,
+		send,
+		reset,
+	} = useGRASendNotifications();
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [sendDialogOpen, setSendDialogOpen] = useState(false);
-	const [surveyBaseUrl, setSurveyBaseUrl] = useState('');
-	const [notificationMessageId, setNotificationMessageId] = useState<number | null>(null);
+	const [progressDialogOpen, setProgressDialogOpen] = useState(false);
+	const [addStudentOpen, setAddStudentOpen] = useState(false);
+	const [resendingId, setResendingId] = useState<number | null>(null);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -62,22 +77,54 @@ export function StudentList({ programId, academicPeriodId, surveyProgramId }: St
 		});
 	}
 
-	function handleSendAll() {
+	function handleOpenSendDialog() {
+		reset();
+		setSendDialogOpen(true);
+		loadSummary(programId || undefined);
+	}
+
+	function handleConfirmSend() {
 		const req: GRAEmailSendRequest = {
 			academicPeriodId: academicPeriodId,
 			programId: programId,
-			surveyBaseUrl: surveyBaseUrl.trim(),
-			...(notificationMessageId ? { notificationMessageId } : {}),
+			surveyBaseUrl: SURVEY_BASE_URL,
 		};
+		setSendDialogOpen(false);
+		setProgressDialogOpen(true);
 		send(req, () => {
-			setSendDialogOpen(false);
 			setToast({
 				open: true,
 				type: 'success',
 				msg: t('surveys.gra.notifications.toast.surveySent'),
 			});
+			load({ programId: programId, academicPeriodId: academicPeriodId });
 		});
 	}
+
+	function handleStudentAdded() {
+		setAddStudentOpen(false);
+		load({ programId: programId, academicPeriodId: academicPeriodId });
+	}
+
+	const handleResend = useCallback(
+		async (notificationId: number) => {
+			setResendingId(notificationId);
+			try {
+				await resendGRANotification(notificationId, locale);
+				setToast({
+					open: true,
+					type: 'success',
+					msg: t('surveys.gra.notifications.toast.resent'),
+				});
+				load({ programId: programId, academicPeriodId: academicPeriodId });
+			} catch (e) {
+				setToast({ open: true, type: 'error', msg: tryTranslate(t, getErrorMessage(e)) });
+			} finally {
+				setResendingId(null);
+			}
+		},
+		[locale, t, load, programId, academicPeriodId],
+	);
 
 	const columns = useMemo<ColumnDef<GRAStudent>[]>(
 		() => [
@@ -129,23 +176,40 @@ export function StudentList({ programId, academicPeriodId, surveyProgramId }: St
 				id: 'actions',
 				header: t('surveys.gra.notifications.columns.actions'),
 				// NOSONAR — cell renderers are render functions, not React components
-				cell: ({ row }) => (
-					<div className="flex items-center justify-end gap-1">
-						<Button
-							size="icon"
-							variant="ghost"
-							className="text-red-600 hover:bg-red-50"
-							onClick={() => setDeleteId(row.original.notificationId)}
-							aria-label={t('surveys.gra.notifications.delete')}>
-							<TrashIcon className="h-5 w-5" />
-						</Button>
-					</div>
-				),
+				cell: ({ row }) => {
+					const alreadyResponded = row.original.responseStatus === NOTIFICATION_STATUS.RESPONDED;
+					return (
+						<div className="flex items-center justify-end gap-1">
+							{!alreadyResponded && (
+								<Button
+									size="icon"
+									variant="ghost"
+									className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+									disabled={resendingId === row.original.notificationId}
+									loading={resendingId === row.original.notificationId}
+									onClick={() => handleResend(row.original.notificationId)}
+									aria-label={t('surveys.gra.notifications.resend')}>
+									<BellAlertIcon className="h-5 w-5" />
+								</Button>
+							)}
+							<Button
+								size="icon"
+								variant="ghost"
+								className="text-red-600 hover:bg-red-50"
+								onClick={() => setDeleteId(row.original.notificationId)}
+								aria-label={t('surveys.gra.notifications.delete')}>
+								<TrashIcon className="h-5 w-5" />
+							</Button>
+						</div>
+					);
+				},
 				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},
 		],
-		[t],
+		[t, resendingId, handleResend],
 	);
+
+	const translatedSendError = sendError ? tryTranslate(t, sendError) : null;
 
 	return (
 		<div className="space-y-4">
@@ -155,18 +219,23 @@ export function StudentList({ programId, academicPeriodId, surveyProgramId }: St
 				</p>
 			)}
 
-			<DataTable
-				columns={columns}
-				data={students}
-				title={t('surveys.gra.notifications.title').replace('{{count}}', String(students.length))}
-				actions={[
-					{
-						label: t('surveys.gra.notifications.sendSurvey'),
-						onClick: () => setSendDialogOpen(true),
-						icon: <PaperAirplaneIcon className="h-4 w-4" />,
-					},
-				]}
-			/>
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<h3 className="text-lg font-bold text-zinc-800 uppercase">
+					{t('surveys.gra.notifications.title').replace('{{count}}', String(students.length))}
+				</h3>
+				<div className="flex flex-wrap items-center gap-2">
+					<Button variant="surface" onClick={() => setAddStudentOpen(true)}>
+						<UserPlusIcon className="h-4 w-4 mr-2" />
+						{t('surveys.gra.notifications.addStudent')}
+					</Button>
+					<Button onClick={handleOpenSendDialog}>
+						<PaperAirplaneIcon className="h-4 w-4 mr-2" />
+						{t('surveys.gra.notifications.sendSurvey')}
+					</Button>
+				</div>
+			</div>
+
+			<DataTable columns={columns} data={students} />
 
 			<Dialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
 				<DialogContent>
@@ -182,6 +251,15 @@ export function StudentList({ programId, academicPeriodId, surveyProgramId }: St
 				</DialogContent>
 			</Dialog>
 
+			<Dialog open={addStudentOpen} onOpenChange={setAddStudentOpen}>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle>{t('surveys.gra.notifications.addStudentTitle')}</DialogTitle>
+					</DialogHeader>
+					<AddStudentPanel programId={programId} onStudentAdded={handleStudentAdded} />
+				</DialogContent>
+			</Dialog>
+
 			<Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
@@ -193,29 +271,75 @@ export function StudentList({ programId, academicPeriodId, surveyProgramId }: St
 							<strong>{t('surveys.gra.notifications.sendDialog.bodyEmphasis')}</strong>
 							{t('surveys.gra.notifications.sendDialog.bodyAfter')}
 						</p>
-						<SurveyTemplateSelect
-							surveyTypeCode="GRA"
-							programId={surveyProgramId}
-							value={notificationMessageId}
-							onChange={setNotificationMessageId}
-						/>
-						<Input
-							label={t('surveys.gra.notifications.sendDialog.urlLabel')}
-							value={surveyBaseUrl}
-							onChange={(e) => setSurveyBaseUrl(e.target.value)}
-							placeholder={t('surveys.gra.notifications.sendDialog.urlPlaceholder')}
-							type="url"
-						/>
+
+						{loadingSummary && (
+							<p className="text-sm text-zinc-500 italic">
+								{t('surveys.gra.notifications.sendDialog.summaryLoading')}
+							</p>
+						)}
+
+						{!loadingSummary && summary && summary.totalStudents === 0 && (
+							<p className="text-sm text-amber-700 bg-amber-50 px-3 py-2 rounded-lg">
+								{t('surveys.gra.notifications.sendDialog.summaryEmpty')}
+							</p>
+						)}
+
+						{!loadingSummary && summary && summary.totalStudents > 0 && (
+							<div className="space-y-3">
+								<div className="grid grid-cols-2 gap-3">
+									<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+										<p className="text-xs font-medium uppercase text-zinc-500">
+											{t('surveys.gra.notifications.sendDialog.summaryPrograms')}
+										</p>
+										<p className="mt-1 text-2xl font-semibold text-zinc-900">
+											{summary.totalPrograms}
+										</p>
+									</div>
+									<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+										<p className="text-xs font-medium uppercase text-zinc-500">
+											{t('surveys.gra.notifications.sendDialog.summaryStudents')}
+										</p>
+										<p className="mt-1 text-2xl font-semibold text-zinc-900">
+											{summary.totalStudents}
+										</p>
+									</div>
+								</div>
+
+								<div>
+									<p className="text-xs font-medium text-zinc-500 mb-1">
+										{t('surveys.gra.notifications.sendDialog.summaryByProgramTitle')}
+									</p>
+									<div className="rounded-lg border border-zinc-200 divide-y divide-zinc-100 max-h-48 overflow-y-auto">
+										{summary.byProgram.map((row) => (
+											<div
+												key={row.programId}
+												className="flex items-center justify-between px-3 py-1.5 text-sm">
+												<span className="text-zinc-700">{row.programName}</span>
+												<span className="font-semibold text-zinc-900">{row.studentCount}</span>
+											</div>
+										))}
+									</div>
+								</div>
+							</div>
+						)}
 					</div>
 					<DialogFooter showCloseButton>
-						<Button onClick={handleSendAll} disabled={sending || !surveyBaseUrl.trim()}>
-							{sending
-								? t('surveys.gra.notifications.sendDialog.sending')
-								: t('surveys.gra.notifications.sendDialog.confirm')}
+						<Button
+							onClick={handleConfirmSend}
+							disabled={loadingSummary || !summary || summary.totalStudents === 0}>
+							{t('surveys.gra.notifications.sendDialog.confirm')}
 						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+
+			<GRANotificationProgressDialog
+				open={progressDialogOpen}
+				sending={sending}
+				status={status}
+				error={translatedSendError}
+				onOpenChange={setProgressDialogOpen}
+			/>
 
 			<Toast
 				isOpen={toast.open}

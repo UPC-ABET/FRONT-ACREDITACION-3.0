@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
@@ -13,6 +13,8 @@ import type {
 	StudentSearchResult,
 	EmailTemplate,
 	GRAEmailSendRequest,
+	GRANotificationJobStatus,
+	GRASendSummary,
 	MassiveUploadResult,
 } from '../types';
 import {
@@ -27,7 +29,9 @@ import {
 	listGRAStudents,
 	getGRAEmailTemplate,
 	saveGRAEmailTemplate,
+	getGRASendSummary,
 	sendGRAEmail,
+	getGRASendStatus,
 	downloadGRATemplate,
 	uploadGRAMassive,
 } from '../services';
@@ -224,7 +228,6 @@ export function useGRAEmail() {
 	const [template, setTemplate] = useState<EmailTemplate>({ subject: '', body: '' });
 	const [loading, setLoading] = useState(false);
 	const [saving, setSaving] = useState(false);
-	const [sending, setSending] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	const load = useCallback(async () => {
@@ -251,22 +254,102 @@ export function useGRAEmail() {
 		}
 	}, []);
 
-	const send = useCallback(
-		async (req: GRAEmailSendRequest, onSuccess?: () => void) => {
-			setSending(true);
+	return { template, setTemplate, loading, saving, error, load, save };
+}
+
+export function useGRASendNotifications() {
+	const { locale } = useI18n();
+	const [summary, setSummary] = useState<GRASendSummary | null>(null);
+	const [loadingSummary, setLoadingSummary] = useState(false);
+	const [sending, setSending] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [jobId, setJobId] = useState<string | null>(null);
+	const [status, setStatus] = useState<GRANotificationJobStatus | null>(null);
+	const onSuccessRef = useRef<(() => void) | undefined>(undefined);
+
+	const loadSummary = useCallback(
+		async (programId?: number) => {
+			setLoadingSummary(true);
+			setError(null);
 			try {
-				await sendGRAEmail(req, locale);
-				onSuccess?.();
+				setSummary(await getGRASendSummary(programId, locale));
 			} catch (e) {
 				setError(getErrorMessage(e));
 			} finally {
+				setLoadingSummary(false);
+			}
+		},
+		[locale],
+	);
+
+	const send = useCallback(
+		async (req: GRAEmailSendRequest, onSuccess?: () => void) => {
+			setSending(true);
+			setError(null);
+			setStatus({ progressPct: 0, totalStudents: 0, emailsSent: 0, emailsFailed: 0, errors: [] });
+			onSuccessRef.current = onSuccess;
+			try {
+				const result = await sendGRAEmail(req, locale);
+				if (!result.jobId) {
+					throw new Error('error.survey.gra.notificationJobNotFound');
+				}
+				setJobId(result.jobId);
+			} catch (e) {
+				setError(getErrorMessage(e));
+				setJobId(null);
+				onSuccessRef.current = undefined;
 				setSending(false);
 			}
 		},
 		[locale],
 	);
 
-	return { template, setTemplate, loading, saving, sending, error, load, save, send };
+	const reset = useCallback(() => {
+		setSummary(null);
+		setStatus(null);
+		setJobId(null);
+		setError(null);
+		setSending(false);
+	}, []);
+
+	useEffect(() => {
+		if (!jobId || !sending) return;
+
+		const activeJobId = jobId;
+		let cancelled = false;
+
+		async function pollStatus() {
+			try {
+				const nextStatus = await getGRASendStatus(activeJobId);
+				if (cancelled) return;
+				setStatus(nextStatus);
+				if (nextStatus.progressPct >= 100) {
+					setSending(false);
+					setJobId(null);
+					onSuccessRef.current?.();
+					onSuccessRef.current = undefined;
+				}
+			} catch (e) {
+				if (cancelled) return;
+				setError(getErrorMessage(e));
+				setSending(false);
+				setJobId(null);
+				onSuccessRef.current = undefined;
+			}
+		}
+
+		void pollStatus();
+		const intervalId = setInterval(() => {
+			void pollStatus();
+		}, 1000);
+
+		return () => {
+			cancelled = true;
+			clearInterval(intervalId);
+		};
+	}, [jobId, sending]);
+
+	return { summary, loadingSummary, loadSummary, sending, status, error, send, reset };
 }
 
 interface GRAUploadParams {
