@@ -33,7 +33,6 @@ interface UseMultipleCompetencyEvaluationParams {
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
 	nonAttendanceTypeIds: Set<number>;
-	duplicateMode: boolean;
 	commissions: CommissionRow[];
 	activeCommissionId: number | null;
 	onDirtyChange?: (isDirty: boolean) => void;
@@ -55,7 +54,6 @@ export function useMultipleCompetencyEvaluation({
 	projectId,
 	qualifStatuses,
 	nonAttendanceTypeIds,
-	duplicateMode,
 	commissions,
 	activeCommissionId,
 	onDirtyChange,
@@ -64,6 +62,7 @@ export function useMultipleCompetencyEvaluation({
 }: UseMultipleCompetencyEvaluationParams) {
 	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
+	const [duplicateMode, setDuplicateMode] = useState(false);
 
 	const markDirty = () => {
 		if (!isDirty) {
@@ -223,6 +222,39 @@ export function useMultipleCompetencyEvaluation({
 		}));
 	};
 
+	// Switching modes must not lose what the evaluator already entered: going to individual
+	// spreads the shared duplicate value onto every student; going back to duplicate takes the
+	// first student's selection as the shared value.
+	const handleToggleDuplicateMode = (next: boolean): void => {
+		if (next === duplicateMode) return;
+		if (next) {
+			setDupSelections((prev) => {
+				const result: DupSelections = { ...prev };
+				for (const cId of allCriteriaIds) {
+					const firstStudent = students[0];
+					result[cId] = firstStudent
+						? (selections[cId]?.[firstStudent.id] ?? prev[cId] ?? null)
+						: (prev[cId] ?? null);
+				}
+				return result;
+			});
+		} else {
+			setSelections((prev) => {
+				const result: Selections = { ...prev };
+				for (const cId of allCriteriaIds) {
+					const dupVal = dupSelections[cId] ?? null;
+					const row: Record<number, number | null> = { ...result[cId] };
+					students.forEach((st) => {
+						row[st.id] = dupVal;
+					});
+					result[cId] = row;
+				}
+				return result;
+			});
+		}
+		setDuplicateMode(next);
+	};
+
 	const handleSave = async (): Promise<void> => {
 		const studentScores = new Map<
 			number,
@@ -285,6 +317,7 @@ export function useMultipleCompetencyEvaluation({
 		visibleOutcomes,
 		selections,
 		dupSelections,
+		duplicateMode,
 		hasMissingStatus,
 		commissionFillStatus,
 		allFilled,
@@ -292,6 +325,7 @@ export function useMultipleCompetencyEvaluation({
 		isDirty,
 		handleSelect,
 		handleDupSelect,
+		handleToggleDuplicateMode,
 		handleSave,
 	};
 }
