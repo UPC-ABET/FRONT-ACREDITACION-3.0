@@ -1,11 +1,15 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Select, Button, Badge, SubTitle, Title } from '@/shared/components/ui';
+import { Select, Button, Badge, SubTitle, Title } from '@/shared';
 import { useI18n, useABET } from '@/providers';
-import { useAcademicPeriods, useStudyPlanCourses, usePrograms } from '@/modules/academic/hooks';
-import { StudyPlanCourseResponse } from '@/modules/academic';
-import { useResolveRubricType } from '../../hooks';
+import {
+	useAcademicPeriods,
+	useStudyPlanCourses,
+	usePrograms,
+	StudyPlanCourseResponse,
+	useResolveRubricType,
+} from '@/modules';
 import { TYPE_CODES } from '@/shared';
 
 export interface Step1Data {

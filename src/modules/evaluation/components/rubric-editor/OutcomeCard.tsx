@@ -3,7 +3,7 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
-import { OutcomeWithCriteria } from '../../types';
+import { OutcomeWithCriteria } from '@/modules';
 
 interface OutcomeCardProps {
 	outcome: OutcomeWithCriteria;

@@ -9,9 +9,8 @@ import {
 	DialogTitle,
 	DialogFooter,
 	DialogClose,
-} from '@/shared/components/ui/Dialog';
-import { Input } from '@/shared/components/ui/Input';
-import { Button } from '@/shared/components/ui/Button';
+} from '@/shared';
+import { Input, Button } from '@/shared';
 import { useI18n } from '@/providers';
 import { cn } from '@/shared/lib/utils';
 import { useEnrolledStudents } from '@/modules/academic';

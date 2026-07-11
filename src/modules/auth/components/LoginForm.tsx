@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LockClosedIcon, UserIcon } from '@heroicons/react/24/outline';
-import { Input, Button, Checkbox, LoadingDialog, ErrorDialog, Title } from '@/shared/components';
-import type { LoginPayload } from '@/modules/auth/types';
-import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules/auth/services';
+import { Input, Button, Checkbox, LoadingDialog, ErrorDialog, Title } from '@/shared';
+import type { LoginPayload } from '@/modules';
+import { loginByCredentials, getMicrosoftLoginUrl } from '@/modules';
 import { safeRedirect } from '@/shared/lib';
 import { useAuth, useI18n } from '@/providers';
 

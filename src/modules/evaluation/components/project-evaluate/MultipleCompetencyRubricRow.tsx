@@ -3,7 +3,7 @@
 import { Spinner } from '@/shared/components';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import type { RubricCriteriaDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
+import type { RubricCriteriaDetailsResponse, ProjectDetailsStudentResponse } from '@/modules';
 import { PLSelector, type PerformanceLevel } from './MultipleCompetencyPerformanceLevelSelector';
 
 interface MultipleCompetencyRubricRowProps {

@@ -13,10 +13,10 @@ import {
 	I18nTextField,
 	Input,
 	Select,
-} from '@/shared/components/ui';
+} from '@/shared';
 import { tryTranslateReason } from '@/shared/utils';
 import { useI18n } from '@/providers';
-import { useProjectGroupOptions, useCreateProjectGroup } from '../../hooks';
+import { useProjectGroupOptions, useCreateProjectGroup } from '@/modules';
 
 type AnyOption = { label: string; value: string | number };
 

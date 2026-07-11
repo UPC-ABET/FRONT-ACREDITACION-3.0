@@ -53,7 +53,7 @@ export function GRANotificationView({ programId }: GRANotificationViewProps) {
 				)}
 
 				{activeTab === 'upload' && (
-					<div className="max-w-lg space-y-4">
+					<div className="space-y-4">
 						<FileUploadPanel
 							title={t('surveys.gra.notifications.uploadTitle')}
 							description={t('surveys.gra.notifications.uploadDesc')}

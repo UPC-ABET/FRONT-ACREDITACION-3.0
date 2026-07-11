@@ -3,12 +3,9 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Select } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { PERFORMANCE_REPORT_KINDS } from '../../constants/performanceReports';
-import type {
-	PerformanceReportFilterOption,
-	PerformanceReportFiltersState,
-} from '../../hooks/usePerformanceReportFilters';
-import type { PerformanceReportKind } from '../../types';
+import { PERFORMANCE_REPORT_KINDS } from '@/modules';
+import type { PerformanceReportFilterOption, PerformanceReportFiltersState } from '@/modules';
+import type { PerformanceReportKind } from '@/modules';
 
 interface PerformanceReportFiltersProps {
 	readonly state: PerformanceReportFiltersState;

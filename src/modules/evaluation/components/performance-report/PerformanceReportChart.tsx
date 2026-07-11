@@ -10,7 +10,7 @@ import {
 	ChartTooltipContent,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type { PerformanceReportDto } from '../../types';
+import type { PerformanceReportDto } from '@/modules';
 
 interface PerformanceReportChartProps {
 	readonly report: PerformanceReportDto;

@@ -29,7 +29,11 @@ export function GRAManagementView() {
 				description={t('surveys.gra.management.subtitle')}
 			/>
 
-			<AllProgramsSelect value={programId} onChange={setProgramId} />
+			<Card>
+				<div className="grid gap-4 sm:max-w-sm">
+					<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="" />
+				</div>
+			</Card>
 
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 

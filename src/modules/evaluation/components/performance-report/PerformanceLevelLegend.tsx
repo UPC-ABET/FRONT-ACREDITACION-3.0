@@ -1,6 +1,6 @@
 'use client';
 
-import type { PerformanceLevelLegendDto } from '../../types';
+import type { PerformanceLevelLegendDto } from '@/modules';
 
 interface PerformanceLevelLegendProps {
 	readonly legend: PerformanceLevelLegendDto[];

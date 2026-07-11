@@ -31,12 +31,16 @@ export function PPPManagementView() {
 				description={t('surveys.ppp.management.subtitle')}
 			/>
 
+			<Card>
+				<div className="grid gap-4 sm:max-w-sm">
+					<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="" />
+				</div>
+			</Card>
+
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
 			<Card className="overflow-visible">
 				<div className="space-y-6">
-					<AllProgramsSelect value={programId} onChange={setProgramId} />
-
 					{activeTab === 'upload' && <PPPMassiveUpload programId={programId} />}
 					{activeTab === 'reports' && <PPPReports programId={programId} />}
 					{activeTab === 'config' && <PPPConfiguration programId={programId} />}

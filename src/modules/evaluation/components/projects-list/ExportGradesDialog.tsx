@@ -12,7 +12,7 @@ import {
 import { Select } from '@/shared/components/ui/Select';
 import { useI18n } from '@/providers';
 import type { TypeOption } from '@/modules/core';
-import type { useExportProjectGrades } from '../../hooks';
+import type { useExportProjectGrades } from '@/modules';
 
 type SelectOption = { label: string; value: number };
 
