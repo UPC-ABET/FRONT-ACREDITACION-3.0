@@ -10,15 +10,12 @@ import {
 	DialogTitle,
 	DialogFooter,
 	DialogClose,
-} from '@/shared/components/ui/Dialog';
-import { Input } from '@/shared/components/ui/Input';
-import { Select } from '@/shared/components/ui/Select';
-import { Button } from '@/shared/components/ui/Button';
+} from '@/shared';
+import { Select, Button, Input } from '@/shared';
 import { useI18n } from '@/providers';
 import { useProfessorsByFilters } from '@/modules/academic';
 import { useTypeGroups, useTypes } from '@/modules/core/hooks';
-import { projectsService } from '../../services';
-import { projectsQueryKeys } from '../../hooks';
+import { projectsService, projectsQueryKeys } from '@/modules';
 import type { ProfessorSearchResponse } from '@/modules/academic';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { cn } from '@/shared/lib/utils';

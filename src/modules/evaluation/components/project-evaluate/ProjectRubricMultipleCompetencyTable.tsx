@@ -12,7 +12,7 @@ import { performanceLevelsService } from '@/modules/academic/services';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import { useMultipleCompetencyEvaluation } from '../../hooks/useMultipleCompetencyEvaluation';
-import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
+import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '@/modules';
 import { MultipleCompetencyRubricRow } from './MultipleCompetencyRubricRow';
 import { DuplicateGradesToggle } from './DuplicateGradesToggle';
 import { PLSelector, type PerformanceLevel } from './MultipleCompetencyPerformanceLevelSelector';

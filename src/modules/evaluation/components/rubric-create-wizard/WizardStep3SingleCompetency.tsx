@@ -6,11 +6,11 @@ import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/so
 import { Button } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
 import { cn } from '@/shared/lib/utils';
-import { RubricTable } from '../rubric-editor/RubricTable';
-import type { RubricQuestion, QuestionCriteria } from '../../types';
+import { RubricTable } from '@/modules';
+import type { RubricQuestion, QuestionCriteria } from '@/modules';
 import type { Step1Data } from './WizardStep1';
 import type { Step2Data } from './WizardStep2';
-import { MAX_COLS, MAX_QUESTIONS, TARGET_SUM } from '../../constants';
+import { MAX_COLS, MAX_QUESTIONS, TARGET_SUM } from '@/modules';
 
 export interface SingleCompetencyPayloadQuestion {
 	question: { es: string; en: string };

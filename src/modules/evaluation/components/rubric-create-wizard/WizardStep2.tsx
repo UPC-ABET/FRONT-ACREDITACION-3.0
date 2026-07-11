@@ -5,7 +5,7 @@ import { Select, Button, SubTitle, Title, TYPE_GROUP_CODES, TYPE_CODES } from '@
 import { useI18n } from '@/providers';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { useCourseOutcomeMappings } from '@/modules/academic/hooks';
-import { COMPETENCY_SCOPE_LABELS } from '../../constants';
+import { COMPETENCY_SCOPE_LABELS } from '@/modules';
 import type { Step1Data } from './WizardStep1';
 
 const GRADE_TYPE_GROUP = TYPE_GROUP_CODES.GRADE_TYPE;

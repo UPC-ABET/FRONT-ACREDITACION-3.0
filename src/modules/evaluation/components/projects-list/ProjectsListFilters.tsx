@@ -1,9 +1,7 @@
 'use client';
 
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { Card } from '@/shared/components/ui';
-import { Select } from '@/shared/components/ui/Select';
-import { buttonVariants } from '@/shared/components/ui/Button';
+import { Card, Select, buttonVariants } from '@/shared';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 

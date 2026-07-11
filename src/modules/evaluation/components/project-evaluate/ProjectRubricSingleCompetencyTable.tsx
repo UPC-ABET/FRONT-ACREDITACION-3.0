@@ -5,7 +5,7 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
 import { useSingleCompetencyRubricTable } from '../../hooks/useSingleCompetencyRubricTable';
-import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
+import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '@/modules';
 import { DuplicateGradesToggle } from './DuplicateGradesToggle';
 import { SingleCompetencyRubricRow } from './SingleCompetencyRubricRow';
 import { SingleCompetencyScoreInput } from './SingleCompetencyScoreInput';

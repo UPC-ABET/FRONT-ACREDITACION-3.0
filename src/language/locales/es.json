@@ -2503,7 +2503,7 @@
 			},
 			"upload": {
 				"title": "Carga Masiva PPP",
-				"description": "Descarga la plantilla, completa los datos y súbela para procesar masivamente.",
+				"description": "Descarga la plantilla excel, completa los datos y cargala para procesar masivamente.",
 				"fileTitle": "Archivo de datos",
 				"downloadLabel": "Descargar Plantilla PPP",
 				"downloadError": "Error al descargar la plantilla."
@@ -2579,9 +2579,10 @@
 				"step2Title": "Paso 2: Sube el archivo completado",
 				"selectFile": "Selecciona el archivo",
 				"clickToSelect": "Haz clic para seleccionar un archivo",
+				"dropzone": "Haz clic o arrastra el archivo Excel aquí",
 				"formats": "Formatos aceptados: {{accept}} · Máx. {{mb}}MB",
 				"uploading": "Subiendo...",
-				"uploadButton": "Subir Archivo"
+				"uploadButton": "Cargar Archivo"
 			},
 			"programLabel": "Carrera",
 			"selectProgram": "Selecciona una carrera",

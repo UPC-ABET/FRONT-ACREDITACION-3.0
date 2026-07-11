@@ -7,7 +7,7 @@ import { useI18n } from '@/providers';
 import type { EnrolledStudentResponse } from '@/modules/academic';
 import type { Step1Data } from '../rubric-create-wizard/WizardStep1';
 import { WizardSelectStudentsModal, WizardSelectEvaluatorModal } from '@/modules';
-import { ProjectGroupSelect } from '../project-group-select/ProjectGroupSelect';
+import { ProjectGroupSelect } from '@/modules';
 
 export interface ProjectFormData {
 	code: string;

@@ -1,7 +1,7 @@
 'use client';
 
 import { JSX } from 'react';
-import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../../types';
+import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '@/modules';
 import { SingleCompetencyScoreInput } from './SingleCompetencyScoreInput';
 import { fmtNum, validateScore } from './singleCompetencyRubricUtils';
 import type { Scores, DupScores } from './singleCompetencyRubricUtils';

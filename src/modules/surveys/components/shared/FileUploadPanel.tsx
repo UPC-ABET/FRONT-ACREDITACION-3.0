@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
-import { Button, Toast } from '@/shared/components';
-import { ArrowUpTrayIcon, ArrowDownTrayIcon, DocumentIcon } from '@heroicons/react/24/outline';
+import { useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, DragEvent } from 'react';
+import { Download, Upload } from 'lucide-react';
+import { Button, Card, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { cn } from '@/shared/lib/utils';
+import { SURVEY_FILE_UPLOAD_MAX_SIZE_MB } from '../../constants/survey';
 
 interface FileUploadPanelProps {
 	readonly title: string;
@@ -19,7 +21,14 @@ interface FileUploadPanelProps {
 	readonly downloadLabel: string;
 }
 
-const MAX_SIZE_MB = 10;
+function getAcceptLabel(accept: string) {
+	const extensions = accept
+		.split(',')
+		.map((item) => item.trim())
+		.filter((item) => item.startsWith('.'));
+
+	return extensions.length ? extensions.join(' / ') : accept;
+}
 
 export function FileUploadPanel({
 	title,
@@ -54,22 +63,25 @@ export function FileUploadPanel({
 			);
 			return;
 		}
-		if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+		if (file.size > SURVEY_FILE_UPLOAD_MAX_SIZE_MB * 1024 * 1024) {
 			setValidationError(
-				t('surveys.shared.fileUpload.fileTooLarge').replace('{{mb}}', String(MAX_SIZE_MB)),
+				t('surveys.shared.fileUpload.fileTooLarge').replace(
+					'{{mb}}',
+					String(SURVEY_FILE_UPLOAD_MAX_SIZE_MB),
+				),
 			);
 			return;
 		}
 		setSelectedFile(file);
 	}
 
-	function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+	function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
 		const file = e.target.files?.[0];
 		if (!file) return;
 		selectFile(file);
 	}
 
-	function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+	function handleDrop(e: DragEvent<HTMLButtonElement>) {
 		e.preventDefault();
 		e.stopPropagation();
 		setIsDraggingFile(false);
@@ -80,14 +92,14 @@ export function FileUploadPanel({
 		if (inputRef.current) inputRef.current.value = '';
 	}
 
-	function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+	function handleDragOver(e: DragEvent<HTMLButtonElement>) {
 		e.preventDefault();
 		e.stopPropagation();
 		e.dataTransfer.dropEffect = 'copy';
 		setIsDraggingFile(true);
 	}
 
-	function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+	function handleDragLeave(e: DragEvent<HTMLButtonElement>) {
 		e.preventDefault();
 		e.stopPropagation();
 		if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
@@ -99,7 +111,7 @@ export function FileUploadPanel({
 		onUpload(selectedFile);
 	}
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (success) {
 			/* eslint-disable react-hooks/set-state-in-effect -- reacting to the parent's async upload-success flag: showing dismissible toast state and clearing the selected-file draft; neither is derivable during render */
 			setToast({
@@ -113,86 +125,79 @@ export function FileUploadPanel({
 		}
 	}, [success, t]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		// eslint-disable-next-line react-hooks/set-state-in-effect -- syncing the parent's async upload error into dismissible toast state; toast is user-mutable so it can't be derived during render
 		if (error) setToast({ open: true, type: 'error', msg: tryTranslate(t, error) });
 	}, [error, t]);
 
+	const acceptLabel = getAcceptLabel(accept);
+
 	return (
-		<div className="space-y-6">
-			<div>
-				<h3 className="text-base font-bold text-zinc-800">{title}</h3>
-				{description && <p className="text-sm text-zinc-500 mt-1">{description}</p>}
-			</div>
+		<>
+			<Card>
+				<div className="space-y-5">
+					<header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+						<div className="space-y-1">
+							<h3 className="text-lg font-semibold text-zinc-900">{title}</h3>
+							{description && <p className="text-sm font-normal text-zinc-500">{description}</p>}
+						</div>
+						{onDownloadTemplate && (
+							<Button
+								variant="surface"
+								size="sm"
+								onClick={onDownloadTemplate}
+								className="w-full sm:w-auto">
+								<Download className="h-4 w-4" />
+								<span>{downloadLabel}</span>
+							</Button>
+						)}
+					</header>
 
-			{onDownloadTemplate && (
-				<div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-200">
-					<ArrowDownTrayIcon className="h-5 w-5 text-zinc-400 shrink-0" />
-					<div className="flex-1">
-						<p className="text-sm font-medium text-zinc-700">
-							{t('surveys.shared.fileUpload.step1Title')}
-						</p>
-						<p className="text-xs text-zinc-500">{t('surveys.shared.fileUpload.step1Desc')}</p>
-					</div>
-					<Button variant="surface" size="sm" onClick={onDownloadTemplate}>
-						{downloadLabel}
-					</Button>
-				</div>
-			)}
+					<button
+						type="button"
+						className={cn(
+							'flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 text-center transition-colors',
+							isDraggingFile
+								? 'border-red-500 bg-red-50'
+								: 'border-zinc-300 bg-zinc-50 hover:border-red-400 hover:bg-red-50/40',
+						)}
+						onClick={() => inputRef.current?.click()}
+						onDrop={handleDrop}
+						onDragOver={handleDragOver}
+						onDragEnter={handleDragOver}
+						onDragLeave={handleDragLeave}>
+						<Upload
+							className={cn('mb-2 h-6 w-6', isDraggingFile ? 'text-red-500' : 'text-zinc-400')}
+						/>
+						<span
+							className={cn(
+								'text-sm font-medium',
+								isDraggingFile ? 'text-red-700' : 'text-zinc-700',
+							)}>
+							{selectedFile ? selectedFile.name : t('surveys.shared.fileUpload.dropzone')}
+						</span>
+						<span className="mt-1 text-xs text-zinc-400">{acceptLabel}</span>
+					</button>
 
-			<div className="p-4 bg-zinc-50 rounded-xl border border-zinc-200 space-y-3">
-				<div className="flex items-center gap-3">
-					<ArrowUpTrayIcon className="h-5 w-5 text-zinc-400 shrink-0" />
-					<p className="text-sm font-medium text-zinc-700">
-						{onDownloadTemplate
-							? t('surveys.shared.fileUpload.step2Title')
-							: t('surveys.shared.fileUpload.selectFile')}
-					</p>
-				</div>
-
-				<div
-					role="button"
-					tabIndex={0}
-					className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center gap-3 cursor-pointer transition-colors ${
-						isDraggingFile ? 'border-red-500 bg-red-50' : 'border-zinc-300 hover:border-red-400'
-					}`}
-					onClick={() => inputRef.current?.click()}
-					onDrop={handleDrop}
-					onDragOver={handleDragOver}
-					onDragEnter={handleDragOver}
-					onDragLeave={handleDragLeave}
-					onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && inputRef.current?.click()}>
-					<DocumentIcon
-						className={cn('h-8 w-8', isDraggingFile ? 'text-red-500' : 'text-zinc-400')}
+					<input
+						ref={inputRef}
+						type="file"
+						accept={accept}
+						className="hidden"
+						onChange={handleFileChange}
 					/>
-					{selectedFile ? (
-						<p className="text-sm font-medium text-zinc-700">{selectedFile.name}</p>
-					) : (
-						<p className="text-sm text-zinc-500">{t('surveys.shared.fileUpload.clickToSelect')}</p>
-					)}
-					<p className="text-xs text-zinc-400">
-						{t('surveys.shared.fileUpload.formats')
-							.replace('{{accept}}', accept)
-							.replace('{{mb}}', String(MAX_SIZE_MB))}
-					</p>
+
+					{validationError && <p className="text-sm text-red-600">{validationError}</p>}
+
+					<div className="flex justify-end">
+						<Button variant="primary" onClick={handleUpload} disabled={!selectedFile || uploading}>
+							{uploading
+								? t('surveys.shared.fileUpload.uploading')
+								: t('surveys.shared.fileUpload.uploadButton')}
+						</Button>
+					</div>
 				</div>
-
-				<input
-					ref={inputRef}
-					type="file"
-					accept={accept}
-					className="hidden"
-					onChange={handleFileChange}
-				/>
-
-				{validationError && <p className="text-xs text-red-600">{validationError}</p>}
-
-				<Button onClick={handleUpload} disabled={!selectedFile || uploading} className="w-full">
-					{uploading
-						? t('surveys.shared.fileUpload.uploading')
-						: t('surveys.shared.fileUpload.uploadButton')}
-				</Button>
-			</div>
+			</Card>
 
 			<Toast
 				isOpen={toast.open}
@@ -200,6 +205,6 @@ export function FileUploadPanel({
 				message={toast.msg}
 				onClose={() => setToast({ ...toast, open: false })}
 			/>
-		</div>
+		</>
 	);
 }

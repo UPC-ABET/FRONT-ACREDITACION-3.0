@@ -1,7 +1,7 @@
 'use client';
 
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { Toggle } from '@/shared/components/ui';
+import { Toggle } from '@/shared';
 import { useI18n } from '@/providers';
 
 interface DuplicateGradesToggleProps {

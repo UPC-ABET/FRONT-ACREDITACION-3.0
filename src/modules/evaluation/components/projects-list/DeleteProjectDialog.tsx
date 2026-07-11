@@ -12,8 +12,8 @@ import {
 import { ApiError } from '@/shared/lib';
 import { interpolate } from '@/shared/utils';
 import { useI18n } from '@/providers';
-import type { useDeleteProject } from '../../hooks';
-import type { ProjectResponse } from '../../types';
+import type { useDeleteProject } from '@/modules';
+import type { ProjectResponse } from '@/modules';
 
 interface DeleteProjectDialogProps {
 	confirmTarget: ProjectResponse | null;

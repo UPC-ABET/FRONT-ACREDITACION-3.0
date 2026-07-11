@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { Checkbox } from '@/shared/components/ui';
 import { useI18n } from '@/providers';
-import { CommissionTab } from '../../types';
-import { verificationOutcomes } from '../../utils/multipleCompetencyUtils';
+import { CommissionTab } from '@/modules';
+import { verificationOutcomes } from '@/modules/evaluation/utils';
 
 function commissionTabStatus(
 	commission: CommissionTab,

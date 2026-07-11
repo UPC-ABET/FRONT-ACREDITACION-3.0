@@ -6,15 +6,14 @@ import { Button, Card, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { ApiError, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
+import { usePerformanceReport, usePerformanceReportDownload } from '@/modules';
 import {
-	usePerformanceReport,
-	usePerformanceReportDownload,
-} from '../../hooks/usePerformanceReports';
-import { PERFORMANCE_REPORT_KINDS } from '../../constants/performanceReports';
-import { PerformanceReportChart } from './PerformanceReportChart';
-import { PerformanceLevelLegend } from './PerformanceLevelLegend';
-import { PerformanceReportTable } from './PerformanceReportTable';
-import type { PerformanceReportFilterDto, PerformanceReportKind } from '../../types';
+	PERFORMANCE_REPORT_KINDS,
+	PerformanceReportChart,
+	PerformanceLevelLegend,
+	PerformanceReportTable,
+} from '@/modules';
+import type { PerformanceReportFilterDto, PerformanceReportKind } from '@/modules';
 
 interface PerformanceReportViewProps {
 	readonly kind: PerformanceReportKind;

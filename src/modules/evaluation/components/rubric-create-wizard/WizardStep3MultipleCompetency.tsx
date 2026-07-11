@@ -3,12 +3,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
-import { Button, Input, Skeleton } from '@/shared/components/ui';
+import { Button, Input, Skeleton } from '@/shared';
 import { useI18n } from '@/providers';
-import { CommissionTabs } from '../rubric-editor/CommissionTabs';
-import { OutcomeCard } from '../rubric-editor/OutcomeCard';
-import { useOutcomes } from '@/modules/accreditation/hooks';
-import type { OutcomeWithCriteria, CriteriaItem } from '../../types';
+import { CommissionTabs, OutcomeCard, useOutcomes } from '@/modules';
+import type { OutcomeWithCriteria, CriteriaItem } from '@/modules';
 import type { Step1Data } from './WizardStep1';
 import type { Step2Data } from './WizardStep2';
 

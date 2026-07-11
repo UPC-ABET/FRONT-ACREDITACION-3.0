@@ -2,15 +2,12 @@
 
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Card, Select } from '@/shared/components';
-import { buttonVariants } from '@/shared/components/ui/Button';
+import { buttonVariants } from '@/shared';
 import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
-import { PERFORMANCE_REPORT_KINDS } from '../../constants/performanceReports';
-import type {
-	PerformanceReportFilterOption,
-	PerformanceReportFiltersState,
-} from '../../hooks/usePerformanceReportFilters';
-import type { PerformanceReportKind } from '../../types';
+import { PERFORMANCE_REPORT_KINDS } from '@/modules';
+import type { PerformanceReportFilterOption, PerformanceReportFiltersState } from '@/modules';
+import type { PerformanceReportKind } from '@/modules';
 
 interface PerformanceReportFiltersProps {
 	readonly state: PerformanceReportFiltersState;
@@ -136,7 +133,7 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 				<p className="text-xs text-zinc-500">{t('performanceReports.filters.gradeTypesHint')}</p>
 			)}
 			{canClear && (
-				<div className="flex justify-end">
+				<div className="flex justify-end pt-2">
 					<button
 						type="button"
 						onClick={state.reset}

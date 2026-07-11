@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import type { CellContext, ColumnDef, Table } from '@tanstack/react-table';
 import { DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
-import type { PerformanceCourseOutcomeSummaryDto, PerformanceLevelLegendDto } from '../../types';
+import type { PerformanceCourseOutcomeSummaryDto, PerformanceLevelLegendDto } from '@/modules';
 
 type SummaryRow = PerformanceCourseOutcomeSummaryDto;
 

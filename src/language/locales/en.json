@@ -2578,6 +2578,7 @@
 				"step2Title": "Step 2: Upload the completed file",
 				"selectFile": "Select the file",
 				"clickToSelect": "Click to select a file",
+				"dropzone": "Click or drag the Excel file here",
 				"formats": "Accepted formats: {{accept}} · Max. {{mb}}MB",
 				"uploading": "Uploading...",
 				"uploadButton": "Upload File"
