@@ -122,21 +122,35 @@ export interface MassiveUploadResult {
 	errors: Array<{ row?: number; code?: string; reason: string }>;
 }
 
-export interface SendEmailResponse {
-	success: boolean;
-	data?: {
-		sent: number;
-		failed: number;
-		failureDetails?: Array<{ studentId: number; reason: string }>;
-	};
-	message?: string;
-}
-
 export interface GRAEmailSendRequest {
 	academicPeriodId: number;
 	programId: number;
 	surveyBaseUrl: string;
-	notificationMessageId?: number;
+}
+
+export interface GRASendResponse {
+	accepted: boolean;
+	jobId: string;
+}
+
+export interface GRANotificationJobStatus {
+	progressPct: number;
+	totalStudents: number;
+	emailsSent: number;
+	emailsFailed: number;
+	errors: string[];
+}
+
+export interface GRASendSummaryByProgram {
+	programId: number;
+	programName: string;
+	studentCount: number;
+}
+
+export interface GRASendSummary {
+	totalPrograms: number;
+	totalStudents: number;
+	byProgram: GRASendSummaryByProgram[];
 }
 
 export type LCFCConfigStatus = 'ACTIVE' | 'INACTIVE';

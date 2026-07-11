@@ -19,7 +19,9 @@ import type {
 	StudentSearchResult,
 	EmailTemplate,
 	GRAEmailSendRequest,
-	SendEmailResponse,
+	GRASendResponse,
+	GRANotificationJobStatus,
+	GRASendSummary,
 	DashboardResponse,
 	PerformanceLevel,
 	MassiveUploadResult,
@@ -225,16 +227,11 @@ export async function searchStudentByCode(
 	return adaptStudent(match, studentCode);
 }
 
-const MAX_PREFIX_SUGGESTIONS = 30;
-
-export async function searchStudentsByPrefix(codePrefix: string): Promise<StudentSearchResult[]> {
-	if (!codePrefix.trim()) return [];
-	const res = await apiPost('students/get-by-filters', {
-		code: codePrefix.trim(),
-		isActive: true,
-	});
-	const list = getApiData<BackendStudent[]>(res) ?? [];
-	return list.slice(0, MAX_PREFIX_SUGGESTIONS).map((student) => adaptStudent(student));
+export async function searchStudentsByPrefix(query: string): Promise<StudentSearchResult[]> {
+	const term = query.trim();
+	if (!term) return [];
+	const res = await apiPost('gra/notification/search-students', { term });
+	return getApiData<StudentSearchResult[]>(res) ?? [];
 }
 
 export async function addStudentToNotification(params: {
@@ -258,6 +255,16 @@ export async function deleteStudentNotification(notificationId: number) {
 	return apiDelete(`gra/notification/delete/${notificationId}`);
 }
 
+// The survey lives in the production accreditation site; the base URL is never entered by hand.
+export const SURVEY_BASE_URL = 'https://accreditation.tcupc.pe';
+
+export async function resendGRANotification(notificationId: number, lang = 'es') {
+	return apiPost(`gra/notification/resend/${notificationId}`, {
+		surveyBaseUrl: SURVEY_BASE_URL,
+		lang,
+	});
+}
+
 export async function listGRAStudents(params: {
 	programId?: number;
 	academicPeriodId?: number;
@@ -273,18 +280,42 @@ export async function listGRAStudents(params: {
 	return { students: list.map((s) => adaptGraStudent(s)) };
 }
 
+export async function getGRASendSummary(
+	programId: number | undefined,
+	lang = 'es',
+): Promise<GRASendSummary> {
+	const res = await apiPost('gra/email/summary', { programId, lang });
+	const data = getApiData<GRASendSummary>(res);
+	return {
+		totalPrograms: data?.totalPrograms ?? 0,
+		totalStudents: data?.totalStudents ?? 0,
+		byProgram: data?.byProgram ?? [],
+	};
+}
+
 export async function sendGRAEmail(
 	request: GRAEmailSendRequest,
 	lang = 'es',
-): Promise<SendEmailResponse> {
+): Promise<GRASendResponse> {
 	const res = await apiPost('gra/email/send', {
 		programId: request.programId,
 		surveyBaseUrl: request.surveyBaseUrl,
-		notificationMessageId: request.notificationMessageId,
 		lang,
 	});
-	const data = getApiData<{ sent?: number; failed?: number }>(res);
-	return { success: true, data: { sent: data?.sent ?? 0, failed: data?.failed ?? 0 } };
+	const data = getApiData<GRASendResponse>(res);
+	return { accepted: data?.accepted ?? false, jobId: data?.jobId ?? '' };
+}
+
+export async function getGRASendStatus(jobId: string): Promise<GRANotificationJobStatus> {
+	const res = await apiGet(`gra/email/send-status/${encodeURIComponent(jobId)}`);
+	const data = getApiData<GRANotificationJobStatus>(res);
+	return {
+		progressPct: data?.progressPct ?? 0,
+		totalStudents: data?.totalStudents ?? 0,
+		emailsSent: data?.emailsSent ?? 0,
+		emailsFailed: data?.emailsFailed ?? 0,
+		errors: data?.errors ?? [],
+	};
 }
 
 export async function getGRAEmailTemplate(lang = 'es'): Promise<EmailTemplate> {

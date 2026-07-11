@@ -6,12 +6,13 @@ import { useI18n, useGlobalAcademicFiltersVisibilityOverride } from '@/providers
 import { GRAReports } from './GRAReports';
 import { GRANotificationView } from './notifications/GRANotificationView';
 import { GRAConfiguration } from './configuration/GRAConfiguration';
-import { AllProgramsSelect } from '../shared/AllProgramsSelect';
 
+// The career filter used to live here, shared across all three tabs. Each tab now owns its
+// own independent career filter instead, so switching programs in one tab no longer affects
+// the others.
 export function GRAManagementView() {
 	const { t } = useI18n();
 	const [activeTab, setActiveTab] = useState('reports');
-	const [programId, setProgramId] = useState(0);
 
 	// Hide school filter — surveys show all programs across schools.
 	useGlobalAcademicFiltersVisibilityOverride({ school: false, modality: true, period: true });
@@ -29,20 +30,12 @@ export function GRAManagementView() {
 				description={t('surveys.gra.management.subtitle')}
 			/>
 
-			<Card>
-				<div className="grid gap-4 sm:max-w-sm">
-					<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="" />
-				</div>
-			</Card>
-
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
 			<Card className="overflow-visible">
-				{activeTab === 'reports' && <GRAReports programId={programId || undefined} />}
-				{activeTab === 'notifications' && (
-					<GRANotificationView programId={programId || undefined} />
-				)}
-				{activeTab === 'config' && <GRAConfiguration programId={programId || undefined} />}
+				{activeTab === 'reports' && <GRAReports />}
+				{activeTab === 'notifications' && <GRANotificationView />}
+				{activeTab === 'config' && <GRAConfiguration />}
 			</Card>
 		</div>
 	);
