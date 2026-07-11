@@ -215,9 +215,9 @@ export function GradeProjectsPage() {
 						title={t('projects.grade.table.grade')}
 						className={cn(
 							buttonVariants({ variant: 'ghost', size: 'icon' }),
-							'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900',
+							'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700',
 						)}>
-						<ClipboardDocumentCheckIcon className="h-5 w-5" />
+						<ClipboardDocumentCheckIcon className="h-4 w-4" />
 					</Link>
 				),
 				meta: {
@@ -254,6 +254,11 @@ export function GradeProjectsPage() {
 				<DataTable
 					columns={columns}
 					data={projects}
+					getRowClassName={(project) =>
+						project.evaluationDate
+							? 'graded-row !bg-emerald-50 [&.graded-row:hover]:!bg-emerald-100/70'
+							: undefined
+					}
 					isLoading={isLoadingProjects}
 					errorMessage={
 						isErrorProjects

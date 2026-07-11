@@ -1,9 +1,7 @@
 'use client';
 
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { Card, Select } from '@/shared/components';
-import { buttonVariants } from '@/shared';
-import { cn } from '@/shared/lib/utils';
+import { Button, Card, Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { PERFORMANCE_REPORT_KINDS } from '@/modules';
 import type { PerformanceReportFilterOption, PerformanceReportFiltersState } from '@/modules';
@@ -105,6 +103,7 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 					label={t('performanceReports.filters.language')}
 					options={languageOptions}
 					value={selectedLanguage}
+					isSearchable
 					onChange={(_name, value) => {
 						const single = asSingle(value);
 						if (single) state.onLangChange(single.value === 1 ? 'en' : 'es');
@@ -133,17 +132,11 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 				<p className="text-xs text-zinc-500">{t('performanceReports.filters.gradeTypesHint')}</p>
 			)}
 			{canClear && (
-				<div className="flex justify-end pt-2">
-					<button
-						type="button"
-						onClick={state.reset}
-						className={cn(
-							buttonVariants({ variant: 'warning', size: 'md' }),
-							'inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-red-100 hover:text-red-500',
-						)}>
+				<div className="flex justify-end">
+					<Button variant="secondary" onClick={state.reset}>
 						<TrashIcon className="h-4 w-4" />
 						{t('performanceReports.filters.clear')}
-					</button>
+					</Button>
 				</div>
 			)}
 		</Card>

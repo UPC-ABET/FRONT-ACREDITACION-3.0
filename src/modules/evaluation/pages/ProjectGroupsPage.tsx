@@ -5,6 +5,7 @@ import { PlusIcon, TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outli
 import {
 	Button,
 	Card,
+	DeleteConfirmDialog,
 	Dialog,
 	DialogClose,
 	DialogContent,
@@ -20,7 +21,7 @@ import {
 	TableLoadingState,
 } from '@/shared/components/ui';
 import { Toggle } from '@/shared/components/ui/Toggle';
-import { tryTranslateReason } from '@/shared/utils';
+import { interpolate, tryTranslateReason } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import { usePrograms } from '@/modules/academic/hooks';
 import {
@@ -30,14 +31,7 @@ import {
 	useDeleteProjectGroup,
 } from '../hooks';
 import type { ProjectGroup } from '../types';
-
-type SelectOption = { label: string; value: number };
-type AnyOption = { label: string; value: string | number };
-
-function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | null {
-	const single = Array.isArray(opt) ? (opt[0] ?? null) : opt;
-	return single ? { label: single.label, value: Number(single.value) } : null;
-}
+import { toSelectOption, type SelectOption } from '../utils/selectOption';
 
 interface FormState {
 	code: string;
@@ -232,7 +226,7 @@ export function ProjectGroupsPage() {
 										<Button
 											variant="ghost"
 											size="icon"
-											className="text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+											className="text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
 											onClick={() => openEdit(group)}
 											aria-label={t('projectGroups.edit.title')}>
 											<PencilSquareIcon className="h-4 w-4" />
@@ -240,7 +234,7 @@ export function ProjectGroupsPage() {
 										<Button
 											variant="ghost"
 											size="icon"
-											className="text-zinc-400 hover:bg-red-50 hover:text-red-600"
+											className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 											onClick={() => {
 												setDeleteTarget(group);
 												setDeleteError(null);
@@ -315,40 +309,22 @@ export function ProjectGroupsPage() {
 			</Dialog>
 
 			{/* Delete modal */}
-			<Dialog
+			<DeleteConfirmDialog
 				open={deleteTarget != null}
 				onOpenChange={(open) => {
 					if (!open) setDeleteTarget(null);
-				}}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<DialogTitle>{t('projectGroups.delete.title')}</DialogTitle>
-					</DialogHeader>
-					<p className="text-sm text-zinc-600">
-						{t('projectGroups.delete.confirm').replace(
-							'{{name}}',
-							deleteTarget ? (deleteTarget.name[loc] ?? deleteTarget.name.es) : '',
-						)}
-					</p>
-					{deleteError && <p className="text-xs text-red-600">{deleteError}</p>}
-					<DialogFooter>
-						<DialogClose
-							render={
-								<Button variant="secondary" disabled={deleteMutation.isPending}>
-									{t('dialog.actions.cancel')}
-								</Button>
-							}
-						/>
-						<Button
-							variant="danger"
-							onClick={handleDelete}
-							disabled={deleteMutation.isPending}
-							loading={deleteMutation.isPending}>
-							{t('dialog.actions.delete')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+				}}
+				contentClassName="sm:max-w-md"
+				title={t('projectGroups.delete.title')}
+				description={interpolate(t('projectGroups.delete.confirm'), {
+					name: deleteTarget ? (deleteTarget.name[loc] ?? deleteTarget.name.es) : '',
+				})}
+				error={deleteError}
+				isPending={deleteMutation.isPending}
+				cancelLabel={t('dialog.actions.cancel')}
+				confirmLabel={t('dialog.actions.delete')}
+				onConfirm={handleDelete}
+			/>
 		</div>
 	);
 }

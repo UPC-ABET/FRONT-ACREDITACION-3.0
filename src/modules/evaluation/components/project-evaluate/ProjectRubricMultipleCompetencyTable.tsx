@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ExclamationTriangleIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { Spinner } from '@/shared/components/ui';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { cn } from '@/shared/lib/utils';
 import { localizedText } from '@/shared/utils';
 import { useI18n } from '@/providers';
@@ -12,7 +13,11 @@ import { performanceLevelsService } from '@/modules/academic/services';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import { useMultipleCompetencyEvaluation } from '../../hooks/useMultipleCompetencyEvaluation';
-import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '@/modules';
+import type {
+	RubricQuestionDetailsResponse,
+	ProjectDetailsStudentResponse,
+	RubricTableHandle,
+} from '../../types';
 import { MultipleCompetencyRubricRow } from './MultipleCompetencyRubricRow';
 import { DuplicateGradesToggle } from './DuplicateGradesToggle';
 import { PLSelector, type PerformanceLevel } from './MultipleCompetencyPerformanceLevelSelector';
@@ -40,28 +45,42 @@ interface ProjectRubricMultipleCompetencyTableProps {
 	rubricId: number;
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
-	nrNaTypeIds: Set<number>;
+	nonAttendanceTypeIds: Set<number>;
 	readOnly?: boolean;
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
 	commissions?: CommissionRow[];
+	observation: I18nValue;
+	attendanceDirty?: boolean;
+	/** Reports this rubric's validation messages (same text as before) so the page can render
+	 * them once, aggregated across every career/gradeType, instead of nested per rubric. */
+	onIncompleteChange?: (items: { message: string; type: 'warning' | 'error' }[]) => void;
 }
 
-export function ProjectRubricMultipleCompetencyTable({
-	outcomes,
-	questions,
-	students,
-	academicPeriodId,
-	evaluatorId,
-	rubricId,
-	projectId,
-	qualifStatuses,
-	nrNaTypeIds,
-	readOnly = false,
-	disableDuplicate = false,
-	onDirtyChange,
-	commissions = [],
-}: ProjectRubricMultipleCompetencyTableProps) {
+export const ProjectRubricMultipleCompetencyTable = forwardRef<
+	RubricTableHandle,
+	ProjectRubricMultipleCompetencyTableProps
+>(function ProjectRubricMultipleCompetencyTable(
+	{
+		outcomes,
+		questions,
+		students,
+		academicPeriodId,
+		evaluatorId,
+		rubricId,
+		projectId,
+		qualifStatuses,
+		nonAttendanceTypeIds,
+		readOnly = false,
+		disableDuplicate = false,
+		onDirtyChange,
+		commissions = [],
+		observation,
+		attendanceDirty,
+		onIncompleteChange,
+	},
+	ref,
+) {
 	const { t, locale } = useI18n();
 
 	const [activeCommissionId, setActiveCommissionId] = useState<number | null>(
@@ -129,6 +148,8 @@ export function ProjectRubricMultipleCompetencyTable({
 		hasMissingStatus,
 		commissionFillStatus,
 		allFilled,
+		canSave,
+		isDirty,
 		handleSelect,
 		handleDupSelect,
 		handleSave,
@@ -140,12 +161,37 @@ export function ProjectRubricMultipleCompetencyTable({
 		rubricId,
 		projectId,
 		qualifStatuses,
-		nrNaTypeIds,
+		nonAttendanceTypeIds,
 		duplicateMode,
 		commissions,
 		activeCommissionId,
 		onDirtyChange,
+		observation,
+		attendanceDirty,
 	});
+
+	useImperativeHandle(ref, () => ({ isDirty, canSave, isPending, save: handleSave }), [
+		isDirty,
+		canSave,
+		isPending,
+		handleSave,
+	]);
+
+	useEffect(() => {
+		if (readOnly) return;
+		const items: { message: string; type: 'warning' | 'error' }[] = [];
+		if (hasMissingStatus) {
+			items.push({ message: t('projects.evaluate.rubric.missingStatus'), type: 'warning' });
+		}
+		if (!allFilled && !hasMissingStatus) {
+			items.push({
+				message: t('projects.evaluate.multipleCompetency.fillAll'),
+				type: 'warning',
+			});
+		}
+		onIncompleteChange?.(items);
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- onIncompleteChange is a page-level setter; including it would re-fire on every page render
+	}, [hasMissingStatus, allFilled, readOnly, t]);
 
 	return (
 		<div className="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
@@ -229,7 +275,7 @@ export function ProjectRubricMultipleCompetencyTable({
 									dupSelections={dupSelections}
 									selections={selections}
 									students={students}
-									nrNaTypeIds={nrNaTypeIds}
+									nonAttendanceTypeIds={nonAttendanceTypeIds}
 									qualifStatuses={qualifStatuses}
 									readOnly={readOnly}
 									onSelect={handleSelect}
@@ -302,7 +348,8 @@ export function ProjectRubricMultipleCompetencyTable({
 													<div className="flex flex-col gap-3">
 														{students
 															.filter(
-																(student) => !nrNaTypeIds.has(qualifStatuses[student.id] ?? -1),
+																(student) =>
+																	!nonAttendanceTypeIds.has(qualifStatuses[student.id] ?? -1),
 															)
 															.map((student) => {
 																const current = selections[criterion.id]?.[student.id] ?? null;
@@ -334,49 +381,6 @@ export function ProjectRubricMultipleCompetencyTable({
 					);
 				})}
 			</div>
-
-			{!readOnly && (
-				<div className="space-y-3 border-t border-zinc-200 px-6 py-4">
-					{(hasMissingStatus || !allFilled) && (
-						<ul className="space-y-1 text-sm">
-							{hasMissingStatus && (
-								<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
-									<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
-									{t('projects.evaluate.rubric.missingStatus')}
-								</li>
-							)}
-							{!allFilled && !hasMissingStatus && (
-								<li className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
-									<ExclamationTriangleIcon className="h-4 w-4 shrink-0 text-amber-500" />
-									{t('projects.evaluate.multipleCompetency.fillAll')}
-								</li>
-							)}
-						</ul>
-					)}
-					<div className="flex justify-end">
-						<button
-							type="button"
-							disabled={!allFilled || isPending || readOnly}
-							className={cn(
-								'inline-flex items-center rounded-lg px-5 py-2 text-sm font-semibold transition-colors',
-								allFilled && !isPending && !readOnly
-									? 'bg-red-600 text-white hover:bg-red-700'
-									: 'cursor-not-allowed bg-zinc-100 text-zinc-400',
-							)}
-							onClick={handleSave}>
-							{readOnly
-								? t('projects.evaluate.rubric.readOnly')
-								: t('projects.evaluate.rubric.saveButton')}
-							{isPending && (
-								<span
-									aria-hidden="true"
-									className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-0.125em]"
-								/>
-							)}
-						</button>
-					</div>
-				</div>
-			)}
 		</div>
 	);
-}
+});

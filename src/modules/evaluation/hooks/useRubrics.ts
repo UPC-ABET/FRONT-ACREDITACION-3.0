@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { rubricsService } from '../services';
-import type { CreateRubricDto, CreateRubricFullDto, GetAllRubricsParams } from '../types';
+import type { CreateRubricFullDto, GetAllRubricsParams } from '../types';
 
 export const rubricsQueryKeys = {
 	all: ['rubrics'] as const,
 	filtered: (params: GetAllRubricsParams) => ['rubrics', 'filtered', params] as const,
-	detail: (rubricId: string | number) => ['rubrics', rubricId] as const,
+	resolveType: (studyPlanCourseId: number) =>
+		['rubrics', 'resolve-type', studyPlanCourseId] as const,
 };
 
 export function useRubrics(params: GetAllRubricsParams = {}) {
@@ -16,27 +17,15 @@ export function useRubrics(params: GetAllRubricsParams = {}) {
 			return response.data;
 		},
 		enabled: !!params.academicPeriodId,
+		placeholderData: (prev) => prev,
 	});
 }
 
-export function useRubric(rubricId: string | number) {
+export function useResolveRubricType(studyPlanCourseId: number | undefined) {
 	return useQuery({
-		queryKey: rubricsQueryKeys.detail(rubricId),
-		queryFn: async () => {
-			const response = await rubricsService.getById(rubricId);
-			return response.data;
-		},
-		enabled: Boolean(rubricId),
-	});
-}
-
-export function useCreateRubric() {
-	const queryClient = useQueryClient();
-	return useMutation({
-		mutationFn: (dto: CreateRubricDto) => rubricsService.create(dto).then((r) => r.data),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: rubricsQueryKeys.all });
-		},
+		queryKey: rubricsQueryKeys.resolveType(studyPlanCourseId!),
+		queryFn: () => rubricsService.resolveType(studyPlanCourseId!).then((r) => r.data),
+		enabled: studyPlanCourseId != null,
 	});
 }
 

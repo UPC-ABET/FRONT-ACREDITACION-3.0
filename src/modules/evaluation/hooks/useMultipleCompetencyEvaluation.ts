@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { useSubmitEvaluation } from './useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../types';
 
@@ -31,11 +32,18 @@ interface UseMultipleCompetencyEvaluationParams {
 	rubricId: number;
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
-	nrNaTypeIds: Set<number>;
+	nonAttendanceTypeIds: Set<number>;
 	duplicateMode: boolean;
 	commissions: CommissionRow[];
 	activeCommissionId: number | null;
 	onDirtyChange?: (isDirty: boolean) => void;
+	/** Shared across every career/gradeType tab — the evaluation covers all students on the
+	 * project, so there is a single observation, not one per tab, edited once at the page level. */
+	observation: I18nValue;
+	/** True when the parent panel has unsaved attendance edits, or the shared observation
+	 * changed elsewhere — neither is tracked by this hook's own isDirty, but both must still
+	 * unlock saving so they get submitted. */
+	attendanceDirty?: boolean;
 }
 
 export function useMultipleCompetencyEvaluation({
@@ -46,13 +54,15 @@ export function useMultipleCompetencyEvaluation({
 	rubricId,
 	projectId,
 	qualifStatuses,
-	nrNaTypeIds,
+	nonAttendanceTypeIds,
 	duplicateMode,
 	commissions,
 	activeCommissionId,
 	onDirtyChange,
+	observation,
+	attendanceDirty = false,
 }: UseMultipleCompetencyEvaluationParams) {
-	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
+	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
 
 	const markDirty = () => {
@@ -112,17 +122,18 @@ export function useMultipleCompetencyEvaluation({
 	const [selections, setSelections] = useState<Selections>(initialSelections);
 	const [dupSelections, setDupSelections] = useState<DupSelections>(initialDupSelections);
 
-	// Sync when data arrives after mount (React Query stale-while-revalidate)
+	// Sync when data arrives after mount (React Query stale-while-revalidate), but never
+	// overwrite unsaved edits — a refetch caused by saving another tab must leave them intact.
 	const [trackedInitialSelections, setTrackedInitialSelections] = useState(initialSelections);
 	if (initialSelections !== trackedInitialSelections) {
 		setTrackedInitialSelections(initialSelections);
-		setSelections(initialSelections);
+		if (!isDirty) setSelections(initialSelections);
 	}
 	const [trackedInitialDupSelections, setTrackedInitialDupSelections] =
 		useState(initialDupSelections);
 	if (initialDupSelections !== trackedInitialDupSelections) {
 		setTrackedInitialDupSelections(initialDupSelections);
-		setDupSelections(initialDupSelections);
+		if (!isDirty) setDupSelections(initialDupSelections);
 	}
 
 	const hasMissingStatus = useMemo(
@@ -133,7 +144,9 @@ export function useMultipleCompetencyEvaluation({
 	// Per-commission fill status for tab indicators
 	const commissionFillStatus = useMemo((): Record<number, 'complete' | 'partial' | 'empty'> => {
 		if (commissions.length === 0) return {};
-		const gradedStudents = students.filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1));
+		const gradedStudents = students.filter(
+			(st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1),
+		);
 		const result: Record<number, 'complete' | 'partial' | 'empty'> = {};
 		for (const commission of commissions) {
 			const commOutcomes = outcomes.filter((o) => commission.outcomeIds.includes(o.id));
@@ -154,12 +167,22 @@ export function useMultipleCompetencyEvaluation({
 				total === 0 ? 'empty' : filled === total ? 'complete' : filled > 0 ? 'partial' : 'empty';
 		}
 		return result;
-	}, [commissions, outcomes, questionByOutcome, selections, students, qualifStatuses, nrNaTypeIds]);
+	}, [
+		commissions,
+		outcomes,
+		questionByOutcome,
+		selections,
+		students,
+		qualifStatuses,
+		nonAttendanceTypeIds,
+	]);
 
 	const allFilled = useMemo(() => {
 		if (!allCriteriaIds.length || !students.length) return false;
 		if (hasMissingStatus) return false;
-		const gradedStudents = students.filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1));
+		const gradedStudents = students.filter(
+			(st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1),
+		);
 		for (const cId of allCriteriaIds) {
 			if (duplicateMode) {
 				if (gradedStudents.length > 0 && dupSelections[cId] == null) return false;
@@ -177,7 +200,7 @@ export function useMultipleCompetencyEvaluation({
 		selections,
 		dupSelections,
 		qualifStatuses,
-		nrNaTypeIds,
+		nonAttendanceTypeIds,
 		hasMissingStatus,
 	]);
 
@@ -200,19 +223,19 @@ export function useMultipleCompetencyEvaluation({
 		}));
 	};
 
-	const handleSave = () => {
+	const handleSave = async (): Promise<void> => {
 		const studentScores = new Map<
 			number,
 			{ rubricQuestionCriteriaId: number; score: number; commentaries: Record<string, string> }[]
 		>();
 
 		for (const st of students) {
-			const isNrNa = nrNaTypeIds.has(qualifStatuses[st.id] ?? -1);
+			const isNonAttendance = nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1);
 			for (const outcome of outcomes) {
 				const q = questionByOutcome.get(outcome.id);
 				for (const c of q?.criterias ?? []) {
 					let score: number | null;
-					if (isNrNa) {
+					if (isNonAttendance) {
 						score = 0;
 					} else if (duplicateMode) {
 						score = dupSelections[c.id] ?? null;
@@ -228,30 +251,33 @@ export function useMultipleCompetencyEvaluation({
 		}
 
 		const entries = [...studentScores.entries()];
-		let remaining = entries.length;
+		if (entries.length === 0) return;
 
-		for (const [projectStudentId, scores] of entries) {
-			submitEvaluation(
-				{
-					projectStudentId: projectStudentId,
+		const observationEs = observation.es?.trim() ?? '';
+		const observationEn = observation.en?.trim() ?? '';
+		// Stored/read as a localized record ({ es, en }); keep the write shape in sync with
+		// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textareas.
+		const observationPayload =
+			observationEs || observationEn ? { es: observationEs, en: observationEn } : undefined;
+
+		// Errors propagate to the caller, which owns the save-all feedback dialogs.
+		await Promise.all(
+			entries.map(([projectStudentId, scores]) =>
+				submitEvaluation({
+					projectStudentId,
 					projectEvaluatorId: evaluatorId,
 					rubricId: rubricId,
-					observation: { es: '', en: '' },
+					observation: observationPayload,
 					scores,
 					qualificationStatusTypeId: qualifStatuses[projectStudentId],
-				},
-				{
-					onSuccess: () => {
-						remaining -= 1;
-						if (remaining === 0) {
-							setIsDirty(false);
-							onDirtyChange?.(false);
-						}
-					},
-				},
-			);
-		}
+				}),
+			),
+		);
+		setIsDirty(false);
+		onDirtyChange?.(false);
 	};
+
+	const canSave = allFilled && (isDirty || attendanceDirty);
 
 	return {
 		isPending,
@@ -262,6 +288,8 @@ export function useMultipleCompetencyEvaluation({
 		hasMissingStatus,
 		commissionFillStatus,
 		allFilled,
+		canSave,
+		isDirty,
 		handleSelect,
 		handleDupSelect,
 		handleSave,

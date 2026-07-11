@@ -16,14 +16,9 @@ import {
 	TableHeader,
 	TableLoadingState,
 	TableRow,
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-	DialogClose,
+	DeleteConfirmDialog,
 } from '@/shared/components/ui';
-import { tryTranslate } from '@/shared/utils';
+import { interpolate, tryTranslate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import {
 	useAcademicPeriods,
@@ -119,6 +114,7 @@ export function EvaluationCoursesPage() {
 						}
 						options={programOptions}
 						value={selectedProgramOpt}
+						isClearable
 						isDisabled={loadingPrograms || programs.length === 0}
 						isSearchable
 						onChange={(_, v) => {
@@ -169,11 +165,11 @@ export function EvaluationCoursesPage() {
 										<Button
 											variant="ghost"
 											size="icon"
-											className="text-red-600 hover:bg-red-50"
+											className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 											onClick={() => setConfirmTarget(spc)}
 											title={t('evaluationCourses.list.removeButton')}
 											aria-label={t('evaluationCourses.list.removeButton')}>
-											<TrashIcon className="h-5 w-5" />
+											<TrashIcon className="h-4 w-4" />
 										</Button>
 									</div>
 								</TableCell>
@@ -189,43 +185,21 @@ export function EvaluationCoursesPage() {
 				onSuccess={() => void refetch()}
 			/>
 
-			<Dialog
+			<DeleteConfirmDialog
 				open={!!confirmTarget}
 				onOpenChange={(open) => {
 					if (!open) setConfirmTarget(null);
-				}}>
-				<DialogContent className="sm:max-w-sm">
-					<DialogHeader>
-						<DialogTitle>{t('evaluationCourses.confirm.title')}</DialogTitle>
-					</DialogHeader>
-
-					<p className="text-sm text-zinc-600">
-						{t('evaluationCourses.confirm.body').replace(
-							'{{course}}',
-							confirmTarget ? courseName(confirmTarget) : '',
-						)}
-					</p>
-
-					<DialogFooter>
-						<DialogClose
-							render={
-								<Button variant="secondary" disabled={enableEvaluation.isPending}>
-									{t('dialog.close')}
-								</Button>
-							}
-						/>
-						<Button
-							variant="primary"
-							className="bg-red-600 hover:bg-red-700"
-							disabled={enableEvaluation.isPending}
-							onClick={() => confirmTarget && handleRemove(confirmTarget)}>
-							{enableEvaluation.isPending
-								? t('evaluationCourses.confirm.removing')
-								: t('evaluationCourses.confirm.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+				}}
+				title={t('evaluationCourses.confirm.title')}
+				description={interpolate(t('evaluationCourses.confirm.body'), {
+					course: confirmTarget ? courseName(confirmTarget) : '',
+				})}
+				isPending={enableEvaluation.isPending}
+				cancelLabel={t('dialog.close')}
+				confirmLabel={t('evaluationCourses.confirm.confirm')}
+				pendingLabel={t('evaluationCourses.confirm.removing')}
+				onConfirm={() => confirmTarget && handleRemove(confirmTarget)}
+			/>
 		</div>
 	);
 }

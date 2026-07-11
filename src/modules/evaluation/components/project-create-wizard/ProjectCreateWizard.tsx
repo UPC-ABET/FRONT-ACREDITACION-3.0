@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useI18n } from '@/providers';
 import { PageHeader, Toast } from '@/shared';
 import { tryTranslateReason } from '@/shared/utils/tryTranslate';
-import { projectsService } from '@/modules';
+import { useCreateProjectFull } from '../../hooks';
 import { WizardStepIndicator } from '../rubric-create-wizard/WizardStepIndicator';
 import { WizardStep1, type Step1Data } from '../rubric-create-wizard/WizardStep1';
 import { ProjectWizardStep2, type ProjectFormData } from './ProjectWizardStep2';
@@ -16,7 +16,7 @@ export function ProjectCreateWizard() {
 
 	const [currentStep, setCurrentStep] = useState(1);
 	const [step1Data, setStep1Data] = useState<Step1Data | null>(null);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const createProjectFull = useCreateProjectFull();
 	const [toast, setToast] = useState({
 		open: false,
 		type: 'info' as 'success' | 'error',
@@ -32,26 +32,24 @@ export function ProjectCreateWizard() {
 
 	const handleSubmit = async (formData: ProjectFormData) => {
 		if (!step1Data) return;
-		setIsSubmitting(true);
 		try {
-			const body = {
+			const project = await createProjectFull.mutateAsync({
 				code: formData.code,
-				name: { es: formData.name, en: formData.name },
-				description: { es: formData.description, en: formData.description },
+				name: { es: formData.name.es ?? '', en: formData.name.en ?? '' },
+				description: { es: formData.description.es ?? '', en: formData.description.en ?? '' },
 				studyPlanCourseId: step1Data.studyPlanCourseId,
 				projectGroupId: formData.projectGroupId,
 				studentSectionEnrollmentIds: formData.studentEnrollmentIds,
 				evaluators: formData.evaluators,
-			};
-			const res = await projectsService.createFull(body);
-			const projectId = res.data?.id;
+			});
 			router.push(
-				projectId ? `/academic-projects/projects/${projectId}/edit` : '/academic-projects/projects',
+				project?.id
+					? `/academic-projects/projects/${project.id}/edit`
+					: '/academic-projects/projects',
 			);
 		} catch (err) {
 			const key = err instanceof Error ? err.message : 'projects.create.error.create';
 			showError(tryTranslateReason(t, key));
-			setIsSubmitting(false);
 		}
 	};
 
@@ -80,7 +78,7 @@ export function ProjectCreateWizard() {
 						step1={step1Data}
 						onBack={() => setCurrentStep(1)}
 						onSubmit={handleSubmit}
-						isSubmitting={isSubmitting}
+						isSubmitting={createProjectFull.isPending}
 					/>
 				)}
 			</div>

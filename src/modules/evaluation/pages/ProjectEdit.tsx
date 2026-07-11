@@ -6,18 +6,19 @@ import { ArrowLeftIcon, PencilIcon, PlusIcon, XMarkIcon } from '@heroicons/react
 import {
 	Button,
 	Card,
+	DeleteConfirmDialog,
+	I18nTextField,
 	Input,
 	PageHeader,
 	Select,
 	TableEmptyState,
 	TableErrorState,
 	TableLoadingState,
-	TextArea,
 	Title,
 	Toast,
-	buttonVariants,
 } from '@/shared/components/ui';
-import { cn } from '@/shared/lib/utils';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
+import { interpolate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import {
 	useProjectDetails,
@@ -39,11 +40,19 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	const [, setEvaluatorError] = useState<string | null>(null);
 	const [evaluatorModalOpen, setEvaluatorModalOpen] = useState(false);
 	const [studentModalOpen, setStudentModalOpen] = useState(false);
+	const [removeStudentTarget, setRemoveStudentTarget] = useState<{
+		id: number;
+		label: string;
+	} | null>(null);
+	const [removeEvaluatorTarget, setRemoveEvaluatorTarget] = useState<{
+		id: number;
+		label: string;
+	} | null>(null);
 
 	const [isEditingHeader, setIsEditingHeader] = useState(false);
 	const [draftCode, setDraftCode] = useState('');
-	const [draftName, setDraftName] = useState('');
-	const [draftDesc, setDraftDesc] = useState('');
+	const [draftName, setDraftName] = useState<I18nValue>({});
+	const [draftDesc, setDraftDesc] = useState<I18nValue>({});
 	const [draftGroupId, setDraftGroupId] = useState<number | undefined>(undefined);
 
 	const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -75,7 +84,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 	const groupOptions = useMemo(
 		() =>
 			projectGroups.map((g) => ({
-				label: `${g.code} — ${g.name[locale as 'es' | 'en'] ?? g.name.es}`,
+				label: `${g.code} — ${g.name[locale as 'es' | 'en'] ?? g.name.es}${g.program ? ` (${g.program.code})` : ''}`,
 				value: g.id,
 			})),
 		[projectGroups, locale],
@@ -92,37 +101,39 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 
 	const enterEditMode = () => {
 		if (!data) return;
-		const loc = locale as 'es' | 'en';
 		setDraftCode(data.project.code);
-		setDraftName(data.project.name[loc] ?? data.project.name.es);
-		setDraftDesc(data.project.description?.[loc] ?? data.project.description?.es ?? '');
+		setDraftName({ es: data.project.name.es ?? '', en: data.project.name.en ?? '' });
+		setDraftDesc({
+			es: data.project.description?.es ?? '',
+			en: data.project.description?.en ?? '',
+		});
 		setDraftGroupId(data.project.projectGroup?.id);
 		setIsEditingHeader(true);
 	};
 
 	const handleSaveHeader = () => {
 		if (!data) return;
-		const loc = locale as 'es' | 'en';
-		const other = loc === 'es' ? 'en' : 'es';
 		const body: Parameters<typeof updateMutation.mutate>[0] = {};
 
 		if (draftCode.trim() !== data.project.code) {
 			body.code = draftCode.trim();
 		}
-		if (draftName.trim() !== (data.project.name[loc] ?? data.project.name.es)) {
-			body.name = { [loc]: draftName.trim(), [other]: data.project.name[other] } as {
-				es: string;
-				en: string;
-			};
+
+		const nameEs = draftName.es?.trim() || draftName.en?.trim() || '';
+		const nameEn = draftName.en?.trim() || nameEs;
+		if (nameEs !== (data.project.name.es ?? '') || nameEn !== (data.project.name.en ?? '')) {
+			body.name = { es: nameEs, en: nameEn };
 		}
+
+		const descEs = draftDesc.es?.trim() ?? '';
+		const descEn = draftDesc.en?.trim() || descEs;
 		if (
-			draftDesc.trim() !== (data.project.description?.[loc] ?? data.project.description?.es ?? '')
+			descEs !== (data.project.description?.es ?? '') ||
+			descEn !== (data.project.description?.en ?? '')
 		) {
-			body.description = {
-				[loc]: draftDesc.trim(),
-				[other]: data.project.description?.[other] ?? '',
-			} as { es: string; en: string };
+			body.description = { es: descEs, en: descEn };
 		}
+
 		if (draftGroupId !== data.project.projectGroup?.id) {
 			body.projectGroupId = draftGroupId ?? null;
 		}
@@ -174,37 +185,36 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				<Card>
 					<div className="flex flex-col gap-4">
 						<div className="flex flex-col gap-3">
-							<div className="flex flex-col gap-1">
-								<label className="text-xs font-medium text-zinc-500">
+							<div className="space-y-2">
+								<label
+									htmlFor="project-edit-code"
+									className="block text-base font-semibold text-zinc-900">
 									{t('projects.edit.header.fieldCode')}
 								</label>
 								<Input
+									id="project-edit-code"
 									value={draftCode}
 									onChange={(e) => setDraftCode(e.target.value)}
 									disabled={updateMutation.isPending}
 								/>
 							</div>
-							<div className="flex flex-col gap-1">
-								<label className="text-xs font-medium text-zinc-500">
-									{t('projects.edit.header.fieldName')}
-								</label>
-								<Input
-									value={draftName}
-									onChange={(e) => setDraftName(e.target.value)}
-									disabled={updateMutation.isPending}
-								/>
-							</div>
-							<div className="flex flex-col gap-1">
-								<label className="text-xs font-medium text-zinc-500">
-									{t('projects.edit.header.fieldDesc')}
-								</label>
-								<TextArea
-									value={draftDesc}
-									onChange={(e) => setDraftDesc(e.target.value)}
-									disabled={updateMutation.isPending}
-									rows={3}
-								/>
-							</div>
+							<I18nTextField
+								as="input"
+								layout="row"
+								label={t('projects.edit.header.fieldName')}
+								required
+								value={draftName}
+								onChange={setDraftName}
+								disabled={updateMutation.isPending}
+							/>
+							<I18nTextField
+								layout="row"
+								label={t('projects.edit.header.fieldDesc')}
+								value={draftDesc}
+								onChange={setDraftDesc}
+								rows={3}
+								disabled={updateMutation.isPending}
+							/>
 							<div className="flex flex-col gap-1">
 								<Select
 									label={t('projects.edit.header.fieldGroup')}
@@ -245,7 +255,7 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				<>
 					<PageHeader
 						title={projectName}
-						description={t('projects.edit.subtitle')}
+						description={project.code}
 						action={
 							<Button
 								variant="secondary"
@@ -259,10 +269,6 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 					/>
 					<Card>
 						<div className="flex flex-col gap-4">
-							<span className="inline-flex w-fit items-center rounded-md border border-zinc-200 bg-zinc-100 px-2.5 py-1 font-mono text-xs font-medium text-zinc-600">
-								{project.code}
-							</span>
-
 							<div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-zinc-600">
 								<div className="flex items-center gap-1.5">
 									<span className="font-medium text-zinc-400">
@@ -336,28 +342,20 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 										</div>
 									</div>
 
-									<button
-										type="button"
+									<Button
+										variant="ghost"
+										size="icon"
+										className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 										onClick={() =>
-											removeStudentMutation.mutate(student.id, {
-												onSuccess: () => {
-													setStudentError(null);
-													showToast('success', t('projects.edit.students.removeSuccess'));
-												},
-												onError: () => {
-													setStudentError(t('projects.edit.students.removeError'));
-													showToast('error', t('projects.edit.students.removeError'));
-												},
+											setRemoveStudentTarget({
+												id: student.id,
+												label: `${student.firstName} ${student.lastName}`.trim(),
 											})
 										}
-										disabled={removeStudentMutation.isPending}
-										className={cn(
-											buttonVariants({ variant: 'ghost', size: 'icon' }),
-											'text-zinc-400 hover:bg-red-50 hover:text-red-600',
-										)}
+										aria-label={t('projects.edit.students.removeButton')}
 										title={t('projects.edit.students.removeButton')}>
 										<XMarkIcon className="h-4 w-4" />
-									</button>
+									</Button>
 								</div>
 							))
 						)}
@@ -402,28 +400,21 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 										<span className="text-xs text-zinc-500">{evaluator.professorEmail}</span>
 									</div>
 
-									<button
-										type="button"
+									<Button
+										variant="ghost"
+										size="icon"
+										className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 										onClick={() =>
-											removeEvaluatorMutation.mutate(evaluator.id, {
-												onSuccess: () => {
-													setEvaluatorError(null);
-													showToast('success', t('projects.edit.evaluators.removeSuccess'));
-												},
-												onError: () => {
-													setEvaluatorError(t('projects.edit.evaluators.removeError'));
-													showToast('error', t('projects.edit.evaluators.removeError'));
-												},
+											setRemoveEvaluatorTarget({
+												id: evaluator.id,
+												label:
+													`${evaluator.professorFirstName} ${evaluator.professorLastName}`.trim(),
 											})
 										}
-										disabled={removeEvaluatorMutation.isPending}
-										className={cn(
-											buttonVariants({ variant: 'ghost', size: 'icon' }),
-											'text-zinc-400 hover:bg-red-50 hover:text-red-600',
-										)}
+										aria-label={t('projects.edit.evaluators.removeButton')}
 										title={t('projects.edit.evaluators.removeButton')}>
 										<XMarkIcon className="h-4 w-4" />
-									</button>
+									</Button>
 								</div>
 							))
 						)}
@@ -447,6 +438,66 @@ export function ProjectEditPage({ projectId }: ProjectEditPageProps) {
 				projectNumericId={project.id}
 				existingEvaluatorTypeCounts={existingEvaluatorTypeCounts}
 				onSuccess={() => showToast('success', t('projects.edit.evaluators.modal.successMessage'))}
+			/>
+
+			<DeleteConfirmDialog
+				open={!!removeStudentTarget}
+				onOpenChange={(open) => {
+					if (!open) setRemoveStudentTarget(null);
+				}}
+				title={t('projects.edit.students.removeConfirm.title')}
+				description={interpolate(t('projects.edit.students.removeConfirm.body'), {
+					name: removeStudentTarget?.label ?? '',
+				})}
+				isPending={removeStudentMutation.isPending}
+				cancelLabel={t('dialog.close')}
+				confirmLabel={t('projects.edit.students.removeConfirm.confirm')}
+				pendingLabel={t('projects.edit.students.removeConfirm.removing')}
+				onConfirm={() => {
+					if (!removeStudentTarget) return;
+					removeStudentMutation.mutate(removeStudentTarget.id, {
+						onSuccess: () => {
+							setStudentError(null);
+							setRemoveStudentTarget(null);
+							showToast('success', t('projects.edit.students.removeSuccess'));
+						},
+						onError: () => {
+							setStudentError(t('projects.edit.students.removeError'));
+							setRemoveStudentTarget(null);
+							showToast('error', t('projects.edit.students.removeError'));
+						},
+					});
+				}}
+			/>
+
+			<DeleteConfirmDialog
+				open={!!removeEvaluatorTarget}
+				onOpenChange={(open) => {
+					if (!open) setRemoveEvaluatorTarget(null);
+				}}
+				title={t('projects.edit.evaluators.removeConfirm.title')}
+				description={interpolate(t('projects.edit.evaluators.removeConfirm.body'), {
+					name: removeEvaluatorTarget?.label ?? '',
+				})}
+				isPending={removeEvaluatorMutation.isPending}
+				cancelLabel={t('dialog.close')}
+				confirmLabel={t('projects.edit.evaluators.removeConfirm.confirm')}
+				pendingLabel={t('projects.edit.evaluators.removeConfirm.removing')}
+				onConfirm={() => {
+					if (!removeEvaluatorTarget) return;
+					removeEvaluatorMutation.mutate(removeEvaluatorTarget.id, {
+						onSuccess: () => {
+							setEvaluatorError(null);
+							setRemoveEvaluatorTarget(null);
+							showToast('success', t('projects.edit.evaluators.removeSuccess'));
+						},
+						onError: () => {
+							setEvaluatorError(t('projects.edit.evaluators.removeError'));
+							setRemoveEvaluatorTarget(null);
+							showToast('error', t('projects.edit.evaluators.removeError'));
+						},
+					});
+				}}
 			/>
 
 			<Toast

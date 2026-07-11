@@ -5,6 +5,7 @@ import { PencilSquareIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outli
 import {
 	Button,
 	Card,
+	DeleteConfirmDialog,
 	Dialog,
 	DialogContent,
 	DialogFooter,
@@ -73,6 +74,7 @@ function PerformanceLevelForm({
 				label={t('performanceLevels.form.instrument')}
 				options={instrumentTypeOptions}
 				value={selectedInstrument}
+				isSearchable
 				placeholder={t('performanceLevels.form.instrumentPlaceholder')}
 				onChange={(_name, val) => {
 					const opt = val as OptionItem | null;
@@ -283,6 +285,7 @@ export function PerformanceLevelsPage() {
 							options={instrumentTypeOptions}
 							value={selectedInstrument}
 							isClearable
+							isSearchable
 							placeholder={t('performanceLevels.list.allInstruments')}
 							onChange={(_name, val) => setSelectedInstrument(val as OptionItem | null)}
 						/>
@@ -375,20 +378,20 @@ export function PerformanceLevelsPage() {
 												<Button
 													variant="ghost"
 													size="icon"
-													className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+													className="text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
 													title={t('performanceLevels.table.edit')}
 													aria-label={t('performanceLevels.table.edit')}
 													onClick={() => openEditModal(level)}>
-													<PencilSquareIcon className="h-5 w-5" />
+													<PencilSquareIcon className="h-4 w-4" />
 												</Button>
 												<Button
 													variant="ghost"
 													size="icon"
-													className="text-red-600 hover:bg-red-50"
+													className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 													title={t('performanceLevels.table.delete')}
 													aria-label={t('performanceLevels.table.delete')}
 													onClick={() => setDeleteConfirm(level)}>
-													<TrashIcon className="h-5 w-5" />
+													<TrashIcon className="h-4 w-4" />
 												</Button>
 											</div>
 										</TableCell>
@@ -450,39 +453,30 @@ export function PerformanceLevelsPage() {
 				</DialogContent>
 			</Dialog>
 
-			<Dialog open={deleteConfirm != null} onOpenChange={() => setDeleteConfirm(null)}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<DialogTitle>{t('performanceLevels.delete.title')}</DialogTitle>
-						<DialogDescription>
-							{t('performanceLevels.delete.description')}{' '}
-							<strong>
-								{deleteConfirm?.name?.[locale as 'es' | 'en'] ?? deleteConfirm?.code ?? ''}
-							</strong>
-						</DialogDescription>
-					</DialogHeader>
-
-					{deleteMutation.isError && (
-						<p className="text-sm text-red-600">
-							{deleteMutation.error?.message || t('performanceLevels.form.saveError')}
-						</p>
-					)}
-
-					<DialogFooter>
-						<Button
-							variant="secondary"
-							onClick={() => setDeleteConfirm(null)}
-							disabled={isMutating}>
-							{t('performanceLevels.delete.cancel')}
-						</Button>
-						<Button variant="primary" onClick={handleDelete} disabled={isMutating}>
-							{isMutating
-								? t('performanceLevels.form.deleting')
-								: t('performanceLevels.delete.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+			<DeleteConfirmDialog
+				open={deleteConfirm != null}
+				onOpenChange={() => setDeleteConfirm(null)}
+				contentClassName="sm:max-w-md"
+				title={t('performanceLevels.delete.title')}
+				description={
+					<>
+						{t('performanceLevels.delete.description')}{' '}
+						<strong>
+							{deleteConfirm?.name?.[locale as 'es' | 'en'] ?? deleteConfirm?.code ?? ''}
+						</strong>
+					</>
+				}
+				error={
+					deleteMutation.isError
+						? deleteMutation.error?.message || t('performanceLevels.form.saveError')
+						: null
+				}
+				isPending={isMutating}
+				cancelLabel={t('performanceLevels.delete.cancel')}
+				confirmLabel={t('performanceLevels.delete.confirm')}
+				pendingLabel={t('performanceLevels.form.deleting')}
+				onConfirm={handleDelete}
+			/>
 		</div>
 	);
 }

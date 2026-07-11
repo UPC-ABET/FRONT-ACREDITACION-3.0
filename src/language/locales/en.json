@@ -1702,6 +1702,7 @@
 				"course": "Course"
 			},
 			"columns": {
+				"program": "Program",
 				"course": "Course",
 				"period": "Academic Period",
 				"gradeType": "Evaluation Type",
@@ -1892,7 +1893,7 @@
 						"loadOutcomes": "Could not load course outcomes."
 					},
 					"validation": {
-						"incomplete": "Complete the description of all criteria in all commissions.",
+						"incomplete": "Complete every criterion for at least one commission to continue. If you started filling in another commission, finish it or leave its criteria empty.",
 						"complete": "Rubric ready to save"
 					}
 				}
@@ -2122,6 +2123,13 @@
 			"tabs": {
 				"unsavedChanges": "Unsaved changes"
 			},
+			"saveAll": {
+				"button": "Save",
+				"successTitle": "Grades saved",
+				"successMessage": "Grades were saved successfully.",
+				"errorTitle": "Could not save",
+				"errorMessage": "An error occurred while saving the grades. Your changes are still on screen; please try again."
+			},
 			"rubric": {
 				"question": "Question",
 				"criteria": "Criteria",
@@ -2135,7 +2143,12 @@
 				"readOnly": "Read only",
 				"saving": "Saving...",
 				"noRubric": "No rubric configured for this career.",
-				"missingStatus": "Select the attendance status for all students to continue."
+				"missingStatus": "Select the attendance status for all students to continue.",
+				"saveSuccessTitle": "Grade saved",
+				"saveSuccessMessage": "The project grade was saved successfully.",
+				"observation": "Observation",
+				"observationPlaceholder": "Add observation",
+				"observationOptional": "Optional"
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",
@@ -2150,7 +2163,6 @@
 			"loading": "Loading project...",
 			"error": "Could not load the project.",
 			"backButton": "Back to projects",
-			"subtitle": "Edit the project information.",
 			"header": {
 				"course": "Course",
 				"rubricType": "Rubric type",
@@ -2178,6 +2190,12 @@
 				"addError": "Could not add the student.",
 				"removeError": "Could not remove the student.",
 				"removeSuccess": "Student removed successfully.",
+				"removeConfirm": {
+					"title": "Remove student",
+					"body": "Are you sure you want to remove {{name}} from this project?",
+					"confirm": "Remove",
+					"removing": "Removing..."
+				},
 				"modal": {
 					"title": "Add students",
 					"searchPlaceholder": "Search by name, code or email...",
@@ -2201,6 +2219,12 @@
 				"adding": "Adding...",
 				"addError": "Could not add the evaluator.",
 				"removeError": "Could not remove the evaluator.",
+				"removeConfirm": {
+					"title": "Remove evaluator",
+					"body": "Are you sure you want to remove {{name}} as an evaluator from this project?",
+					"confirm": "Remove",
+					"removing": "Removing..."
+				},
 				"modal": {
 					"title": "Add evaluator",
 					"searchPlaceholder": "Search by name or lastname...",

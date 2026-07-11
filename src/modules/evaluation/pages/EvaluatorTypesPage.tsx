@@ -5,6 +5,7 @@ import { PlusIcon, TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outli
 import {
 	Button,
 	Card,
+	DeleteConfirmDialog,
 	Dialog,
 	DialogContent,
 	DialogFooter,
@@ -19,6 +20,7 @@ import {
 	TableLoadingState,
 } from '@/shared/components/ui';
 import { Toggle } from '@/shared/components/ui/Toggle';
+import { interpolate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import { TypeOption } from '@/modules/core';
 import {
@@ -185,10 +187,9 @@ export function EvaluatorTypesPage() {
 											</span>
 											{maxEvaluators != null && (
 												<span>
-													{t('academicProjects.evaluators.maxLabel').replace(
-														'{{max}}',
-														String(maxEvaluators),
-													)}
+													{interpolate(t('academicProjects.evaluators.maxLabel'), {
+														max: maxEvaluators,
+													})}
 												</span>
 											)}
 										</div>
@@ -197,7 +198,7 @@ export function EvaluatorTypesPage() {
 										<Button
 											variant="ghost"
 											size="icon"
-											className="text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+											className="text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
 											onClick={() => openEdit(type)}
 											aria-label={t('academicProjects.evaluators.editTitle')}>
 											<PencilSquareIcon className="h-4 w-4" />
@@ -205,7 +206,7 @@ export function EvaluatorTypesPage() {
 										<Button
 											variant="ghost"
 											size="icon"
-											className="text-zinc-400 hover:bg-red-50 hover:text-red-600"
+											className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
 											onClick={() => {
 												setDeleteTarget({ id: type.id, label });
 												setDeleteError(null);
@@ -327,40 +328,22 @@ export function EvaluatorTypesPage() {
 			</Dialog>
 
 			{/* Delete modal */}
-			<Dialog
+			<DeleteConfirmDialog
 				open={deleteTarget != null}
 				onOpenChange={(open) => {
 					if (!open) setDeleteTarget(null);
-				}}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<DialogTitle>{t('academicProjects.evaluators.deleteTitle')}</DialogTitle>
-					</DialogHeader>
-					<p className="text-sm text-zinc-600">
-						{t('academicProjects.evaluators.deleteConfirm').replace(
-							'{{name}}',
-							deleteTarget?.label ?? '',
-						)}
-					</p>
-					{deleteError && <p className="text-xs text-red-600">{deleteError}</p>}
-					<DialogFooter>
-						<DialogClose
-							render={
-								<Button variant="secondary" disabled={deleteTypeMutation.isPending}>
-									{t('dialog.actions.cancel')}
-								</Button>
-							}
-						/>
-						<Button
-							variant="danger"
-							onClick={handleDelete}
-							disabled={deleteTypeMutation.isPending}
-							loading={deleteTypeMutation.isPending}>
-							{t('dialog.actions.delete')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+				}}
+				contentClassName="sm:max-w-md"
+				title={t('academicProjects.evaluators.deleteTitle')}
+				description={interpolate(t('academicProjects.evaluators.deleteConfirm'), {
+					name: deleteTarget?.label ?? '',
+				})}
+				error={deleteError}
+				isPending={deleteTypeMutation.isPending}
+				cancelLabel={t('dialog.actions.cancel')}
+				confirmLabel={t('dialog.actions.delete')}
+				onConfirm={handleDelete}
+			/>
 		</div>
 	);
 }

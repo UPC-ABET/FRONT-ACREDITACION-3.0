@@ -2,45 +2,26 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { PencilSquareIcon, EyeIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
-	Badge,
 	Button,
 	buttonVariants,
 	Card,
+	DataTable,
 	PageHeader,
 	Select,
-	Table,
-	TableBody,
-	TableCell,
-	TableEmptyState,
-	TableErrorState,
-	TableHead,
-	TableHeader,
-	TableLoadingState,
-	TableRow,
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogFooter,
-	DialogClose,
+	DeleteConfirmDialog,
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
-import { tryTranslate } from '@/shared/utils';
+import { interpolate, tryTranslate } from '@/shared/utils';
 import { useI18n, useABET } from '@/providers';
 import { usePrograms, useStudyPlanCourses } from '@/modules/academic/hooks';
+import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
 import { useRubrics, useDeleteRubric } from '../hooks';
 import { mapRubricToRow } from '../utils/rubricsMappers';
+import { useRubricsColumns } from '../components/rubrics-list/useRubricsColumns';
+import { toSelectOption, type SelectOption, type AnyOption } from '../utils/selectOption';
 import type { RubricListRow } from '../types';
-
-type SelectOption = { label: string; value: number };
-type AnyOption = { label: string; value: string | number };
-
-function toSelectOption(opt: AnyOption | AnyOption[] | null): SelectOption | null {
-	const single = Array.isArray(opt) ? (opt[0] ?? null) : opt;
-	return single ? { label: single.label, value: Number(single.value) } : null;
-}
 
 export function RubricsListPage() {
 	const { locale, t } = useI18n();
@@ -48,6 +29,7 @@ export function RubricsListPage() {
 
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 	const [selectedCourse, setSelectedCourse] = useState<SelectOption | null>(null);
+	const [page, setPage] = useState(1);
 
 	useEffect(() => {
 		/* eslint-disable react-hooks/set-state-in-effect -- clear the program/course filters when the global school/period/modality context changes so stale selections aren't queried */
@@ -55,6 +37,11 @@ export function RubricsListPage() {
 		setSelectedCourse(null);
 		/* eslint-enable react-hooks/set-state-in-effect */
 	}, [schoolId, selectedPeriodId, modalityTypeId]);
+
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset to page 1 whenever the program/course filter changes so paging starts fresh
+		setPage(1);
+	}, [selectedProgram?.value, selectedCourse?.value]);
 
 	const { data: programs = [] } = usePrograms(
 		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
@@ -76,15 +63,20 @@ export function RubricsListPage() {
 			...(selectedPeriodId ? { academicPeriodId: selectedPeriodId } : {}),
 			...(selectedProgram ? { programId: selectedProgram.value } : {}),
 			...(selectedCourse ? { courseId: selectedCourse.value } : {}),
+			page,
+			pageSize: DEFAULT_PAGE_SIZE,
 		}),
-		[schoolId, selectedPeriodId, selectedProgram, selectedCourse],
+		[schoolId, selectedPeriodId, selectedProgram, selectedCourse, page],
 	);
 
-	const { data, isLoading, isError, error } = useRubrics(rubricParams);
-	const items = useMemo(() => (data ?? []).map(mapRubricToRow), [data]);
+	const { data, isLoading, isFetching, isError, error } = useRubrics(rubricParams);
+	const items = useMemo(() => (data?.items ?? []).map(mapRubricToRow), [data]);
+	const totalPages = data?.totalPages ?? 1;
+	const total = data?.total ?? 0;
 
 	const [confirmTarget, setConfirmTarget] = useState<RubricListRow | null>(null);
 	const deleteMutation = useDeleteRubric();
+	const columns = useRubricsColumns({ setConfirmTarget });
 
 	const programOptions = useMemo(
 		() => programs.map((p) => ({ label: p.name[locale as 'es' | 'en'] ?? p.name.es, value: p.id })),
@@ -136,6 +128,7 @@ export function RubricsListPage() {
 							options={programOptions}
 							value={selectedProgram}
 							isClearable
+							isSearchable
 							isDisabled={!selectedPeriodId}
 							onChange={(_, opt) => {
 								setSelectedProgram(toSelectOption(opt as AnyOption | AnyOption[] | null));
@@ -147,6 +140,7 @@ export function RubricsListPage() {
 							options={courseOptions}
 							value={selectedCourse}
 							isClearable
+							isSearchable
 							isDisabled={!selectedProgram}
 							onChange={(_, opt) =>
 								setSelectedCourse(toSelectOption(opt as AnyOption | AnyOption[] | null))
@@ -165,133 +159,50 @@ export function RubricsListPage() {
 				</div>
 			</Card>
 
-			{isLoading ? (
-				<TableLoadingState label={t('rubrics.list.loading')} />
-			) : isError ? (
-				<TableErrorState
-					message={
-						error instanceof Error ? tryTranslate(t, error.message) : t('rubrics.list.error')
-					}
-				/>
-			) : !items.length ? (
-				<TableEmptyState message={t('rubrics.list.empty')} />
-			) : (
-				<div className="space-y-3">
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead>{t('rubrics.list.columns.course')}</TableHead>
-								<TableHead>{t('rubrics.list.columns.period')}</TableHead>
-								<TableHead>{t('rubrics.list.columns.gradeType')}</TableHead>
-								<TableHead>{t('rubrics.list.columns.rubricType')}</TableHead>
-								<TableHead className="w-24 text-right">
-									{t('rubrics.list.columns.actions')}
-								</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{items.map((row) => (
-								<TableRow key={row.id}>
-									<TableCell>
-										<span className="font-medium text-zinc-900">{row.courseLabel[locale]}</span>
-									</TableCell>
-									<TableCell>
-										<span className="text-zinc-700">{row.periodLabel}</span>
-									</TableCell>
-									<TableCell>
-										<span className="text-zinc-700">{row.gradeTypeLabel[locale]}</span>
-									</TableCell>
-									<TableCell>
-										{row.isCapstone ? (
-											<Badge variant="success">{t('rubrics.badges.capstone')}</Badge>
-										) : (
-											<Badge variant="outline">{t('rubrics.badges.noCapstone')}</Badge>
-										)}
-									</TableCell>
-									<TableCell>
-										<div className="flex items-center justify-end gap-1">
-											<Link
-												href={`/rubrics/${row.id}/edit`}
-												aria-label={
-													row.canEdit
-														? t('rubrics.list.actions.edit')
-														: t('rubrics.list.actions.view')
-												}
-												title={
-													row.canEdit
-														? t('rubrics.list.actions.edit')
-														: t('rubrics.list.actions.view')
-												}
-												className={cn(
-													buttonVariants({ variant: 'ghost', size: 'icon' }),
-													'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900',
-												)}>
-												{row.canEdit ? (
-													<PencilSquareIcon className="h-5 w-5" />
-												) : (
-													<EyeIcon className="h-5 w-5" />
-												)}
-											</Link>
-											<Button
-												variant="ghost"
-												size="icon"
-												className="text-red-600 hover:bg-red-50"
-												disabled={!row.canEdit}
-												onClick={() => setConfirmTarget(row)}
-												aria-label={t('rubrics.list.actions.delete')}
-												title={t('rubrics.list.actions.delete')}>
-												<TrashIcon className="h-5 w-5" />
-											</Button>
-										</div>
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</div>
-			)}
+			<DataTable
+				columns={columns}
+				data={items}
+				isLoading={isLoading}
+				errorMessage={
+					isError
+						? error instanceof Error
+							? tryTranslate(t, error.message)
+							: t('rubrics.list.error')
+						: undefined
+				}
+				emptyMessage={t('rubrics.list.empty')}
+				showSearch={false}
+				serverPagination={{
+					page,
+					pageCount: totalPages,
+					total,
+					onPageChange: setPage,
+					isFetching,
+				}}
+			/>
 
-			<Dialog
+			<DeleteConfirmDialog
 				open={!!confirmTarget}
 				onOpenChange={(open) => {
 					if (!open) setConfirmTarget(null);
-				}}>
-				<DialogContent className="sm:max-w-sm">
-					<DialogHeader>
-						<DialogTitle>{t('rubrics.list.deleteModal.title')}</DialogTitle>
-					</DialogHeader>
-					<p className="text-sm text-zinc-600">
-						{t('rubrics.list.deleteModal.body').replace(
-							'{{course}}',
-							confirmTarget ? confirmTarget.courseLabel[locale] : '',
-						)}
-					</p>
-					<DialogFooter>
-						<DialogClose
-							render={
-								<Button variant="secondary" disabled={deleteMutation.isPending}>
-									{t('dialog.close')}
-								</Button>
-							}
-						/>
-						<Button
-							variant="danger"
-							disabled={deleteMutation.isPending}
-							onClick={() => {
-								if (confirmTarget) {
-									deleteMutation.mutate(confirmTarget.id, {
-										onSuccess: () => setConfirmTarget(null),
-										onError: () => setConfirmTarget(null),
-									});
-								}
-							}}>
-							{deleteMutation.isPending
-								? t('rubrics.list.deleteModal.deleting')
-								: t('rubrics.list.deleteModal.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+				}}
+				title={t('rubrics.list.deleteModal.title')}
+				description={interpolate(t('rubrics.list.deleteModal.body'), {
+					course: confirmTarget ? confirmTarget.courseLabel[locale] : '',
+				})}
+				isPending={deleteMutation.isPending}
+				cancelLabel={t('dialog.close')}
+				confirmLabel={t('rubrics.list.deleteModal.confirm')}
+				pendingLabel={t('rubrics.list.deleteModal.deleting')}
+				onConfirm={() => {
+					if (confirmTarget) {
+						deleteMutation.mutate(confirmTarget.id, {
+							onSuccess: () => setConfirmTarget(null),
+							onError: () => setConfirmTarget(null),
+						});
+					}
+				}}
+			/>
 		</div>
 	);
 }

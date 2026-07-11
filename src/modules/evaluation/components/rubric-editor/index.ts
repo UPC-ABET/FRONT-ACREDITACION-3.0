@@ -6,7 +6,6 @@ export * from './OutcomeCard';
 export * from './QuestionInlineRow';
 export * from './PerformanceLevelsSummary';
 export * from './QuestionCell';
-export * from './ReadonlyBanner';
 export * from './RubricEditor';
 export * from './RubricEditorMultipleCompetency';
 export * from './RubricEditorSingleCompetency';

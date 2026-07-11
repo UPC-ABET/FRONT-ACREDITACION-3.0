@@ -2,8 +2,10 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
+import { Button, buttonVariants } from '@/shared/components/ui';
+import { cn } from '@/shared/lib/utils';
 import { useI18n } from '@/providers';
 import type { ProjectResponse } from '../../types';
 
@@ -157,21 +159,27 @@ export function useProjectsColumns({ setConfirmTarget, setDeleteError }: UseProj
 					<div className="flex justify-center gap-1">
 						<Link
 							href={`/academic-projects/projects/${row.original.id}/edit`}
-							className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
+							className={cn(
+								buttonVariants({ variant: 'ghost', size: 'icon' }),
+								'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700',
+							)}
+							aria-label={t('projects.list.table.edit')}
 							title={t('projects.list.table.edit')}>
-							<PencilIcon className="h-4 w-4" />
+							<PencilSquareIcon className="h-4 w-4" />
 						</Link>
-						<button
-							type="button"
+						<Button
+							variant="ghost"
+							size="icon"
+							className="text-zinc-500 hover:bg-red-50 hover:text-red-600"
+							disabled={!!row.original.hasEvaluations}
 							onClick={() => {
 								setConfirmTarget(row.original);
 								setDeleteError(null);
 							}}
-							disabled={!!row.original.hasEvaluations}
-							className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:pointer-events-none disabled:opacity-30"
+							aria-label={t('projects.list.table.delete')}
 							title={t('projects.list.table.delete')}>
 							<TrashIcon className="h-4 w-4" />
-						</button>
+						</Button>
 					</div>
 				),
 				meta: {

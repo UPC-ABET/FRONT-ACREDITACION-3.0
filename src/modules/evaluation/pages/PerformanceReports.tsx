@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { PageHeader, Tabs } from '@/shared/components';
-import { useABET, useI18n } from '@/providers';
+import { useABET, useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import { PerformanceReportFilters, PerformanceReportView } from '../components/performance-report';
 import { usePerformanceReportFilters } from '../hooks/usePerformanceReportFilters';
 import { PERFORMANCE_REPORT_KINDS } from '../constants/performanceReports';
@@ -13,6 +13,8 @@ export function PerformanceReports() {
 	const { academicPeriodId } = useABET();
 	const filterState = usePerformanceReportFilters();
 	const [activeTab, setActiveTab] = useState<PerformanceReportKind>(PERFORMANCE_REPORT_KINDS.RC);
+
+	useGlobalAcademicFiltersVisibilityOverride({ school: false, modality: true, period: true });
 
 	const tabs = [
 		{ id: PERFORMANCE_REPORT_KINDS.RC, label: t('performanceReports.tabs.rc') },

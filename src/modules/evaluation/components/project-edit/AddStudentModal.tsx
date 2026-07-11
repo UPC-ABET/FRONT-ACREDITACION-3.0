@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import {
 	Dialog,
@@ -17,8 +16,7 @@ import { LoadingState } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useEnrolledStudents } from '@/modules/academic';
 import type { EnrolledStudentResponse } from '@/modules/academic';
-import { projectsService } from '../../services';
-import { projectsQueryKeys } from '../../hooks';
+import { useAddProjectStudents } from '../../hooks';
 
 interface AddStudentModalProps {
 	open: boolean;
@@ -38,7 +36,6 @@ export function AddStudentModal({
 	onSuccess,
 }: AddStudentModalProps) {
 	const { t } = useI18n();
-	const queryClient = useQueryClient();
 
 	const [search, setSearch] = useState('');
 	const [selectedStudents, setSelectedStudents] = useState<Map<number, EnrolledStudentResponse>>(
@@ -87,31 +84,23 @@ export function AddStudentModal({
 		});
 	};
 
-	const addMutation = useMutation({
-		mutationFn: () =>
-			Promise.all(
-				Array.from(selectedStudents.values()).map((student) =>
-					projectsService.createStudent({
-						projectId: projectNumericId,
-						studentSectionEnrollmentId: student.studentSectionEnrollmentId,
-						isActive: true,
-					}),
-				),
-			),
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: projectsQueryKeys.details(projectId, { isEvaluationMode: false }),
-			});
-			onOpenChange(false);
-			onSuccess?.();
-		},
-		onError: () => setSubmitError(t('projects.edit.students.modal.errorMessage')),
-	});
+	const addMutation = useAddProjectStudents(projectId, projectNumericId);
 
 	const handleConfirm = () => {
 		if (selectedStudents.size === 0) return;
 		setSubmitError(null);
-		addMutation.mutate();
+		addMutation.mutate(
+			Array.from(selectedStudents.values()).map((student) => ({
+				studentSectionEnrollmentId: student.studentSectionEnrollmentId,
+			})),
+			{
+				onSuccess: () => {
+					onOpenChange(false);
+					onSuccess?.();
+				},
+				onError: () => setSubmitError(t('projects.edit.students.modal.errorMessage')),
+			},
+		);
 	};
 
 	const canSubmit = selectedStudents.size > 0 && !addMutation.isPending;

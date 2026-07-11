@@ -14,7 +14,7 @@ interface SingleCompetencyRubricRowProps {
 	dupScores: DupScores;
 	scores: Scores;
 	students: ProjectDetailsStudentResponse[];
-	nrNaTypeIds: Set<number>;
+	nonAttendanceTypeIds: Set<number>;
 	qualifStatuses: Record<number, number | null>;
 	msgNaN: string;
 	msgRange: string;
@@ -31,7 +31,7 @@ export function SingleCompetencyRubricRow({
 	dupScores,
 	scores,
 	students,
-	nrNaTypeIds,
+	nonAttendanceTypeIds,
 	qualifStatuses,
 	msgNaN,
 	msgRange,
@@ -83,7 +83,7 @@ export function SingleCompetencyRubricRow({
 					<div className="flex flex-col items-center gap-3">
 						{students
 							.map((st, stIdx) => ({ st, stIdx }))
-							.filter(({ st }) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1))
+							.filter(({ st }) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1))
 							.map(({ st, stIdx }) => {
 								const val = scores[q.id]?.[stIdx] ?? '';
 								return (

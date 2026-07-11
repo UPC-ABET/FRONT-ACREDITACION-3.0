@@ -1,35 +1,63 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeftIcon, EyeIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
 	Alert,
 	AlertDescription,
-	Badge,
+	Button,
 	Card,
+	ErrorDialog,
+	I18nTextField,
 	PageHeader,
-	Select,
 	Skeleton,
+	SuccessDialog,
 	TableEmptyState,
 	TableErrorState,
 	Tabs,
 } from '@/shared/components/ui';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
+import { cn } from '@/shared/lib/utils';
 import { useTabParam } from '@/shared';
 import { useAuth, useI18n } from '@/providers';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectDetails, useQualificationStatusTypes } from '../hooks';
-import { ProjectRubricSingleCompetencyTable } from '../components/project-evaluate/ProjectRubricSingleCompetencyTable';
-import { ProjectRubricMultipleCompetencyTable } from '../components/project-evaluate/ProjectRubricMultipleCompetencyTable';
+import { ProjectEvaluateRubricPanel } from '../components/project-evaluate/ProjectEvaluateRubricPanel';
 import { TYPE_CODES } from '@/shared/constants';
+import type { RubricTableHandle } from '../types';
 
 interface ProjectEvaluatePageProps {
 	projectId: string;
 	competencyScopeCode: string;
 }
 
+const EMPTY_OBSERVATION: I18nValue = { es: '', en: '' };
+
 function dirtyKey(studyPlanCourseId: number, gradeTypeId: number): string {
 	return `${studyPlanCourseId}:${gradeTypeId}`;
+}
+
+function getInitialObservation(
+	rubrics: {
+		items: {
+			students: { observation?: I18nValue | null }[];
+		}[];
+	}[],
+): I18nValue {
+	for (const rubricEntry of rubrics) {
+		for (const item of rubricEntry.items) {
+			const withObservation = item.students.find((student) => student.observation != null);
+			if (withObservation?.observation) {
+				return {
+					es: withObservation.observation.es ?? '',
+					en: withObservation.observation.en ?? '',
+				};
+			}
+		}
+	}
+
+	return EMPTY_OBSERVATION;
 }
 
 export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectEvaluatePageProps) {
@@ -45,12 +73,12 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 	});
 	const { statusTypes, isLoading: isLoadingStatuses } = useQualificationStatusTypes();
 
-	const nrNaTypeIds = useMemo(() => {
-		const nrNaCodes = new Set<string>([
-			TYPE_CODES.QUALIFICATION_STATUS.NR,
-			TYPE_CODES.QUALIFICATION_STATUS.NA,
-		]);
-		return new Set(statusTypes.filter((s) => nrNaCodes.has(s.code)).map((s) => s.id));
+	const nonAttendanceTypeIds = useMemo(() => {
+		return new Set(
+			statusTypes
+				.filter((status) => status.code !== TYPE_CODES.QUALIFICATION_STATUS.ASISTIO)
+				.map((status) => status.id),
+		);
 	}, [statusTypes]);
 
 	const myEvaluatorEntries = useMemo(
@@ -88,6 +116,35 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 	const [dirtyTabs, setDirtyTabs] = useState<Set<string>>(new Set());
 
+	// Each career/gradeType panel reports its own validation messages (same text as before);
+	// the page keeps them keyed by tab and renders the aggregate once, outside the rubric box.
+	const [incompleteItemsByTab, setIncompleteItemsByTab] = useState<
+		Map<string, { message: string; type: 'warning' | 'error' }[]>
+	>(new Map());
+	const handleIncompleteChange = (
+		studyPlanCourseId: number,
+		gradeTypeId: number,
+		items: { message: string; type: 'warning' | 'error' }[],
+	) => {
+		setIncompleteItemsByTab((prev) => {
+			const next = new Map(prev);
+			const key = dirtyKey(studyPlanCourseId, gradeTypeId);
+			if (items.length > 0) {
+				next.set(key, items);
+			} else {
+				next.delete(key);
+			}
+			return next;
+		});
+	};
+	const incompleteItems = useMemo(() => {
+		const seen = new Map<string, { message: string; type: 'warning' | 'error' }>();
+		for (const items of incompleteItemsByTab.values()) {
+			for (const item of items) seen.set(item.message, item);
+		}
+		return [...seen.values()];
+	}, [incompleteItemsByTab]);
+
 	const statusOptions = useMemo(
 		() =>
 			statusTypes.map((s) => ({ value: s.id, label: s.name[locale as 'es' | 'en'] ?? s.name.es })),
@@ -109,6 +166,18 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 	const rubrics = useMemo(() => data?.rubrics ?? [], [data?.rubrics]);
 
+	// The evaluation covers all students on the project regardless of career, so there is a
+	// single shared observation — not one per career/gradeType tab.
+	const initialObservation = useMemo(() => getInitialObservation(rubrics), [rubrics]);
+
+	const [observation, setObservation] = useState<I18nValue>(initialObservation);
+	const [observationDirty, setObservationDirty] = useState(false);
+	const [trackedInitialObservation, setTrackedInitialObservation] = useState(initialObservation);
+	if (initialObservation !== trackedInitialObservation) {
+		setTrackedInitialObservation(initialObservation);
+		if (!observationDirty) setObservation(initialObservation);
+	}
+
 	const careerIds = useMemo(
 		() => [
 			...new Set(
@@ -129,6 +198,13 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 	const activeItems = useMemo(() => activeRubricEntry?.items ?? [], [activeRubricEntry]);
 
+	// Used only as a fallback when the selected career has no rubric items at all, so we can
+	// still show who's in the project even though there's nothing to grade yet.
+	const activeStudents = useMemo(
+		() => (data?.students ?? []).filter((s) => s.studyPlanCourseId === effectiveStudyPlanCourseId),
+		[data?.students, effectiveStudyPlanCourseId],
+	);
+
 	const effectiveGradeTypeId = useMemo(() => {
 		if (activeItems.some((item) => item.gradeType.id === activeGradeTypeId)) {
 			return activeGradeTypeId;
@@ -136,34 +212,63 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		return activeItems[0]?.gradeType.id ?? null;
 	}, [activeItems, activeGradeTypeId]);
 
-	const activeItem = useMemo(
-		() => activeItems.find((item) => item.gradeType.id === effectiveGradeTypeId) ?? null,
-		[activeItems, effectiveGradeTypeId],
-	);
-
-	const activeStudents = useMemo(() => {
-		return (data?.students ?? []).filter((s) => s.studyPlanCourseId === effectiveStudyPlanCourseId);
-	}, [data?.students, effectiveStudyPlanCourseId]);
-
-	const initialQualifStatuses = useMemo<Record<number, number | null>>(() => {
-		const result: Record<number, number | null> = {};
-		for (const st of activeStudents) {
-			const itemStudent = activeItem?.students.find((s) => s.projectStudentId === st.id);
-			const entry = (itemStudent?.evaluationStatuses ?? []).find(
-				(e) => e.evaluatorId === evaluatorId,
+	// Every (career, gradeType) combination stays mounted at all times so switching tabs
+	// never discards in-progress edits — only the active one is shown (CSS `hidden`).
+	const panels = useMemo(() => {
+		return careerIds.flatMap((careerId) => {
+			const rubricEntry = rubrics.find((r) => r.studyPlanCourseId === careerId);
+			const studentsForCareer = (data?.students ?? []).filter(
+				(s) => s.studyPlanCourseId === careerId,
 			);
-			result[st.id] = entry?.qualificationStatusTypeId ?? null;
-		}
-		return result;
-	}, [activeStudents, activeItem, evaluatorId]);
+			return (rubricEntry?.items ?? []).map((item) => ({
+				key: dirtyKey(careerId, item.gradeType.id),
+				studyPlanCourseId: careerId,
+				gradeTypeId: item.gradeType.id,
+				item,
+				students: studentsForCareer,
+			}));
+		});
+	}, [careerIds, rubrics, data?.students]);
 
-	const [qualifStatuses, setQualifStatuses] =
-		useState<Record<number, number | null>>(initialQualifStatuses);
-	const [trackedQualifStatuses, setTrackedQualifStatuses] = useState(initialQualifStatuses);
-	if (initialQualifStatuses !== trackedQualifStatuses) {
-		setTrackedQualifStatuses(initialQualifStatuses);
-		setQualifStatuses(initialQualifStatuses);
-	}
+	// Editing the shared observation touches every career/gradeType panel, so mark them all
+	// dirty — otherwise "Save" would only persist it for whichever tab is currently active.
+	const handleObservationChange = (value: I18nValue) => {
+		setObservation(value);
+		setObservationDirty(true);
+		setDirtyTabs((prev) => new Set([...prev, ...panels.map((p) => p.key)]));
+	};
+
+	const panelRefs = useRef(new Map<string, RubricTableHandle>());
+	const registerPanelRef = (key: string) => (handle: RubricTableHandle | null) => {
+		if (handle) {
+			panelRefs.current.set(key, handle);
+		} else {
+			panelRefs.current.delete(key);
+		}
+	};
+
+	const [isSavingAll, setIsSavingAll] = useState(false);
+	const [showSaveAllSuccess, setShowSaveAllSuccess] = useState(false);
+	const [saveAllError, setSaveAllError] = useState(false);
+
+	const handleSaveAll = async () => {
+		const dirtyKeys = [...dirtyTabs];
+		const readyKeys = dirtyKeys.filter((key) => panelRefs.current.get(key)?.canSave);
+
+		if (readyKeys.length === 0) return;
+
+		setIsSavingAll(true);
+		try {
+			await Promise.all(readyKeys.map((key) => panelRefs.current.get(key)?.save()));
+			setObservationDirty(false);
+			setShowSaveAllSuccess(true);
+		} catch {
+			// Panels that failed stay dirty, so the user can retry them.
+			setSaveAllError(true);
+		} finally {
+			setIsSavingAll(false);
+		}
+	};
 
 	if (isLoading) {
 		return (
@@ -196,9 +301,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 	const projectName = project.name[locale as 'es' | 'en'] ?? project.name.es;
 	const courseName = course?.name[locale as 'es' | 'en'] ?? course?.name.es ?? '—';
 
-	const isCapstone = activeItem?.rubric?.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 	const isMultiple = competencyScopeCode === TYPE_CODES.COMPETENCY_SCOPE.MULTIPLE;
-	const isCapstoneMultiple = isCapstone && isMultiple;
 
 	return (
 		<div className="space-y-6">
@@ -270,31 +373,15 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 						/>
 					)}
 
-					{activeItem?.rubric && (
-						<div className="flex items-center gap-1.5 text-sm text-zinc-600">
-							<span className="font-medium text-zinc-400">
-								{t('projects.evaluate.header.rubric')}
-							</span>
-							<Badge variant={isCapstone ? 'success' : 'outline'}>
-								{isCapstone ? t('rubrics.badges.capstone') : t('rubrics.badges.noCapstone')}
-							</Badge>
-						</div>
-					)}
-
-					<Card title={t('projects.evaluate.students.title')}>
-						<div className="-m-4 divide-y divide-zinc-100">
-							{activeStudents.length === 0 ? (
-								<TableEmptyState message={t('projects.evaluate.students.empty')} />
-							) : (
-								activeStudents.map((student) => {
-									const itemStudent = activeItem?.students.find(
-										(s) => s.projectStudentId === student.id,
-									);
-									return (
-										<div
-											key={student.id}
-											className="flex flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-											<div className="flex flex-col gap-0.5">
+					{activeItems.length === 0 && (
+						<div className="space-y-4">
+							<Card title={t('projects.evaluate.students.title')}>
+								<div className="-m-4 divide-y divide-zinc-100">
+									{activeStudents.length === 0 ? (
+										<TableEmptyState message={t('projects.evaluate.students.empty')} />
+									) : (
+										activeStudents.map((student) => (
+											<div key={student.id} className="flex flex-col gap-0.5 px-6 py-4">
 												<span className="font-medium text-zinc-900">
 													{student.firstName} {student.lastName}
 												</span>
@@ -304,95 +391,105 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 													<span>{student.email}</span>
 												</div>
 											</div>
-
-											<div className="flex items-center justify-between gap-4 sm:justify-end sm:gap-8">
-												{!isReadOnly && (
-													<div className="flex w-44 flex-col gap-0.5">
-														<span className="text-xs font-medium text-zinc-400">
-															{t('projects.evaluate.students.attendance')}
-														</span>
-														<Select
-															size="sm"
-															options={statusOptions}
-															value={
-																statusOptions.find((o) => o.value === qualifStatuses[student.id]) ??
-																null
-															}
-															isDisabled={isLoadingStatuses}
-															isClearable
-															placeholder="—"
-															onChange={(_, val) => {
-																const opt = Array.isArray(val) ? (val[0] ?? null) : val;
-																setQualifStatuses((prev) => ({
-																	...prev,
-																	[student.id]: opt ? Number(opt.value) : null,
-																}));
-															}}
-														/>
-													</div>
-												)}
-
-												<div className="flex flex-col items-end gap-0.5">
-													<span className="text-xs font-medium text-zinc-400">
-														{t('projects.evaluate.students.grade')}
-													</span>
-													{itemStudent?.totalGrade != null ? (
-														<span className="text-2xl font-bold tabular-nums text-zinc-900">
-															{itemStudent.totalGrade}
-															<span className="ml-0.5 text-sm font-normal text-zinc-400">/20</span>
-														</span>
-													) : (
-														<span className="text-sm text-zinc-400">
-															{t('projects.evaluate.students.noGrade')}
-														</span>
-													)}
-												</div>
-											</div>
-										</div>
-									);
-								})
-							)}
+										))
+									)}
+								</div>
+							</Card>
+							<TableEmptyState message={t('projects.evaluate.rubric.noRubric')} />
 						</div>
-					</Card>
+					)}
 
-					{!activeItem?.rubric ? (
-						<TableEmptyState message={t('projects.evaluate.rubric.noRubric')} />
-					) : isCapstoneMultiple ? (
-						<ProjectRubricMultipleCompetencyTable
-							outcomes={activeItem.outcomes}
-							questions={activeItem.questions}
-							students={activeStudents}
+					{panels.map((panel) => (
+						<ProjectEvaluateRubricPanel
+							key={panel.key}
+							ref={registerPanelRef(panel.key)}
+							isVisible={
+								panel.studyPlanCourseId === effectiveStudyPlanCourseId &&
+								panel.gradeTypeId === effectiveGradeTypeId
+							}
+							item={panel.item}
+							students={panel.students}
+							evaluatorId={evaluatorId}
+							projectId={projectId}
 							academicPeriodId={data.academicPeriod?.id ?? null}
-							evaluatorId={evaluatorId}
-							rubricId={activeItem.rubric.id}
-							projectId={projectId}
-							qualifStatuses={qualifStatuses}
-							nrNaTypeIds={nrNaTypeIds}
-							readOnly={isReadOnly}
+							nonAttendanceTypeIds={nonAttendanceTypeIds}
+							statusOptions={statusOptions}
+							isLoadingStatuses={isLoadingStatuses}
+							isReadOnly={isReadOnly}
 							disableDuplicate={careerIds.length > 1}
+							isMultipleScope={isMultiple}
+							t={t}
 							onDirtyChange={(dirty) =>
-								handleDirtyChange(effectiveStudyPlanCourseId!, effectiveGradeTypeId!, dirty)
+								handleDirtyChange(panel.studyPlanCourseId, panel.gradeTypeId, dirty)
 							}
-							commissions={activeItem.commissions}
-						/>
-					) : activeItem.questions.length > 0 ? (
-						<ProjectRubricSingleCompetencyTable
-							questions={activeItem.questions}
-							students={activeStudents}
-							evaluatorId={evaluatorId}
-							rubricId={activeItem.rubric.id}
-							projectId={projectId}
-							qualifStatuses={qualifStatuses}
-							nrNaTypeIds={nrNaTypeIds}
-							readOnly={isReadOnly}
-							disableDuplicate={careerIds.length > 1}
-							onDirtyChange={(dirty) =>
-								handleDirtyChange(effectiveStudyPlanCourseId!, effectiveGradeTypeId!, dirty)
+							observation={observation}
+							observationDirty={observationDirty}
+							onIncompleteChange={(incomplete) =>
+								handleIncompleteChange(panel.studyPlanCourseId, panel.gradeTypeId, incomplete)
 							}
 						/>
-					) : null}
+					))}
 				</div>
 			) : null}
+
+			{!isReadOnly && rubrics.some((rubric) => rubric.items.length > 0) && (
+				<div className="flex flex-col gap-4">
+					<Card>
+						<I18nTextField
+							layout="row"
+							label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
+							placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
+							value={observation}
+							onChange={handleObservationChange}
+							rows={3}
+						/>
+					</Card>
+
+					{incompleteItems.length > 0 && (
+						<ul className="space-y-1 text-sm">
+							{incompleteItems.map((item) => (
+								<li
+									key={item.message}
+									className={cn(
+										'flex items-center gap-2 rounded-lg px-3 py-2',
+										item.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-amber-50 text-amber-800',
+									)}>
+									<ExclamationTriangleIcon
+										className={cn(
+											'h-4 w-4 shrink-0',
+											item.type === 'error' ? 'text-red-500' : 'text-amber-500',
+										)}
+									/>
+									{item.message}
+								</li>
+							))}
+						</ul>
+					)}
+					<div className="flex justify-end">
+						<Button
+							variant="danger"
+							loading={isSavingAll}
+							disabled={dirtyTabs.size === 0 || isSavingAll}
+							onClick={() => void handleSaveAll()}>
+							{t('projects.evaluate.saveAll.button')}
+						</Button>
+					</div>
+				</div>
+			)}
+
+			<SuccessDialog
+				isOpen={showSaveAllSuccess}
+				onClose={() => setShowSaveAllSuccess(false)}
+				title={t('projects.evaluate.saveAll.successTitle')}
+				message={t('projects.evaluate.saveAll.successMessage')}
+			/>
+
+			<ErrorDialog
+				isOpen={saveAllError}
+				onClose={() => setSaveAllError(false)}
+				title={t('projects.evaluate.saveAll.errorTitle')}
+				message={t('projects.evaluate.saveAll.errorMessage')}
+			/>
 		</div>
 	);
 }

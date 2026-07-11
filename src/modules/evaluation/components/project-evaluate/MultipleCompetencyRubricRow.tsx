@@ -19,7 +19,7 @@ interface MultipleCompetencyRubricRowProps {
 	dupSelections: Record<number, number | null>;
 	selections: Record<number, Record<number, number | null>>;
 	students: ProjectDetailsStudentResponse[];
-	nrNaTypeIds: Set<number>;
+	nonAttendanceTypeIds: Set<number>;
 	qualifStatuses: Record<number, number | null>;
 	readOnly: boolean;
 	onSelect: (criteriaId: number, projectStudentId: number, value: number) => void;
@@ -39,7 +39,7 @@ export function MultipleCompetencyRubricRow({
 	dupSelections,
 	selections,
 	students,
-	nrNaTypeIds,
+	nonAttendanceTypeIds,
 	qualifStatuses,
 	readOnly,
 	onSelect,
@@ -86,7 +86,7 @@ export function MultipleCompetencyRubricRow({
 				) : (
 					<div className="flex flex-col gap-2">
 						{students
-							.filter((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1))
+							.filter((st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1))
 							.map((st) => {
 								const current = selections[criteria.id]?.[st.id] ?? null;
 								return (

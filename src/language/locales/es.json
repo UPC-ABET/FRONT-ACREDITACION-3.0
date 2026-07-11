@@ -1702,6 +1702,7 @@
 				"course": "Curso"
 			},
 			"columns": {
+				"program": "Carrera",
 				"course": "Curso",
 				"period": "Período Académico",
 				"gradeType": "Tipo de Evaluación",
@@ -1892,7 +1893,7 @@
 						"loadOutcomes": "No se pudieron cargar los outcomes del curso."
 					},
 					"validation": {
-						"incomplete": "Completa la descripción de todos los criterios en todas las comisiones.",
+						"incomplete": "Completa todos los criterios de al menos una comisión para continuar. Si empezaste a llenar otra comisión, complétala o deja sus criterios vacíos.",
 						"complete": "Rúbrica lista para guardar"
 					}
 				}
@@ -2122,6 +2123,13 @@
 			"tabs": {
 				"unsavedChanges": "Cambios sin guardar"
 			},
+			"saveAll": {
+				"button": "Guardar",
+				"successTitle": "Calificaciones guardadas",
+				"successMessage": "Se guardaron correctamente las calificaciones.",
+				"errorTitle": "No se pudo guardar",
+				"errorMessage": "Ocurrió un error al guardar las calificaciones. Tus cambios siguen en pantalla; vuelve a intentarlo."
+			},
 			"rubric": {
 				"question": "Pregunta",
 				"criteria": "Criterios",
@@ -2135,7 +2143,12 @@
 				"readOnly": "Solo lectura",
 				"saving": "Guardando...",
 				"noRubric": "No hay rúbrica configurada para esta carrera.",
-				"missingStatus": "Selecciona la asistencia de todos los estudiantes para continuar."
+				"missingStatus": "Selecciona la asistencia de todos los estudiantes para continuar.",
+				"saveSuccessTitle": "Calificación guardada",
+				"saveSuccessMessage": "La calificación del proyecto se guardó correctamente.",
+				"observation": "Observaciones",
+				"observationPlaceholder": "Agregar observación",
+				"observationOptional": "Opcional"
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",
@@ -2150,7 +2163,6 @@
 			"loading": "Cargando proyecto...",
 			"error": "No fue posible cargar el proyecto.",
 			"backButton": "Volver a proyectos",
-			"subtitle": "Edite la información del proyecto.",
 			"header": {
 				"course": "Curso",
 				"rubricType": "Tipo de rúbrica",
@@ -2178,6 +2190,12 @@
 				"addError": "No se pudo agregar el estudiante.",
 				"removeError": "No se pudo eliminar el estudiante.",
 				"removeSuccess": "Estudiante eliminado correctamente.",
+				"removeConfirm": {
+					"title": "Eliminar estudiante",
+					"body": "¿Seguro que deseas eliminar a {{name}} de este proyecto?",
+					"confirm": "Eliminar",
+					"removing": "Eliminando..."
+				},
 				"modal": {
 					"title": "Agregar estudiantes",
 					"searchPlaceholder": "Buscar por nombre, código o correo...",
@@ -2201,6 +2219,12 @@
 				"adding": "Agregando...",
 				"addError": "No se pudo agregar el evaluador.",
 				"removeError": "No se pudo eliminar el evaluador.",
+				"removeConfirm": {
+					"title": "Eliminar evaluador",
+					"body": "¿Seguro que deseas eliminar a {{name}} como evaluador de este proyecto?",
+					"confirm": "Eliminar",
+					"removing": "Eliminando..."
+				},
 				"modal": {
 					"title": "Agregar evaluador",
 					"searchPlaceholder": "Buscar por nombre o apellido...",

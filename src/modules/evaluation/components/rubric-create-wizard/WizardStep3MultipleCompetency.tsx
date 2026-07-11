@@ -133,14 +133,31 @@ export function WizardStep3MultipleCompetency({
 
 	const activeCommission = commissionTabs.find((c) => c.id === activeCommissionId);
 
-	const allFilled = useMemo(
-		() =>
-			outcomes.length > 0 &&
-			outcomes.every(
-				(o) => o.criteria.length > 0 && o.criteria.every((c) => c.text[locale].trim().length > 0),
-			),
-		[outcomes, locale],
-	);
+	// A rubric is ready to save once at least one commission has every outcome's criteria
+	// filled in; other commissions may stay untouched, but none may be left half-filled.
+	const allFilled = useMemo(() => {
+		const outcomeComplete = (o: LocalOutcome) =>
+			o.criteria.length > 0 && o.criteria.every((c) => c.text[locale].trim().length > 0);
+		const outcomeHasAnyFilled = (o: LocalOutcome) =>
+			o.criteria.some((c) => c.text[locale].trim().length > 0);
+
+		const byCommission = new Map<string, LocalOutcome[]>();
+		for (const o of outcomes) {
+			if (!byCommission.has(o.commissionId)) byCommission.set(o.commissionId, []);
+			byCommission.get(o.commissionId)!.push(o);
+		}
+
+		let hasComplete = false;
+		let hasPartial = false;
+		for (const commissionOutcomes of byCommission.values()) {
+			const isComplete = commissionOutcomes.length > 0 && commissionOutcomes.every(outcomeComplete);
+			const isPartial = !isComplete && commissionOutcomes.some(outcomeHasAnyFilled);
+			if (isComplete) hasComplete = true;
+			if (isPartial) hasPartial = true;
+		}
+
+		return hasComplete && !hasPartial;
+	}, [outcomes, locale]);
 
 	const updateOutcome = (outcomeId: number, updater: (o: LocalOutcome) => LocalOutcome) =>
 		setOutcomes((prev) => prev.map((o) => (o.outcomeId === outcomeId ? updater(o) : o)));

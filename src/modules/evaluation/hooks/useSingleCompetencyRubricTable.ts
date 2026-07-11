@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useI18n } from '@/providers';
+import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { useSubmitEvaluation } from './useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../types';
 import {
@@ -18,8 +19,15 @@ interface UseSingleCompetencyRubricTableOptions {
 	rubricId: number;
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
-	nrNaTypeIds: Set<number>;
+	nonAttendanceTypeIds: Set<number>;
 	onDirtyChange?: (isDirty: boolean) => void;
+	/** Shared across every career/gradeType tab — the evaluation covers all students on the
+	 * project, so there is a single observation, not one per tab, edited once at the page level. */
+	observation: I18nValue;
+	/** True when the parent panel has unsaved attendance edits, or the shared observation
+	 * changed elsewhere — neither is tracked by this hook's own isDirty, but both must still
+	 * unlock saving so they get submitted. */
+	attendanceDirty?: boolean;
 }
 
 export function useSingleCompetencyRubricTable({
@@ -29,11 +37,13 @@ export function useSingleCompetencyRubricTable({
 	rubricId,
 	projectId,
 	qualifStatuses,
-	nrNaTypeIds,
+	nonAttendanceTypeIds,
 	onDirtyChange,
+	observation,
+	attendanceDirty = false,
 }: UseSingleCompetencyRubricTableOptions) {
 	const { t, locale } = useI18n();
-	const { mutate: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
+	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 	const [isDirty, setIsDirty] = useState(false);
@@ -80,10 +90,12 @@ export function useSingleCompetencyRubricTable({
 	const [scores, setScores] = useState<Scores>(initialScores);
 	const [dupScores, setDupScores] = useState<DupScores>(initialDupScores);
 
+	// Reseed from the server only while there is nothing unsaved to overwrite: a refetch
+	// triggered by saving another tab must not discard this tab's in-progress edits.
 	const [trackedInitialScores, setTrackedInitialScores] = useState(initialScores);
 	if (initialScores !== trackedInitialScores) {
 		setTrackedInitialScores(initialScores);
-		setScores(initialScores);
+		if (!isDirty) setScores(initialScores);
 	}
 
 	const ranges = useMemo(() => {
@@ -107,13 +119,13 @@ export function useSingleCompetencyRubricTable({
 	const allFilled = useMemo(() => {
 		if (!questions.length) return false;
 		if (hasMissingStatus) return false;
-		const hasGraded = students.some((st) => !nrNaTypeIds.has(qualifStatuses[st.id] ?? -1));
+		const hasGraded = students.some((st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1));
 		for (const q of questions) {
 			if (duplicateMode) {
 				if (hasGraded && !dupScores[q.id]?.trim()) return false;
 			} else {
 				for (let stIdx = 0; stIdx < students.length; stIdx++) {
-					if (nrNaTypeIds.has(qualifStatuses[students[stIdx].id] ?? -1)) continue;
+					if (nonAttendanceTypeIds.has(qualifStatuses[students[stIdx].id] ?? -1)) continue;
 					if (!scores[q.id]?.[stIdx]?.trim()) return false;
 				}
 			}
@@ -126,7 +138,7 @@ export function useSingleCompetencyRubricTable({
 		scores,
 		dupScores,
 		qualifStatuses,
-		nrNaTypeIds,
+		nonAttendanceTypeIds,
 		hasMissingStatus,
 	]);
 
@@ -145,7 +157,7 @@ export function useSingleCompetencyRubricTable({
 		return false;
 	}, [questions, students.length, duplicateMode, scores, dupScores, ranges, msgNaN, msgRange]);
 
-	const canSave = allFilled && !hasErrors;
+	const canSave = allFilled && !hasErrors && (isDirty || attendanceDirty);
 
 	const handleScore = (qId: number, stIdx: number, val: string): void => {
 		markDirty();
@@ -164,7 +176,7 @@ export function useSingleCompetencyRubricTable({
 			return score >= min && score <= max;
 		});
 
-	const handleSave = (): void => {
+	const handleSave = async (): Promise<void> => {
 		const studentPayloads = new Map<number, CriteriaScoreEntry[]>();
 
 		for (const q of questions) {
@@ -179,9 +191,9 @@ export function useSingleCompetencyRubricTable({
 				const matchedCriteria = !isNaN(dupScore) ? findMatchingCriteria(q, dupScore) : undefined;
 
 				for (const st of students) {
-					const isNrNa = nrNaTypeIds.has(qualifStatuses[st.id] ?? -1);
+					const isNonAttendance = nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1);
 					const existing: CriteriaScoreEntry[] = studentPayloads.get(st.id) ?? [];
-					if (isNrNa) {
+					if (isNonAttendance) {
 						existing.push({
 							rubricQuestionCriteriaId: lowestCriteria.id,
 							score: 0,
@@ -199,9 +211,9 @@ export function useSingleCompetencyRubricTable({
 				}
 			} else {
 				students.forEach((st, stIdx) => {
-					const isNrNa = nrNaTypeIds.has(qualifStatuses[st.id] ?? -1);
+					const isNonAttendance = nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1);
 					const existing: CriteriaScoreEntry[] = studentPayloads.get(st.id) ?? [];
-					if (isNrNa) {
+					if (isNonAttendance) {
 						existing.push({
 							rubricQuestionCriteriaId: lowestCriteria.id,
 							score: 0,
@@ -226,29 +238,30 @@ export function useSingleCompetencyRubricTable({
 		}
 
 		const entries = [...studentPayloads.entries()].filter(([, s]) => s.length > 0);
-		let remaining = entries.length;
+		if (entries.length === 0) return;
 
-		for (const [projectStudentId, criteriaScores] of entries) {
-			submitEvaluation(
-				{
+		const observationEs = observation.es?.trim() ?? '';
+		const observationEn = observation.en?.trim() ?? '';
+		// Stored/read as a localized record ({ es, en }); keep the write shape in sync with
+		// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textareas.
+		const observationPayload =
+			observationEs || observationEn ? { es: observationEs, en: observationEn } : undefined;
+
+		// Errors propagate to the caller, which owns the save-all feedback dialogs.
+		await Promise.all(
+			entries.map(([projectStudentId, criteriaScores]) =>
+				submitEvaluation({
 					projectStudentId,
 					projectEvaluatorId: evaluatorId,
 					rubricId: rubricId,
-					observation: { es: '', en: '' },
+					observation: observationPayload,
 					scores: criteriaScores,
 					qualificationStatusTypeId: qualifStatuses[projectStudentId],
-				},
-				{
-					onSuccess: () => {
-						remaining -= 1;
-						if (remaining === 0) {
-							setIsDirty(false);
-							onDirtyChange?.(false);
-						}
-					},
-				},
-			);
-		}
+				}),
+			),
+		);
+		setIsDirty(false);
+		onDirtyChange?.(false);
 	};
 
 	return {
@@ -265,6 +278,7 @@ export function useSingleCompetencyRubricTable({
 		allFilled,
 		hasErrors,
 		canSave,
+		isDirty,
 		handleScore,
 		handleDupScore,
 		handleSave,

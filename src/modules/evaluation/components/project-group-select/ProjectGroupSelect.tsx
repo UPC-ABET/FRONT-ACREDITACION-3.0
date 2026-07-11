@@ -54,7 +54,7 @@ export function ProjectGroupSelect({
 	const options = useMemo<AnyOption[]>(
 		() =>
 			groups.map((g) => ({
-				label: `${g.code} — ${g.name[loc] ?? g.name.es}`,
+				label: `${g.code} — ${g.name[loc] ?? g.name.es}${g.program ? ` (${g.program.code})` : ''}`,
 				value: g.id,
 			})),
 		[groups, loc],
