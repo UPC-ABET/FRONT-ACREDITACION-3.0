@@ -1,11 +1,21 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Toast, Toggle } from '@/shared/components';
+import {
+	Button,
+	Toast,
+	Toggle,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+} from '@/shared/components';
 import { tryTranslate } from '@/shared';
 import { PaperAirplaneIcon, BellAlertIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
 import { useLCFCNotification, useLCFCConfiguration } from '../../../hooks';
+import { SendSummaryBody } from '../../shared/SendSummaryBody';
 import type { LCFCCourse } from '../../../types';
 import { LCFCNotificationProgressDialog } from './LCFCNotificationProgressDialog';
 
@@ -16,12 +26,21 @@ interface LCFCNotificationViewProps {
 export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
-	const { sending, error: sendError, status: sendStatus, send } = useLCFCNotification();
+	const {
+		sending,
+		error: sendError,
+		status: sendStatus,
+		summary,
+		loadingSummary,
+		loadSummary,
+		send,
+	} = useLCFCNotification();
 	const { courses, load: loadCourses } = useLCFCConfiguration();
 
 	const [resend, setResend] = useState(false);
 	// courseSectionId currently being (re)sent, for the per-row spinner; 0 = the "send all" button.
 	const [sendingSectionId, setSendingSectionId] = useState<number | null>(null);
+	const [sendDialogOpen, setSendDialogOpen] = useState(false);
 	const [progressDialogOpen, setProgressDialogOpen] = useState(false);
 	const [progressTargetLabel, setProgressTargetLabel] = useState('');
 	const [sendErrorDismissed, setSendErrorDismissed] = useState(false);
@@ -60,8 +79,21 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		return true;
 	}
 
-	function handleSendAll() {
+	function handleOpenSendDialog() {
 		if (!requireValid()) return;
+		setResend(false);
+		setSendDialogOpen(true);
+		loadSummary({ programId, resend: false });
+	}
+
+	function handleToggleResend(checked: boolean) {
+		setResend(checked);
+		loadSummary({ programId, resend: checked });
+	}
+
+	function handleConfirmSendAll() {
+		if (!requireValid()) return;
+		setSendDialogOpen(false);
 		setSendErrorDismissed(false);
 		setSendingSectionId(0);
 		setProgressTargetLabel(t('surveys.lcfc.notifications.progress.targetAll'));
@@ -121,24 +153,9 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 					</p>
 				</div>
 
-				<div className="space-y-4">
-					<p className="text-xs text-zinc-500">
-						{t('surveys.lcfc.notifications.deadlineInConfig')}
-					</p>
+				<p className="text-xs text-zinc-500">{t('surveys.lcfc.notifications.deadlineInConfig')}</p>
 
-					<div>
-						<Toggle
-							label={t('surveys.lcfc.notifications.resendLabel')}
-							checked={resend}
-							onChange={setResend}
-						/>
-						<p className="text-xs text-zinc-500 mt-1">
-							{t('surveys.lcfc.notifications.resendHint')}
-						</p>
-					</div>
-				</div>
-
-				<Button onClick={handleSendAll} disabled={!isValid || sending}>
+				<Button onClick={handleOpenSendDialog} disabled={!isValid || sending}>
 					<PaperAirplaneIcon className="h-4 w-4 mr-2" />
 					{sending && sendingSectionId === 0
 						? t('surveys.lcfc.notifications.sending')
@@ -188,6 +205,51 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 					</table>
 				</div>
 			)}
+
+			<Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>{t('surveys.lcfc.notifications.sendDialog.title')}</DialogTitle>
+					</DialogHeader>
+					<div className="space-y-4 py-2">
+						<p className="text-sm text-zinc-600">
+							{t('surveys.lcfc.notifications.sendDialog.body')}
+						</p>
+
+						<div>
+							<Toggle
+								label={t('surveys.lcfc.notifications.resendLabel')}
+								checked={resend}
+								onChange={handleToggleResend}
+							/>
+							<p className="text-xs text-zinc-500 mt-1">
+								{t('surveys.lcfc.notifications.resendHint')}
+							</p>
+						</div>
+
+						<SendSummaryBody
+							loading={loadingSummary}
+							summary={summary}
+							loadingLabel={t('surveys.lcfc.notifications.sendDialog.summaryLoading')}
+							emptyMessage={t(
+								resend
+									? 'surveys.lcfc.notifications.sendDialog.summaryEmptyResend'
+									: 'surveys.lcfc.notifications.sendDialog.summaryEmpty',
+							)}
+							programsLabel={t('surveys.lcfc.notifications.sendDialog.summaryPrograms')}
+							studentsLabel={t('surveys.lcfc.notifications.sendDialog.summaryStudents')}
+							byProgramTitle={t('surveys.lcfc.notifications.sendDialog.summaryByProgramTitle')}
+						/>
+					</div>
+					<DialogFooter showCloseButton>
+						<Button
+							onClick={handleConfirmSendAll}
+							disabled={loadingSummary || !summary || summary.totalStudents === 0}>
+							{t('surveys.lcfc.notifications.sendDialog.confirm')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 
 			<Toast
 				isOpen={visibleToast.open}

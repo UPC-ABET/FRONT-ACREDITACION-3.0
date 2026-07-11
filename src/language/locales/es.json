@@ -2336,6 +2336,17 @@
 				"colActions": "Acciones",
 				"resendRow": "Reenviar",
 				"sending": "Enviando...",
+				"sendDialog": {
+					"title": "Enviar encuesta LCFC",
+					"body": "Se enviará la encuesta a todos los estudiantes matriculados en los cursos activos del período y carrera actuales.",
+					"summaryLoading": "Calculando resumen del envío...",
+					"summaryEmpty": "No hay estudiantes pendientes de notificar.",
+					"summaryEmptyResend": "No hay estudiantes pendientes de responder para reenviar.",
+					"summaryPrograms": "Carreras a notificar",
+					"summaryStudents": "Estudiantes a notificar",
+					"summaryByProgramTitle": "Estudiantes por carrera",
+					"confirm": "Confirmar envío"
+				},
 				"progress": {
 					"title": "Enviando notificaciones LCFC",
 					"completedTitle": "Envío finalizado",
@@ -2448,6 +2459,8 @@
 				"deleteBody": "¿Deseas eliminar este estudiante de la notificación?",
 				"delete": "Eliminar",
 				"resend": "Reenviar notificación",
+				"resendLabel": "Reenviar a quienes ya recibieron",
+				"resendHint": "Vuelve a enviar el correo a los estudiantes que ya fueron notificados pero aún no han respondido, reutilizando el mismo enlace. Los que ya respondieron nunca reciben nada.",
 				"addStudent": "Agregar Estudiante",
 				"sendDialog": {
 					"title": "Enviar encuesta GRA",
@@ -2456,6 +2469,7 @@
 					"bodyAfter": " los estudiantes pendientes del período y carrera actuales.",
 					"summaryLoading": "Calculando resumen del envío...",
 					"summaryEmpty": "No hay estudiantes pendientes de notificar.",
+					"summaryEmptyResend": "No hay estudiantes pendientes de responder para reenviar.",
 					"summaryPrograms": "Carreras a notificar",
 					"summaryStudents": "Estudiantes a notificar",
 					"summaryByProgramTitle": "Estudiantes por carrera",

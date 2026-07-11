@@ -126,6 +126,8 @@ export interface GRAEmailSendRequest {
 	academicPeriodId: number;
 	programId: number;
 	surveyBaseUrl: string;
+	/** "Reenviar a quienes ya recibieron" — also resends to already-notified, unanswered students. */
+	resend?: boolean;
 }
 
 export interface GRASendResponse {

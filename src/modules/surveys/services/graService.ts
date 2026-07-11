@@ -282,9 +282,10 @@ export async function listGRAStudents(params: {
 
 export async function getGRASendSummary(
 	programId: number | undefined,
+	resend: boolean,
 	lang = 'es',
 ): Promise<GRASendSummary> {
-	const res = await apiPost('gra/email/summary', { programId, lang });
+	const res = await apiPost('gra/email/summary', { programId, resend, lang });
 	const data = getApiData<GRASendSummary>(res);
 	return {
 		totalPrograms: data?.totalPrograms ?? 0,
@@ -300,6 +301,7 @@ export async function sendGRAEmail(
 	const res = await apiPost('gra/email/send', {
 		programId: request.programId,
 		surveyBaseUrl: request.surveyBaseUrl,
+		resend: request.resend ?? false,
 		lang,
 	});
 	const data = getApiData<GRASendResponse>(res);

@@ -16,6 +16,7 @@ import type {
 	LCFCNotificationSendResponse,
 	LCFCNotificationJobStatus,
 	LCFCEmailParam,
+	GRASendSummary,
 	DashboardResponse,
 	AvailableSection,
 	LCFCSectionOutcome,
@@ -185,6 +186,28 @@ export async function changeLCFCConfigStatus(configId: number, newStatus: LCFCCo
 	return apiPost('lcfc/config/update-status', {
 		updates: [{ configId, isActive: newStatus === 'ACTIVE' }],
 	});
+}
+
+export async function getLCFCSendSummary(
+	request: Pick<
+		LCFCNotificationSendRequest,
+		'programId' | 'campusId' | 'courseSectionId' | 'resend'
+	>,
+	lang = 'es',
+): Promise<GRASendSummary> {
+	const res = await apiPost('lcfc/notification/summary', {
+		programId: request.programId,
+		campusId: request.campusId,
+		courseSectionId: request.courseSectionId,
+		resend: request.resend,
+		lang,
+	});
+	const data = getApiData<GRASendSummary>(res);
+	return {
+		totalPrograms: data?.totalPrograms ?? 0,
+		totalStudents: data?.totalStudents ?? 0,
+		byProgram: data?.byProgram ?? [],
+	};
 }
 
 export async function sendLCFCNotification(

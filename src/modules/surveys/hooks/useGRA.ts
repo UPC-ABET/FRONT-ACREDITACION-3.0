@@ -257,6 +257,9 @@ export function useGRAEmail() {
 	return { template, setTemplate, loading, saving, error, load, save };
 }
 
+/** Send flow for GRA notifications, including the "Reenviar a quienes ya recibieron" toggle
+ *  (mirrors LCFC's resend toggle): previews a summary, kicks off a background job, and polls
+ *  the job-status endpoint. */
 export function useGRASendNotifications() {
 	const { locale } = useI18n();
 	const [summary, setSummary] = useState<GRASendSummary | null>(null);
@@ -268,11 +271,11 @@ export function useGRASendNotifications() {
 	const onSuccessRef = useRef<(() => void) | undefined>(undefined);
 
 	const loadSummary = useCallback(
-		async (programId?: number) => {
+		async (programId: number | undefined, resend: boolean) => {
 			setLoadingSummary(true);
 			setError(null);
 			try {
-				setSummary(await getGRASendSummary(programId, locale));
+				setSummary(await getGRASendSummary(programId, resend, locale));
 			} catch (e) {
 				setError(getErrorMessage(e));
 			} finally {
