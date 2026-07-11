@@ -2336,6 +2336,17 @@
 				"colActions": "Actions",
 				"resendRow": "Resend",
 				"sending": "Sending...",
+				"sendDialog": {
+					"title": "Send LCFC survey",
+					"body": "The survey will be sent to all students enrolled in active courses for the current period and program.",
+					"summaryLoading": "Calculating send summary...",
+					"summaryEmpty": "No students pending notification.",
+					"summaryEmptyResend": "No students pending a response to resend to.",
+					"summaryPrograms": "Programs to notify",
+					"summaryStudents": "Students to notify",
+					"summaryByProgramTitle": "Students by program",
+					"confirm": "Confirm send"
+				},
 				"progress": {
 					"title": "Sending LCFC notifications",
 					"completedTitle": "Send completed",
@@ -2448,6 +2459,8 @@
 				"deleteBody": "Do you want to remove this student from the notification?",
 				"delete": "Remove",
 				"resend": "Resend notification",
+				"resendLabel": "Resend to those who already received it",
+				"resendHint": "Resends the email to students who were already notified but haven't responded yet, reusing the same link. Students who already responded never receive anything.",
 				"addStudent": "Add Student",
 				"sendDialog": {
 					"title": "Send GRA survey",
@@ -2456,6 +2469,7 @@
 					"bodyAfter": " pending students for the current period and program.",
 					"summaryLoading": "Calculating send summary...",
 					"summaryEmpty": "No students pending notification.",
+					"summaryEmptyResend": "No students pending a response to resend to.",
 					"summaryPrograms": "Programs to notify",
 					"summaryStudents": "Students to notify",
 					"summaryByProgramTitle": "Students by program",

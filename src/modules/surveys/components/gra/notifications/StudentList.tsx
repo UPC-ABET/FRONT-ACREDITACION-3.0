@@ -12,6 +12,7 @@ import {
 	DialogTitle,
 	DialogFooter,
 	Toast,
+	Toggle,
 } from '@/shared/components';
 import {
 	TrashIcon,
@@ -25,6 +26,7 @@ import { getErrorMessage } from '@/shared/lib';
 import { useGRAStudents, useGRASendNotifications } from '../../../hooks';
 import { AddStudentPanel } from './AddStudentPanel';
 import { GRANotificationProgressDialog } from './GRANotificationProgressDialog';
+import { SendSummaryBody } from '../../shared/SendSummaryBody';
 import { SURVEY_BASE_URL, resendGRANotification } from '../../../services';
 import type { GRAStudent, GRAEmailSendRequest } from '../../../types';
 import {
@@ -55,6 +57,8 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 	const [progressDialogOpen, setProgressDialogOpen] = useState(false);
 	const [addStudentOpen, setAddStudentOpen] = useState(false);
 	const [resendingId, setResendingId] = useState<number | null>(null);
+	// "Reenviar a quienes ya recibieron" — same toggle LCFC uses on its send flow.
+	const [includeAlreadySent, setIncludeAlreadySent] = useState(false);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -79,8 +83,14 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 
 	function handleOpenSendDialog() {
 		reset();
+		setIncludeAlreadySent(false);
 		setSendDialogOpen(true);
-		loadSummary(programId || undefined);
+		loadSummary(programId || undefined, false);
+	}
+
+	function handleToggleIncludeAlreadySent(checked: boolean) {
+		setIncludeAlreadySent(checked);
+		loadSummary(programId || undefined, checked);
 	}
 
 	function handleConfirmSend() {
@@ -88,6 +98,7 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 			academicPeriodId: academicPeriodId,
 			programId: programId,
 			surveyBaseUrl: SURVEY_BASE_URL,
+			resend: includeAlreadySent,
 		};
 		setSendDialogOpen(false);
 		setProgressDialogOpen(true);
@@ -272,56 +283,30 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 							{t('surveys.gra.notifications.sendDialog.bodyAfter')}
 						</p>
 
-						{loadingSummary && (
-							<p className="text-sm text-zinc-500 italic">
-								{t('surveys.gra.notifications.sendDialog.summaryLoading')}
+						<div>
+							<Toggle
+								label={t('surveys.gra.notifications.resendLabel')}
+								checked={includeAlreadySent}
+								onChange={handleToggleIncludeAlreadySent}
+							/>
+							<p className="text-xs text-zinc-500 mt-1">
+								{t('surveys.gra.notifications.resendHint')}
 							</p>
-						)}
+						</div>
 
-						{!loadingSummary && summary && summary.totalStudents === 0 && (
-							<p className="text-sm text-amber-700 bg-amber-50 px-3 py-2 rounded-lg">
-								{t('surveys.gra.notifications.sendDialog.summaryEmpty')}
-							</p>
-						)}
-
-						{!loadingSummary && summary && summary.totalStudents > 0 && (
-							<div className="space-y-3">
-								<div className="grid grid-cols-2 gap-3">
-									<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-										<p className="text-xs font-medium uppercase text-zinc-500">
-											{t('surveys.gra.notifications.sendDialog.summaryPrograms')}
-										</p>
-										<p className="mt-1 text-2xl font-semibold text-zinc-900">
-											{summary.totalPrograms}
-										</p>
-									</div>
-									<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-										<p className="text-xs font-medium uppercase text-zinc-500">
-											{t('surveys.gra.notifications.sendDialog.summaryStudents')}
-										</p>
-										<p className="mt-1 text-2xl font-semibold text-zinc-900">
-											{summary.totalStudents}
-										</p>
-									</div>
-								</div>
-
-								<div>
-									<p className="text-xs font-medium text-zinc-500 mb-1">
-										{t('surveys.gra.notifications.sendDialog.summaryByProgramTitle')}
-									</p>
-									<div className="rounded-lg border border-zinc-200 divide-y divide-zinc-100 max-h-48 overflow-y-auto">
-										{summary.byProgram.map((row) => (
-											<div
-												key={row.programId}
-												className="flex items-center justify-between px-3 py-1.5 text-sm">
-												<span className="text-zinc-700">{row.programName}</span>
-												<span className="font-semibold text-zinc-900">{row.studentCount}</span>
-											</div>
-										))}
-									</div>
-								</div>
-							</div>
-						)}
+						<SendSummaryBody
+							loading={loadingSummary}
+							summary={summary}
+							loadingLabel={t('surveys.gra.notifications.sendDialog.summaryLoading')}
+							emptyMessage={t(
+								includeAlreadySent
+									? 'surveys.gra.notifications.sendDialog.summaryEmptyResend'
+									: 'surveys.gra.notifications.sendDialog.summaryEmpty',
+							)}
+							programsLabel={t('surveys.gra.notifications.sendDialog.summaryPrograms')}
+							studentsLabel={t('surveys.gra.notifications.sendDialog.summaryStudents')}
+							byProgramTitle={t('surveys.gra.notifications.sendDialog.summaryByProgramTitle')}
+						/>
 					</div>
 					<DialogFooter showCloseButton>
 						<Button

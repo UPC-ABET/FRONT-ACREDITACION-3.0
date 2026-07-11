@@ -11,6 +11,7 @@ import type {
 	LCFCEmailParam,
 	LCFCNotificationJobStatus,
 	LCFCNotificationSendRequest,
+	GRASendSummary,
 } from '../types';
 import {
 	getAcademicPeriods,
@@ -22,6 +23,7 @@ import {
 	updateLCFCConfig,
 	deleteLCFCConfig,
 	getLCFCEmailParams,
+	getLCFCSendSummary,
 	getLCFCNotificationStatus,
 	sendLCFCNotification,
 } from '../services';
@@ -161,6 +163,8 @@ export function useLCFCNotification() {
 	const [error, setError] = useState<string | null>(null);
 	const [jobId, setJobId] = useState<string | null>(null);
 	const [status, setStatus] = useState<LCFCNotificationJobStatus | null>(null);
+	const [summary, setSummary] = useState<GRASendSummary | null>(null);
+	const [loadingSummary, setLoadingSummary] = useState(false);
 	const onSuccessRef = useRef<(() => void) | undefined>(undefined);
 	const onErrorRef = useRef<(() => void) | undefined>(undefined);
 
@@ -174,6 +178,26 @@ export function useLCFCNotification() {
 			setLoading(false);
 		}
 	}, []);
+
+	const loadSummary = useCallback(
+		async (
+			request: Pick<
+				LCFCNotificationSendRequest,
+				'programId' | 'campusId' | 'courseSectionId' | 'resend'
+			>,
+		) => {
+			setLoadingSummary(true);
+			setError(null);
+			try {
+				setSummary(await getLCFCSendSummary(request, locale));
+			} catch (e) {
+				setError(getErrorMessage(e));
+			} finally {
+				setLoadingSummary(false);
+			}
+		},
+		[locale],
+	);
 
 	const send = useCallback(
 		async (request: LCFCNotificationSendRequest, onSuccess?: () => void, onError?: () => void) => {
@@ -239,7 +263,19 @@ export function useLCFCNotification() {
 		};
 	}, [jobId, sending]);
 
-	return { params, loading, sending, error, status, jobId, loadParams, send };
+	return {
+		params,
+		loading,
+		sending,
+		error,
+		status,
+		jobId,
+		summary,
+		loadingSummary,
+		loadParams,
+		loadSummary,
+		send,
+	};
 }
 
 export function useLCFCAvailableSections() {
