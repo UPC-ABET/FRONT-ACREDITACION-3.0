@@ -261,7 +261,18 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 	const [showSaveAllSuccess, setShowSaveAllSuccess] = useState(false);
 	const [saveAllError, setSaveAllError] = useState(false);
 
+	// Every panel (not just the dirty ones) must be free of incomplete-commission warnings before
+	// the global save unlocks — an untouched career tab with an empty rubric still counts as
+	// incomplete, the same way a partially-filled commission does.
+	const canSaveAll =
+		dirtyTabs.size > 0 &&
+		panels.every((panel) => {
+			const key = dirtyKey(panel.studyPlanCourseId, panel.gradeTypeId);
+			return (incompleteItemsByTab.get(key)?.length ?? 0) === 0;
+		});
+
 	const handleSaveAll = async () => {
+		if (!canSaveAll) return;
 		const dirtyKeys = [...dirtyTabs];
 		const readyKeys = dirtyKeys.filter((key) => panelRefs.current.get(key)?.canSave);
 
@@ -481,7 +492,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 						<Button
 							variant="danger"
 							loading={isSavingAll}
-							disabled={dirtyTabs.size === 0 || isSavingAll}
+							disabled={!canSaveAll || isSavingAll}
 							onClick={() => void handleSaveAll()}>
 							{t('projects.evaluate.saveAll.button')}
 						</Button>

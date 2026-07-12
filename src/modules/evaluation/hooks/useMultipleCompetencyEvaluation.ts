@@ -140,7 +140,8 @@ export function useMultipleCompetencyEvaluation({
 		[students, qualifStatuses],
 	);
 
-	// Per-commission fill status for tab indicators
+	// Per-commission fill status for tab indicators — also drives allFilled below, so it must
+	// reflect whichever grid (individual or duplicate) is actually being edited.
 	const commissionFillStatus = useMemo((): Record<number, 'complete' | 'partial' | 'empty'> => {
 		if (commissions.length === 0) return {};
 		const gradedStudents = students.filter(
@@ -156,10 +157,18 @@ export function useMultipleCompetencyEvaluation({
 			}
 			let filled = 0;
 			let total = 0;
-			for (const cId of criteriaIds) {
-				for (const st of gradedStudents) {
+			if (duplicateMode) {
+				for (const cId of criteriaIds) {
+					if (gradedStudents.length === 0) continue;
 					total++;
-					if ((selections[cId]?.[st.id] ?? null) != null) filled++;
+					if (dupSelections[cId] != null) filled++;
+				}
+			} else {
+				for (const cId of criteriaIds) {
+					for (const st of gradedStudents) {
+						total++;
+						if ((selections[cId]?.[st.id] ?? null) != null) filled++;
+					}
 				}
 			}
 			result[commission.id] =
@@ -171,14 +180,25 @@ export function useMultipleCompetencyEvaluation({
 		outcomes,
 		questionByOutcome,
 		selections,
+		dupSelections,
+		duplicateMode,
 		students,
 		qualifStatuses,
 		nonAttendanceTypeIds,
 	]);
 
+	// A commission-based (capstone multiple) rubric is valid the same way it's created: each
+	// commission must be either untouched or fully graded — starting one commits you to finishing
+	// it, but leaving another commission untouched entirely doesn't block saving the completed one.
 	const allFilled = useMemo(() => {
 		if (!allCriteriaIds.length || !students.length) return false;
 		if (hasMissingStatus) return false;
+
+		if (commissions.length > 0) {
+			const statuses = Object.values(commissionFillStatus);
+			return statuses.some((s) => s === 'complete') && statuses.every((s) => s !== 'partial');
+		}
+
 		const gradedStudents = students.filter(
 			(st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1),
 		);
@@ -201,6 +221,8 @@ export function useMultipleCompetencyEvaluation({
 		qualifStatuses,
 		nonAttendanceTypeIds,
 		hasMissingStatus,
+		commissions,
+		commissionFillStatus,
 	]);
 
 	const handleSelect = (criteriaId: number, projectStudentId: number, value: number) => {
