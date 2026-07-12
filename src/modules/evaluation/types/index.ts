@@ -207,6 +207,7 @@ export type ProjectByProfessorResponse = {
 		lastName: string;
 		email: string;
 		studentCode: string;
+		totalGrade: number | null;
 	}[];
 };
 

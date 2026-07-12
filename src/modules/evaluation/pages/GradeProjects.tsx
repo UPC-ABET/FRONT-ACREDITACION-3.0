@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTabParam } from '@/shared';
 import Link from 'next/link';
-import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
 	buttonVariants,
@@ -182,6 +182,7 @@ export function GradeProjectsPage() {
 									<span className="h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-300" />
 									<span>
 										{st.firstName} {st.lastName}
+										{st.totalGrade != null && ` (${st.totalGrade})`}
 									</span>
 								</div>
 							))}
@@ -204,7 +205,7 @@ export function GradeProjectsPage() {
 			},
 			{
 				id: 'actions',
-				header: t('projects.grade.table.actions'),
+				header: t('projects.grade.table.grade'),
 				cell: ({ row }) => (
 					<Link
 						href={`/evaluation/grade-projects/${activeTab}/${row.original.projectId}/evaluate`}
@@ -214,7 +215,7 @@ export function GradeProjectsPage() {
 							buttonVariants({ variant: 'ghost', size: 'icon' }),
 							'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700',
 						)}>
-						<ClipboardDocumentCheckIcon className="h-4 w-4" />
+						<PencilSquareIcon className="h-4 w-4" />
 					</Link>
 				),
 				meta: {
