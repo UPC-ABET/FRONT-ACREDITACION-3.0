@@ -1,5 +1,6 @@
 import { ApiResponse } from '@/shared';
-import { apiGet, apiPost, apiPatch, apiDelete, apiGetBlobResponse } from '@/shared/lib';
+import { apiGet, apiPost, apiPatch, apiDelete, apiGetBlobResponse, ApiError } from '@/shared/lib';
+import type { SchoolSourceItem } from '@/shared/types';
 import type {
 	CreateProjectFullDto,
 	FilterProjectDto,
@@ -10,6 +11,7 @@ import type {
 	ProjectPaginatedResponse,
 	ProjectResponse,
 	ProjectStudentResponse,
+	RawEvaluationSchool,
 } from '../types';
 
 export const projectsService = {
@@ -92,5 +94,17 @@ export const projectsService = {
 	exportGrades(params: { gradeTypeCode: string }): Promise<Blob> {
 		const qs = new URLSearchParams({ gradeTypeCode: params.gradeTypeCode });
 		return apiGetBlobResponse(`/projects/export/grades?${qs.toString()}`).then((r) => r.blob);
+	},
+
+	async getSchoolsByProfessor(professorId: string | number): Promise<SchoolSourceItem[]> {
+		const envelope = await apiGet<ApiResponse<RawEvaluationSchool[]>>(
+			`/projects/professor/${professorId}/schools`,
+		);
+		if (!envelope?.data) throw new ApiError(envelope?.message ?? 'projects.error.generic');
+		return envelope.data.map((school) => ({
+			id: Number(school.id),
+			code: school.code,
+			name: school.name,
+		}));
 	},
 };

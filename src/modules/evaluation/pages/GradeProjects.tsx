@@ -14,10 +14,11 @@ import {
 	Tabs,
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
-import { useI18n, useABET } from '@/providers';
+import { useI18n, useABET, useSchoolSourceOverride } from '@/providers';
 import { useAuth } from '@/providers';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
+import { projectsService } from '../services';
 import { DEFAULT_PAGE_SIZE, TYPE_CODES } from '@/shared/constants';
 import { formatDateTime } from '@/shared/utils/formatDate';
 import type { ProjectByProfessorResponse } from '../types';
@@ -61,6 +62,14 @@ export function GradeProjectsPage() {
 		isFetching: isFetchingProfessor,
 		isError: isErrorProfessor,
 	} = useProfessorByUserId(userId ?? undefined);
+
+	useSchoolSourceOverride({
+		key: `evaluation-schools:${professor?.id ?? 'none'}`,
+		fetch: () =>
+			professor?.id == null
+				? Promise.resolve([])
+				: projectsService.getSchoolsByProfessor(professor.id),
+	});
 
 	const {
 		data: projectsData,

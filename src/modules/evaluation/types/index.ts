@@ -186,6 +186,12 @@ export type EvaluationResponse = {
 
 export { type OutcomeResponse };
 
+export type RawEvaluationSchool = {
+	id: number | string;
+	code: string;
+	name: I18nText;
+};
+
 export type ProjectByProfessorResponse = {
 	projectId: number;
 	projectCode: string;
