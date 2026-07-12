@@ -19,6 +19,7 @@ import { useAuth } from '@/providers';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
 import { DEFAULT_PAGE_SIZE, TYPE_CODES } from '@/shared/constants';
+import { formatDateTime } from '@/shared/utils/formatDate';
 import type { ProjectByProfessorResponse } from '../types';
 
 type RubricTab = 'partial' | 'final';
@@ -88,11 +89,7 @@ export function GradeProjectsPage() {
 
 	const formatDate = (dateStr: string | undefined) => {
 		if (!dateStr) return '—';
-		return new Date(dateStr).toLocaleDateString(locale === 'es' ? 'es-PE' : 'en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		});
+		return formatDateTime(dateStr, locale === 'es' ? 'es-PE' : 'en-US');
 	};
 
 	const columns = useMemo<ColumnDef<ProjectByProfessorResponse>[]>(
