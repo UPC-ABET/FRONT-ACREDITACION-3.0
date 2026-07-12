@@ -68,3 +68,41 @@ export type OutcomeCommissionOption = {
 	name: { es: string; en: string };
 	accreditorId: number;
 };
+
+export type OutcomeConversion = {
+	id: number;
+	sourceProgramCommissionId: number;
+	sourceCommissionCode: string;
+	targetProgramCommissionId: number;
+	targetCommissionCode: string;
+	targetOutcomeId: number;
+	targetOutcomeCode: string;
+	formula: string;
+	referencedOutcomeCodes: string[];
+	isActive: boolean;
+};
+
+export type OutcomeConversionFilters = {
+	sourceProgramCommissionId?: number;
+	targetProgramCommissionId?: number;
+	academicPeriodId?: number;
+};
+
+export type OutcomeConversionCreate = {
+	sourceProgramCommissionId: number;
+	targetProgramCommissionId: number;
+	targetOutcomeId: number;
+	formula: string;
+};
+
+export type OutcomeConversionUpdate = {
+	formula: string;
+};
+
+export type OutcomeConversionCoverage = {
+	targetProgramCommissionId: number;
+	targetCommissionCode: string;
+	totalOutcomes: number;
+	mappedOutcomes: number;
+	missingOutcomeCodes: string[];
+};

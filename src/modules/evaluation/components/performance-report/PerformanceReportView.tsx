@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ArrowDownTrayIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, DocumentArrowDownIcon, UsersIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { ApiError, getErrorMessage } from '@/shared/lib';
@@ -12,6 +12,7 @@ import {
 	PerformanceReportChart,
 	PerformanceLevelLegend,
 	PerformanceReportTable,
+	ProcessedRvGradesDialog,
 } from '@/modules';
 import type { PerformanceReportFilterDto, PerformanceReportKind } from '@/modules';
 
@@ -36,6 +37,7 @@ export function PerformanceReportView({
 		type: 'error',
 		msg: '',
 	});
+	const [isGradesDialogOpen, setIsGradesDialogOpen] = useState(false);
 
 	// gradeTypeIds only apply to RV; strip them for RC so its cache key doesn't churn on an
 	// input the backend ignores.
@@ -44,6 +46,8 @@ export function PerformanceReportView({
 			kind === PERFORMANCE_REPORT_KINDS.RV ? filters : { ...filters, gradeTypeIds: undefined },
 		[kind, filters],
 	);
+
+	const isVerificationReport = kind === PERFORMANCE_REPORT_KINDS.RV;
 
 	const reportQuery = usePerformanceReport(kind, effectiveFilters, academicPeriodId);
 	const downloadMutation = usePerformanceReportDownload(kind);
@@ -106,6 +110,16 @@ export function PerformanceReportView({
 				)}
 
 				<div className="flex shrink-0 gap-2">
+					{isVerificationReport && (
+						<Button
+							variant="surface"
+							size="sm"
+							disabled={effectiveFilters.programCommissionId == null}
+							onClick={() => setIsGradesDialogOpen(true)}>
+							<UsersIcon className="mr-1 h-4 w-4" aria-hidden="true" />
+							{t('processedRvGrades.openDialog')}
+						</Button>
+					)}
 					<Button
 						variant="surface"
 						size="sm"
@@ -142,6 +156,16 @@ export function PerformanceReportView({
 				errorMessage={tableError}
 				emptyMessage={t('performanceReports.empty')}
 			/>
+
+			{isVerificationReport && (
+				<ProcessedRvGradesDialog
+					open={isGradesDialogOpen}
+					onClose={() => setIsGradesDialogOpen(false)}
+					programCommissionId={effectiveFilters.programCommissionId}
+					outcomeId={effectiveFilters.outcomeId}
+					academicPeriodId={academicPeriodId}
+				/>
+			)}
 
 			<Toast
 				isOpen={toast.open}

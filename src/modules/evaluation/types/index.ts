@@ -8,6 +8,7 @@ export * from './rubricEditor';
 export * from './rubricListRow';
 export * from './rubricQuestion';
 export * from './performanceReport';
+export * from './processedRvGrade';
 export * from './projectGroup';
 
 export type EvaluationScorePayload = {
