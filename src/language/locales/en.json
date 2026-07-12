@@ -2334,6 +2334,7 @@
 				"colCourse": "Course",
 				"colSection": "Section",
 				"colActions": "Actions",
+				"searchPlaceholder": "Search by course or section...",
 				"resendRow": "Resend",
 				"sending": "Sending...",
 				"sendDialog": {
@@ -2455,6 +2456,7 @@
 					"responseStatus": "Response",
 					"actions": "Actions"
 				},
+				"searchPlaceholder": "Search by code, name, or email...",
 				"deleteTitle": "Remove student",
 				"deleteBody": "Do you want to remove this student from the notification?",
 				"delete": "Remove",
@@ -2493,6 +2495,10 @@
 					"sent": "Sent",
 					"pending": "Pending",
 					"responded": "Responded"
+				},
+				"legend": {
+					"sent": "Sent",
+					"notSent": "Not sent"
 				},
 				"toast": {
 					"studentDeleted": "Student removed from notification.",

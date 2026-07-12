@@ -29,10 +29,10 @@ import { GRANotificationProgressDialog } from './GRANotificationProgressDialog';
 import { SendSummaryBody } from '../../shared/SendSummaryBody';
 import { SURVEY_BASE_URL, resendGRANotification } from '../../../services';
 import type { GRAStudent, GRAEmailSendRequest } from '../../../types';
-import {
-	NOTIFICATION_STATUS,
-	NOTIFICATION_STATUS_LABEL_KEY,
-} from '../../../constants/notificationStatus';
+import { NOTIFICATION_STATUS } from '../../../constants/notificationStatus';
+
+const STUDENTS_PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
 
 interface StudentListProps {
 	readonly programId: number;
@@ -41,7 +41,15 @@ interface StudentListProps {
 
 export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 	const { t, locale } = useI18n();
-	const { students, error, load, remove } = useGRAStudents();
+	const {
+		students,
+		total,
+		totalPages,
+		loading: studentsLoading,
+		error,
+		load,
+		remove,
+	} = useGRAStudents();
 	const {
 		summary,
 		loadingSummary,
@@ -52,6 +60,10 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 		send,
 		reset,
 	} = useGRASendNotifications();
+	const [page, setPage] = useState(1);
+	// searchInput follows the keystrokes; search is its debounced value sent to the backend.
+	const [searchInput, setSearchInput] = useState('');
+	const [search, setSearch] = useState('');
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [sendDialogOpen, setSendDialogOpen] = useState(false);
 	const [progressDialogOpen, setProgressDialogOpen] = useState(false);
@@ -65,9 +77,28 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 		msg: '',
 	});
 
+	// Changing the career filter restarts from the first page (adjust-state-during-render pattern).
+	const [prevProgramId, setPrevProgramId] = useState(programId);
+	if (prevProgramId !== programId) {
+		setPrevProgramId(programId);
+		setPage(1);
+	}
+
 	useEffect(() => {
-		load({ programId: programId, academicPeriodId: academicPeriodId });
-	}, [programId, academicPeriodId, load]);
+		const id = setTimeout(() => {
+			setPage(1);
+			setSearch(searchInput.trim());
+		}, SEARCH_DEBOUNCE_MS);
+		return () => clearTimeout(id);
+	}, [searchInput]);
+
+	const reload = useCallback(() => {
+		load({ programId, academicPeriodId, search, page, pageSize: STUDENTS_PAGE_SIZE });
+	}, [load, programId, academicPeriodId, search, page]);
+
+	useEffect(() => {
+		reload();
+	}, [reload]);
 
 	function handleDelete(id: number) {
 		remove(id, () => {
@@ -77,7 +108,7 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 				type: 'success',
 				msg: t('surveys.gra.notifications.toast.studentDeleted'),
 			});
-			load({ programId: programId, academicPeriodId: academicPeriodId });
+			reload();
 		});
 	}
 
@@ -108,13 +139,13 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 				type: 'success',
 				msg: t('surveys.gra.notifications.toast.surveySent'),
 			});
-			load({ programId: programId, academicPeriodId: academicPeriodId });
+			reload();
 		});
 	}
 
 	function handleStudentAdded() {
 		setAddStudentOpen(false);
-		load({ programId: programId, academicPeriodId: academicPeriodId });
+		reload();
 	}
 
 	const handleResend = useCallback(
@@ -127,14 +158,14 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 					type: 'success',
 					msg: t('surveys.gra.notifications.toast.resent'),
 				});
-				load({ programId: programId, academicPeriodId: academicPeriodId });
+				reload();
 			} catch (e) {
 				setToast({ open: true, type: 'error', msg: tryTranslate(t, getErrorMessage(e)) });
 			} finally {
 				setResendingId(null);
 			}
 		},
-		[locale, t, load, programId, academicPeriodId],
+		[locale, t, reload],
 	);
 
 	const columns = useMemo<ColumnDef<GRAStudent>[]>(
@@ -156,31 +187,39 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 				header: t('surveys.gra.notifications.columns.sendStatus'),
 				// NOSONAR — cell renderers are render functions, not React components
 				cell: ({ getValue }) => {
-					const status = (getValue() as string) ?? NOTIFICATION_STATUS.PENDING;
-					const labelKey =
-						NOTIFICATION_STATUS_LABEL_KEY[status as keyof typeof NOTIFICATION_STATUS_LABEL_KEY] ??
-						'surveys.gra.notifications.status.pending';
+					const sent = (getValue() as string) === NOTIFICATION_STATUS.SENT;
+					const label = t(
+						sent
+							? 'surveys.gra.notifications.legend.sent'
+							: 'surveys.gra.notifications.legend.notSent',
+					);
 					return (
-						<Badge variant={status === NOTIFICATION_STATUS.SENT ? 'default' : 'outline'}>
-							{t(labelKey)}
-						</Badge>
+						<span className="flex justify-center">
+							<span
+								className={`h-3 w-3 rounded-full ${sent ? 'bg-green-500' : 'bg-red-500'}`}
+								title={label}
+								aria-label={label}
+							/>
+						</span>
 					);
 				},
+				meta: { headerClassName: 'text-center', cellClassName: 'text-center' },
 			},
 			{
 				accessorKey: 'responseStatus',
 				header: t('surveys.gra.notifications.columns.responseStatus'),
 				// NOSONAR — cell renderers are render functions, not React components
-				cell: ({ getValue }) => {
-					const status = getValue() as string | undefined;
-					if (!status) return <span className="text-zinc-400 text-xs">—</span>;
-					const labelKey =
-						NOTIFICATION_STATUS_LABEL_KEY[status as keyof typeof NOTIFICATION_STATUS_LABEL_KEY];
-					return (
-						<Badge variant={status === NOTIFICATION_STATUS.RESPONDED ? 'success' : 'outline'}>
-							{labelKey ? t(labelKey) : status}
-						</Badge>
-					);
+				cell: ({ row }) => {
+					// Empty until the survey is sent; then PENDING until the student responds.
+					if (row.original.responseStatus === NOTIFICATION_STATUS.RESPONDED) {
+						return (
+							<Badge variant="success">{t('surveys.gra.notifications.status.responded')}</Badge>
+						);
+					}
+					if (row.original.sendStatus === NOTIFICATION_STATUS.SENT) {
+						return <Badge variant="outline">{t('surveys.gra.notifications.status.pending')}</Badge>;
+					}
+					return <span className="text-zinc-400 text-xs">—</span>;
 				},
 			},
 			{
@@ -232,7 +271,7 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<h3 className="text-lg font-bold text-zinc-800 uppercase">
-					{t('surveys.gra.notifications.title').replace('{{count}}', String(students.length))}
+					{t('surveys.gra.notifications.title').replace('{{count}}', String(total))}
 				</h3>
 				<div className="flex flex-wrap items-center gap-2">
 					<Button variant="surface" onClick={() => setAddStudentOpen(true)}>
@@ -246,7 +285,33 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 				</div>
 			</div>
 
-			<DataTable columns={columns} data={students} />
+			{/* Send-status legend for the color dots in the "Envío" column */}
+			<div className="flex items-center gap-4 text-xs text-zinc-600">
+				<span className="flex items-center gap-1.5">
+					<span className="h-2.5 w-2.5 rounded-full bg-green-500" />
+					{t('surveys.gra.notifications.legend.sent')}
+				</span>
+				<span className="flex items-center gap-1.5">
+					<span className="h-2.5 w-2.5 rounded-full bg-red-500" />
+					{t('surveys.gra.notifications.legend.notSent')}
+				</span>
+			</div>
+
+			<DataTable
+				columns={columns}
+				data={students}
+				searchValue={searchInput}
+				onSearchChange={setSearchInput}
+				searchPlaceholder={t('surveys.gra.notifications.searchPlaceholder')}
+				serverPagination={{
+					page,
+					pageCount: totalPages,
+					total,
+					onPageChange: setPage,
+					isFetching: studentsLoading,
+				}}
+				isLoading={studentsLoading && students.length === 0}
+			/>
 
 			<Dialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
 				<DialogContent>

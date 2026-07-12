@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { type ColumnDef } from '@tanstack/react-table';
 import {
 	Button,
+	DataTable,
 	Toast,
 	Toggle,
 	Dialog,
@@ -14,10 +16,13 @@ import {
 import { tryTranslate } from '@/shared';
 import { PaperAirplaneIcon, BellAlertIcon } from '@heroicons/react/24/outline';
 import { useI18n, useABET } from '@/providers';
-import { useLCFCNotification, useLCFCConfiguration } from '../../../hooks';
+import { useLCFCNotification, useLCFCSections } from '../../../hooks';
 import { SendSummaryBody } from '../../shared/SendSummaryBody';
-import type { LCFCCourse } from '../../../types';
+import type { LCFCSectionSummary } from '../../../types';
 import { LCFCNotificationProgressDialog } from './LCFCNotificationProgressDialog';
+
+const SECTIONS_PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
 
 interface LCFCNotificationViewProps {
 	programId?: number;
@@ -35,8 +40,18 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		loadSummary,
 		send,
 	} = useLCFCNotification();
-	const { courses, load: loadCourses } = useLCFCConfiguration();
+	const {
+		sections,
+		total,
+		totalPages,
+		loading: sectionsLoading,
+		load: loadSections,
+	} = useLCFCSections();
 
+	const [page, setPage] = useState(1);
+	// searchInput follows the keystrokes; search is its debounced value sent to the backend.
+	const [searchInput, setSearchInput] = useState('');
+	const [search, setSearch] = useState('');
 	const [resend, setResend] = useState(false);
 	// courseSectionId currently being (re)sent, for the per-row spinner; 0 = the "send all" button.
 	const [sendingSectionId, setSendingSectionId] = useState<number | null>(null);
@@ -53,9 +68,27 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	const isValid = !!academicPeriodId;
 
 	useEffect(() => {
-		// With no program selected we still load every configured course across all programs.
-		if (academicPeriodId) loadCourses(academicPeriodId, programId);
-	}, [academicPeriodId, programId, loadCourses]);
+		const id = setTimeout(() => {
+			setPage(1);
+			setSearch(searchInput.trim());
+		}, SEARCH_DEBOUNCE_MS);
+		return () => clearTimeout(id);
+	}, [searchInput]);
+
+	// Changing the career filter restarts from the first page (adjust-state-during-render pattern).
+	const [prevProgramId, setPrevProgramId] = useState(programId);
+	if (prevProgramId !== programId) {
+		setPrevProgramId(programId);
+		setPage(1);
+	}
+
+	useEffect(() => {
+		// With no program selected the backend lists every configured course across all programs;
+		// the search then applies globally. The period travels in the x-academic-period-id header.
+		if (academicPeriodId) {
+			loadSections({ programId, search, page, pageSize: SECTIONS_PAGE_SIZE });
+		}
+	}, [academicPeriodId, programId, search, page, loadSections]);
 
 	// Build the request shared by "send all" and per-row resend. The deadline is configured
 	// in the Configuration tab and applied by the backend, so it isn't sent here. The survey
@@ -108,7 +141,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		);
 	}
 
-	function handleResendSection(course: LCFCCourse) {
+	function handleResendSection(course: LCFCSectionSummary) {
 		if (!requireValid()) return;
 		const courseSectionId = course.courseSectionId as number;
 		setSendErrorDismissed(false);
@@ -116,7 +149,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		setProgressTargetLabel(
 			t('surveys.lcfc.notifications.progress.targetSection')
 				.replace('{{course}}', course.courseName)
-				.replace('{{section}}', course.sectionCode ?? course.code),
+				.replace('{{section}}', course.sectionCode),
 		);
 		setProgressDialogOpen(true);
 		// Per-row action always resends (reuses token + refreshes deadline) for that section.
@@ -130,11 +163,43 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 		);
 	}
 
+	const columns = useMemo<ColumnDef<LCFCSectionSummary>[]>(
+		() => [
+			{
+				accessorKey: 'courseName',
+				header: t('surveys.lcfc.notifications.colCourse'),
+			},
+			{
+				accessorKey: 'sectionCode',
+				header: t('surveys.lcfc.notifications.colSection'),
+			},
+			{
+				id: 'actions',
+				header: t('surveys.lcfc.notifications.colActions'),
+				// NOSONAR — cell renderers are render functions, not React components
+				cell: ({ row }) => (
+					<Button
+						size="icon"
+						variant="ghost"
+						className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+						disabled={!isValid || sending}
+						loading={sending && sendingSectionId === row.original.courseSectionId}
+						onClick={() => handleResendSection(row.original)}
+						aria-label={t('surveys.lcfc.notifications.resendRow')}>
+						<BellAlertIcon className="h-5 w-5" />
+					</Button>
+				),
+				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
+			},
+		],
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- handleResendSection is re-created per render; the deps cover everything it reads (period/program via buildRequest)
+		[t, isValid, sending, sendingSectionId, programId, academicPeriodId],
+	);
+
 	if (!academicPeriodId) {
 		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
 
-	const activeCourses = courses.filter((c) => c.isActive && c.courseSectionId);
 	const translatedSendError = sendError ? tryTranslate(t, sendError) : '';
 	const visibleToast =
 		sendError && !sendErrorDismissed
@@ -163,48 +228,22 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 				</Button>
 			</div>
 
-			{/* Per-section summary table: resend to a single course section. */}
-			{activeCourses.length > 0 && (
-				<div className="rounded-xl border border-zinc-200 overflow-hidden">
-					<table className="w-full text-[13px]">
-						<thead className="bg-zinc-50 text-zinc-600">
-							<tr>
-								<th className="text-left text-[13px] font-medium px-4 py-2">
-									{t('surveys.lcfc.notifications.colCourse')}
-								</th>
-								<th className="text-left text-[13px] font-medium px-4 py-2">
-									{t('surveys.lcfc.notifications.colSection')}
-								</th>
-								<th className="text-right text-[13px] font-medium px-4 py-2">
-									{t('surveys.lcfc.notifications.colActions')}
-								</th>
-							</tr>
-						</thead>
-						<tbody className="divide-y divide-zinc-100">
-							{activeCourses.map((course) => (
-								<tr key={course.id}>
-									<td className="px-4 py-2 text-[13px] text-zinc-800">{course.courseName}</td>
-									<td className="px-4 py-2 text-[13px] text-zinc-600">
-										{course.sectionCode ?? course.code}
-									</td>
-									<td className="px-4 py-2 text-[13px] text-right">
-										<Button
-											size="icon"
-											variant="ghost"
-											className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-											disabled={!isValid || sending}
-											loading={sending && sendingSectionId === course.courseSectionId}
-											onClick={() => handleResendSection(course)}
-											aria-label={t('surveys.lcfc.notifications.resendRow')}>
-											<BellAlertIcon className="h-5 w-5" />
-										</Button>
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-			)}
+			{/* Per-section table (server-paginated + searched): resend to a single course section. */}
+			<DataTable
+				columns={columns}
+				data={sections}
+				searchValue={searchInput}
+				onSearchChange={setSearchInput}
+				searchPlaceholder={t('surveys.lcfc.notifications.searchPlaceholder')}
+				serverPagination={{
+					page,
+					pageCount: totalPages,
+					total,
+					onPageChange: setPage,
+					isFetching: sectionsLoading,
+				}}
+				isLoading={sectionsLoading && sections.length === 0}
+			/>
 
 			<Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
 				<DialogContent>

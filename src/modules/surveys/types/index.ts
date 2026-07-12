@@ -184,6 +184,32 @@ export interface LCFCCourse {
 	commissionId?: number;
 }
 
+/** Lean row from lcfc/config/list-sections — just what the notifications section table renders. */
+export interface LCFCSectionSummary {
+	id: number;
+	courseName: string;
+	sectionCode: string;
+	courseSectionId?: number;
+	isActive: boolean;
+}
+
+/** Server-paginated page of section summaries (mirrors the backend PaginatedResult shape). */
+export interface LCFCSectionPage {
+	items: LCFCSectionSummary[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+}
+
+export interface BackendLcfcSectionRow {
+	id: number;
+	courseName?: string | { es?: string; en?: string };
+	sectionCode?: string | null;
+	courseSectionId?: number | null;
+	isActive: boolean;
+}
+
 export interface LCFCConfigUpdateRequest {
 	userOutcomeName?: I18nText;
 	userOutcomeDescription?: I18nText;
@@ -554,7 +580,9 @@ export interface BackendGraConfig {
 		commissionId?: number;
 		isExternal?: boolean;
 	};
-	userOutcomeName?: string;
+	// jsonb I18nText columns that in practice hold a bare ES string
+	userOutcomeName?: string | { es?: string; en?: string };
+	userOutcomeDescription?: string | { es?: string; en?: string };
 }
 
 export interface BackendGraStudent {
@@ -565,8 +593,11 @@ export interface BackendGraStudent {
 	studentEmail?: string;
 	programId?: number;
 	campusId?: number;
-	status: string;
-	sendDate?: string;
+	/** Localized display name of the notification status (e.g. "Enviada") — don't compare against it */
+	notificationStatus?: string;
+	/** Stable core.types code (TG1001-T001 scheduled / TG1001-T002 sent) */
+	notificationStatusCode?: string;
+	sentDate?: string;
 	responseStatus?: string;
 	responseDate?: string;
 	maxRegisterDate?: string;

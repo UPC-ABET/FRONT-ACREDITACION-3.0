@@ -10,6 +10,8 @@ import {
 	fileToBase64,
 } from '@/shared/lib';
 import { getSurveyTypeId } from './academicService';
+import { TYPE_CODES } from '@/shared/constants';
+import { NOTIFICATION_STATUS } from '../constants/notificationStatus';
 import { performanceLevelsService } from '@/modules/academic';
 import type { PerformanceLevelResponse } from '@/modules/academic/types';
 import type {
@@ -56,9 +58,11 @@ function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
 	return {
 		id: raw.id,
 		outcomeId: raw.outcomeId,
-		generalCompetence: extra.nameEs ?? raw.userOutcomeName ?? '',
+		generalCompetence: extra.nameEs ?? toText(raw.userOutcomeName),
 		specificCompetence: extra.nameEn ?? extra.nameEs ?? '',
-		description: extra.descriptionEs ?? '',
+		// The backend stores the ES description in user_outcome_description (bare string inside an
+		// I18nText jsonb column) — extra.descriptionEs only exists on legacy records.
+		description: toText(raw.userOutcomeDescription) || (extra.descriptionEs ?? ''),
 		descriptionEn: extra.descriptionEn ?? '',
 		performanceLevel: extra.order ?? 3,
 		isActive: raw.isActive,
@@ -70,14 +74,17 @@ function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
 }
 
 function adaptGraStudent(raw: BackendGraStudent): GRAStudent {
+	// The backend exposes the localized status name ("Enviada") plus the stable type code;
+	// derive the UI status from the code so display-name changes can't break the mapping.
+	const sent = raw.notificationStatusCode === TYPE_CODES.SURVEY_NOTIFICATION_STATUS.SENT;
 	return {
 		notificationId: raw.notificationId,
 		studentId: raw.studentId,
 		studentCode: raw.studentCode,
 		studentName: raw.studentName,
 		studentEmail: raw.studentEmail ?? '',
-		sendStatus: raw.status,
-		sendDate: raw.sendDate,
+		sendStatus: sent ? NOTIFICATION_STATUS.SENT : NOTIFICATION_STATUS.PENDING,
+		sendDate: raw.sentDate,
 		responseStatus: raw.responseStatus,
 		responseDate: raw.responseDate,
 	};
@@ -270,14 +277,38 @@ export async function listGRAStudents(params: {
 	academicPeriodId?: number;
 	campusId?: number;
 	studentCode?: string;
-}): Promise<{ students: GRAStudent[] }> {
+	search?: string;
+	page?: number;
+	pageSize?: number;
+}): Promise<{
+	students: GRAStudent[];
+	total: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
+}> {
 	const res = await apiPost('gra/notification/list-students', {
 		programId: params.programId,
 		campusId: params.campusId,
 		studentCode: params.studentCode,
+		search: params.search?.trim() || undefined,
+		page: params.page,
+		pageSize: params.pageSize,
 	});
-	const list = getApiData<BackendGraStudent[]>(res) ?? [];
-	return { students: list.map((s) => adaptGraStudent(s)) };
+	const data = getApiData<{
+		items?: BackendGraStudent[];
+		total?: number;
+		page?: number;
+		pageSize?: number;
+		totalPages?: number;
+	}>(res);
+	return {
+		students: (data?.items ?? []).map((s) => adaptGraStudent(s)),
+		total: data?.total ?? 0,
+		page: data?.page ?? 1,
+		pageSize: data?.pageSize ?? 0,
+		totalPages: data?.totalPages ?? 0,
+	};
 }
 
 export async function getGRASendSummary(
