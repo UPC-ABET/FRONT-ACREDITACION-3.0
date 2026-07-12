@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Badge, Card, Select, TableEmptyState } from '@/shared/components/ui';
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { TYPE_CODES } from '@/shared/constants';
@@ -119,6 +119,21 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 	const isCapstone = item.rubric?.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 	const isCapstoneMultiple = isCapstone && isMultipleScope;
 
+	// The rubric can only be graded once every student's attendance is known — otherwise there's
+	// no way to tell who should get a criteria score vs. the automatic non-attendance score.
+	const hasMissingStatus =
+		students.length > 0 && students.some((st) => qualifStatuses[st.id] == null);
+
+	// The rubric table only reports its own warnings while mounted, so when attendance is
+	// incomplete (and the table is hidden below) this panel must report the same warning itself.
+	useEffect(() => {
+		if (isReadOnly || !item.rubric || !hasMissingStatus) return;
+		onIncompleteChange?.([
+			{ message: t('projects.evaluate.rubric.missingStatus'), type: 'warning' },
+		]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- onIncompleteChange is a page-level setter; including it would re-fire on every page render
+	}, [isReadOnly, item.rubric, hasMissingStatus, t]);
+
 	return (
 		<div className={isVisible ? 'space-y-4' : 'hidden'}>
 			{item.rubric && (
@@ -207,7 +222,7 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 
 			{!item.rubric ? (
 				<TableEmptyState message={t('projects.evaluate.rubric.noRubric')} />
-			) : isCapstoneMultiple ? (
+			) : hasMissingStatus ? null : isCapstoneMultiple ? (
 				<ProjectRubricMultipleCompetencyTable
 					ref={tableRef}
 					outcomes={item.outcomes}

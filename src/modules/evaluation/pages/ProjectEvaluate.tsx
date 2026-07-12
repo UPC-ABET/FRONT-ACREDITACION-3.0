@@ -212,6 +212,16 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		return activeItems[0]?.gradeType.id ?? null;
 	}, [activeItems, activeGradeTypeId]);
 
+	// The shared observation field is only meaningful once the active tab's rubric is visible —
+	// while attendance is incomplete the rubric itself is hidden, so hide this too.
+	const activeTabHasMissingStatus = useMemo(() => {
+		if (effectiveStudyPlanCourseId == null || effectiveGradeTypeId == null) return false;
+		const items = incompleteItemsByTab.get(
+			dirtyKey(effectiveStudyPlanCourseId, effectiveGradeTypeId),
+		);
+		return (items ?? []).some((i) => i.message === t('projects.evaluate.rubric.missingStatus'));
+	}, [incompleteItemsByTab, effectiveStudyPlanCourseId, effectiveGradeTypeId, t]);
+
 	// Every (career, gradeType) combination stays mounted at all times so switching tabs
 	// never discards in-progress edits — only the active one is shown (CSS `hidden`).
 	const panels = useMemo(() => {
@@ -434,16 +444,18 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 			{!isReadOnly && rubrics.some((rubric) => rubric.items.length > 0) && (
 				<div className="flex flex-col gap-4">
-					<Card>
-						<I18nTextField
-							layout="row"
-							label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
-							placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
-							value={observation}
-							onChange={handleObservationChange}
-							rows={3}
-						/>
-					</Card>
+					{!activeTabHasMissingStatus && (
+						<Card>
+							<I18nTextField
+								layout="row"
+								label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
+								placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
+								value={observation}
+								onChange={handleObservationChange}
+								rows={3}
+							/>
+						</Card>
+					)}
 
 					{incompleteItems.length > 0 && (
 						<ul className="space-y-1 text-sm">
