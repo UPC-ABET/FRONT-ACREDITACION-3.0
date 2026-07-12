@@ -53,6 +53,8 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	const [searchInput, setSearchInput] = useState('');
 	const [search, setSearch] = useState('');
 	const [resend, setResend] = useState(false);
+	// Section targeted by the send dialog; null = the "send all" flow.
+	const [targetSection, setTargetSection] = useState<LCFCSectionSummary | null>(null);
 	// courseSectionId currently being (re)sent, for the per-row spinner; 0 = the "send all" button.
 	const [sendingSectionId, setSendingSectionId] = useState<number | null>(null);
 	const [sendDialogOpen, setSendDialogOpen] = useState(false);
@@ -93,11 +95,11 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 	// Build the request shared by "send all" and per-row resend. The deadline is configured
 	// in the Configuration tab and applied by the backend, so it isn't sent here. The survey
 	// lives in this same app, so the base URL is always our own origin.
-	function buildRequest(courseSectionId?: number, forceResend?: boolean) {
+	function buildRequest(courseSectionId?: number) {
 		return {
 			academicPeriodId: academicPeriodId as number,
 			surveyBaseUrl: window.location.origin,
-			resend: forceResend ?? resend,
+			resend,
 			// Omit programId when no program is selected so the backend targets every program.
 			...(programId ? { programId } : {}),
 			...(courseSectionId ? { courseSectionId } : {}),
@@ -114,47 +116,43 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 
 	function handleOpenSendDialog() {
 		if (!requireValid()) return;
+		setTargetSection(null);
 		setResend(false);
 		setSendDialogOpen(true);
 		loadSummary({ programId, resend: false });
 	}
 
+	// Bell button: opens the same summary dialog scoped to one section, so the user can review
+	// how many students it reaches before confirming. Defaults to resend, the row action's intent.
+	function handleOpenResendDialog(course: LCFCSectionSummary) {
+		if (!requireValid()) return;
+		setTargetSection(course);
+		setResend(true);
+		setSendDialogOpen(true);
+		loadSummary({ programId, courseSectionId: course.courseSectionId, resend: true });
+	}
+
 	function handleToggleResend(checked: boolean) {
 		setResend(checked);
-		loadSummary({ programId, resend: checked });
+		loadSummary({ programId, courseSectionId: targetSection?.courseSectionId, resend: checked });
 	}
 
-	function handleConfirmSendAll() {
+	function handleConfirmSend() {
 		if (!requireValid()) return;
+		const courseSectionId = targetSection?.courseSectionId;
 		setSendDialogOpen(false);
 		setSendErrorDismissed(false);
-		setSendingSectionId(0);
-		setProgressTargetLabel(t('surveys.lcfc.notifications.progress.targetAll'));
-		setProgressDialogOpen(true);
-		send(
-			buildRequest(),
-			() => {
-				setSendingSectionId(null);
-				setToast({ open: true, type: 'success', msg: t('surveys.lcfc.notifications.toast.sent') });
-			},
-			() => setSendingSectionId(null),
-		);
-	}
-
-	function handleResendSection(course: LCFCSectionSummary) {
-		if (!requireValid()) return;
-		const courseSectionId = course.courseSectionId as number;
-		setSendErrorDismissed(false);
-		setSendingSectionId(courseSectionId);
+		setSendingSectionId(courseSectionId ?? 0);
 		setProgressTargetLabel(
-			t('surveys.lcfc.notifications.progress.targetSection')
-				.replace('{{course}}', course.courseName)
-				.replace('{{section}}', course.sectionCode),
+			targetSection
+				? t('surveys.lcfc.notifications.progress.targetSection')
+						.replace('{{course}}', targetSection.courseName)
+						.replace('{{section}}', targetSection.sectionCode)
+				: t('surveys.lcfc.notifications.progress.targetAll'),
 		);
 		setProgressDialogOpen(true);
-		// Per-row action always resends (reuses token + refreshes deadline) for that section.
 		send(
-			buildRequest(courseSectionId, true),
+			buildRequest(courseSectionId),
 			() => {
 				setSendingSectionId(null);
 				setToast({ open: true, type: 'success', msg: t('surveys.lcfc.notifications.toast.sent') });
@@ -184,7 +182,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 						className="text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
 						disabled={!isValid || sending}
 						loading={sending && sendingSectionId === row.original.courseSectionId}
-						onClick={() => handleResendSection(row.original)}
+						onClick={() => handleOpenResendDialog(row.original)}
 						aria-label={t('surveys.lcfc.notifications.resendRow')}>
 						<BellAlertIcon className="h-5 w-5" />
 					</Button>
@@ -192,7 +190,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 				meta: { headerClassName: 'text-right', cellClassName: 'text-right' },
 			},
 		],
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- handleResendSection is re-created per render; the deps cover everything it reads (period/program via buildRequest)
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- handleOpenResendDialog is re-created per render; the deps cover everything it reads
 		[t, isValid, sending, sendingSectionId, programId, academicPeriodId],
 	);
 
@@ -252,7 +250,11 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 					</DialogHeader>
 					<div className="space-y-4 py-2">
 						<p className="text-sm text-zinc-600">
-							{t('surveys.lcfc.notifications.sendDialog.body')}
+							{targetSection
+								? t('surveys.lcfc.notifications.sendDialog.bodySection')
+										.replace('{{course}}', targetSection.courseName)
+										.replace('{{section}}', targetSection.sectionCode)
+								: t('surveys.lcfc.notifications.sendDialog.body')}
 						</p>
 
 						<div>
@@ -282,7 +284,7 @@ export function LCFCNotificationView({ programId }: LCFCNotificationViewProps) {
 					</div>
 					<DialogFooter showCloseButton>
 						<Button
-							onClick={handleConfirmSendAll}
+							onClick={handleConfirmSend}
 							disabled={loadingSummary || !summary || summary.totalStudents === 0}>
 							{t('surveys.lcfc.notifications.sendDialog.confirm')}
 						</Button>

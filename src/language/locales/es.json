@@ -2340,6 +2340,7 @@
 				"sendDialog": {
 					"title": "Enviar encuesta LCFC",
 					"body": "Se enviará la encuesta a todos los estudiantes matriculados en los cursos activos del período y carrera actuales.",
+					"bodySection": "Se enviará la encuesta a los estudiantes matriculados en {{course}} — Sección {{section}}.",
 					"summaryLoading": "Calculando resumen del envío...",
 					"summaryEmpty": "No hay estudiantes pendientes de notificar.",
 					"summaryEmptyResend": "No hay estudiantes pendientes de responder para reenviar.",

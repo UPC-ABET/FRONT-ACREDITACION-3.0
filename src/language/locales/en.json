@@ -2340,6 +2340,7 @@
 				"sendDialog": {
 					"title": "Send LCFC survey",
 					"body": "The survey will be sent to all students enrolled in active courses for the current period and program.",
+					"bodySection": "The survey will be sent to the students enrolled in {{course}} — Section {{section}}.",
 					"summaryLoading": "Calculating send summary...",
 					"summaryEmpty": "No students pending notification.",
 					"summaryEmptyResend": "No students pending a response to resend to.",
