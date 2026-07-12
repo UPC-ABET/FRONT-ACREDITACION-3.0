@@ -267,7 +267,7 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 					<DialogHeader>
 						<DialogTitle>{t('surveys.gra.notifications.addStudentTitle')}</DialogTitle>
 					</DialogHeader>
-					<AddStudentPanel programId={programId} onStudentAdded={handleStudentAdded} />
+					<AddStudentPanel onStudentAdded={handleStudentAdded} />
 				</DialogContent>
 			</Dialog>
 

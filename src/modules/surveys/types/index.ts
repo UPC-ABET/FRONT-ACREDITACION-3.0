@@ -100,6 +100,8 @@ export interface StudentSearchResult {
 	code: string;
 	name: string;
 	email: string;
+	/** The student's own program id — the add flow uses it instead of the UI career filter. */
+	programId?: number | null;
 	career: string;
 	cycle?: string;
 	sections?: string[];
