@@ -2041,7 +2041,7 @@
 			"exportButton": "Export grades",
 			"exportModal": {
 				"title": "Export grades",
-				"gradeTypeLabel": "Grade type",
+				"competencyScopeLabel": "Competency scope",
 				"filename": "project-grades",
 				"confirm": "Export",
 				"exporting": "Exporting...",

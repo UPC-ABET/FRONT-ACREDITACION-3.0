@@ -2041,7 +2041,7 @@
 			"exportButton": "Exportar notas",
 			"exportModal": {
 				"title": "Exportar notas",
-				"gradeTypeLabel": "Tipo de nota",
+				"competencyScopeLabel": "Alcance de competencia",
 				"filename": "proyectos-notas",
 				"confirm": "Exportar",
 				"exporting": "Exportando...",

@@ -134,7 +134,7 @@ export function useDeleteProject() {
 
 export function useExportProjectGrades() {
 	return useMutation({
-		mutationFn: (params: { gradeTypeCode: string; filename: string }) =>
+		mutationFn: (params: { competencyScopeCode: string; filename: string }) =>
 			projectsService.exportGrades(params).then((blob) => {
 				triggerBrowserDownload(blob, params.filename);
 			}),

@@ -91,8 +91,8 @@ export const projectsService = {
 		return apiPost('/project-evaluators/create', body);
 	},
 
-	exportGrades(params: { gradeTypeCode: string }): Promise<Blob> {
-		const qs = new URLSearchParams({ gradeTypeCode: params.gradeTypeCode });
+	exportGrades(params: { competencyScopeCode: string }): Promise<Blob> {
+		const qs = new URLSearchParams({ competencyScopeCode: params.competencyScopeCode });
 		return apiGetBlobResponse(`/projects/export/grades?${qs.toString()}`).then((r) => r.blob);
 	},
 
