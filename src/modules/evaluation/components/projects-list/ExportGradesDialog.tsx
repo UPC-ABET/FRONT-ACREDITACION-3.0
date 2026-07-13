@@ -19,10 +19,10 @@ type SelectOption = { label: string; value: number };
 interface ExportGradesDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	gradeTypeOptions: SelectOption[];
-	selectedGradeTypeId: number | null;
-	setSelectedGradeTypeId: (id: number | null) => void;
-	selectedGradeType: TypeOption | null;
+	competencyScopeOptions: SelectOption[];
+	selectedCompetencyScopeId: number | null;
+	setSelectedCompetencyScopeId: (id: number | null) => void;
+	selectedCompetencyScope: TypeOption | null;
 	exportError: string | null;
 	setExportError: (error: string | null) => void;
 	exportMutation: ReturnType<typeof useExportProjectGrades>;
@@ -34,10 +34,10 @@ interface ExportGradesDialogProps {
 export function ExportGradesDialog({
 	open,
 	onOpenChange,
-	gradeTypeOptions,
-	selectedGradeTypeId,
-	setSelectedGradeTypeId,
-	selectedGradeType,
+	competencyScopeOptions,
+	selectedCompetencyScopeId,
+	setSelectedCompetencyScopeId,
+	selectedCompetencyScope,
 	exportError,
 	setExportError,
 	exportMutation,
@@ -55,16 +55,17 @@ export function ExportGradesDialog({
 				</DialogHeader>
 				<div className="space-y-3">
 					<Select
-						label={t('projects.list.exportModal.gradeTypeLabel')}
-						options={gradeTypeOptions}
+						label={t('projects.list.exportModal.competencyScopeLabel')}
+						options={competencyScopeOptions}
 						value={
-							selectedGradeTypeId !== null
-								? (gradeTypeOptions.find((o) => o.value === selectedGradeTypeId) ?? null)
+							selectedCompetencyScopeId !== null
+								? (competencyScopeOptions.find((o) => o.value === selectedCompetencyScopeId) ??
+									null)
 								: null
 						}
 						onChange={(_, opt) => {
 							const single = Array.isArray(opt) ? opt[0] : opt;
-							if (single) setSelectedGradeTypeId(Number(single.value));
+							if (single) setSelectedCompetencyScopeId(Number(single.value));
 						}}
 						isSearchable
 					/>
@@ -80,17 +81,18 @@ export function ExportGradesDialog({
 					/>
 					<Button
 						variant="primary"
-						disabled={exportMutation.isPending || !selectedGradeType}
+						disabled={exportMutation.isPending || !selectedCompetencyScope}
 						onClick={() => {
-							if (!selectedPeriodId || !schoolId || !selectedGradeType) return;
+							if (!selectedPeriodId || !schoolId || !selectedCompetencyScope) return;
 							setExportError(null);
-							const gradeTypeLabel =
-								selectedGradeType.name[locale as 'es' | 'en'] ?? selectedGradeType.name.es;
-							const sanitizedGradeType = gradeTypeLabel.trim().replace(/\s+/g, '-').toLowerCase();
-							const filename = `${t('projects.list.exportModal.filename')}-${sanitizedGradeType}.xlsx`;
+							const competencyScopeLabel =
+								selectedCompetencyScope.name[locale as 'es' | 'en'] ??
+								selectedCompetencyScope.name.es;
+							const sanitizedScope = competencyScopeLabel.trim().replace(/\s+/g, '-').toLowerCase();
+							const filename = `${t('projects.list.exportModal.filename')}-${sanitizedScope}.xlsx`;
 							exportMutation.mutate(
 								{
-									gradeTypeCode: selectedGradeType.code,
+									competencyScopeCode: selectedCompetencyScope.code,
 									filename,
 								},
 								{

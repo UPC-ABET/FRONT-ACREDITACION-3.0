@@ -169,6 +169,34 @@ export function useSingleCompetencyRubricTable({
 		setDupScores((prev) => ({ ...prev, [qId]: val }));
 	};
 
+	// Switching modes must not lose what the evaluator already entered: going to individual
+	// spreads the shared duplicate value onto every student; going back to duplicate takes the
+	// first student's score as the shared value.
+	const handleToggleDuplicateMode = (next: boolean): void => {
+		if (next === duplicateMode) return;
+		if (next) {
+			setDupScores((prev) => {
+				const result: DupScores = { ...prev };
+				for (const q of questions) result[q.id] = scores[q.id]?.[0] ?? prev[q.id] ?? '';
+				return result;
+			});
+		} else {
+			setScores((prev) => {
+				const result: Scores = { ...prev };
+				for (const q of questions) {
+					const dupVal = dupScores[q.id] ?? '';
+					const row: Record<number, string> = { ...result[q.id] };
+					students.forEach((_, stIdx) => {
+						row[stIdx] = dupVal;
+					});
+					result[q.id] = row;
+				}
+				return result;
+			});
+		}
+		setDuplicateMode(next);
+	};
+
 	const findMatchingCriteria = (q: RubricQuestionDetailsResponse, score: number) =>
 		q.criterias.find((c) => {
 			const min = parseFloat(c.minValue);
@@ -268,7 +296,7 @@ export function useSingleCompetencyRubricTable({
 		locale,
 		isPending,
 		duplicateMode,
-		setDuplicateMode,
+		setDuplicateMode: handleToggleDuplicateMode,
 		scores,
 		dupScores,
 		ranges,

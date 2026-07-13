@@ -1,3 +1,5 @@
+import type { OutcomeConversionFilters } from '../types';
+
 interface OutcomeMaintenanceParams {
 	programId: number;
 	academicPeriodId: number;
@@ -13,4 +15,11 @@ export const accreditationQueryKeys = {
 	outcomesMaintenance: () => [...accreditationQueryKeys.outcomes(), 'maintenance'] as const,
 	outcomesMaintenanceList: (params: OutcomeMaintenanceParams) =>
 		[...accreditationQueryKeys.outcomesMaintenance(), params] as const,
+	outcomeConversions: () => [...accreditationQueryKeys.all, 'outcome-conversions'] as const,
+	// The period travels in the X-Academic-Period-Id header, so it must be part of the key —
+	// otherwise a period switch would serve another period's conversions from cache.
+	outcomeConversionsList: (academicPeriodId: number | null, filters: OutcomeConversionFilters) =>
+		[...accreditationQueryKeys.outcomeConversions(), 'list', academicPeriodId, filters] as const,
+	outcomeConversionsCoverage: (academicPeriodId: number | null) =>
+		[...accreditationQueryKeys.outcomeConversions(), 'coverage', academicPeriodId] as const,
 };

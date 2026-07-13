@@ -12,4 +12,5 @@ export * from './useRubricMultipleCompetencyCriteria';
 export * from './useRubricMultipleCompetencySave';
 export * from './usePerformanceReports';
 export * from './usePerformanceReportFilters';
+export * from './useProcessedRvGrades';
 export * from './queryKeys';

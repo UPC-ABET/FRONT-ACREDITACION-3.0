@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTabParam } from '@/shared';
 import Link from 'next/link';
-import { ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
 	buttonVariants,
@@ -14,11 +14,13 @@ import {
 	Tabs,
 } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
-import { useI18n, useABET } from '@/providers';
+import { useI18n, useABET, useSchoolSourceOverride } from '@/providers';
 import { useAuth } from '@/providers';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
 import { useProjectsByProfessor } from '../hooks';
+import { projectsService } from '../services';
 import { DEFAULT_PAGE_SIZE, TYPE_CODES } from '@/shared/constants';
+import { formatDateTime } from '@/shared/utils/formatDate';
 import type { ProjectByProfessorResponse } from '../types';
 
 type RubricTab = 'partial' | 'final';
@@ -61,6 +63,14 @@ export function GradeProjectsPage() {
 		isError: isErrorProfessor,
 	} = useProfessorByUserId(userId ?? undefined);
 
+	useSchoolSourceOverride({
+		key: `evaluation-schools:${professor?.id ?? 'none'}`,
+		fetch: () =>
+			professor?.id == null
+				? Promise.resolve([])
+				: projectsService.getSchoolsByProfessor(professor.id),
+	});
+
 	const {
 		data: projectsData,
 		isLoading: isLoadingProjects,
@@ -88,11 +98,7 @@ export function GradeProjectsPage() {
 
 	const formatDate = (dateStr: string | undefined) => {
 		if (!dateStr) return '—';
-		return new Date(dateStr).toLocaleDateString(locale === 'es' ? 'es-PE' : 'en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		});
+		return formatDateTime(dateStr, locale === 'es' ? 'es-PE' : 'en-US');
 	};
 
 	const columns = useMemo<ColumnDef<ProjectByProfessorResponse>[]>(
@@ -185,6 +191,7 @@ export function GradeProjectsPage() {
 									<span className="h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-300" />
 									<span>
 										{st.firstName} {st.lastName}
+										{st.totalGrade != null && ` (${st.totalGrade})`}
 									</span>
 								</div>
 							))}
@@ -207,7 +214,7 @@ export function GradeProjectsPage() {
 			},
 			{
 				id: 'actions',
-				header: t('projects.grade.table.actions'),
+				header: t('projects.grade.table.grade'),
 				cell: ({ row }) => (
 					<Link
 						href={`/evaluation/grade-projects/${activeTab}/${row.original.projectId}/evaluate`}
@@ -217,7 +224,7 @@ export function GradeProjectsPage() {
 							buttonVariants({ variant: 'ghost', size: 'icon' }),
 							'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700',
 						)}>
-						<ClipboardDocumentCheckIcon className="h-4 w-4" />
+						<PencilSquareIcon className="h-4 w-4" />
 					</Link>
 				),
 				meta: {

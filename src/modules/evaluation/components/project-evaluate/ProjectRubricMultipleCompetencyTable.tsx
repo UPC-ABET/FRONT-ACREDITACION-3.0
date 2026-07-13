@@ -92,7 +92,6 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		setActiveCommissionId(commissions[0]?.id ?? null);
 	}
 
-	const [duplicateMode, setDuplicateMode] = useState(false);
 	const [openOutcomeIds, setOpenOutcomeIds] = useState<Set<number>>(new Set());
 
 	const toggleOutcomeOpen = (id: number) => {
@@ -145,6 +144,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		visibleOutcomes,
 		selections,
 		dupSelections,
+		duplicateMode,
 		hasMissingStatus,
 		commissionFillStatus,
 		allFilled,
@@ -152,6 +152,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		isDirty,
 		handleSelect,
 		handleDupSelect,
+		handleToggleDuplicateMode,
 		handleSave,
 	} = useMultipleCompetencyEvaluation({
 		outcomes,
@@ -162,7 +163,6 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		projectId,
 		qualifStatuses,
 		nonAttendanceTypeIds,
-		duplicateMode,
 		commissions,
 		activeCommissionId,
 		onDirtyChange,
@@ -232,7 +232,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 			{!disableDuplicate && (
 				<DuplicateGradesToggle
 					checked={duplicateMode}
-					onChange={setDuplicateMode}
+					onChange={handleToggleDuplicateMode}
 					disabled={readOnly}
 				/>
 			)}

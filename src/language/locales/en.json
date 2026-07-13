@@ -1627,6 +1627,14 @@
 			"createFailed": "Could not create the project group.",
 			"updateFailed": "Could not update the project group.",
 			"deleteFailed": "Could not delete the project group."
+		},
+		"outcomeConversion": {
+			"sameSourceAndTarget": "The source and target commissions must be different.",
+			"commissionPeriodMismatch": "The commissions must belong to the same program and academic period.",
+			"targetOutcomeNotInTargetCommission": "The target outcome does not belong to the target commission.",
+			"invalidFormula": "The formula is not valid. Check the parentheses and operators.",
+			"unknownOutcomeReference": "The formula references an outcome that does not exist in the source commission.",
+			"duplicateConversion": "A conversion already exists for that target outcome from that source commission."
 		}
 	},
 	"table": {
@@ -2033,7 +2041,7 @@
 			"exportButton": "Export grades",
 			"exportModal": {
 				"title": "Export grades",
-				"gradeTypeLabel": "Grade type",
+				"competencyScopeLabel": "Competency scope",
 				"filename": "project-grades",
 				"confirm": "Export",
 				"exporting": "Exporting...",
@@ -3881,7 +3889,8 @@
 		"downloadExcel": "Download Excel",
 		"tabs": {
 			"rc": "RC — Control",
-			"rv": "RV — Verification"
+			"rv": "RV — Verification",
+			"conversions": "Conversions"
 		},
 		"filters": {
 			"accreditor": "Accreditor",
@@ -3964,6 +3973,108 @@
 			"active": "Active",
 			"saveError": "Could not save the project group.",
 			"createError": "Could not create the project group."
+		}
+	},
+	"outcomeConversions": {
+		"title": "Outcome conversion between commissions",
+		"subtitle": "For each outcome of the target commission, define the formula that derives it from the outcomes of the source commission (the one the rubrics grade against).",
+		"selectPeriod": "Select an academic period in the top bar to manage conversions.",
+		"selectProgram": "Select a program to see its commissions.",
+		"selectCommissions": "Select the source and target commissions to see their conversions.",
+		"empty": "The target commission has no registered outcomes.",
+		"searchPlaceholder": "Search by outcome or formula...",
+		"filters": {
+			"program": "Program",
+			"programPlaceholder": "Program",
+			"sourceCommission": "Source commission",
+			"sourceCommissionPlaceholder": "Source commission",
+			"targetCommission": "Target commission",
+			"targetCommissionPlaceholder": "Target commission"
+		},
+		"table": {
+			"targetOutcome": "Target outcome",
+			"outcomeName": "Outcome name",
+			"formula": "Formula",
+			"noFormula": "No formula",
+			"references": "Referenced outcomes",
+			"actions": "Actions"
+		},
+		"actions": {
+			"create": "Define formula",
+			"edit": "Edit formula",
+			"delete": "Delete conversion"
+		},
+		"formula": {
+			"createTitle": "Define conversion formula",
+			"editTitle": "Edit conversion formula",
+			"subtitle": "Outcome {{targetOutcome}} of {{targetCommission}} will be derived from the outcomes of {{sourceCommission}}.",
+			"sourceOutcomes": "{{sourceCommission}} outcomes",
+			"loadingSourceOutcomes": "Loading the source commission outcomes...",
+			"noSourceOutcomes": "The source commission has no registered outcomes.",
+			"insertReference": "Insert outcome {{code}} into the formula",
+			"label": "Formula",
+			"placeholder": "e.g. ([B] + [E]) / 2",
+			"hint": "Allowed operators: + - * / and parentheses. Outcome references go in brackets: [A], [6]. Grades are computed out of 20 and the result is clamped to the [0, 20] range.",
+			"referencedOutcomes": "Referenced outcomes",
+			"save": "Save formula"
+		},
+		"coverage": {
+			"title": "The {{targetCommission}} RV report is incomplete",
+			"description": "{{mapped}} of {{total}} outcomes have a formula. Missing: {{codes}}."
+		},
+		"pendingRebuild": {
+			"title": "There are formula changes pending reprocessing",
+			"description": "Grades that were already scored are not recalculated on their own. Run “Rebuild the period's RV grades” to apply the new conversions to the verification report."
+		},
+		"delete": {
+			"title": "Delete conversion",
+			"message": "Delete the conversion formula of outcome {{targetOutcome}}? Already converted grades remain until you rebuild the period."
+		},
+		"toast": {
+			"created": "Conversion formula created.",
+			"updated": "Conversion formula updated.",
+			"deleted": "Conversion formula deleted."
+		},
+		"error": {
+			"loadFailed": "Conversions could not be loaded.",
+			"saveFailed": "The conversion formula could not be saved.",
+			"deleteFailed": "The conversion could not be deleted."
+		}
+	},
+	"processedRvGrades": {
+		"title": "RV grades by student",
+		"subtitle": "Verification grades already scaled to 20 and classified in the semaphore, both the graded ones and those derived by conversion.",
+		"openDialog": "Grades by student",
+		"empty": "No processed grades for the selected filters. If the period was graded before conversions were enabled, rebuild the RV grades.",
+		"searchPlaceholder": "Search by student, course or outcome...",
+		"error": "The processed RV grades could not be loaded.",
+		"filters": {
+			"origin": "Grade origin",
+			"allOrigins": "All origins"
+		},
+		"origin": {
+			"converted": "Converted",
+			"graded": "Graded"
+		},
+		"table": {
+			"studentCode": "Code",
+			"studentName": "Student",
+			"courseCode": "Course",
+			"outcomeCode": "Outcome",
+			"grade": "Grade",
+			"scaledGrade": "Grade /20",
+			"level": "Performance level",
+			"origin": "Origin",
+			"traceability": "Traceability",
+			"sourceCommission": "Source commission"
+		},
+		"rebuild": {
+			"action": "Rebuild the period's RV grades",
+			"confirmTitle": "Rebuild the period's RV grades",
+			"confirmMessage": "The verification grades of every evaluation in the active period will be recalculated, applying the current conversion formulas. This may take a few minutes.",
+			"success": "Reprocessed {{evaluations}} evaluations: {{graded}} graded grades and {{converted}} converted.",
+			"skipped": "{{skipped}} conversions were skipped: the rubric did not grade every outcome their formula needs.",
+			"error": "The period's RV grades could not be rebuilt."
 		}
 	}
 }

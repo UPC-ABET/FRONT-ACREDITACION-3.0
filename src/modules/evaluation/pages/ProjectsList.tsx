@@ -137,24 +137,28 @@ export function ProjectsListPage() {
 	const deleteMutation = useDeleteProject();
 
 	const [exportOpen, setExportOpen] = useState(false);
-	const [selectedGradeTypeId, setSelectedGradeTypeId] = useState<number | null>(null);
+	const [selectedCompetencyScopeId, setSelectedCompetencyScopeId] = useState<number | null>(null);
 	const [exportError, setExportError] = useState<string | null>(null);
 	const exportMutation = useExportProjectGrades();
 
-	const { data: gradeTypes = [] } = useTypesByGroupCode(TYPE_GROUP_CODES.GRADE_TYPE, {
-		enabled: exportOpen,
-	});
-
-	const gradeTypeOptions = useMemo(
-		() =>
-			gradeTypes.map((gt) => ({
-				label: gt.name[locale as 'es' | 'en'] ?? gt.name.es,
-				value: gt.id,
-			})),
-		[gradeTypes, locale],
+	const { data: competencyScopeTypes = [] } = useTypesByGroupCode(
+		TYPE_GROUP_CODES.COMPETENCY_SCOPE,
+		{
+			enabled: exportOpen,
+		},
 	);
 
-	const selectedGradeType = gradeTypes.find((gt) => gt.id === selectedGradeTypeId) ?? null;
+	const competencyScopeOptions = useMemo(
+		() =>
+			competencyScopeTypes.map((cs) => ({
+				label: cs.name[locale as 'es' | 'en'] ?? cs.name.es,
+				value: cs.id,
+			})),
+		[competencyScopeTypes, locale],
+	);
+
+	const selectedCompetencyScope =
+		competencyScopeTypes.find((cs) => cs.id === selectedCompetencyScopeId) ?? null;
 
 	const handleClearFilters = () => {
 		setSelectedProgram(null);
@@ -243,13 +247,13 @@ export function ProjectsListPage() {
 					if (!open) {
 						setExportOpen(false);
 						setExportError(null);
-						setSelectedGradeTypeId(null);
+						setSelectedCompetencyScopeId(null);
 					}
 				}}
-				gradeTypeOptions={gradeTypeOptions}
-				selectedGradeTypeId={selectedGradeTypeId}
-				setSelectedGradeTypeId={setSelectedGradeTypeId}
-				selectedGradeType={selectedGradeType}
+				competencyScopeOptions={competencyScopeOptions}
+				selectedCompetencyScopeId={selectedCompetencyScopeId}
+				setSelectedCompetencyScopeId={setSelectedCompetencyScopeId}
+				selectedCompetencyScope={selectedCompetencyScope}
 				exportError={exportError}
 				setExportError={setExportError}
 				exportMutation={exportMutation}

@@ -54,20 +54,12 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 	const useMultipleCompetencyEditor =
 		step1.isCapstone && selectedCompetencyScopeObj?.code === TYPE_CODES.COMPETENCY_SCOPE.MULTIPLE;
 
-	const { data: outcomeTypes = [] } = useTypesByGroupCode(TYPE_GROUP_CODES.OUTCOME_TYPE, {
-		enabled: useMultipleCompetencyEditor,
-	});
-	const verificationOutcomeTypeId = outcomeTypes.find(
-		(ot) => ot.code === TYPE_CODES.OUTCOME_TYPE.VERIFICATION,
-	)?.id;
-
 	const { data: mappings = [], isLoading: loadingMappings } = useCourseOutcomeMappings(
 		{
 			studyPlanCourseId: step1.studyPlanCourseId,
 			isActive: true,
-			outcomeTypeId: verificationOutcomeTypeId,
 		},
-		{ enabled: useMultipleCompetencyEditor && verificationOutcomeTypeId != null },
+		{ enabled: useMultipleCompetencyEditor },
 	);
 
 	const outcomeIds = useMemo(() => mappings.map((m) => m.outcomeId), [mappings]);

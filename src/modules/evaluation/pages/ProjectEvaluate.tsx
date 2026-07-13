@@ -212,6 +212,16 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		return activeItems[0]?.gradeType.id ?? null;
 	}, [activeItems, activeGradeTypeId]);
 
+	// The shared observation field is only meaningful once the active tab's rubric is visible —
+	// while attendance is incomplete the rubric itself is hidden, so hide this too.
+	const activeTabHasMissingStatus = useMemo(() => {
+		if (effectiveStudyPlanCourseId == null || effectiveGradeTypeId == null) return false;
+		const items = incompleteItemsByTab.get(
+			dirtyKey(effectiveStudyPlanCourseId, effectiveGradeTypeId),
+		);
+		return (items ?? []).some((i) => i.message === t('projects.evaluate.rubric.missingStatus'));
+	}, [incompleteItemsByTab, effectiveStudyPlanCourseId, effectiveGradeTypeId, t]);
+
 	// Every (career, gradeType) combination stays mounted at all times so switching tabs
 	// never discards in-progress edits — only the active one is shown (CSS `hidden`).
 	const panels = useMemo(() => {
@@ -251,7 +261,18 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 	const [showSaveAllSuccess, setShowSaveAllSuccess] = useState(false);
 	const [saveAllError, setSaveAllError] = useState(false);
 
+	// Every panel (not just the dirty ones) must be free of incomplete-commission warnings before
+	// the global save unlocks — an untouched career tab with an empty rubric still counts as
+	// incomplete, the same way a partially-filled commission does.
+	const canSaveAll =
+		dirtyTabs.size > 0 &&
+		panels.every((panel) => {
+			const key = dirtyKey(panel.studyPlanCourseId, panel.gradeTypeId);
+			return (incompleteItemsByTab.get(key)?.length ?? 0) === 0;
+		});
+
 	const handleSaveAll = async () => {
+		if (!canSaveAll) return;
 		const dirtyKeys = [...dirtyTabs];
 		const readyKeys = dirtyKeys.filter((key) => panelRefs.current.get(key)?.canSave);
 
@@ -434,16 +455,18 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 			{!isReadOnly && rubrics.some((rubric) => rubric.items.length > 0) && (
 				<div className="flex flex-col gap-4">
-					<Card>
-						<I18nTextField
-							layout="row"
-							label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
-							placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
-							value={observation}
-							onChange={handleObservationChange}
-							rows={3}
-						/>
-					</Card>
+					{!activeTabHasMissingStatus && (
+						<Card>
+							<I18nTextField
+								layout="row"
+								label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
+								placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
+								value={observation}
+								onChange={handleObservationChange}
+								rows={3}
+							/>
+						</Card>
+					)}
 
 					{incompleteItems.length > 0 && (
 						<ul className="space-y-1 text-sm">
@@ -469,7 +492,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 						<Button
 							variant="danger"
 							loading={isSavingAll}
-							disabled={dirtyTabs.size === 0 || isSavingAll}
+							disabled={!canSaveAll || isSavingAll}
 							onClick={() => void handleSaveAll()}>
 							{t('projects.evaluate.saveAll.button')}
 						</Button>

@@ -33,7 +33,6 @@ interface UseMultipleCompetencyEvaluationParams {
 	projectId: string | number;
 	qualifStatuses: Record<number, number | null>;
 	nonAttendanceTypeIds: Set<number>;
-	duplicateMode: boolean;
 	commissions: CommissionRow[];
 	activeCommissionId: number | null;
 	onDirtyChange?: (isDirty: boolean) => void;
@@ -55,7 +54,6 @@ export function useMultipleCompetencyEvaluation({
 	projectId,
 	qualifStatuses,
 	nonAttendanceTypeIds,
-	duplicateMode,
 	commissions,
 	activeCommissionId,
 	onDirtyChange,
@@ -64,6 +62,7 @@ export function useMultipleCompetencyEvaluation({
 }: UseMultipleCompetencyEvaluationParams) {
 	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
 	const [isDirty, setIsDirty] = useState(false);
+	const [duplicateMode, setDuplicateMode] = useState(false);
 
 	const markDirty = () => {
 		if (!isDirty) {
@@ -141,7 +140,8 @@ export function useMultipleCompetencyEvaluation({
 		[students, qualifStatuses],
 	);
 
-	// Per-commission fill status for tab indicators
+	// Per-commission fill status for tab indicators — also drives allFilled below, so it must
+	// reflect whichever grid (individual or duplicate) is actually being edited.
 	const commissionFillStatus = useMemo((): Record<number, 'complete' | 'partial' | 'empty'> => {
 		if (commissions.length === 0) return {};
 		const gradedStudents = students.filter(
@@ -157,10 +157,18 @@ export function useMultipleCompetencyEvaluation({
 			}
 			let filled = 0;
 			let total = 0;
-			for (const cId of criteriaIds) {
-				for (const st of gradedStudents) {
+			if (duplicateMode) {
+				for (const cId of criteriaIds) {
+					if (gradedStudents.length === 0) continue;
 					total++;
-					if ((selections[cId]?.[st.id] ?? null) != null) filled++;
+					if (dupSelections[cId] != null) filled++;
+				}
+			} else {
+				for (const cId of criteriaIds) {
+					for (const st of gradedStudents) {
+						total++;
+						if ((selections[cId]?.[st.id] ?? null) != null) filled++;
+					}
 				}
 			}
 			result[commission.id] =
@@ -172,14 +180,25 @@ export function useMultipleCompetencyEvaluation({
 		outcomes,
 		questionByOutcome,
 		selections,
+		dupSelections,
+		duplicateMode,
 		students,
 		qualifStatuses,
 		nonAttendanceTypeIds,
 	]);
 
+	// A commission-based (capstone multiple) rubric is valid the same way it's created: each
+	// commission must be either untouched or fully graded — starting one commits you to finishing
+	// it, but leaving another commission untouched entirely doesn't block saving the completed one.
 	const allFilled = useMemo(() => {
 		if (!allCriteriaIds.length || !students.length) return false;
 		if (hasMissingStatus) return false;
+
+		if (commissions.length > 0) {
+			const statuses = Object.values(commissionFillStatus);
+			return statuses.some((s) => s === 'complete') && statuses.every((s) => s !== 'partial');
+		}
+
 		const gradedStudents = students.filter(
 			(st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1),
 		);
@@ -202,6 +221,8 @@ export function useMultipleCompetencyEvaluation({
 		qualifStatuses,
 		nonAttendanceTypeIds,
 		hasMissingStatus,
+		commissions,
+		commissionFillStatus,
 	]);
 
 	const handleSelect = (criteriaId: number, projectStudentId: number, value: number) => {
@@ -221,6 +242,39 @@ export function useMultipleCompetencyEvaluation({
 			...prev,
 			[criteriaId]: prev[criteriaId] === value ? null : value,
 		}));
+	};
+
+	// Switching modes must not lose what the evaluator already entered: going to individual
+	// spreads the shared duplicate value onto every student; going back to duplicate takes the
+	// first student's selection as the shared value.
+	const handleToggleDuplicateMode = (next: boolean): void => {
+		if (next === duplicateMode) return;
+		if (next) {
+			setDupSelections((prev) => {
+				const result: DupSelections = { ...prev };
+				for (const cId of allCriteriaIds) {
+					const firstStudent = students[0];
+					result[cId] = firstStudent
+						? (selections[cId]?.[firstStudent.id] ?? prev[cId] ?? null)
+						: (prev[cId] ?? null);
+				}
+				return result;
+			});
+		} else {
+			setSelections((prev) => {
+				const result: Selections = { ...prev };
+				for (const cId of allCriteriaIds) {
+					const dupVal = dupSelections[cId] ?? null;
+					const row: Record<number, number | null> = { ...result[cId] };
+					students.forEach((st) => {
+						row[st.id] = dupVal;
+					});
+					result[cId] = row;
+				}
+				return result;
+			});
+		}
+		setDuplicateMode(next);
 	};
 
 	const handleSave = async (): Promise<void> => {
@@ -285,6 +339,7 @@ export function useMultipleCompetencyEvaluation({
 		visibleOutcomes,
 		selections,
 		dupSelections,
+		duplicateMode,
 		hasMissingStatus,
 		commissionFillStatus,
 		allFilled,
@@ -292,6 +347,7 @@ export function useMultipleCompetencyEvaluation({
 		isDirty,
 		handleSelect,
 		handleDupSelect,
+		handleToggleDuplicateMode,
 		handleSave,
 	};
 }

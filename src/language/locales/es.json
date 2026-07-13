@@ -1627,6 +1627,14 @@
 			"createFailed": "No se pudo crear el grupo de proyecto.",
 			"updateFailed": "No se pudo actualizar el grupo de proyecto.",
 			"deleteFailed": "No se pudo eliminar el grupo de proyecto."
+		},
+		"outcomeConversion": {
+			"sameSourceAndTarget": "La comisión origen y la comisión destino deben ser distintas.",
+			"commissionPeriodMismatch": "Las comisiones deben pertenecer al mismo programa y periodo académico.",
+			"targetOutcomeNotInTargetCommission": "El outcome destino no pertenece a la comisión destino.",
+			"invalidFormula": "La fórmula no es válida. Revisa los paréntesis y los operadores.",
+			"unknownOutcomeReference": "La fórmula referencia un outcome que no existe en la comisión origen.",
+			"duplicateConversion": "Ya existe una conversión para ese outcome destino desde esa comisión origen."
 		}
 	},
 	"table": {
@@ -2033,7 +2041,7 @@
 			"exportButton": "Exportar notas",
 			"exportModal": {
 				"title": "Exportar notas",
-				"gradeTypeLabel": "Tipo de nota",
+				"competencyScopeLabel": "Alcance de competencia",
 				"filename": "proyectos-notas",
 				"confirm": "Exportar",
 				"exporting": "Exportando...",
@@ -3882,7 +3890,8 @@
 		"downloadExcel": "Descargar Excel",
 		"tabs": {
 			"rc": "RC — Control",
-			"rv": "RV — Verificación"
+			"rv": "RV — Verificación",
+			"conversions": "Conversiones"
 		},
 		"filters": {
 			"accreditor": "Acreditador",
@@ -3965,6 +3974,108 @@
 			"active": "Activo",
 			"saveError": "No se pudo guardar el grupo de proyecto.",
 			"createError": "No se pudo crear el grupo de proyecto."
+		}
+	},
+	"outcomeConversions": {
+		"title": "Conversión de outcomes entre comisiones",
+		"subtitle": "Define, para cada outcome de la comisión destino, la fórmula que lo calcula a partir de los outcomes de la comisión origen (la que se califica en las rúbricas).",
+		"selectPeriod": "Selecciona un periodo académico en la barra superior para gestionar las conversiones.",
+		"selectProgram": "Selecciona una carrera para ver sus comisiones.",
+		"selectCommissions": "Selecciona la comisión origen y la comisión destino para ver sus conversiones.",
+		"empty": "La comisión destino no tiene outcomes registrados.",
+		"searchPlaceholder": "Buscar por outcome o fórmula...",
+		"filters": {
+			"program": "Carrera",
+			"programPlaceholder": "Carrera",
+			"sourceCommission": "Comisión origen",
+			"sourceCommissionPlaceholder": "Comisión origen",
+			"targetCommission": "Comisión destino",
+			"targetCommissionPlaceholder": "Comisión destino"
+		},
+		"table": {
+			"targetOutcome": "Outcome destino",
+			"outcomeName": "Nombre del outcome",
+			"formula": "Fórmula",
+			"noFormula": "Sin fórmula",
+			"references": "Outcomes referenciados",
+			"actions": "Acciones"
+		},
+		"actions": {
+			"create": "Definir fórmula",
+			"edit": "Editar fórmula",
+			"delete": "Eliminar conversión"
+		},
+		"formula": {
+			"createTitle": "Definir fórmula de conversión",
+			"editTitle": "Editar fórmula de conversión",
+			"subtitle": "El outcome {{targetOutcome}} de {{targetCommission}} se calculará a partir de los outcomes de {{sourceCommission}}.",
+			"sourceOutcomes": "Outcomes de {{sourceCommission}}",
+			"loadingSourceOutcomes": "Cargando los outcomes de la comisión origen...",
+			"noSourceOutcomes": "La comisión origen no tiene outcomes registrados.",
+			"insertReference": "Insertar el outcome {{code}} en la fórmula",
+			"label": "Fórmula",
+			"placeholder": "Ej: ([B] + [E]) / 2",
+			"hint": "Operadores permitidos: + - * / y paréntesis. Las referencias a outcomes van entre corchetes: [A], [6]. Las notas se calculan sobre 20 y el resultado se acota al rango [0, 20].",
+			"referencedOutcomes": "Outcomes referenciados",
+			"save": "Guardar fórmula"
+		},
+		"coverage": {
+			"title": "El reporte RV de {{targetCommission}} está incompleto",
+			"description": "Hay {{mapped}} de {{total}} outcomes con fórmula. Faltan: {{codes}}."
+		},
+		"pendingRebuild": {
+			"title": "Hay cambios de fórmula sin reprocesar",
+			"description": "Las notas ya calificadas no se recalculan solas. Ejecuta «Reprocesar notas RV del periodo» para aplicar las conversiones nuevas al reporte de verificación."
+		},
+		"delete": {
+			"title": "Eliminar conversión",
+			"message": "¿Eliminar la fórmula de conversión del outcome {{targetOutcome}}? Las notas ya convertidas se mantienen hasta que reproceses el periodo."
+		},
+		"toast": {
+			"created": "Fórmula de conversión creada.",
+			"updated": "Fórmula de conversión actualizada.",
+			"deleted": "Fórmula de conversión eliminada."
+		},
+		"error": {
+			"loadFailed": "No se pudieron cargar las conversiones.",
+			"saveFailed": "No se pudo guardar la fórmula de conversión.",
+			"deleteFailed": "No se pudo eliminar la conversión."
+		}
+	},
+	"processedRvGrades": {
+		"title": "Notas RV por alumno",
+		"subtitle": "Notas de verificación ya escaladas a 20 y clasificadas en el semáforo, tanto las calificadas como las obtenidas por conversión.",
+		"openDialog": "Notas por alumno",
+		"empty": "No hay notas procesadas para los filtros seleccionados. Si el periodo se calificó antes de habilitar las conversiones, reprocesa las notas RV.",
+		"searchPlaceholder": "Buscar por alumno, curso u outcome...",
+		"error": "No se pudieron cargar las notas RV procesadas.",
+		"filters": {
+			"origin": "Origen de la nota",
+			"allOrigins": "Todos los orígenes"
+		},
+		"origin": {
+			"converted": "Convertida",
+			"graded": "Calificada"
+		},
+		"table": {
+			"studentCode": "Código",
+			"studentName": "Alumno",
+			"courseCode": "Curso",
+			"outcomeCode": "Outcome",
+			"grade": "Nota",
+			"scaledGrade": "Nota /20",
+			"level": "Nivel de desempeño",
+			"origin": "Origen",
+			"traceability": "Trazabilidad",
+			"sourceCommission": "Comisión origen"
+		},
+		"rebuild": {
+			"action": "Reprocesar notas RV del periodo",
+			"confirmTitle": "Reprocesar notas RV del periodo",
+			"confirmMessage": "Se recalcularán las notas de verificación de todas las evaluaciones del periodo activo, aplicando las fórmulas de conversión vigentes. Puede tardar unos minutos.",
+			"success": "Reprocesadas {{evaluations}} evaluaciones: {{graded}} notas calificadas y {{converted}} convertidas.",
+			"skipped": "{{skipped}} conversiones se omitieron: la rúbrica no calificó todos los outcomes que su fórmula necesita.",
+			"error": "No se pudieron reprocesar las notas RV del periodo."
 		}
 	}
 }
