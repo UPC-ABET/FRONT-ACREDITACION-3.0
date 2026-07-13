@@ -11,11 +11,13 @@ import type {
 	LCFCEmailParam,
 	LCFCNotificationJobStatus,
 	LCFCNotificationSendRequest,
+	LCFCSectionSummary,
 	GRASendSummary,
 } from '../types';
 import {
 	getAcademicPeriods,
 	listLCFCCourses,
+	listLCFCSectionSummaries,
 	generateLCFCConfiguration,
 	getAvailableSections,
 	cloneLCFCConfiguration,
@@ -153,6 +155,36 @@ export function useLCFCConfiguration() {
 	}, []);
 
 	return { courses, loading, error, load, generate, clone, changeStatus, update, remove };
+}
+
+/** Lean, server-paginated section list for the notifications view — much lighter than
+ *  useLCFCConfiguration (the backend sends one page instead of every config row). */
+export function useLCFCSections() {
+	const [sections, setSections] = useState<LCFCSectionSummary[]>([]);
+	const [total, setTotal] = useState(0);
+	const [totalPages, setTotalPages] = useState(0);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const load = useCallback(
+		async (params: { programId?: number; search?: string; page?: number; pageSize?: number }) => {
+			setLoading(true);
+			setError(null);
+			try {
+				const result = await listLCFCSectionSummaries(params);
+				setSections(result.items);
+				setTotal(result.total);
+				setTotalPages(result.totalPages);
+			} catch (e) {
+				setError(getErrorMessage(e));
+			} finally {
+				setLoading(false);
+			}
+		},
+		[],
+	);
+
+	return { sections, total, totalPages, loading, error, load };
 }
 
 export function useLCFCNotification() {

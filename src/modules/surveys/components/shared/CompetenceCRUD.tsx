@@ -22,7 +22,7 @@ import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import type { CompetenceConfig, CompetenceFormData } from '../../types';
 import { competenceSchema } from '../../schemas/competenceSchema';
-import { MIN_PERFORMANCE_LEVEL, MAX_PERFORMANCE_LEVEL } from '../../constants/competence';
+import { MIN_PERFORMANCE_LEVEL } from '../../constants/competence';
 import { listGRAOutcomes } from '../../services/graService';
 
 export interface CompetenceCRUDProps {
@@ -68,7 +68,7 @@ export function CompetenceCRUD({
 	onSave,
 	onDelete,
 }: CompetenceCRUDProps) {
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const [modalOpen, setModalOpen] = useState(false);
 	const [deleteId, setDeleteId] = useState<number | null>(null);
 	const [form, setForm] = useState(EMPTY_FORM);
@@ -226,11 +226,16 @@ export function CompetenceCRUD({
 			header: t('surveys.competence.table.nameEn'),
 		},
 		{
-			accessorKey: 'description',
+			id: 'description',
 			header: t('surveys.competence.table.description'),
-			cell: ({ getValue }) => (
-				<span className="max-w-xs block truncate text-zinc-500">{getValue() as string}</span>
-			),
+			cell: ({ row }) => {
+				// Follow the global language selector, falling back to the other language when empty
+				const text =
+					locale === 'en'
+						? row.original.descriptionEn || row.original.description
+						: row.original.description || row.original.descriptionEn;
+				return <span className="max-w-xs block truncate text-zinc-500">{text}</span>;
+			},
 		},
 		{
 			id: 'visible',
@@ -324,15 +329,11 @@ export function CompetenceCRUD({
 								<input
 									type="number"
 									min={MIN_PERFORMANCE_LEVEL}
-									max={MAX_PERFORMANCE_LEVEL}
 									value={form.performanceLevel}
 									onChange={(e) =>
 										setForm({
 											...form,
-											performanceLevel: Math.min(
-												MAX_PERFORMANCE_LEVEL,
-												Math.max(MIN_PERFORMANCE_LEVEL, Number(e.target.value)),
-											),
+											performanceLevel: Math.max(MIN_PERFORMANCE_LEVEL, Number(e.target.value)),
 										})
 									}
 									className="w-full h-9 rounded-md border border-zinc-200 px-3 text-sm focus:outline-none focus:border-red-500"

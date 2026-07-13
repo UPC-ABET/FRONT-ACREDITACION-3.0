@@ -25,6 +25,8 @@ import type {
 	GenerateConfigResult,
 	CloneConfigResult,
 	BackendLcfcConfig,
+	BackendLcfcSectionRow,
+	LCFCSectionPage,
 	BackendGenerateResult,
 	PerceptionReportFilters,
 	PerceptionReportResponse,
@@ -81,6 +83,43 @@ export async function listLCFCCourses(
 	});
 	const list = getApiData<BackendLcfcConfig[]>(res) ?? [];
 	return { courses: list.map((c) => adaptLcfcConfig(c)) };
+}
+
+/** Lightweight, server-paginated section list for the notifications view — avoids the ~1 MB
+ *  full-config payload. Search matches course name or section code on the backend. */
+export async function listLCFCSectionSummaries(params: {
+	programId?: number;
+	search?: string;
+	page?: number;
+	pageSize?: number;
+}): Promise<LCFCSectionPage> {
+	const res = await apiPost('lcfc/config/list-sections', {
+		programId: params.programId || undefined,
+		isActive: true,
+		search: params.search?.trim() || undefined,
+		page: params.page,
+		pageSize: params.pageSize,
+	});
+	const data = getApiData<{
+		items?: BackendLcfcSectionRow[];
+		total?: number;
+		page?: number;
+		pageSize?: number;
+		totalPages?: number;
+	}>(res);
+	return {
+		items: (data?.items ?? []).map((row) => ({
+			id: row.id,
+			courseName: toText(row.courseName) || `Course ${row.id}`,
+			sectionCode: row.sectionCode ?? '',
+			courseSectionId: row.courseSectionId ?? undefined,
+			isActive: row.isActive,
+		})),
+		total: data?.total ?? 0,
+		page: data?.page ?? 1,
+		pageSize: data?.pageSize ?? 0,
+		totalPages: data?.totalPages ?? 0,
+	};
 }
 
 export async function getAvailableSections(

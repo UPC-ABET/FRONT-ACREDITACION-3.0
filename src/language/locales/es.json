@@ -2334,11 +2334,13 @@
 				"colCourse": "Curso",
 				"colSection": "Sección",
 				"colActions": "Acciones",
+				"searchPlaceholder": "Buscar por curso o sección...",
 				"resendRow": "Reenviar",
 				"sending": "Enviando...",
 				"sendDialog": {
 					"title": "Enviar encuesta LCFC",
 					"body": "Se enviará la encuesta a todos los estudiantes matriculados en los cursos activos del período y carrera actuales.",
+					"bodySection": "Se enviará la encuesta a los estudiantes matriculados en {{course}} — Sección {{section}}.",
 					"summaryLoading": "Calculando resumen del envío...",
 					"summaryEmpty": "No hay estudiantes pendientes de notificar.",
 					"summaryEmptyResend": "No hay estudiantes pendientes de responder para reenviar.",
@@ -2455,6 +2457,7 @@
 					"responseStatus": "Respuesta",
 					"actions": "Acciones"
 				},
+				"searchPlaceholder": "Buscar por código, nombre o email...",
 				"deleteTitle": "Eliminar estudiante",
 				"deleteBody": "¿Deseas eliminar este estudiante de la notificación?",
 				"delete": "Eliminar",
@@ -2493,6 +2496,10 @@
 					"sent": "Enviado",
 					"pending": "Pendiente",
 					"responded": "Respondido"
+				},
+				"legend": {
+					"sent": "Enviado",
+					"notSent": "No enviado"
 				},
 				"periodLabel": "Período académico",
 				"periodPlaceholder": "Selecciona un período",

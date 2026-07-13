@@ -10,11 +10,10 @@ import { useGRAStudentSearch } from '../../../hooks';
 const SEARCH_DEBOUNCE_MS = 250;
 
 interface AddStudentPanelProps {
-	readonly programId: number;
 	readonly onStudentAdded?: () => void;
 }
 
-export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelProps) {
+export function AddStudentPanel({ onStudentAdded }: AddStudentPanelProps) {
 	const { t } = useI18n();
 	const { result, suggestions, loading, error, searchPrefix, selectSuggestion, add, reset } =
 		useGRAStudentSearch();
@@ -83,7 +82,9 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 
 	async function handleAdd() {
 		if (!result) return;
-		if (!programId) {
+		// The student is always added to their OWN career (known from the search result),
+		// regardless of any career filter selected in the UI.
+		if (!result.programId) {
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
 			return;
 		}
@@ -91,7 +92,7 @@ export function AddStudentPanel({ programId, onStudentAdded }: AddStudentPanelPr
 		await add(
 			{
 				studentId: result.studentId,
-				programId: programId,
+				programId: result.programId,
 			},
 			() => {
 				setToast({

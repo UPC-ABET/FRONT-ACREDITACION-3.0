@@ -124,7 +124,9 @@ export function useGRACompetences() {
 
 export function useGRAStudents() {
 	const [students, setStudents] = useState<GRAStudent[]>([]);
-	const [, setLoading] = useState(false);
+	const [total, setTotal] = useState(0);
+	const [totalPages, setTotalPages] = useState(0);
+	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	const load = useCallback(
@@ -133,12 +135,17 @@ export function useGRAStudents() {
 			academicPeriodId?: number;
 			campusId?: number;
 			studentCode?: string;
+			search?: string;
+			page?: number;
+			pageSize?: number;
 		}) => {
 			setLoading(true);
 			setError(null);
 			try {
-				const { students: data } = await listGRAStudents(params);
-				setStudents(data);
+				const result = await listGRAStudents(params);
+				setStudents(result.students);
+				setTotal(result.total);
+				setTotalPages(result.totalPages);
 			} catch (e) {
 				setError(getErrorMessage(e));
 			} finally {
@@ -157,7 +164,7 @@ export function useGRAStudents() {
 		}
 	}, []);
 
-	return { students, error, load, remove };
+	return { students, total, totalPages, loading, error, load, remove };
 }
 
 export function useGRAStudentSearch() {
