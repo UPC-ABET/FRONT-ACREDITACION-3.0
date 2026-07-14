@@ -25,6 +25,9 @@ export interface PerceptionReportPanelProps {
 	};
 	hideGenerateButton?: boolean;
 	requireCommission?: boolean;
+	/** When no program/commission/campus is selected, skip validation and generate anyway
+	 *  (the backend returns a per-program overview report in that case). */
+	allowUnfiltered?: boolean;
 	onGeneratingChange?: (generating: boolean) => void;
 	generate: (
 		filters: PerceptionReportFilters & { programId?: number },
@@ -68,6 +71,7 @@ export const PerceptionReportPanel = forwardRef<
 		externalFilters,
 		hideGenerateButton,
 		requireCommission,
+		allowUnfiltered,
 		onGeneratingChange,
 		generate,
 	},
@@ -114,18 +118,26 @@ export const PerceptionReportPanel = forwardRef<
 	}, [generateMutation.isPending, onGeneratingChange]);
 
 	function handleGenerate() {
-		if (!programId) {
-			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
-			return;
-		}
 		const resolvedCommissionId = externalFilters
 			? externalFilters.commissionId
 			: commission
 				? Number(commission.value)
 				: undefined;
-		if (requireCommission && !resolvedCommissionId) {
-			setToast({ open: true, type: 'error', msg: t('surveys.perception.commissionRequired') });
-			return;
+		const resolvedCampusId = externalFilters
+			? externalFilters.campusId
+			: campus
+				? Number(campus.value)
+				: undefined;
+		const unfiltered = !programId && !resolvedCommissionId && !resolvedCampusId;
+		if (!(allowUnfiltered && unfiltered)) {
+			if (!programId) {
+				setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
+				return;
+			}
+			if (requireCommission && !resolvedCommissionId) {
+				setToast({ open: true, type: 'error', msg: t('surveys.perception.commissionRequired') });
+				return;
+			}
 		}
 		const resolvedLang: 'es' | 'en' = externalFilters
 			? (externalFilters.lang ?? (locale === 'en' ? 'en' : 'es'))
@@ -135,11 +147,7 @@ export const PerceptionReportPanel = forwardRef<
 		generateMutation.mutate({
 			programId,
 			commissionId: resolvedCommissionId,
-			campusId: externalFilters
-				? externalFilters.campusId
-				: campus
-					? Number(campus.value)
-					: undefined,
+			campusId: resolvedCampusId,
 			surveyNumbers: showSurveyNumber
 				? surveyNumbers.map((option) => Number(option.value))
 				: undefined,
