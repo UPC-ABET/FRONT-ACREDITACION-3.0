@@ -98,6 +98,7 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 				ref={panelRef}
 				hideGenerateButton
 				requireCommission
+				allowUnfiltered
 				onGeneratingChange={setGenerating}
 				programId={programId || undefined}
 				generate={async (filters) => {
