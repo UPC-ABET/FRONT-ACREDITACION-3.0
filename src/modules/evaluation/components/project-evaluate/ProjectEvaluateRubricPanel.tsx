@@ -87,17 +87,17 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 		[],
 	);
 
+	// Attendance is shared across every evaluator of the project — whoever marks it first, all
+	// evaluators see and edit the same value, rather than each keeping their own.
 	const initialQualifStatuses = useMemo<Record<number, number | null>>(() => {
 		const result: Record<number, number | null> = {};
 		for (const st of students) {
 			const itemStudent = item.students.find((s) => s.projectStudentId === st.id);
-			const entry = (itemStudent?.evaluationStatuses ?? []).find(
-				(e) => e.evaluatorId === evaluatorId,
-			);
+			const entry = (itemStudent?.evaluationStatuses ?? [])[0];
 			result[st.id] = entry?.qualificationStatusTypeId ?? null;
 		}
 		return result;
-	}, [students, item, evaluatorId]);
+	}, [students, item]);
 
 	const [qualifStatuses, setQualifStatuses] =
 		useState<Record<number, number | null>>(initialQualifStatuses);
