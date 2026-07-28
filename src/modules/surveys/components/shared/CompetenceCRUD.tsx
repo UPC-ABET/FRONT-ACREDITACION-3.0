@@ -280,8 +280,11 @@ export function CompetenceCRUD({
 		},
 	];
 
-	// Show outcomes section: only when not external and commissions are available
-	const showOutcomes = !form.isExternal && commissionGroups.length > 0;
+	// Show outcomes section: only for "specific" competencies (linking to a real outcome is what
+	// makes them specific) — "general" competencies must never surface outcome pickers, or saving
+	// silently reclassifies them as specific (see isSpecificItem).
+	const showOutcomes =
+		competenceType === 'specific' && !form.isExternal && commissionGroups.length > 0;
 
 	return (
 		<div className="space-y-4">
