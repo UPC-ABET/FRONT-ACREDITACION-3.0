@@ -93,6 +93,7 @@ export function GRAReports() {
 
 			<PerceptionReportPanel
 				programId={programId}
+				allowUnfiltered
 				generate={async (filters) => {
 					dashboardMutation.mutate();
 					return generateGRAPerceptionPdf(filters);
