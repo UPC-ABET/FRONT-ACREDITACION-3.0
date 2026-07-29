@@ -20,6 +20,7 @@ import {
 import { PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
+import { TYPE_CODES } from '@/shared/constants';
 import type { CompetenceConfig, CompetenceFormData } from '../../types';
 import { competenceSchema } from '../../schemas/competenceSchema';
 import { MIN_PERFORMANCE_LEVEL } from '../../constants/competence';
@@ -52,9 +53,13 @@ const EMPTY_FORM: Omit<CompetenceFormData, 'academicPeriodId' | 'school'> = {
 	isExternal: false,
 };
 
-/** outcomeId === undefined or 1 means "no real outcome" → general */
-function isSpecificItem(item: CompetenceConfig): boolean {
-	return item.outcomeId != null && item.outcomeId !== 1;
+/**
+ * A competence is "specific" when its outcomeId links to an outcome under a Específica commission
+ * (per Carrera x Comisión). No outcome (undefined/1, the "no real outcome" sentinel) or an outcome
+ * under a General commission (e.g. WASC) both count as general.
+ */
+function isSpecificItem(item: CompetenceConfig, specificOutcomeIds: Set<number>): boolean {
+	return item.outcomeId != null && item.outcomeId !== 1 && specificOutcomeIds.has(item.outcomeId);
 }
 
 export function CompetenceCRUD({
@@ -85,15 +90,34 @@ export function CompetenceCRUD({
 		if (cycleId) onLoad(cycleId, programId);
 	}, [cycleId, programId, onLoad]);
 
-	const { data: commissionGroups = [] } = useQuery({
+	const { data: allCommissionGroups = [] } = useQuery({
 		queryKey: ['gra-outcomes', programId, cycleId],
 		queryFn: () => listGRAOutcomes({ programId: programId as number }),
 		enabled: Boolean(programId) && Boolean(cycleId),
 	});
 
+	// Each commission is configured (Carrera x Comisión) as General or Específica — only show the
+	// outcomes of commissions matching this CRUD's type, so e.g. a General commission (WASC) never
+	// surfaces under the "specific" picker and vice versa.
+	const commissionTypeCode =
+		competenceType === 'specific'
+			? TYPE_CODES.COMMISSION_TYPE.SPECIFIC
+			: TYPE_CODES.COMMISSION_TYPE.GENERAL;
+	const commissionGroups = allCommissionGroups.filter(
+		(g) => g.commissionTypeCode === commissionTypeCode,
+	);
+
+	const specificOutcomeIds = new Set(
+		allCommissionGroups
+			.filter((g) => g.commissionTypeCode === TYPE_CODES.COMMISSION_TYPE.SPECIFIC)
+			.flatMap((g) => g.outcomes.map((o) => o.outcomeId)),
+	);
+
 	// Filter the list by type
 	const filteredItems = competences.filter((item) =>
-		competenceType === 'specific' ? isSpecificItem(item) : !isSpecificItem(item),
+		competenceType === 'specific'
+			? isSpecificItem(item, specificOutcomeIds)
+			: !isSpecificItem(item, specificOutcomeIds),
 	);
 
 	function openAdd() {
@@ -280,11 +304,9 @@ export function CompetenceCRUD({
 		},
 	];
 
-	// Show outcomes section: only for "specific" competencies (linking to a real outcome is what
-	// makes them specific) — "general" competencies must never surface outcome pickers, or saving
-	// silently reclassifies them as specific (see isSpecificItem).
-	const showOutcomes =
-		competenceType === 'specific' && !form.isExternal && commissionGroups.length > 0;
+	// Show the outcomes section for both types, but each only offers outcomes from commissions of
+	// its own type (Específica vs General, per Carrera x Comisión) — see commissionGroups above.
+	const showOutcomes = !form.isExternal && commissionGroups.length > 0;
 
 	return (
 		<div className="space-y-4">

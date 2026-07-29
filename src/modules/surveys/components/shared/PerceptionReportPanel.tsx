@@ -145,7 +145,9 @@ export const PerceptionReportPanel = forwardRef<
 				? 'en'
 				: 'es';
 		generateMutation.mutate({
-			programId,
+			// 0 means "no career selected" (AllProgramsSelect's default) — never a real program id, so
+			// it must not reach the backend as a filter or the "all careers" report comes back empty.
+			programId: programId || undefined,
 			commissionId: resolvedCommissionId,
 			campusId: resolvedCampusId,
 			surveyNumbers: showSurveyNumber
