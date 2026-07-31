@@ -21,7 +21,11 @@ here first if something looks off):
   tabular data, React context for client state
 - **Styling**: Tailwind CSS `^4` (`@import "tailwindcss"`)
 - **Validation**: Zod `^4.4.3`
-- **i18n**: Custom `useI18n()` hook with locale JSON files at `src/language/locales/{es,en}.json`
+- **i18n**: Custom `useI18n()` hook (client components) with locale JSON files at
+  `src/language/locales/{es,en}.json`; server-run code (route `page.tsx` files, the root
+  layout) uses `getServerLocale()` / `translateServer()` from
+  `@/shared/lib/serverLocale.ts`, which reads the same `appLocale` cookie
+  `useI18n()`'s provider persists
 - **Components**: Custom UI primitives in `src/shared/components/ui/`, some based on
   shadcn/ui; `@base-ui/react`, `@headlessui/react`, `radix-ui` as headless building blocks
 - **Other notable deps**: `exceljs` (Excel loads/exports), `jspdf` (PDF export), `recharts`
@@ -408,17 +412,6 @@ Things that are still true today — not fixed, not fixable in this change's sco
   `/tests/*` demo area that no longer match the implemented architecture (see
   [Authentication Architecture](#authentication-architecture)). Not rewritten in this
   change; flagging so it isn't mistaken for current documentation.
-- **`src/shared/constants/app.ts`'s `APP_NAME`/`APP_DESCRIPTION` are not locale-aware**
-  (no `{en, es}` pair) and feed the page `<title>` for every visitor regardless of locale.
-  This is a genuine architectural constraint, not an oversight: it's consumed by the static
-  `metadata` export in the root `src/app/layout.tsx`, which Next.js evaluates server-side
-  before any client locale context exists (`LocaleProvider` is a `'use client'` provider
-  mounted inside that same layout). Making it locale-aware would require adopting
-  per-locale routing (`generateMetadata()` under a `[locale]` segment — the
-  `src/app/[locale]/` folder exists today only as an unused placeholder) — a real feature,
-  not a docs-scope fix. Left as Spanish-only; translating the literal string to English
-  would just change the app's visible name for its Spanish-speaking default audience
-  without fixing the underlying gap.
 
 ## Contradictions Found and Resolved
 
@@ -448,3 +441,19 @@ why — not current gaps.
   components updated. `evaluation/constants/competencyScope.ts` had the same pattern for a
   different reason (see the comment in that file) and was migrated to source its strings
   from the locale JSON instead of hardcoding them, while keeping the constant itself.
+- **The root page `<title>`/`<meta description>` and `<html lang>` were hardcoded to
+  Spanish**, via `APP_NAME`/`APP_DESCRIPTION` constants feeding the static `metadata`
+  export in `src/app/layout.tsx`. This looked like a genuine architectural constraint at
+  first (Next.js evaluates a static `metadata` export server-side, before any client
+  locale context exists) — but `src/shared/lib/serverLocale.ts` (`getServerLocale()` /
+  `translateServer()`, reading the `appLocale` cookie via `next/headers`) already existed
+  and is already used by 5 route `page.tsx` files for exactly this. The root layout was
+  simply never wired into it. Fixed: `layout.tsx` now exports an async
+  `generateMetadata()` using `translateServer('app.name')` /
+  `translateServer('app.description')`, and `RootLayout` itself is async and sets
+  `lang={await getServerLocale()}`. `es.json`/`en.json` already had unused `app.name` /
+  `app.description` keys with the right bilingual content — just never read from anywhere.
+  `APP_NAME`/`APP_DESCRIPTION` were deleted from `src/shared/constants/app.ts` (no longer
+  needed). Manually verified: `curl localhost:3000/` renders `<title>Sistema de
+Acreditación ABET</title>` and `lang="es"` with no cookie; `curl -b appLocale=en
+localhost:3000/` renders `<title>ABET Accreditation System</title>` and `lang="en"`.
