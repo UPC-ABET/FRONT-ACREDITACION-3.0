@@ -400,36 +400,51 @@ here would later be read as authoritative.
 
 ## Known Gaps
 
+Things that are still true today — not fixed, not fixable in this change's scope.
+
 - **No test runner** (see [Commands](#commands) and
   [`POLICIES.md`](./POLICIES.md#verification-gate)).
 - **`README.md` is stale** — describes a `bearerToken`/`localStorage` auth flow and a
   `/tests/*` demo area that no longer match the implemented architecture (see
   [Authentication Architecture](#authentication-architecture)). Not rewritten in this
   change; flagging so it isn't mistaken for current documentation.
-- **`generator/create-module.ts` previously contradicted AGENTS.md** (empty `export {}`
-  placeholders, docblock headers, Spanish strings, default-exported page component). Fixed
-  in this change — see [`POLICIES.md`](./POLICIES.md#generator-vs-policy) for the decision
-  record.
-- **A second, ad-hoc i18n pattern (fixed in this change).** Several `ifcs`/`admin` modules
-  used to define local `{ en: '...', es: '...' }` label-pair objects instead of adding
-  keys to `src/language/locales/{es,en}.json` — `ifcLabels.ts`,
-  `{view,form,finding-view,consult,shared}/*Labels.ts`, `adminLabels.ts`, and
-  `evaluation/constants/competencyScope.ts`. All were migrated to `t('key')` + locale JSON;
-  the constant files were deleted and their consuming components updated. One exception:
-  `competencyScope.ts` is kept as a small constant, but it now sources its strings from the
-  locale JSON at module load (`import esMessages from '@/language/locales/es.json'`) rather
-  than hardcoding them — it genuinely needs both language strings simultaneously (to build
-  an `I18nText`-shaped fallback), which `t()` can't do since it's bound to the active
-  locale, not parameterizable per call.
 - **`src/shared/constants/app.ts`'s `APP_NAME`/`APP_DESCRIPTION` are not locale-aware**
   (no `{en, es}` pair) and feed the page `<title>` for every visitor regardless of locale.
-  Unlike the label objects above, this one is a genuine architectural constraint, not just
-  an unmigrated pattern: it's consumed by the static `metadata` export in the root
-  `src/app/layout.tsx`, which Next.js evaluates server-side before any client locale
-  context exists (`LocaleProvider` is a `'use client'` provider mounted inside that same
-  layout). Making it locale-aware would require adopting per-locale routing
-  (`generateMetadata()` under a `[locale]` segment — the `src/app/[locale]/` folder exists
-  today only as an unused placeholder) — a real feature, not a docs-scope fix. Left as
-  Spanish-only; translating the literal string to English would just change the app's
-  visible name for its Spanish-speaking default audience without fixing the underlying
-  gap.
+  This is a genuine architectural constraint, not an oversight: it's consumed by the static
+  `metadata` export in the root `src/app/layout.tsx`, which Next.js evaluates server-side
+  before any client locale context exists (`LocaleProvider` is a `'use client'` provider
+  mounted inside that same layout). Making it locale-aware would require adopting
+  per-locale routing (`generateMetadata()` under a `[locale]` segment — the
+  `src/app/[locale]/` folder exists today only as an unused placeholder) — a real feature,
+  not a docs-scope fix. Left as Spanish-only; translating the literal string to English
+  would just change the app's visible name for its Spanish-speaking default audience
+  without fixing the underlying gap.
+
+## Contradictions Found and Resolved
+
+Things this change found broken and fixed, kept here as the record of what changed and
+why — not current gaps.
+
+- **`generator/create-module.ts` contradicted AGENTS.md.** It scaffolded every module
+  folder with a docblock-commented `export {}` placeholder, wrote Spanish console output,
+  and generated `export default function Page()`. Fixed to scaffold only the folders that
+  get real content, drop the docblocks, use English output, and keep the page component a
+  named export (with the `app/**/page.tsx` route file re-exporting it as default, since
+  Next.js requires that). See [`POLICIES.md`](./POLICIES.md#generator-vs-policy).
+- **The generator's sidebar-patching was silently broken, found by actually running it.**
+  Two bugs, both fixed: (1) it looked for `src/app/components/app-sidebar.tsx`, but the
+  file is `AppSidebar.tsx` — every run silently skipped the sidebar entirely and logged a
+  warning easy to miss. (2) Its `FolderIcon` import check ran _after_ the nav entry (which
+  itself contains the literal string `"FolderIcon"`) was already inserted into
+  `sidebarContent`, so `!sidebarContent.includes('FolderIcon')` was always false — the
+  import was never added, breaking `tsc` for every generated module's first run. Manually
+  verified after both fixes: `node dist-scripts/generator/create-module.js scratchcheck`
+  now produces a clean `tsc --noEmit` and correctly patches the sidebar.
+- **A second, ad-hoc i18n pattern existed alongside `t('key')` + locale JSON.** Several
+  `ifcs`/`admin` modules defined local `{ en: '...', es: '...' }` label-pair objects
+  instead of adding keys to `src/language/locales/{es,en}.json` — `ifcLabels.ts`,
+  `{view,form,finding-view,consult,shared}/*Labels.ts`, and `adminLabels.ts`. All were
+  migrated to `t('key')` + locale JSON; the constant files were deleted and their consuming
+  components updated. `evaluation/constants/competencyScope.ts` had the same pattern for a
+  different reason (see the comment in that file) and was migrated to source its strings
+  from the locale JSON instead of hardcoding them, while keeping the constant itself.
