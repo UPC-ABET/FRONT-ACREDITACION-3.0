@@ -1,10 +1,17 @@
-# Frontend ABET
+# ABET Frontend
 
-Frontend en Next.js (App Router) para el sistema de acreditacion ABET. Este README describe como funciona el generator, la estructura de la app, i18n, providers y las piezas globales.
+Next.js (App Router) frontend for the ABET accreditation system. This README describes how
+the generator works, the app structure, i18n, providers, and the global pieces.
 
-## Requisitos
+> **This file predates the current architecture in places** (see the Auth guard section
+> below, which still describes a `bearerToken`/`localStorage` flow). For the current,
+> verified state of the codebase, see [`docs/CONTEXT.md`](./docs/CONTEXT.md) and
+> [`docs/POLICIES.md`](./docs/POLICIES.md) — those are kept accurate; this file is a
+> narrative walkthrough that hasn't been fully reconciled with them yet.
 
-- Node.js 18+ (recomendado)
+## Requirements
+
+- Node.js 18+ (recommended)
 - npm / yarn / pnpm
 
 ## Scripts
@@ -16,86 +23,88 @@ npm run start
 npm run lint
 ```
 
-## Estructura principal
+## Main structure
 
 ```
 src/
-  app/                # Rutas y layouts de Next.js (App Router)
-  modules/            # Modulos de dominio (auth, tests, etc.)
-  shared/             # UI y utilidades compartidas
-  providers/          # Contextos globales
-  language/           # i18n (json de traducciones)
+  app/                # Next.js routes and layouts (App Router)
+  modules/            # Domain modules (auth, tests, etc.)
+  shared/              # Shared UI and utilities
+  providers/           # Global contexts
+  language/            # i18n (translation json)
 public/
-  assets/             # Imagenes estaticas (logo, etc.)
+  assets/              # Static images (logo, etc.)
 ```
 
-Notas:
+Notes:
 
-- `src/app` solo orquesta pantallas y conecta modulos (no logica de negocio compleja).
-- `src/modules` contiene logica de dominio, servicios y paginas reutilizables.
-- `src/shared` contiene UI, hooks, utils y tipos globales.
-- `src/providers` centraliza contextos globales.
-- `src/language` contiene los mensajes de i18n.
+- `src/app` only orchestrates screens and wires up modules (no complex business logic).
+- `src/modules` contains domain logic, services, and reusable pages.
+- `src/shared` contains global UI, hooks, utils, and types.
+- `src/providers` centralizes global contexts.
+- `src/language` contains the i18n messages.
 
-## Rutas y layouts (App Router)
+## Routes and layouts (App Router)
 
-- `src/app/layout.tsx`: layout raiz. Inyecta `LocaleProvider` y `LayoutClient`.
-- `src/app/(protected)/layout.tsx`: layout cliente para rutas protegidas.
-- `src/app/[locale]/layout.tsx`: layout de locale (placeholder actual).
-- `src/app/page.tsx`: home. Renderiza `HomeClient`.
+- `src/app/layout.tsx`: root layout. Injects `LocaleProvider` and `LayoutClient`.
+- `src/app/(protected)/layout.tsx`: client layout for protected routes.
+- `src/app/[locale]/layout.tsx`: locale layout (current placeholder).
+- `src/app/page.tsx`: home. Renders `HomeClient`.
 - `src/app/auth/login/page.tsx`: login.
-- `src/app/tests/*`: paginas demo para UI (modals, charts, tables, public).
+- `src/app/tests/*`: demo pages for UI (modals, charts, tables, public).
 
-### Auth guard y middleware
+### Auth guard and middleware
 
-- `middleware.ts` redirige a `/auth/login` si no existe cookie `bearerToken` y la ruta no es `/auth/*`.
-- `useAuthGuard` (en `src/shared/hooks/useAuthGuard.ts`) verifica `bearerToken` en `localStorage` y redirige a login.
-- `LayoutClient` aplica el guard en rutas no-auth y monta `Navbar` + `AppSidebar`.
+- `middleware.ts` redirects to `/auth/login` if the `bearerToken` cookie doesn't exist and
+  the route isn't `/auth/*`.
+- `useAuthGuard` (in `src/shared/hooks/useAuthGuard.ts`) checks `bearerToken` in
+  `localStorage` and redirects to login.
+- `LayoutClient` applies the guard on non-auth routes and mounts `Navbar` + `AppSidebar`.
 
-## Providers globales
+## Global providers
 
-- `LocaleProvider` (i18n) en `src/providers/locale-provider.tsx`.
-- `ABETProvider` en `src/providers/abet-provider.tsx` (estado global de modalidad).
-- `SidebarProvider` re-exporta el provider de UI.
+- `LocaleProvider` (i18n) in `src/providers/locale-provider.tsx`.
+- `ABETProvider` in `src/providers/abet-provider.tsx` (global modality state).
+- `SidebarProvider` re-exports the UI provider.
 
-`LayoutClient` es el punto de composicion de providers globales y layout visual.
+`LayoutClient` is the composition point for global providers and the visual layout.
 
 ## i18n (language / locales)
 
-Los mensajes viven en:
+Messages live in:
 
 - `src/language/locales/es.json`
 - `src/language/locales/en.json`
 
-`LocaleProvider` expone:
+`LocaleProvider` exposes:
 
-- `locale`: `es` o `en`
+- `locale`: `es` or `en`
 - `setLocale(nextLocale)`
-- `t('ruta.clave')`
+- `t('path.key')`
 
-El locale se persiste en:
+The locale is persisted in:
 
-- `localStorage` con la key `app_locale`
+- `localStorage` under the key `app_locale`
 - `document.documentElement.lang`
-- cookie `app_locale` (max-age 1 anio)
+- an `app_locale` cookie (max-age 1 year)
 
-### Agregar una nueva traduccion
+### Adding a new translation
 
-1. Agrega la clave en `es.json` y `en.json`.
-2. Usa `t('tu.clave')` desde componentes o modulos.
-3. Si es texto de UI global, prefierelo en `shared/components`.
+1. Add the key to `es.json` and `en.json`.
+2. Use `t('your.key')` from components or modules.
+3. If it's global UI text, prefer putting it in `shared/components`.
 
-## Sidebar y navegacion
+## Sidebar and navigation
 
-- `AppSidebar` construye el menu usando `t('nav.*')`.
-- Para rutas nuevas, agrega un item en el `navigation` o usa el generator (ver abajo).
+- `AppSidebar` builds the menu using `t('nav.*')`.
+- For new routes, add an item to `navigation` or use the generator (see below).
 
-## Modulos
+## Modules
 
-### Estructura estandar de un modulo
+### Standard module structure
 
 ```
-src/modules/<modulo>/
+src/modules/<module>/
   components/
   constants/
   hooks/
@@ -105,80 +114,87 @@ src/modules/<modulo>/
   index.ts
 ```
 
-### Modulo `auth`
+### `auth` module
 
-- `src/modules/auth/Login.tsx`: pantalla de login.
-- `LoginForm` usa `loginMock` (servicio local) y guarda `bearerToken` en `localStorage`.
-- Credenciales demo actuales (segun `authService.ts`):
+- `src/modules/auth/Login.tsx`: login screen.
+- `LoginForm` uses `loginMock` (a local service) and stores `bearerToken` in
+  `localStorage`.
+- Current demo credentials (per `authService.ts`):
   - `codigo=demo`, `password=demo`
   - `codigo=Admi`, `password=abet123`
 
-### Modulo `tests`
+### `tests` module
 
-Contiene paginas demo de UI para validar componentes compartidos:
+Contains demo UI pages for validating shared components:
 
 - `charts`, `tables`, `modals`, `public`
 
-## Generator de modulos
+## Module generator
 
-El generator crea un modulo completo y la ruta asociada.
+The generator creates a full module and its associated route.
 
-### Compilar scripts
+### Build the scripts
 
 ```bash
 npx tsc -p tsconfig.scripts.json
 ```
 
-### Crear un modulo
+### Create a module
 
 ```bash
-node dist-scripts/generator/crear-modulo.js <nombre-modulo>
+node dist-scripts/generator/create-module.js <module-name>
 ```
 
-### Que genera
+### What it generates
 
-Para `rubricas`, crea:
+For `rubricas`, it creates:
 
-- `src/modules/rubricas/` con subcarpetas y `index.ts` por cada una.
-- `src/modules/rubricas/services/rubricasService.ts` con CRUD basico (usa `NEXT_PUBLIC_API_URL`).
-- `src/modules/rubricas/index.ts` (barrel).
-- `src/app/rubricas/page.tsx` con pagina basica.
-- Agrega un item al `navigation` en `src/app/components/app-sidebar.tsx` (usa `FolderIcon`).
+- `src/modules/rubricas/types/index.ts` and `src/modules/rubricas/services/` (CRUD service
+  using `NEXT_PUBLIC_API_URL`) and `src/modules/rubricas/pages/` (a named-export page
+  component) — only the folders that get real content, per
+  [`docs/POLICIES.md`](./docs/POLICIES.md#code-style) ("no empty placeholder files").
+- `src/modules/rubricas/index.ts` (barrel, re-exporting `pages`/`services`/`types`).
+- `src/app/rubricas/page.tsx`, a thin route file with a default export that re-exports the
+  module's named page component (Next.js requires the route file's default export; the
+  module's own component stays a named export).
+- An item added to `navigation` in `src/app/components/app-sidebar.tsx` (uses `FolderIcon`).
 
-### Notas del generator
+### Generator notes
 
-- Si la ruta ya existe en el sidebar, no la duplica.
-- Si no encuentra `const navigation`, avisa en consola.
-- Para personalizar el service, edita el archivo generado en `services/`.
+- If the route already exists in the sidebar, it isn't duplicated.
+- If `const navigation` isn't found, it warns in the console.
+- To customize the service, edit the generated file in `services/`.
 
-## Configuracion global y constantes
+## Global configuration and constants
 
-- `src/shared/constants/app.ts` define `APP_NAME`, `APP_DESCRIPTION`, `DEFAULT_LOCALE`, `STORAGE_KEYS`, etc.
-- `src/app/layout.tsx` consume esas constantes para `metadata`.
+- `src/shared/constants/app.ts` defines `APP_NAME`, `APP_DESCRIPTION`, `DEFAULT_LOCALE`,
+  `STORAGE_KEYS`, etc.
+- `src/app/layout.tsx` consumes those constants for `metadata`.
 
-## UI compartida
+## Shared UI
 
-`src/shared/components` contiene:
+`src/shared/components` contains:
 
-- Componentes base (Button, Card, Input, Select, Table, Dialogs, etc.)
+- Base components (Button, Card, Input, Select, Table, Dialogs, etc.)
 - Layout (Navbar, Sidebar)
-- `LanguageSwitcher` para cambiar idioma
+- `LanguageSwitcher` for switching language
 
 ## Assets
 
-- Logo en `public/assets/ABETLogo.png`.
+- Logo at `public/assets/ABETLogo.png`.
 
-## Variables de entorno
+## Environment variables
 
-Actualmente se usa:
+Currently in use:
 
-- `NEXT_PUBLIC_API_URL` (generator la usa para construir URLs en services).
+- `NEXT_PUBLIC_API_URL` (used by the generator to build service URLs).
 
-Si agregas mas variables, documentalas aqui y mantenlas en `.env.local`.
+See [`docs/CONTEXT.md`](./docs/CONTEXT.md#environment-variables) for the full,
+Zod-validated list.
 
-## Flujo rapido de desarrollo
+## Quick development flow
 
-1. Inicia el dev server.
-2. Usa el login demo para entrar.
-3. Explora `/tests/*` para ver componentes.
-4. Crea nuevos modulos con el generator cuando sea posible.
+1. Start the dev server.
+2. Use the demo login to sign in.
+3. Explore `/tests/*` to see components.
+4. Create new modules with the generator when possible.
