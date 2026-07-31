@@ -27,10 +27,9 @@ import {
 import { coreQueryKeys, getParameterByCode } from '@/modules/core';
 import { PARAMETER_CODES } from '@/shared';
 import type { I18nText } from '@/shared';
-import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
 
 export default function FindingDetailPage() {
-	const { t, locale: lang } = useI18n();
+	const { t } = useI18n();
 	const router = useRouter();
 	const params = useParams<{ id: string }>();
 	const id = Number(params?.id);
@@ -96,11 +95,11 @@ export default function FindingDetailPage() {
 		<div className="space-y-6">
 			<PageHeader
 				title={data.finding.findingCode}
-				description={L.pageTitle[lang]}
+				description={t('ifcFindings.findingView.pageTitle')}
 				action={
 					<Button variant="ghost" size="lg" onClick={() => router.push('/ifc-findings')}>
 						<ArrowLeftIcon className="h-5 w-5" />
-						{L.btnBack[lang]}
+						{t('ifcFindings.findingView.btn.back')}
 					</Button>
 				}
 			/>
@@ -116,7 +115,7 @@ export default function FindingDetailPage() {
 				}
 			/>
 
-			<Card title={L.sectionActions[lang]}>
+			<Card title={t('ifcFindings.findingView.sectionActions')}>
 				<FindingActionsTable actions={data.actions} />
 			</Card>
 

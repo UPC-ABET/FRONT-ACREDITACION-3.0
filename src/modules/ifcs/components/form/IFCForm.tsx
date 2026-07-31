@@ -17,7 +17,6 @@ import { IFCLearningOutcomeReached } from '../shared/IFCLearningOutcomeReached';
 import { IFCOutcomeResults } from '../shared/IFCOutcomeResults';
 import { PreviousActionsTable } from '../shared/PreviousActionsTable';
 import { SubmitConfirmModal } from '../shared/SubmitConfirmModal';
-import { FORM_LABELS } from './formLabels';
 import { IFCActionsEditor } from './IFCActionsEditor';
 import { IFCFindingsEditor } from './IFCFindingsEditor';
 import { IFCInformationFields } from './IFCInformationFields';
@@ -138,7 +137,7 @@ export function IFCForm(props: Props) {
 			<Card>
 				<div className="rounded-lg border border-zinc-200 bg-zinc-50/60 p-4">
 					<p className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-						{FORM_LABELS.coordinator[lang]}
+						{t('ifcs.form.coordinator')}
 					</p>
 					<p className="mt-1.5 text-base text-zinc-900">
 						{props.prefill.coordinatorName ?? '—'}
@@ -191,13 +190,13 @@ export function IFCForm(props: Props) {
 
 			<div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap justify-end gap-3 border-t border-zinc-200 bg-white/95 px-4 py-4 backdrop-blur sm:relative sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
 				<Button variant="ghost" size="lg" onClick={() => router.back()}>
-					{FORM_LABELS.btnCancel[lang]}
+					{t('ifcs.form.btn.cancel')}
 				</Button>
 				<Button variant="secondary" size="lg" onClick={() => void onSave(false)}>
-					{FORM_LABELS.btnSave[lang]}
+					{t('ifcs.form.btn.save')}
 				</Button>
 				<Button variant="primary" size="lg" onClick={() => setModalOpen(true)}>
-					{FORM_LABELS.btnSubmit[lang]}
+					{t('ifcs.form.btn.submit')}
 				</Button>
 			</div>
 

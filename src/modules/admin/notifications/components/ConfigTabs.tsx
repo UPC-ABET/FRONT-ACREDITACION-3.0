@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { Tabs } from '@/shared';
 import { useI18n } from '@/providers';
 import type { CoreType, NotificationConfig } from '../types';
-import { TRIGGER_FALLBACK_LABEL } from './adminLabels';
 import { ConfigEditor } from './ConfigEditor';
 
 type Props = {
@@ -13,22 +12,25 @@ type Props = {
 	configs: NotificationConfig[];
 };
 
-function labelFor(c: CoreType, lang: string): string {
-	const fallback = TRIGGER_FALLBACK_LABEL[c.code]?.[lang as 'es' | 'en'];
-	return c.name?.[lang] ?? c.name?.es ?? fallback ?? c.code;
+function labelFor(c: CoreType, lang: string, t: (key: string) => string): string {
+	if (c.name?.[lang]) return c.name[lang];
+	if (c.name?.es) return c.name.es;
+	const key = `admin.notify.trigger.${c.code}`;
+	const translated = t(key);
+	return translated === key ? c.code : translated;
 }
 
 export function ConfigTabs({ triggers, statuses, configs }: Props) {
 	const { t, locale: lang } = useI18n();
 
 	const triggerTabs = useMemo(
-		() => triggers.map((tr) => ({ id: String(tr.id), label: labelFor(tr, lang) })),
-		[triggers, lang],
+		() => triggers.map((tr) => ({ id: String(tr.id), label: labelFor(tr, lang, t) })),
+		[triggers, lang, t],
 	);
 
 	const statusItems = useMemo(
-		() => statuses.map((s) => ({ id: String(s.id), label: labelFor(s, lang) })),
-		[statuses, lang],
+		() => statuses.map((s) => ({ id: String(s.id), label: labelFor(s, lang, t) })),
+		[statuses, lang, t],
 	);
 
 	const [activeTriggerState, setActiveTrigger] = useState<string>('');

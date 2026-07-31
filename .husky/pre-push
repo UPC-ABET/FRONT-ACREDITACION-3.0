@@ -1,0 +1,12 @@
+protected_branches="develop staging production"
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+	branch=$(echo "$remote_ref" | sed 's|^refs/heads/||')
+	for protected in $protected_branches; do
+		if [ "$branch" = "$protected" ]; then
+			echo "pre-push: direct pushes to '$protected' are blocked. Open a PR against develop instead." >&2
+			echo "See docs/POLICIES.md#git--commits." >&2
+			exit 1
+		fi
+	done
+done

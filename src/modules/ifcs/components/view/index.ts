@@ -4,4 +4,3 @@ export * from './IFCInformationBlock';
 export * from './IFCFindingsTable';
 export * from './IFCActionsTable';
 export * from './IFCActionButtons';
-export * from './viewLabels';

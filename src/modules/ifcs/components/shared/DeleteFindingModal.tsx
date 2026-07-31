@@ -2,7 +2,6 @@
 
 import { ConfirmDialog } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { CONSULT_LABELS } from '../consult/consultLabels';
 
 type Props = {
 	target: { id: number } | null;
@@ -12,17 +11,17 @@ type Props = {
 };
 
 export function DeleteFindingModal({ target, onConfirm, onClose, submitting }: Props) {
-	const { locale: lang } = useI18n();
+	const { t } = useI18n();
 
 	return (
 		<ConfirmDialog
 			isOpen={target !== null}
 			onClose={onClose}
-			title={CONSULT_LABELS.deleteModalTitle[lang]}
-			message={CONSULT_LABELS.deleteModalBody[lang]}
+			title={t('ifcFindings.deleteModal.title')}
+			message={t('ifcFindings.deleteModal.body')}
 			onConfirm={onConfirm}
-			confirmLabel={CONSULT_LABELS.deleteModalConfirm[lang]}
-			declineLabel={CONSULT_LABELS.deleteModalCancel[lang]}
+			confirmLabel={t('ifcFindings.deleteModal.confirm')}
+			declineLabel={t('ifcFindings.deleteModal.cancel')}
 			onDecline={onClose}
 			isLoading={submitting}
 		/>

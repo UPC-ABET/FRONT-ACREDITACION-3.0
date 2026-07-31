@@ -2,7 +2,6 @@
 
 import { useI18n } from '@/providers';
 import { Button } from '@/shared/components';
-import { VIEW_LABELS } from './viewLabels';
 import { TYPE_CODES } from '@/shared/constants';
 import type { IFCHeader } from '../../types';
 
@@ -57,33 +56,33 @@ export function IFCActionButtons({
 	onEdit,
 	onBack,
 }: Props) {
-	const { locale: lang } = useI18n();
+	const { t } = useI18n();
 
 	return (
 		<div className="flex flex-wrap items-center justify-end gap-3 pt-2">
 			{flags.showBack && (
 				<Button variant="secondary" size="lg" onClick={onBack} disabled={disabled}>
-					{VIEW_LABELS.btnBack[lang]}
+					{t('ifcs.view.btn.back')}
 				</Button>
 			)}
 			{flags.showEdit && (
 				<Button variant="surface" size="lg" onClick={onEdit} disabled={disabled}>
-					{VIEW_LABELS.btnEdit[lang]}
+					{t('ifcs.view.btn.edit')}
 				</Button>
 			)}
 			{flags.showReject && (
 				<Button variant="warning" size="lg" onClick={onReject} disabled={disabled}>
-					{VIEW_LABELS.btnReject[lang]}
+					{t('ifcs.view.btn.reject')}
 				</Button>
 			)}
 			{flags.showApprove && (
 				<Button variant="primary" size="lg" onClick={onApprove} disabled={disabled}>
-					{VIEW_LABELS.btnApprove[lang]}
+					{t('ifcs.view.btn.approve')}
 				</Button>
 			)}
 			{flags.showSubmit && (
 				<Button variant="primary" size="lg" onClick={onSubmit} disabled={disabled}>
-					{VIEW_LABELS.btnSubmit[lang]}
+					{t('ifcs.view.btn.submit')}
 				</Button>
 			)}
 		</div>

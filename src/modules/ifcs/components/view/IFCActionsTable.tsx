@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, Card, DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { VIEW_LABELS } from './viewLabels';
 import type { Finding, FindingAction } from '../../types';
 
 type ActionRow = FindingAction & { parentFindingCode: string };
@@ -12,7 +11,7 @@ type ActionRow = FindingAction & { parentFindingCode: string };
 type Props = { findings: Finding[] };
 
 export function IFCActionsTable({ findings }: Props) {
-	const { locale: lang } = useI18n();
+	const { t, locale: lang } = useI18n();
 
 	const data = useMemo<ActionRow[]>(
 		() => findings.flatMap((f) => f.actions.map((a) => ({ ...a, parentFindingCode: f.code }))),
@@ -21,10 +20,10 @@ export function IFCActionsTable({ findings }: Props) {
 
 	const columns = useMemo<ColumnDef<ActionRow>[]>(
 		() => [
-			{ accessorKey: 'code', header: VIEW_LABELS.colCode[lang] },
+			{ accessorKey: 'code', header: t('ifcs.view.col.code') },
 			{
 				id: 'description',
-				header: VIEW_LABELS.colDescription[lang],
+				header: t('ifcs.view.col.description'),
 				accessorFn: (row) => row.description?.[lang] ?? row.description?.es ?? '',
 				cell: ({ row }) => (
 					<span className="whitespace-pre-line leading-relaxed">
@@ -35,7 +34,7 @@ export function IFCActionsTable({ findings }: Props) {
 			{
 				id: 'completeness',
 				accessorFn: (row) => row.completeness.code,
-				header: VIEW_LABELS.colCompleteness[lang],
+				header: t('ifcs.view.col.completeness'),
 				cell: ({ row }) => (
 					<Badge color={row.original.completeness.color}>
 						{row.original.completeness.name?.[lang] ?? row.original.completeness.name?.es ?? ''}
@@ -44,14 +43,14 @@ export function IFCActionsTable({ findings }: Props) {
 			},
 			{
 				accessorKey: 'parentFindingCode',
-				header: VIEW_LABELS.colFinding[lang],
+				header: t('ifcs.view.col.finding'),
 			},
 		],
-		[lang],
+		[t, lang],
 	);
 
 	return (
-		<Card title={VIEW_LABELS.sectionActions[lang]}>
+		<Card title={t('ifcs.view.section.actions')}>
 			<div className="overflow-x-auto">
 				<DataTable<ActionRow, unknown>
 					columns={columns}

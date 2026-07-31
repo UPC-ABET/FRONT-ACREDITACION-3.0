@@ -385,14 +385,38 @@
 		},
 		"view": {
 			"col": {
-				"completeness": "Completeness"
+				"completeness": "Completeness",
+				"code": "Code",
+				"description": "Description",
+				"criticality": "Criticality",
+				"finding": "Finding"
 			},
 			"toast": {
 				"submitted": "IFC submitted for review",
 				"approved": "IFC approved",
 				"rejected": "IFC returned to the coordinator"
 			},
-			"rejectEmpty": "An observation is required to reject"
+			"rejectEmpty": "An observation is required to reject",
+			"header": {
+				"coordinator": "Coordinator",
+				"created": "Created",
+				"status": "Status",
+				"by": "by",
+				"rejectionReason": "Rejection reason",
+				"observation": "Observation"
+			},
+			"section": {
+				"findings": "Findings",
+				"actions": "Actions"
+			},
+			"btn": {
+				"back": "Back to list",
+				"edit": "Edit",
+				"reject": "Reject",
+				"approve": "Approve",
+				"submit": "Submit",
+				"export": "Export"
+			}
 		},
 		"pdf": {
 			"downloadPdf": "Download PDF",
@@ -415,7 +439,28 @@
 				"requiredFields": "Required fields are missing or empty",
 				"findingIncomplete": "Every finding needs a description and a criticality",
 				"actionIncomplete": "Every action needs a description and a linked finding"
-			}
+			},
+			"coordinator": "Coordinator",
+			"btn": {
+				"cancel": "Cancel",
+				"save": "Save",
+				"submit": "Submit",
+				"addFinding": "Add Finding",
+				"addAction": "Add Action",
+				"delete": "Delete"
+			},
+			"section": {
+				"findings": "Findings",
+				"actions": "Actions"
+			},
+			"findingPlaceholder": "Finding",
+			"actionPlaceholder": "Action",
+			"col": {
+				"description": "Description",
+				"criticality": "Criticality",
+				"finding": "Finding"
+			},
+			"selectCriticality": "Select criticality"
 		},
 		"submit": {
 			"modal": {
@@ -464,6 +509,24 @@
 			"saveFailed": "Could not save the IFC",
 			"bootstrapFailed": "Could not load the form",
 			"generic": "Something went wrong"
+		},
+		"chartIncomplete": "The organization chart is incomplete or has not been uploaded yet. Please contact the administrator.",
+		"shared": {
+			"sectionOutcome": "Course Achievement Results",
+			"achievedOutcome": "Achieved Outcome",
+			"studentOutcome": "Student Outcome",
+			"sectionPreviousActions": "Previous Actions",
+			"colCode": "Code",
+			"colDescription": "Description",
+			"colFinding": "Finding",
+			"colCompleteness": "Completeness",
+			"evidence": {
+				"col": "Evidence",
+				"add": "Add evidence",
+				"edit": "Edit evidence",
+				"view": "View evidence",
+				"modalTitle": "Evidence · "
+			}
 		}
 	},
 	"ifcFindings": {
@@ -493,7 +556,11 @@
 			"col": {
 				"actionCode": "Code",
 				"actionDesc": "Description",
-				"actionStatus": "Status"
+				"actionStatus": "Status",
+				"code": "Code",
+				"period": "Academic Period",
+				"criticality": "Criticality",
+				"description": "Description"
 			},
 			"actionsEmpty": "No actions associated",
 			"toast": {
@@ -501,13 +568,29 @@
 			},
 			"err": {
 				"descriptionEmpty": "Description must have at least one language filled"
-			}
+			},
+			"pageTitle": "Finding",
+			"sectionGeneral": "General Information",
+			"btn": {
+				"delete": "Delete",
+				"edit": "Edit",
+				"cancel": "Cancel",
+				"save": "Save",
+				"back": "Back to list"
+			},
+			"sectionActions": "Associated Improvement Actions"
 		},
 		"error": {
 			"listFailed": "Could not load findings",
 			"deleteFailed": "Could not delete the finding",
 			"viewFailed": "Could not load the finding",
 			"patchFailed": "Could not save the finding"
+		},
+		"deleteModal": {
+			"title": "Delete this finding?",
+			"body": "This will also delete the finding's actions and its links to the IFC. This action cannot be undone.",
+			"confirm": "Delete",
+			"cancel": "Cancel"
 		}
 	},
 	"admin": {
@@ -1001,6 +1084,10 @@
 					"status": "Status",
 					"statusPlaceholder": "All"
 				}
+			},
+			"trigger": {
+				"TG1002-T001": "Manual",
+				"TG1002-T002": "Auto status change"
 			}
 		},
 		"params": {
@@ -1881,6 +1968,10 @@
 				"next": "Next",
 				"error": {
 					"loadTypes": "Could not load evaluation types."
+				},
+				"competencyScope": {
+					"single": "Single competency",
+					"multiple": "Multiple competency"
 				}
 			},
 			"step3": {

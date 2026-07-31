@@ -4,7 +4,6 @@ import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { Button, Card, I18nTextField, Select, TableEmptyState, Title } from '@/shared';
 import type { CriticalityOption, FormFinding } from '@/modules';
-import { FORM_LABELS } from '@/modules';
 
 type Props = {
 	findings: FormFinding[];
@@ -15,25 +14,25 @@ type Props = {
 };
 
 export function IFCFindingsEditor({ findings, criticalities, onAdd, onUpdate, onDelete }: Props) {
-	const { locale: lang } = useI18n();
+	const { t, locale: lang } = useI18n();
+	const sectionTitle = t('ifcs.form.section.findings');
+	const addLabel = t('ifcs.form.btn.addFinding');
 
 	return (
 		<section className="space-y-5">
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<Title
-					title={FORM_LABELS.sectionFindings[lang]}
+					title={sectionTitle}
 					className="[&_h2]:text-lg [&_h2]:font-bold [&_h2]:uppercase [&_h2]:tracking-wide [&_h2]:text-zinc-900"
 				/>
 				<Button variant="secondary" size="lg" onClick={onAdd}>
 					<PlusIcon className="h-5 w-5" />
-					{FORM_LABELS.btnAddFinding[lang]}
+					{addLabel}
 				</Button>
 			</div>
 
 			{findings.length === 0 && (
-				<TableEmptyState
-					message={`${FORM_LABELS.sectionFindings[lang]} — ${FORM_LABELS.btnAddFinding[lang].toLowerCase()}`}
-				/>
+				<TableEmptyState message={`${sectionTitle} — ${addLabel.toLowerCase()}`} />
 			)}
 
 			<div className="space-y-4">
@@ -53,14 +52,14 @@ export function IFCFindingsEditor({ findings, criticalities, onAdd, onUpdate, on
 										<span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700">
 											{idx + 1}
 										</span>
-										{FORM_LABELS.findingPlaceholder[lang]}
+										{t('ifcs.form.findingPlaceholder')}
 									</span>
 									<Button
 										variant="ghost"
 										size="md"
 										onClick={() => onDelete(f.tempId)}
-										aria-label={FORM_LABELS.btnDelete[lang]}
-										title={FORM_LABELS.btnDelete[lang]}
+										aria-label={t('ifcs.form.btn.delete')}
+										title={t('ifcs.form.btn.delete')}
 										className="text-zinc-500 hover:text-red-600">
 										<TrashIcon className="h-5 w-5" />
 									</Button>
@@ -68,15 +67,15 @@ export function IFCFindingsEditor({ findings, criticalities, onAdd, onUpdate, on
 
 								<div className="space-y-5 p-5">
 									<I18nTextField
-										label={FORM_LABELS.colDescription[lang]}
+										label={t('ifcs.form.col.description')}
 										required
 										value={f.description}
 										onChange={(next) => onUpdate(f.tempId, { description: next })}
 									/>
 
 									<Select
-										label={FORM_LABELS.colCriticality[lang]}
-										placeholder={FORM_LABELS.selectCriticality[lang]}
+										label={t('ifcs.form.col.criticality')}
+										placeholder={t('ifcs.form.selectCriticality')}
 										value={criticalityOption ?? null}
 										options={criticalities.map((c) => ({
 											value: c.code,

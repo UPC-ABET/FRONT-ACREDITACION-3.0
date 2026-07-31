@@ -24,7 +24,6 @@ import { useABET, useI18n, useSchoolSourceData, useSchoolSourceOverride } from '
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
 import { TYPE_CODES } from '@/shared/constants';
-import { ORG_LABELS } from '../constants';
 import {
 	useIFCList,
 	useIfcNotify,
@@ -353,7 +352,7 @@ export function IFCDashboard() {
 			{chartIncomplete && (
 				<Alert variant="destructive" className="flex items-start gap-3 text-base">
 					<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
-					<p>{ORG_LABELS.chartIncomplete[lang]}</p>
+					<p>{t('ifcs.chartIncomplete')}</p>
 				</Alert>
 			)}
 

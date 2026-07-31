@@ -1,5 +1,6 @@
 import React from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
+import type { Metadata } from 'next';
 import './globals.css';
 import {
 	AuthProvider,
@@ -9,7 +10,7 @@ import {
 	GlobalFiltersVisibilityProvider,
 } from '@/providers';
 import LayoutClient from '@/app/components/LayoutClient';
-import { APP_DESCRIPTION, APP_NAME, DEFAULT_LOCALE } from '@/shared/constants';
+import { getServerLocale, translateServer } from '@/shared/lib/serverLocale';
 
 // TODO (tech debt): app-wide force-dynamic to bypass Next 16's `useSearchParams()`
 // prerender bailout. Works because this is an auth-gated, client-rendered SPA, but
@@ -28,23 +29,29 @@ const geistMono = Geist_Mono({
 	subsets: ['latin'],
 });
 
-export const metadata = {
-	title: {
-		default: APP_NAME,
-		template: `%s - ${APP_NAME}`,
-	},
-	description: APP_DESCRIPTION,
-	icons: {
-		icon: '/assets/icon_upc.svg',
-		shortcut: '/assets/icon_upc.svg',
-		apple: '/assets/icon_upc.svg',
-	},
-};
+export async function generateMetadata(): Promise<Metadata> {
+	const appName = await translateServer('app.name');
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+	return {
+		title: {
+			default: appName,
+			template: `%s - ${appName}`,
+		},
+		description: await translateServer('app.description'),
+		icons: {
+			icon: '/assets/icon_upc.svg',
+			shortcut: '/assets/icon_upc.svg',
+			apple: '/assets/icon_upc.svg',
+		},
+	};
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+	const locale = await getServerLocale();
+
 	return (
 		<html
-			lang={DEFAULT_LOCALE}
+			lang={locale}
 			className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
 			<body className="h-full bg-zinc-50 text-zinc-900">
 				<QueryProvider>
