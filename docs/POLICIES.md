@@ -206,13 +206,12 @@ architecture (`AuthProvider`, `useAuth()`, `SessionGuard`).
 - Locale files: `src/language/locales/es.json` and `src/language/locales/en.json`.
 - Error codes from the backend (like `error.ifc.notFound`) are also i18n keys — add them to
   both locale files.
-- **Never hardcode Spanish (or English) strings** in components, services, or toasts. A
-  local `{ en, es }` label-object constant (instead of `t('key')` + locale JSON) is not a
-  sanctioned alternative — it was a pre-existing gap in some `ifcs`/`admin` files, migrated
-  to `t('key')` as part of introducing this file. See
-  [`CONTEXT.md`](./CONTEXT.md#known-gaps) for the one remaining exception
-  (`app.ts`'s static metadata) and why it's a real architectural constraint, not an
-  oversight.
+- **Never hardcode Spanish (or English) strings** in components, services, or toasts. Don't
+  introduce a local `{ en, es }` label-object constant as an alternative to `t('key')` +
+  locale JSON — some `ifcs`/`admin` files did this before this file existed; they've since
+  been migrated to `t('key')`. See [`CONTEXT.md`](./CONTEXT.md#known-gaps) for the one
+  remaining exception (`app.ts`'s static metadata) and why it's a real architectural
+  constraint, not an oversight.
 - Services throw i18n keys, never localized text: `throw new ApiError('ifcs.error.createFailed')`.
 
 ---

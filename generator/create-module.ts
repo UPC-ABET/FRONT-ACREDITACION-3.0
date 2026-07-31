@@ -97,7 +97,7 @@ export default ${pageComponentName};
 
 fs.writeFileSync(path.join(appPageDir, 'page.tsx'), appPageContent, { encoding: 'utf8' });
 
-const sidebarPath = path.join(projectRoot, 'src/app/components/app-sidebar.tsx');
+const sidebarPath = path.join(projectRoot, 'src/app/components/AppSidebar.tsx');
 
 if (fs.existsSync(sidebarPath)) {
 	let sidebarContent = fs.readFileSync(sidebarPath, 'utf8');
@@ -131,12 +131,14 @@ if (fs.existsSync(sidebarPath)) {
 			if (closingIndex === -1) {
 				console.warn('Could not find the closing bracket of the navigation array.');
 			} else {
+				const hasFolderIconImport = sidebarContent.includes('FolderIcon');
+
 				sidebarContent =
 					sidebarContent.slice(0, closingIndex) +
 					`\n${navEntry}\n` +
 					sidebarContent.slice(closingIndex);
 
-				if (!sidebarContent.includes('FolderIcon')) {
+				if (!hasFolderIconImport) {
 					sidebarContent = sidebarContent.replace(
 						/(import \{[^}]+)(} from '@heroicons\/react\/24\/outline')/,
 						`$1  FolderIcon,\n$2`,

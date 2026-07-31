@@ -84,7 +84,9 @@ export const ${moduleName}Service = {
 	},
 };
 `;
-fs.writeFileSync(path.join(basePath, 'services', `${moduleName}Service.ts`), serviceContent, { encoding: 'utf8' });
+fs.writeFileSync(path.join(basePath, 'services', `${moduleName}Service.ts`), serviceContent, {
+    encoding: 'utf8',
+});
 fs.writeFileSync(path.join(basePath, 'services', 'index.ts'), `export * from './${moduleName}Service';\n`, { encoding: 'utf8' });
 const pageComponentName = `${moduleNameCapitalized}Page`;
 const pageContent = `export function ${pageComponentName}() {
@@ -107,7 +109,7 @@ const appPageContent = `import { ${pageComponentName} } from '@/modules/${module
 export default ${pageComponentName};
 `;
 fs.writeFileSync(path.join(appPageDir, 'page.tsx'), appPageContent, { encoding: 'utf8' });
-const sidebarPath = path.join(projectRoot, 'src/app/components/app-sidebar.tsx');
+const sidebarPath = path.join(projectRoot, 'src/app/components/AppSidebar.tsx');
 if (fs.existsSync(sidebarPath)) {
     let sidebarContent = fs.readFileSync(sidebarPath, 'utf8');
     const navEntry = `  { name: '${moduleNameCapitalized}', href: '/${moduleName}', icon: FolderIcon },`;
@@ -140,11 +142,12 @@ if (fs.existsSync(sidebarPath)) {
                 console.warn('Could not find the closing bracket of the navigation array.');
             }
             else {
+                const hasFolderIconImport = sidebarContent.includes('FolderIcon');
                 sidebarContent =
                     sidebarContent.slice(0, closingIndex) +
                         `\n${navEntry}\n` +
                         sidebarContent.slice(closingIndex);
-                if (!sidebarContent.includes('FolderIcon')) {
+                if (!hasFolderIconImport) {
                     sidebarContent = sidebarContent.replace(/(import \{[^}]+)(} from '@heroicons\/react\/24\/outline')/, `$1  FolderIcon,\n$2`);
                 }
                 fs.writeFileSync(sidebarPath, sidebarContent, { encoding: 'utf8' });
