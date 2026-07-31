@@ -410,20 +410,26 @@ here would later be read as authoritative.
   placeholders, docblock headers, Spanish strings, default-exported page component). Fixed
   in this change — see [`POLICIES.md`](./POLICIES.md#generator-vs-policy) for the decision
   record.
-- **A second, ad-hoc i18n pattern exists alongside `t('key')` + locale JSON.** Several
-  modules define local `{ en: '...', es: '...' }` label-pair objects instead of adding
-  keys to `src/language/locales/{es,en}.json`:
-  `src/modules/ifcs/constants/ifcLabels.ts`,
-  `src/modules/ifcs/components/{view,form,finding-view,consult,shared}/*Labels.ts`, and
-  `src/modules/admin/notifications/components/adminLabels.ts`. This is a real deviation
-  from the i18n rule in [`POLICIES.md`](./POLICIES.md#i18n) — but the `es` values are the
-  actual Spanish-locale UI text these screens render, so removing or translating them
-  would break the Spanish UI (the app's default locale). Migrating these to the locale
-  JSON files is a legitimate follow-up change (touches every component that reads these
-  objects by locale key), not attempted here.
-- **`src/shared/constants/app.ts`'s `APP_NAME`/`APP_DESCRIPTION` are not locale-aware at
-  all** (no `{en, es}` pair, unlike the pattern above) and feed the page `<title>` for
-  every visitor regardless of locale. Same follow-up as above would give them a proper
-  `{en, es}` pair or a locale key; left as Spanish-only here since translating them
-  would change the app's visible name to English for its Spanish-speaking default
-  audience — a product decision, not a docs one.
+- **A second, ad-hoc i18n pattern (fixed in this change).** Several `ifcs`/`admin` modules
+  used to define local `{ en: '...', es: '...' }` label-pair objects instead of adding
+  keys to `src/language/locales/{es,en}.json` — `ifcLabels.ts`,
+  `{view,form,finding-view,consult,shared}/*Labels.ts`, `adminLabels.ts`, and
+  `evaluation/constants/competencyScope.ts`. All were migrated to `t('key')` + locale JSON;
+  the constant files were deleted and their consuming components updated. One exception:
+  `competencyScope.ts` is kept as a small constant, but it now sources its strings from the
+  locale JSON at module load (`import esMessages from '@/language/locales/es.json'`) rather
+  than hardcoding them — it genuinely needs both language strings simultaneously (to build
+  an `I18nText`-shaped fallback), which `t()` can't do since it's bound to the active
+  locale, not parameterizable per call.
+- **`src/shared/constants/app.ts`'s `APP_NAME`/`APP_DESCRIPTION` are not locale-aware**
+  (no `{en, es}` pair) and feed the page `<title>` for every visitor regardless of locale.
+  Unlike the label objects above, this one is a genuine architectural constraint, not just
+  an unmigrated pattern: it's consumed by the static `metadata` export in the root
+  `src/app/layout.tsx`, which Next.js evaluates server-side before any client locale
+  context exists (`LocaleProvider` is a `'use client'` provider mounted inside that same
+  layout). Making it locale-aware would require adopting per-locale routing
+  (`generateMetadata()` under a `[locale]` segment — the `src/app/[locale]/` folder exists
+  today only as an unused placeholder) — a real feature, not a docs-scope fix. Left as
+  Spanish-only; translating the literal string to English would just change the app's
+  visible name for its Spanish-speaking default audience without fixing the underlying
+  gap.

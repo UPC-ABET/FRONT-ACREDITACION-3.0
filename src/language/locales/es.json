@@ -385,14 +385,38 @@
 		},
 		"view": {
 			"col": {
-				"completeness": "Completitud"
+				"completeness": "Completitud",
+				"code": "Código",
+				"description": "Descripción",
+				"criticality": "Criticidad",
+				"finding": "Hallazgo"
 			},
 			"toast": {
 				"submitted": "IFC enviado a revisión",
 				"approved": "IFC aprobado",
 				"rejected": "IFC devuelto al coordinador"
 			},
-			"rejectEmpty": "La observación es obligatoria para rechazar"
+			"rejectEmpty": "La observación es obligatoria para rechazar",
+			"header": {
+				"coordinator": "Docente",
+				"created": "Creado",
+				"status": "Estado",
+				"by": "por",
+				"rejectionReason": "Motivo de rechazo",
+				"observation": "Observación"
+			},
+			"section": {
+				"findings": "Hallazgos",
+				"actions": "Acciones"
+			},
+			"btn": {
+				"back": "Volver al listado",
+				"edit": "Editar",
+				"reject": "Rechazar",
+				"approve": "Aprobar",
+				"submit": "Enviar",
+				"export": "Exportar"
+			}
 		},
 		"pdf": {
 			"downloadPdf": "Descargar PDF",
@@ -415,7 +439,28 @@
 				"requiredFields": "Hay campos obligatorios sin completar",
 				"findingIncomplete": "Cada hallazgo necesita descripción y criticidad",
 				"actionIncomplete": "Cada acción necesita descripción y un hallazgo enlazado"
-			}
+			},
+			"coordinator": "Docente",
+			"btn": {
+				"cancel": "Cancelar",
+				"save": "Guardar",
+				"submit": "Enviar",
+				"addFinding": "Agregar Hallazgo",
+				"addAction": "Agregar Acción",
+				"delete": "Eliminar"
+			},
+			"section": {
+				"findings": "Hallazgos",
+				"actions": "Acciones"
+			},
+			"findingPlaceholder": "Hallazgo",
+			"actionPlaceholder": "Acción",
+			"col": {
+				"description": "Descripción",
+				"criticality": "Criticidad",
+				"finding": "Hallazgo"
+			},
+			"selectCriticality": "Seleccionar criticidad"
 		},
 		"submit": {
 			"modal": {
@@ -464,6 +509,24 @@
 			"saveFailed": "No se pudo guardar el IFC",
 			"bootstrapFailed": "No se pudo cargar el formulario",
 			"generic": "Ocurrió un error"
+		},
+		"chartIncomplete": "El organigrama está incompleto o aún no ha sido cargado. Por favor, contacte al administrador.",
+		"shared": {
+			"sectionOutcome": "Resultado de los logros del Curso",
+			"achievedOutcome": "Resultado Alcanzado",
+			"studentOutcome": "Student Outcome",
+			"sectionPreviousActions": "Acciones Previas",
+			"colCode": "Código",
+			"colDescription": "Descripción",
+			"colFinding": "Hallazgo",
+			"colCompleteness": "Completitud",
+			"evidence": {
+				"col": "Evidencia",
+				"add": "Agregar evidencia",
+				"edit": "Editar evidencia",
+				"view": "Ver evidencia",
+				"modalTitle": "Evidencia · "
+			}
 		}
 	},
 	"ifcFindings": {
@@ -493,7 +556,11 @@
 			"col": {
 				"actionCode": "Código",
 				"actionDesc": "Descripción",
-				"actionStatus": "Estado"
+				"actionStatus": "Estado",
+				"code": "Código",
+				"period": "Período Académico",
+				"criticality": "Criticidad",
+				"description": "Descripción"
 			},
 			"actionsEmpty": "No hay acciones asociadas",
 			"toast": {
@@ -501,13 +568,29 @@
 			},
 			"err": {
 				"descriptionEmpty": "La descripción debe tener al menos un idioma completado"
-			}
+			},
+			"pageTitle": "Hallazgo",
+			"sectionGeneral": "Información General",
+			"btn": {
+				"delete": "Eliminar",
+				"edit": "Editar",
+				"cancel": "Cancelar",
+				"save": "Guardar",
+				"back": "Volver al listado"
+			},
+			"sectionActions": "Acciones de Mejora Asociadas"
 		},
 		"error": {
 			"listFailed": "No se pudo cargar la lista de hallazgos",
 			"deleteFailed": "No se pudo eliminar el hallazgo",
 			"viewFailed": "No se pudo cargar el hallazgo",
 			"patchFailed": "No se pudo guardar el hallazgo"
+		},
+		"deleteModal": {
+			"title": "¿Eliminar este hallazgo?",
+			"body": "También se eliminarán las acciones del hallazgo y sus enlaces al IFC. Esta acción no se puede deshacer.",
+			"confirm": "Eliminar",
+			"cancel": "Cancelar"
 		}
 	},
 	"admin": {
@@ -1001,6 +1084,10 @@
 					"status": "Estado",
 					"statusPlaceholder": "Todos"
 				}
+			},
+			"trigger": {
+				"TG1002-T001": "Manual",
+				"TG1002-T002": "Cambio de estado automático"
 			}
 		},
 		"params": {
@@ -1881,6 +1968,10 @@
 				"next": "Siguiente",
 				"error": {
 					"loadTypes": "No se pudieron cargar los tipos de evaluación."
+				},
+				"competencyScope": {
+					"single": "Única competencia",
+					"multiple": "Múltiple competencia"
 				}
 			},
 			"step3": {

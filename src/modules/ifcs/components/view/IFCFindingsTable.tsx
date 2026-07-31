@@ -4,20 +4,19 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, Card, DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { VIEW_LABELS } from './viewLabels';
 import type { Finding } from '../../types';
 
 type Props = { findings: Finding[] };
 
 export function IFCFindingsTable({ findings }: Props) {
-	const { locale: lang } = useI18n();
+	const { t, locale: lang } = useI18n();
 
 	const columns = useMemo<ColumnDef<Finding>[]>(
 		() => [
-			{ accessorKey: 'code', header: VIEW_LABELS.colCode[lang] },
+			{ accessorKey: 'code', header: t('ifcs.view.col.code') },
 			{
 				id: 'description',
-				header: VIEW_LABELS.colDescription[lang],
+				header: t('ifcs.view.col.description'),
 				accessorFn: (row) => row.description?.[lang] ?? row.description?.es ?? '',
 				cell: ({ row }) => (
 					<span className="whitespace-pre-line leading-relaxed">
@@ -27,7 +26,7 @@ export function IFCFindingsTable({ findings }: Props) {
 			},
 			{
 				id: 'criticality',
-				header: VIEW_LABELS.colCriticality[lang],
+				header: t('ifcs.view.col.criticality'),
 				cell: ({ row }) => {
 					const c = row.original.criticality;
 					const label = c?.name?.[lang] ?? c?.name?.es ?? '';
@@ -36,11 +35,11 @@ export function IFCFindingsTable({ findings }: Props) {
 				},
 			},
 		],
-		[lang],
+		[t, lang],
 	);
 
 	return (
-		<Card title={VIEW_LABELS.sectionFindings[lang]}>
+		<Card title={t('ifcs.view.section.findings')}>
 			<div className="overflow-x-auto">
 				<DataTable<Finding, unknown>
 					columns={columns}

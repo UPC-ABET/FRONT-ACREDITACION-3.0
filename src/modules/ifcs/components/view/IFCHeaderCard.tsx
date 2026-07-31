@@ -4,7 +4,6 @@ import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { Badge, Button, Card, I18nTextField, PageHeader, Toast } from '@/shared/components';
 import { formatDateTime, tryTranslate } from '@/shared/utils';
-import { VIEW_LABELS } from './viewLabels';
 import { TYPE_CODES } from '@/shared/constants';
 import { usePdfDownload } from '../../hooks/usePdfDownload';
 import type { I18nText, IFCHeader } from '../../types';
@@ -52,7 +51,7 @@ export function IFCHeaderCard({
 						disabled={!canExport || isDownloading}
 						onClick={() => downloadOne(Number(ifc.id))}>
 						<ArrowDownTrayIcon className="h-5 w-5" />
-						{isDownloading ? t('loading.default') : VIEW_LABELS.export[lang]}
+						{isDownloading ? t('loading.default') : t('ifcs.view.btn.export')}
 					</Button>
 				}
 			/>
@@ -62,25 +61,26 @@ export function IFCHeaderCard({
 					<dl className="grid grid-cols-1 gap-5 rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:grid-cols-2 lg:grid-cols-3">
 						<div>
 							<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-								{VIEW_LABELS.coordinator[lang]}
+								{t('ifcs.view.header.coordinator')}
 							</dt>
 							<dd className="mt-1.5 text-base text-zinc-900">{coordinator}</dd>
 						</div>
 						<div>
 							<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-								{VIEW_LABELS.created[lang]}
+								{t('ifcs.view.header.created')}
 							</dt>
 							<dd className="mt-1.5 text-base text-zinc-900">{formatDateTime(ifc.createdAt)}</dd>
 						</div>
 						<div>
 							<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-								{VIEW_LABELS.status[lang]}
+								{t('ifcs.view.header.status')}
 							</dt>
 							<dd className="mt-1.5 flex flex-wrap items-center gap-2 text-base text-zinc-900">
 								<Badge color={ifc.status?.color}>{statusLabel}</Badge>
 								{ifc.status && (
 									<span className="text-sm text-zinc-600">
-										{VIEW_LABELS.by[lang]} {ifc.status.by ?? '—'} · {formatDateTime(ifc.status.at)}
+										{t('ifcs.view.header.by')} {ifc.status.by ?? '—'} ·{' '}
+										{formatDateTime(ifc.status.at)}
 									</span>
 								)}
 							</dd>
@@ -90,7 +90,7 @@ export function IFCHeaderCard({
 					{isObserved && ifc.status?.comment && (
 						<div className="rounded-lg border border-amber-200 bg-amber-50 p-5">
 							<p className="text-sm font-semibold uppercase tracking-wide text-amber-700">
-								{VIEW_LABELS.rejectionReason[lang]}
+								{t('ifcs.view.header.rejectionReason')}
 							</p>
 							<p className="mt-2 whitespace-pre-line text-base leading-relaxed text-amber-900">
 								{ifc.status.comment[lang] ?? ifc.status.comment.es ?? ''}
@@ -100,7 +100,7 @@ export function IFCHeaderCard({
 
 					{showObservation && (
 						<I18nTextField
-							label={VIEW_LABELS.observation[lang]}
+							label={t('ifcs.view.header.observation')}
 							required
 							value={observationText}
 							onChange={onObservationChange}

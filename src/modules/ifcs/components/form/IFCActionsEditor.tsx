@@ -4,7 +4,6 @@ import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { Button, Card, I18nTextField, Select, TableEmptyState, Title } from '@/shared';
 import type { FormAction, FormFinding } from '@/modules';
-import { FORM_LABELS } from '@/modules';
 
 type Props = {
 	actions: FormAction[];
@@ -15,14 +14,16 @@ type Props = {
 };
 
 export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete }: Props) {
-	const { locale: lang } = useI18n();
+	const { t, locale: lang } = useI18n();
+	const sectionTitle = t('ifcs.form.section.actions');
+	const addLabel = t('ifcs.form.btn.addAction');
 
 	const findingOptions = findings.map((f, idx) => ({
 		value: f.tempId,
 		label:
 			f.description[lang]?.trim() ||
 			f.description.es?.trim() ||
-			`${FORM_LABELS.findingPlaceholder[lang]} ${idx + 1}`,
+			`${t('ifcs.form.findingPlaceholder')} ${idx + 1}`,
 	}));
 
 	const noFindings = findings.length === 0;
@@ -31,19 +32,17 @@ export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete 
 		<section className="space-y-5">
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<Title
-					title={FORM_LABELS.sectionActions[lang]}
+					title={sectionTitle}
 					className="[&_h2]:text-lg [&_h2]:font-bold [&_h2]:uppercase [&_h2]:tracking-wide [&_h2]:text-zinc-900"
 				/>
 				<Button variant="secondary" size="lg" disabled={noFindings} onClick={onAdd}>
 					<PlusIcon className="h-5 w-5" />
-					{FORM_LABELS.btnAddAction[lang]}
+					{addLabel}
 				</Button>
 			</div>
 
 			{actions.length === 0 && (
-				<TableEmptyState
-					message={`${FORM_LABELS.sectionActions[lang]} — ${FORM_LABELS.btnAddAction[lang].toLowerCase()}`}
-				/>
+				<TableEmptyState message={`${sectionTitle} — ${addLabel.toLowerCase()}`} />
 			)}
 
 			<div className="space-y-4">
@@ -57,14 +56,14 @@ export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete 
 										<span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700">
 											{idx + 1}
 										</span>
-										{FORM_LABELS.actionPlaceholder[lang]}
+										{t('ifcs.form.actionPlaceholder')}
 									</span>
 									<Button
 										variant="ghost"
 										size="md"
 										onClick={() => onDelete(a.tempId)}
-										aria-label={FORM_LABELS.btnDelete[lang]}
-										title={FORM_LABELS.btnDelete[lang]}
+										aria-label={t('ifcs.form.btn.delete')}
+										title={t('ifcs.form.btn.delete')}
 										className="text-zinc-500 hover:text-red-600">
 										<TrashIcon className="h-5 w-5" />
 									</Button>
@@ -72,7 +71,7 @@ export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete 
 
 								<div className="space-y-5 p-5">
 									<Select
-										label={FORM_LABELS.colFinding[lang]}
+										label={t('ifcs.form.col.finding')}
 										value={selectedFinding ?? null}
 										options={findingOptions}
 										onChange={(_, opt) => {
@@ -82,7 +81,7 @@ export function IFCActionsEditor({ actions, findings, onAdd, onUpdate, onDelete 
 									/>
 
 									<I18nTextField
-										label={FORM_LABELS.colDescription[lang]}
+										label={t('ifcs.form.col.description')}
 										required
 										value={a.description}
 										onChange={(next) => onUpdate(a.tempId, { description: next })}

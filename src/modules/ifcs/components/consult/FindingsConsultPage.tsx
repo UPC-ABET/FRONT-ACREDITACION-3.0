@@ -29,7 +29,6 @@ import {
 } from '@/modules/organization';
 import type { FindingRow } from '../../types';
 import { DeleteFindingModal } from '../shared/DeleteFindingModal';
-import { CONSULT_LABELS } from './consultLabels';
 import { FindingsTable } from './FindingsTable';
 
 function runAutoSelect(
@@ -51,7 +50,7 @@ function runAutoSelect(
 }
 
 export function FindingsConsultPage() {
-	const { t, locale: lang } = useI18n();
+	const { t } = useI18n();
 	const router = useRouter();
 
 	const { academicPeriodId, schoolId } = useABET();
@@ -177,12 +176,12 @@ export function FindingsConsultPage() {
 			{chartIncomplete && (
 				<Alert variant="destructive" className="flex items-start gap-3 text-base">
 					<ExclamationTriangleIcon className="h-6 w-6 flex-shrink-0 text-red-600" />
-					<p>{CONSULT_LABELS.chartIncomplete[lang]}</p>
+					<p>{t('ifcs.chartIncomplete')}</p>
 				</Alert>
 			)}
 
 			{!noSchools && !chartIncomplete && hasSearched && rows.length === 0 && !submitting && (
-				<TableEmptyState message={CONSULT_LABELS.empty[lang]} />
+				<TableEmptyState message={t('ifcFindings.empty')} />
 			)}
 
 			{!noSchools && !chartIncomplete && rows.length > 0 && (

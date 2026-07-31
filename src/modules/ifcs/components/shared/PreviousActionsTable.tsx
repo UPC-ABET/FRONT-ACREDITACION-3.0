@@ -17,7 +17,6 @@ import {
 import { useI18n } from '@/providers';
 import { TYPE_CODES } from '@/shared/constants';
 import type { I18nText, PreviousAction } from '../../types';
-import { IFC_SHARED_LABELS as L } from './ifc.labels';
 
 type Mode = 'view' | 'edit';
 
@@ -34,15 +33,15 @@ export function PreviousActionsTable({
 	evidencesByActionId,
 	onEvidenceChange,
 }: Props) {
-	const { locale: lang } = useI18n();
+	const { t, locale: lang } = useI18n();
 	const rows = previousActions ?? [];
 
 	const columns = useMemo<ColumnDef<PreviousAction>[]>(
 		() => [
-			{ accessorKey: 'code', header: L.colCode[lang] },
+			{ accessorKey: 'code', header: t('ifcs.shared.colCode') },
 			{
 				id: 'description',
-				header: L.colDescription[lang],
+				header: t('ifcs.shared.colDescription'),
 				accessorFn: (row) => row.description?.[lang] ?? row.description?.es ?? '',
 				cell: ({ row }) => (
 					<span className="whitespace-pre-line leading-relaxed">
@@ -53,7 +52,7 @@ export function PreviousActionsTable({
 			{
 				id: 'finding',
 				accessorFn: (row) => row.finding.code,
-				header: L.colFinding[lang],
+				header: t('ifcs.shared.colFinding'),
 				cell: ({ row }) => (
 					<span className="tabular-nums text-zinc-700">{row.original.finding.code}</span>
 				),
@@ -61,7 +60,7 @@ export function PreviousActionsTable({
 			{
 				id: 'completeness',
 				accessorFn: (row) => row.completeness.code,
-				header: L.colCompleteness[lang],
+				header: t('ifcs.shared.colCompleteness'),
 				cell: ({ row }) => (
 					<Badge color={row.original.completeness.color}>
 						{row.original.completeness.name?.[lang] ?? row.original.completeness.name?.es ?? ''}
@@ -70,7 +69,7 @@ export function PreviousActionsTable({
 			},
 			{
 				id: 'evidence',
-				header: L.colEvidence[lang],
+				header: t('ifcs.shared.evidence.col'),
 				cell: ({ row }) => (
 					<EvidenceCell
 						action={row.original}
@@ -81,13 +80,13 @@ export function PreviousActionsTable({
 				),
 			},
 		],
-		[lang, mode, evidencesByActionId, onEvidenceChange],
+		[t, lang, mode, evidencesByActionId, onEvidenceChange],
 	);
 
 	if (rows.length === 0) return null;
 
 	return (
-		<Card title={L.sectionPreviousActions[lang]}>
+		<Card title={t('ifcs.shared.sectionPreviousActions')}>
 			<div className="overflow-x-auto">
 				<DataTable<PreviousAction, unknown>
 					columns={columns}
@@ -108,7 +107,7 @@ type CellProps = {
 };
 
 function EvidenceCell({ action, mode, liveEvidences, onChange }: CellProps) {
-	const { locale: lang } = useI18n();
+	const { t, locale: lang } = useI18n();
 	const lockedByServer = action.completeness.code === TYPE_CODES.ACTION_COMPLETENESS.IMPLEMENTED;
 	const editable = mode === 'edit' && !lockedByServer;
 
@@ -126,7 +125,7 @@ function EvidenceCell({ action, mode, liveEvidences, onChange }: CellProps) {
 					onClick={() => setModalOpen(true)}
 					className="inline-flex items-center gap-1.5">
 					{hasContent ? <PencilSquareIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
-					{hasContent ? L.evidenceEdit[lang] : L.evidenceAdd[lang]}
+					{hasContent ? t('ifcs.shared.evidence.edit') : t('ifcs.shared.evidence.add')}
 				</Button>
 				{modalOpen && (
 					<EvidenceEditDialog
@@ -153,12 +152,12 @@ function EvidenceCell({ action, mode, liveEvidences, onChange }: CellProps) {
 					size="sm"
 					className="inline-flex items-center gap-1.5 text-zinc-600">
 					{lockedByServer && mode === 'edit' && <LockClosedIcon className="h-4 w-4" />}
-					{L.evidenceView[lang]}
+					{t('ifcs.shared.evidence.view')}
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent align="end">
 				<p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-2">
-					{L.colEvidence[lang]}
+					{t('ifcs.shared.evidence.col')}
 				</p>
 				<p className="whitespace-pre-line text-sm text-zinc-700">
 					{evidences?.[lang] ?? evidences?.es ?? evidences?.en ?? ''}
@@ -176,7 +175,7 @@ type DialogProps = {
 };
 
 function EvidenceEditDialog({ onClose, action, value, onSave }: DialogProps) {
-	const { locale: lang } = useI18n();
+	const { t } = useI18n();
 	const [draft, setDraft] = useState<I18nText>(value);
 
 	return (
@@ -184,7 +183,7 @@ function EvidenceEditDialog({ onClose, action, value, onSave }: DialogProps) {
 			isOpen
 			onClose={onClose}
 			onSubmit={() => onSave(draft)}
-			title={`${L.evidenceModalTitle[lang]}${action.code}`}>
+			title={`${t('ifcs.shared.evidence.modalTitle')}${action.code}`}>
 			<I18nTextField value={draft} onChange={setDraft} rows={5} />
 		</FormDialog>
 	);

@@ -2,17 +2,16 @@
 
 import { useI18n } from '@/providers';
 import { Card, SubTitle } from '@/shared/components';
-import { IFC_SHARED_LABELS } from '@/modules';
 import type { ProgramGroup } from '@/modules';
 
 type Props = { outcomeResult: ProgramGroup[] };
 
 export function IFCOutcomeResults({ outcomeResult }: Props) {
-	const { locale: lang } = useI18n();
+	const { t, locale: lang } = useI18n();
 	if (!outcomeResult || outcomeResult.length === 0) return null;
 
 	return (
-		<Card title={IFC_SHARED_LABELS.sectionOutcome[lang]} className="h-full">
+		<Card title={t('ifcs.shared.sectionOutcome')} className="h-full">
 			<div className="space-y-6">
 				{outcomeResult.map((program) => (
 					<div key={program.programCode} className="space-y-3">
@@ -38,7 +37,7 @@ export function IFCOutcomeResults({ outcomeResult }: Props) {
 												key={`${commission.commissionCode}-${outcome.outcomeCode}`}
 												className="space-y-1">
 												<p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-													{IFC_SHARED_LABELS.studentOutcome[lang]} ({ref})
+													{t('ifcs.shared.studentOutcome')} ({ref})
 												</p>
 												<p className="text-base italic leading-relaxed text-zinc-800">
 													&ldquo;

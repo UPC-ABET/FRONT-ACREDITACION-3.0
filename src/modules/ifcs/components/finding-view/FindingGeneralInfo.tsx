@@ -5,7 +5,6 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Badge, Button, Card, I18nTextField } from '@/shared/components';
 import { useI18n } from '@/providers';
 import type { FindingDetail, I18nText } from '../../types';
-import { FINDING_VIEW_LABELS as L } from './findingViewLabels';
 
 type Props = {
 	finding: FindingDetail;
@@ -24,7 +23,7 @@ export function FindingGeneralInfo({
 	onDelete,
 	onValidationError,
 }: Props) {
-	const { locale: lang } = useI18n();
+	const { t, locale: lang } = useI18n();
 	const [editing, setEditing] = useState(false);
 	const [draft, setDraft] = useState<I18nText>(finding.description ?? {});
 
@@ -58,24 +57,24 @@ export function FindingGeneralInfo({
 	const descriptionText = finding.description?.[lang] ?? finding.description?.es ?? '';
 
 	return (
-		<Card title={L.sectionGeneral[lang]}>
+		<Card title={t('ifcFindings.findingView.sectionGeneral')}>
 			<div className="space-y-6">
 				<dl className="grid grid-cols-1 gap-5 rounded-lg border border-zinc-200 bg-zinc-50/60 p-5 sm:grid-cols-3">
 					<div>
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-							{L.colCode[lang]}
+							{t('ifcFindings.findingView.col.code')}
 						</dt>
 						<dd className="mt-1.5 text-base text-zinc-900">{finding.findingCode}</dd>
 					</div>
 					<div>
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-							{L.colPeriod[lang]}
+							{t('ifcFindings.findingView.col.period')}
 						</dt>
 						<dd className="mt-1.5 text-base text-zinc-900">{finding.academicPeriodCode}</dd>
 					</div>
 					<div>
 						<dt className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-							{L.colCriticality[lang]}
+							{t('ifcFindings.findingView.col.criticality')}
 						</dt>
 						<dd className="mt-1.5">
 							<Badge color={finding.criticality.color}>{criticalityLabel}</Badge>
@@ -85,7 +84,7 @@ export function FindingGeneralInfo({
 
 				<div>
 					<p className="mb-2 text-sm font-semibold uppercase tracking-wide text-zinc-500">
-						{L.colDescription[lang]}
+						{t('ifcFindings.findingView.col.description')}
 					</p>
 					{editing ? (
 						<I18nTextField value={draft} onChange={setDraft} disabled={saving} />
@@ -101,21 +100,21 @@ export function FindingGeneralInfo({
 						<>
 							<Button variant="ghost" size="lg" onClick={onDelete}>
 								<TrashIcon className="h-5 w-5" />
-								{L.btnDelete[lang]}
+								{t('ifcFindings.findingView.btn.delete')}
 							</Button>
 							<Button variant="secondary" size="lg" onClick={startEdit}>
 								<PencilSquareIcon className="h-5 w-5" />
-								{L.btnEdit[lang]}
+								{t('ifcFindings.findingView.btn.edit')}
 							</Button>
 						</>
 					)}
 					{editing && (
 						<>
 							<Button variant="ghost" size="lg" disabled={saving} onClick={cancelEdit}>
-								{L.btnCancel[lang]}
+								{t('ifcFindings.findingView.btn.cancel')}
 							</Button>
 							<Button variant="primary" size="lg" disabled={saving} onClick={handleSave}>
-								{L.btnSave[lang]}
+								{t('ifcFindings.findingView.btn.save')}
 							</Button>
 						</>
 					)}

@@ -31,7 +31,7 @@ interface WizardStep2Props {
 type AnyOption = { label: string; value: string | number };
 
 export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
-	const { t } = useI18n();
+	const { t, locale: lang } = useI18n();
 	const [selectedGradeType, setSelectedGradeType] = useState<AnyOption | null>(null);
 	const [selectedCompetencyScope, setSelectedCompetencyScope] = useState<AnyOption | null>(null);
 
@@ -84,7 +84,7 @@ export function WizardStep2({ step1, onBack, onNext }: WizardStep2Props) {
 	}));
 
 	const competencyScopeOptions: AnyOption[] = competencyScopeTypes.map((et) => ({
-		label: COMPETENCY_SCOPE_LABELS[et.code]?.es ?? et.name.es,
+		label: COMPETENCY_SCOPE_LABELS[et.code]?.[lang] ?? et.name.es,
 		value: et.id,
 	}));
 
