@@ -194,17 +194,19 @@ export function useMultipleCompetencyEvaluation({
 		if (!allCriteriaIds.length || !students.length) return false;
 		if (hasMissingStatus) return false;
 
+		const gradedStudents = students.filter(
+			(st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1),
+		);
+		if (gradedStudents.length === 0) return true;
+
 		if (commissions.length > 0) {
 			const statuses = Object.values(commissionFillStatus);
 			return statuses.some((s) => s === 'complete') && statuses.every((s) => s !== 'partial');
 		}
 
-		const gradedStudents = students.filter(
-			(st) => !nonAttendanceTypeIds.has(qualifStatuses[st.id] ?? -1),
-		);
 		for (const cId of allCriteriaIds) {
 			if (duplicateMode) {
-				if (gradedStudents.length > 0 && dupSelections[cId] == null) return false;
+				if (dupSelections[cId] == null) return false;
 			} else {
 				for (const st of gradedStudents) {
 					if (selections[cId]?.[st.id] == null) return false;
