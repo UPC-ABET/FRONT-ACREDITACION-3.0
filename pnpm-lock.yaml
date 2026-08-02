@@ -89,7 +89,7 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       abet-plugins:
         specifier: github:UPC-ABET/abet-plugins
-        version: https://codeload.github.com/UPC-ABET/abet-plugins/tar.gz/dee12c82c35c409ef2926b7b4f624046f2e1d372
+        version: https://codeload.github.com/UPC-ABET/abet-plugins/tar.gz/d441dd60e2d0cc72da10c4f188aacea05c23f94c
       autoprefixer:
         specifier: ^10
         version: 10.5.0(postcss@8.5.14)
@@ -1775,9 +1775,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  abet-plugins@https://codeload.github.com/UPC-ABET/abet-plugins/tar.gz/dee12c82c35c409ef2926b7b4f624046f2e1d372:
-    resolution: {gitHosted: true, integrity: sha512-WUB2JULn7keZR7iZF9XZVlycnniKHkSRz9xwjmDedSA5I+cHIYVPZqYPcKV3BonFTVqFXO+SWs66ngTQ4N1OGg==, tarball: https://codeload.github.com/UPC-ABET/abet-plugins/tar.gz/dee12c82c35c409ef2926b7b4f624046f2e1d372}
-    version: 0.2.0
+  abet-plugins@https://codeload.github.com/UPC-ABET/abet-plugins/tar.gz/d441dd60e2d0cc72da10c4f188aacea05c23f94c:
+    resolution: {gitHosted: true, tarball: https://codeload.github.com/UPC-ABET/abet-plugins/tar.gz/d441dd60e2d0cc72da10c4f188aacea05c23f94c}
+    version: 0.3.0
     engines: {node: '>=20'}
     hasBin: true
 
@@ -5471,7 +5471,7 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
 
-  abet-plugins@https://codeload.github.com/UPC-ABET/abet-plugins/tar.gz/dee12c82c35c409ef2926b7b4f624046f2e1d372: {}
+  abet-plugins@https://codeload.github.com/UPC-ABET/abet-plugins/tar.gz/d441dd60e2d0cc72da10c4f188aacea05c23f94c: {}
 
   acorn-jsx@5.3.2(acorn@8.16.0):
     dependencies:
