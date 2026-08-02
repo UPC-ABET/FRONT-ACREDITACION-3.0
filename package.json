@@ -39,7 +39,7 @@
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
-		"abet-plugins": "git+https://github.com/UPC-ABET/abet-plugins.git",
+		"abet-plugins": "github:UPC-ABET/abet-plugins",
 		"autoprefixer": "^10",
 		"eslint": "^9",
 		"eslint-config-next": "16.2.2",
