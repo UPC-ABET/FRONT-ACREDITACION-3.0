@@ -87,6 +87,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.14)
+      abet-plugins:
+        specifier: git+https://github.com/UPC-ABET/abet-plugins.git
+        version: git+https://github.com/UPC-ABET/abet-plugins.git#448d064341040d7b5d74f3585ea84a2e42a54a25
       autoprefixer:
         specifier: ^10
         version: 10.5.0(postcss@8.5.14)
@@ -1771,6 +1774,12 @@ packages:
     resolution: {integrity: sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==}
     cpu: [x64]
     os: [win32]
+
+  abet-plugins@git+https://github.com/UPC-ABET/abet-plugins.git#448d064341040d7b5d74f3585ea84a2e42a54a25:
+    resolution: {commit: 448d064341040d7b5d74f3585ea84a2e42a54a25, repo: https://github.com/UPC-ABET/abet-plugins.git, type: git}
+    version: 0.2.0
+    engines: {node: '>=20'}
+    hasBin: true
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -5461,6 +5470,8 @@ snapshots:
 
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
+
+  abet-plugins@git+https://github.com/UPC-ABET/abet-plugins.git#448d064341040d7b5d74f3585ea84a2e42a54a25: {}
 
   acorn-jsx@5.3.2(acorn@8.16.0):
     dependencies:
