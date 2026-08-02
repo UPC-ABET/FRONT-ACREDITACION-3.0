@@ -1,19 +1,7 @@
-commit_msg_file="$1"
-
-non_comment_lines=$(grep -v '^#' "$commit_msg_file" | grep -c '[^[:space:]]')
-
-if [ "$non_comment_lines" -gt 1 ]; then
-	echo "commit-msg: only a single subject line is allowed (no body, no bullet points, no blank-line description, no trailers)." >&2
-	echo "See docs/POLICIES.md#git--commits." >&2
-	exit 1
-fi
-
-subject=$(grep -v '^#' "$commit_msg_file" | grep '[^[:space:]]' | head -n1)
-pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9._/,-]+\))?(!)?: .+'
-
-if ! echo "$subject" | grep -Eq "$pattern"; then
-	echo "commit-msg: subject must follow Conventional Commits, e.g. 'feat: add bulk edit' or 'fix(auth): handle expired cookie'." >&2
-	echo "Got: $subject" >&2
-	echo "See docs/POLICIES.md#git--commits." >&2
-	exit 1
+# Conventional Commits, subject only, no trailers.
+# The same policy runs inside Claude Code as a PreToolUse hook, where --no-verify
+# cannot skip it; this covers Codex, opencode and plain git.
+ABET_HOOK=node_modules/abet-plugins/shared/hooks/cli.mjs
+if [ -f "$ABET_HOOK" ]; then
+  node "$ABET_HOOK" commit-msg "$1"
 fi

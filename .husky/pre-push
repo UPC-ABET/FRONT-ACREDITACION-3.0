@@ -1,12 +1,6 @@
-protected_branches="develop staging production"
-
-while read -r local_ref local_sha remote_ref remote_sha; do
-	branch=$(echo "$remote_ref" | sed 's|^refs/heads/||')
-	for protected in $protected_branches; do
-		if [ "$branch" = "$protected" ]; then
-			echo "pre-push: direct pushes to '$protected' are blocked. Open a PR against develop instead." >&2
-			echo "See docs/POLICIES.md#git--commits." >&2
-			exit 1
-		fi
-	done
-done
+# Blocks direct pushes to develop, staging and production.
+# Prefix with ABET_ALLOW_PROTECTED_PUSH=1 when the direct push is deliberate.
+ABET_HOOK=node_modules/abet-plugins/shared/hooks/cli.mjs
+if [ -f "$ABET_HOOK" ]; then
+  node "$ABET_HOOK" pre-push
+fi
