@@ -171,8 +171,17 @@ export function useMultipleCompetencyEvaluation({
 					}
 				}
 			}
+
 			result[commission.id] =
-				total === 0 ? 'empty' : filled === total ? 'complete' : filled > 0 ? 'partial' : 'empty';
+				gradedStudents.length === 0
+					? 'complete'
+					: total === 0
+						? 'empty'
+						: filled === total
+							? 'complete'
+							: filled > 0
+								? 'partial'
+								: 'empty';
 		}
 		return result;
 	}, [
