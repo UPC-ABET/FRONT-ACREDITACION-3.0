@@ -1354,7 +1354,8 @@
 			"entityTypeInvalid": "The entity type is not valid.",
 			"entityTypeReadOnly": "The entity type is read-only.",
 			"entityCodeRequired": "The entity is required for this type.",
-			"entityNotFound": "The selected entity was not found."
+			"entityNotFound": "The selected entity was not found.",
+			"entityAlreadyAssigned": "The selected entity is already assigned to another node."
 		},
 		"courseOutcomeMapping": {
 			"courseOutOfScope": "The course does not belong to the selected program.",

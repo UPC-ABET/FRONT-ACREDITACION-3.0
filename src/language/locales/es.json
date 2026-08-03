@@ -1354,7 +1354,8 @@
 			"entityTypeInvalid": "El tipo de entidad no es válido.",
 			"entityTypeReadOnly": "El tipo de entidad es de solo lectura.",
 			"entityCodeRequired": "La entidad es obligatoria para este tipo.",
-			"entityNotFound": "No se encontró la entidad seleccionada."
+			"entityNotFound": "No se encontró la entidad seleccionada.",
+			"entityAlreadyAssigned": "La entidad seleccionada ya está asignada a otro nodo."
 		},
 		"courseOutcomeMapping": {
 			"courseOutOfScope": "El curso no pertenece a la carrera seleccionada.",
