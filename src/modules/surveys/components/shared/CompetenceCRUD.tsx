@@ -175,10 +175,9 @@ export function CompetenceCRUD({
 
 		// A real outcome is always required (outcome_id is never null) — the schema check above
 		// already guarantees firstOutcomeId/form.outcomeId is set by this point.
+		const commissionOutcomeIds = Object.values(commissionSelections).filter(Boolean);
 		const selectedOutcomeIds =
-			Object.values(commissionSelections).filter(Boolean).length > 0
-				? Object.values(commissionSelections).filter(Boolean)
-				: [formToValidate.outcomeId];
+			commissionOutcomeIds.length > 0 ? commissionOutcomeIds : [formToValidate.outcomeId];
 		const baseData: CompetenceFormData = {
 			...form,
 			academicPeriodId: cycleId,
