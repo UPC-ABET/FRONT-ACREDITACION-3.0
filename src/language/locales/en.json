@@ -2544,6 +2544,7 @@
 			"notifications": {
 				"title": "Notified Students ({{count}})",
 				"sendSurvey": "Send Survey",
+				"exportExcel": "Export to Excel",
 				"downloadLabel": "Download GRA Template",
 				"tabs": {
 					"list": "Notified Students",

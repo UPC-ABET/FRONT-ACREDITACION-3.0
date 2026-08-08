@@ -2544,6 +2544,7 @@
 			"notifications": {
 				"title": "Estudiantes Notificados ({{count}})",
 				"sendSurvey": "Enviar Encuesta",
+				"exportExcel": "Exportar a Excel",
 				"downloadLabel": "Descargar Plantilla GRA",
 				"tabs": {
 					"list": "Estudiantes Notificados",

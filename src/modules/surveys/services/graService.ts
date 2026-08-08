@@ -314,6 +314,24 @@ export async function listGRAStudents(params: {
 	};
 }
 
+export async function exportGRAStudents(params: {
+	programId?: number;
+	campusId?: number;
+	studentCode?: string;
+	search?: string;
+}): Promise<void> {
+	const query = new URLSearchParams();
+	if (params.programId) query.set('programId', String(params.programId));
+	if (params.campusId) query.set('campusId', String(params.campusId));
+	if (params.studentCode) query.set('studentCode', params.studentCode);
+	if (params.search?.trim()) query.set('search', params.search.trim());
+	const qs = query.toString();
+	const { blob, response } = await apiGetBlobResponse(
+		`gra/notification/export${qs ? `?${qs}` : ''}`,
+	);
+	triggerBlobDownload(blob, resolveDownloadFileName(response, 'estudiantes_notificados_gra.xlsx'));
+}
+
 export async function getGRASendSummary(
 	programId: number | undefined,
 	resend: boolean,

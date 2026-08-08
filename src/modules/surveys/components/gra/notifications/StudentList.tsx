@@ -19,6 +19,7 @@ import {
 	PaperAirplaneIcon,
 	UserPlusIcon,
 	BellAlertIcon,
+	ArrowDownTrayIcon,
 } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
@@ -27,7 +28,7 @@ import { useGRAStudents, useGRASendNotifications } from '../../../hooks';
 import { AddStudentPanel } from './AddStudentPanel';
 import { GRANotificationProgressDialog } from './GRANotificationProgressDialog';
 import { SendSummaryBody } from '../../shared/SendSummaryBody';
-import { SURVEY_BASE_URL, resendGRANotification } from '../../../services';
+import { SURVEY_BASE_URL, resendGRANotification, exportGRAStudents } from '../../../services';
 import type { GRAStudent, GRAEmailSendRequest } from '../../../types';
 import { NOTIFICATION_STATUS } from '../../../constants/notificationStatus';
 
@@ -69,6 +70,7 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 	const [progressDialogOpen, setProgressDialogOpen] = useState(false);
 	const [addStudentOpen, setAddStudentOpen] = useState(false);
 	const [resendingId, setResendingId] = useState<number | null>(null);
+	const [exporting, setExporting] = useState(false);
 	// "Reenviar a quienes ya recibieron" — same toggle LCFC uses on its send flow.
 	const [includeAlreadySent, setIncludeAlreadySent] = useState(false);
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
@@ -141,6 +143,17 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 			});
 			reload();
 		});
+	}
+
+	async function handleExport() {
+		setExporting(true);
+		try {
+			await exportGRAStudents({ programId, search });
+		} catch (e) {
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, getErrorMessage(e)) });
+		} finally {
+			setExporting(false);
+		}
 	}
 
 	function handleStudentAdded() {
@@ -274,6 +287,14 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 					{t('surveys.gra.notifications.title').replace('{{count}}', String(total))}
 				</h3>
 				<div className="flex flex-wrap items-center gap-2">
+					<Button
+						variant="surface"
+						onClick={handleExport}
+						disabled={exporting || total === 0}
+						loading={exporting}>
+						<ArrowDownTrayIcon className="h-4 w-4 mr-2" />
+						{t('surveys.gra.notifications.exportExcel')}
+					</Button>
 					<Button variant="surface" onClick={() => setAddStudentOpen(true)}>
 						<UserPlusIcon className="h-4 w-4 mr-2" />
 						{t('surveys.gra.notifications.addStudent')}
