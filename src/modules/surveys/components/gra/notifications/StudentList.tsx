@@ -148,7 +148,7 @@ export function StudentList({ programId, academicPeriodId }: StudentListProps) {
 	async function handleExport() {
 		setExporting(true);
 		try {
-			await exportGRAStudents({ programId, search });
+			await exportGRAStudents({ programId, search }, t('surveys.gra.notifications.exportFileName'));
 		} catch (e) {
 			setToast({ open: true, type: 'error', msg: tryTranslate(t, getErrorMessage(e)) });
 		} finally {

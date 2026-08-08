@@ -49,7 +49,11 @@ export function GRAReports() {
 		}
 		setDownloading(true);
 		try {
-			await downloadGRASurveys(academicPeriodId, programId ?? 0);
+			await downloadGRASurveys(
+				academicPeriodId,
+				programId ?? 0,
+				t('surveys.gra.reports.exportFileName'),
+			);
 		} catch (error) {
 			setToast({ open: true, type: 'error', msg: tryTranslate(t, (error as Error).message) });
 		} finally {

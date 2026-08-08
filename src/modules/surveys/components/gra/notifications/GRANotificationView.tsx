@@ -50,7 +50,9 @@ export function GRANotificationView() {
 							onUpload={(file) =>
 								upload(file, { programId: resolvedProgramId, academicPeriodId: periodId })
 							}
-							onDownloadTemplate={() => downloadTemplate()}
+							onDownloadTemplate={() =>
+								downloadTemplate(t('surveys.gra.notifications.templateFileName'))
+							}
 							downloadLabel={t('surveys.gra.notifications.downloadLabel')}
 						/>
 						{result && <UploadResultSummary result={result} />}

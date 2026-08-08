@@ -2545,7 +2545,9 @@
 				"title": "Estudiantes Notificados ({{count}})",
 				"sendSurvey": "Enviar Encuesta",
 				"exportExcel": "Exportar a Excel",
+				"exportFileName": "estudiantes_notificados_gra.xlsx",
 				"downloadLabel": "Descargar Plantilla GRA",
+				"templateFileName": "plantilla_notificaciones_gra.xlsx",
 				"tabs": {
 					"list": "Estudiantes Notificados",
 					"upload": "Carga Masiva",
@@ -2632,7 +2634,8 @@
 			},
 			"reports": {
 				"title": "Dashboard — Graduandos",
-				"description": "Resumen de percepción por ciclo académico para encuestas de graduandos."
+				"description": "Resumen de percepción por ciclo académico para encuestas de graduandos.",
+				"exportFileName": "encuestas_gra.xlsx"
 			},
 			"emailTemplate": {
 				"title": "Plantilla de Correo Electrónico",

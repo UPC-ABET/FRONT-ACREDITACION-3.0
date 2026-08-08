@@ -314,12 +314,15 @@ export async function listGRAStudents(params: {
 	};
 }
 
-export async function exportGRAStudents(params: {
-	programId?: number;
-	campusId?: number;
-	studentCode?: string;
-	search?: string;
-}): Promise<void> {
+export async function exportGRAStudents(
+	params: {
+		programId?: number;
+		campusId?: number;
+		studentCode?: string;
+		search?: string;
+	},
+	fallbackFileName: string,
+): Promise<void> {
 	const query = new URLSearchParams();
 	if (params.programId) query.set('programId', String(params.programId));
 	if (params.campusId) query.set('campusId', String(params.campusId));
@@ -329,7 +332,7 @@ export async function exportGRAStudents(params: {
 	const { blob, response } = await apiGetBlobResponse(
 		`gra/notification/export${qs ? `?${qs}` : ''}`,
 	);
-	triggerBlobDownload(blob, resolveDownloadFileName(response, 'estudiantes_notificados_gra.xlsx'));
+	triggerBlobDownload(blob, resolveDownloadFileName(response, fallbackFileName));
 }
 
 export async function getGRASendSummary(
@@ -392,9 +395,9 @@ export async function saveGRAEmailTemplate(template: { subject: string; body: st
 	});
 }
 
-export async function downloadGRATemplate(): Promise<void> {
+export async function downloadGRATemplate(fallbackFileName: string): Promise<void> {
 	const { blob, response } = await apiGetBlobResponse('gra/notification/template');
-	triggerBlobDownload(blob, resolveDownloadFileName(response, 'GRA_Notification_Template.xlsx'));
+	triggerBlobDownload(blob, resolveDownloadFileName(response, fallbackFileName));
 }
 
 export async function uploadGRAMassive(
@@ -465,9 +468,13 @@ export async function generateGRAPerceptionPdf(
 	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };
 }
 
-export async function downloadGRASurveys(academicPeriodId: number, programId = 0): Promise<void> {
+export async function downloadGRASurveys(
+	academicPeriodId: number,
+	programId: number,
+	fallbackFileName: string,
+): Promise<void> {
 	const params = new URLSearchParams({ academicPeriodId: String(academicPeriodId) });
 	if (programId) params.set('programId', String(programId));
 	const { blob, response } = await apiGetBlobResponse(`gra/export?${params.toString()}`);
-	triggerBlobDownload(blob, resolveDownloadFileName(response, 'encuestas_gra.xlsx'));
+	triggerBlobDownload(blob, resolveDownloadFileName(response, fallbackFileName));
 }
