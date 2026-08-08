@@ -375,10 +375,10 @@ export function useGRAUpload() {
 	const [success, setSuccess] = useState(false);
 	const [result, setResult] = useState<MassiveUploadResult | null>(null);
 
-	const downloadTemplate = useCallback(async () => {
+	const downloadTemplate = useCallback(async (fallbackFileName: string) => {
 		setError(null);
 		try {
-			await downloadGRATemplate();
+			await downloadGRATemplate(fallbackFileName);
 		} catch (e) {
 			setError(getErrorMessage(e));
 		}

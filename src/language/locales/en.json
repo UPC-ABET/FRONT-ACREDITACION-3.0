@@ -2544,7 +2544,10 @@
 			"notifications": {
 				"title": "Notified Students ({{count}})",
 				"sendSurvey": "Send Survey",
+				"exportExcel": "Export to Excel",
+				"exportFileName": "gra_notified_students.xlsx",
 				"downloadLabel": "Download GRA Template",
+				"templateFileName": "gra_notifications_template.xlsx",
 				"tabs": {
 					"list": "Notified Students",
 					"upload": "Bulk Upload",
@@ -2630,7 +2633,8 @@
 			},
 			"reports": {
 				"title": "Dashboard — Graduating Students",
-				"description": "Perception summary by academic cycle for graduating student surveys."
+				"description": "Perception summary by academic cycle for graduating student surveys.",
+				"exportFileName": "gra_surveys.xlsx"
 			},
 			"emailTemplate": {
 				"title": "Email Template",
