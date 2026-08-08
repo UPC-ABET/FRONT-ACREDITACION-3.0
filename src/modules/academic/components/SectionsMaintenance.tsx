@@ -51,6 +51,10 @@ function localized(text: { es?: string; en?: string } | undefined, locale: strin
 	return text[locale as 'es' | 'en'] ?? text.es ?? text.en ?? '';
 }
 
+function fullName(firstName: string | null, lastName: string | null): string {
+	return [firstName, lastName].filter(Boolean).join(' ');
+}
+
 export function SectionsMaintenance() {
 	const { t, locale } = useI18n();
 	const { academicPeriodId, modalityTypeId } = useABET();
@@ -79,9 +83,14 @@ export function SectionsMaintenance() {
 	}, [search]);
 
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- sync paging with external period/search
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- sync paging with external period/modality/search
 		setPage(1);
-	}, [debouncedSearch, academicPeriodId]);
+	}, [debouncedSearch, academicPeriodId, modalityTypeId]);
+
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- program options are scoped to modality; a stale selection would silently keep filtering by a program from the previous modality
+		setProgramId(null);
+	}, [modalityTypeId]);
 
 	const handleSearchChange = (value: string) => setSearch(value);
 
@@ -92,6 +101,7 @@ export function SectionsMaintenance() {
 
 	const { data, isLoading, isFetching, isError } = useCourseSectionsMaintenance({
 		academicPeriodId,
+		modalityTypeId,
 		programId,
 		page,
 		pageSize: PAGE_SIZE,
@@ -168,15 +178,15 @@ export function SectionsMaintenance() {
 	const columns = useMemo<ColumnDef<CourseSectionMaintenanceItem>[]>(
 		() => [
 			{
-				accessorKey: 'courseCode',
-				header: t('loads.sectionsMaintenance.col.courseCode'),
-				meta: { cellClassName: 'font-mono text-zinc-800' },
-			},
-			{
 				id: 'courseName',
 				header: t('loads.sectionsMaintenance.col.courseName'),
 				meta: { cellClassName: 'text-zinc-800' },
 				cell: ({ row }) => localized(row.original.courseName, locale),
+			},
+			{
+				accessorKey: 'courseCode',
+				header: t('loads.sectionsMaintenance.col.courseCode'),
+				meta: { cellClassName: 'font-mono text-zinc-800' },
 			},
 			{
 				accessorKey: 'sectionCode',
@@ -192,7 +202,8 @@ export function SectionsMaintenance() {
 				id: 'professorName',
 				header: t('loads.sectionsMaintenance.col.professorName'),
 				meta: { cellClassName: 'text-zinc-700' },
-				cell: ({ row }) => `${row.original.professorFirstName} ${row.original.professorLastName}`,
+				cell: ({ row }) =>
+					fullName(row.original.professorFirstName, row.original.professorLastName),
 			},
 			{
 				accessorKey: 'campusCode',

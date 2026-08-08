@@ -3,16 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
-import {
-	Button,
-	Card,
-	ConfirmDialog,
-	DataTable,
-	Select,
-	SubTitle,
-	Title,
-	Toast,
-} from '@/shared/components';
+import { Button, Card, ConfirmDialog, DataTable, Select, SubTitle, Title, Toast } from '@/shared';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
@@ -58,9 +49,14 @@ export function ClassRepresentativesMaintenance() {
 	}, [search]);
 
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset paging to the first page when the external academic period changes
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset paging to the first page when the external academic period/modality changes
 		setPage(1);
-	}, [academicPeriodId]);
+	}, [academicPeriodId, modalityTypeId]);
+
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- program options are scoped to modality; a stale selection would silently keep filtering by a program from the previous modality
+		setProgramId(null);
+	}, [modalityTypeId]);
 
 	const handleSearchChange = (value: string) => {
 		setSearch(value);
@@ -74,6 +70,7 @@ export function ClassRepresentativesMaintenance() {
 
 	const { data, isLoading, isFetching, isError } = useClassRepresentativesMaintenance({
 		academicPeriodId,
+		modalityTypeId,
 		programId,
 		page,
 		pageSize: PAGE_SIZE,
