@@ -54,12 +54,12 @@ const EMPTY_FORM: Omit<CompetenceFormData, 'academicPeriodId' | 'school'> = {
 };
 
 /**
- * A competence is "specific" when its outcomeId links to an outcome under a Específica commission
- * (per Carrera x Comisión). No outcome (undefined/1, the "no real outcome" sentinel) or an outcome
- * under a General commission (e.g. WASC) both count as general.
+ * A competence is "specific" when its linked outcome belongs to an Específica commission
+ * (per Carrera x Comisión). The commission type is resolved server-side from the real
+ * outcome → program_commission → commission_type chain — never inferred from the outcome id.
  */
-function isSpecificItem(item: CompetenceConfig, specificOutcomeIds: Set<number>): boolean {
-	return item.outcomeId != null && item.outcomeId !== 1 && specificOutcomeIds.has(item.outcomeId);
+function isSpecificItem(item: CompetenceConfig): boolean {
+	return item.commissionTypeCode === TYPE_CODES.COMMISSION_TYPE.SPECIFIC;
 }
 
 export function CompetenceCRUD({
@@ -107,22 +107,18 @@ export function CompetenceCRUD({
 		(g) => g.commissionTypeCode === commissionTypeCode,
 	);
 
-	const specificOutcomeIds = new Set(
-		allCommissionGroups
-			.filter((g) => g.commissionTypeCode === TYPE_CODES.COMMISSION_TYPE.SPECIFIC)
-			.flatMap((g) => g.outcomes.map((o) => o.outcomeId)),
-	);
-
 	// Filter the list by type
 	const filteredItems = competences.filter((item) =>
-		competenceType === 'specific'
-			? isSpecificItem(item, specificOutcomeIds)
-			: !isSpecificItem(item, specificOutcomeIds),
+		competenceType === 'specific' ? isSpecificItem(item) : !isSpecificItem(item),
 	);
 
 	function openAdd() {
 		if (!programId) {
 			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
+			return;
+		}
+		if (commissionGroups.length === 0) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.noCommissionForType') });
 			return;
 		}
 		setForm(EMPTY_FORM);
@@ -143,7 +139,7 @@ export function CompetenceCRUD({
 			isExternal: row.isExternal ?? false,
 		});
 		// Pre-select the outcome in its commission group
-		if (row.outcomeId && row.outcomeId !== 1) {
+		if (row.outcomeId != null) {
 			const group = commissionGroups.find((g) =>
 				g.outcomes.some((o) => o.outcomeId === row.outcomeId),
 			);
@@ -177,7 +173,11 @@ export function CompetenceCRUD({
 		}
 		setSaving(true);
 
-		const selectedOutcomeIds = Object.values(commissionSelections).filter(Boolean);
+		// A real outcome is always required (outcome_id is never null) — the schema check above
+		// already guarantees firstOutcomeId/form.outcomeId is set by this point.
+		const commissionOutcomeIds = Object.values(commissionSelections).filter(Boolean);
+		const selectedOutcomeIds =
+			commissionOutcomeIds.length > 0 ? commissionOutcomeIds : [formToValidate.outcomeId];
 		const baseData: CompetenceFormData = {
 			...form,
 			academicPeriodId: cycleId,
@@ -185,33 +185,23 @@ export function CompetenceCRUD({
 			programId,
 		};
 
-		if (selectedOutcomeIds.length === 0) {
-			// General competency — no outcome link
-			onSave({ ...baseData, outcomeId: undefined }, () => {
-				setSaving(false);
-				setModalOpen(false);
-				setToast({ open: true, type: 'success', msg: t('surveys.competence.toast.saved') });
-				onLoad(cycleId, programId);
+		// Save one record per selected commission outcome
+		let remaining = selectedOutcomeIds.length;
+		let firstDone = false;
+		selectedOutcomeIds.forEach((outcomeId) => {
+			onSave({ ...baseData, outcomeId }, () => {
+				remaining--;
+				if (!firstDone) {
+					firstDone = true;
+					setSaving(false);
+					setModalOpen(false);
+					setToast({ open: true, type: 'success', msg: t('surveys.competence.toast.saved') });
+				}
+				if (remaining === 0) {
+					onLoad(cycleId, programId);
+				}
 			});
-		} else {
-			// Save one record per selected commission outcome
-			let remaining = selectedOutcomeIds.length;
-			let firstDone = false;
-			selectedOutcomeIds.forEach((outcomeId) => {
-				onSave({ ...baseData, outcomeId }, () => {
-					remaining--;
-					if (!firstDone) {
-						firstDone = true;
-						setSaving(false);
-						setModalOpen(false);
-						setToast({ open: true, type: 'success', msg: t('surveys.competence.toast.saved') });
-					}
-					if (remaining === 0) {
-						onLoad(cycleId, programId);
-					}
-				});
-			});
-		}
+		});
 	}
 
 	function handleDelete(id: number) {
