@@ -8,6 +8,7 @@ import type { CourseSectionMaintenanceCreate, CourseSectionMaintenanceUpdate } f
 
 interface MaintenanceListParams {
 	academicPeriodId: number | null;
+	programId: number | null;
 	page: number;
 	pageSize: number;
 	search: string;
@@ -28,6 +29,7 @@ export function useCourseSectionsMaintenance(params: MaintenanceListParams) {
 					page: params.page,
 					pageSize: params.pageSize,
 					search: params.search.trim() || undefined,
+					programId: params.programId ?? undefined,
 				})
 				.then((response) => response.data),
 		enabled: params.academicPeriodId != null,

@@ -19,6 +19,7 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
+	Select,
 	SubTitle,
 	Title,
 	Toast,
@@ -32,12 +33,14 @@ import {
 	useCampuses,
 	useCourseSectionMaintenanceMutations,
 	useCourseSectionsMaintenance,
+	useProgramsByModality,
 	useSectionModalityTypes,
 } from '../hooks';
 import type {
 	CourseSectionMaintenanceCreate,
 	CourseSectionMaintenanceItem,
 	CourseSectionMaintenanceUpdate,
+	ProgramResponse,
 } from '../types';
 import { SectionCreateDialog, SectionEditDialog } from '@/modules';
 
@@ -50,9 +53,12 @@ function localized(text: { es?: string; en?: string } | undefined, locale: strin
 
 export function SectionsMaintenance() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId } = useABET();
+	const { academicPeriodId, modalityTypeId } = useABET();
 	const { toast, showToast, clearToast } = useApiErrorToast();
 
+	const { data: programs = [] } = useProgramsByModality(modalityTypeId);
+
+	const [programId, setProgramId] = useState<number | null>(null);
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
 	const [page, setPage] = useState(1);
@@ -79,8 +85,14 @@ export function SectionsMaintenance() {
 
 	const handleSearchChange = (value: string) => setSearch(value);
 
+	const handleProgramChange = (value: number | null) => {
+		setProgramId(value);
+		setPage(1);
+	};
+
 	const { data, isLoading, isFetching, isError } = useCourseSectionsMaintenance({
 		academicPeriodId,
+		programId,
 		page,
 		pageSize: PAGE_SIZE,
 		search: debouncedSearch,
@@ -89,6 +101,16 @@ export function SectionsMaintenance() {
 	const items = data?.items ?? [];
 	const total = data?.total ?? 0;
 	const totalPages = data?.totalPages ?? 1;
+
+	const programOptions = useMemo(
+		() =>
+			programs.map((program: ProgramResponse) => ({
+				value: program.id,
+				label: localized(program.name, locale) || program.code,
+			})),
+		[programs, locale],
+	);
+	const selectedProgram = programOptions.find((option) => option.value === programId) ?? null;
 
 	const handleCreate = async (body: CourseSectionMaintenanceCreate) => {
 		setCreateError(null);
@@ -151,6 +173,12 @@ export function SectionsMaintenance() {
 				meta: { cellClassName: 'font-mono text-zinc-800' },
 			},
 			{
+				id: 'courseName',
+				header: t('loads.sectionsMaintenance.col.courseName'),
+				meta: { cellClassName: 'text-zinc-800' },
+				cell: ({ row }) => localized(row.original.courseName, locale),
+			},
+			{
 				accessorKey: 'sectionCode',
 				header: t('loads.sectionsMaintenance.col.sectionCode'),
 				meta: { cellClassName: 'font-mono text-zinc-700' },
@@ -159,6 +187,12 @@ export function SectionsMaintenance() {
 				accessorKey: 'professorCode',
 				header: t('loads.sectionsMaintenance.col.professorCode'),
 				meta: { cellClassName: 'font-mono text-zinc-700' },
+			},
+			{
+				id: 'professorName',
+				header: t('loads.sectionsMaintenance.col.professorName'),
+				meta: { cellClassName: 'text-zinc-700' },
+				cell: ({ row }) => `${row.original.professorFirstName} ${row.original.professorLastName}`,
 			},
 			{
 				accessorKey: 'campusCode',
@@ -222,6 +256,23 @@ export function SectionsMaintenance() {
 					searchPlaceholder={t('loads.sectionsMaintenance.searchPlaceholder')}
 					searchValue={search}
 					onSearchChange={handleSearchChange}
+					filters={
+						<div className="w-full sm:w-56">
+							<Select
+								name="program"
+								aria-label={t('loads.sectionsMaintenance.programLabel')}
+								placeholder={t('loads.sectionsMaintenance.programPlaceholder')}
+								isSearchable
+								isClearable
+								isDisabled={noPeriodSelected}
+								options={programOptions}
+								value={selectedProgram}
+								onChange={(_name, value) =>
+									handleProgramChange(value && !Array.isArray(value) ? Number(value.value) : null)
+								}
+							/>
+						</div>
+					}
 					aria-label={t('loads.sectionsMaintenance.title')}
 					isLoading={isLoading}
 					errorMessage={isError ? t('loads.sectionsMaintenance.error.loadFailed') : undefined}

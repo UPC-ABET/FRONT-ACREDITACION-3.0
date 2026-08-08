@@ -269,8 +269,11 @@ export type CourseSectionMaintenanceItem = {
 	campusId: number;
 	sectionModalityTypeId: number;
 	courseCode: string;
+	courseName: { es: string; en: string };
 	sectionCode: string;
 	professorCode: string;
+	professorFirstName: string;
+	professorLastName: string;
 	campusCode: string;
 	modalityTypeName: { es: string; en: string };
 };
