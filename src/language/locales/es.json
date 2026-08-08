@@ -2392,6 +2392,7 @@
 				"requiredEn": "El nombre en inglés es obligatorio.",
 				"requiredDescEs": "La descripción en español es obligatoria.",
 				"requiredDescEn": "La descripción en inglés es obligatoria.",
+				"requiredOutcome": "Debes seleccionar un outcome.",
 				"saved": "Competencia guardada exitosamente.",
 				"deleted": "Competencia eliminada."
 			},
@@ -2748,6 +2749,7 @@
 			},
 			"programLabel": "Carrera",
 			"selectProgram": "Selecciona una carrera",
+			"noCommissionForType": "No hay una comisión configurada para este tipo de competencia en esta carrera.",
 			"noProgramsForSchool": "No hay carreras configuradas para esta escuela",
 			"generateConfig": "Generar configuración",
 			"generateConfigHint": "Genera la configuración a partir de los outcomes de la carrera seleccionada.",

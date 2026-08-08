@@ -2392,6 +2392,7 @@
 				"requiredEn": "English name is required.",
 				"requiredDescEs": "Spanish description is required.",
 				"requiredDescEn": "English description is required.",
+				"requiredOutcome": "You must select an outcome.",
 				"saved": "Competence saved successfully.",
 				"deleted": "Competence deleted."
 			},
@@ -2747,6 +2748,7 @@
 			},
 			"programLabel": "Program",
 			"selectProgram": "Select a program",
+			"noCommissionForType": "There is no commission configured for this competence type in this program.",
 			"noProgramsForSchool": "No programs configured for this school",
 			"generateConfig": "Generate configuration",
 			"generateConfigHint": "Generate the configuration from the selected program's outcomes.",

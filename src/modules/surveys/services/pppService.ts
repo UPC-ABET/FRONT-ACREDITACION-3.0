@@ -31,6 +31,7 @@ function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 	return {
 		id: raw.id,
 		outcomeId: raw.outcomeId,
+		commissionTypeCode: raw.outcome?.programCommission?.commissionType?.code,
 		generalCompetence: extra.nameEs ?? raw.userOutcomeName ?? '',
 		specificCompetence: extra.nameEn ?? extra.nameEs ?? '',
 		description: extra.descriptionEs ?? '',
@@ -159,7 +160,7 @@ export async function generatePPPConfigFromOutcomes(
 
 export async function savePPPCompetence(data: CompetenceFormData) {
 	const payload = {
-		outcomeId: data.outcomeId ?? 1,
+		outcomeId: data.outcomeId,
 		nameEs: data.generalCompetence,
 		nameEn: data.specificCompetence || data.generalCompetence,
 		descriptionEs: data.description,

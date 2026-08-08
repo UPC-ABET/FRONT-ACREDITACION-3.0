@@ -34,6 +34,9 @@ export interface Program {
 export interface CompetenceConfig {
 	id: number;
 	outcomeId?: number;
+	/** Commission type code (TG301-T001 General / TG301-T002 Especifica) of the linked outcome,
+	 * resolved server-side. Undefined when the config has no outcome linked. */
+	commissionTypeCode?: string;
 	generalCompetence: string;
 	specificCompetence: string;
 	description: string;
@@ -528,6 +531,7 @@ export interface BackendPppConfig {
 	};
 	userOutcomeName?: string;
 	outcomeCode?: string;
+	outcome?: { programCommission?: { commissionType?: { code?: string } } };
 }
 
 export interface BackendUploadResult {
@@ -583,6 +587,7 @@ export interface BackendGraConfig {
 	// jsonb I18nText columns that in practice hold a bare ES string
 	userOutcomeName?: string | { es?: string; en?: string };
 	userOutcomeDescription?: string | { es?: string; en?: string };
+	outcome?: { programCommission?: { commissionType?: { code?: string } } };
 }
 
 export interface BackendGraStudent {

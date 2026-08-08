@@ -58,6 +58,7 @@ function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
 	return {
 		id: raw.id,
 		outcomeId: raw.outcomeId,
+		commissionTypeCode: raw.outcome?.programCommission?.commissionType?.code,
 		generalCompetence: extra.nameEs ?? toText(raw.userOutcomeName),
 		specificCompetence: extra.nameEn ?? extra.nameEs ?? '',
 		// The backend stores the ES description in user_outcome_description (bare string inside an
@@ -131,7 +132,7 @@ export async function listGRACompetences(
 
 export async function saveGRACompetence(data: CompetenceFormData) {
 	const payload = {
-		outcomeId: data.outcomeId ?? 1,
+		outcomeId: data.outcomeId,
 		nameEs: data.generalCompetence,
 		nameEn: data.specificCompetence || data.generalCompetence,
 		descriptionEs: data.description,
