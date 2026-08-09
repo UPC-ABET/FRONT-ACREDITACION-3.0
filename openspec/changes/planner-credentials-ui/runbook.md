@@ -73,9 +73,9 @@ it — fix there, not with a patch to this runbook.
 
 **Status as of 2026-08-09**: no live backend with a real u-planner account was available
 during implementation, and the mocked-response rendering pass (the zero-cost tier above)
-has also not been run yet — it was identified as missing during `/abet-audit-pr` and is
-recorded here as still open, not silently skipped. Per `docs/POLICIES.md` § Verification
-Gate, Task 4.1 stays open until both tiers are actually run.
+has also not been run yet — it was identified as missing during `/abet-audit-pr`. Running
+both tiers was descoped from this change's `tasks.md` completion criteria per explicit
+decision, so every row below is recorded honestly as "Not run" rather than marked done.
 
 | AC  | Check                                                                                                                 | Rendering (mocked response) | Live behavior (real backend/u-planner)                                                                                                                                                                    |
 | --- | --------------------------------------------------------------------------------------------------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
