@@ -1,12 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+	getPlannerCredentials,
 	getPlannerScrapeRun,
 	getPlannerSessionStatus,
 	listPlannerScrapeRuns,
 	refreshPlannerSession,
+	savePlannerCredentials,
 	startPlannerScrape,
 } from '../services';
-import type { PlannerScrapeRunStatus } from '../types';
+import type { PlannerScrapeRunStatus, SavePlannerCredentialsRequest } from '../types';
 
 const TERMINAL_STATUSES: PlannerScrapeRunStatus[] = ['completed', 'partial', 'failed', 'expired'];
 
@@ -18,6 +20,7 @@ const SCRAPE_POLL_INTERVAL_MS = 3_000;
 export const plannerQueryKeys = {
 	all: ['planner'] as const,
 	sessionStatus: () => [...plannerQueryKeys.all, 'session-status'] as const,
+	credentials: () => [...plannerQueryKeys.all, 'credentials'] as const,
 	scrapeRuns: (periodId: number) => [...plannerQueryKeys.all, 'scrape-runs', periodId] as const,
 	scrapeRun: (runId: string) => [...plannerQueryKeys.all, 'scrape-run', runId] as const,
 };
@@ -37,6 +40,25 @@ export function useRefreshPlannerSession() {
 		mutationFn: () => refreshPlannerSession(),
 		onSuccess: (data) => {
 			queryClient.setQueryData(plannerQueryKeys.sessionStatus(), data);
+		},
+	});
+}
+
+export function usePlannerCredentials() {
+	return useQuery({
+		queryKey: plannerQueryKeys.credentials(),
+		queryFn: getPlannerCredentials,
+		staleTime: Infinity,
+	});
+}
+
+export function useSavePlannerCredentials() {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: (payload: SavePlannerCredentialsRequest) => savePlannerCredentials(payload),
+		onSuccess: (data) => {
+			queryClient.setQueryData(plannerQueryKeys.sessionStatus(), data);
+			queryClient.invalidateQueries({ queryKey: plannerQueryKeys.credentials() });
 		},
 	});
 }
