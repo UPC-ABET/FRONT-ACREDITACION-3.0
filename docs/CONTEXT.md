@@ -399,6 +399,15 @@ here would later be read as authoritative.
    `TYPE_CODES.IFC_STATUS.SAVED` (`'TG701-T001'`) via `getTypesByGroupCode()` — the set of
    valid statuses and their order is backend data, not frontend code. —
    `src/modules/core`
+4. **Planner credentials are a single, system-wide secret — not per-school or
+   per-account.** `PlannerSessionStatusValue` includes a 4th value, `'not_configured'`,
+   meaning no credentials have ever been saved; the UI renders that as a setup form (via
+   `PlannerCredentialsCard`), never as an error. Unlike Banner (which keeps a streamed 2FA
+   browser login with no stored password), Planner's username/password are POSTed once
+   through `POST /planner/session/credentials`, verified against u-planner before being
+   persisted, and never returned by any endpoint afterward. — `src/modules/planner/types`,
+   `src/modules/planner/components/PlannerSessionStatusCard.tsx`,
+   `src/modules/planner/components/PlannerCredentialsCard.tsx`
 
 ---
 
