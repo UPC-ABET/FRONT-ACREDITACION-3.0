@@ -1,8 +1,19 @@
-export type PlannerSessionStatusValue = 'active' | 'expiring' | 'expired';
+export type PlannerSessionStatusValue = 'active' | 'expiring' | 'expired' | 'not_configured';
 
 export interface PlannerSessionStatus {
 	status: PlannerSessionStatusValue;
 	tokenExp: string | null;
+}
+
+export interface PlannerCredentials {
+	username: string | null;
+	configured: boolean;
+	updatedAt: string | null;
+}
+
+export interface SavePlannerCredentialsRequest {
+	username: string;
+	password: string;
 }
 
 export interface StartPlannerScrapeRequest {
