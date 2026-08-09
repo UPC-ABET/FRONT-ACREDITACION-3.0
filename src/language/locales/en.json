@@ -194,16 +194,33 @@
 			"tokenExp": "Expires:",
 			"noToken": "No active token",
 			"refresh": "Try to refresh",
+			"refreshError": "Could not refresh the Planner token.",
 			"status": {
 				"active": "Active",
 				"expiring": "Expiring",
-				"expired": "Expired"
+				"expired": "Expired",
+				"not_configured": "Not configured"
 			},
 			"hint": {
 				"active": "The token is valid. Extraction can run.",
 				"expiring": "The token is about to expire; it will refresh automatically.",
-				"expired": "No valid token. Check the Planner credentials or try to refresh."
+				"expired": "No valid token. Check the Planner credentials or try to refresh.",
+				"not_configured": "Planner credentials have not been configured yet. Set them below to enable extraction."
 			}
+		},
+		"credentials": {
+			"title": "Planner credentials",
+			"subtitle": "The system-wide username and password used to sign in to Planner (u-planner).",
+			"loading": "Loading credentials...",
+			"loadError": "Could not load the credentials.",
+			"currentLabel": "Configured as:",
+			"updatedAtLabel": "Last updated:",
+			"notConfigured": "No credentials have been configured yet.",
+			"usernameLabel": "Username",
+			"passwordLabel": "Password",
+			"save": "Save credentials",
+			"saveSuccess": "Planner credentials were verified and saved.",
+			"saveError": "Could not save the Planner credentials."
 		},
 		"scrape": {
 			"title": "Run extraction",
@@ -1382,7 +1399,16 @@
 			"noCourses": "There are no courses to extract.",
 			"periodNotFound": "The selected academic period does not exist.",
 			"periodNotInPlanner": "The period is not available in Planner.",
-			"runNotFound": "The requested run was not found."
+			"runNotFound": "The requested run was not found.",
+			"invalidCredentials": "u-planner rejected this username and password. No changes were saved — any previously configured credentials are still in place.",
+			"verificationCooldown": "Still checking the previous attempt (or it was rejected less than 30 seconds ago). Try again in a moment — this does not mean the credentials are wrong.",
+			"invalidCredentialsPayload": "The submitted data is not valid.",
+			"credentialsNotConfigured": "Planner credentials have not been configured yet.",
+			"unreachable": "Planner (u-planner) is not responding right now. This is not a problem with the credentials."
+		},
+		"scraperCredential": {
+			"saveFailed": "These credentials cannot be used as submitted (e.g. an empty or whitespace-only username).",
+			"decryptionFailed": "The stored Planner credentials could not be read due to a server-side configuration issue. Contact an administrator."
 		},
 		"conflict": "Conflict with the current state of the resource",
 		"internalServer": "Internal server error",
