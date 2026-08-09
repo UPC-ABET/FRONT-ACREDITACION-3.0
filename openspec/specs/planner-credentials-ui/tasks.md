@@ -315,7 +315,7 @@ type="success">` (self-contained, not the parent's `useApiErrorToast`).
 
 > **Task 4.1 (full AC walkthrough against a running backend) was descoped from this
 > change's completion criteria on 2026-08-09**, per explicit product decision, rather than
-> run. It is not silently dropped: `openspec/changes/planner-credentials-ui/runbook.md`'s
+> run. It is not silently dropped: `openspec/specs/planner-credentials-ui/runbook.md`'s
 > AC-by-AC checklist still records every behavioral row as "Not run" (both the mocked-
 > response and live-backend tiers), and that gap is carried into the PR body's Risks and
 > follow-ups so a reviewer sees it. If this needs to be picked back up later, `runbook.md`
@@ -368,7 +368,7 @@ auditor's own recommendation) were fixed in this pass.
 
 **Files**
 
-- `openspec/changes/planner-credentials-ui/runbook.md` (modify)
+- `openspec/specs/planner-credentials-ui/runbook.md` (modify)
 
 **Steps**
 
