@@ -1,28 +1,48 @@
 'use client';
 
+import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import { Badge, Button, Card, Spinner } from '@/shared/components';
+import { Badge, Button, Card, Spinner, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { usePlannerSessionStatus, useRefreshPlannerSession } from '../hooks';
-import type { PlannerSessionStatusValue } from '../types';
-
-const TOKEN_COLORS: Record<PlannerSessionStatusValue, string> = {
-	active: '#059669',
-	expiring: '#d97706',
-	expired: '#dc2626',
-};
+import { ApiError } from '@/shared/lib/apiError';
+import { resolveApiErrorContent, type ApiErrorContent } from '@/shared/utils/tryTranslate';
+import { plannerQueryKeys, usePlannerSessionStatus, useRefreshPlannerSession } from '../hooks';
+import {
+	PLANNER_CREDENTIALS_NOT_CONFIGURED_KEY,
+	PLANNER_SESSION_STATUS_COLORS,
+} from '../constants';
 
 // Unlike Banner, Planner has no manual "stopper": the token is obtained/refreshed
 // server-side from stored credentials, so there is no login button — only a refresh.
+// There is also no refresh action while not_configured: nothing exists yet to refresh,
+// and pressing it would only produce credentialsNotConfigured.
 export function PlannerSessionStatusCard() {
 	const { t, locale } = useI18n();
+	const queryClient = useQueryClient();
 	const { data, isLoading, isError } = usePlannerSessionStatus();
 	const refreshSession = useRefreshPlannerSession();
+	const [refreshError, setRefreshError] = useState<ApiErrorContent | null>(null);
 
 	const status = data?.status;
 	const formattedExp = data?.tokenExp
 		? new Date(data.tokenExp).toLocaleString(locale === 'en' ? 'en-US' : 'es-PE')
 		: null;
+
+	const handleRefresh = () => {
+		refreshSession.mutate(undefined, {
+			onError: (error) => {
+				if (error instanceof ApiError && error.message === PLANNER_CREDENTIALS_NOT_CONFIGURED_KEY) {
+					// Defensive fallback only (the refresh button is hidden while not_configured):
+					// a race where credentials were cleared elsewhere between load and click.
+					// Refetch instead of showing an error — the not_configured rendering takes over.
+					queryClient.invalidateQueries({ queryKey: plannerQueryKeys.sessionStatus() });
+					return;
+				}
+				setRefreshError(resolveApiErrorContent(t, error, 'planner.session.refreshError'));
+			},
+		});
+	};
 
 	const renderBody = () => {
 		if (isLoading) {
@@ -44,7 +64,9 @@ export function PlannerSessionStatusCard() {
 					<span className="text-sm font-semibold text-zinc-700">
 						{t('planner.session.tokenLabel')}:
 					</span>
-					<Badge color={TOKEN_COLORS[status]}>{t(`planner.session.status.${status}`)}</Badge>
+					<Badge color={PLANNER_SESSION_STATUS_COLORS[status]}>
+						{t(`planner.session.status.${status}`)}
+					</Badge>
 					{formattedExp ? (
 						<span className="text-sm text-zinc-500">
 							{t('planner.session.tokenExp')} {formattedExp}
@@ -66,18 +88,27 @@ export function PlannerSessionStatusCard() {
 			className="overflow-visible">
 			<div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
 				<div className="flex-1">{renderBody()}</div>
-				<div className="flex shrink-0 items-center gap-2">
-					<Button
-						variant="surface"
-						size="sm"
-						onClick={() => refreshSession.mutate()}
-						loading={refreshSession.isPending}
-						disabled={isLoading}>
-						<ArrowPathIcon className="h-4 w-4" />
-						{t('planner.session.refresh')}
-					</Button>
-				</div>
+				{status !== 'not_configured' && (
+					<div className="flex shrink-0 items-center gap-2">
+						<Button
+							variant="surface"
+							size="sm"
+							onClick={handleRefresh}
+							loading={refreshSession.isPending}
+							disabled={isLoading}>
+							<ArrowPathIcon className="h-4 w-4" />
+							{t('planner.session.refresh')}
+						</Button>
+					</div>
+				)}
 			</div>
+			<Toast
+				isOpen={refreshError !== null}
+				onClose={() => setRefreshError(null)}
+				type="error"
+				message={refreshError?.title}
+				reasons={refreshError?.reasons}
+			/>
 		</Card>
 	);
 }

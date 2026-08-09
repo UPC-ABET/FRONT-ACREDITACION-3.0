@@ -1,8 +1,10 @@
 import { apiGet, apiPost, getApiData } from '@/shared/lib';
 import type {
+	PlannerCredentials,
 	PlannerScrapeRun,
 	PlannerScrapeRunSummary,
 	PlannerSessionStatus,
+	SavePlannerCredentialsRequest,
 	StartPlannerScrapeRequest,
 	StartPlannerScrapeResponse,
 } from '../types';
@@ -14,6 +16,18 @@ export async function getPlannerSessionStatus(): Promise<PlannerSessionStatus> {
 
 export async function refreshPlannerSession(): Promise<PlannerSessionStatus> {
 	const res = await apiPost('/planner/session/refresh');
+	return getApiData<PlannerSessionStatus>(res);
+}
+
+export async function getPlannerCredentials(): Promise<PlannerCredentials> {
+	const res = await apiGet('/planner/session/credentials');
+	return getApiData<PlannerCredentials>(res);
+}
+
+export async function savePlannerCredentials(
+	payload: SavePlannerCredentialsRequest,
+): Promise<PlannerSessionStatus> {
+	const res = await apiPost('/planner/session/credentials', payload);
 	return getApiData<PlannerSessionStatus>(res);
 }
 

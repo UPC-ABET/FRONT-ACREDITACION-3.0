@@ -194,16 +194,34 @@
 			"tokenExp": "Vence:",
 			"noToken": "Sin token activo",
 			"refresh": "Intentar actualizar",
+			"refreshError": "No se pudo actualizar el token de Planner.",
 			"status": {
 				"active": "Activo",
 				"expiring": "Por vencer",
-				"expired": "Vencido"
+				"expired": "Vencido",
+				"not_configured": "Sin configurar"
 			},
 			"hint": {
 				"active": "El token es válido. La extracción puede ejecutarse.",
 				"expiring": "El token está por vencer; se renovará automáticamente.",
-				"expired": "No hay token válido. Verifica las credenciales de Planner o intenta actualizar."
+				"expired": "No hay token válido. Verifica las credenciales de Planner o intenta actualizar.",
+				"not_configured": "Aún no se han configurado las credenciales de Planner. Configúralas más abajo para habilitar la extracción."
 			}
+		},
+		"credentials": {
+			"title": "Credenciales de Planner",
+			"subtitle": "Usuario y contraseña, a nivel de todo el sistema, usados para iniciar sesión en Planner (u-planner).",
+			"loading": "Cargando credenciales...",
+			"loadError": "No se pudieron cargar las credenciales.",
+			"retry": "Reintentar",
+			"currentLabel": "Configurado como:",
+			"updatedAtLabel": "Última actualización:",
+			"notConfigured": "Aún no se han configurado credenciales.",
+			"usernameLabel": "Usuario",
+			"passwordLabel": "Contraseña",
+			"save": "Guardar credenciales",
+			"saveSuccess": "Las credenciales de Planner se verificaron y guardaron.",
+			"saveError": "No se pudieron guardar las credenciales de Planner."
 		},
 		"scrape": {
 			"title": "Ejecutar extracción",
@@ -1382,7 +1400,16 @@
 			"noCourses": "No hay cursos para extraer.",
 			"periodNotFound": "El período académico seleccionado no existe.",
 			"periodNotInPlanner": "El período no está disponible en Planner.",
-			"runNotFound": "No se encontró la ejecución solicitada."
+			"runNotFound": "No se encontró la ejecución solicitada.",
+			"invalidCredentials": "u-planner rechazó este usuario y contraseña. No se guardó ningún cambio: las credenciales configuradas previamente, si existían, siguen vigentes.",
+			"verificationCooldown": "Aún se está verificando el intento anterior (o fue rechazado hace menos de 30 segundos). Intenta de nuevo en un momento — esto no significa que las credenciales sean incorrectas.",
+			"invalidCredentialsPayload": "Los datos enviados no son válidos.",
+			"credentialsNotConfigured": "Aún no se han configurado las credenciales de Planner.",
+			"unreachable": "Planner (u-planner) no está respondiendo en este momento. Esto no es un problema con las credenciales."
+		},
+		"scraperCredential": {
+			"saveFailed": "Estas credenciales no se pueden usar tal como fueron enviadas (por ejemplo, un usuario vacío o compuesto solo por espacios).",
+			"decryptionFailed": "No se pudieron leer las credenciales de Planner guardadas debido a un problema de configuración del servidor. Contacta a un administrador."
 		},
 		"conflict": "Conflicto con el estado actual del recurso",
 		"internalServer": "Error interno del servidor",
