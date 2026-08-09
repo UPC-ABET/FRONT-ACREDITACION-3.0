@@ -17,11 +17,13 @@ export const classRepresentativesService = {
 		page: number;
 		pageSize: number;
 		search?: string;
+		programId?: number;
 	}): Promise<ApiResponse<ClassRepresentativeMaintenanceList>> {
 		const query = new URLSearchParams();
 		query.set('page', String(params.page));
 		query.set('pageSize', String(params.pageSize));
 		if (params.search) query.set('search', params.search);
+		if (params.programId != null) query.set('programId', String(params.programId));
 		return apiGet(`${REPRESENTATIVES_BASE}/maintenance?${query.toString()}`);
 	},
 };

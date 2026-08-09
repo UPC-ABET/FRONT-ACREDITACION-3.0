@@ -13,11 +13,13 @@ export const courseSectionsService = {
 		page?: number;
 		pageSize?: number;
 		search?: string;
+		programId?: number;
 	}): Promise<ApiResponse<CourseSectionMaintenanceList>> {
 		const query = new URLSearchParams();
 		if (params.page != null) query.set('page', String(params.page));
 		if (params.pageSize != null) query.set('pageSize', String(params.pageSize));
 		if (params.search) query.set('search', params.search);
+		if (params.programId != null) query.set('programId', String(params.programId));
 		const qs = query.toString();
 		return apiGet(`/course-sections/maintenance${qs ? `?${qs}` : ''}`);
 	},

@@ -3563,6 +3563,8 @@
 			"title": "Sections maintenance",
 			"subtitle": "Edit or delete the sections for the selected academic period.",
 			"selectPeriod": "Select an academic period in the header to continue.",
+			"programLabel": "Program",
+			"programPlaceholder": "All programs",
 			"searchPlaceholder": "Search by section, course, professor or campus...",
 			"results": "results",
 			"page": "Page",
@@ -3571,8 +3573,10 @@
 			"retry": "Retry",
 			"col": {
 				"courseCode": "Course",
+				"courseName": "Course Name",
 				"sectionCode": "Section",
 				"professorCode": "Professor",
+				"professorName": "Professor Name",
 				"campusCode": "Campus",
 				"modality": "Modality",
 				"actions": "Actions"
@@ -3683,6 +3687,8 @@
 			"title": "Class representatives maintenance",
 			"subtitle": "Assign or remove the section class representatives for the selected academic period.",
 			"selectPeriod": "Select an academic period in the header to continue.",
+			"programLabel": "Program",
+			"programPlaceholder": "All programs",
 			"searchPlaceholder": "Search by course, section or student code...",
 			"results": "results",
 			"page": "Page",

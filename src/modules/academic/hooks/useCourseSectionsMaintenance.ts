@@ -8,6 +8,8 @@ import type { CourseSectionMaintenanceCreate, CourseSectionMaintenanceUpdate } f
 
 interface MaintenanceListParams {
 	academicPeriodId: number | null;
+	modalityTypeId: number | null;
+	programId: number | null;
 	page: number;
 	pageSize: number;
 	search: string;
@@ -21,6 +23,8 @@ export const courseSectionsMaintenanceKeys = {
 
 export function useCourseSectionsMaintenance(params: MaintenanceListParams) {
 	return useQuery({
+		// modalityTypeId is part of the key so a modality switch re-fetches, even though
+		// it only travels as the X-Modality-Type-Id header, not a query param.
 		queryKey: courseSectionsMaintenanceKeys.list(params),
 		queryFn: () =>
 			courseSectionsService
@@ -28,6 +32,7 @@ export function useCourseSectionsMaintenance(params: MaintenanceListParams) {
 					page: params.page,
 					pageSize: params.pageSize,
 					search: params.search.trim() || undefined,
+					programId: params.programId ?? undefined,
 				})
 				.then((response) => response.data),
 		enabled: params.academicPeriodId != null,

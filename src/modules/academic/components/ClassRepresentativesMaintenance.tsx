@@ -3,22 +3,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import type { ColumnDef } from '@tanstack/react-table';
-import {
-	Button,
-	Card,
-	ConfirmDialog,
-	DataTable,
-	SubTitle,
-	Title,
-	Toast,
-} from '@/shared/components';
+import { Button, Card, ConfirmDialog, DataTable, Select, SubTitle, Title, Toast } from '@/shared';
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
-import { useClassRepresentativeMutations, useClassRepresentativesMaintenance } from '../hooks';
-import type { ClassRepresentativeMaintenanceItem } from '../types';
+import {
+	useClassRepresentativeMutations,
+	useClassRepresentativesMaintenance,
+	useProgramsByModality,
+} from '../hooks';
+import type { ClassRepresentativeMaintenanceItem, ProgramResponse } from '../types';
 import { ClassRepresentativeCreateDialog } from './ClassRepresentativeCreateDialog';
 
 const PAGE_SIZE = DEFAULT_PAGE_SIZE;
@@ -30,9 +26,12 @@ function localized(text: { es?: string; en?: string } | undefined, locale: strin
 
 export function ClassRepresentativesMaintenance() {
 	const { t, locale } = useI18n();
-	const { academicPeriodId } = useABET();
+	const { academicPeriodId, modalityTypeId } = useABET();
 	const { toast, showToast, clearToast } = useApiErrorToast();
 
+	const { data: programs = [] } = useProgramsByModality(modalityTypeId);
+
+	const [programId, setProgramId] = useState<number | null>(null);
 	const [search, setSearch] = useState('');
 	const [debouncedSearch, setDebouncedSearch] = useState('');
 	const [page, setPage] = useState(1);
@@ -50,17 +49,29 @@ export function ClassRepresentativesMaintenance() {
 	}, [search]);
 
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset paging to the first page when the external academic period changes
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- reset paging to the first page when the external academic period/modality changes
 		setPage(1);
-	}, [academicPeriodId]);
+	}, [academicPeriodId, modalityTypeId]);
+
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect -- program options are scoped to modality; a stale selection would silently keep filtering by a program from the previous modality
+		setProgramId(null);
+	}, [modalityTypeId]);
 
 	const handleSearchChange = (value: string) => {
 		setSearch(value);
 		setPage(1);
 	};
 
+	const handleProgramChange = (value: number | null) => {
+		setProgramId(value);
+		setPage(1);
+	};
+
 	const { data, isLoading, isFetching, isError } = useClassRepresentativesMaintenance({
 		academicPeriodId,
+		modalityTypeId,
+		programId,
 		page,
 		pageSize: PAGE_SIZE,
 		search: debouncedSearch,
@@ -69,6 +80,16 @@ export function ClassRepresentativesMaintenance() {
 	const items = data?.items ?? [];
 	const total = data?.total ?? 0;
 	const totalPages = data?.totalPages ?? 1;
+
+	const programOptions = useMemo(
+		() =>
+			programs.map((program: ProgramResponse) => ({
+				value: program.id,
+				label: localized(program.name, locale) || program.code,
+			})),
+		[programs, locale],
+	);
+	const selectedProgram = programOptions.find((option) => option.value === programId) ?? null;
 
 	const handleAssign = async (body: { sectionCode: string; studentCode: string }) => {
 		setCreateError(null);
@@ -178,6 +199,23 @@ export function ClassRepresentativesMaintenance() {
 					searchPlaceholder={t('loads.classRepresentativesMaintenance.searchPlaceholder')}
 					searchValue={search}
 					onSearchChange={handleSearchChange}
+					filters={
+						<div className="w-full sm:w-56">
+							<Select
+								name="program"
+								aria-label={t('loads.classRepresentativesMaintenance.programLabel')}
+								placeholder={t('loads.classRepresentativesMaintenance.programPlaceholder')}
+								isSearchable
+								isClearable
+								isDisabled={noPeriodSelected}
+								options={programOptions}
+								value={selectedProgram}
+								onChange={(_name, value) =>
+									handleProgramChange(value && !Array.isArray(value) ? Number(value.value) : null)
+								}
+							/>
+						</div>
+					}
 					aria-label={t('loads.classRepresentativesMaintenance.title')}
 					isLoading={isLoading}
 					errorMessage={

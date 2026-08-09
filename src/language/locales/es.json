@@ -3564,6 +3564,8 @@
 			"title": "Mantenimiento de secciones",
 			"subtitle": "Edita o elimina las secciones del período académico seleccionado.",
 			"selectPeriod": "Selecciona un período académico en la cabecera para continuar.",
+			"programLabel": "Carrera",
+			"programPlaceholder": "Todas las carreras",
 			"searchPlaceholder": "Buscar por sección, curso, docente o campus...",
 			"results": "resultados",
 			"page": "Página",
@@ -3572,8 +3574,10 @@
 			"retry": "Reintentar",
 			"col": {
 				"courseCode": "Curso",
+				"courseName": "Nombre de curso",
 				"sectionCode": "Sección",
 				"professorCode": "Docente",
+				"professorName": "Nombre docente",
 				"campusCode": "Campus",
 				"modality": "Modalidad",
 				"actions": "Acciones"
@@ -3684,6 +3688,8 @@
 			"title": "Mantenimiento de delegados",
 			"subtitle": "Asigna o remueve los delegados de sección del período académico seleccionado.",
 			"selectPeriod": "Selecciona un período académico en la cabecera para continuar.",
+			"programLabel": "Carrera",
+			"programPlaceholder": "Todas las carreras",
 			"searchPlaceholder": "Buscar por curso, sección o código de alumno...",
 			"results": "resultados",
 			"page": "Página",

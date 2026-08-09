@@ -6,6 +6,8 @@ import type { AssignRepresentativeDto } from '../types';
 
 interface MaintenanceListParams {
 	academicPeriodId: number | null;
+	modalityTypeId: number | null;
+	programId: number | null;
 	page: number;
 	pageSize: number;
 	search: string;
@@ -19,6 +21,8 @@ export const classRepresentativesMaintenanceKeys = {
 
 export function useClassRepresentativesMaintenance(params: MaintenanceListParams) {
 	return useQuery({
+		// modalityTypeId is part of the key so a modality switch re-fetches, even though
+		// it only travels as the X-Modality-Type-Id header, not a query param.
 		queryKey: classRepresentativesMaintenanceKeys.list(params),
 		queryFn: () =>
 			classRepresentativesService
@@ -26,6 +30,7 @@ export function useClassRepresentativesMaintenance(params: MaintenanceListParams
 					page: params.page,
 					pageSize: params.pageSize,
 					search: params.search.trim() || undefined,
+					programId: params.programId ?? undefined,
 				})
 				.then((response) => response.data),
 		enabled: params.academicPeriodId != null,
