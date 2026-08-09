@@ -8,7 +8,7 @@ import {
 	savePlannerCredentials,
 	startPlannerScrape,
 } from '../services';
-import type { PlannerScrapeRunStatus, SavePlannerCredentialsRequest } from '../types';
+import type { PlannerScrapeRunStatus } from '../types';
 
 const TERMINAL_STATUSES: PlannerScrapeRunStatus[] = ['completed', 'partial', 'failed', 'expired'];
 
@@ -55,8 +55,11 @@ export function usePlannerCredentials() {
 export function useSavePlannerCredentials() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (payload: SavePlannerCredentialsRequest) => savePlannerCredentials(payload),
-		onSuccess: (data) => {
+		mutationFn: savePlannerCredentials,
+		onSuccess: async (data) => {
+			// Cancel any in-flight status poll first — otherwise its response can land after
+			// setQueryData and overwrite the freshly-saved status with stale data.
+			await queryClient.cancelQueries({ queryKey: plannerQueryKeys.sessionStatus() });
 			queryClient.setQueryData(plannerQueryKeys.sessionStatus(), data);
 			queryClient.invalidateQueries({ queryKey: plannerQueryKeys.credentials() });
 		},
