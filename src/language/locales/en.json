@@ -213,6 +213,7 @@
 			"subtitle": "The system-wide username and password used to sign in to Planner (u-planner).",
 			"loading": "Loading credentials...",
 			"loadError": "Could not load the credentials.",
+			"retry": "Retry",
 			"currentLabel": "Configured as:",
 			"updatedAtLabel": "Last updated:",
 			"notConfigured": "No credentials have been configured yet.",

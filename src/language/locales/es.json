@@ -213,6 +213,7 @@
 			"subtitle": "Usuario y contraseña, a nivel de todo el sistema, usados para iniciar sesión en Planner (u-planner).",
 			"loading": "Cargando credenciales...",
 			"loadError": "No se pudieron cargar las credenciales.",
+			"retry": "Reintentar",
 			"currentLabel": "Configurado como:",
 			"updatedAtLabel": "Última actualización:",
 			"notConfigured": "Aún no se han configurado credenciales.",
