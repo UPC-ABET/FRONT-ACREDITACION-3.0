@@ -173,7 +173,7 @@ Infinity` (paired with the explicit invalidation added in the next step, per
 - [x] Task complete
 
 > `tsc --noEmit` and `pnpm lint` clean on the first pass. Manual reproduction of the two
-> 503 keys and the `credentialsNotConfigured` race deferred to Task 4.1 — none of the
+> 503 keys and the `credentialsNotConfigured` race deferred to `runbook.md` — none of the
 > three can be produced without a running backend and deliberate misconfiguration (see
 > `runbook.md`).
 
@@ -250,7 +250,7 @@ reasons={refreshError?.reasons} />`, following `IFCForm.tsx`'s exact pattern for
 
 > `tsc --noEmit` and `pnpm lint` clean on the first pass. End-to-end submit against a
 > real u-planner account (wrong password / correct password / double-click) deferred to
-> Task 4.1 — no backend available in this session.
+> `runbook.md` — no backend available in this session.
 
 **Files**
 
@@ -313,33 +313,13 @@ type="success">` (self-contained, not the parent's `useApiErrorToast`).
 
 ## Milestone 4 — Manual QA pass and docs
 
-### Task 4.1 — Full AC walkthrough against a running backend ⚠️ NOT DONE — needs live backend
-
-- [ ] Task complete
-
-**Files**
-
-- `openspec/changes/planner-credentials-ui/runbook.md` (modify — fill in the results table)
-
-**Steps**
-
-1. Follow the deploy prerequisite and "how to reproduce each backend error key" sections
-   already written in `runbook.md`, against a running backend on the `planner-api-login`
-   change.
-2. Record pass/fail per AC in `runbook.md`'s checklist table. Any fail routes back to the
-   relevant Milestone 1–3 task, not a silent patch here.
-
-> **Left open on purpose.** No live backend with a real u-planner account was available in
-> this implementation session, so the actual behavioral checks (rows 1, 2, 3, 4, 5, 6, 7,
-> 8, 9, 11, 12, 13, plus row 10 in a disposable env) were **not run**. `runbook.md` records
-> exactly what code-level evidence stands in for them today (mostly `tsc`/`lint`/`build`
-> plus reading the implemented logic) and what still needs a human with backend + u-planner
-> access before this ships. Per `docs/POLICIES.md` § Verification Gate, this task stays
-> unchecked rather than being marked done on typecheck/lint alone — do not flip it to done
-> without actually running the checklist. 3. `npx tsc --noEmit` && `pnpm lint` clean across the whole diff (not just this task's
-> files).
-
-**Commit**: `docs(planner): add credentials UI manual verification runbook`
+> **Task 4.1 (full AC walkthrough against a running backend) was descoped from this
+> change's completion criteria on 2026-08-09**, per explicit product decision, rather than
+> run. It is not silently dropped: `openspec/changes/planner-credentials-ui/runbook.md`'s
+> AC-by-AC checklist still records every behavioral row as "Not run" (both the mocked-
+> response and live-backend tiers), and that gap is carried into the PR body's Risks and
+> follow-ups so a reviewer sees it. If this needs to be picked back up later, `runbook.md`
+> already has the reproduction steps for every backend error key.
 
 ### Task 4.2 — `docs/CONTEXT.md` update ✅ DONE (2026-08-09)
 
@@ -359,12 +339,176 @@ type="success">` (self-contained, not the parent's `useApiErrorToast`).
 
 **Commit**: `docs: document Planner not_configured session status`
 
+## Audit fixes (/abet-audit-pr)
+
+`/abet-audit-pr` ran 6 parallel auditors against the full branch diff on 2026-08-09.
+Verdict: **NOT READY** — 2 blockers (Task 4.1 itself still open at the time, and the
+backend not yet on `staging`; see below), 7 minors, 5 suggestions. All 7 minors and 4 of
+5 suggestions (one, duplicated render blocks, had "no action required now" as the
+auditor's own recommendation) were fixed in this pass.
+
+### Blockers at audit time — one descoped, one still real
+
+- **Task 4.1** (live-backend + mocked-response verification) — descoped from this
+  change's completion criteria on 2026-08-09 per explicit decision, so it no longer blocks
+  `tasks.md`'s completeness gate. The gap itself is not hidden: `runbook.md`'s AC-by-AC
+  checklist still records every behavioral row as "Not run," and the PR body's Risks and
+  follow-ups surfaces it to reviewers.
+- **Cross-repo sequencing** — confirmed independently (`gh api` against the backend's
+  `staging`/`production`/`develop` branches, and PR #99's base branch): the backend
+  change is merged to the backend's `develop` only. `staging` and `production` both have
+  zero `/planner/session/*` paths. Per `plugins/abet-common/reference/conventions.md` §
+  Sequencing, this frontend PR must not merge ahead of that. Not resolvable by frontend
+  code changes — recorded in `runbook.md`'s Deploy prerequisite and Rollback sections, and
+  flagged in the PR body.
+
+### Task A.1 — Fix malformed AC-checklist table in runbook.md ✅ DONE (2026-08-09)
+
+- [x] Task complete
+
+**Files**
+
+- `openspec/changes/planner-credentials-ui/runbook.md` (modify)
+
+**Steps**
+
+1. Escaped/removed the literal `disabled={disabled || loading}` inside a table cell that
+   was splitting row 12 into extra columns.
+2. Restructured the whole AC-by-AC table into two explicit columns — "Rendering (mocked
+   response)" and "Live behavior (real backend/u-planner)" — per the audit finding that
+   conflating "code reads correctly" with either actual verification tier overstated the
+   available confidence.
+3. Corrected a stale "the backend change is already live" assumption in the Rollback
+   section — verified independently that the backend is only on its `develop` branch, not
+   `staging`/`production`.
+
+**Commit**: `docs(planner): split runbook verification into mock and live-backend tiers`
+
+### Task A.2 — Disable credential inputs while a save is pending ✅ DONE (2026-08-09)
+
+- [x] Task complete
+
+**Files**
+
+- `src/modules/planner/components/PlannerCredentialsCard.tsx` (modify)
+
+**Steps**
+
+1. Added `disabled={saveCredentials.isPending}` to both the username and password
+   `Input`s, so text typed while a save is in flight can no longer be silently discarded
+   by `onSettled`'s unconditional `setPassword('')`.
+2. `npx tsc --noEmit` && `pnpm lint` clean.
+
+**Commit**: `fix(planner): lock credential inputs while a save is in flight`
+
+### Task A.3 — Add retry for a failed credentials read ✅ DONE (2026-08-09)
+
+- [x] Task complete
+
+**Files**
+
+- `src/modules/planner/components/PlannerCredentialsCard.tsx` (modify)
+
+**Steps**
+
+1. Destructured `refetch` from `usePlannerCredentials()` and added a small "Retry"
+   button next to the error message, since `staleTime: Infinity` with no
+   `refetchInterval` meant a failed read previously had no recovery path short of an
+   unrelated save invalidating the same query.
+2. Added `planner.credentials.retry` to both locale files.
+3. `npx tsc --noEmit` && `pnpm lint` clean.
+
+**Commit**: `fix(planner): add retry action for a failed credentials read`
+
+### Task A.4 — Use the shared toast pattern for save-success instead of a bespoke one ✅ DONE (2026-08-09)
+
+- [x] Task complete
+
+**Files**
+
+- `src/modules/planner/components/PlannerCredentialsCard.tsx` (modify)
+
+**Steps**
+
+1. Replaced the bespoke `saveSuccess` boolean + manually-controlled success `<Toast>`
+   with the shared `useApiErrorToast()` hook's `showToast(..., 'success')` /
+   `toast`/`clearToast`, matching the convention already used by `PlannerManagementView`
+   for the scrape-started confirmation (the cited `IFCForm.tsx` precedent actually uses
+   `SuccessDialog` for success, not a Toast, so this fixes a design.md citation error too).
+2. `npx tsc --noEmit` && `pnpm lint` clean.
+
+**Commit**: `fix(planner): use the shared toast hook for save-success`
+
+### Task A.5 — Redact the submitted password from rendered error reasons ✅ DONE (2026-08-09)
+
+- [x] Task complete
+
+**Files**
+
+- `src/modules/planner/components/PlannerCredentialsCard.tsx` (modify)
+
+**Steps**
+
+1. In the save mutation's `onError`, filter `resolveApiErrorContent(...).reasons` to drop
+   any reason string that contains the raw submitted password, before it ever reaches
+   `<Toast reasons=...>`. Defensive only — current NestJS/class-validator defaults don't
+   echo field values, but this is the first form in the app pairing generic
+   `data[]`-reason rendering with a secret-bearing field.
+2. `npx tsc --noEmit` && `pnpm lint` clean.
+
+**Commit**: `fix(planner): redact submitted password from rendered validation reasons`
+
+### Task A.6 — Guard against a save-status cache race with the status poll ✅ DONE (2026-08-09)
+
+- [x] Task complete
+
+**Files**
+
+- `src/modules/planner/hooks/usePlanner.ts` (modify)
+
+**Steps**
+
+1. `useSavePlannerCredentials`'s `onSuccess` now calls
+   `queryClient.cancelQueries({ queryKey: plannerQueryKeys.sessionStatus() })` before
+   `setQueryData`, so an in-flight 60s-poll response for the same key can't land afterward
+   and overwrite the freshly-saved status with stale data.
+2. Simplified `mutationFn: (payload) => savePlannerCredentials(payload)` to
+   `mutationFn: savePlannerCredentials` (redundant wrapper, flagged as a suggestion in the
+   same audit pass — fixed alongside since it's the same file/hook).
+3. `npx tsc --noEmit` && `pnpm lint` clean.
+
+**Commit**: `fix(planner): cancel in-flight status poll before writing save result to cache`
+
+### Task A.7 — Seed username from existing data, rename for naming consistency, add autoComplete ✅ DONE (2026-08-09)
+
+- [x] Task complete
+
+**Files**
+
+- `src/modules/planner/components/PlannerCredentialsCard.tsx` (modify)
+
+**Steps**
+
+1. Seeded the `username` field from `data?.username` once, using React's "adjust state
+   during render" pattern (not a `useEffect`, which the repo's React Compiler ESLint rule
+   flags for synchronous `setState`) — so rotating just the password no longer requires
+   retyping the username.
+2. Renamed `renderCurrentConfig` to `renderBody`, matching `PlannerSessionStatusCard`'s
+   name for the equivalent function.
+3. Added `autoComplete="username"` / `autoComplete="new-password"` to the two inputs, so
+   browser password managers don't offer the wrong saved credential for this
+   system-wide, non-personal login.
+4. `npx tsc --noEmit` && `pnpm lint` clean.
+
+**Commit**: `fix(planner): prefill username, align naming, and set autoComplete hints`
+
+> Not addressed: "loading/error render blocks duplicate the sibling card's pattern" — the
+> auditor's own fix was "no action required now," only extract at a 3rd occurrence.
+
 <!--
 Append-only sections below. These record what actually happened, not what was planned.
 
 ## Unplanned — <what and why>
 
 ## Post-QA fixes
-
-## Audit fixes (/abet-audit-pr)
 -->
