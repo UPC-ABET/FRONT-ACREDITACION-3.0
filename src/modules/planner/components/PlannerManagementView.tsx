@@ -5,7 +5,6 @@ import { Toast } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
 import { useABET, useI18n } from '@/providers';
 import { PlannerSessionStatusCard } from './PlannerSessionStatusCard';
-import { PlannerCredentialsCard } from './PlannerCredentialsCard';
 import { PlannerStartScrapePanel } from './PlannerStartScrapePanel';
 import { PlannerScrapeRunProgress } from './PlannerScrapeRunProgress';
 import { PlannerScrapeRunHistory } from './PlannerScrapeRunHistory';
@@ -39,8 +38,6 @@ export function PlannerManagementView() {
 	return (
 		<div className="w-full space-y-6">
 			<PlannerSessionStatusCard />
-
-			<PlannerCredentialsCard />
 
 			<PlannerStartScrapePanel
 				canStart={Boolean(academicPeriodId)}
