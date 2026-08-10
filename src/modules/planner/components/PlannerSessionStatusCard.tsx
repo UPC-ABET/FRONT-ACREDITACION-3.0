@@ -2,16 +2,22 @@
 
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 import { Badge, Button, Card, Spinner, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { useApiErrorToast } from '@/shared/hooks';
 import { ApiError } from '@/shared/lib/apiError';
-import { resolveApiErrorContent, type ApiErrorContent } from '@/shared/utils/tryTranslate';
-import { plannerQueryKeys, usePlannerSessionStatus, useRefreshPlannerSession } from '../hooks';
+import {
+	plannerQueryKeys,
+	usePlannerCredentials,
+	usePlannerSessionStatus,
+	useRefreshPlannerSession,
+} from '../hooks';
 import {
 	PLANNER_CREDENTIALS_NOT_CONFIGURED_KEY,
 	PLANNER_SESSION_STATUS_COLORS,
 } from '../constants';
+import { PlannerCredentialsDialog } from './PlannerCredentialsDialog';
 
 // Unlike Banner, Planner has no manual "stopper": the token is obtained/refreshed
 // server-side from stored credentials, so there is no login button — only a refresh.
@@ -21,12 +27,18 @@ export function PlannerSessionStatusCard() {
 	const { t, locale } = useI18n();
 	const queryClient = useQueryClient();
 	const { data, isLoading, isError } = usePlannerSessionStatus();
+	const { data: credentials } = usePlannerCredentials();
 	const refreshSession = useRefreshPlannerSession();
-	const [refreshError, setRefreshError] = useState<ApiErrorContent | null>(null);
+	const { toast, showToast, handleError, clearToast } = useApiErrorToast();
+
+	const [credentialsDialogOpen, setCredentialsDialogOpen] = useState(false);
 
 	const status = data?.status;
 	const formattedExp = data?.tokenExp
 		? new Date(data.tokenExp).toLocaleString(locale === 'en' ? 'en-US' : 'es-PE')
+		: null;
+	const formattedUpdatedAt = credentials?.updatedAt
+		? new Date(credentials.updatedAt).toLocaleString(locale === 'en' ? 'en-US' : 'es-PE')
 		: null;
 
 	const handleRefresh = () => {
@@ -39,9 +51,14 @@ export function PlannerSessionStatusCard() {
 					queryClient.invalidateQueries({ queryKey: plannerQueryKeys.sessionStatus() });
 					return;
 				}
-				setRefreshError(resolveApiErrorContent(t, error, 'planner.session.refreshError'));
+				handleError(error, 'planner.session.refreshError');
 			},
 		});
+	};
+
+	const handleCredentialsSaved = () => {
+		setCredentialsDialogOpen(false);
+		showToast(t('planner.credentials.saveSuccess'), 'success');
 	};
 
 	const renderBody = () => {
@@ -59,7 +76,7 @@ export function PlannerSessionStatusCard() {
 		}
 
 		return (
-			<div className="space-y-3">
+			<div className="space-y-2">
 				<div className="flex items-center gap-2">
 					<span className="text-sm font-semibold text-zinc-700">
 						{t('planner.session.tokenLabel')}:
@@ -77,6 +94,21 @@ export function PlannerSessionStatusCard() {
 				</div>
 
 				<p className="text-sm text-zinc-600">{t(`planner.session.hint.${status}`)}</p>
+
+				{status !== 'not_configured' && credentials?.configured && (
+					<p className="text-sm text-zinc-500">
+						<span className="font-semibold text-zinc-700">
+							{t('planner.credentials.currentLabel')}
+						</span>{' '}
+						{credentials.username}
+						{formattedUpdatedAt && (
+							<>
+								{' '}
+								· {t('planner.credentials.updatedAtLabel')} {formattedUpdatedAt}
+							</>
+						)}
+					</p>
+				)}
 			</div>
 		);
 	};
@@ -88,8 +120,8 @@ export function PlannerSessionStatusCard() {
 			className="overflow-visible">
 			<div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
 				<div className="flex-1">{renderBody()}</div>
-				{status !== 'not_configured' && (
-					<div className="flex shrink-0 items-center gap-2">
+				<div className="flex shrink-0 items-center gap-2">
+					{status !== 'not_configured' && (
 						<Button
 							variant="surface"
 							size="sm"
@@ -99,16 +131,23 @@ export function PlannerSessionStatusCard() {
 							<ArrowPathIcon className="h-4 w-4" />
 							{t('planner.session.refresh')}
 						</Button>
-					</div>
-				)}
+					)}
+					<Button variant="primary" size="sm" onClick={() => setCredentialsDialogOpen(true)}>
+						<ArrowRightOnRectangleIcon className="h-4 w-4" />
+						{t('planner.credentials.openButton')}
+					</Button>
+				</div>
 			</div>
-			<Toast
-				isOpen={refreshError !== null}
-				onClose={() => setRefreshError(null)}
-				type="error"
-				message={refreshError?.title}
-				reasons={refreshError?.reasons}
-			/>
+
+			<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
+
+			{credentialsDialogOpen && (
+				<PlannerCredentialsDialog
+					initialUsername={credentials?.username ?? null}
+					onClose={() => setCredentialsDialogOpen(false)}
+					onSaved={handleCredentialsSaved}
+				/>
+			)}
 		</Card>
 	);
 }
