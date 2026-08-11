@@ -27,18 +27,35 @@ import {
 import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
-import { tryTranslate } from '@/shared/utils';
+import { localizedText, tryTranslate } from '@/shared/utils';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
+import { useTypesByGroupCode } from '@/modules/core';
 import {
 	useStudyPlanCourseLevels,
 	useStudyPlanCoursesView,
 	useStudyPlanCoursesViewMutations,
 } from '../hooks';
-import type { CourseUpdateBody, StudyPlanCourseCreate, StudyPlanCourseRow } from '../types';
+import type {
+	CourseUpdateBody,
+	StudyPlanCourseCreate,
+	StudyPlanCourseEditBody,
+	StudyPlanCourseRow,
+} from '../types';
 import { StudyPlanCourseCreateDialog, StudyPlanCourseEditDialog } from '@/modules';
 
-function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
-	if (!text) return '';
-	return text[locale as 'es' | 'en'] ?? text.es ?? text.en ?? '';
+function sameI18n(
+	a: { es: string; en: string } | undefined,
+	b: { es: string; en: string },
+): boolean {
+	return a == null || (a.es === b.es && a.en === b.en);
+}
+
+function hasCourseChanges(body: CourseUpdateBody, row: StudyPlanCourseRow): boolean {
+	return (
+		(body.code != null && body.code !== row.courseCode) ||
+		!sameI18n(body.name, row.courseName) ||
+		!sameI18n(body.learningOutcome, row.learningOutcome)
+	);
 }
 
 export function StudyPlanCoursesView({
@@ -64,7 +81,11 @@ export function StudyPlanCoursesView({
 		academicPeriodId,
 	);
 	const { data: levels = [], isLoading: levelsLoading } = useStudyPlanCourseLevels();
-	const { createCourse, updateCourse, removeCourseFromPlan } = useStudyPlanCoursesViewMutations();
+	const { data: gradeTypes = [], isLoading: gradeTypesLoading } = useTypesByGroupCode(
+		TYPE_GROUP_CODES.GRADE_TYPE,
+	);
+	const { createCourse, updateCourse, updateGradeType, removeCourseFromPlan } =
+		useStudyPlanCoursesViewMutations();
 
 	const sortedLevels = useMemo(
 		() => [...(data?.levels ?? [])].sort((a, b) => a.level - b.level),
@@ -90,12 +111,34 @@ export function StudyPlanCoursesView({
 		}
 	};
 
-	const handleSaveEdit = async (body: CourseUpdateBody) => {
+	// The course fields and the grade type are saved through two different endpoints, so the
+	// pair is not atomic: if the second call fails, `saved` (and with it the dialog's `item`)
+	// already reflects the first one, so retrying only re-sends what is still pending.
+	const handleSaveEdit = async (body: StudyPlanCourseEditBody) => {
 		if (!editing) return;
 		setEditError(null);
+		const { gradeTypeId, ...courseBody } = body;
+		let saved = editing;
+		let didSave = false;
 		try {
-			await updateCourse.mutateAsync({ courseId: editing.courseId, body });
-			showToast('loads.studyPlanCoursesView.toast.updated', 'success');
+			if (hasCourseChanges(courseBody, saved)) {
+				await updateCourse.mutateAsync({ courseId: saved.courseId, body: courseBody });
+				saved = {
+					...saved,
+					courseCode: courseBody.code ?? saved.courseCode,
+					courseName: courseBody.name ?? saved.courseName,
+					learningOutcome: courseBody.learningOutcome ?? saved.learningOutcome,
+				};
+				setEditing(saved);
+				didSave = true;
+			}
+			if (gradeTypeId !== saved.gradeTypeId) {
+				await updateGradeType.mutateAsync({ id: saved.id, gradeTypeId });
+				saved = { ...saved, gradeTypeId };
+				setEditing(saved);
+				didSave = true;
+			}
+			if (didSave) showToast('loads.studyPlanCoursesView.toast.updated', 'success');
 			setEditing(null);
 		} catch (error) {
 			const [reason] = getApiErrorReasons(error);
@@ -133,14 +176,14 @@ export function StudyPlanCoursesView({
 				id: 'courseName',
 				header: t('loads.studyPlanCoursesView.col.courseName'),
 				meta: { cellClassName: 'text-zinc-700' },
-				cell: ({ row }) => localized(row.original.courseName, locale),
+				cell: ({ row }) => localizedText(row.original.courseName, locale),
 			},
 			{
 				id: 'learningOutcome',
 				header: t('loads.studyPlanCoursesView.col.learningOutcome'),
 				cell: ({ row }) => (
 					<span className="line-clamp-2 max-w-md text-zinc-500">
-						{localized(row.original.learningOutcome, locale)}
+						{localizedText(row.original.learningOutcome, locale)}
 					</span>
 				),
 			},
@@ -255,7 +298,7 @@ export function StudyPlanCoursesView({
 						{sortedLevels.map((group) => (
 							<section key={group.levelTypeId} className="space-y-3">
 								<Title
-									title={localized(group.levelName, locale)}
+									title={localizedText(group.levelName, locale)}
 									className="[&_h2]:text-sm [&_h2]:font-semibold [&_h2]:uppercase [&_h2]:tracking-wide [&_h2]:text-zinc-700"
 								/>
 								{renderCoursesTable(group.courses)}
@@ -289,7 +332,9 @@ export function StudyPlanCoursesView({
 			{editing && (
 				<StudyPlanCourseEditDialog
 					item={editing}
-					saving={updateCourse.isPending}
+					gradeTypes={gradeTypes}
+					gradeTypesLoading={gradeTypesLoading}
+					saving={updateCourse.isPending || updateGradeType.isPending}
 					errorMessage={editError}
 					onClose={() => setEditing(null)}
 					onSave={handleSaveEdit}

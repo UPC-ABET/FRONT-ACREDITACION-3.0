@@ -1408,6 +1408,9 @@
 			"saveFailed": "These credentials cannot be used as submitted (e.g. an empty or whitespace-only username).",
 			"decryptionFailed": "The stored Planner credentials could not be read due to a server-side configuration issue. Contact an administrator."
 		},
+		"scrapingExport": {
+			"gradesRcInProgress": "Another user is currently downloading this file. Try again in a few minutes."
+		},
 		"conflict": "Conflict with the current state of the resource",
 		"internalServer": "Internal server error",
 		"professor": {
@@ -3920,7 +3923,10 @@
 				"title": "Edit course",
 				"subtitle": "Edits the shared course (affects everywhere it is used).",
 				"save": "Save",
-				"error": "Could not save the course."
+				"error": "Could not save the course.",
+				"gradeType": "Grade type",
+				"gradeTypePlaceholder": "Select the grade type",
+				"gradeTypeDescription": "Grade that evaluates this course in this study plan and period. Used to export grades in the RC upload format."
 			},
 			"delete": {
 				"title": "Remove course from plan",

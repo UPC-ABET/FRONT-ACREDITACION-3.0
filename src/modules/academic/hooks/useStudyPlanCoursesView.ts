@@ -59,6 +59,16 @@ export function useStudyPlanCoursesViewMutations() {
 		onSuccess: invalidate,
 	});
 
+	// The grade type lives in the study plan course's `extra`, not in the shared course record:
+	// the same course can be evaluated by a different grade in another plan or period.
+	const updateGradeType = useMutation({
+		mutationFn: ({ id, gradeTypeId }: { id: number; gradeTypeId: number | null }) =>
+			studyPlanCoursesService
+				.update(id, { extra: { gradeTypeId } })
+				.then((response) => response.data),
+		onSuccess: invalidate,
+	});
+
 	const createCourse = useMutation({
 		mutationFn: (body: StudyPlanCourseCreate) =>
 			studyPlanCoursesService.maintenanceCreate(body).then((response) => response.data),
@@ -71,5 +81,5 @@ export function useStudyPlanCoursesViewMutations() {
 		onSuccess: invalidate,
 	});
 
-	return { createCourse, updateCourse, removeCourseFromPlan };
+	return { createCourse, updateCourse, updateGradeType, removeCourseFromPlan };
 }

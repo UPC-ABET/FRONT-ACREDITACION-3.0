@@ -393,6 +393,7 @@ export type StudyPlanCourseRow = {
 	courseCode: string;
 	courseName: { es: string; en: string };
 	learningOutcome: { es: string; en: string };
+	gradeTypeId: number | null;
 };
 
 export type StudyPlanLevelGroup = {
@@ -441,6 +442,12 @@ export type CourseUpdateBody = {
 	code?: string;
 	name?: { es: string; en: string };
 	learningOutcome?: { es: string; en: string };
+};
+
+// The course fields are shared across every plan; the grade type belongs to this study plan
+// course only, so the dialog saves them through two different endpoints.
+export type StudyPlanCourseEditBody = CourseUpdateBody & {
+	gradeTypeId: number | null;
 };
 
 export type CourseOutcomeMappingFilter = Partial<{
