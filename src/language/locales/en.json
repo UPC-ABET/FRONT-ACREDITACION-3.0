@@ -1408,6 +1408,9 @@
 			"saveFailed": "These credentials cannot be used as submitted (e.g. an empty or whitespace-only username).",
 			"decryptionFailed": "The stored Planner credentials could not be read due to a server-side configuration issue. Contact an administrator."
 		},
+		"scrapingExport": {
+			"gradesRcInProgress": "Another user is currently downloading this file. Try again in a few minutes."
+		},
 		"conflict": "Conflict with the current state of the resource",
 		"internalServer": "Internal server error",
 		"professor": {
