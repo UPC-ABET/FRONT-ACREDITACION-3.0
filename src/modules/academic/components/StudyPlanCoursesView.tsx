@@ -119,6 +119,7 @@ export function StudyPlanCoursesView({
 		setEditError(null);
 		const { gradeTypeId, ...courseBody } = body;
 		let saved = editing;
+		let didSave = false;
 		try {
 			if (hasCourseChanges(courseBody, saved)) {
 				await updateCourse.mutateAsync({ courseId: saved.courseId, body: courseBody });
@@ -129,13 +130,15 @@ export function StudyPlanCoursesView({
 					learningOutcome: courseBody.learningOutcome ?? saved.learningOutcome,
 				};
 				setEditing(saved);
+				didSave = true;
 			}
 			if (gradeTypeId !== saved.gradeTypeId) {
 				await updateGradeType.mutateAsync({ id: saved.id, gradeTypeId });
 				saved = { ...saved, gradeTypeId };
 				setEditing(saved);
+				didSave = true;
 			}
-			showToast('loads.studyPlanCoursesView.toast.updated', 'success');
+			if (didSave) showToast('loads.studyPlanCoursesView.toast.updated', 'success');
 			setEditing(null);
 		} catch (error) {
 			const [reason] = getApiErrorReasons(error);
