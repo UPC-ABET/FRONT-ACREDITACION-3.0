@@ -3920,7 +3920,10 @@
 				"title": "Edit course",
 				"subtitle": "Edits the shared course (affects everywhere it is used).",
 				"save": "Save",
-				"error": "Could not save the course."
+				"error": "Could not save the course.",
+				"gradeType": "Grade type",
+				"gradeTypePlaceholder": "Select the grade type",
+				"gradeTypeDescription": "Grade that evaluates this course in this study plan and period. Used to export grades in the RC upload format."
 			},
 			"delete": {
 				"title": "Remove course from plan",

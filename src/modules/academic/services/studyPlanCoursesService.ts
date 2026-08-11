@@ -12,6 +12,7 @@ export const studyPlanCoursesService = {
 		return apiPost('/study-plan-courses/get-by-filters', filters);
 	},
 
+	// `extra` is merged server-side, so a payload naming one key leaves the others alone.
 	update(
 		id: number,
 		body: { extra: Record<string, unknown> },

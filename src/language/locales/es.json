@@ -3921,7 +3921,10 @@
 				"title": "Editar curso",
 				"subtitle": "Edita el curso compartido (afecta todos los lugares donde se usa).",
 				"save": "Guardar",
-				"error": "No se pudo guardar el curso."
+				"error": "No se pudo guardar el curso.",
+				"gradeType": "Tipo de nota",
+				"gradeTypePlaceholder": "Selecciona el tipo de nota",
+				"gradeTypeDescription": "Nota que evalúa el curso en esta malla y período. Se usa para exportar las notas con formato de carga RC."
 			},
 			"delete": {
 				"title": "Quitar curso de la malla",

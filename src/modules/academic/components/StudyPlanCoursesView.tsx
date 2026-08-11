@@ -28,12 +28,14 @@ import { useABET, useI18n } from '@/providers';
 import { useApiErrorToast } from '@/shared/hooks';
 import { getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
+import { TYPE_GROUP_CODES } from '@/shared/constants';
+import { useTypesByGroupCode } from '@/modules/core';
 import {
 	useStudyPlanCourseLevels,
 	useStudyPlanCoursesView,
 	useStudyPlanCoursesViewMutations,
 } from '../hooks';
-import type { CourseUpdateBody, StudyPlanCourseCreate, StudyPlanCourseRow } from '../types';
+import type { StudyPlanCourseCreate, StudyPlanCourseEditBody, StudyPlanCourseRow } from '../types';
 import { StudyPlanCourseCreateDialog, StudyPlanCourseEditDialog } from '@/modules';
 
 function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
@@ -64,7 +66,11 @@ export function StudyPlanCoursesView({
 		academicPeriodId,
 	);
 	const { data: levels = [], isLoading: levelsLoading } = useStudyPlanCourseLevels();
-	const { createCourse, updateCourse, removeCourseFromPlan } = useStudyPlanCoursesViewMutations();
+	const { data: gradeTypes = [], isLoading: gradeTypesLoading } = useTypesByGroupCode(
+		TYPE_GROUP_CODES.GRADE_TYPE,
+	);
+	const { createCourse, updateCourse, updateGradeType, removeCourseFromPlan } =
+		useStudyPlanCoursesViewMutations();
 
 	const sortedLevels = useMemo(
 		() => [...(data?.levels ?? [])].sort((a, b) => a.level - b.level),
@@ -90,11 +96,15 @@ export function StudyPlanCoursesView({
 		}
 	};
 
-	const handleSaveEdit = async (body: CourseUpdateBody) => {
+	const handleSaveEdit = async (body: StudyPlanCourseEditBody) => {
 		if (!editing) return;
 		setEditError(null);
+		const { gradeTypeId, ...courseBody } = body;
 		try {
-			await updateCourse.mutateAsync({ courseId: editing.courseId, body });
+			await updateCourse.mutateAsync({ courseId: editing.courseId, body: courseBody });
+			if (gradeTypeId !== editing.gradeTypeId) {
+				await updateGradeType.mutateAsync({ id: editing.id, gradeTypeId });
+			}
 			showToast('loads.studyPlanCoursesView.toast.updated', 'success');
 			setEditing(null);
 		} catch (error) {
@@ -289,7 +299,9 @@ export function StudyPlanCoursesView({
 			{editing && (
 				<StudyPlanCourseEditDialog
 					item={editing}
-					saving={updateCourse.isPending}
+					gradeTypes={gradeTypes}
+					gradeTypesLoading={gradeTypesLoading}
+					saving={updateCourse.isPending || updateGradeType.isPending}
 					errorMessage={editError}
 					onClose={() => setEditing(null)}
 					onSave={handleSaveEdit}

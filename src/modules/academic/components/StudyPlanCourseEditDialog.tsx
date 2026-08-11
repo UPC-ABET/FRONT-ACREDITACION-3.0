@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	Button,
 	Dialog,
@@ -11,30 +11,58 @@ import {
 	DialogTitle,
 	I18nTextField,
 	Input,
+	Select,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
+import type { TypeOption } from '@/modules/core';
 import type { I18nText } from '@/shared/types';
-import type { CourseUpdateBody, StudyPlanCourseRow } from '../types';
+import type { StudyPlanCourseEditBody, StudyPlanCourseRow } from '../types';
 
 function asI18n(text: { es?: string; en?: string } | undefined): I18nText {
 	return { es: text?.es ?? '', en: text?.en ?? '' };
 }
 
+function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
+	if (!text) return '';
+	return text[locale as 'es' | 'en'] ?? text.es ?? text.en ?? '';
+}
+
 type Props = {
 	item: StudyPlanCourseRow;
+	gradeTypes: TypeOption[];
+	gradeTypesLoading: boolean;
 	saving: boolean;
 	errorMessage: string | null;
 	onClose: () => void;
-	onSave: (body: CourseUpdateBody) => void;
+	onSave: (body: StudyPlanCourseEditBody) => void;
 };
 
-export function StudyPlanCourseEditDialog({ item, saving, errorMessage, onClose, onSave }: Props) {
-	const { t } = useI18n();
+export function StudyPlanCourseEditDialog({
+	item,
+	gradeTypes,
+	gradeTypesLoading,
+	saving,
+	errorMessage,
+	onClose,
+	onSave,
+}: Props) {
+	const { t, locale } = useI18n();
 	const [code, setCode] = useState(item.courseCode);
 	const [name, setName] = useState<I18nText>(() => asI18n(item.courseName));
 	const [learningOutcome, setLearningOutcome] = useState<I18nText>(() =>
 		asI18n(item.learningOutcome),
 	);
+	const [gradeTypeId, setGradeTypeId] = useState<number | null>(item.gradeTypeId);
+
+	const gradeTypeOptions = useMemo(
+		() =>
+			gradeTypes.map((gradeType) => ({
+				value: gradeType.id,
+				label: `${gradeType.code} — ${localized(gradeType.name, locale)}`,
+			})),
+		[gradeTypes, locale],
+	);
+	const selectedGradeType = gradeTypeOptions.find((option) => option.value === gradeTypeId) ?? null;
 
 	const canSave = code.trim() !== '' && !saving;
 
@@ -43,6 +71,7 @@ export function StudyPlanCourseEditDialog({ item, saving, errorMessage, onClose,
 			code: code.trim(),
 			name: { es: name.es ?? '', en: name.en ?? '' },
 			learningOutcome: { es: learningOutcome.es ?? '', en: learningOutcome.en ?? '' },
+			gradeTypeId,
 		});
 	};
 
@@ -79,6 +108,24 @@ export function StudyPlanCourseEditDialog({ item, saving, errorMessage, onClose,
 						value={learningOutcome}
 						onChange={setLearningOutcome}
 					/>
+					<div className="space-y-1">
+						<Select
+							name="gradeType"
+							label={t('loads.studyPlanCoursesView.edit.gradeType')}
+							placeholder={t('loads.studyPlanCoursesView.edit.gradeTypePlaceholder')}
+							isSearchable
+							isClearable
+							isDisabled={gradeTypesLoading}
+							options={gradeTypeOptions}
+							value={selectedGradeType}
+							onChange={(_name, value) =>
+								setGradeTypeId(value && !Array.isArray(value) ? Number(value.value) : null)
+							}
+						/>
+						<p className="text-xs text-zinc-500">
+							{t('loads.studyPlanCoursesView.edit.gradeTypeDescription')}
+						</p>
+					</div>
 					{errorMessage && <p className="text-sm font-medium text-red-600">{errorMessage}</p>}
 				</div>
 
