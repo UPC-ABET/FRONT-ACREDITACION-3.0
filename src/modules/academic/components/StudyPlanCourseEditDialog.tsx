@@ -14,17 +14,13 @@ import {
 	Select,
 } from '@/shared/components';
 import { useI18n } from '@/providers';
+import { localizedText } from '@/shared/utils';
 import type { TypeOption } from '@/modules/core';
 import type { I18nText } from '@/shared/types';
 import type { StudyPlanCourseEditBody, StudyPlanCourseRow } from '../types';
 
 function asI18n(text: { es?: string; en?: string } | undefined): I18nText {
 	return { es: text?.es ?? '', en: text?.en ?? '' };
-}
-
-function localized(text: { es?: string; en?: string } | undefined, locale: string): string {
-	if (!text) return '';
-	return text[locale as 'es' | 'en'] ?? text.es ?? text.en ?? '';
 }
 
 type Props = {
@@ -58,7 +54,7 @@ export function StudyPlanCourseEditDialog({
 		() =>
 			gradeTypes.map((gradeType) => ({
 				value: gradeType.id,
-				label: `${gradeType.code} — ${localized(gradeType.name, locale)}`,
+				label: `${gradeType.code} — ${localizedText(gradeType.name, locale)}`,
 			})),
 		[gradeTypes, locale],
 	);
