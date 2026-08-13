@@ -9,7 +9,6 @@ import {
 	Button,
 	Card,
 	ErrorDialog,
-	I18nTextField,
 	PageHeader,
 	Skeleton,
 	SuccessDialog,
@@ -32,32 +31,30 @@ interface ProjectEvaluatePageProps {
 	competencyScopeCode: string;
 }
 
-const EMPTY_OBSERVATION: I18nValue = { es: '', en: '' };
-
 function dirtyKey(studyPlanCourseId: number, gradeTypeId: number): string {
 	return `${studyPlanCourseId}:${gradeTypeId}`;
 }
 
-function getInitialObservation(
+function getInitialObservationsByStudent(
 	rubrics: {
 		items: {
-			students: { observation?: I18nValue | null }[];
+			students: { projectStudentId: number; observation?: I18nValue | null }[];
 		}[];
 	}[],
-): I18nValue {
+): Record<number, I18nValue> {
+	const result: Record<number, I18nValue> = {};
 	for (const rubricEntry of rubrics) {
 		for (const item of rubricEntry.items) {
-			const withObservation = item.students.find((student) => student.observation != null);
-			if (withObservation?.observation) {
-				return {
-					es: withObservation.observation.es ?? '',
-					en: withObservation.observation.en ?? '',
+			for (const student of item.students) {
+				if (student.observation == null) continue;
+				result[student.projectStudentId] = {
+					es: student.observation.es ?? '',
+					en: student.observation.en ?? '',
 				};
 			}
 		}
 	}
-
-	return EMPTY_OBSERVATION;
+	return result;
 }
 
 export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectEvaluatePageProps) {
@@ -166,16 +163,22 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 	const rubrics = useMemo(() => data?.rubrics ?? [], [data?.rubrics]);
 
-	// The evaluation covers all students on the project regardless of career, so there is a
-	// single shared observation — not one per career/gradeType tab.
-	const initialObservation = useMemo(() => getInitialObservation(rubrics), [rubrics]);
+	// Each student has their own observation, keyed by projectStudentId.
+	const initialObservations = useMemo(() => getInitialObservationsByStudent(rubrics), [rubrics]);
 
-	const [observation, setObservation] = useState<I18nValue>(initialObservation);
-	const [observationDirty, setObservationDirty] = useState(false);
-	const [trackedInitialObservation, setTrackedInitialObservation] = useState(initialObservation);
-	if (initialObservation !== trackedInitialObservation) {
-		setTrackedInitialObservation(initialObservation);
-		if (!observationDirty) setObservation(initialObservation);
+	const [observations, setObservations] = useState<Record<number, I18nValue>>(initialObservations);
+	const [dirtyStudentIds, setDirtyStudentIds] = useState<Set<number>>(new Set());
+	const [trackedInitialObservations, setTrackedInitialObservations] = useState(initialObservations);
+	if (initialObservations !== trackedInitialObservations) {
+		setTrackedInitialObservations(initialObservations);
+		// Refresh from the server, but keep whatever the evaluator hasn't saved yet.
+		setObservations((prev) => {
+			const next = { ...initialObservations };
+			for (const studentId of dirtyStudentIds) {
+				if (prev[studentId] != null) next[studentId] = prev[studentId];
+			}
+			return next;
+		});
 	}
 
 	const careerIds = useMemo(
@@ -212,16 +215,6 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		return activeItems[0]?.gradeType.id ?? null;
 	}, [activeItems, activeGradeTypeId]);
 
-	// The shared observation field is only meaningful once the active tab's rubric is visible —
-	// while attendance is incomplete the rubric itself is hidden, so hide this too.
-	const activeTabHasMissingStatus = useMemo(() => {
-		if (effectiveStudyPlanCourseId == null || effectiveGradeTypeId == null) return false;
-		const items = incompleteItemsByTab.get(
-			dirtyKey(effectiveStudyPlanCourseId, effectiveGradeTypeId),
-		);
-		return (items ?? []).some((i) => i.message === t('projects.evaluate.rubric.missingStatus'));
-	}, [incompleteItemsByTab, effectiveStudyPlanCourseId, effectiveGradeTypeId, t]);
-
 	// Every (career, gradeType) combination stays mounted at all times so switching tabs
 	// never discards in-progress edits — only the active one is shown (CSS `hidden`).
 	const panels = useMemo(() => {
@@ -240,12 +233,15 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		});
 	}, [careerIds, rubrics, data?.students]);
 
-	// Editing the shared observation touches every career/gradeType panel, so mark them all
-	// dirty — otherwise "Save" would only persist it for whichever tab is currently active.
-	const handleObservationChange = (value: I18nValue) => {
-		setObservation(value);
-		setObservationDirty(true);
-		setDirtyTabs((prev) => new Set([...prev, ...panels.map((p) => p.key)]));
+	// Editing a student's observation only affects the panel(s) that include them — a student
+	// normally belongs to a single career, so this is usually just the active tab.
+	const handleObservationChange = (studentId: number, value: I18nValue) => {
+		setObservations((prev) => ({ ...prev, [studentId]: value }));
+		setDirtyStudentIds((prev) => new Set(prev).add(studentId));
+		const affectedKeys = panels
+			.filter((p) => p.students.some((s) => s.id === studentId))
+			.map((p) => p.key);
+		setDirtyTabs((prev) => new Set([...prev, ...affectedKeys]));
 	};
 
 	const panelRefs = useRef(new Map<string, RubricTableHandle>());
@@ -281,7 +277,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		setIsSavingAll(true);
 		try {
 			await Promise.all(readyKeys.map((key) => panelRefs.current.get(key)?.save()));
-			setObservationDirty(false);
+			setDirtyStudentIds(new Set());
 			setShowSaveAllSuccess(true);
 		} catch {
 			// Panels that failed stay dirty, so the user can retry them.
@@ -443,8 +439,9 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 							onDirtyChange={(dirty) =>
 								handleDirtyChange(panel.studyPlanCourseId, panel.gradeTypeId, dirty)
 							}
-							observation={observation}
-							observationDirty={observationDirty}
+							observations={observations}
+							dirtyStudentIds={dirtyStudentIds}
+							onObservationChange={handleObservationChange}
 							onIncompleteChange={(incomplete) =>
 								handleIncompleteChange(panel.studyPlanCourseId, panel.gradeTypeId, incomplete)
 							}
@@ -455,19 +452,6 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 			{!isReadOnly && rubrics.some((rubric) => rubric.items.length > 0) && (
 				<div className="flex flex-col gap-4">
-					{!activeTabHasMissingStatus && (
-						<Card>
-							<I18nTextField
-								layout="row"
-								label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
-								placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
-								value={observation}
-								onChange={handleObservationChange}
-								rows={3}
-							/>
-						</Card>
-					)}
-
 					{incompleteItems.length > 0 && (
 						<ul className="space-y-1 text-sm">
 							{incompleteItems.map((item) => (

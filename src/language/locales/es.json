@@ -2276,7 +2276,8 @@
 				"saveSuccessMessage": "La calificación del proyecto se guardó correctamente.",
 				"observation": "Observaciones",
 				"observationPlaceholder": "Agregar observación",
-				"observationOptional": "Opcional"
+				"observationOptional": "Opcional",
+				"applyObservationToAll": "Aplicar a todos los estudiantes"
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",

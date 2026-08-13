@@ -2276,7 +2276,8 @@
 				"saveSuccessMessage": "The project grade was saved successfully.",
 				"observation": "Observation",
 				"observationPlaceholder": "Add observation",
-				"observationOptional": "Optional"
+				"observationOptional": "Optional",
+				"applyObservationToAll": "Apply to all students"
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",

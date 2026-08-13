@@ -27,7 +27,7 @@ interface ProjectRubricSingleCompetencyTableProps {
 	readOnly?: boolean;
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
-	observation: I18nValue;
+	observations: Record<number, I18nValue>;
 	attendanceDirty?: boolean;
 	/** Reports this rubric's validation messages (same text as before) so the page can render
 	 * them once, aggregated across every career/gradeType, instead of nested per rubric. */
@@ -49,7 +49,7 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		readOnly = false,
 		disableDuplicate = false,
 		onDirtyChange,
-		observation,
+		observations,
 		attendanceDirty,
 		onIncompleteChange,
 	},
@@ -83,7 +83,7 @@ export const ProjectRubricSingleCompetencyTable = forwardRef<
 		qualifStatuses,
 		nonAttendanceTypeIds,
 		onDirtyChange,
-		observation,
+		observations,
 		attendanceDirty,
 	});
 

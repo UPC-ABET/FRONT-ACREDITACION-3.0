@@ -36,12 +36,10 @@ interface UseMultipleCompetencyEvaluationParams {
 	commissions: CommissionRow[];
 	activeCommissionId: number | null;
 	onDirtyChange?: (isDirty: boolean) => void;
-	/** Shared across every career/gradeType tab — the evaluation covers all students on the
-	 * project, so there is a single observation, not one per tab, edited once at the page level. */
-	observation: I18nValue;
-	/** True when the parent panel has unsaved attendance edits, or the shared observation
-	 * changed elsewhere — neither is tracked by this hook's own isDirty, but both must still
-	 * unlock saving so they get submitted. */
+	/** Keyed by projectStudentId — each student has their own observation, edited at the page level. */
+	observations: Record<number, I18nValue>;
+	/** True when the parent panel has unsaved attendance or observation edits — neither is
+	 * tracked by this hook's own isDirty, but both must still unlock saving so they get submitted. */
 	attendanceDirty?: boolean;
 }
 
@@ -57,7 +55,7 @@ export function useMultipleCompetencyEvaluation({
 	commissions,
 	activeCommissionId,
 	onDirtyChange,
-	observation,
+	observations,
 	attendanceDirty = false,
 }: UseMultipleCompetencyEvaluationParams) {
 	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
@@ -318,25 +316,25 @@ export function useMultipleCompetencyEvaluation({
 		const entries = [...studentScores.entries()];
 		if (entries.length === 0) return;
 
-		const observationEs = observation.es?.trim() ?? '';
-		const observationEn = observation.en?.trim() ?? '';
-		// Stored/read as a localized record ({ es, en }); keep the write shape in sync with
-		// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textareas.
-		const observationPayload =
-			observationEs || observationEn ? { es: observationEs, en: observationEn } : undefined;
-
 		// Errors propagate to the caller, which owns the save-all feedback dialogs.
 		await Promise.all(
-			entries.map(([projectStudentId, scores]) =>
-				submitEvaluation({
+			entries.map(([projectStudentId, scores]) => {
+				const observation = observations[projectStudentId];
+				const observationEs = observation?.es?.trim() ?? '';
+				const observationEn = observation?.en?.trim() ?? '';
+				// Stored/read as a localized record ({ es, en }); keep the write shape in sync with
+				// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textareas.
+				const observationPayload =
+					observationEs || observationEn ? { es: observationEs, en: observationEn } : undefined;
+				return submitEvaluation({
 					projectStudentId,
 					projectEvaluatorId: evaluatorId,
 					rubricId: rubricId,
 					observation: observationPayload,
 					scores,
 					qualificationStatusTypeId: qualifStatuses[projectStudentId],
-				}),
-			),
+				});
+			}),
 		);
 		setIsDirty(false);
 		onDirtyChange?.(false);
