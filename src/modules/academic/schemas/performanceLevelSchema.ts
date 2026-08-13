@@ -7,7 +7,10 @@ const numericField = z
 	.refine((v) => v === '' || v >= 0, { message: 'performanceLevels.form.minZeroError' });
 
 export const performanceLevelFormSchema = z.object({
-	instrumentTypeId: z.number().int().positive(),
+	instrumentTypeId: z
+		.number()
+		.int()
+		.positive({ message: 'performanceLevels.form.instrumentRequired' }),
 	academicPeriodId: z.number().int().positive(),
 	nameEs: z.string().min(1),
 	nameEn: z.string().min(1),

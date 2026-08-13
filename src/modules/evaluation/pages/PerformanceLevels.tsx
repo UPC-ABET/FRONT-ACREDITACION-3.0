@@ -204,7 +204,7 @@ export function PerformanceLevelsPage() {
 
 	function openCreateModal() {
 		setEditingLevel(null);
-		resetForm();
+		resetForm(academicPeriodId ?? 0);
 		setFormError(null);
 		setModalOpen(true);
 	}

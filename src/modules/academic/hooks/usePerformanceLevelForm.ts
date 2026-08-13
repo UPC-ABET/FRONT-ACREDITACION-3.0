@@ -40,8 +40,8 @@ function levelToForm(level: PerformanceLevelResponse): PerformanceLevelFormState
 export function usePerformanceLevelForm() {
 	const [form, setForm] = useState<PerformanceLevelFormState>(EMPTY_FORM);
 
-	function resetForm() {
-		setForm({ ...EMPTY_FORM });
+	function resetForm(academicPeriodId = 0) {
+		setForm({ ...EMPTY_FORM, academicPeriodId });
 	}
 
 	function populateForm(level: PerformanceLevelResponse) {

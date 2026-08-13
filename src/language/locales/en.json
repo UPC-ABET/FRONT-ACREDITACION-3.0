@@ -2069,6 +2069,7 @@
 			"deleting": "Deleting...",
 			"saveError": "An error occurred while saving.",
 			"minZeroError": "Value cannot be negative.",
+			"instrumentRequired": "You must select an instrument.",
 			"instrument": "Instrument",
 			"instrumentPlaceholder": "Select instrument",
 			"nameEs": "Name (ES)",
