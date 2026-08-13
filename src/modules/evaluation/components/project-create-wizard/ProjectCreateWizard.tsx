@@ -7,7 +7,7 @@ import { PageHeader, Toast } from '@/shared';
 import { tryTranslateReason } from '@/shared/utils/tryTranslate';
 import { useCreateProjectFull } from '../../hooks';
 import { WizardStepIndicator } from '../rubric-create-wizard/WizardStepIndicator';
-import { WizardStep1, type Step1Data } from '../rubric-create-wizard/WizardStep1';
+import { ProjectWizardStep1, type ProjectStep1Data } from './ProjectWizardStep1';
 import { ProjectWizardStep2, type ProjectFormData } from './ProjectWizardStep2';
 
 export function ProjectCreateWizard() {
@@ -15,7 +15,7 @@ export function ProjectCreateWizard() {
 	const { t } = useI18n();
 
 	const [currentStep, setCurrentStep] = useState(1);
-	const [step1Data, setStep1Data] = useState<Step1Data | null>(null);
+	const [step1Data, setStep1Data] = useState<ProjectStep1Data | null>(null);
 	const createProjectFull = useCreateProjectFull();
 	const [toast, setToast] = useState({
 		open: false,
@@ -25,7 +25,7 @@ export function ProjectCreateWizard() {
 
 	const showError = (message: string) => setToast({ open: true, type: 'error', message });
 
-	const handleStep1Next = (data: Step1Data) => {
+	const handleStep1Next = (data: ProjectStep1Data) => {
 		setStep1Data(data);
 		setCurrentStep(2);
 	};
@@ -71,7 +71,7 @@ export function ProjectCreateWizard() {
 			<WizardStepIndicator steps={steps} currentStep={currentStep} />
 
 			<div className="px-6 sm:max-w-[900px] m-auto">
-				{currentStep === 1 && <WizardStep1 onNext={handleStep1Next} />}
+				{currentStep === 1 && <ProjectWizardStep1 onNext={handleStep1Next} />}
 
 				{currentStep === 2 && step1Data && (
 					<ProjectWizardStep2

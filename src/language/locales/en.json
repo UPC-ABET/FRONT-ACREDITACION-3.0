@@ -2105,6 +2105,21 @@
 			"error": {
 				"create": "Could not create the project. Please try again."
 			},
+			"step1": {
+				"title": "Select course",
+				"subtitle": "Choose the major and course.",
+				"selectPeriodFirst": "Select a period in the top bar first",
+				"programLabel": "Major",
+				"programPlaceholder": "Select a major",
+				"programLoading": "Loading majors...",
+				"programNoOptions": "No majors available",
+				"courseLabel": "Course",
+				"coursePlaceholder": "Select a course",
+				"courseLoading": "Loading courses...",
+				"courseNoOptions": "No courses available",
+				"courseSelectProgramFirst": "Select a major first",
+				"next": "Next"
+			},
 			"step2": {
 				"infoTitle": "Project Information",
 				"fieldCode": "Code",

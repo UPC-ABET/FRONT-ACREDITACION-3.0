@@ -2105,6 +2105,21 @@
 			"error": {
 				"create": "No fue posible crear el proyecto. Intenta de nuevo."
 			},
+			"step1": {
+				"title": "Seleccionar curso",
+				"subtitle": "Elige la carrera y el curso.",
+				"selectPeriodFirst": "Selecciona un periodo en la barra superior primero",
+				"programLabel": "Carrera",
+				"programPlaceholder": "Selecciona una carrera",
+				"programLoading": "Cargando carreras...",
+				"programNoOptions": "Sin carreras disponibles",
+				"courseLabel": "Curso",
+				"coursePlaceholder": "Selecciona un curso",
+				"courseLoading": "Cargando cursos...",
+				"courseNoOptions": "Sin cursos disponibles",
+				"courseSelectProgramFirst": "Selecciona una carrera primero",
+				"next": "Siguiente"
+			},
 			"step2": {
 				"infoTitle": "Información del Proyecto",
 				"fieldCode": "Código",
