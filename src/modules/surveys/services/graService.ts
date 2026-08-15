@@ -68,7 +68,6 @@ function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
 		performanceLevel: extra.order ?? 3,
 		isActive: raw.isActive,
 		isVisible: raw.isVisible ?? raw.isActive,
-		isExternal: extra.isExternal ?? false,
 		programId: extra.programId,
 		periodId: extra.academicPeriodId,
 	};
@@ -140,7 +139,7 @@ export async function saveGRACompetence(data: CompetenceFormData) {
 		order: data.performanceLevel,
 		programId: data.programId ?? 0,
 		isVisible: data.isVisible ?? true,
-		isExternal: data.isExternal ?? false,
+		isExternal: false,
 	};
 
 	if (!data.id || data.id === 0) {

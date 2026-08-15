@@ -8,7 +8,6 @@ export const competenceSchema = z.object({
 	descriptionEn: z.string().min(1, { message: 'surveys.competence.toast.requiredDescEn' }),
 	performanceLevel: z.number().int().min(MIN_PERFORMANCE_LEVEL),
 	isVisible: z.boolean().optional().default(true),
-	isExternal: z.boolean().optional().default(false),
 	// A real outcome must always be linked (business rule: outcome_id is never null);
 	// General vs Específica is resolved server-side from that outcome's commission type.
 	outcomeId: z.number({ error: 'surveys.competence.toast.requiredOutcome' }),

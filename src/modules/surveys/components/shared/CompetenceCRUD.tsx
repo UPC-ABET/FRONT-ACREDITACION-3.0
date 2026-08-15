@@ -31,8 +31,6 @@ export interface CompetenceCRUDProps {
 	programId?: number;
 	/** 'general' shows non-linked items; 'specific' shows items linked to a real outcome */
 	competenceType: 'general' | 'specific';
-	/** Show the "Is it for another program?" toggle — typically only PPP */
-	showExternalToggle?: boolean;
 	competences: CompetenceConfig[];
 	loading: boolean;
 	error: string | null;
@@ -50,7 +48,6 @@ const EMPTY_FORM: Omit<CompetenceFormData, 'academicPeriodId' | 'school'> = {
 	descriptionEn: '',
 	performanceLevel: 1,
 	isVisible: true,
-	isExternal: false,
 };
 
 /**
@@ -66,7 +63,6 @@ export function CompetenceCRUD({
 	cycleId,
 	programId,
 	competenceType,
-	showExternalToggle = false,
 	competences,
 	error,
 	onLoad,
@@ -136,7 +132,6 @@ export function CompetenceCRUD({
 			descriptionEn: row.descriptionEn ?? '',
 			performanceLevel: row.performanceLevel,
 			isVisible: row.isVisible ?? true,
-			isExternal: row.isExternal ?? false,
 		});
 		// Pre-select the outcome in its commission group
 		if (row.outcomeId != null) {
@@ -296,7 +291,7 @@ export function CompetenceCRUD({
 
 	// Show the outcomes section for both types, but each only offers outcomes from commissions of
 	// its own type (Específica vs General, per Carrera x Comisión) — see commissionGroups above.
-	const showOutcomes = !form.isExternal && commissionGroups.length > 0;
+	const showOutcomes = commissionGroups.length > 0;
 
 	return (
 		<div className="space-y-4">
@@ -399,21 +394,7 @@ export function CompetenceCRUD({
 							rows={2}
 						/>
 
-						{/* "Is it for another program?" (PPP only) */}
-						{showExternalToggle && (
-							<div className="rounded-lg border border-zinc-100 bg-zinc-50 px-4 py-3">
-								<Toggle
-									label={t('surveys.competence.modal.externalLabel')}
-									checked={form.isExternal ?? false}
-									onChange={(checked) => {
-										setForm({ ...form, isExternal: checked });
-										if (checked) setCommissionSelections({});
-									}}
-								/>
-							</div>
-						)}
-
-						{/* Outcomes by commission (hidden when external or no program selected) */}
+						{/* Outcomes by commission (hidden when no program selected) */}
 						{showOutcomes && (
 							<div className="space-y-3">
 								<p className="text-xs font-medium text-zinc-500 uppercase tracking-wide">

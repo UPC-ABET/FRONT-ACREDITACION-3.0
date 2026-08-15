@@ -88,7 +88,6 @@ export function PPPConfiguration() {
 							cycleId={academicPeriodId}
 							programId={programId}
 							competenceType="specific"
-							showExternalToggle
 							competences={competences}
 							loading={compLoading}
 							error={compError}
@@ -102,7 +101,6 @@ export function PPPConfiguration() {
 							cycleId={academicPeriodId}
 							programId={programId}
 							competenceType="general"
-							showExternalToggle
 							competences={competences}
 							loading={compLoading}
 							error={compError}
