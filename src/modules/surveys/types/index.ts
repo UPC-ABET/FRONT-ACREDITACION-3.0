@@ -530,6 +530,7 @@ export interface BackendPppConfig {
 		isExternal?: boolean;
 	};
 	userOutcomeName?: string;
+	userOutcomeDescription?: string;
 	outcomeCode?: string;
 	outcome?: { programCommission?: { commissionType?: { code?: string } } };
 }

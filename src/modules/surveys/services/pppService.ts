@@ -34,7 +34,7 @@ function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 		commissionTypeCode: raw.outcome?.programCommission?.commissionType?.code,
 		generalCompetence: extra.nameEs ?? raw.userOutcomeName ?? '',
 		specificCompetence: extra.nameEn ?? extra.nameEs ?? '',
-		description: extra.descriptionEs ?? '',
+		description: extra.descriptionEs ?? raw.userOutcomeDescription ?? '',
 		descriptionEn: extra.descriptionEn ?? '',
 		performanceLevel: extra.order ?? 3,
 		isActive: raw.isActive,
@@ -110,6 +110,12 @@ function pickEs(value: I18nOrString): string {
 	return '';
 }
 
+function pickEn(value: I18nOrString): string {
+	if (typeof value === 'string') return value;
+	if (value && typeof value === 'object') return value.en ?? value.es ?? '';
+	return '';
+}
+
 /**
  * Real outcomes of a program for a period (accreditation.outcomes), grouped by
  * commission on the backend and flattened here. PPP/GRA/LCFC all measure these
@@ -137,13 +143,15 @@ export async function generatePPPConfigFromOutcomes(
 	for (let i = 0; i < outcomes.length; i++) {
 		const o = outcomes[i];
 		try {
-			const name = pickEs(o.outcomeName) || o.outcomeCode;
+			const nameEs = pickEs(o.outcomeName) || o.outcomeCode;
+			const nameEn = pickEn(o.outcomeName) || o.outcomeCode;
 			await savePPPCompetence({
 				id: 0,
 				outcomeId: o.outcomeId,
-				generalCompetence: name,
-				specificCompetence: name,
+				generalCompetence: nameEs,
+				specificCompetence: nameEn,
 				description: pickEs(o.outcomeDescription),
+				descriptionEn: pickEn(o.outcomeDescription),
 				performanceLevel: i + 1,
 				academicPeriodId,
 				programId,
