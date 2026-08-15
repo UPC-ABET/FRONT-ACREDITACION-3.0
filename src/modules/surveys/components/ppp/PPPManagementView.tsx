@@ -3,15 +3,15 @@
 import React, { useState } from 'react';
 import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n, useGlobalAcademicFiltersVisibilityOverride } from '@/providers';
-import { AllProgramsSelect } from '../shared/AllProgramsSelect';
 import { PPPMassiveUpload } from './PPPMassiveUpload';
 import { PPPReports } from './PPPReports';
 import { PPPConfiguration } from './configuration/PPPConfiguration';
 
+// Each tab owns its own independent career filter, same as GRA/LCFC, so switching
+// programs in one tab does not affect the others.
 export function PPPManagementView() {
 	const { t } = useI18n();
 	const [activeTab, setActiveTab] = useState('upload');
-	const [programId, setProgramId] = useState(0);
 
 	// Hide school filter — surveys show all programs across schools.
 	useGlobalAcademicFiltersVisibilityOverride({ school: false, modality: true, period: true });
@@ -31,19 +31,13 @@ export function PPPManagementView() {
 				description={t('surveys.ppp.management.subtitle')}
 			/>
 
-			<Card>
-				<div className="grid gap-4 sm:max-w-sm">
-					<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="" />
-				</div>
-			</Card>
-
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
 			<Card className="overflow-visible">
 				<div className="space-y-6">
-					{activeTab === 'upload' && <PPPMassiveUpload programId={programId} />}
-					{activeTab === 'reports' && <PPPReports programId={programId} />}
-					{activeTab === 'config' && <PPPConfiguration programId={programId} />}
+					{activeTab === 'upload' && <PPPMassiveUpload />}
+					{activeTab === 'reports' && <PPPReports />}
+					{activeTab === 'config' && <PPPConfiguration />}
 				</div>
 			</Card>
 		</div>

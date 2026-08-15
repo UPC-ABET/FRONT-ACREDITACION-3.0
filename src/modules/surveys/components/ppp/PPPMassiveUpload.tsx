@@ -6,15 +6,13 @@ import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { FileUploadPanel } from '../shared/FileUploadPanel';
 import { UploadResultSummary } from '../shared/UploadResultSummary';
+import { AllProgramsSelect } from '../shared/AllProgramsSelect';
 import { usePPPUpload } from '../../hooks';
 
-interface PPPMassiveUploadProps {
-	readonly programId: number;
-}
-
-export function PPPMassiveUpload({ programId }: PPPMassiveUploadProps) {
+export function PPPMassiveUpload() {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
+	const [programId, setProgramId] = useState(0);
 	const { loading, error, success, result, upload } = usePPPUpload();
 
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
@@ -40,6 +38,8 @@ export function PPPMassiveUpload({ programId }: PPPMassiveUploadProps) {
 
 	return (
 		<div className="space-y-5">
+			<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="max-w-xs" />
+
 			<div>
 				<h3 className="text-base font-bold text-zinc-800">{t('surveys.ppp.upload.title')}</h3>
 				<p className="text-sm text-zinc-500 mt-1">{t('surveys.ppp.upload.description')}</p>

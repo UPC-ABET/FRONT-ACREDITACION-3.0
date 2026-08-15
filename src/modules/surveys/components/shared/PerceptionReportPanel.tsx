@@ -22,6 +22,7 @@ export interface PerceptionReportPanelProps {
 		commissionId?: number;
 		campusId?: number;
 		lang?: 'es' | 'en';
+		surveyNumbers?: number[];
 	};
 	hideGenerateButton?: boolean;
 	requireCommission?: boolean;
@@ -38,7 +39,7 @@ export interface PerceptionReportPanelHandle {
 	generate: () => void;
 }
 
-const SURVEY_NUMBER_OPTIONS: OptionItem[] = [
+export const SURVEY_NUMBER_OPTIONS: OptionItem[] = [
 	{ value: 1, label: '1' },
 	{ value: 2, label: '2' },
 ];
@@ -144,15 +145,16 @@ export const PerceptionReportPanel = forwardRef<
 			: language.value === 'en'
 				? 'en'
 				: 'es';
+		const resolvedSurveyNumbers = externalFilters
+			? externalFilters.surveyNumbers
+			: surveyNumbers.map((option) => Number(option.value));
 		generateMutation.mutate({
 			// 0 means "no career selected" (AllProgramsSelect's default) — never a real program id, so
 			// it must not reach the backend as a filter or the "all careers" report comes back empty.
 			programId: programId || undefined,
 			commissionId: resolvedCommissionId,
 			campusId: resolvedCampusId,
-			surveyNumbers: showSurveyNumber
-				? surveyNumbers.map((option) => Number(option.value))
-				: undefined,
+			surveyNumbers: showSurveyNumber ? resolvedSurveyNumbers : undefined,
 			lang: resolvedLang,
 		});
 	}
