@@ -35,19 +35,29 @@ function dirtyKey(studyPlanCourseId: number, gradeTypeId: number): string {
 	return `${studyPlanCourseId}:${gradeTypeId}`;
 }
 
-function getInitialObservationsByStudent(
+const EMPTY_OBSERVATIONS: Record<number, I18nValue> = {};
+const EMPTY_STUDENT_IDS: Set<number> = new Set();
+
+function observationKey(rubricId: number, projectStudentId: number): string {
+	return `${rubricId}:${projectStudentId}`;
+}
+
+function getInitialObservations(
 	rubrics: {
 		items: {
+			rubric?: { id: number } | null;
 			students: { projectStudentId: number; observation?: I18nValue | null }[];
 		}[];
 	}[],
-): Record<number, I18nValue> {
-	const result: Record<number, I18nValue> = {};
+): Record<string, I18nValue> {
+	const result: Record<string, I18nValue> = {};
 	for (const rubricEntry of rubrics) {
 		for (const item of rubricEntry.items) {
+			const rubricId = item.rubric?.id;
+			if (rubricId == null) continue;
 			for (const student of item.students) {
 				if (student.observation == null) continue;
-				result[student.projectStudentId] = {
+				result[observationKey(rubricId, student.projectStudentId)] = {
 					es: student.observation.es ?? '',
 					en: student.observation.en ?? '',
 				};
@@ -163,19 +173,19 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 	const rubrics = useMemo(() => data?.rubrics ?? [], [data?.rubrics]);
 
-	// Each student has their own observation, keyed by projectStudentId.
-	const initialObservations = useMemo(() => getInitialObservationsByStudent(rubrics), [rubrics]);
+	// Each student has their own observation per rubric, keyed by `rubricId:projectStudentId`.
+	const initialObservations = useMemo(() => getInitialObservations(rubrics), [rubrics]);
 
-	const [observations, setObservations] = useState<Record<number, I18nValue>>(initialObservations);
-	const [dirtyStudentIds, setDirtyStudentIds] = useState<Set<number>>(new Set());
+	const [observations, setObservations] = useState<Record<string, I18nValue>>(initialObservations);
+	const [dirtyObservationKeys, setDirtyObservationKeys] = useState<Set<string>>(new Set());
 	const [trackedInitialObservations, setTrackedInitialObservations] = useState(initialObservations);
 	if (initialObservations !== trackedInitialObservations) {
 		setTrackedInitialObservations(initialObservations);
 		// Refresh from the server, but keep whatever the evaluator hasn't saved yet.
 		setObservations((prev) => {
 			const next = { ...initialObservations };
-			for (const studentId of dirtyStudentIds) {
-				if (prev[studentId] != null) next[studentId] = prev[studentId];
+			for (const key of dirtyObservationKeys) {
+				if (prev[key] != null) next[key] = prev[key];
 			}
 			return next;
 		});
@@ -233,16 +243,37 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		});
 	}, [careerIds, rubrics, data?.students]);
 
-	// Editing a student's observation only affects the panel(s) that include them — a student
-	// normally belongs to a single career, so this is usually just the active tab.
-	const handleObservationChange = (studentId: number, value: I18nValue) => {
-		setObservations((prev) => ({ ...prev, [studentId]: value }));
-		setDirtyStudentIds((prev) => new Set(prev).add(studentId));
+	// An edit belongs to one rubric, so it only marks the panel(s) rendering that rubric dirty.
+	const handleObservationChange = (rubricId: number, studentId: number, value: I18nValue) => {
+		const key = observationKey(rubricId, studentId);
+		setObservations((prev) => ({ ...prev, [key]: value }));
+		setDirtyObservationKeys((prev) => new Set(prev).add(key));
 		const affectedKeys = panels
-			.filter((p) => p.students.some((s) => s.id === studentId))
+			.filter((p) => p.item.rubric?.id === rubricId && p.students.some((s) => s.id === studentId))
 			.map((p) => p.key);
 		setDirtyTabs((prev) => new Set([...prev, ...affectedKeys]));
 	};
+
+	// Each panel gets only its own rubric's slice, re-keyed by projectStudentId — that's what the
+	// rubric tables submit. Memoised so the panels' identity checks stay stable across renders.
+	const observationsByPanel = useMemo(() => {
+		const result = new Map<string, { values: Record<number, I18nValue>; dirty: Set<number> }>();
+		for (const panel of panels) {
+			const rubricId = panel.item.rubric?.id;
+			const values: Record<number, I18nValue> = {};
+			const dirty = new Set<number>();
+			if (rubricId != null) {
+				for (const student of panel.students) {
+					const key = observationKey(rubricId, student.id);
+					const value = observations[key];
+					if (value != null) values[student.id] = value;
+					if (dirtyObservationKeys.has(key)) dirty.add(student.id);
+				}
+			}
+			result.set(panel.key, { values, dirty });
+		}
+		return result;
+	}, [panels, observations, dirtyObservationKeys]);
 
 	const panelRefs = useRef(new Map<string, RubricTableHandle>());
 	const registerPanelRef = (key: string) => (handle: RubricTableHandle | null) => {
@@ -272,13 +303,35 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		const dirtyKeys = [...dirtyTabs];
 		const readyKeys = dirtyKeys.filter((key) => panelRefs.current.get(key)?.canSave);
 
-		if (readyKeys.length === 0) return;
+		// Nothing submittable despite the button being enabled — say so instead of doing nothing.
+		if (readyKeys.length === 0) {
+			setSaveAllError(true);
+			return;
+		}
+
+		// Only the observations the submitted panels actually cover lose their dirty mark —
+		// clearing the whole set would let a refetch revert edits made in a panel that was skipped.
+		const savedObservationKeys = new Set(
+			panels.flatMap((panel) => {
+				const rubricId = panel.item.rubric?.id;
+				if (rubricId == null || !readyKeys.includes(panel.key)) return [];
+				return panel.students.map((s) => observationKey(rubricId, s.id));
+			}),
+		);
 
 		setIsSavingAll(true);
 		try {
 			await Promise.all(readyKeys.map((key) => panelRefs.current.get(key)?.save()));
-			setDirtyStudentIds(new Set());
-			setShowSaveAllSuccess(true);
+			setDirtyObservationKeys(
+				(prev) => new Set([...prev].filter((key) => !savedObservationKeys.has(key))),
+			);
+			// Success only when every dirty panel was submitted; otherwise part of the work is
+			// still pending and saying "saved" would be a lie.
+			if (readyKeys.length === dirtyKeys.length) {
+				setShowSaveAllSuccess(true);
+			} else {
+				setSaveAllError(true);
+			}
 		} catch {
 			// Panels that failed stay dirty, so the user can retry them.
 			setSaveAllError(true);
@@ -439,9 +492,12 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 							onDirtyChange={(dirty) =>
 								handleDirtyChange(panel.studyPlanCourseId, panel.gradeTypeId, dirty)
 							}
-							observations={observations}
-							dirtyStudentIds={dirtyStudentIds}
-							onObservationChange={handleObservationChange}
+							observations={observationsByPanel.get(panel.key)?.values ?? EMPTY_OBSERVATIONS}
+							dirtyStudentIds={observationsByPanel.get(panel.key)?.dirty ?? EMPTY_STUDENT_IDS}
+							onObservationChange={(studentId, value) => {
+								const rubricId = panel.item.rubric?.id;
+								if (rubricId != null) handleObservationChange(rubricId, studentId, value);
+							}}
 							onIncompleteChange={(incomplete) =>
 								handleIncompleteChange(panel.studyPlanCourseId, panel.gradeTypeId, incomplete)
 							}

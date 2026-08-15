@@ -5,3 +5,4 @@ export * from './project-create-wizard';
 export * from './project-group-select';
 export * from './rubric-create-wizard';
 export * from './performance-report';
+export * from './course-scope';

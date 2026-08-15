@@ -125,7 +125,7 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 
 	// Students that already have an observation start expanded, so the evaluator sees it without
 	// having to click through every row.
-	const [openObservationIds, setOpenObservationIds] = useState<Set<number>>(
+	const studentIdsWithObservation = useMemo(
 		() =>
 			new Set(
 				students
@@ -135,7 +135,22 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 					})
 					.map((st) => st.id),
 			),
+		[students, observations],
 	);
+
+	const [openObservationIds, setOpenObservationIds] = useState<Set<number>>(
+		() => studentIdsWithObservation,
+	);
+	const [trackedObservedIds, setTrackedObservedIds] = useState(studentIdsWithObservation);
+	if (studentIdsWithObservation !== trackedObservedIds) {
+		const newlyObserved = [...studentIdsWithObservation].filter(
+			(id) => !trackedObservedIds.has(id),
+		);
+		setTrackedObservedIds(studentIdsWithObservation);
+		if (newlyObserved.length > 0) {
+			setOpenObservationIds((prev) => new Set([...prev, ...newlyObserved]));
+		}
+	}
 	const toggleObservationOpen = (studentId: number) => {
 		setOpenObservationIds((prev) => {
 			const next = new Set(prev);
@@ -290,59 +305,50 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 				/>
 			) : null}
 
-			{!isReadOnly && !hasMissingStatus && item.rubric && students.length > 0 && (
-				<Card title={t('projects.evaluate.rubric.observation')}>
-					<div className="-m-4 divide-y divide-zinc-100">
-						{students.map((student) => {
-							const isOpen = openObservationIds.has(student.id);
-							return (
-								<div key={student.id}>
-									<button
-										type="button"
-										onClick={() => toggleObservationOpen(student.id)}
-										aria-expanded={isOpen}
-										className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left hover:bg-zinc-50">
-										<span className="text-sm font-medium text-zinc-800">
-											{student.firstName} {student.lastName}
-										</span>
-										{isOpen ? (
-											<MinusIcon className="h-4 w-4 shrink-0 text-zinc-400" />
-										) : (
-											<PlusIcon className="h-4 w-4 shrink-0 text-zinc-400" />
-										)}
-									</button>
-									{isOpen && (
-										<div className="space-y-2 px-4 pb-4">
-											<I18nTextField
-												layout="row"
-												placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
-												value={observations[student.id] ?? { es: '', en: '' }}
-												onChange={(value) => onObservationChange(student.id, value)}
-												rows={3}
-											/>
-											{students.length > 1 && (
-												<div className="flex justify-end">
-													<button
-														type="button"
-														onClick={() => {
-															const value = observations[student.id] ?? { es: '', en: '' };
-															for (const other of students) {
-																if (other.id !== student.id) onObservationChange(other.id, value);
-															}
-														}}
-														className="text-xs font-medium text-red-700 hover:underline">
-														{t('projects.evaluate.rubric.applyObservationToAll')}
-													</button>
-												</div>
+			{/* Only rendered when a rubric table is mounted below: without one there's nothing to
+			    submit through, so an observation typed here would be silently discarded. */}
+			{!isReadOnly &&
+				!hasMissingStatus &&
+				item.rubric &&
+				students.length > 0 &&
+				(isCapstoneMultiple || item.questions.length > 0) && (
+					<Card title={t('projects.evaluate.rubric.observation')}>
+						<div className="-m-4 divide-y divide-zinc-100">
+							{students.map((student) => {
+								const isOpen = openObservationIds.has(student.id);
+								return (
+									<div key={student.id}>
+										<button
+											type="button"
+											onClick={() => toggleObservationOpen(student.id)}
+											aria-expanded={isOpen}
+											className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left hover:bg-zinc-50">
+											<span className="text-sm font-medium text-zinc-800">
+												{student.firstName} {student.lastName}
+											</span>
+											{isOpen ? (
+												<MinusIcon className="h-4 w-4 shrink-0 text-zinc-400" />
+											) : (
+												<PlusIcon className="h-4 w-4 shrink-0 text-zinc-400" />
 											)}
-										</div>
-									)}
-								</div>
-							);
-						})}
-					</div>
-				</Card>
-			)}
+										</button>
+										{isOpen && (
+											<div className="px-4 pb-4">
+												<I18nTextField
+													layout="row"
+													placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
+													value={observations[student.id] ?? { es: '', en: '' }}
+													onChange={(value) => onObservationChange(student.id, value)}
+													rows={3}
+												/>
+											</div>
+										)}
+									</div>
+								);
+							})}
+						</div>
+					</Card>
+				)}
 		</div>
 	);
 });

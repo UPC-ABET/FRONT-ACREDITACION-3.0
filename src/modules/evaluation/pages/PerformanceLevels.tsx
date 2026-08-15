@@ -233,8 +233,7 @@ export function PerformanceLevelsPage() {
 		if (editingLevel) {
 			await updateMutation.mutateAsync({ id: editingLevel.id, ...toDto() });
 		} else {
-			if (academicPeriodId == null) return;
-			await createMutation.mutateAsync({ ...toDto(), academicPeriodId });
+			await createMutation.mutateAsync(toDto());
 		}
 		handleModalClose();
 	}

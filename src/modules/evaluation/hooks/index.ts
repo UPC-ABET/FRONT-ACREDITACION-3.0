@@ -14,3 +14,4 @@ export * from './usePerformanceReports';
 export * from './usePerformanceReportFilters';
 export * from './useProcessedRvGrades';
 export * from './queryKeys';
+export * from './useCourseScopeSelection';

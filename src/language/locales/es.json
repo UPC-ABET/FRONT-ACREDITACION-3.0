@@ -2070,6 +2070,10 @@
 			"saveError": "Ocurrió un error al guardar.",
 			"minZeroError": "El valor no puede ser negativo.",
 			"instrumentRequired": "Debes seleccionar un instrumento.",
+			"nameEsRequired": "El nombre en español es obligatorio.",
+			"nameEnRequired": "El nombre en inglés es obligatorio.",
+			"codeRequired": "El código es obligatorio.",
+			"colorInvalid": "El color debe ser un hexadecimal válido (por ejemplo, #1A2B3C).",
 			"instrument": "Instrumento",
 			"instrumentPlaceholder": "Seleccionar instrumento",
 			"nameEs": "Nombre (ES)",
@@ -2290,9 +2294,7 @@
 				"saveSuccessTitle": "Calificación guardada",
 				"saveSuccessMessage": "La calificación del proyecto se guardó correctamente.",
 				"observation": "Observaciones",
-				"observationPlaceholder": "Agregar observación",
-				"observationOptional": "Opcional",
-				"applyObservationToAll": "Aplicar a todos los estudiantes"
+				"observationPlaceholder": "Agregar observación"
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",

@@ -2070,6 +2070,10 @@
 			"saveError": "An error occurred while saving.",
 			"minZeroError": "Value cannot be negative.",
 			"instrumentRequired": "You must select an instrument.",
+			"nameEsRequired": "The Spanish name is required.",
+			"nameEnRequired": "The English name is required.",
+			"codeRequired": "The code is required.",
+			"colorInvalid": "The color must be a valid hex value (for example, #1A2B3C).",
 			"instrument": "Instrument",
 			"instrumentPlaceholder": "Select instrument",
 			"nameEs": "Name (ES)",
@@ -2290,9 +2294,7 @@
 				"saveSuccessTitle": "Grade saved",
 				"saveSuccessMessage": "The project grade was saved successfully.",
 				"observation": "Observation",
-				"observationPlaceholder": "Add observation",
-				"observationOptional": "Optional",
-				"applyObservationToAll": "Apply to all students"
+				"observationPlaceholder": "Add observation"
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",

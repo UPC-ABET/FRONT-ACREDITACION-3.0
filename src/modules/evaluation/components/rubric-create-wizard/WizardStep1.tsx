@@ -1,25 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { Select, Button, Badge, SubTitle, Title } from '@/shared';
-import { useI18n, useABET } from '@/providers';
-import {
-	useAcademicPeriods,
-	useStudyPlanCourses,
-	usePrograms,
-	StudyPlanCourseResponse,
-	useResolveRubricType,
-} from '@/modules';
-import { TYPE_CODES } from '@/shared';
+import { Badge, Button, SubTitle, Title, TYPE_CODES } from '@/shared';
+import { useI18n } from '@/providers';
+import { useResolveRubricType } from '@/modules';
+import { useCourseScopeSelection, type CourseScopeData } from '../../hooks';
+import { CourseScopeFields } from '../course-scope';
 
-export interface Step1Data {
-	periodId: number;
-	programId: number;
-	courseId: number;
-	studyPlanCourseId: number;
-	studyPlanAcademicPeriodId: number;
-	courseName: { en: string; es: string };
-	periodCode: string;
+export interface Step1Data extends CourseScopeData {
 	rubricTypeId: number;
 	rubricTypeCode: string;
 	isCapstone: boolean;
@@ -29,90 +16,29 @@ interface WizardStep1Props {
 	onNext: (data: Step1Data) => void;
 }
 
-type AnyOption = { label: string; value: string | number };
-
-function getSpcCourseName(spc: StudyPlanCourseResponse): { en: string; es: string } {
-	const raw = spc.course?.name;
-	if (!raw) return { en: '', es: '' };
-	return typeof raw === 'string' ? { en: raw, es: raw } : raw;
-}
-
 export function WizardStep1({ onNext }: WizardStep1Props) {
-	const { t, locale } = useI18n();
-	const { academicPeriodId, schoolId, modalityTypeId } = useABET();
+	const { t } = useI18n();
+	// Rubrics can only be created for courses flagged as evaluable.
+	const selection = useCourseScopeSelection({ spcFilterExtra: { isEvaluable: true } });
 
-	const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
-	const [selectedProgramOpt, setSelectedProgramOpt] = useState<AnyOption | null>(null);
-	const [selectedSpc, setSelectedSpc] = useState<StudyPlanCourseResponse | null>(null);
-	const [selectedCourseOpt, setSelectedCourseOpt] = useState<AnyOption | null>(null);
-
-	const [trackedPeriodId, setTrackedPeriodId] = useState(academicPeriodId);
-	if (academicPeriodId !== trackedPeriodId) {
-		setTrackedPeriodId(academicPeriodId);
-		setSelectedProgramId(null);
-		setSelectedProgramOpt(null);
-		setSelectedCourseOpt(null);
-		setSelectedSpc(null);
-	}
-
-	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
-
-	const { data: programs = [], isLoading: loadingPrograms } = usePrograms(
-		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
-		{ enabled: !!schoolId && !!academicPeriodId },
+	const { data: resolvedType, isLoading: loadingResolve } = useResolveRubricType(
+		selection.selectedSpc?.id,
 	);
-
-	// Evaluable SPCs filtered by programId once a program is selected
-	const { data: spcList = [], isLoading: loadingSpc } = useStudyPlanCourses(
-		{
-			programId: selectedProgramId ?? undefined,
-			extra: { isEvaluable: true },
-			isActive: true,
-		},
-		{ enabled: !!academicPeriodId && !!selectedProgramId },
-	);
-
-	const { data: resolvedType, isLoading: loadingResolve } = useResolveRubricType(selectedSpc?.id);
 
 	const isCapstone = resolvedType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 
 	const handleNext = () => {
-		if (!academicPeriodId || !selectedProgramId || !selectedSpc || !resolvedType) return;
-		const period = periods.find((p) => p.id === academicPeriodId);
-		if (!period) return;
+		const data = selection.buildData();
+		if (!data || !resolvedType) return;
 		onNext({
-			periodId: period.id,
-			programId: selectedProgramId,
-			courseId: selectedSpc.course?.id ?? selectedSpc.courseId,
-			studyPlanCourseId: selectedSpc.id,
-			studyPlanAcademicPeriodId: selectedSpc.studyPlanAcademicPeriodId,
-			courseName: getSpcCourseName(selectedSpc),
-			periodCode: period.code,
+			...data,
 			rubricTypeId: resolvedType.id,
 			rubricTypeCode: resolvedType.code,
 			isCapstone,
 		});
 	};
 
-	const programOptions: AnyOption[] = useMemo(
-		() =>
-			programs.map((p) => ({
-				label: p.name[locale as 'es' | 'en'] ?? p.name.es,
-				value: p.id,
-			})),
-		[programs, locale],
-	);
-
-	const courseOptions: AnyOption[] = useMemo(
-		() =>
-			spcList.map((spc) => ({
-				label: getSpcCourseName(spc)[locale as 'es' | 'en'] || String(spc.courseId),
-				value: spc.id,
-			})),
-		[spcList, locale],
-	);
-
-	const canContinue = !!academicPeriodId && !!selectedSpc && !!resolvedType && !loadingResolve;
+	const canContinue = selection.isComplete && !!resolvedType && !loadingResolve;
 
 	return (
 		<div className="space-y-6">
@@ -127,54 +53,7 @@ export function WizardStep1({ onNext }: WizardStep1Props) {
 				/>
 			</div>
 
-			<div className="grid gap-6 sm:grid-cols-2">
-				<Select
-					label={t('rubrics.wizard.step1.programLabel')}
-					placeholder={
-						!academicPeriodId
-							? t('rubrics.wizard.step1.selectPeriodFirst')
-							: loadingPrograms
-								? t('rubrics.wizard.step1.programLoading')
-								: programs.length === 0
-									? t('rubrics.wizard.step1.programNoOptions')
-									: t('rubrics.wizard.step1.programPlaceholder')
-					}
-					options={programOptions}
-					value={selectedProgramOpt}
-					isDisabled={!academicPeriodId || loadingPrograms}
-					isSearchable
-					onChange={(_, v) => {
-						const opt = Array.isArray(v) ? (v[0] ?? null) : v;
-						setSelectedProgramOpt(opt as AnyOption | null);
-						setSelectedProgramId(opt ? Number(opt.value) : null);
-						setSelectedCourseOpt(null);
-						setSelectedSpc(null);
-					}}
-				/>
-
-				<Select
-					label={t('rubrics.wizard.step1.courseLabel')}
-					placeholder={
-						!selectedProgramId
-							? t('rubrics.wizard.step1.courseSelectProgramFirst')
-							: loadingSpc
-								? t('rubrics.wizard.step1.courseLoading')
-								: spcList.length === 0
-									? t('rubrics.wizard.step1.courseNoOptions')
-									: t('rubrics.wizard.step1.coursePlaceholder')
-					}
-					options={courseOptions}
-					value={selectedCourseOpt}
-					isDisabled={!selectedProgramId || loadingSpc || spcList.length === 0}
-					isSearchable
-					onChange={(_, v) => {
-						const opt = Array.isArray(v) ? (v[0] ?? null) : v;
-						setSelectedCourseOpt(opt as AnyOption | null);
-						const spc = opt ? (spcList.find((s) => s.id === Number(opt.value)) ?? null) : null;
-						setSelectedSpc(spc);
-					}}
-				/>
-			</div>
+			<CourseScopeFields i18nPrefix="rubrics.wizard.step1" selection={selection} />
 
 			{loadingResolve && (
 				<p className="text-sm text-zinc-500">{t('rubrics.wizard.step1.verifyingOutcomes')}</p>

@@ -322,10 +322,8 @@ export function useMultipleCompetencyEvaluation({
 				const observation = observations[projectStudentId];
 				const observationEs = observation?.es?.trim() ?? '';
 				const observationEn = observation?.en?.trim() ?? '';
-				// Stored/read as a localized record ({ es, en }); keep the write shape in sync with
-				// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textareas.
 				const observationPayload =
-					observationEs || observationEn ? { es: observationEs, en: observationEn } : undefined;
+					observationEs || observationEn ? { es: observationEs, en: observationEn } : null;
 				return submitEvaluation({
 					projectStudentId,
 					projectEvaluatorId: evaluatorId,
