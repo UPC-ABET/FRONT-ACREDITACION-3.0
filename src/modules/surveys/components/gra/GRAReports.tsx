@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { Button, Toast } from '@/shared/components';
+import { Button, Select, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { getErrorMessage } from '@/shared/lib';
-import { PerceptionReportPanel } from '../shared/PerceptionReportPanel';
-import { CommissionCampusFilters } from '../shared/CommissionCampusFilters';
+import {
+	PerceptionReportPanel,
+	type PerceptionReportPanelHandle,
+} from '../shared/PerceptionReportPanel';
 import { SurveyMetricsSummary } from '../shared/SurveyMetricsSummary';
 import { AllProgramsSelect } from '../shared/AllProgramsSelect';
 import { useSurveyFilterOptions } from '../../hooks';
@@ -27,6 +29,8 @@ export function GRAReports() {
 		msg: '',
 	});
 	const [downloading, setDownloading] = useState(false);
+	const [generating, setGenerating] = useState(false);
+	const panelRef = useRef<PerceptionReportPanelHandle>(null);
 
 	const { commissionOptions, campusOptions } = useSurveyFilterOptions(programId);
 
@@ -67,35 +71,63 @@ export function GRAReports() {
 
 	return (
 		<div className="space-y-6">
+			<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+				<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="" />
+				<Select
+					name="gra-commission"
+					label={t('surveys.perception.commission')}
+					placeholder={t('surveys.perception.allCommissions')}
+					isClearable
+					isSearchable
+					options={commissionOptions}
+					value={commission}
+					onChange={(_name, value) =>
+						setCommission(value && !Array.isArray(value) ? (value as OptionItem) : null)
+					}
+				/>
+				<Select
+					name="gra-campus"
+					label={t('surveys.perception.campus')}
+					placeholder={t('surveys.perception.allCampuses')}
+					isClearable
+					isSearchable
+					options={campusOptions}
+					value={campus}
+					onChange={(_name, value) =>
+						setCampus(value && !Array.isArray(value) ? (value as OptionItem) : null)
+					}
+				/>
+			</div>
+
 			<div className="flex items-start justify-between gap-3">
 				<div>
 					<h3 className="text-base font-bold text-zinc-800">{t('surveys.gra.reports.title')}</h3>
 					<p className="text-sm text-zinc-500 mt-1">{t('surveys.gra.reports.description')}</p>
 				</div>
-				<Button
-					variant="surface"
-					onClick={handleDownload}
-					disabled={downloading}
-					loading={downloading}>
-					<ArrowDownTrayIcon className="h-4 w-4 mr-1" />
-					{t('surveys.shared.downloadExcel')}
-				</Button>
+				<div className="flex flex-wrap gap-2">
+					<Button
+						variant="surface"
+						onClick={handleDownload}
+						disabled={downloading}
+						loading={downloading}>
+						<ArrowDownTrayIcon className="h-4 w-4 mr-1" />
+						{t('surveys.shared.downloadExcel')}
+					</Button>
+					<Button
+						onClick={() => panelRef.current?.generate()}
+						disabled={generating}
+						loading={generating}>
+						{t('surveys.perception.generate')}
+					</Button>
+				</div>
 			</div>
-
-			<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="max-w-xs" />
-
-			<CommissionCampusFilters
-				commissionOptions={commissionOptions}
-				campusOptions={campusOptions}
-				commission={commission}
-				campus={campus}
-				onCommissionChange={setCommission}
-				onCampusChange={setCampus}
-			/>
 
 			{dashboard && <SurveyMetricsSummary summary={dashboard.summary} />}
 
 			<PerceptionReportPanel
+				ref={panelRef}
+				hideGenerateButton
+				onGeneratingChange={setGenerating}
 				programId={programId}
 				allowUnfiltered
 				generate={async (filters) => {
