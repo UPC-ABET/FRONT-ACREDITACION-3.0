@@ -333,8 +333,10 @@ export function useMultipleCompetencyEvaluation({
 		const entries = [...studentScores.entries()];
 		if (entries.length === 0) return;
 
-		// Errors propagate to the caller, which owns the save-all feedback dialogs.
-		await Promise.all(
+		// One request per student, so a rejection partway leaves the earlier writes committed.
+		// `allSettled` lets the refetch below run regardless, rather than leaving the grid showing
+		// totals that no longer match what the server holds.
+		const results = await Promise.allSettled(
 			entries.map(([projectStudentId, scores]) => {
 				const observation = observations[projectStudentId];
 				const observationEs = observation?.es?.trim() ?? '';
@@ -351,11 +353,19 @@ export function useMultipleCompetencyEvaluation({
 				});
 			}),
 		);
-		// Drop dirty before refetching: the reseed above is gated on it, and now that every student
-		// has been written the server's version is the one that should win.
+
+		await invalidateEvaluations();
+
+		// Errors propagate to the caller, which owns the save-all feedback dialogs. Staying dirty
+		// keeps the reseed gated, so the failed students' edits survive the refetch above.
+		const rejected = results.find((result) => result.status === 'rejected');
+		if (rejected) throw rejected.reason;
+
+		// Only drop dirty once the refetch carrying these writes has landed: the reseed is gated on
+		// it, so clearing first would apply whatever snapshot the cache happened to hold — including
+		// one taken before this save, if a sibling tab's invalidation raced it.
 		setIsDirty(false);
 		onDirtyChange?.(false);
-		await invalidateEvaluations();
 	};
 
 	const canSave = allFilled && (isDirty || attendanceDirty);
