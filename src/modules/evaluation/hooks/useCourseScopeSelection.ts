@@ -1,11 +1,10 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useABET, useI18n } from '@/providers';
 import {
-	programsService,
-	studyPlanCoursesService,
+	usePrograms,
+	useStudyPlanCourses,
 	useAcademicPeriods,
 	StudyPlanCourseResponse,
 } from '@/modules';
@@ -70,39 +69,21 @@ export function useCourseScopeSelection({
 
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 
-	const { data: programs = [], isLoading: loadingPrograms } = useQuery({
-		queryKey: [
-			'programs',
-			'filtered',
-			{ isActive: true, schoolFilter: true, modalityTypeId },
-			{ schoolId, academicPeriodId },
-		] as const,
-		queryFn: () =>
-			programsService
-				.getByFilters({
-					isActive: true,
-					schoolFilter: true,
-					modalityTypeId: modalityTypeId ?? undefined,
-				})
-				.then((r) => r.data ?? []),
-		enabled: !!schoolId && !!academicPeriodId,
-	});
+	const { data: programs = [], isLoading: loadingPrograms } = usePrograms(
+		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
+		{ enabled: !!schoolId && !!academicPeriodId },
+	);
 
-	const { data: spcList = [], isLoading: loadingSpc } = useQuery({
-		queryKey: [
-			'academic',
-			'spc',
-			{ programId: selectedProgramId, isActive: true, extra: spcFilterExtra ?? null },
-			{ schoolId, modalityTypeId, academicPeriodId },
-		] as const,
-		queryFn: () =>
-			studyPlanCoursesService
-				.getByFilters({
-					programId: selectedProgramId ?? undefined,
-					isActive: true,
-					...(spcFilterExtra ? { extra: spcFilterExtra } : {}),
-				})
-				.then((r) => r.data ?? []),
+	const spcFilters = useMemo(
+		() => ({
+			programId: selectedProgramId ?? undefined,
+			isActive: true,
+			...(spcFilterExtra ? { extra: spcFilterExtra } : {}),
+		}),
+		[selectedProgramId, spcFilterExtra],
+	);
+
+	const { data: spcList = [], isLoading: loadingSpc } = useStudyPlanCourses(spcFilters, {
 		enabled: !!academicPeriodId && !!selectedProgramId,
 	});
 

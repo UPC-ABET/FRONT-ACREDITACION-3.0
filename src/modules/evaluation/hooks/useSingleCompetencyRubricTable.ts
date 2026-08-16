@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useI18n } from '@/providers';
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
-import { useSubmitEvaluation } from './useEvaluations';
+import { useSubmitEvaluation, useInvalidateProjectEvaluations } from './useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../types';
 import {
 	validateScore,
@@ -41,7 +41,8 @@ export function useSingleCompetencyRubricTable({
 	attendanceDirty = false,
 }: UseSingleCompetencyRubricTableOptions) {
 	const { t, locale } = useI18n();
-	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
+	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation();
+	const invalidateEvaluations = useInvalidateProjectEvaluations(projectId);
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 	const [isDirty, setIsDirty] = useState(false);
@@ -79,6 +80,8 @@ export function useSingleCompetencyRubricTable({
 		return result;
 	}, [questions, students]);
 
+	// Only seeds the initial state — unlike the multiple-competency grid there is no reseed for
+	// duplicate mode, so a refetch cannot wipe it.
 	const initialDupScores = useMemo<DupScores>(() => {
 		const result: DupScores = {};
 		for (const q of questions) result[q.id] = '';
@@ -88,12 +91,14 @@ export function useSingleCompetencyRubricTable({
 	const [scores, setScores] = useState<Scores>(initialScores);
 	const [dupScores, setDupScores] = useState<DupScores>(initialDupScores);
 
-	// Reseed from the server only while there is nothing unsaved to overwrite: a refetch
-	// triggered by saving another tab must not discard this tab's in-progress edits.
+	// Reseed from the server only while there is nothing unsaved to overwrite: a refetch triggered
+	// by saving another tab must not discard this tab's in-progress edits. The tracker advances
+	// only when the value is actually applied — advancing it while dirty would mark server data as
+	// "seen" without ever showing it, stranding the grid on stale values until a reload.
 	const [trackedInitialScores, setTrackedInitialScores] = useState(initialScores);
-	if (initialScores !== trackedInitialScores) {
+	if (initialScores !== trackedInitialScores && !isDirty) {
 		setTrackedInitialScores(initialScores);
-		if (!isDirty) setScores(initialScores);
+		setScores(initialScores);
 	}
 
 	const ranges = useMemo(() => {
@@ -284,8 +289,11 @@ export function useSingleCompetencyRubricTable({
 				});
 			}),
 		);
+		// Drop dirty before refetching: the reseed above is gated on it, and now that every student
+		// has been written the server's version is the one that should win.
 		setIsDirty(false);
 		onDirtyChange?.(false);
+		await invalidateEvaluations();
 	};
 
 	return {

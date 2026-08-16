@@ -106,10 +106,13 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 	// Attendance is not part of the rubric's dirty state, so track local edits separately to
 	// keep a refetch (triggered by saving another tab) from reverting them.
 	const [hasLocalStatusEdits, setHasLocalStatusEdits] = useState(false);
+	// Same rule as the score grids: the tracker advances only when the value is applied. Advancing
+	// it while there are local edits would mark another evaluator's attendance change as "seen"
+	// without ever showing it, so it would stay hidden until a full reload.
 	const [trackedQualifStatuses, setTrackedQualifStatuses] = useState(initialQualifStatuses);
-	if (initialQualifStatuses !== trackedQualifStatuses) {
+	if (initialQualifStatuses !== trackedQualifStatuses && !hasLocalStatusEdits) {
 		setTrackedQualifStatuses(initialQualifStatuses);
-		if (!hasLocalStatusEdits) setQualifStatuses(initialQualifStatuses);
+		setQualifStatuses(initialQualifStatuses);
 	}
 
 	const handleDirtyChange = (isDirty: boolean) => {
@@ -142,12 +145,16 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 		() => studentIdsWithObservation,
 	);
 	const [trackedObservedIds, setTrackedObservedIds] = useState(studentIdsWithObservation);
+	// Only an id that was not observed before forces a panel open, so the sync — and the extra
+	// render pass it costs — is skipped when the set merely changed identity. Leaving the tracked
+	// set stale on removals is deliberate: clearing an observation should not re-open the row if
+	// the evaluator types into it again.
 	if (studentIdsWithObservation !== trackedObservedIds) {
 		const newlyObserved = [...studentIdsWithObservation].filter(
 			(id) => !trackedObservedIds.has(id),
 		);
-		setTrackedObservedIds(studentIdsWithObservation);
 		if (newlyObserved.length > 0) {
+			setTrackedObservedIds(studentIdsWithObservation);
 			setOpenObservationIds((prev) => new Set([...prev, ...newlyObserved]));
 		}
 	}

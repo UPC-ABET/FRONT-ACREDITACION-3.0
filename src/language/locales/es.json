@@ -2275,7 +2275,9 @@
 				"successTitle": "Calificaciones guardadas",
 				"successMessage": "Se guardaron correctamente las calificaciones.",
 				"errorTitle": "No se pudo guardar",
-				"errorMessage": "Ocurrió un error al guardar las calificaciones. Tus cambios siguen en pantalla; vuelve a intentarlo."
+				"errorMessage": "Ocurrió un error al guardar las calificaciones. Tus cambios siguen en pantalla; vuelve a intentarlo.",
+				"partialTitle": "Guardado parcial",
+				"partialMessage": "Se guardaron {{saved}} de {{total}} pestañas. Quedan pendientes: {{pending}}. Complétalas y vuelve a guardar."
 			},
 			"rubric": {
 				"question": "Pregunta",

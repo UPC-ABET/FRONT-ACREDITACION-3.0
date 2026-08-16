@@ -161,6 +161,20 @@ export function PerformanceLevelsPage() {
 	const [formError, setFormError] = useState<string | null>(null);
 	const { form, setForm, resetForm, populateForm, toDto } = usePerformanceLevelForm();
 
+	// The dialog holds a snapshot of the period it was opened under, so a top-bar switch would
+	// leave the user submitting into a period whose list is no longer on screen. Close it instead;
+	// a mid-flight mutation keeps its own snapshot and still completes.
+	const [trackedPeriodId, setTrackedPeriodId] = useState(academicPeriodId);
+	if (academicPeriodId !== trackedPeriodId) {
+		setTrackedPeriodId(academicPeriodId);
+		if (modalOpen) {
+			setModalOpen(false);
+			setEditingLevel(null);
+			setFormError(null);
+		}
+		setDeleteConfirm(null);
+	}
+
 	const { data: academicPeriods = [] } = useAcademicPeriods({});
 
 	const { data: typeGroups } = useTypeGroups({

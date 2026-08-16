@@ -13,6 +13,8 @@ interface ProjectWizardStep1Props {
 
 export function ProjectWizardStep1({ onNext }: ProjectWizardStep1Props) {
 	const { t } = useI18n();
+	// Projects are created only on evaluable courses: without a rubric there is nothing to grade,
+	// and both the project and rubric lists filter their course pickers by the same flag.
 	const selection = useCourseScopeSelection({ spcFilterExtra: { isEvaluable: true } });
 
 	const handleNext = () => {

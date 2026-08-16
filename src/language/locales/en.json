@@ -2275,7 +2275,9 @@
 				"successTitle": "Grades saved",
 				"successMessage": "Grades were saved successfully.",
 				"errorTitle": "Could not save",
-				"errorMessage": "An error occurred while saving the grades. Your changes are still on screen; please try again."
+				"errorMessage": "An error occurred while saving the grades. Your changes are still on screen; please try again.",
+				"partialTitle": "Partially saved",
+				"partialMessage": "Saved {{saved}} of {{total}} tabs. Still pending: {{pending}}. Complete them and save again."
 			},
 			"rubric": {
 				"question": "Question",

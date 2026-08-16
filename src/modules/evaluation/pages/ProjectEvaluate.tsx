@@ -9,6 +9,7 @@ import {
 	Button,
 	Card,
 	ErrorDialog,
+	InfoDialog,
 	PageHeader,
 	Skeleton,
 	SuccessDialog,
@@ -40,6 +41,26 @@ const EMPTY_STUDENT_IDS: Set<number> = new Set();
 
 function observationKey(rubricId: number, projectStudentId: number): string {
 	return `${rubricId}:${projectStudentId}`;
+}
+
+type PanelObservations = { values: Record<number, I18nValue>; dirty: Set<number> };
+
+// Reference comparison is enough: an edit replaces the I18nValue for exactly one student.
+function sameObservationValues(
+	a: Record<number, I18nValue>,
+	b: Record<number, I18nValue>,
+): boolean {
+	const keysA = Object.keys(a);
+	if (keysA.length !== Object.keys(b).length) return false;
+	return keysA.every((key) => a[Number(key)] === b[Number(key)]);
+}
+
+function sameIdSet(a: Set<number>, b: Set<number>): boolean {
+	if (a.size !== b.size) return false;
+	for (const id of a) {
+		if (!b.has(id)) return false;
+	}
+	return true;
 }
 
 function getInitialObservations(
@@ -255,9 +276,13 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 	};
 
 	// Each panel gets only its own rubric's slice, re-keyed by projectStudentId — that's what the
-	// rubric tables submit. Memoised so the panels' identity checks stay stable across renders.
+	// rubric tables submit. A keystroke changes `observations`, so the memo re-runs for every
+	// panel; the cache hands back the previous slice whenever the contents are unchanged, so only
+	// the edited panel gets new prop identities and the rest skip their own re-derivation.
+	const panelObservationsCache = useRef(new Map<string, PanelObservations>());
 	const observationsByPanel = useMemo(() => {
-		const result = new Map<string, { values: Record<number, I18nValue>; dirty: Set<number> }>();
+		const cache = panelObservationsCache.current;
+		const result = new Map<string, PanelObservations>();
 		for (const panel of panels) {
 			const rubricId = panel.item.rubric?.id;
 			const values: Record<number, I18nValue> = {};
@@ -270,7 +295,18 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 					if (dirtyObservationKeys.has(key)) dirty.add(student.id);
 				}
 			}
-			result.set(panel.key, { values, dirty });
+			const previous = cache.get(panel.key);
+			const slice =
+				previous &&
+				sameObservationValues(previous.values, values) &&
+				sameIdSet(previous.dirty, dirty)
+					? previous
+					: { values, dirty };
+			cache.set(panel.key, slice);
+			result.set(panel.key, slice);
+		}
+		for (const key of [...cache.keys()]) {
+			if (!result.has(key)) cache.delete(key);
 		}
 		return result;
 	}, [panels, observations, dirtyObservationKeys]);
@@ -287,6 +323,25 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 	const [isSavingAll, setIsSavingAll] = useState(false);
 	const [showSaveAllSuccess, setShowSaveAllSuccess] = useState(false);
 	const [saveAllError, setSaveAllError] = useState(false);
+	const [partialSave, setPartialSave] = useState<{
+		saved: number;
+		total: number;
+		pending: string[];
+	} | null>(null);
+
+	// Names the panels the user still has to deal with, matching the career/gradeType tab labels.
+	const panelLabel = (key: string): string => {
+		const panel = panels.find((p) => p.key === key);
+		if (!panel) return key;
+		const rubricEntry = rubrics.find((r) => r.studyPlanCourseId === panel.studyPlanCourseId);
+		const program =
+			rubricEntry?.programName?.[locale as 'es' | 'en'] ??
+			rubricEntry?.programName?.es ??
+			String(panel.studyPlanCourseId);
+		const gradeType =
+			panel.item.gradeType.name[locale as 'es' | 'en'] ?? panel.item.gradeType.name.es;
+		return `${program} — ${gradeType}`;
+	};
 
 	// Every panel (not just the dirty ones) must be free of incomplete-commission warnings before
 	// the global save unlocks — an untouched career tab with an empty rubric still counts as
@@ -325,12 +380,17 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 			setDirtyObservationKeys(
 				(prev) => new Set([...prev].filter((key) => !savedObservationKeys.has(key))),
 			);
-			// Success only when every dirty panel was submitted; otherwise part of the work is
-			// still pending and saying "saved" would be a lie.
+			// Plain success only when every dirty panel was submitted. A partial run is neither a
+			// success nor a failure: the submitted panels did persist, so name what is left instead
+			// of claiming the whole save failed.
 			if (readyKeys.length === dirtyKeys.length) {
 				setShowSaveAllSuccess(true);
 			} else {
-				setSaveAllError(true);
+				setPartialSave({
+					saved: readyKeys.length,
+					total: dirtyKeys.length,
+					pending: dirtyKeys.filter((key) => !readyKeys.includes(key)).map(panelLabel),
+				});
 			}
 		} catch {
 			// Panels that failed stay dirty, so the user can retry them.
@@ -545,6 +605,20 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 				onClose={() => setShowSaveAllSuccess(false)}
 				title={t('projects.evaluate.saveAll.successTitle')}
 				message={t('projects.evaluate.saveAll.successMessage')}
+			/>
+
+			<InfoDialog
+				isOpen={partialSave !== null}
+				onClose={() => setPartialSave(null)}
+				title={t('projects.evaluate.saveAll.partialTitle')}
+				message={
+					partialSave
+						? t('projects.evaluate.saveAll.partialMessage')
+								.replace('{{saved}}', String(partialSave.saved))
+								.replace('{{total}}', String(partialSave.total))
+								.replace('{{pending}}', partialSave.pending.join(', '))
+						: ''
+				}
 			/>
 
 			<ErrorDialog

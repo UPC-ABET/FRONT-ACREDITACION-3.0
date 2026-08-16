@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
-import { useSubmitEvaluation } from './useEvaluations';
+import { useSubmitEvaluation, useInvalidateProjectEvaluations } from './useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../types';
 
 type OutcomeRow = {
@@ -58,7 +58,8 @@ export function useMultipleCompetencyEvaluation({
 	observations,
 	attendanceDirty = false,
 }: UseMultipleCompetencyEvaluationParams) {
-	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
+	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation();
+	const invalidateEvaluations = useInvalidateProjectEvaluations(projectId);
 	const [isDirty, setIsDirty] = useState(false);
 	const [duplicateMode, setDuplicateMode] = useState(false);
 
@@ -110,27 +111,43 @@ export function useMultipleCompetencyEvaluation({
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- evaluatorId intentionally reseeds the score grid when the active evaluator changes
 	}, [outcomes, students, questionByOutcome, evaluatorId]);
 
+	// Duplicate mode holds a single shared value per criteria, so it can only adopt a server score
+	// when every student already carries the same one — which is exactly what a duplicate-mode save
+	// writes. This must be derived from the response rather than blanked: `allCriteriaIds` gets a
+	// new identity on every refetch, and the reseed below reads that as "new server data arrived",
+	// so a constant grid of nulls silently wiped the evaluator's grades right after saving.
 	const initialDupSelections = useMemo<DupSelections>(() => {
 		const result: DupSelections = {};
-		for (const id of allCriteriaIds) result[id] = null;
+		for (const outcome of outcomes) {
+			const q = questionByOutcome.get(outcome.id);
+			for (const c of q?.criterias ?? []) {
+				const scores = students.map(
+					(st) => c.scores.find((s) => s.studentId === st.id)?.score ?? null,
+				);
+				const [first] = scores;
+				result[c.id] = first != null && scores.every((value) => value === first) ? first : null;
+			}
+		}
 		return result;
-	}, [allCriteriaIds]);
+	}, [outcomes, questionByOutcome, students]);
 
 	const [selections, setSelections] = useState<Selections>(initialSelections);
 	const [dupSelections, setDupSelections] = useState<DupSelections>(initialDupSelections);
 
-	// Sync when data arrives after mount (React Query stale-while-revalidate), but never
-	// overwrite unsaved edits — a refetch caused by saving another tab must leave them intact.
+	// Sync when data arrives after mount (React Query stale-while-revalidate), but never overwrite
+	// unsaved edits — a refetch caused by saving another tab must leave them intact. The tracker
+	// advances only when the value is actually applied: advancing it while dirty would mark server
+	// data as "seen" without ever showing it, stranding the grid on stale values until a reload.
 	const [trackedInitialSelections, setTrackedInitialSelections] = useState(initialSelections);
-	if (initialSelections !== trackedInitialSelections) {
+	if (initialSelections !== trackedInitialSelections && !isDirty) {
 		setTrackedInitialSelections(initialSelections);
-		if (!isDirty) setSelections(initialSelections);
+		setSelections(initialSelections);
 	}
 	const [trackedInitialDupSelections, setTrackedInitialDupSelections] =
 		useState(initialDupSelections);
-	if (initialDupSelections !== trackedInitialDupSelections) {
+	if (initialDupSelections !== trackedInitialDupSelections && !isDirty) {
 		setTrackedInitialDupSelections(initialDupSelections);
-		if (!isDirty) setDupSelections(initialDupSelections);
+		setDupSelections(initialDupSelections);
 	}
 
 	const hasMissingStatus = useMemo(
@@ -334,8 +351,11 @@ export function useMultipleCompetencyEvaluation({
 				});
 			}),
 		);
+		// Drop dirty before refetching: the reseed above is gated on it, and now that every student
+		// has been written the server's version is the one that should win.
 		setIsDirty(false);
 		onDirtyChange?.(false);
+		await invalidateEvaluations();
 	};
 
 	const canSave = allFilled && (isDirty || attendanceDirty);
