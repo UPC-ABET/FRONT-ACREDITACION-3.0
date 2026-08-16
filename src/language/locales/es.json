@@ -1399,7 +1399,7 @@
 			"periodNotInPlanner": "El período no está disponible en Planner.",
 			"runNotFound": "No se encontró la ejecución solicitada.",
 			"invalidCredentials": "u-planner rechazó este usuario y contraseña. No se guardó ningún cambio: las credenciales configuradas previamente, si existían, siguen vigentes.",
-			"verificationCooldown": "Aún se está verificando el intento anterior (o fue rechazado hace menos de 30 segundos). Intenta de nuevo en un momento — esto no significa que las credenciales sean incorrectas.",
+			"verificationCooldown": "Ya hay una verificación en curso, o una fue rechazada hace menos de 30 segundos — posiblemente por otra persona, ya que este límite aplica a todo el servidor, no solo a ti. Intenta de nuevo en un momento; esto no es un veredicto sobre lo que ingresaste.",
 			"invalidCredentialsPayload": "Los datos enviados no son válidos.",
 			"credentialsNotConfigured": "Aún no se han configurado las credenciales de Planner.",
 			"unreachable": "Planner (u-planner) no está respondiendo en este momento. Esto no es un problema con las credenciales."

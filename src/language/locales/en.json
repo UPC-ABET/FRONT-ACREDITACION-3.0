@@ -1399,7 +1399,7 @@
 			"periodNotInPlanner": "The period is not available in Planner.",
 			"runNotFound": "The requested run was not found.",
 			"invalidCredentials": "u-planner rejected this username and password. No changes were saved — any previously configured credentials are still in place.",
-			"verificationCooldown": "Still checking the previous attempt (or it was rejected less than 30 seconds ago). Try again in a moment — this does not mean the credentials are wrong.",
+			"verificationCooldown": "A verification is already in progress, or one was rejected in the last 30 seconds — possibly by someone else, since this limit applies server-wide, not just to you. Try again in a moment; this is not a verdict on what you entered.",
 			"invalidCredentialsPayload": "The submitted data is not valid.",
 			"credentialsNotConfigured": "Planner credentials have not been configured yet.",
 			"unreachable": "Planner (u-planner) is not responding right now. This is not a problem with the credentials."
