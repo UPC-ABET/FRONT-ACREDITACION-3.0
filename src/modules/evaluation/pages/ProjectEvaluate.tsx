@@ -45,24 +45,6 @@ function observationKey(rubricId: number, projectStudentId: number): string {
 
 type PanelObservations = { values: Record<number, I18nValue>; dirty: Set<number> };
 
-// Reference comparison is enough: an edit replaces the I18nValue for exactly one student.
-function sameObservationValues(
-	a: Record<number, I18nValue>,
-	b: Record<number, I18nValue>,
-): boolean {
-	const keysA = Object.keys(a);
-	if (keysA.length !== Object.keys(b).length) return false;
-	return keysA.every((key) => a[Number(key)] === b[Number(key)]);
-}
-
-function sameIdSet(a: Set<number>, b: Set<number>): boolean {
-	if (a.size !== b.size) return false;
-	for (const id of a) {
-		if (!b.has(id)) return false;
-	}
-	return true;
-}
-
 function getInitialObservations(
 	rubrics: {
 		items: {
@@ -276,12 +258,10 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 	};
 
 	// Each panel gets only its own rubric's slice, re-keyed by projectStudentId — that's what the
-	// rubric tables submit. A keystroke changes `observations`, so the memo re-runs for every
-	// panel; the cache hands back the previous slice whenever the contents are unchanged, so only
-	// the edited panel gets new prop identities and the rest skip their own re-derivation.
-	const panelObservationsCache = useRef(new Map<string, PanelObservations>());
+	// rubric tables submit. A keystroke rebuilds every panel's slice, but the cost stops there:
+	// the panels' own observation sync is gated on an id becoming newly observed, so a fresh prop
+	// identity alone no longer triggers the extra render pass it used to.
 	const observationsByPanel = useMemo(() => {
-		const cache = panelObservationsCache.current;
 		const result = new Map<string, PanelObservations>();
 		for (const panel of panels) {
 			const rubricId = panel.item.rubric?.id;
@@ -295,18 +275,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 					if (dirtyObservationKeys.has(key)) dirty.add(student.id);
 				}
 			}
-			const previous = cache.get(panel.key);
-			const slice =
-				previous &&
-				sameObservationValues(previous.values, values) &&
-				sameIdSet(previous.dirty, dirty)
-					? previous
-					: { values, dirty };
-			cache.set(panel.key, slice);
-			result.set(panel.key, slice);
-		}
-		for (const key of [...cache.keys()]) {
-			if (!result.has(key)) cache.delete(key);
+			result.set(panel.key, { values, dirty });
 		}
 		return result;
 	}, [panels, observations, dirtyObservationKeys]);
