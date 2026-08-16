@@ -181,10 +181,14 @@ hard "never import another module's internal paths" rule. Known cross-module imp
 (consuming domain-owned exports through a public barrel):
 
 - `admin/notifications` → `@/modules/academic/components` (for `AcademicPeriodSelect`)
-- `admin/notifications` → `@/modules/core` (for `TYPE_GROUP_CODES`, `getTypesByGroupCode`)
+- `admin/notifications` → `@/modules/core` (for `getTypesByGroupCode`)
 - `evaluation` → `@/modules/academic` (for DTOs)
-- `evaluation` → `@/modules/core` (for `TYPE_CODES`, `TYPE_GROUP_CODES`)
-- `ifcs` → `@/modules/core` (for constants and services)
+- `academic` → `@/modules/core` (for `useTypesByGroupCode`, `TypeOption`)
+- `ifcs` → `@/modules/core` (for services)
+
+The `TYPE_CODES` / `TYPE_GROUP_CODES` / `PARAMETER_CODES` tables are **not** cross-module
+imports — they live in `@/shared/constants`, so reaching for them is a `shared/` import, not
+a module hop.
 
 For nested modules like `admin/parameters`, the barrel is `@/modules/admin/parameters` —
 `admin/` itself has no barrel (see above).
@@ -200,23 +204,30 @@ repo; the frontend is currently clean. Re-run the same `rg` check periodically �
 
 ## Core Module (`@/modules/core`)
 
-The core module owns shared backend entity constants and lookup services that multiple
-modules consume.
+Two halves that are easy to confuse: the backend's code **tables** are shared constants, and
+`@/modules/core` owns the runtime **lookups** that resolve them against the API.
 
-### Constants
+### Constants — `@/shared/constants` (barrel: `@/shared`)
 
 - **`TYPE_GROUP_CODES`** — Type group identifiers (e.g., `IFC_STATUS: 'TG701'`,
-  `PROGRAM_MODALITY: 'TG102'`)
+  `PROGRAM_MODALITY: 'TG102'`, `GRADE_TYPE: 'TG205'`)
 - **`TYPE_CODES`** — Individual type item codes (e.g., `IFC_STATUS.SAVED: 'TG701-T001'`)
 - **`PARAMETER_CODES`** — Parameter lookup keys (e.g., `LANGUAGES: 'PARAMETER_LANGUAGES'`)
 
-### Services
+Defined in `src/shared/constants/{typeGroupCodes,typeCodes,parameterCodes}.ts`. They are
+plain code tables with no domain owner — every module addresses them, so they sit at the
+bottom of the tree rather than in `core`.
+
+### Services and hooks — `@/modules/core`
 
 - **`getTypesByGroupCode(groupCode)`** — Fetches type options from `/types/by-group-code/`
+- **`useTypesByGroupCode(groupCode)`** — Query wrapper over the above (`staleTime: Infinity`)
 - **`getParameterByCode<T>(code)`** — Fetches parameter value from `/parameters/get-by-filters`
+- **`TypeOption`** — The resolved `{ id, code, name, extra }` shape those return
 
-All modules import these from `@/modules/core` rather than duplicating codes locally — see
-[`POLICIES.md`](./POLICIES.md#core-module) for the rule.
+All modules import the codes from `@/shared/constants` and the lookups from `@/modules/core`,
+rather than duplicating either locally — see [`POLICIES.md`](./POLICIES.md#core-module) for
+the rule.
 
 ---
 
