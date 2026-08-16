@@ -2277,7 +2277,9 @@
 				"errorTitle": "Could not save",
 				"errorMessage": "An error occurred while saving the grades. Your changes are still on screen; please try again.",
 				"partialTitle": "Partially saved",
-				"partialMessage": "Saved {{saved}} of {{total}} tabs. Still pending: {{pending}}. Complete them and save again."
+				"partialMessage": "Saved {{saved}} of {{total}} tabs. Still pending: {{pending}}. Complete them and save again.",
+				"nothingToSaveTitle": "Nothing to save",
+				"nothingToSaveMessage": "These changes cannot be saved on their own because the rubric has no questions yet. Add questions to the rubric, then save again."
 			},
 			"rubric": {
 				"question": "Question",

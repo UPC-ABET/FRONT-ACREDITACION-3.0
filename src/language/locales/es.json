@@ -2277,7 +2277,9 @@
 				"errorTitle": "No se pudo guardar",
 				"errorMessage": "Ocurrió un error al guardar las calificaciones. Tus cambios siguen en pantalla; vuelve a intentarlo.",
 				"partialTitle": "Guardado parcial",
-				"partialMessage": "Se guardaron {{saved}} de {{total}} pestañas. Quedan pendientes: {{pending}}. Complétalas y vuelve a guardar."
+				"partialMessage": "Se guardaron {{saved}} de {{total}} pestañas. Quedan pendientes: {{pending}}. Complétalas y vuelve a guardar.",
+				"nothingToSaveTitle": "No hay nada que guardar",
+				"nothingToSaveMessage": "Estos cambios no se pueden guardar por sí solos porque la rúbrica aún no tiene preguntas. Agrega preguntas a la rúbrica y vuelve a guardar."
 			},
 			"rubric": {
 				"question": "Pregunta",

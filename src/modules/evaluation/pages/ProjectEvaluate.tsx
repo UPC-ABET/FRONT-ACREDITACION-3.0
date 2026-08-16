@@ -19,6 +19,7 @@ import {
 } from '@/shared/components/ui';
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { cn } from '@/shared/lib/utils';
+import { interpolate } from '@/shared/utils';
 import { useTabParam } from '@/shared';
 import { useAuth, useI18n } from '@/providers';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
@@ -297,6 +298,7 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		total: number;
 		pending: string[];
 	} | null>(null);
+	const [nothingToSave, setNothingToSave] = useState(false);
 
 	// Names the panels the user still has to deal with, matching the career/gradeType tab labels.
 	const panelLabel = (key: string): string => {
@@ -327,9 +329,11 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		const dirtyKeys = [...dirtyTabs];
 		const readyKeys = dirtyKeys.filter((key) => panelRefs.current.get(key)?.canSave);
 
-		// Nothing submittable despite the button being enabled — say so instead of doing nothing.
+		// Nothing submittable despite the button being enabled — a panel whose rubric carries no
+		// questions mounts no table, so its attendance edits mark the tab dirty with nothing able to
+		// submit them. Say that, rather than reporting a save that never ran as failed.
 		if (readyKeys.length === 0) {
-			setSaveAllError(true);
+			setNothingToSave(true);
 			return;
 		}
 
@@ -582,12 +586,20 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 				title={t('projects.evaluate.saveAll.partialTitle')}
 				message={
 					partialSave
-						? t('projects.evaluate.saveAll.partialMessage')
-								.replace('{{saved}}', String(partialSave.saved))
-								.replace('{{total}}', String(partialSave.total))
-								.replace('{{pending}}', partialSave.pending.join(', '))
+						? interpolate(t('projects.evaluate.saveAll.partialMessage'), {
+								saved: partialSave.saved,
+								total: partialSave.total,
+								pending: partialSave.pending.join(', '),
+							})
 						: ''
 				}
+			/>
+
+			<InfoDialog
+				isOpen={nothingToSave}
+				onClose={() => setNothingToSave(false)}
+				title={t('projects.evaluate.saveAll.nothingToSaveTitle')}
+				message={t('projects.evaluate.saveAll.nothingToSaveMessage')}
 			/>
 
 			<ErrorDialog
