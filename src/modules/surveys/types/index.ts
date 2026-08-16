@@ -123,6 +123,10 @@ export interface MassiveUploadResult {
 	success: number;
 	failed: number;
 	errors: Array<{ row?: number; code?: string; reason: string }>;
+	/** Base64 xlsx (same file + an "Errores" column) — present only when `failed > 0`. */
+	excelWithErrors?: string | null;
+	/** Suggested file name for `excelWithErrors`. */
+	fileName?: string | null;
 }
 
 export interface GRAEmailSendRequest {
@@ -537,7 +541,11 @@ export interface BackendUploadResult {
 	total?: number;
 	success?: number;
 	failed?: number;
-	errors?: Array<{ row?: number; code?: string; reason?: string; message?: string }>;
+	// PPP's uploadExcel returns plain "Row N: message" strings; other upload endpoints
+	// return structured objects — accept either.
+	errors?: Array<string | { row?: number; code?: string; reason?: string; message?: string }>;
+	excelWithErrors?: string | null;
+	fileName?: string | null;
 }
 
 export interface BackendLcfcConfig {

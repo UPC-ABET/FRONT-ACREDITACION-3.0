@@ -2699,7 +2699,9 @@
 				"description": "Descarga la plantilla excel, completa los datos y cargala para procesar masivamente.",
 				"fileTitle": "Archivo de datos",
 				"downloadLabel": "Descargar Plantilla PPP",
-				"downloadError": "Error al descargar la plantilla."
+				"downloadError": "Error al descargar la plantilla.",
+				"selectProgramForTemplate": "Selecciona una carrera para descargar su plantilla.",
+				"rowsWithErrors": "Se encontraron errores en algunas filas y no se guardó ningún registro. Se descargó el mismo Excel con una columna adicional que detalla el error de cada fila para que puedas corregirlo y volver a subirlo."
 			},
 			"reports": {
 				"title": "Dashboard PPP",

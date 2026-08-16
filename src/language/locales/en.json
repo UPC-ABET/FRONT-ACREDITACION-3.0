@@ -2698,7 +2698,9 @@
 				"description": "Download the template, fill in the data and upload it to process in bulk.",
 				"fileTitle": "Data file",
 				"downloadLabel": "Download PPP Template",
-				"downloadError": "Error downloading the template."
+				"downloadError": "Error downloading the template.",
+				"selectProgramForTemplate": "Select a career to download its template.",
+				"rowsWithErrors": "Some rows had errors and nothing was saved. The same Excel file was downloaded with an extra column detailing each row's error so you can fix it and upload it again."
 			},
 			"reports": {
 				"title": "Dashboard PPP",

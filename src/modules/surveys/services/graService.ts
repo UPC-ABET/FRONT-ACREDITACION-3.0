@@ -109,11 +109,11 @@ function adaptUploadResult(raw: BackendUploadResult): MassiveUploadResult {
 		total: raw.total ?? 0,
 		success: raw.success ?? 0,
 		failed: raw.failed ?? 0,
-		errors: (raw.errors ?? []).map((e) => ({
-			row: e.row,
-			code: e.code,
-			reason: e.reason ?? e.message ?? '',
-		})),
+		errors: (raw.errors ?? []).map((e) =>
+			typeof e === 'string'
+				? { reason: e }
+				: { row: e.row, code: e.code, reason: e.reason ?? e.message ?? '' },
+		),
 	};
 }
 
