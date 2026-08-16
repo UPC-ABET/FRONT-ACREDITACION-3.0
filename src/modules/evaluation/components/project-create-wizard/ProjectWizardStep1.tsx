@@ -7,15 +7,17 @@ import { CourseScopeFields } from '../course-scope';
 
 export type ProjectStep1Data = CourseScopeData;
 
+// Projects are created only on evaluable courses: without a rubric there is nothing to grade, and
+// both the project and rubric lists filter their course pickers by the same flag.
+const EVALUABLE_ONLY = { isEvaluable: true } as const;
+
 interface ProjectWizardStep1Props {
 	onNext: (data: ProjectStep1Data) => void;
 }
 
 export function ProjectWizardStep1({ onNext }: ProjectWizardStep1Props) {
 	const { t } = useI18n();
-	// Projects are created only on evaluable courses: without a rubric there is nothing to grade,
-	// and both the project and rubric lists filter their course pickers by the same flag.
-	const selection = useCourseScopeSelection({ spcFilterExtra: { isEvaluable: true } });
+	const selection = useCourseScopeSelection({ spcFilterExtra: EVALUABLE_ONLY });
 
 	const handleNext = () => {
 		const data = selection.buildData();

@@ -44,10 +44,11 @@ import type {
 import { StudyPlanCourseCreateDialog, StudyPlanCourseEditDialog } from '@/modules';
 
 function sameI18n(
-	a: { es: string; en: string } | undefined,
-	b: { es: string; en: string },
+	submitted: { es: string; en: string } | undefined,
+	current: { es: string; en: string } | undefined,
 ): boolean {
-	return a == null || (a.es === b.es && a.en === b.en);
+	if (submitted == null) return true;
+	return (current?.es ?? '') === submitted.es && (current?.en ?? '') === submitted.en;
 }
 
 function hasCourseChanges(body: CourseUpdateBody, row: StudyPlanCourseRow): boolean {

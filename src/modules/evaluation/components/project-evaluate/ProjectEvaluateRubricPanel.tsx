@@ -145,16 +145,15 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 		() => studentIdsWithObservation,
 	);
 	const [trackedObservedIds, setTrackedObservedIds] = useState(studentIdsWithObservation);
-	// Only an id that was not observed before forces a panel open, so the sync — and the extra
-	// render pass it costs — is skipped when the set merely changed identity. Leaving the tracked
-	// set stale on removals is deliberate: clearing an observation should not re-open the row if
-	// the evaluator types into it again.
+	// Only an id that was not observed before forces a panel open, so the extra render pass is
+	// skipped when the set merely changed identity. The tracker advances either way — leaving it
+	// stale would re-run this diff on every subsequent render of the panel.
 	if (studentIdsWithObservation !== trackedObservedIds) {
 		const newlyObserved = [...studentIdsWithObservation].filter(
 			(id) => !trackedObservedIds.has(id),
 		);
+		setTrackedObservedIds(studentIdsWithObservation);
 		if (newlyObserved.length > 0) {
-			setTrackedObservedIds(studentIdsWithObservation);
 			setOpenObservationIds((prev) => new Set([...prev, ...newlyObserved]));
 		}
 	}
@@ -334,9 +333,9 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 												{student.firstName} {student.lastName}
 											</span>
 											{isOpen ? (
-												<MinusIcon className="h-4 w-4 shrink-0 text-zinc-400" />
+												<MinusIcon aria-hidden className="h-4 w-4 shrink-0 text-zinc-400" />
 											) : (
-												<PlusIcon className="h-4 w-4 shrink-0 text-zinc-400" />
+												<PlusIcon aria-hidden className="h-4 w-4 shrink-0 text-zinc-400" />
 											)}
 										</button>
 										{isOpen && (

@@ -12,14 +12,15 @@ export interface Step1Data extends CourseScopeData {
 	isCapstone: boolean;
 }
 
+const EVALUABLE_ONLY = { isEvaluable: true } as const;
+
 interface WizardStep1Props {
 	onNext: (data: Step1Data) => void;
 }
 
 export function WizardStep1({ onNext }: WizardStep1Props) {
 	const { t } = useI18n();
-	// Rubrics can only be created for courses flagged as evaluable.
-	const selection = useCourseScopeSelection({ spcFilterExtra: { isEvaluable: true } });
+	const selection = useCourseScopeSelection({ spcFilterExtra: EVALUABLE_ONLY });
 
 	const { data: resolvedType, isLoading: loadingResolve } = useResolveRubricType(
 		selection.selectedSpc?.id,
