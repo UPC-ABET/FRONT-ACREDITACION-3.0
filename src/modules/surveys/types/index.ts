@@ -129,6 +129,16 @@ export interface MassiveUploadResult {
 	fileName?: string | null;
 }
 
+/** Real-time progress of a PPP bulk-upload job (polled from `ppp/survey/upload-status/:jobId`).
+ *  `progressPct` reflects rows actually validated/saved server-side — never simulated. */
+export interface PPPUploadJobStatus {
+	progressPct: number;
+	totalRows: number;
+	processedRows: number;
+	done: boolean;
+	result: MassiveUploadResult | null;
+}
+
 export interface GRAEmailSendRequest {
 	academicPeriodId: number;
 	programId: number;

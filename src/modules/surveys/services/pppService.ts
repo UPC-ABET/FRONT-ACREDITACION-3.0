@@ -1,4 +1,5 @@
 import {
+	apiGet,
 	apiPost,
 	apiPut,
 	apiDelete,
@@ -19,6 +20,7 @@ import type {
 	PerformanceLevel,
 	DashboardResponse,
 	MassiveUploadResult,
+	PPPUploadJobStatus,
 	PPPNotificationSendRequest,
 	BackendPppConfig,
 	BackendUploadResult,
@@ -235,23 +237,48 @@ export async function downloadPPPTemplate(programId = 0): Promise<void> {
 	triggerBlobDownload(blob, resolveDownloadFileName(response, 'PPP_Survey_Template.xlsx'));
 }
 
-export async function uploadPPPMassive(
+/** Kicks off the PPP bulk import in the background and returns a job id to poll for
+ *  real progress (see {@link getPPPUploadStatus}) — the file itself may take a while
+ *  to validate/save row by row, so the caller isn't left waiting on a single request. */
+export async function startPPPUpload(
 	file: File,
-	academicPeriodId: number,
 	programId = 0,
 	campusId = 0,
-): Promise<MassiveUploadResult> {
+): Promise<{ accepted: boolean; jobId: string; totalRows: number }> {
 	const fileBase64 = await fileToBase64(file);
 	const res = await apiPost('ppp/survey/upload-excel', {
 		fileBase64,
 		programId,
 		campusId,
 	});
-	const result = adaptUploadResult(getApiData<BackendUploadResult>(res) ?? {});
-	if (result.failed > 0) {
+	const data = getApiData<{ accepted?: boolean; jobId?: string; totalRows?: number }>(res);
+	return {
+		accepted: data?.accepted ?? false,
+		jobId: data?.jobId ?? '',
+		totalRows: data?.totalRows ?? 0,
+	};
+}
+
+export async function getPPPUploadStatus(jobId: string): Promise<PPPUploadJobStatus> {
+	const res = await apiGet(`ppp/survey/upload-status/${encodeURIComponent(jobId)}`);
+	const data = getApiData<{
+		progressPct?: number;
+		totalRows?: number;
+		processedRows?: number;
+		done?: boolean;
+		result?: BackendUploadResult | null;
+	}>(res);
+	const result = data?.result ? adaptUploadResult(data.result) : null;
+	if (result && result.failed > 0) {
 		logger.warn(`PPP upload: ${result.failed} failed rows out of ${result.total}`);
 	}
-	return result;
+	return {
+		progressPct: data?.progressPct ?? 0,
+		totalRows: data?.totalRows ?? 0,
+		processedRows: data?.processedRows ?? 0,
+		done: data?.done ?? false,
+		result,
+	};
 }
 
 export async function generatePPPDashboard(params: {

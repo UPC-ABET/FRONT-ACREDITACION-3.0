@@ -1716,7 +1716,8 @@
 				"invalidPracticeNumber": "Practice number must be 1 (Practice I) or 2 (Practice II).",
 				"noScores": "At least one outcome score must be provided.",
 				"invalidScore": "Invalid score: must be between 1.0 and 5.0.",
-				"invalidRuc": "RUC must be exactly 11 numeric digits."
+				"invalidRuc": "RUC must be exactly 11 numeric digits.",
+				"uploadJobNotFound": "The upload process could not be found. Please try again."
 			}
 		},
 		"rubric": {
@@ -2701,6 +2702,20 @@
 				"downloadError": "Error downloading the template.",
 				"selectProgramForTemplate": "Select a career to download its template.",
 				"rowsWithErrors": "Some rows had errors and nothing was saved. The same Excel file was downloaded with an extra column detailing each row's error so you can fix it and upload it again."
+			},
+			"progress": {
+				"title": "Processing bulk upload",
+				"completedTitle": "Upload completed",
+				"failedTitle": "Upload had errors",
+				"preparing": "Preparing the file.",
+				"processing": "Validating and saving rows.",
+				"progressLabel": "Progress",
+				"progressValue": "{{percentage}}%",
+				"rowsLabel": "Rows processed",
+				"rowsValue": "{{processed}} / {{total}}",
+				"success": "Saved",
+				"failed": "With errors",
+				"errorsNote": "An Excel file with each error's detail was downloaded so you can fix it."
 			},
 			"reports": {
 				"title": "Dashboard PPP",

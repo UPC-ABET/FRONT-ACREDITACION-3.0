@@ -1716,7 +1716,8 @@
 				"invalidPracticeNumber": "El número de práctica debe ser 1 (Práctica I) o 2 (Práctica II).",
 				"noScores": "Debe proporcionar al menos un puntaje de outcome.",
 				"invalidScore": "Puntaje inválido: debe estar entre 1.0 y 5.0.",
-				"invalidRuc": "El RUC debe tener exactamente 11 dígitos numéricos."
+				"invalidRuc": "El RUC debe tener exactamente 11 dígitos numéricos.",
+				"uploadJobNotFound": "No se encontró el proceso de carga. Vuelve a intentarlo."
 			}
 		},
 		"rubric": {
@@ -2702,6 +2703,20 @@
 				"downloadError": "Error al descargar la plantilla.",
 				"selectProgramForTemplate": "Selecciona una carrera para descargar su plantilla.",
 				"rowsWithErrors": "Se encontraron errores en algunas filas y no se guardó ningún registro. Se descargó el mismo Excel con una columna adicional que detalla el error de cada fila para que puedas corregirlo y volver a subirlo."
+			},
+			"progress": {
+				"title": "Procesando carga masiva",
+				"completedTitle": "Carga completada",
+				"failedTitle": "Carga con errores",
+				"preparing": "Preparando el archivo.",
+				"processing": "Validando y guardando las filas.",
+				"progressLabel": "Progreso",
+				"progressValue": "{{percentage}}%",
+				"rowsLabel": "Filas procesadas",
+				"rowsValue": "{{processed}} / {{total}}",
+				"success": "Guardadas",
+				"failed": "Con errores",
+				"errorsNote": "Se descargó un Excel con el detalle de cada error para que puedas corregirlo."
 			},
 			"reports": {
 				"title": "Dashboard PPP",

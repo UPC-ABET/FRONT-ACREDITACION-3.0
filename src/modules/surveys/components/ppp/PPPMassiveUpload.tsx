@@ -7,6 +7,7 @@ import { tryTranslate, triggerBrowserDownload } from '@/shared/utils';
 import { FileUploadPanel } from '../shared/FileUploadPanel';
 import { UploadResultSummary } from '../shared/UploadResultSummary';
 import { AllProgramsSelect } from '../shared/AllProgramsSelect';
+import { PPPUploadProgressDialog } from './PPPUploadProgressDialog';
 import { usePPPUpload } from '../../hooks';
 
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -22,7 +23,8 @@ export function PPPMassiveUpload() {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const [programId, setProgramId] = useState(0);
-	const { loading, error, result, upload } = usePPPUpload();
+	const { loading, error, status, result, upload } = usePPPUpload();
+	const [progressDialogOpen, setProgressDialogOpen] = useState(false);
 
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
@@ -85,13 +87,22 @@ export function PPPMassiveUpload() {
 						setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
 						return;
 					}
-					upload(file, academicPeriodId, programId);
+					setProgressDialogOpen(true);
+					upload(file, programId);
 				}}
 				onDownloadTemplate={handleDownloadTemplate}
 				downloadLabel={t('surveys.ppp.upload.downloadLabel')}
 			/>
 
 			{result && <UploadResultSummary result={result} />}
+
+			<PPPUploadProgressDialog
+				open={progressDialogOpen}
+				uploading={loading}
+				status={status}
+				error={error ? tryTranslate(t, error) : null}
+				onOpenChange={setProgressDialogOpen}
+			/>
 
 			<Toast
 				isOpen={toast.open}

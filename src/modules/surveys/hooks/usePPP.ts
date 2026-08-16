@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
 	CompetenceFormData,
-	MassiveUploadResult,
+	PPPUploadJobStatus,
 	PPPNotificationSendRequest,
 } from '../types';
 import {
@@ -18,7 +18,8 @@ import {
 	clonePPPConfiguration,
 	generatePPPConfigFromOutcomes,
 	downloadPPPTemplate,
-	uploadPPPMassive,
+	startPPPUpload,
+	getPPPUploadStatus,
 	sendPPPNotification,
 } from '../services';
 
@@ -148,40 +149,82 @@ export function usePPPDownload() {
 	return { loading, error, download };
 }
 
+/** PPP bulk upload: kicks off a background job and polls its status every second so the
+ *  UI can show real progress (rows actually validated/saved server-side, never simulated). */
 export function usePPPUpload() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [success, setSuccess] = useState(false);
-	const [result, setResult] = useState<MassiveUploadResult | null>(null);
+	const [jobId, setJobId] = useState<string | null>(null);
+	const [status, setStatus] = useState<PPPUploadJobStatus | null>(null);
 
-	const upload = useCallback(
-		async (file: File, academicPeriodId: number, programId = 0, campusId = 0) => {
-			setLoading(true);
-			setError(null);
-			setSuccess(false);
-			setResult(null);
-			try {
-				const uploadResult = await uploadPPPMassive(file, academicPeriodId, programId, campusId);
-				setResult(uploadResult);
-				setSuccess(true);
-			} catch (e) {
-				setError(getErrorMessage(e));
-			} finally {
-				setLoading(false);
+	const upload = useCallback(async (file: File, programId = 0, campusId = 0) => {
+		setLoading(true);
+		setError(null);
+		setStatus(null);
+		try {
+			const started = await startPPPUpload(file, programId, campusId);
+			if (!started.jobId) {
+				throw new Error('error.survey.ppp.uploadJobNotFound');
 			}
-		},
-		[],
-	);
+			setStatus({
+				progressPct: 0,
+				totalRows: started.totalRows,
+				processedRows: 0,
+				done: false,
+				result: null,
+			});
+			setJobId(started.jobId);
+		} catch (e) {
+			setError(getErrorMessage(e));
+			setLoading(false);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!jobId || !loading) return;
+
+		const activeJobId = jobId;
+		let cancelled = false;
+
+		async function pollStatus() {
+			try {
+				const nextStatus = await getPPPUploadStatus(activeJobId);
+				if (cancelled) return;
+				setStatus(nextStatus);
+				if (nextStatus.done) {
+					setLoading(false);
+					setJobId(null);
+				}
+			} catch (e) {
+				if (cancelled) return;
+				setError(getErrorMessage(e));
+				setLoading(false);
+				setJobId(null);
+			}
+		}
+
+		void pollStatus();
+		const intervalId = setInterval(() => {
+			void pollStatus();
+		}, 1000);
+
+		return () => {
+			cancelled = true;
+			clearInterval(intervalId);
+		};
+	}, [jobId, loading]);
 
 	return {
 		loading,
 		error,
-		success,
-		result,
+		status,
+		result: status?.result ?? null,
 		upload,
 		reset: () => {
-			setSuccess(false);
-			setResult(null);
+			setStatus(null);
+			setJobId(null);
+			setError(null);
+			setLoading(false);
 		},
 	};
 }
