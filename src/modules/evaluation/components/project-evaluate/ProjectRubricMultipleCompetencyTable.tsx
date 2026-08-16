@@ -50,7 +50,7 @@ interface ProjectRubricMultipleCompetencyTableProps {
 	disableDuplicate?: boolean;
 	onDirtyChange?: (isDirty: boolean) => void;
 	commissions?: CommissionRow[];
-	observation: I18nValue;
+	observations: Record<number, I18nValue>;
 	attendanceDirty?: boolean;
 	/** Reports this rubric's validation messages (same text as before) so the page can render
 	 * them once, aggregated across every career/gradeType, instead of nested per rubric. */
@@ -75,7 +75,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		disableDuplicate = false,
 		onDirtyChange,
 		commissions = [],
-		observation,
+		observations,
 		attendanceDirty,
 		onIncompleteChange,
 	},
@@ -166,7 +166,7 @@ export const ProjectRubricMultipleCompetencyTable = forwardRef<
 		commissions,
 		activeCommissionId,
 		onDirtyChange,
-		observation,
+		observations,
 		attendanceDirty,
 	});
 

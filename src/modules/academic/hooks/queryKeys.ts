@@ -5,12 +5,23 @@ import type {
 	CourseOutcomeMappingFilter,
 } from '../types';
 
+/**
+ * School / period / modality travel as request headers, so responses depend on them without
+ * them appearing in any filter. Query keys for scoped endpoints carry this alongside the
+ * filters. See `useAbetScope`.
+ */
+export interface AbetScope {
+	schoolId: number | null;
+	academicPeriodId: number | null;
+	modalityTypeId: number | null;
+}
+
 export const academicQueryKeys = {
 	all: ['academic'] as const,
 
 	studyPlanCourses: () => [...academicQueryKeys.all, 'spc'] as const,
-	studyPlanCoursesByFilter: (filters: StudyPlanCourseFilters) =>
-		[...academicQueryKeys.studyPlanCourses(), filters] as const,
+	studyPlanCoursesByFilter: (filters: StudyPlanCourseFilters, scope: AbetScope) =>
+		[...academicQueryKeys.studyPlanCourses(), filters, scope] as const,
 	studyPlanCoursesView: (studyPlanId: number | null, academicPeriodId: number | null) =>
 		[...academicQueryKeys.studyPlanCourses(), 'view', studyPlanId, academicPeriodId] as const,
 

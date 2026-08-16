@@ -6,7 +6,7 @@ import { Button, Card, I18nTextField, Input, TableEmptyState, Title } from '@/sh
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { useI18n } from '@/providers';
 import type { EnrolledStudentResponse } from '@/modules/academic';
-import type { Step1Data } from '../rubric-create-wizard/WizardStep1';
+import type { ProjectStep1Data } from './ProjectWizardStep1';
 import { WizardSelectStudentsModal, WizardSelectEvaluatorModal } from '@/modules';
 import { ProjectGroupSelect } from '@/modules';
 
@@ -29,7 +29,7 @@ export interface LocalEvaluator {
 }
 
 interface ProjectWizardStep2Props {
-	step1: Step1Data;
+	step1: ProjectStep1Data;
 	onBack: () => void;
 	onSubmit: (data: ProjectFormData) => Promise<void>;
 	isSubmitting: boolean;

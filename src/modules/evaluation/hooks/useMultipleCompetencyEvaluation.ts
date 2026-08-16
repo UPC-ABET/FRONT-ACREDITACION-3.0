@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
-import { useSubmitEvaluation } from './useEvaluations';
+import { useSubmitEvaluation, useInvalidateProjectEvaluations } from './useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../types';
 
 type OutcomeRow = {
@@ -36,12 +36,10 @@ interface UseMultipleCompetencyEvaluationParams {
 	commissions: CommissionRow[];
 	activeCommissionId: number | null;
 	onDirtyChange?: (isDirty: boolean) => void;
-	/** Shared across every career/gradeType tab — the evaluation covers all students on the
-	 * project, so there is a single observation, not one per tab, edited once at the page level. */
-	observation: I18nValue;
-	/** True when the parent panel has unsaved attendance edits, or the shared observation
-	 * changed elsewhere — neither is tracked by this hook's own isDirty, but both must still
-	 * unlock saving so they get submitted. */
+	/** Keyed by projectStudentId — each student has their own observation, edited at the page level. */
+	observations: Record<number, I18nValue>;
+	/** True when the parent panel has unsaved attendance or observation edits — neither is
+	 * tracked by this hook's own isDirty, but both must still unlock saving so they get submitted. */
 	attendanceDirty?: boolean;
 }
 
@@ -57,10 +55,11 @@ export function useMultipleCompetencyEvaluation({
 	commissions,
 	activeCommissionId,
 	onDirtyChange,
-	observation,
+	observations,
 	attendanceDirty = false,
 }: UseMultipleCompetencyEvaluationParams) {
-	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
+	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation();
+	const invalidateEvaluations = useInvalidateProjectEvaluations(projectId);
 	const [isDirty, setIsDirty] = useState(false);
 	const [duplicateMode, setDuplicateMode] = useState(false);
 
@@ -112,27 +111,43 @@ export function useMultipleCompetencyEvaluation({
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- evaluatorId intentionally reseeds the score grid when the active evaluator changes
 	}, [outcomes, students, questionByOutcome, evaluatorId]);
 
+	// Duplicate mode holds a single shared value per criteria, so it can only adopt a server score
+	// when every student already carries the same one — which is exactly what a duplicate-mode save
+	// writes. This must be derived from the response rather than blanked: `allCriteriaIds` gets a
+	// new identity on every refetch, and the reseed below reads that as "new server data arrived",
+	// so a constant grid of nulls silently wiped the evaluator's grades right after saving.
 	const initialDupSelections = useMemo<DupSelections>(() => {
 		const result: DupSelections = {};
-		for (const id of allCriteriaIds) result[id] = null;
+		for (const outcome of outcomes) {
+			const q = questionByOutcome.get(outcome.id);
+			for (const c of q?.criterias ?? []) {
+				const scores = students.map(
+					(st) => c.scores.find((s) => s.studentId === st.id)?.score ?? null,
+				);
+				const [first] = scores;
+				result[c.id] = first != null && scores.every((value) => value === first) ? first : null;
+			}
+		}
 		return result;
-	}, [allCriteriaIds]);
+	}, [outcomes, questionByOutcome, students]);
 
 	const [selections, setSelections] = useState<Selections>(initialSelections);
 	const [dupSelections, setDupSelections] = useState<DupSelections>(initialDupSelections);
 
-	// Sync when data arrives after mount (React Query stale-while-revalidate), but never
-	// overwrite unsaved edits — a refetch caused by saving another tab must leave them intact.
+	// Sync when data arrives after mount (React Query stale-while-revalidate), but never overwrite
+	// unsaved edits — a refetch caused by saving another tab must leave them intact. The tracker
+	// advances only when the value is actually applied: advancing it while dirty would mark server
+	// data as "seen" without ever showing it, stranding the grid on stale values until a reload.
 	const [trackedInitialSelections, setTrackedInitialSelections] = useState(initialSelections);
-	if (initialSelections !== trackedInitialSelections) {
+	if (initialSelections !== trackedInitialSelections && !isDirty) {
 		setTrackedInitialSelections(initialSelections);
-		if (!isDirty) setSelections(initialSelections);
+		setSelections(initialSelections);
 	}
 	const [trackedInitialDupSelections, setTrackedInitialDupSelections] =
 		useState(initialDupSelections);
-	if (initialDupSelections !== trackedInitialDupSelections) {
+	if (initialDupSelections !== trackedInitialDupSelections && !isDirty) {
 		setTrackedInitialDupSelections(initialDupSelections);
-		if (!isDirty) setDupSelections(initialDupSelections);
+		setDupSelections(initialDupSelections);
 	}
 
 	const hasMissingStatus = useMemo(
@@ -318,26 +333,37 @@ export function useMultipleCompetencyEvaluation({
 		const entries = [...studentScores.entries()];
 		if (entries.length === 0) return;
 
-		const observationEs = observation.es?.trim() ?? '';
-		const observationEn = observation.en?.trim() ?? '';
-		// Stored/read as a localized record ({ es, en }); keep the write shape in sync with
-		// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textareas.
-		const observationPayload =
-			observationEs || observationEn ? { es: observationEs, en: observationEn } : undefined;
-
-		// Errors propagate to the caller, which owns the save-all feedback dialogs.
-		await Promise.all(
-			entries.map(([projectStudentId, scores]) =>
-				submitEvaluation({
+		// One request per student, so a rejection partway leaves the earlier writes committed.
+		// `allSettled` lets the refetch below run regardless, rather than leaving the grid showing
+		// totals that no longer match what the server holds.
+		const results = await Promise.allSettled(
+			entries.map(([projectStudentId, scores]) => {
+				const observation = observations[projectStudentId];
+				const observationEs = observation?.es?.trim() ?? '';
+				const observationEn = observation?.en?.trim() ?? '';
+				const observationPayload =
+					observationEs || observationEn ? { es: observationEs, en: observationEn } : null;
+				return submitEvaluation({
 					projectStudentId,
 					projectEvaluatorId: evaluatorId,
 					rubricId: rubricId,
 					observation: observationPayload,
 					scores,
 					qualificationStatusTypeId: qualifStatuses[projectStudentId],
-				}),
-			),
+				});
+			}),
 		);
+
+		await invalidateEvaluations();
+
+		// Errors propagate to the caller, which owns the save-all feedback dialogs. Staying dirty
+		// keeps the reseed gated, so the failed students' edits survive the refetch above.
+		const rejected = results.find((result) => result.status === 'rejected');
+		if (rejected) throw rejected.reason;
+
+		// Only drop dirty once the refetch carrying these writes has landed: the reseed is gated on
+		// it, so clearing first would apply whatever snapshot the cache happened to hold — including
+		// one taken before this save, if a sibling tab's invalidation raced it.
 		setIsDirty(false);
 		onDirtyChange?.(false);
 	};

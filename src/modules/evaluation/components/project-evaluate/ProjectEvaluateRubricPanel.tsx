@@ -1,7 +1,8 @@
 'use client';
 
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { Badge, Card, Select, TableEmptyState } from '@/shared/components/ui';
+import { PlusIcon, MinusIcon } from '@heroicons/react/24/outline';
+import { Badge, Card, I18nTextField, Select, TableEmptyState } from '@/shared/components/ui';
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { TYPE_CODES } from '@/shared/constants';
 import { ProjectRubricSingleCompetencyTable } from './ProjectRubricSingleCompetencyTable';
@@ -32,10 +33,10 @@ interface ProjectEvaluateRubricPanelProps {
 	isMultipleScope: boolean;
 	t: (key: string) => string;
 	onDirtyChange: (isDirty: boolean) => void;
-	/** Shared across every panel — the evaluation covers all students on the project regardless
-	 * of career, so there is a single observation, owned and edited by the page. */
-	observation: I18nValue;
-	observationDirty: boolean;
+	/** Keyed by projectStudentId — owned and edited by the page so it survives tab switches. */
+	observations: Record<number, I18nValue>;
+	dirtyStudentIds: Set<number>;
+	onObservationChange: (studentId: number, value: I18nValue) => void;
 	/** Reports this rubric's validation messages (same text as before) so the page can render
 	 * them once, aggregated across every career/gradeType, instead of nested per rubric. */
 	onIncompleteChange?: (items: { message: string; type: 'warning' | 'error' }[]) => void;
@@ -60,8 +61,9 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 		isMultipleScope,
 		t,
 		onDirtyChange,
-		observation,
-		observationDirty,
+		observations,
+		dirtyStudentIds,
+		onObservationChange,
 		onIncompleteChange,
 	},
 	ref,
@@ -104,10 +106,13 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 	// Attendance is not part of the rubric's dirty state, so track local edits separately to
 	// keep a refetch (triggered by saving another tab) from reverting them.
 	const [hasLocalStatusEdits, setHasLocalStatusEdits] = useState(false);
+	// Same rule as the score grids: the tracker advances only when the value is applied. Advancing
+	// it while there are local edits would mark another evaluator's attendance change as "seen"
+	// without ever showing it, so it would stay hidden until a full reload.
 	const [trackedQualifStatuses, setTrackedQualifStatuses] = useState(initialQualifStatuses);
-	if (initialQualifStatuses !== trackedQualifStatuses) {
+	if (initialQualifStatuses !== trackedQualifStatuses && !hasLocalStatusEdits) {
 		setTrackedQualifStatuses(initialQualifStatuses);
-		if (!hasLocalStatusEdits) setQualifStatuses(initialQualifStatuses);
+		setQualifStatuses(initialQualifStatuses);
 	}
 
 	const handleDirtyChange = (isDirty: boolean) => {
@@ -118,6 +123,51 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 
 	const isCapstone = item.rubric?.rubricType?.code === TYPE_CODES.RUBRIC_TYPE.CAPSTONE;
 	const isCapstoneMultiple = isCapstone && isMultipleScope;
+
+	const observationsDirty = students.some((st) => dirtyStudentIds.has(st.id));
+
+	// Students that already have an observation start expanded, so the evaluator sees it without
+	// having to click through every row.
+	const studentIdsWithObservation = useMemo(
+		() =>
+			new Set(
+				students
+					.filter((st) => {
+						const value = observations[st.id];
+						return !!(value?.es?.trim() || value?.en?.trim());
+					})
+					.map((st) => st.id),
+			),
+		[students, observations],
+	);
+
+	const [openObservationIds, setOpenObservationIds] = useState<Set<number>>(
+		() => studentIdsWithObservation,
+	);
+	const [trackedObservedIds, setTrackedObservedIds] = useState(studentIdsWithObservation);
+	// Only an id that was not observed before forces a panel open, so the extra render pass is
+	// skipped when the set merely changed identity. The tracker advances either way — leaving it
+	// stale would re-run this diff on every subsequent render of the panel.
+	if (studentIdsWithObservation !== trackedObservedIds) {
+		const newlyObserved = [...studentIdsWithObservation].filter(
+			(id) => !trackedObservedIds.has(id),
+		);
+		setTrackedObservedIds(studentIdsWithObservation);
+		if (newlyObserved.length > 0) {
+			setOpenObservationIds((prev) => new Set([...prev, ...newlyObserved]));
+		}
+	}
+	const toggleObservationOpen = (studentId: number) => {
+		setOpenObservationIds((prev) => {
+			const next = new Set(prev);
+			if (next.has(studentId)) {
+				next.delete(studentId);
+			} else {
+				next.add(studentId);
+			}
+			return next;
+		});
+	};
 
 	// The rubric can only be graded once every student's attendance is known — otherwise there's
 	// no way to tell who should get a criteria score vs. the automatic non-attendance score.
@@ -238,8 +288,8 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 					disableDuplicate={disableDuplicate}
 					onDirtyChange={handleDirtyChange}
 					commissions={item.commissions}
-					observation={observation}
-					attendanceDirty={hasLocalStatusEdits || observationDirty}
+					observations={observations}
+					attendanceDirty={hasLocalStatusEdits || observationsDirty}
 					onIncompleteChange={onIncompleteChange}
 				/>
 			) : item.questions.length > 0 ? (
@@ -255,11 +305,56 @@ export const ProjectEvaluateRubricPanel = forwardRef<
 					readOnly={isReadOnly}
 					disableDuplicate={disableDuplicate}
 					onDirtyChange={handleDirtyChange}
-					observation={observation}
-					attendanceDirty={hasLocalStatusEdits || observationDirty}
+					observations={observations}
+					attendanceDirty={hasLocalStatusEdits || observationsDirty}
 					onIncompleteChange={onIncompleteChange}
 				/>
 			) : null}
+
+			{/* Only rendered when a rubric table is mounted below: without one there's nothing to
+			    submit through, so an observation typed here would be silently discarded. */}
+			{!isReadOnly &&
+				!hasMissingStatus &&
+				item.rubric &&
+				students.length > 0 &&
+				(isCapstoneMultiple || item.questions.length > 0) && (
+					<Card title={t('projects.evaluate.rubric.observation')}>
+						<div className="-m-4 divide-y divide-zinc-100">
+							{students.map((student) => {
+								const isOpen = openObservationIds.has(student.id);
+								return (
+									<div key={student.id}>
+										<button
+											type="button"
+											onClick={() => toggleObservationOpen(student.id)}
+											aria-expanded={isOpen}
+											className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left hover:bg-zinc-50">
+											<span className="text-sm font-medium text-zinc-800">
+												{student.firstName} {student.lastName}
+											</span>
+											{isOpen ? (
+												<MinusIcon aria-hidden className="h-4 w-4 shrink-0 text-zinc-400" />
+											) : (
+												<PlusIcon aria-hidden className="h-4 w-4 shrink-0 text-zinc-400" />
+											)}
+										</button>
+										{isOpen && (
+											<div className="px-4 pb-4">
+												<I18nTextField
+													layout="row"
+													placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
+													value={observations[student.id] ?? { es: '', en: '' }}
+													onChange={(value) => onObservationChange(student.id, value)}
+													rows={3}
+												/>
+											</div>
+										)}
+									</div>
+								);
+							})}
+						</div>
+					</Card>
+				)}
 		</div>
 	);
 });

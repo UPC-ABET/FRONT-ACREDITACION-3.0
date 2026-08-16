@@ -1,4 +1,5 @@
 export * from './queryKeys';
+export * from './useAbetScope';
 export * from './useCourseOutcomeMappings';
 export * from './usePerformanceLevels';
 export * from './usePerformanceLevelForm';

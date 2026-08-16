@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useI18n } from '@/providers';
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
-import { useSubmitEvaluation } from './useEvaluations';
+import { useSubmitEvaluation, useInvalidateProjectEvaluations } from './useEvaluations';
 import type { RubricQuestionDetailsResponse, ProjectDetailsStudentResponse } from '../types';
 import {
 	validateScore,
@@ -21,12 +21,10 @@ interface UseSingleCompetencyRubricTableOptions {
 	qualifStatuses: Record<number, number | null>;
 	nonAttendanceTypeIds: Set<number>;
 	onDirtyChange?: (isDirty: boolean) => void;
-	/** Shared across every career/gradeType tab — the evaluation covers all students on the
-	 * project, so there is a single observation, not one per tab, edited once at the page level. */
-	observation: I18nValue;
-	/** True when the parent panel has unsaved attendance edits, or the shared observation
-	 * changed elsewhere — neither is tracked by this hook's own isDirty, but both must still
-	 * unlock saving so they get submitted. */
+	/** Keyed by projectStudentId — each student has their own observation, edited at the page level. */
+	observations: Record<number, I18nValue>;
+	/** True when the parent panel has unsaved attendance or observation edits — neither is
+	 * tracked by this hook's own isDirty, but both must still unlock saving so they get submitted. */
 	attendanceDirty?: boolean;
 }
 
@@ -39,11 +37,12 @@ export function useSingleCompetencyRubricTable({
 	qualifStatuses,
 	nonAttendanceTypeIds,
 	onDirtyChange,
-	observation,
+	observations,
 	attendanceDirty = false,
 }: UseSingleCompetencyRubricTableOptions) {
 	const { t, locale } = useI18n();
-	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation(projectId);
+	const { mutateAsync: submitEvaluation, isPending } = useSubmitEvaluation();
+	const invalidateEvaluations = useInvalidateProjectEvaluations(projectId);
 
 	const [duplicateMode, setDuplicateMode] = useState(false);
 	const [isDirty, setIsDirty] = useState(false);
@@ -81,6 +80,8 @@ export function useSingleCompetencyRubricTable({
 		return result;
 	}, [questions, students]);
 
+	// Only seeds the initial state — unlike the multiple-competency grid there is no reseed for
+	// duplicate mode, so a refetch cannot wipe it.
 	const initialDupScores = useMemo<DupScores>(() => {
 		const result: DupScores = {};
 		for (const q of questions) result[q.id] = '';
@@ -90,12 +91,14 @@ export function useSingleCompetencyRubricTable({
 	const [scores, setScores] = useState<Scores>(initialScores);
 	const [dupScores, setDupScores] = useState<DupScores>(initialDupScores);
 
-	// Reseed from the server only while there is nothing unsaved to overwrite: a refetch
-	// triggered by saving another tab must not discard this tab's in-progress edits.
+	// Reseed from the server only while there is nothing unsaved to overwrite: a refetch triggered
+	// by saving another tab must not discard this tab's in-progress edits. The tracker advances
+	// only when the value is actually applied — advancing it while dirty would mark server data as
+	// "seen" without ever showing it, stranding the grid on stale values until a reload.
 	const [trackedInitialScores, setTrackedInitialScores] = useState(initialScores);
-	if (initialScores !== trackedInitialScores) {
+	if (initialScores !== trackedInitialScores && !isDirty) {
 		setTrackedInitialScores(initialScores);
-		if (!isDirty) setScores(initialScores);
+		setScores(initialScores);
 	}
 
 	const ranges = useMemo(() => {
@@ -268,26 +271,37 @@ export function useSingleCompetencyRubricTable({
 		const entries = [...studentPayloads.entries()].filter(([, s]) => s.length > 0);
 		if (entries.length === 0) return;
 
-		const observationEs = observation.es?.trim() ?? '';
-		const observationEn = observation.en?.trim() ?? '';
-		// Stored/read as a localized record ({ es, en }); keep the write shape in sync with
-		// ProjectRubricItemStudentResponse.observation so a refetch repopulates the textareas.
-		const observationPayload =
-			observationEs || observationEn ? { es: observationEs, en: observationEn } : undefined;
-
-		// Errors propagate to the caller, which owns the save-all feedback dialogs.
-		await Promise.all(
-			entries.map(([projectStudentId, criteriaScores]) =>
-				submitEvaluation({
+		// One request per student, so a rejection partway leaves the earlier writes committed.
+		// `allSettled` lets the refetch below run regardless, rather than leaving the grid showing
+		// totals that no longer match what the server holds.
+		const results = await Promise.allSettled(
+			entries.map(([projectStudentId, criteriaScores]) => {
+				const observation = observations[projectStudentId];
+				const observationEs = observation?.es?.trim() ?? '';
+				const observationEn = observation?.en?.trim() ?? '';
+				const observationPayload =
+					observationEs || observationEn ? { es: observationEs, en: observationEn } : null;
+				return submitEvaluation({
 					projectStudentId,
 					projectEvaluatorId: evaluatorId,
 					rubricId: rubricId,
 					observation: observationPayload,
 					scores: criteriaScores,
 					qualificationStatusTypeId: qualifStatuses[projectStudentId],
-				}),
-			),
+				});
+			}),
 		);
+
+		await invalidateEvaluations();
+
+		// Errors propagate to the caller, which owns the save-all feedback dialogs. Staying dirty
+		// keeps the reseed gated, so the failed students' edits survive the refetch above.
+		const rejected = results.find((result) => result.status === 'rejected');
+		if (rejected) throw rejected.reason;
+
+		// Only drop dirty once the refetch carrying these writes has landed: the reseed is gated on
+		// it, so clearing first would apply whatever snapshot the cache happened to hold — including
+		// one taken before this save, if a sibling tab's invalidation raced it.
 		setIsDirty(false);
 		onDirtyChange?.(false);
 	};

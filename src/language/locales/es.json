@@ -2069,6 +2069,11 @@
 			"deleting": "Eliminando...",
 			"saveError": "Ocurrió un error al guardar.",
 			"minZeroError": "El valor no puede ser negativo.",
+			"instrumentRequired": "Debes seleccionar un instrumento.",
+			"nameEsRequired": "El nombre en español es obligatorio.",
+			"nameEnRequired": "El nombre en inglés es obligatorio.",
+			"codeRequired": "El código es obligatorio.",
+			"colorInvalid": "El color debe ser un hexadecimal válido (por ejemplo, #1A2B3C).",
 			"instrument": "Instrumento",
 			"instrumentPlaceholder": "Seleccionar instrumento",
 			"nameEs": "Nombre (ES)",
@@ -2103,6 +2108,21 @@
 			},
 			"error": {
 				"create": "No fue posible crear el proyecto. Intenta de nuevo."
+			},
+			"step1": {
+				"title": "Seleccionar curso",
+				"subtitle": "Elige la carrera y el curso.",
+				"selectPeriodFirst": "Selecciona un periodo en la barra superior primero",
+				"programLabel": "Carrera",
+				"programPlaceholder": "Selecciona una carrera",
+				"programLoading": "Cargando carreras...",
+				"programNoOptions": "Sin carreras disponibles",
+				"courseLabel": "Curso",
+				"coursePlaceholder": "Selecciona un curso",
+				"courseLoading": "Cargando cursos...",
+				"courseNoOptions": "Sin cursos disponibles",
+				"courseSelectProgramFirst": "Selecciona una carrera primero",
+				"next": "Siguiente"
 			},
 			"step2": {
 				"infoTitle": "Información del Proyecto",
@@ -2255,7 +2275,11 @@
 				"successTitle": "Calificaciones guardadas",
 				"successMessage": "Se guardaron correctamente las calificaciones.",
 				"errorTitle": "No se pudo guardar",
-				"errorMessage": "Ocurrió un error al guardar las calificaciones. Tus cambios siguen en pantalla; vuelve a intentarlo."
+				"errorMessage": "Ocurrió un error al guardar las calificaciones. Tus cambios siguen en pantalla; vuelve a intentarlo.",
+				"partialTitle": "Guardado parcial",
+				"partialMessage": "Se guardaron {{saved}} de {{total}} pestañas. Quedan pendientes: {{pending}}. Complétalas y vuelve a guardar.",
+				"nothingToSaveTitle": "No hay nada que guardar",
+				"nothingToSaveMessage": "Estos cambios no se pueden guardar por sí solos porque la rúbrica aún no tiene preguntas. Agrega preguntas a la rúbrica y vuelve a guardar."
 			},
 			"rubric": {
 				"question": "Pregunta",
@@ -2274,8 +2298,7 @@
 				"saveSuccessTitle": "Calificación guardada",
 				"saveSuccessMessage": "La calificación del proyecto se guardó correctamente.",
 				"observation": "Observaciones",
-				"observationPlaceholder": "Agregar observación",
-				"observationOptional": "Opcional"
+				"observationPlaceholder": "Agregar observación"
 			},
 			"multipleCompetency": {
 				"outcome": "Outcome",

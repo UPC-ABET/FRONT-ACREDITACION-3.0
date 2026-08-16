@@ -31,8 +31,10 @@ the basis of typecheck/lint alone if a manual step was called for and skipped.
 - **`app/` is a thin shell.** Route files only import a page component from a module and
   render it. No business logic, no data fetching, no auth checks in `app/`.
 - **`shared/` is for truly cross-cutting utilities.** If something belongs to a domain
-  (academic periods, type codes, parameters), it goes in that domain's module — not in
-  shared.
+  (academic periods, rubrics, projects), it goes in that domain's module — not in shared.
+  The backend's code tables (`TYPE_CODES`, `TYPE_GROUP_CODES`, `PARAMETER_CODES`) are the
+  deliberate exception: every module addresses them, so they live in `shared/constants` —
+  see [Core Module](#core-module).
 - **Domain creates it, domain exports it.** The module that owns a concept exports it.
   Other modules import from that module. Example: `AcademicPeriodSelect` lives in
   `@/modules/academic/components/`, not in shared.
@@ -127,7 +129,9 @@ be moved to the module. Verified clean as of 2026-07-30 — see
 ## Core Module
 
 Never duplicate type/parameter codes as local constants — always import `TYPE_GROUP_CODES`,
-`TYPE_CODES`, and `PARAMETER_CODES` from `@/modules/core`. See
+`TYPE_CODES`, and `PARAMETER_CODES` from `@/shared/constants` (or the `@/shared` barrel). The
+code **tables** are shared constants; `@/modules/core` owns the runtime lookups that resolve them
+against the backend (`getTypesByGroupCode`, `useTypesByGroupCode`, `getParameterByCode`). See
 [`CONTEXT.md`](./CONTEXT.md#core-module-modulescore) for what each export actually contains.
 
 ---

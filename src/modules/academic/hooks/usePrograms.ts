@@ -1,10 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { programsService } from '../services';
 import { FilterProgramRequest } from '../types';
+import type { AbetScope } from './queryKeys';
+import { useAbetScope } from './useAbetScope';
 
 export const programsQueryKeys = {
 	all: ['programs'] as const,
-	filtered: (filters: FilterProgramRequest) => ['programs', 'filtered', filters] as const,
+	filtered: (filters: FilterProgramRequest, scope: AbetScope) =>
+		['programs', 'filtered', filters, scope] as const,
 	allActive: () => ['programs', 'all-active', { isActive: true }] as const,
 	bySchoolModality: (schoolId: number | null, modalityTypeId: number | null) =>
 		[
@@ -15,8 +18,9 @@ export const programsQueryKeys = {
 };
 
 export function usePrograms(filters: FilterProgramRequest = {}, options?: { enabled?: boolean }) {
+	const scope = useAbetScope();
 	return useQuery({
-		queryKey: programsQueryKeys.filtered(filters),
+		queryKey: programsQueryKeys.filtered(filters, scope),
 		queryFn: () => programsService.getByFilters(filters).then((r) => r.data),
 		enabled: options?.enabled ?? true,
 	});

@@ -4,13 +4,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { studyPlanCoursesService } from '../services/studyPlanCoursesService';
 import type { StudyPlanCourseFilters } from '../types';
 import { academicQueryKeys } from './queryKeys';
+import { useAbetScope } from './useAbetScope';
 
 export function useStudyPlanCourses(
 	filters: StudyPlanCourseFilters,
 	options?: { enabled?: boolean },
 ) {
+	const scope = useAbetScope();
 	return useQuery({
-		queryKey: academicQueryKeys.studyPlanCoursesByFilter(filters),
+		queryKey: academicQueryKeys.studyPlanCoursesByFilter(filters, scope),
 		queryFn: () => studyPlanCoursesService.getByFilters(filters).then((r) => r.data),
 		enabled: options?.enabled ?? true,
 	});

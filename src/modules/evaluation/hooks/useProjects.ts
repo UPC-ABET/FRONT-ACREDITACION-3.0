@@ -23,6 +23,9 @@ export const projectsQueryKeys = {
 		['projects', 'by-professor', professorId, params ?? {}] as const,
 	details: (projectId: string | number, params?: DetailsParams) =>
 		['projects', 'details', projectId, params ?? {}] as const,
+	/** Prefix that matches a project's details under any params — use it to invalidate, since
+	 * `details(projectId)` builds a `{}` params segment that only matches by coincidence. */
+	detailsAll: (projectId: string | number) => ['projects', 'details', projectId] as const,
 };
 
 export function useProjects(filters: FilterProjectDto = {}, options?: { enabled?: boolean }) {
@@ -117,7 +120,7 @@ export function useRemoveProjectStudent(projectId: string | number) {
 	return useMutation({
 		mutationFn: (projectStudentId: number) => projectsService.removeStudent(projectStudentId),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: projectsQueryKeys.details(projectId) });
+			queryClient.invalidateQueries({ queryKey: projectsQueryKeys.detailsAll(projectId) });
 		},
 	});
 }
@@ -146,7 +149,7 @@ export function useRemoveProjectEvaluator(projectId: string | number) {
 	return useMutation({
 		mutationFn: (projectEvaluatorId: number) => projectsService.removeEvaluator(projectEvaluatorId),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: projectsQueryKeys.details(projectId) });
+			queryClient.invalidateQueries({ queryKey: projectsQueryKeys.detailsAll(projectId) });
 		},
 	});
 }

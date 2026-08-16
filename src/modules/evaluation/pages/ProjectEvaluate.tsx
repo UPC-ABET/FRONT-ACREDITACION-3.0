@@ -9,7 +9,7 @@ import {
 	Button,
 	Card,
 	ErrorDialog,
-	I18nTextField,
+	InfoDialog,
 	PageHeader,
 	Skeleton,
 	SuccessDialog,
@@ -19,6 +19,7 @@ import {
 } from '@/shared/components/ui';
 import type { I18nValue } from '@/shared/components/ui/I18nTextField';
 import { cn } from '@/shared/lib/utils';
+import { interpolate } from '@/shared/utils';
 import { useTabParam } from '@/shared';
 import { useAuth, useI18n } from '@/providers';
 import { useProfessorByUserId } from '@/modules/academic/hooks';
@@ -32,32 +33,42 @@ interface ProjectEvaluatePageProps {
 	competencyScopeCode: string;
 }
 
-const EMPTY_OBSERVATION: I18nValue = { es: '', en: '' };
-
 function dirtyKey(studyPlanCourseId: number, gradeTypeId: number): string {
 	return `${studyPlanCourseId}:${gradeTypeId}`;
 }
 
-function getInitialObservation(
+const EMPTY_OBSERVATIONS: Record<number, I18nValue> = {};
+const EMPTY_STUDENT_IDS: Set<number> = new Set();
+
+function observationKey(rubricId: number, projectStudentId: number): string {
+	return `${rubricId}:${projectStudentId}`;
+}
+
+type PanelObservations = { values: Record<number, I18nValue>; dirty: Set<number> };
+
+function getInitialObservations(
 	rubrics: {
 		items: {
-			students: { observation?: I18nValue | null }[];
+			rubric?: { id: number } | null;
+			students: { projectStudentId: number; observation?: I18nValue | null }[];
 		}[];
 	}[],
-): I18nValue {
+): Record<string, I18nValue> {
+	const result: Record<string, I18nValue> = {};
 	for (const rubricEntry of rubrics) {
 		for (const item of rubricEntry.items) {
-			const withObservation = item.students.find((student) => student.observation != null);
-			if (withObservation?.observation) {
-				return {
-					es: withObservation.observation.es ?? '',
-					en: withObservation.observation.en ?? '',
+			const rubricId = item.rubric?.id;
+			if (rubricId == null) continue;
+			for (const student of item.students) {
+				if (student.observation == null) continue;
+				result[observationKey(rubricId, student.projectStudentId)] = {
+					es: student.observation.es ?? '',
+					en: student.observation.en ?? '',
 				};
 			}
 		}
 	}
-
-	return EMPTY_OBSERVATION;
+	return result;
 }
 
 export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectEvaluatePageProps) {
@@ -166,16 +177,22 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 	const rubrics = useMemo(() => data?.rubrics ?? [], [data?.rubrics]);
 
-	// The evaluation covers all students on the project regardless of career, so there is a
-	// single shared observation — not one per career/gradeType tab.
-	const initialObservation = useMemo(() => getInitialObservation(rubrics), [rubrics]);
+	// Each student has their own observation per rubric, keyed by `rubricId:projectStudentId`.
+	const initialObservations = useMemo(() => getInitialObservations(rubrics), [rubrics]);
 
-	const [observation, setObservation] = useState<I18nValue>(initialObservation);
-	const [observationDirty, setObservationDirty] = useState(false);
-	const [trackedInitialObservation, setTrackedInitialObservation] = useState(initialObservation);
-	if (initialObservation !== trackedInitialObservation) {
-		setTrackedInitialObservation(initialObservation);
-		if (!observationDirty) setObservation(initialObservation);
+	const [observations, setObservations] = useState<Record<string, I18nValue>>(initialObservations);
+	const [dirtyObservationKeys, setDirtyObservationKeys] = useState<Set<string>>(new Set());
+	const [trackedInitialObservations, setTrackedInitialObservations] = useState(initialObservations);
+	if (initialObservations !== trackedInitialObservations) {
+		setTrackedInitialObservations(initialObservations);
+		// Refresh from the server, but keep whatever the evaluator hasn't saved yet.
+		setObservations((prev) => {
+			const next = { ...initialObservations };
+			for (const key of dirtyObservationKeys) {
+				if (prev[key] != null) next[key] = prev[key];
+			}
+			return next;
+		});
 	}
 
 	const careerIds = useMemo(
@@ -212,16 +229,6 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		return activeItems[0]?.gradeType.id ?? null;
 	}, [activeItems, activeGradeTypeId]);
 
-	// The shared observation field is only meaningful once the active tab's rubric is visible —
-	// while attendance is incomplete the rubric itself is hidden, so hide this too.
-	const activeTabHasMissingStatus = useMemo(() => {
-		if (effectiveStudyPlanCourseId == null || effectiveGradeTypeId == null) return false;
-		const items = incompleteItemsByTab.get(
-			dirtyKey(effectiveStudyPlanCourseId, effectiveGradeTypeId),
-		);
-		return (items ?? []).some((i) => i.message === t('projects.evaluate.rubric.missingStatus'));
-	}, [incompleteItemsByTab, effectiveStudyPlanCourseId, effectiveGradeTypeId, t]);
-
 	// Every (career, gradeType) combination stays mounted at all times so switching tabs
 	// never discards in-progress edits — only the active one is shown (CSS `hidden`).
 	const panels = useMemo(() => {
@@ -240,13 +247,39 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		});
 	}, [careerIds, rubrics, data?.students]);
 
-	// Editing the shared observation touches every career/gradeType panel, so mark them all
-	// dirty — otherwise "Save" would only persist it for whichever tab is currently active.
-	const handleObservationChange = (value: I18nValue) => {
-		setObservation(value);
-		setObservationDirty(true);
-		setDirtyTabs((prev) => new Set([...prev, ...panels.map((p) => p.key)]));
+	// An edit belongs to one rubric, so it only marks the panel(s) rendering that rubric dirty.
+	const handleObservationChange = (rubricId: number, studentId: number, value: I18nValue) => {
+		const key = observationKey(rubricId, studentId);
+		setObservations((prev) => ({ ...prev, [key]: value }));
+		setDirtyObservationKeys((prev) => new Set(prev).add(key));
+		const affectedKeys = panels
+			.filter((p) => p.item.rubric?.id === rubricId && p.students.some((s) => s.id === studentId))
+			.map((p) => p.key);
+		setDirtyTabs((prev) => new Set([...prev, ...affectedKeys]));
 	};
+
+	// Each panel gets only its own rubric's slice, re-keyed by projectStudentId — that's what the
+	// rubric tables submit. A keystroke rebuilds every panel's slice, but the cost stops there:
+	// the panels' own observation sync is gated on an id becoming newly observed, so a fresh prop
+	// identity alone no longer triggers the extra render pass it used to.
+	const observationsByPanel = useMemo(() => {
+		const result = new Map<string, PanelObservations>();
+		for (const panel of panels) {
+			const rubricId = panel.item.rubric?.id;
+			const values: Record<number, I18nValue> = {};
+			const dirty = new Set<number>();
+			if (rubricId != null) {
+				for (const student of panel.students) {
+					const key = observationKey(rubricId, student.id);
+					const value = observations[key];
+					if (value != null) values[student.id] = value;
+					if (dirtyObservationKeys.has(key)) dirty.add(student.id);
+				}
+			}
+			result.set(panel.key, { values, dirty });
+		}
+		return result;
+	}, [panels, observations, dirtyObservationKeys]);
 
 	const panelRefs = useRef(new Map<string, RubricTableHandle>());
 	const registerPanelRef = (key: string) => (handle: RubricTableHandle | null) => {
@@ -260,6 +293,26 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 	const [isSavingAll, setIsSavingAll] = useState(false);
 	const [showSaveAllSuccess, setShowSaveAllSuccess] = useState(false);
 	const [saveAllError, setSaveAllError] = useState(false);
+	const [partialSave, setPartialSave] = useState<{
+		saved: number;
+		total: number;
+		pending: string[];
+	} | null>(null);
+	const [nothingToSave, setNothingToSave] = useState(false);
+
+	// Names the panels the user still has to deal with, matching the career/gradeType tab labels.
+	const panelLabel = (key: string): string => {
+		const panel = panels.find((p) => p.key === key);
+		if (!panel) return key;
+		const rubricEntry = rubrics.find((r) => r.studyPlanCourseId === panel.studyPlanCourseId);
+		const program =
+			rubricEntry?.programName?.[locale as 'es' | 'en'] ??
+			rubricEntry?.programName?.es ??
+			String(panel.studyPlanCourseId);
+		const gradeType =
+			panel.item.gradeType.name[locale as 'es' | 'en'] ?? panel.item.gradeType.name.es;
+		return `${program} — ${gradeType}`;
+	};
 
 	// Every panel (not just the dirty ones) must be free of incomplete-commission warnings before
 	// the global save unlocks — an untouched career tab with an empty rubric still counts as
@@ -276,13 +329,42 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 		const dirtyKeys = [...dirtyTabs];
 		const readyKeys = dirtyKeys.filter((key) => panelRefs.current.get(key)?.canSave);
 
-		if (readyKeys.length === 0) return;
+		// Nothing submittable despite the button being enabled — a panel whose rubric carries no
+		// questions mounts no table, so its attendance edits mark the tab dirty with nothing able to
+		// submit them. Say that, rather than reporting a save that never ran as failed.
+		if (readyKeys.length === 0) {
+			setNothingToSave(true);
+			return;
+		}
+
+		// Only the observations the submitted panels actually cover lose their dirty mark —
+		// clearing the whole set would let a refetch revert edits made in a panel that was skipped.
+		const savedObservationKeys = new Set(
+			panels.flatMap((panel) => {
+				const rubricId = panel.item.rubric?.id;
+				if (rubricId == null || !readyKeys.includes(panel.key)) return [];
+				return panel.students.map((s) => observationKey(rubricId, s.id));
+			}),
+		);
 
 		setIsSavingAll(true);
 		try {
 			await Promise.all(readyKeys.map((key) => panelRefs.current.get(key)?.save()));
-			setObservationDirty(false);
-			setShowSaveAllSuccess(true);
+			setDirtyObservationKeys(
+				(prev) => new Set([...prev].filter((key) => !savedObservationKeys.has(key))),
+			);
+			// Plain success only when every dirty panel was submitted. A partial run is neither a
+			// success nor a failure: the submitted panels did persist, so name what is left instead
+			// of claiming the whole save failed.
+			if (readyKeys.length === dirtyKeys.length) {
+				setShowSaveAllSuccess(true);
+			} else {
+				setPartialSave({
+					saved: readyKeys.length,
+					total: dirtyKeys.length,
+					pending: dirtyKeys.filter((key) => !readyKeys.includes(key)).map(panelLabel),
+				});
+			}
 		} catch {
 			// Panels that failed stay dirty, so the user can retry them.
 			setSaveAllError(true);
@@ -443,8 +525,12 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 							onDirtyChange={(dirty) =>
 								handleDirtyChange(panel.studyPlanCourseId, panel.gradeTypeId, dirty)
 							}
-							observation={observation}
-							observationDirty={observationDirty}
+							observations={observationsByPanel.get(panel.key)?.values ?? EMPTY_OBSERVATIONS}
+							dirtyStudentIds={observationsByPanel.get(panel.key)?.dirty ?? EMPTY_STUDENT_IDS}
+							onObservationChange={(studentId, value) => {
+								const rubricId = panel.item.rubric?.id;
+								if (rubricId != null) handleObservationChange(rubricId, studentId, value);
+							}}
 							onIncompleteChange={(incomplete) =>
 								handleIncompleteChange(panel.studyPlanCourseId, panel.gradeTypeId, incomplete)
 							}
@@ -455,19 +541,6 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 
 			{!isReadOnly && rubrics.some((rubric) => rubric.items.length > 0) && (
 				<div className="flex flex-col gap-4">
-					{!activeTabHasMissingStatus && (
-						<Card>
-							<I18nTextField
-								layout="row"
-								label={`${t('projects.evaluate.rubric.observation')} (${t('projects.evaluate.rubric.observationOptional')})`}
-								placeholder={t('projects.evaluate.rubric.observationPlaceholder')}
-								value={observation}
-								onChange={handleObservationChange}
-								rows={3}
-							/>
-						</Card>
-					)}
-
 					{incompleteItems.length > 0 && (
 						<ul className="space-y-1 text-sm">
 							{incompleteItems.map((item) => (
@@ -505,6 +578,28 @@ export function ProjectEvaluatePage({ projectId, competencyScopeCode }: ProjectE
 				onClose={() => setShowSaveAllSuccess(false)}
 				title={t('projects.evaluate.saveAll.successTitle')}
 				message={t('projects.evaluate.saveAll.successMessage')}
+			/>
+
+			<InfoDialog
+				isOpen={partialSave !== null}
+				onClose={() => setPartialSave(null)}
+				title={t('projects.evaluate.saveAll.partialTitle')}
+				message={
+					partialSave
+						? interpolate(t('projects.evaluate.saveAll.partialMessage'), {
+								saved: partialSave.saved,
+								total: partialSave.total,
+								pending: partialSave.pending.join(', '),
+							})
+						: ''
+				}
+			/>
+
+			<InfoDialog
+				isOpen={nothingToSave}
+				onClose={() => setNothingToSave(false)}
+				title={t('projects.evaluate.saveAll.nothingToSaveTitle')}
+				message={t('projects.evaluate.saveAll.nothingToSaveMessage')}
 			/>
 
 			<ErrorDialog
