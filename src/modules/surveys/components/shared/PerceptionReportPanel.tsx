@@ -122,16 +122,16 @@ export const PerceptionReportPanel = forwardRef<
 			: campus
 				? Number(campus.value)
 				: undefined;
-		const unfiltered = !programId && !resolvedCommissionId && !resolvedCampusId;
-		if (!(allowUnfiltered && unfiltered)) {
-			if (!programId) {
-				setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
-				return;
-			}
-			if (requireCommission && !resolvedCommissionId) {
-				setToast({ open: true, type: 'error', msg: t('surveys.perception.commissionRequired') });
-				return;
-			}
+		// An all-careers overview stays valid when narrowed by commission or campus alone, so a
+		// missing career only blocks screens that require one — as does the commission rule.
+		const careerRequired = !allowUnfiltered;
+		if (careerRequired && !programId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
+			return;
+		}
+		if (requireCommission && !resolvedCommissionId && (programId || careerRequired)) {
+			setToast({ open: true, type: 'error', msg: t('surveys.perception.commissionRequired') });
+			return;
 		}
 		const resolvedLang: 'es' | 'en' = externalFilters
 			? (externalFilters.lang ?? (locale === 'en' ? 'en' : 'es'))

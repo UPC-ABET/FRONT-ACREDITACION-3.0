@@ -127,11 +127,16 @@ export interface MassiveUploadResult {
 	total: number;
 	success: number;
 	failed: number;
-	errors: Array<{ row?: number; code?: string; reason: string }>;
-	/** Base64 xlsx (same file + an "Errores" column) — present only when `failed > 0`. */
-	excelWithErrors?: string | null;
-	/** Suggested file name for `excelWithErrors`. */
+	/** `reason` is an i18n key, never display text; `args` interpolates it. */
+	errors: Array<{
+		row?: number;
+		code?: string;
+		reason: string;
+		args?: Record<string, string | number>;
+	}>;
 	fileName?: string | null;
+	/** Only says whether an annotated workbook exists; fetching it is a separate request. */
+	hasErrorFile?: boolean;
 }
 
 /** Real-time progress of a PPP bulk-upload job (polled from `ppp/survey/upload-status/:jobId`).
@@ -556,11 +561,17 @@ export interface BackendUploadResult {
 	total?: number;
 	success?: number;
 	failed?: number;
-	// PPP's uploadExcel returns plain "Row N: message" strings; other upload endpoints
-	// return structured objects — accept either.
-	errors?: Array<string | { row?: number; code?: string; reason?: string; message?: string }>;
-	excelWithErrors?: string | null;
+	errors?: Array<{ row?: number; code?: string; reason?: string; message?: string }>;
+}
+
+/** PPP's bulk import diverges from the shape the other upload endpoints return. */
+export interface BackendPppUploadResult {
+	total?: number;
+	success?: number;
+	failed?: number;
+	errors?: Array<{ key: string; args?: Record<string, string | number>; row: number }>;
 	fileName?: string | null;
+	hasErrorFile?: boolean;
 }
 
 export interface BackendLcfcConfig {

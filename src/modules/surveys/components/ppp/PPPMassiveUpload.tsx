@@ -3,14 +3,12 @@
 import React, { useState } from 'react';
 import { Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
-import { base64ToBlob, tryTranslate, triggerBrowserDownload } from '@/shared/utils';
+import { tryTranslate } from '@/shared/utils';
 import { FileUploadPanel } from '../shared/FileUploadPanel';
 import { UploadResultSummary } from '../shared/UploadResultSummary';
 import { AllProgramsSelect } from '../shared/AllProgramsSelect';
 import { PPPUploadProgressDialog } from './PPPUploadProgressDialog';
 import { usePPPUpload } from '../../hooks';
-
-const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 interface PPPMassiveUploadProps {
 	/** Owned by PPPManagementView so the selection survives switching tabs. */
@@ -21,8 +19,9 @@ interface PPPMassiveUploadProps {
 export function PPPMassiveUpload({ programId, onProgramChange }: PPPMassiveUploadProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
-	const { loading, error, status, result, upload } = usePPPUpload();
+	const { loading, error, status, jobId, result, upload } = usePPPUpload();
 	const [progressDialogOpen, setProgressDialogOpen] = useState(false);
+	const [downloadingErrors, setDownloadingErrors] = useState(false);
 
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
@@ -31,16 +30,21 @@ export function PPPMassiveUpload({ programId, onProgramChange }: PPPMassiveUploa
 	});
 
 	// PPP's bulk upload is all-or-nothing: any row with an error means nothing was saved, and
-	// the backend returns the same workbook with an "Errores" column appended. The download is
-	// tied to a click rather than fired automatically — a browser that blocks unprompted
-	// downloads would otherwise leave the user with no way to reach the only record of what
-	// went wrong.
-	function handleDownloadErrors() {
-		if (!result?.excelWithErrors) return;
-		triggerBrowserDownload(
-			base64ToBlob(result.excelWithErrors, XLSX_MIME),
-			result.fileName ?? 'PPP_errores.xlsx',
-		);
+	// the backend keeps the annotated workbook behind its own endpoint. The download is tied to
+	// a click rather than fired automatically — a browser that blocks unprompted downloads would
+	// otherwise leave the user with no way to reach the only record of what went wrong.
+	async function handleDownloadErrors() {
+		if (!jobId) return;
+		setDownloadingErrors(true);
+		try {
+			const { downloadPPPUploadErrors } = await import('../../services/pppService');
+			await downloadPPPUploadErrors(jobId);
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : t('surveys.ppp.upload.downloadError');
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, msg) });
+		} finally {
+			setDownloadingErrors(false);
+		}
 	}
 
 	async function handleDownloadTemplate() {
@@ -79,7 +83,9 @@ export function PPPMassiveUpload({ programId, onProgramChange }: PPPMassiveUploa
 				title={t('surveys.ppp.upload.fileTitle')}
 				uploading={loading}
 				success={result != null && result.failed === 0}
-				error={error}
+				// The progress dialog already reports failures; letting the panel raise its own
+				// toast puts a second copy behind the open modal.
+				error={null}
 				onUpload={(file) => {
 					if (!programId) {
 						setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
@@ -101,6 +107,7 @@ export function PPPMassiveUpload({ programId, onProgramChange }: PPPMassiveUploa
 				error={error ? tryTranslate(t, error) : null}
 				onOpenChange={setProgressDialogOpen}
 				onDownloadErrors={handleDownloadErrors}
+				downloadingErrors={downloadingErrors}
 			/>
 
 			<Toast

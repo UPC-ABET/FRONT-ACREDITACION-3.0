@@ -23,7 +23,7 @@ import type {
 	PPPUploadJobStatus,
 	PPPNotificationSendRequest,
 	BackendPppConfig,
-	BackendUploadResult,
+	BackendPppUploadResult,
 	PerceptionReportFilters,
 	PerceptionReportResponse,
 } from '../types';
@@ -61,18 +61,20 @@ function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): Pe
 	};
 }
 
-function adaptUploadResult(raw: BackendUploadResult): MassiveUploadResult {
+function adaptUploadResult(raw: BackendPppUploadResult): MassiveUploadResult {
 	return {
 		total: raw.total ?? 0,
 		success: raw.success ?? 0,
 		failed: raw.failed ?? 0,
-		errors: (raw.errors ?? []).map((e) =>
-			typeof e === 'string'
-				? { reason: e }
-				: { row: e.row, code: e.code, reason: e.reason ?? e.message ?? '' },
-		),
-		excelWithErrors: raw.excelWithErrors ?? null,
+		// `row: 0` marks a job-level failure rather than a worksheet row: row 1 is the header,
+		// so no data row can ever carry it.
+		errors: (raw.errors ?? []).map((e) => ({
+			row: e.row ? e.row : undefined,
+			reason: e.key,
+			args: e.args,
+		})),
 		fileName: raw.fileName ?? null,
+		hasErrorFile: raw.hasErrorFile ?? false,
 	};
 }
 
@@ -269,7 +271,7 @@ export async function getPPPUploadStatus(jobId: string): Promise<PPPUploadJobSta
 		totalRows?: number;
 		processedRows?: number;
 		done?: boolean;
-		result?: BackendUploadResult | null;
+		result?: BackendPppUploadResult | null;
 	}>(res);
 	const result = data?.result ? adaptUploadResult(data.result) : null;
 	if (result && result.failed > 0) {
@@ -282,6 +284,14 @@ export async function getPPPUploadStatus(jobId: string): Promise<PPPUploadJobSta
 		done: data?.done ?? false,
 		result,
 	};
+}
+
+/** Kept out of the status poll, which runs once a second and would carry the whole file. */
+export async function downloadPPPUploadErrors(jobId: string): Promise<void> {
+	const { blob, response } = await apiGetBlobResponse(
+		`ppp/survey/upload-errors/${encodeURIComponent(jobId)}`,
+	);
+	triggerBlobDownload(blob, resolveDownloadFileName(response, 'errores_ppp.xlsx'));
 }
 
 export async function generatePPPDashboard(params: {

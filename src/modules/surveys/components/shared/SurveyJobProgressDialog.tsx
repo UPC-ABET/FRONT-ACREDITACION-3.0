@@ -39,6 +39,7 @@ export interface SurveyJobProgressDialogProps {
 	readonly onOpenChange: (open: boolean) => void;
 	/** Extra actions in the footer, shown alongside Close once `busy` is false. */
 	readonly footerActions?: React.ReactNode;
+	readonly children?: React.ReactNode;
 }
 
 export function clampPercentage(value: number | undefined): number {
@@ -63,6 +64,7 @@ export function SurveyJobProgressDialog({
 	error,
 	onOpenChange,
 	footerActions,
+	children,
 }: SurveyJobProgressDialogProps) {
 	const { t } = useI18n();
 	const safePercentage = clampPercentage(percentage);
@@ -132,6 +134,8 @@ export function SurveyJobProgressDialog({
 							))}
 						</div>
 					))}
+
+					{children}
 
 					{note && <p className="text-sm text-amber-700">{note}</p>}
 

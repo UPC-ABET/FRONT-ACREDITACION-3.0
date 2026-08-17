@@ -22,7 +22,10 @@ export const surveyQueryKeys = {
 
 	periods: () => ['surveys', 'periods'] as const,
 	programs: () => ['surveys', 'programs'] as const,
-	commissions: (programId?: number) => ['surveys', 'commissions', programId] as const,
+	// The outcomes endpoint is scoped by the X-Academic-Period-Id header, so the period has to
+	// be part of the key or switching it in the top bar serves the old period's options.
+	commissions: (programId?: number, academicPeriodId?: number | null) =>
+		['surveys', 'commissions', programId, academicPeriodId] as const,
 	campuses: () => ['surveys', 'campuses'] as const,
 
 	graCompetences: () => ['surveys', 'gra', 'competences'] as const,

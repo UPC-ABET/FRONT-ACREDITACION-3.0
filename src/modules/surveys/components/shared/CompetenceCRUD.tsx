@@ -66,6 +66,7 @@ export function CompetenceCRUD({
 	programId,
 	competenceType,
 	competences,
+	loading,
 	error,
 	onLoad,
 	onSave,
@@ -308,6 +309,7 @@ export function CompetenceCRUD({
 			<DataTable
 				columns={columns}
 				data={filteredItems}
+				isLoading={loading}
 				title={
 					competenceType === 'specific'
 						? t('surveys.competence.table.titleSpecific')

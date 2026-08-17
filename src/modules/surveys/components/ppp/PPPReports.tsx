@@ -26,10 +26,9 @@ export function PPPReports({ programId, onProgramChange }: PPPReportsProps) {
 	const [commission, setCommission] = useState<OptionItem | null>(null);
 	const [campus, setCampus] = useState<OptionItem | null>(null);
 	const [surveyNumbers, setSurveyNumbers] = useState<OptionItem[]>([]);
-	const [language, setLanguage] = useState<OptionItem>({
-		value: 'es',
-		label: t('surveys.perception.spanish'),
-	});
+	// Only the value is state — storing the whole option would freeze its label at the
+	// mount-time locale.
+	const [lang, setLang] = useState<'es' | 'en'>('es');
 	const [generating, setGenerating] = useState(false);
 	const panelRef = useRef<PerceptionReportPanelHandle>(null);
 
@@ -73,10 +72,11 @@ export function PPPReports({ programId, onProgramChange }: PPPReportsProps) {
 					name="ppp-language"
 					label={t('surveys.perception.language')}
 					options={languageOptions}
-					value={language}
-					onChange={(_name, value) =>
-						value && !Array.isArray(value) && setLanguage(value as OptionItem)
-					}
+					value={languageOptions.find((option) => option.value === lang) ?? languageOptions[0]}
+					onChange={(_name, value) => {
+						if (!value || Array.isArray(value)) return;
+						setLang(value.value === 'en' ? 'en' : 'es');
+					}}
 				/>
 			</div>
 
@@ -105,7 +105,7 @@ export function PPPReports({ programId, onProgramChange }: PPPReportsProps) {
 					commissionId: commission ? Number(commission.value) : undefined,
 					campusId: campus ? Number(campus.value) : undefined,
 					surveyNumbers: surveyNumbers.map((option) => Number(option.value)),
-					lang: language.value === 'en' ? 'en' : 'es',
+					lang,
 				}}
 			/>
 		</div>

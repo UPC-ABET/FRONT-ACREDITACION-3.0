@@ -61,6 +61,8 @@ export function usePPPCompetences() {
 	const load = useCallback(async (periodId: number, programId = 0) => {
 		setLoading(true);
 		setError(null);
+		// Without this the previous career's rows stay on screen for the whole request.
+		setCompetences([]);
 		try {
 			setCompetences(await listPPPCompetences(periodId, programId));
 		} catch (e) {
@@ -210,6 +212,7 @@ export function usePPPUpload() {
 		loading: starting || running,
 		error: startError ?? pollError,
 		status,
+		jobId,
 		result: status?.result ?? null,
 		upload,
 		reset,

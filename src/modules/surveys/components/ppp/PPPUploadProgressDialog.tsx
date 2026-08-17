@@ -15,6 +15,7 @@ interface PPPUploadProgressDialogProps {
 	readonly onOpenChange: (open: boolean) => void;
 	/** Invoked by the "download errors" action; only offered when the workbook is available. */
 	readonly onDownloadErrors?: () => void;
+	readonly downloadingErrors?: boolean;
 }
 
 export function PPPUploadProgressDialog({
@@ -24,12 +25,13 @@ export function PPPUploadProgressDialog({
 	error,
 	onOpenChange,
 	onDownloadErrors,
+	downloadingErrors,
 }: PPPUploadProgressDialogProps) {
 	const { t } = useI18n();
 	const completed = !uploading && !error && !!status?.done;
 	const result = status?.result ?? null;
 	const hasErrors = completed && !!result && result.failed > 0;
-	const canDownloadErrors = hasErrors && !!result?.excelWithErrors && !!onDownloadErrors;
+	const canDownloadErrors = hasErrors && !!result?.hasErrorFile && !!onDownloadErrors;
 
 	const titleKey =
 		error || hasErrors
@@ -66,8 +68,12 @@ export function PPPUploadProgressDialog({
 			onOpenChange={onOpenChange}
 			footerActions={
 				canDownloadErrors ? (
-					<Button variant="surface" onClick={onDownloadErrors}>
-						<ArrowDownTrayIcon className="h-4 w-4 mr-1" />
+					<Button
+						variant="surface"
+						onClick={onDownloadErrors}
+						disabled={downloadingErrors}
+						loading={downloadingErrors}>
+						<ArrowDownTrayIcon className="h-4 w-4 mr-1" aria-hidden="true" />
 						{t('surveys.ppp.progress.downloadErrors')}
 					</Button>
 				) : undefined

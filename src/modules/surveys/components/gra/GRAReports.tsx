@@ -25,11 +25,9 @@ export function GRAReports() {
 	const [commission, setCommission] = useState<OptionItem | null>(null);
 	const [campus, setCampus] = useState<OptionItem | null>(null);
 	// Defaults to the UI locale but stays user-overridable, so a coordinator browsing in
-	// Spanish can still produce the English report an accreditor asked for.
-	const [language, setLanguage] = useState<OptionItem>(() => ({
-		value: locale === 'en' ? 'en' : 'es',
-		label: t(locale === 'en' ? 'surveys.perception.english' : 'surveys.perception.spanish'),
-	}));
+	// Spanish can still produce the English report an accreditor asked for. Only the value is
+	// state — storing the whole option would freeze its label at the mount-time locale.
+	const [lang, setLang] = useState<'es' | 'en'>(locale === 'en' ? 'en' : 'es');
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -99,10 +97,11 @@ export function GRAReports() {
 					name="gra-language"
 					label={t('surveys.perception.language')}
 					options={languageOptions}
-					value={language}
-					onChange={(_name, value) =>
-						value && !Array.isArray(value) && setLanguage(value as OptionItem)
-					}
+					value={languageOptions.find((option) => option.value === lang) ?? languageOptions[0]}
+					onChange={(_name, value) => {
+						if (!value || Array.isArray(value)) return;
+						setLang(value.value === 'en' ? 'en' : 'es');
+					}}
 				/>
 			</div>
 
@@ -144,7 +143,7 @@ export function GRAReports() {
 				externalFilters={{
 					commissionId: commission ? Number(commission.value) : undefined,
 					campusId: campus ? Number(campus.value) : undefined,
-					lang: language.value === 'en' ? 'en' : 'es',
+					lang,
 				}}
 			/>
 

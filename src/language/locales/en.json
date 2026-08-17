@@ -1718,7 +1718,20 @@
 				"noScores": "At least one outcome score must be provided.",
 				"invalidScore": "Invalid score: must be between 1.0 and 5.0.",
 				"invalidRuc": "RUC must be exactly 11 numeric digits.",
-				"uploadJobNotFound": "The upload process could not be found. Please try again."
+				"uploadJobNotFound": "The upload process could not be found. Please try again.",
+				"uploadErrorFileNotFound": "The error report is no longer available. Upload the file again to regenerate it.",
+				"tooManyUploadJobs": "Too many uploads are in progress. Wait for them to finish and try again.",
+				"upload": {
+					"studentCodeRequired": "The student code is required",
+					"invalidPracticeNumber": "Invalid practice number (must be 1 or 2)",
+					"studentNotFound": "No student found with code \"{{code}}\"",
+					"noCourseSection": "No course section is available to register the internship",
+					"invalidScore": "Invalid score in column {{label}}: \"{{value}}\" (must be a number between 1 and 5)",
+					"noScores": "The row carries no competence score at all",
+					"duplicateSurvey": "Student {{code}} already has practice {{practiceNumber}} registered for this period",
+					"duplicateInFile": "The file repeats practice {{practiceNumber}} for student {{code}} (already on row {{firstRow}})",
+					"saveFailed": "No row was saved: the operation failed ({{reason}})"
+				}
 			}
 		},
 		"rubric": {
