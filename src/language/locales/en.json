@@ -2655,6 +2655,7 @@
 				"uploadTitle": "Bulk upload of GRA students",
 				"uploadDesc": "Upload an Excel file with the data of the students to notify.",
 				"addStudentTitle": "Add Individual Student",
+				"studentNotFound": "No student matched the search.",
 				"studentCodePlaceholder": "Student code or name (e.g. 2020001 or John Doe)",
 				"searchStudent": "Search student",
 				"studentName": "Name",
