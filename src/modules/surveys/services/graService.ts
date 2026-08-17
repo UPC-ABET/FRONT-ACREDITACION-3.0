@@ -68,6 +68,7 @@ function adaptGraConfig(raw: BackendGraConfig): CompetenceConfig {
 		performanceLevel: extra.order ?? 3,
 		isActive: raw.isActive,
 		isVisible: raw.isVisible ?? raw.isActive,
+		isExternal: extra.isExternal ?? false,
 		programId: extra.programId,
 		periodId: extra.academicPeriodId,
 	};
@@ -139,7 +140,9 @@ export async function saveGRACompetence(data: CompetenceFormData) {
 		order: data.performanceLevel,
 		programId: data.programId ?? 0,
 		isVisible: data.isVisible ?? true,
-		isExternal: false,
+		// No UI edits this flag any more; echo back whatever the record already carried so a
+		// plain save can't overwrite a stored `true` with a hardcoded `false`.
+		isExternal: data.isExternal ?? false,
 	};
 
 	if (!data.id || data.id === 0) {

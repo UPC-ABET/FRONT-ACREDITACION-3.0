@@ -9,14 +9,20 @@ import {
 	type PerceptionReportPanelHandle,
 } from '../shared/PerceptionReportPanel';
 import { AllProgramsSelect } from '../shared/AllProgramsSelect';
+import { CommissionCampusFilters } from '../shared/CommissionCampusFilters';
 import { useSurveyFilterOptions } from '../../hooks';
 import { generatePPPPerceptionPdf } from '../../services';
 import type { OptionItem } from '../../types';
 
-export function PPPReports() {
+interface PPPReportsProps {
+	/** Owned by PPPManagementView so the selection survives switching tabs. */
+	readonly programId: number;
+	readonly onProgramChange: (programId: number) => void;
+}
+
+export function PPPReports({ programId, onProgramChange }: PPPReportsProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
-	const [programId, setProgramId] = useState(0);
 	const [commission, setCommission] = useState<OptionItem | null>(null);
 	const [campus, setCampus] = useState<OptionItem | null>(null);
 	const [surveyNumbers, setSurveyNumbers] = useState<OptionItem[]>([]);
@@ -41,30 +47,16 @@ export function PPPReports() {
 	return (
 		<div className="space-y-6">
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-				<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="" />
-				<Select
-					name="ppp-commission"
-					label={t('surveys.perception.commission')}
-					placeholder={t('surveys.perception.allCommissions')}
-					isClearable
-					isSearchable
-					options={commissionOptions}
-					value={commission}
-					onChange={(_name, value) =>
-						setCommission(value && !Array.isArray(value) ? (value as OptionItem) : null)
-					}
-				/>
-				<Select
-					name="ppp-campus"
-					label={t('surveys.perception.campus')}
-					placeholder={t('surveys.perception.allCampuses')}
-					isClearable
-					isSearchable
-					options={campusOptions}
-					value={campus}
-					onChange={(_name, value) =>
-						setCampus(value && !Array.isArray(value) ? (value as OptionItem) : null)
-					}
+				<AllProgramsSelect value={programId} onChange={onProgramChange} wrapperClassName="" />
+				<CommissionCampusFilters
+					className="contents"
+					namePrefix="ppp-"
+					commissionOptions={commissionOptions}
+					campusOptions={campusOptions}
+					commission={commission}
+					campus={campus}
+					onCommissionChange={setCommission}
+					onCampusChange={setCampus}
 				/>
 				<Select
 					name="ppp-survey-numbers"

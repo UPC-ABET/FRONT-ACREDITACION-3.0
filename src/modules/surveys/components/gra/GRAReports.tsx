@@ -13,6 +13,7 @@ import {
 } from '../shared/PerceptionReportPanel';
 import { SurveyMetricsSummary } from '../shared/SurveyMetricsSummary';
 import { AllProgramsSelect } from '../shared/AllProgramsSelect';
+import { CommissionCampusFilters } from '../shared/CommissionCampusFilters';
 import { useSurveyFilterOptions } from '../../hooks';
 import { downloadGRASurveys, generateGRAPerceptionPdf, generateGRADashboard } from '../../services';
 import type { OptionItem } from '../../types';
@@ -23,6 +24,12 @@ export function GRAReports() {
 	const [programId, setProgramId] = useState(0);
 	const [commission, setCommission] = useState<OptionItem | null>(null);
 	const [campus, setCampus] = useState<OptionItem | null>(null);
+	// Defaults to the UI locale but stays user-overridable, so a coordinator browsing in
+	// Spanish can still produce the English report an accreditor asked for.
+	const [language, setLanguage] = useState<OptionItem>(() => ({
+		value: locale === 'en' ? 'en' : 'es',
+		label: t(locale === 'en' ? 'surveys.perception.english' : 'surveys.perception.spanish'),
+	}));
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -33,6 +40,11 @@ export function GRAReports() {
 	const panelRef = useRef<PerceptionReportPanelHandle>(null);
 
 	const { commissionOptions, campusOptions } = useSurveyFilterOptions(programId);
+
+	const languageOptions: OptionItem[] = [
+		{ value: 'es', label: t('surveys.perception.spanish') },
+		{ value: 'en', label: t('surveys.perception.english') },
+	];
 
 	const dashboardMutation = useMutation({
 		mutationFn: () =>
@@ -73,28 +85,23 @@ export function GRAReports() {
 		<div className="space-y-6">
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 				<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="" />
-				<Select
-					name="gra-commission"
-					label={t('surveys.perception.commission')}
-					placeholder={t('surveys.perception.allCommissions')}
-					isClearable
-					isSearchable
-					options={commissionOptions}
-					value={commission}
-					onChange={(_name, value) =>
-						setCommission(value && !Array.isArray(value) ? (value as OptionItem) : null)
-					}
+				<CommissionCampusFilters
+					className="contents"
+					namePrefix="gra-"
+					commissionOptions={commissionOptions}
+					campusOptions={campusOptions}
+					commission={commission}
+					campus={campus}
+					onCommissionChange={setCommission}
+					onCampusChange={setCampus}
 				/>
 				<Select
-					name="gra-campus"
-					label={t('surveys.perception.campus')}
-					placeholder={t('surveys.perception.allCampuses')}
-					isClearable
-					isSearchable
-					options={campusOptions}
-					value={campus}
+					name="gra-language"
+					label={t('surveys.perception.language')}
+					options={languageOptions}
+					value={language}
 					onChange={(_name, value) =>
-						setCampus(value && !Array.isArray(value) ? (value as OptionItem) : null)
+						value && !Array.isArray(value) && setLanguage(value as OptionItem)
 					}
 				/>
 			</div>
@@ -137,7 +144,7 @@ export function GRAReports() {
 				externalFilters={{
 					commissionId: commission ? Number(commission.value) : undefined,
 					campusId: campus ? Number(campus.value) : undefined,
-					lang: locale === 'en' ? 'en' : 'es',
+					lang: language.value === 'en' ? 'en' : 'es',
 				}}
 			/>
 

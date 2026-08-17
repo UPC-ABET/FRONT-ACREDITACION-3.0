@@ -44,6 +44,9 @@ export interface CompetenceConfig {
 	performanceLevel: number;
 	isActive?: boolean;
 	isVisible?: boolean;
+	/** Server-side flag with no UI left to edit it. Read from `extra.isExternal` and sent back
+	 *  unchanged on save so editing a competence can't silently reset a stored `true`. */
+	isExternal?: boolean;
 	programId?: number;
 	periodId?: number;
 }
@@ -57,6 +60,8 @@ export interface CompetenceFormData {
 	descriptionEn?: string;
 	performanceLevel: number;
 	isVisible?: boolean;
+	/** Carried through the form untouched — see `CompetenceConfig.isExternal`. */
+	isExternal?: boolean;
 	academicPeriodId: number;
 	programId?: number;
 	school: string;

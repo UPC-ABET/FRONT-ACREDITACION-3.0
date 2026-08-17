@@ -1669,6 +1669,7 @@
 			"duplicateEvaluatorType": "Ya existe un evaluador con ese tipo de rol en el proyecto."
 		},
 		"survey": {
+			"jobPollTimeout": "El proceso está tardando más de lo esperado y se dejó de consultar su estado. Vuelve a intentarlo; si el problema persiste, avisa al administrador.",
 			"gra": {
 				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado.",
 				"invalidExcelFile": "El archivo proporcionado no es un Excel válido.",
@@ -2483,8 +2484,6 @@
 					"failedTitle": "No se pudo completar el envío",
 					"preparing": "Preparando el envío para {{target}}.",
 					"sending": "Procesando el envío para {{target}}.",
-					"progressLabel": "Progreso",
-					"progressValue": "{{percentage}}%",
 					"sent": "Enviados",
 					"failed": "Fallidos",
 					"skippedAlreadySent": "Ya notificados",
@@ -2701,8 +2700,7 @@
 				"fileTitle": "Archivo de datos",
 				"downloadLabel": "Descargar Plantilla PPP",
 				"downloadError": "Error al descargar la plantilla.",
-				"selectProgramForTemplate": "Selecciona una carrera para descargar su plantilla.",
-				"rowsWithErrors": "Se encontraron errores en algunas filas y no se guardó ningún registro. Se descargó el mismo Excel con una columna adicional que detalla el error de cada fila para que puedas corregirlo y volver a subirlo."
+				"selectProgramForTemplate": "Selecciona una carrera para descargar su plantilla."
 			},
 			"progress": {
 				"title": "Procesando carga masiva",
@@ -2710,13 +2708,11 @@
 				"failedTitle": "Carga con errores",
 				"preparing": "Preparando el archivo.",
 				"processing": "Validando y guardando las filas.",
-				"progressLabel": "Progreso",
-				"progressValue": "{{percentage}}%",
-				"rowsLabel": "Filas procesadas",
-				"rowsValue": "{{processed}} / {{total}}",
+				"rowsValue": "{{processed}} / {{total}} filas procesadas",
 				"success": "Guardadas",
 				"failed": "Con errores",
-				"errorsNote": "Se descargó un Excel con el detalle de cada error para que puedas corregirlo."
+				"errorsNote": "No se guardó ningún registro. Descarga el Excel con el detalle de cada error, corrígelo y vuelve a subirlo.",
+				"downloadErrors": "Descargar errores"
 			},
 			"reports": {
 				"title": "Dashboard PPP",
@@ -2801,7 +2797,11 @@
 			"generateConfig": "Generar configuración",
 			"generateConfigHint": "Genera la configuración a partir de los outcomes de la carrera seleccionada.",
 			"configGenerated": "Configuración generada: {{created}} de {{total}} outcomes.",
-			"noOutcomesForProgram": "La carrera seleccionada no tiene outcomes en este período. Regístralos primero en Mantenimiento de Outcomes."
+			"noOutcomesForProgram": "La carrera seleccionada no tiene outcomes en este período. Regístralos primero en Mantenimiento de Outcomes.",
+			"progress": {
+				"progressLabel": "Progreso",
+				"progressValue": "{{percentage}}%"
+			}
 		},
 		"student": {
 			"loading": "Cargando encuesta...",

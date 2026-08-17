@@ -1669,6 +1669,7 @@
 			"duplicateEvaluatorType": "An evaluator with this role type already exists in the project."
 		},
 		"survey": {
+			"jobPollTimeout": "The process is taking longer than expected and we stopped checking its status. Please try again; if it keeps happening, contact the administrator.",
 			"gra": {
 				"tokenNotFound": "The survey link is invalid or has expired.",
 				"invalidExcelFile": "The provided file is not a valid Excel file.",
@@ -2483,8 +2484,6 @@
 					"failedTitle": "Send could not be completed",
 					"preparing": "Preparing the send for {{target}}.",
 					"sending": "Processing the send for {{target}}.",
-					"progressLabel": "Progress",
-					"progressValue": "{{percentage}}%",
 					"sent": "Sent",
 					"failed": "Failed",
 					"skippedAlreadySent": "Already notified",
@@ -2700,8 +2699,7 @@
 				"fileTitle": "Data file",
 				"downloadLabel": "Download PPP Template",
 				"downloadError": "Error downloading the template.",
-				"selectProgramForTemplate": "Select a career to download its template.",
-				"rowsWithErrors": "Some rows had errors and nothing was saved. The same Excel file was downloaded with an extra column detailing each row's error so you can fix it and upload it again."
+				"selectProgramForTemplate": "Select a career to download its template."
 			},
 			"progress": {
 				"title": "Processing bulk upload",
@@ -2709,13 +2707,11 @@
 				"failedTitle": "Upload had errors",
 				"preparing": "Preparing the file.",
 				"processing": "Validating and saving rows.",
-				"progressLabel": "Progress",
-				"progressValue": "{{percentage}}%",
-				"rowsLabel": "Rows processed",
-				"rowsValue": "{{processed}} / {{total}}",
+				"rowsValue": "{{processed}} / {{total}} rows processed",
 				"success": "Saved",
 				"failed": "With errors",
-				"errorsNote": "An Excel file with each error's detail was downloaded so you can fix it."
+				"errorsNote": "No records were saved. Download the Excel with each error's detail, fix it and upload it again.",
+				"downloadErrors": "Download errors"
 			},
 			"reports": {
 				"title": "Dashboard PPP",
@@ -2800,7 +2796,11 @@
 			"generateConfig": "Generate configuration",
 			"generateConfigHint": "Generate the configuration from the selected program's outcomes.",
 			"configGenerated": "Configuration generated: {{created}} of {{total}} outcomes.",
-			"noOutcomesForProgram": "The selected program has no outcomes for this period. Register them first in Outcomes Maintenance."
+			"noOutcomesForProgram": "The selected program has no outcomes for this period. Register them first in Outcomes Maintenance.",
+			"progress": {
+				"progressLabel": "Progress",
+				"progressValue": "{{percentage}}%"
+			}
 		},
 		"student": {
 			"loading": "Loading survey...",

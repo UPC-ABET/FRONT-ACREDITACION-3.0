@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Card, Button, Select, Toast } from '@/shared/components';
 import { ArrowDownTrayIcon, EyeIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { tryTranslate } from '@/shared/utils';
+import { base64ToBlob, tryTranslate } from '@/shared/utils';
 import { getErrorMessage } from '@/shared/lib';
 import { useSurveyFilterOptions } from '../../hooks';
 import type {
@@ -43,13 +43,6 @@ export const SURVEY_NUMBER_OPTIONS: OptionItem[] = [
 	{ value: 1, label: '1' },
 	{ value: 2, label: '2' },
 ];
-
-function base64ToBlob(base64: string, type: string): Blob {
-	const binary = atob(base64);
-	const bytes = new Uint8Array(binary.length);
-	for (let index = 0; index < binary.length; index++) bytes[index] = binary.charCodeAt(index);
-	return new Blob([bytes], { type });
-}
 
 function downloadBlob(blob: Blob, filename: string): void {
 	const url = URL.createObjectURL(blob);

@@ -8,10 +8,15 @@ import { usePPPCompetences } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
 import { AllProgramsSelect } from '../../shared/AllProgramsSelect';
 
-export function PPPConfiguration() {
+interface PPPConfigurationProps {
+	/** Owned by PPPManagementView so the selection survives switching tabs. */
+	readonly programId: number;
+	readonly onProgramChange: (programId: number) => void;
+}
+
+export function PPPConfiguration({ programId, onProgramChange }: PPPConfigurationProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
-	const [programId, setProgramId] = useState(0);
 	const {
 		competences,
 		loading: compLoading,
@@ -66,7 +71,7 @@ export function PPPConfiguration() {
 
 	return (
 		<div className="space-y-6">
-			<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="max-w-xs" />
+			<AllProgramsSelect value={programId} onChange={onProgramChange} wrapperClassName="max-w-xs" />
 
 			{!programId && (
 				<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectProgram')}</p>

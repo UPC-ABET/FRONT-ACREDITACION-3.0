@@ -48,6 +48,8 @@ const EMPTY_FORM: Omit<CompetenceFormData, 'academicPeriodId' | 'school'> = {
 	descriptionEn: '',
 	performanceLevel: 1,
 	isVisible: true,
+	// Not editable in the UI — a new record simply starts out non-external.
+	isExternal: false,
 };
 
 /**
@@ -132,6 +134,8 @@ export function CompetenceCRUD({
 			descriptionEn: row.descriptionEn ?? '',
 			performanceLevel: row.performanceLevel,
 			isVisible: row.isVisible ?? true,
+			// Carried through untouched: the toggle is gone, but the stored value must survive a save.
+			isExternal: row.isExternal ?? false,
 		});
 		// Pre-select the outcome in its commission group
 		if (row.outcomeId != null) {
