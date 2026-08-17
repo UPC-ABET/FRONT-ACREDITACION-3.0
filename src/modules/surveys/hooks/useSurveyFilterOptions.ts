@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { campusesService } from '@/modules/academic';
+import { useABET } from '@/providers';
 import { listGRAOutcomes } from '../services';
 import { surveyQueryKeys } from './useSurveyQueries';
 import type { OptionItem } from '../types';
 
 export function useSurveyFilterOptions(programId?: number) {
+	const { academicPeriodId } = useABET();
+
 	const { data: commissionOptions = [] } = useQuery({
-		queryKey: surveyQueryKeys.commissions(programId),
+		queryKey: surveyQueryKeys.commissions(programId, academicPeriodId),
 		queryFn: () => listGRAOutcomes({ programId: programId as number }),
 		enabled: Boolean(programId),
 		select: (groups): OptionItem[] =>

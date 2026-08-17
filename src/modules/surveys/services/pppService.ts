@@ -1,4 +1,5 @@
 import {
+	apiGet,
 	apiPost,
 	apiPut,
 	apiDelete,
@@ -19,9 +20,10 @@ import type {
 	PerformanceLevel,
 	DashboardResponse,
 	MassiveUploadResult,
+	PPPUploadJobStatus,
 	PPPNotificationSendRequest,
 	BackendPppConfig,
-	BackendUploadResult,
+	BackendPppUploadResult,
 	PerceptionReportFilters,
 	PerceptionReportResponse,
 } from '../types';
@@ -34,7 +36,7 @@ function adaptPppConfig(raw: BackendPppConfig): CompetenceConfig {
 		commissionTypeCode: raw.outcome?.programCommission?.commissionType?.code,
 		generalCompetence: extra.nameEs ?? raw.userOutcomeName ?? '',
 		specificCompetence: extra.nameEn ?? extra.nameEs ?? '',
-		description: extra.descriptionEs ?? '',
+		description: extra.descriptionEs ?? raw.userOutcomeDescription ?? '',
 		descriptionEn: extra.descriptionEn ?? '',
 		performanceLevel: extra.order ?? 3,
 		isActive: raw.isActive,
@@ -59,16 +61,20 @@ function adaptPerformanceLevel(raw: PerformanceLevelResponse, index: number): Pe
 	};
 }
 
-function adaptUploadResult(raw: BackendUploadResult): MassiveUploadResult {
+function adaptUploadResult(raw: BackendPppUploadResult): MassiveUploadResult {
 	return {
 		total: raw.total ?? 0,
 		success: raw.success ?? 0,
 		failed: raw.failed ?? 0,
+		// `row: 0` marks a job-level failure rather than a worksheet row: row 1 is the header,
+		// so no data row can ever carry it.
 		errors: (raw.errors ?? []).map((e) => ({
-			row: e.row,
-			code: e.code,
-			reason: e.reason ?? e.message ?? '',
+			row: e.row ? e.row : undefined,
+			reason: e.key,
+			args: e.args,
 		})),
+		fileName: raw.fileName ?? null,
+		hasErrorFile: raw.hasErrorFile ?? false,
 	};
 }
 
@@ -110,6 +116,12 @@ function pickEs(value: I18nOrString): string {
 	return '';
 }
 
+function pickEn(value: I18nOrString): string {
+	if (typeof value === 'string') return value;
+	if (value && typeof value === 'object') return value.en ?? value.es ?? '';
+	return '';
+}
+
 /**
  * Real outcomes of a program for a period (accreditation.outcomes), grouped by
  * commission on the backend and flattened here. PPP/GRA/LCFC all measure these
@@ -137,13 +149,15 @@ export async function generatePPPConfigFromOutcomes(
 	for (let i = 0; i < outcomes.length; i++) {
 		const o = outcomes[i];
 		try {
-			const name = pickEs(o.outcomeName) || o.outcomeCode;
+			const nameEs = pickEs(o.outcomeName) || o.outcomeCode;
+			const nameEn = pickEn(o.outcomeName) || o.outcomeCode;
 			await savePPPCompetence({
 				id: 0,
 				outcomeId: o.outcomeId,
-				generalCompetence: name,
-				specificCompetence: name,
+				generalCompetence: nameEs,
+				specificCompetence: nameEn,
 				description: pickEs(o.outcomeDescription),
+				descriptionEn: pickEn(o.outcomeDescription),
 				performanceLevel: i + 1,
 				academicPeriodId,
 				programId,
@@ -168,6 +182,8 @@ export async function savePPPCompetence(data: CompetenceFormData) {
 		order: data.performanceLevel,
 		programId: data.programId ?? 0,
 		isVisible: data.isVisible ?? true,
+		// No UI edits this flag any more; echo back whatever the record already carried so a
+		// plain save can't overwrite a stored `true` with a hardcoded `false`.
 		isExternal: data.isExternal ?? false,
 	};
 
@@ -226,23 +242,56 @@ export async function downloadPPPTemplate(programId = 0): Promise<void> {
 	triggerBlobDownload(blob, resolveDownloadFileName(response, 'PPP_Survey_Template.xlsx'));
 }
 
-export async function uploadPPPMassive(
+/** Kicks off the PPP bulk import in the background and returns a job id to poll for
+ *  real progress (see {@link getPPPUploadStatus}) — the file itself may take a while
+ *  to validate/save row by row, so the caller isn't left waiting on a single request. */
+export async function startPPPUpload(
 	file: File,
-	academicPeriodId: number,
 	programId = 0,
 	campusId = 0,
-): Promise<MassiveUploadResult> {
+): Promise<{ accepted: boolean; jobId: string; totalRows: number }> {
 	const fileBase64 = await fileToBase64(file);
 	const res = await apiPost('ppp/survey/upload-excel', {
 		fileBase64,
 		programId,
 		campusId,
 	});
-	const result = adaptUploadResult(getApiData<BackendUploadResult>(res) ?? {});
-	if (result.failed > 0) {
+	const data = getApiData<{ accepted?: boolean; jobId?: string; totalRows?: number }>(res);
+	return {
+		accepted: data?.accepted ?? false,
+		jobId: data?.jobId ?? '',
+		totalRows: data?.totalRows ?? 0,
+	};
+}
+
+export async function getPPPUploadStatus(jobId: string): Promise<PPPUploadJobStatus> {
+	const res = await apiGet(`ppp/survey/upload-status/${encodeURIComponent(jobId)}`);
+	const data = getApiData<{
+		progressPct?: number;
+		totalRows?: number;
+		processedRows?: number;
+		done?: boolean;
+		result?: BackendPppUploadResult | null;
+	}>(res);
+	const result = data?.result ? adaptUploadResult(data.result) : null;
+	if (result && result.failed > 0) {
 		logger.warn(`PPP upload: ${result.failed} failed rows out of ${result.total}`);
 	}
-	return result;
+	return {
+		progressPct: data?.progressPct ?? 0,
+		totalRows: data?.totalRows ?? 0,
+		processedRows: data?.processedRows ?? 0,
+		done: data?.done ?? false,
+		result,
+	};
+}
+
+/** Kept out of the status poll, which runs once a second and would carry the whole file. */
+export async function downloadPPPUploadErrors(jobId: string): Promise<void> {
+	const { blob, response } = await apiGetBlobResponse(
+		`ppp/survey/upload-errors/${encodeURIComponent(jobId)}`,
+	);
+	triggerBlobDownload(blob, resolveDownloadFileName(response, 'errores_ppp.xlsx'));
 }
 
 export async function generatePPPDashboard(params: {

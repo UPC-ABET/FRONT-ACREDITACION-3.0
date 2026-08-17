@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
 import { surveyQueryKeys } from './useSurveyQueries';
+import { useJobPolling } from './useJobPolling';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
@@ -264,6 +265,15 @@ export function useGRAEmail() {
 	return { template, setTemplate, loading, saving, error, load, save };
 }
 
+const GRA_SEND_JOB_SCOPE = ['gra', 'send-status'] as const;
+const GRA_PENDING_STATUS: GRANotificationJobStatus = {
+	progressPct: 0,
+	totalStudents: 0,
+	emailsSent: 0,
+	emailsFailed: 0,
+	errors: [],
+};
+
 /** Send flow for GRA notifications, including the "Reenviar a quienes ya recibieron" toggle
  *  (mirrors LCFC's resend toggle): previews a summary, kicks off a background job, and polls
  *  the job-status endpoint. */
@@ -271,20 +281,35 @@ export function useGRASendNotifications() {
 	const { locale } = useI18n();
 	const [summary, setSummary] = useState<GRASendSummary | null>(null);
 	const [loadingSummary, setLoadingSummary] = useState(false);
-	const [sending, setSending] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [starting, setStarting] = useState(false);
+	const [startError, setStartError] = useState<string | null>(null);
 	const [jobId, setJobId] = useState<string | null>(null);
-	const [status, setStatus] = useState<GRANotificationJobStatus | null>(null);
 	const onSuccessRef = useRef<(() => void) | undefined>(undefined);
+
+	const {
+		status,
+		running,
+		error: pollError,
+	} = useJobPolling<GRANotificationJobStatus>({
+		scope: GRA_SEND_JOB_SCOPE,
+		jobId,
+		fetchStatus: getGRASendStatus,
+		isDone: (jobStatus) => jobStatus.progressPct >= 100,
+		pendingStatus: GRA_PENDING_STATUS,
+		onSettled: ({ error: settledError }) => {
+			if (!settledError) onSuccessRef.current?.();
+			onSuccessRef.current = undefined;
+		},
+	});
 
 	const loadSummary = useCallback(
 		async (programId: number | undefined, resend: boolean) => {
 			setLoadingSummary(true);
-			setError(null);
+			setStartError(null);
 			try {
 				setSummary(await getGRASendSummary(programId, resend, locale));
 			} catch (e) {
-				setError(getErrorMessage(e));
+				setStartError(getErrorMessage(e));
 			} finally {
 				setLoadingSummary(false);
 			}
@@ -294,9 +319,9 @@ export function useGRASendNotifications() {
 
 	const send = useCallback(
 		async (req: GRAEmailSendRequest, onSuccess?: () => void) => {
-			setSending(true);
-			setError(null);
-			setStatus({ progressPct: 0, totalStudents: 0, emailsSent: 0, emailsFailed: 0, errors: [] });
+			setStarting(true);
+			setStartError(null);
+			setJobId(null);
 			onSuccessRef.current = onSuccess;
 			try {
 				const result = await sendGRAEmail(req, locale);
@@ -305,10 +330,10 @@ export function useGRASendNotifications() {
 				}
 				setJobId(result.jobId);
 			} catch (e) {
-				setError(getErrorMessage(e));
-				setJobId(null);
+				setStartError(getErrorMessage(e));
 				onSuccessRef.current = undefined;
-				setSending(false);
+			} finally {
+				setStarting(false);
 			}
 		},
 		[locale],
@@ -316,50 +341,20 @@ export function useGRASendNotifications() {
 
 	const reset = useCallback(() => {
 		setSummary(null);
-		setStatus(null);
 		setJobId(null);
-		setError(null);
-		setSending(false);
+		setStartError(null);
 	}, []);
 
-	useEffect(() => {
-		if (!jobId || !sending) return;
-
-		const activeJobId = jobId;
-		let cancelled = false;
-
-		async function pollStatus() {
-			try {
-				const nextStatus = await getGRASendStatus(activeJobId);
-				if (cancelled) return;
-				setStatus(nextStatus);
-				if (nextStatus.progressPct >= 100) {
-					setSending(false);
-					setJobId(null);
-					onSuccessRef.current?.();
-					onSuccessRef.current = undefined;
-				}
-			} catch (e) {
-				if (cancelled) return;
-				setError(getErrorMessage(e));
-				setSending(false);
-				setJobId(null);
-				onSuccessRef.current = undefined;
-			}
-		}
-
-		void pollStatus();
-		const intervalId = setInterval(() => {
-			void pollStatus();
-		}, 1000);
-
-		return () => {
-			cancelled = true;
-			clearInterval(intervalId);
-		};
-	}, [jobId, sending]);
-
-	return { summary, loadingSummary, loadSummary, sending, status, error, send, reset };
+	return {
+		summary,
+		loadingSummary,
+		loadSummary,
+		sending: starting || running,
+		status,
+		error: startError ?? pollError,
+		send,
+		reset,
+	};
 }
 
 interface GRAUploadParams {

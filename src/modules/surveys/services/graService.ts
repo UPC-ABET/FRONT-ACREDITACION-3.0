@@ -110,11 +110,11 @@ function adaptUploadResult(raw: BackendUploadResult): MassiveUploadResult {
 		total: raw.total ?? 0,
 		success: raw.success ?? 0,
 		failed: raw.failed ?? 0,
-		errors: (raw.errors ?? []).map((e) => ({
-			row: e.row,
-			code: e.code,
-			reason: e.reason ?? e.message ?? '',
-		})),
+		errors: (raw.errors ?? []).map((e) =>
+			typeof e === 'string'
+				? { reason: e }
+				: { row: e.row, code: e.code, reason: e.reason ?? e.message ?? '' },
+		),
 	};
 }
 
@@ -140,6 +140,8 @@ export async function saveGRACompetence(data: CompetenceFormData) {
 		order: data.performanceLevel,
 		programId: data.programId ?? 0,
 		isVisible: data.isVisible ?? true,
+		// No UI edits this flag any more; echo back whatever the record already carried so a
+		// plain save can't overwrite a stored `true` with a hardcoded `false`.
 		isExternal: data.isExternal ?? false,
 	};
 

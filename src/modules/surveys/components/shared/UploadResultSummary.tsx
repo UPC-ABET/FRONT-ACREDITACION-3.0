@@ -39,9 +39,9 @@ export function UploadResultSummary({ result }: UploadResultSummaryProps) {
 							{error.row != null
 								? interpolate(t('surveys.shared.upload.rowError'), {
 										row: error.row,
-										reason: tryTranslate(t, error.reason),
+										reason: interpolate(tryTranslate(t, error.reason), error.args ?? {}),
 									})
-								: tryTranslate(t, error.reason)}
+								: interpolate(tryTranslate(t, error.reason), error.args ?? {})}
 						</li>
 					))}
 				</ul>

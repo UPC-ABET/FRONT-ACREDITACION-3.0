@@ -1,11 +1,7 @@
+import { base64ToBlob } from '@/shared/utils/base64ToBlob';
+
 export function triggerFileDownload(base64: string, contentType: string, fileName: string): void {
-	const byteCharacters = atob(base64);
-	const byteArray = new Uint8Array(byteCharacters.length);
-	for (let i = 0; i < byteCharacters.length; i += 1) {
-		byteArray[i] = byteCharacters.charCodeAt(i);
-	}
-	const blob = new Blob([byteArray], { type: contentType });
-	triggerBlobDownload(blob, fileName);
+	triggerBlobDownload(base64ToBlob(base64, contentType), fileName);
 }
 
 export function triggerBlobDownload(blob: Blob, fileName: string): void {

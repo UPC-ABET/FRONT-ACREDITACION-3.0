@@ -1669,6 +1669,7 @@
 			"duplicateEvaluatorType": "Ya existe un evaluador con ese tipo de rol en el proyecto."
 		},
 		"survey": {
+			"jobPollTimeout": "El proceso está tardando más de lo esperado y se dejó de consultar su estado. Vuelve a intentarlo; si el problema persiste, avisa al administrador.",
 			"gra": {
 				"tokenNotFound": "El enlace de la encuesta no es válido o ha expirado.",
 				"invalidExcelFile": "El archivo proporcionado no es un Excel válido.",
@@ -1716,7 +1717,21 @@
 				"invalidPracticeNumber": "El número de práctica debe ser 1 (Práctica I) o 2 (Práctica II).",
 				"noScores": "Debe proporcionar al menos un puntaje de outcome.",
 				"invalidScore": "Puntaje inválido: debe estar entre 1.0 y 5.0.",
-				"invalidRuc": "El RUC debe tener exactamente 11 dígitos numéricos."
+				"invalidRuc": "El RUC debe tener exactamente 11 dígitos numéricos.",
+				"uploadJobNotFound": "No se encontró el proceso de carga. Vuelve a intentarlo.",
+				"uploadErrorFileNotFound": "El Excel con los errores ya no está disponible. Vuelve a subir el archivo para generarlo otra vez.",
+				"tooManyUploadJobs": "Hay demasiadas cargas en curso. Espera a que terminen e inténtalo de nuevo.",
+				"upload": {
+					"studentCodeRequired": "El código de alumno es obligatorio",
+					"invalidPracticeNumber": "Número de práctica inválido (debe ser 1 o 2)",
+					"studentNotFound": "No se encontró al alumno con código \"{{code}}\"",
+					"noCourseSection": "No hay una sección de curso disponible para registrar la práctica",
+					"invalidScore": "Nota inválida en la columna {{label}}: \"{{value}}\" (debe ser un número entre 1 y 5)",
+					"noScores": "La fila no tiene ninguna nota de competencia",
+					"duplicateSurvey": "El alumno {{code}} ya tiene registrada la práctica {{practiceNumber}} en este periodo",
+					"duplicateInFile": "El archivo repite la práctica {{practiceNumber}} del alumno {{code}} (ya está en la fila {{firstRow}})",
+					"saveFailed": "No se guardó ninguna fila: la operación falló ({{reason}})"
+				}
 			}
 		},
 		"rubric": {
@@ -2427,7 +2442,6 @@
 				"descriptionEsPlaceholder": "Describe la competencia...",
 				"descriptionEnLabel": "Descripción en inglés",
 				"descriptionEnPlaceholder": "Describe the competence...",
-				"externalLabel": "¿Este outcome es para una carrera ajena a esta escuela?",
 				"outcomesSection": "Outcomes por comisión",
 				"outcomePlaceholder": "Seleccione un outcome",
 				"save": "Guardar",
@@ -2506,8 +2520,6 @@
 					"failedTitle": "No se pudo completar el envío",
 					"preparing": "Preparando el envío para {{target}}.",
 					"sending": "Procesando el envío para {{target}}.",
-					"progressLabel": "Progreso",
-					"progressValue": "{{percentage}}%",
 					"sent": "Enviados",
 					"failed": "Fallidos",
 					"skippedAlreadySent": "Ya notificados",
@@ -2723,7 +2735,20 @@
 				"description": "Descarga la plantilla excel, completa los datos y cargala para procesar masivamente.",
 				"fileTitle": "Archivo de datos",
 				"downloadLabel": "Descargar Plantilla PPP",
-				"downloadError": "Error al descargar la plantilla."
+				"downloadError": "Error al descargar la plantilla.",
+				"selectProgramForTemplate": "Selecciona una carrera para descargar su plantilla."
+			},
+			"progress": {
+				"title": "Procesando carga masiva",
+				"completedTitle": "Carga completada",
+				"failedTitle": "Carga con errores",
+				"preparing": "Preparando el archivo.",
+				"processing": "Validando y guardando las filas.",
+				"rowsValue": "{{processed}} / {{total}} filas procesadas",
+				"success": "Guardadas",
+				"failed": "Con errores",
+				"errorsNote": "No se guardó ningún registro. Descarga el Excel con el detalle de cada error, corrígelo y vuelve a subirlo.",
+				"downloadErrors": "Descargar errores"
 			},
 			"reports": {
 				"title": "Dashboard PPP",
@@ -2808,7 +2833,11 @@
 			"generateConfig": "Generar configuración",
 			"generateConfigHint": "Genera la configuración a partir de los outcomes de la carrera seleccionada.",
 			"configGenerated": "Configuración generada: {{created}} de {{total}} outcomes.",
-			"noOutcomesForProgram": "La carrera seleccionada no tiene outcomes en este período. Regístralos primero en Mantenimiento de Outcomes."
+			"noOutcomesForProgram": "La carrera seleccionada no tiene outcomes en este período. Regístralos primero en Mantenimiento de Outcomes.",
+			"progress": {
+				"progressLabel": "Progreso",
+				"progressValue": "{{percentage}}%"
+			}
 		},
 		"student": {
 			"loading": "Cargando encuesta...",

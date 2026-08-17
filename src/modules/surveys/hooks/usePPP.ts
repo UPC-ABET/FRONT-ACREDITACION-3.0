@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
+import { useJobPolling } from './useJobPolling';
 import type {
 	AcademicPeriod,
 	CompetenceConfig,
 	CompetenceFormData,
-	MassiveUploadResult,
+	PPPUploadJobStatus,
 	PPPNotificationSendRequest,
 } from '../types';
 import {
@@ -18,7 +19,8 @@ import {
 	clonePPPConfiguration,
 	generatePPPConfigFromOutcomes,
 	downloadPPPTemplate,
-	uploadPPPMassive,
+	startPPPUpload,
+	getPPPUploadStatus,
 	sendPPPNotification,
 } from '../services';
 
@@ -59,6 +61,8 @@ export function usePPPCompetences() {
 	const load = useCallback(async (periodId: number, programId = 0) => {
 		setLoading(true);
 		setError(null);
+		// Without this the previous career's rows stay on screen for the whole request.
+		setCompetences([]);
 		try {
 			setCompetences(await listPPPCompetences(periodId, programId));
 		} catch (e) {
@@ -148,41 +152,70 @@ export function usePPPDownload() {
 	return { loading, error, download };
 }
 
-export function usePPPUpload() {
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [success, setSuccess] = useState(false);
-	const [result, setResult] = useState<MassiveUploadResult | null>(null);
+const PPP_UPLOAD_JOB_SCOPE = ['ppp', 'upload-status'] as const;
 
-	const upload = useCallback(
-		async (file: File, academicPeriodId: number, programId = 0, campusId = 0) => {
-			setLoading(true);
-			setError(null);
-			setSuccess(false);
-			setResult(null);
-			try {
-				const uploadResult = await uploadPPPMassive(file, academicPeriodId, programId, campusId);
-				setResult(uploadResult);
-				setSuccess(true);
-			} catch (e) {
-				setError(getErrorMessage(e));
-			} finally {
-				setLoading(false);
-			}
-		},
-		[],
+/** PPP bulk upload: kicks off a background job and polls its status so the UI can show real
+ *  progress (rows actually validated/saved server-side, never simulated). */
+export function usePPPUpload() {
+	const [starting, setStarting] = useState(false);
+	const [startError, setStartError] = useState<string | null>(null);
+	const [jobId, setJobId] = useState<string | null>(null);
+	const [totalRows, setTotalRows] = useState(0);
+
+	// Reported until the first poll lands, so the dialog opens showing the row count the
+	// start call already told us rather than an empty bar.
+	const pendingStatus = useMemo<PPPUploadJobStatus>(
+		() => ({ progressPct: 0, totalRows, processedRows: 0, done: false, result: null }),
+		[totalRows],
 	);
 
+	const {
+		status,
+		running,
+		error: pollError,
+	} = useJobPolling<PPPUploadJobStatus>({
+		scope: PPP_UPLOAD_JOB_SCOPE,
+		jobId,
+		fetchStatus: getPPPUploadStatus,
+		isDone: (jobStatus) => jobStatus.done,
+		pendingStatus,
+	});
+
+	const upload = useCallback(async (file: File, programId = 0, campusId = 0) => {
+		setStarting(true);
+		setStartError(null);
+		setJobId(null);
+		setTotalRows(0);
+		try {
+			const started = await startPPPUpload(file, programId, campusId);
+			// `accepted: false` means the server did not queue the job, so there is nothing to
+			// poll — without this check the dialog would sit on a bar that never advances.
+			if (!started.accepted || !started.jobId) {
+				throw new Error('error.survey.ppp.uploadJobNotFound');
+			}
+			setTotalRows(started.totalRows);
+			setJobId(started.jobId);
+		} catch (e) {
+			setStartError(getErrorMessage(e));
+		} finally {
+			setStarting(false);
+		}
+	}, []);
+
+	const reset = useCallback(() => {
+		setJobId(null);
+		setTotalRows(0);
+		setStartError(null);
+	}, []);
+
 	return {
-		loading,
-		error,
-		success,
-		result,
+		loading: starting || running,
+		error: startError ?? pollError,
+		status,
+		jobId,
+		result: status?.result ?? null,
 		upload,
-		reset: () => {
-			setSuccess(false);
-			setResult(null);
-		},
+		reset,
 	};
 }
 

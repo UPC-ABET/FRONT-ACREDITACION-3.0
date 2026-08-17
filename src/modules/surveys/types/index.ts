@@ -44,6 +44,8 @@ export interface CompetenceConfig {
 	performanceLevel: number;
 	isActive?: boolean;
 	isVisible?: boolean;
+	/** Server-side flag with no UI left to edit it. Read from `extra.isExternal` and sent back
+	 *  unchanged on save so editing a competence can't silently reset a stored `true`. */
 	isExternal?: boolean;
 	programId?: number;
 	periodId?: number;
@@ -58,6 +60,7 @@ export interface CompetenceFormData {
 	descriptionEn?: string;
 	performanceLevel: number;
 	isVisible?: boolean;
+	/** Carried through the form untouched — see `CompetenceConfig.isExternal`. */
 	isExternal?: boolean;
 	academicPeriodId: number;
 	programId?: number;
@@ -124,7 +127,26 @@ export interface MassiveUploadResult {
 	total: number;
 	success: number;
 	failed: number;
-	errors: Array<{ row?: number; code?: string; reason: string }>;
+	/** `reason` is an i18n key, never display text; `args` interpolates it. */
+	errors: Array<{
+		row?: number;
+		code?: string;
+		reason: string;
+		args?: Record<string, string | number>;
+	}>;
+	fileName?: string | null;
+	/** Only says whether an annotated workbook exists; fetching it is a separate request. */
+	hasErrorFile?: boolean;
+}
+
+/** Real-time progress of a PPP bulk-upload job (polled from `ppp/survey/upload-status/:jobId`).
+ *  `progressPct` reflects rows actually validated/saved server-side — never simulated. */
+export interface PPPUploadJobStatus {
+	progressPct: number;
+	totalRows: number;
+	processedRows: number;
+	done: boolean;
+	result: MassiveUploadResult | null;
 }
 
 export interface GRAEmailSendRequest {
@@ -530,6 +552,7 @@ export interface BackendPppConfig {
 		isExternal?: boolean;
 	};
 	userOutcomeName?: string;
+	userOutcomeDescription?: string;
 	outcomeCode?: string;
 	outcome?: { programCommission?: { commissionType?: { code?: string } } };
 }
@@ -539,6 +562,16 @@ export interface BackendUploadResult {
 	success?: number;
 	failed?: number;
 	errors?: Array<{ row?: number; code?: string; reason?: string; message?: string }>;
+}
+
+/** PPP's bulk import diverges from the shape the other upload endpoints return. */
+export interface BackendPppUploadResult {
+	total?: number;
+	success?: number;
+	failed?: number;
+	errors?: Array<{ key: string; args?: Record<string, string | number>; row: number }>;
+	fileName?: string | null;
+	hasErrorFile?: boolean;
 }
 
 export interface BackendLcfcConfig {

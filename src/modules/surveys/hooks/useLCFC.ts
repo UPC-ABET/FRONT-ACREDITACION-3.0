@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { getErrorMessage } from '@/shared/lib';
 import { useI18n } from '@/providers';
+import { useJobPolling } from './useJobPolling';
 import type {
 	AcademicPeriod,
 	LCFCCourse,
@@ -187,18 +188,42 @@ export function useLCFCSections() {
 	return { sections, total, totalPages, loading, error, load };
 }
 
+const LCFC_SEND_JOB_SCOPE = ['lcfc', 'notification-status'] as const;
+const LCFC_PENDING_STATUS: LCFCNotificationJobStatus = {
+	progressPct: 0,
+	emailsSent: 0,
+	emailsFailed: 0,
+};
+
 export function useLCFCNotification() {
 	const { locale } = useI18n();
 	const [params, setParams] = useState<LCFCEmailParam[]>([]);
 	const [loading, setLoading] = useState(false);
-	const [sending, setSending] = useState(false);
+	const [starting, setStarting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [jobId, setJobId] = useState<string | null>(null);
-	const [status, setStatus] = useState<LCFCNotificationJobStatus | null>(null);
 	const [summary, setSummary] = useState<GRASendSummary | null>(null);
 	const [loadingSummary, setLoadingSummary] = useState(false);
 	const onSuccessRef = useRef<(() => void) | undefined>(undefined);
 	const onErrorRef = useRef<(() => void) | undefined>(undefined);
+
+	const {
+		status,
+		running,
+		error: pollError,
+	} = useJobPolling<LCFCNotificationJobStatus>({
+		scope: LCFC_SEND_JOB_SCOPE,
+		jobId,
+		fetchStatus: getLCFCNotificationStatus,
+		isDone: (jobStatus) => jobStatus.progressPct >= 100,
+		pendingStatus: LCFC_PENDING_STATUS,
+		onSettled: ({ error: settledError }) => {
+			if (settledError) onErrorRef.current?.();
+			else onSuccessRef.current?.();
+			onSuccessRef.current = undefined;
+			onErrorRef.current = undefined;
+		},
+	});
 
 	const loadParams = useCallback(async () => {
 		setLoading(true);
@@ -233,9 +258,9 @@ export function useLCFCNotification() {
 
 	const send = useCallback(
 		async (request: LCFCNotificationSendRequest, onSuccess?: () => void, onError?: () => void) => {
-			setSending(true);
+			setStarting(true);
 			setError(null);
-			setStatus({ progressPct: 0, emailsSent: 0, emailsFailed: 0 });
+			setJobId(null);
 			onSuccessRef.current = onSuccess;
 			onErrorRef.current = onError;
 			try {
@@ -246,60 +271,21 @@ export function useLCFCNotification() {
 				setJobId(result.jobId);
 			} catch (e) {
 				setError(getErrorMessage(e));
-				setJobId(null);
 				onSuccessRef.current = undefined;
 				onErrorRef.current?.();
 				onErrorRef.current = undefined;
-				setSending(false);
+			} finally {
+				setStarting(false);
 			}
 		},
 		[locale],
 	);
 
-	useEffect(() => {
-		if (!jobId || !sending) return;
-
-		const activeJobId = jobId;
-		let cancelled = false;
-
-		async function pollStatus() {
-			try {
-				const nextStatus = await getLCFCNotificationStatus(activeJobId);
-				if (cancelled) return;
-				setStatus(nextStatus);
-				if (nextStatus.progressPct >= 100) {
-					setSending(false);
-					setJobId(null);
-					onSuccessRef.current?.();
-					onSuccessRef.current = undefined;
-				}
-			} catch (e) {
-				if (cancelled) return;
-				setError(getErrorMessage(e));
-				setSending(false);
-				setJobId(null);
-				onSuccessRef.current = undefined;
-				onErrorRef.current?.();
-				onErrorRef.current = undefined;
-			}
-		}
-
-		void pollStatus();
-		const intervalId = setInterval(() => {
-			void pollStatus();
-		}, 1000);
-
-		return () => {
-			cancelled = true;
-			clearInterval(intervalId);
-		};
-	}, [jobId, sending]);
-
 	return {
 		params,
 		loading,
-		sending,
-		error,
+		sending: starting || running,
+		error: error ?? pollError,
 		status,
 		jobId,
 		summary,

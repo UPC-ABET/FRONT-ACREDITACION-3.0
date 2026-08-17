@@ -6,12 +6,15 @@ import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { usePPPCompetences } from '../../../hooks';
 import { CompetenceCRUD } from '../../shared/CompetenceCRUD';
+import { AllProgramsSelect } from '../../shared/AllProgramsSelect';
 
 interface PPPConfigurationProps {
+	/** Owned by PPPManagementView so the selection survives switching tabs. */
 	readonly programId: number;
+	readonly onProgramChange: (programId: number) => void;
 }
 
-export function PPPConfiguration({ programId }: PPPConfigurationProps) {
+export function PPPConfiguration({ programId, onProgramChange }: PPPConfigurationProps) {
 	const { t } = useI18n();
 	const { academicPeriodId } = useABET();
 	const {
@@ -66,49 +69,53 @@ export function PPPConfiguration({ programId }: PPPConfigurationProps) {
 		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
 	}
 
-	if (!programId) {
-		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectProgram')}</p>;
-	}
-
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
-				<p className="text-xs text-zinc-600">{t('surveys.shared.generateConfigHint')}</p>
-				<Button size="sm" onClick={handleGenerate} disabled={compLoading || !programId}>
-					<SparklesIcon className="h-4 w-4 mr-1" />
-					{t('surveys.shared.generateConfig')}
-				</Button>
-			</div>
+			<AllProgramsSelect value={programId} onChange={onProgramChange} wrapperClassName="max-w-xs" />
 
-			<div className="space-y-8">
-				{/* Specific competences */}
-				<CompetenceCRUD
-					cycleId={academicPeriodId}
-					programId={programId}
-					competenceType="specific"
-					showExternalToggle
-					competences={competences}
-					loading={compLoading}
-					error={compError}
-					onLoad={loadComp}
-					onSave={saveComp}
-					onDelete={removeComp}
-				/>
+			{!programId && (
+				<p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectProgram')}</p>
+			)}
 
-				{/* General competences */}
-				<CompetenceCRUD
-					cycleId={academicPeriodId}
-					programId={programId}
-					competenceType="general"
-					showExternalToggle
-					competences={competences}
-					loading={compLoading}
-					error={compError}
-					onLoad={loadComp}
-					onSave={saveComp}
-					onDelete={removeComp}
-				/>
-			</div>
+			{programId > 0 && (
+				<>
+					<div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
+						<p className="text-xs text-zinc-600">{t('surveys.shared.generateConfigHint')}</p>
+						<Button size="sm" onClick={handleGenerate} disabled={compLoading || !programId}>
+							<SparklesIcon className="h-4 w-4 mr-1" />
+							{t('surveys.shared.generateConfig')}
+						</Button>
+					</div>
+
+					<div className="space-y-8">
+						{/* Specific competences */}
+						<CompetenceCRUD
+							cycleId={academicPeriodId}
+							programId={programId}
+							competenceType="specific"
+							competences={competences}
+							loading={compLoading}
+							error={compError}
+							onLoad={loadComp}
+							onSave={saveComp}
+							onDelete={removeComp}
+						/>
+
+						{/* General competences */}
+						<CompetenceCRUD
+							cycleId={academicPeriodId}
+							programId={programId}
+							competenceType="general"
+							competences={competences}
+							loading={compLoading}
+							error={compError}
+							onLoad={loadComp}
+							onSave={saveComp}
+							onDelete={removeComp}
+						/>
+					</div>
+				</>
+			)}
 
 			<Toast
 				isOpen={toast.open}

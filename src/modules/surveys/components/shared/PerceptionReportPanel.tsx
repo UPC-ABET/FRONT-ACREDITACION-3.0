@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Card, Button, Select, Toast } from '@/shared/components';
 import { ArrowDownTrayIcon, EyeIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
-import { tryTranslate } from '@/shared/utils';
+import { base64ToBlob, tryTranslate } from '@/shared/utils';
 import { getErrorMessage } from '@/shared/lib';
 import { useSurveyFilterOptions } from '../../hooks';
 import type {
@@ -22,6 +22,7 @@ export interface PerceptionReportPanelProps {
 		commissionId?: number;
 		campusId?: number;
 		lang?: 'es' | 'en';
+		surveyNumbers?: number[];
 	};
 	hideGenerateButton?: boolean;
 	requireCommission?: boolean;
@@ -38,17 +39,10 @@ export interface PerceptionReportPanelHandle {
 	generate: () => void;
 }
 
-const SURVEY_NUMBER_OPTIONS: OptionItem[] = [
+export const SURVEY_NUMBER_OPTIONS: OptionItem[] = [
 	{ value: 1, label: '1' },
 	{ value: 2, label: '2' },
 ];
-
-function base64ToBlob(base64: string, type: string): Blob {
-	const binary = atob(base64);
-	const bytes = new Uint8Array(binary.length);
-	for (let index = 0; index < binary.length; index++) bytes[index] = binary.charCodeAt(index);
-	return new Blob([bytes], { type });
-}
 
 function downloadBlob(blob: Blob, filename: string): void {
 	const url = URL.createObjectURL(blob);
@@ -128,31 +122,32 @@ export const PerceptionReportPanel = forwardRef<
 			: campus
 				? Number(campus.value)
 				: undefined;
-		const unfiltered = !programId && !resolvedCommissionId && !resolvedCampusId;
-		if (!(allowUnfiltered && unfiltered)) {
-			if (!programId) {
-				setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
-				return;
-			}
-			if (requireCommission && !resolvedCommissionId) {
-				setToast({ open: true, type: 'error', msg: t('surveys.perception.commissionRequired') });
-				return;
-			}
+		// An all-careers overview stays valid when narrowed by commission or campus alone, so a
+		// missing career only blocks screens that require one — as does the commission rule.
+		const careerRequired = !allowUnfiltered;
+		if (careerRequired && !programId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectProgram') });
+			return;
+		}
+		if (requireCommission && !resolvedCommissionId && (programId || careerRequired)) {
+			setToast({ open: true, type: 'error', msg: t('surveys.perception.commissionRequired') });
+			return;
 		}
 		const resolvedLang: 'es' | 'en' = externalFilters
 			? (externalFilters.lang ?? (locale === 'en' ? 'en' : 'es'))
 			: language.value === 'en'
 				? 'en'
 				: 'es';
+		const resolvedSurveyNumbers = externalFilters
+			? externalFilters.surveyNumbers
+			: surveyNumbers.map((option) => Number(option.value));
 		generateMutation.mutate({
 			// 0 means "no career selected" (AllProgramsSelect's default) — never a real program id, so
 			// it must not reach the backend as a filter or the "all careers" report comes back empty.
 			programId: programId || undefined,
 			commissionId: resolvedCommissionId,
 			campusId: resolvedCampusId,
-			surveyNumbers: showSurveyNumber
-				? surveyNumbers.map((option) => Number(option.value))
-				: undefined,
+			surveyNumbers: showSurveyNumber ? resolvedSurveyNumbers : undefined,
 			lang: resolvedLang,
 		});
 	}

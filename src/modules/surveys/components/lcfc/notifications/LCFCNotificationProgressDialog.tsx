@@ -1,18 +1,12 @@
 'use client';
 
-import {
-	Button,
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from '@/shared/components';
-import { cn } from '@/shared/lib/utils';
+import { interpolate } from '@/shared/utils';
 import { useI18n } from '@/providers';
+import {
+	SurveyJobProgressDialog,
+	type SurveyJobProgressStat,
+} from '../../shared/SurveyJobProgressDialog';
 import type { LCFCNotificationJobStatus } from '../../../types';
-
-const PROGRESS_SEGMENTS = 20;
 
 interface LCFCNotificationProgressDialogProps {
 	readonly open: boolean;
@@ -21,11 +15,6 @@ interface LCFCNotificationProgressDialogProps {
 	readonly error?: string | null;
 	readonly targetLabel: string;
 	readonly onOpenChange: (open: boolean) => void;
-}
-
-function clampPercentage(value: number | undefined): number {
-	if (typeof value !== 'number' || Number.isNaN(value)) return 0;
-	return Math.min(100, Math.max(0, Math.round(value)));
 }
 
 export function LCFCNotificationProgressDialog({
@@ -37,11 +26,11 @@ export function LCFCNotificationProgressDialog({
 	onOpenChange,
 }: LCFCNotificationProgressDialogProps) {
 	const { t } = useI18n();
-	const percentage = clampPercentage(status?.progressPct);
-	const filledSegments = Math.ceil((percentage / 100) * PROGRESS_SEGMENTS);
+	const percentage = status?.progressPct ?? 0;
 	const completed = !sending && !error && percentage >= 100;
 	const skippedAlreadySent = status?.skippedAlreadySent ?? 0;
 	const skippedAlreadyCompleted = status?.skippedAlreadyCompleted ?? 0;
+
 	// Everything was skipped because those students were already notified: without this hint
 	// the dialog reads "finished, 0 sent" and looks like a silent failure.
 	const showResendHint =
@@ -49,116 +38,48 @@ export function LCFCNotificationProgressDialog({
 		(status?.emailsSent ?? 0) === 0 &&
 		(status?.emailsFailed ?? 0) === 0 &&
 		skippedAlreadySent > 0;
+
+	const stats: SurveyJobProgressStat[] = [
+		{ labelKey: 'surveys.lcfc.notifications.progress.sent', value: status?.emailsSent ?? 0 },
+		{ labelKey: 'surveys.lcfc.notifications.progress.failed', value: status?.emailsFailed ?? 0 },
+	];
+	if (skippedAlreadySent > 0 || skippedAlreadyCompleted > 0) {
+		stats.push(
+			{
+				labelKey: 'surveys.lcfc.notifications.progress.skippedAlreadySent',
+				value: skippedAlreadySent,
+			},
+			{
+				labelKey: 'surveys.lcfc.notifications.progress.skippedCompleted',
+				value: skippedAlreadyCompleted,
+			},
+		);
+	}
+
 	const titleKey = error
 		? 'surveys.lcfc.notifications.progress.failedTitle'
 		: completed
 			? 'surveys.lcfc.notifications.progress.completedTitle'
 			: 'surveys.lcfc.notifications.progress.title';
-	const descriptionKey =
-		percentage === 0 && sending
-			? 'surveys.lcfc.notifications.progress.preparing'
-			: 'surveys.lcfc.notifications.progress.sending';
 
 	return (
-		<Dialog
+		<SurveyJobProgressDialog
 			open={open}
-			onOpenChange={(nextOpen) => {
-				if (!nextOpen && sending) return;
-				onOpenChange(nextOpen);
-			}}>
-			<DialogContent className="max-w-md">
-				<DialogHeader>
-					<DialogTitle>{t(titleKey)}</DialogTitle>
-					<p className="text-sm text-zinc-500">
-						{t(descriptionKey).replace('{{target}}', targetLabel)}
-					</p>
-				</DialogHeader>
-
-				<div className="space-y-4">
-					<div className="space-y-2">
-						<div className="flex items-center justify-between text-sm">
-							<span className="font-medium text-zinc-700">
-								{t('surveys.lcfc.notifications.progress.progressLabel')}
-							</span>
-							<span className="font-semibold text-zinc-900">
-								{t('surveys.lcfc.notifications.progress.progressValue').replace(
-									'{{percentage}}',
-									String(percentage),
-								)}
-							</span>
-						</div>
-						<div
-							className="flex h-2 gap-1"
-							role="progressbar"
-							aria-valuemin={0}
-							aria-valuemax={100}
-							aria-valuenow={percentage}
-							aria-label={t('surveys.lcfc.notifications.progress.progressLabel')}>
-							{Array.from({ length: PROGRESS_SEGMENTS }, (_, index) => (
-								<span
-									key={index}
-									className={cn(
-										'h-full flex-1 rounded-full',
-										index < filledSegments ? 'bg-red-600' : 'bg-zinc-100',
-									)}
-								/>
-							))}
-						</div>
-					</div>
-
-					<div className="grid grid-cols-2 gap-3">
-						<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-							<p className="text-xs font-medium uppercase text-zinc-500">
-								{t('surveys.lcfc.notifications.progress.sent')}
-							</p>
-							<p className="mt-1 text-2xl font-semibold text-zinc-900">{status?.emailsSent ?? 0}</p>
-						</div>
-						<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-							<p className="text-xs font-medium uppercase text-zinc-500">
-								{t('surveys.lcfc.notifications.progress.failed')}
-							</p>
-							<p className="mt-1 text-2xl font-semibold text-zinc-900">
-								{status?.emailsFailed ?? 0}
-							</p>
-						</div>
-					</div>
-
-					{(skippedAlreadySent > 0 || skippedAlreadyCompleted > 0) && (
-						<div className="grid grid-cols-2 gap-3">
-							<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-								<p className="text-xs font-medium uppercase text-zinc-500">
-									{t('surveys.lcfc.notifications.progress.skippedAlreadySent')}
-								</p>
-								<p className="mt-1 text-2xl font-semibold text-zinc-900">{skippedAlreadySent}</p>
-							</div>
-							<div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-								<p className="text-xs font-medium uppercase text-zinc-500">
-									{t('surveys.lcfc.notifications.progress.skippedCompleted')}
-								</p>
-								<p className="mt-1 text-2xl font-semibold text-zinc-900">
-									{skippedAlreadyCompleted}
-								</p>
-							</div>
-						</div>
-					)}
-
-					{showResendHint && (
-						<p className="text-sm text-amber-700">
-							{t('surveys.lcfc.notifications.progress.resendHint')}
-						</p>
-					)}
-
-					{error && <p className="text-sm font-medium text-red-700">{error}</p>}
-				</div>
-
-				{!sending && (
-					<DialogFooter>
-						<Button variant="secondary" onClick={() => onOpenChange(false)}>
-							{t('dialog.close')}
-						</Button>
-					</DialogFooter>
-				)}
-			</DialogContent>
-		</Dialog>
+			busy={sending}
+			percentage={percentage}
+			title={t(titleKey)}
+			description={interpolate(
+				t(
+					percentage === 0 && sending
+						? 'surveys.lcfc.notifications.progress.preparing'
+						: 'surveys.lcfc.notifications.progress.sending',
+				),
+				{ target: targetLabel },
+			)}
+			stats={stats}
+			note={showResendHint ? t('surveys.lcfc.notifications.progress.resendHint') : null}
+			error={error}
+			onOpenChange={onOpenChange}
+		/>
 	);
 }

@@ -3,15 +3,19 @@
 import React, { useState } from 'react';
 import { Card, PageHeader, Tabs } from '@/shared/components';
 import { useI18n, useGlobalAcademicFiltersVisibilityOverride } from '@/providers';
-import { AllProgramsSelect } from '../shared/AllProgramsSelect';
 import { PPPMassiveUpload } from './PPPMassiveUpload';
 import { PPPReports } from './PPPReports';
 import { PPPConfiguration } from './configuration/PPPConfiguration';
 
+// Each tab has its own career filter, so switching programs in one tab does not affect the
+// others. The three ids live here rather than inside each tab because the tabs unmount when
+// you switch away — holding them locally would reset the selection on every round trip.
 export function PPPManagementView() {
 	const { t } = useI18n();
 	const [activeTab, setActiveTab] = useState('upload');
-	const [programId, setProgramId] = useState(0);
+	const [uploadProgramId, setUploadProgramId] = useState(0);
+	const [reportsProgramId, setReportsProgramId] = useState(0);
+	const [configProgramId, setConfigProgramId] = useState(0);
 
 	// Hide school filter — surveys show all programs across schools.
 	useGlobalAcademicFiltersVisibilityOverride({ school: false, modality: true, period: true });
@@ -31,19 +35,19 @@ export function PPPManagementView() {
 				description={t('surveys.ppp.management.subtitle')}
 			/>
 
-			<Card>
-				<div className="grid gap-4 sm:max-w-sm">
-					<AllProgramsSelect value={programId} onChange={setProgramId} wrapperClassName="" />
-				</div>
-			</Card>
-
 			<Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
 			<Card className="overflow-visible">
 				<div className="space-y-6">
-					{activeTab === 'upload' && <PPPMassiveUpload programId={programId} />}
-					{activeTab === 'reports' && <PPPReports programId={programId} />}
-					{activeTab === 'config' && <PPPConfiguration programId={programId} />}
+					{activeTab === 'upload' && (
+						<PPPMassiveUpload programId={uploadProgramId} onProgramChange={setUploadProgramId} />
+					)}
+					{activeTab === 'reports' && (
+						<PPPReports programId={reportsProgramId} onProgramChange={setReportsProgramId} />
+					)}
+					{activeTab === 'config' && (
+						<PPPConfiguration programId={configProgramId} onProgramChange={setConfigProgramId} />
+					)}
 				</div>
 			</Card>
 		</div>
