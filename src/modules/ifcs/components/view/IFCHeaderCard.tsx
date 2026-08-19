@@ -13,6 +13,7 @@ type Props = {
 	showObservation: boolean;
 	observationText: I18nText;
 	onObservationChange: (next: I18nText) => void;
+	onHistory: () => void;
 };
 
 export function IFCHeaderCard({
@@ -20,6 +21,7 @@ export function IFCHeaderCard({
 	showObservation,
 	observationText,
 	onObservationChange,
+	onHistory,
 }: Props) {
 	const { t, locale: lang } = useI18n();
 	const statusCode = ifc.status?.code ?? TYPE_CODES.IFC_STATUS.UNREGISTERED;
@@ -45,14 +47,21 @@ export function IFCHeaderCard({
 				title={courseName || '-'}
 				description={crumbs || undefined}
 				action={
-					<Button
-						variant="secondary"
-						size="lg"
-						disabled={!canExport || isDownloading}
-						onClick={() => downloadOne(Number(ifc.id))}>
-						<ArrowDownTrayIcon className="h-5 w-5" />
-						{isDownloading ? t('loading.default') : t('ifcs.view.btn.export')}
-					</Button>
+					<div className="flex flex-wrap items-center gap-3">
+						{ifc.showHistory && (
+							<Button variant="secondary" size="lg" onClick={onHistory}>
+								{t('ifcs.view.btn.history')}
+							</Button>
+						)}
+						<Button
+							variant="secondary"
+							size="lg"
+							disabled={!canExport || isDownloading}
+							onClick={() => downloadOne(Number(ifc.id))}>
+							<ArrowDownTrayIcon className="h-5 w-5" />
+							{isDownloading ? t('loading.default') : t('ifcs.view.btn.export')}
+						</Button>
+					</div>
 				}
 			/>
 

@@ -17,7 +17,6 @@ export type ActionFlags = {
 	showReject: boolean;
 	showObservation: boolean;
 	showBack: boolean;
-	showHistory: boolean;
 };
 
 export function computeActionFlags(ifc: IFCHeader): ActionFlags {
@@ -35,7 +34,6 @@ export function computeActionFlags(ifc: IFCHeader): ActionFlags {
 		showReject: status === S.SUBMITTED && hasHigherLevel,
 		showObservation: status === S.SUBMITTED && hasHigherLevel,
 		showBack: true,
-		showHistory: hasHigherLevel && status !== S.UNREGISTERED,
 	};
 }
 
@@ -47,7 +45,6 @@ type Props = {
 	onReject: () => void;
 	onEdit: () => void;
 	onBack: () => void;
-	onHistory: () => void;
 };
 
 export function IFCActionButtons({
@@ -58,7 +55,6 @@ export function IFCActionButtons({
 	onReject,
 	onEdit,
 	onBack,
-	onHistory,
 }: Props) {
 	const { t } = useI18n();
 
@@ -67,11 +63,6 @@ export function IFCActionButtons({
 			{flags.showBack && (
 				<Button variant="secondary" size="lg" onClick={onBack} disabled={disabled}>
 					{t('ifcs.view.btn.back')}
-				</Button>
-			)}
-			{flags.showHistory && (
-				<Button variant="secondary" size="lg" onClick={onHistory} disabled={disabled}>
-					{t('ifcs.view.btn.history')}
 				</Button>
 			)}
 			{flags.showEdit && (

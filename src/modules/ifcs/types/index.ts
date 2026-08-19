@@ -64,6 +64,7 @@ export interface IFCHeader {
 	} | null;
 	requesterInChain: boolean;
 	requesterHasHigherLevel: boolean;
+	showHistory: boolean;
 }
 
 export interface OutcomeItem {

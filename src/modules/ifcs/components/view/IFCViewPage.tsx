@@ -130,6 +130,7 @@ export default function IFCViewPage() {
 				showObservation={flags.showObservation}
 				observationText={observationText}
 				onObservationChange={setObservationText}
+				onHistory={handleHistory}
 			/>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -153,7 +154,6 @@ export default function IFCViewPage() {
 					onReject={handleReject}
 					onEdit={handleEdit}
 					onBack={handleBack}
-					onHistory={handleHistory}
 				/>
 			</div>
 
