@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import type { TypeOption } from '@/modules/core';
 import { findDirectorForSchool, useChartHeadsConfig } from '@/modules/admin/chart-heads';
 import { TYPE_CODES, TYPE_GROUP_CODES } from '@/shared/constants';
 import { Card, PageHeader, Tabs, TableEmptyState } from '@/shared/components';
 import { useTabParam } from '@/shared';
+import { logger } from '@/shared/lib';
 import { useABET, useGlobalAcademicFiltersVisibilityOverride, useI18n } from '@/providers';
 import {
 	hasUploadMaintenance,
@@ -37,6 +38,16 @@ export default function LoadsPage() {
 	});
 
 	const chartHeadsConfig = useChartHeadsConfig(isChartsFlow ? academicPeriodId : null);
+
+	useEffect(() => {
+		if (chartHeadsConfig.isError) {
+			logger.warn(
+				'[LoadsPage] failed to load chart-heads config for the upload precondition check',
+				chartHeadsConfig.error,
+			);
+		}
+	}, [chartHeadsConfig.isError, chartHeadsConfig.error]);
+
 	const chartsPrecondition = useMemo(() => {
 		if (!isChartsFlow || schoolId === null || !chartHeadsConfig.data) return undefined;
 		const director = findDirectorForSchool(chartHeadsConfig.data, schoolId);
