@@ -115,6 +115,10 @@ export default function IFCViewPage() {
 		router.push('/ifcs');
 	}
 
+	function handleHistory() {
+		router.push(`/ifcs/${id}/history`);
+	}
+
 	return (
 		<div className="space-y-6">
 			<IFCHeaderCard
@@ -145,6 +149,7 @@ export default function IFCViewPage() {
 					onReject={handleReject}
 					onEdit={handleEdit}
 					onBack={handleBack}
+					onHistory={handleHistory}
 				/>
 			</div>
 
