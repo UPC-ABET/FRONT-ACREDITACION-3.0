@@ -180,6 +180,18 @@
 					"title": "Grades RC",
 					"description": "Grades by grade type and qualification status (from Banner)."
 				}
+			},
+			"notasRc": {
+				"generate": "Generate",
+				"regenerate": "Generate again",
+				"retry": "Retry",
+				"downloadFile": "Download file",
+				"badgeRunning": "Running",
+				"badgeCompleted": "Ready",
+				"badgeFailed": "Error",
+				"statusRunning": "Generating the file, this can take several minutes…",
+				"statusFailed": "The file could not be generated.",
+				"startFailed": "Could not start generating the file."
 			}
 		},
 		"metaTitle": "Scraping — Data extraction"
@@ -1438,7 +1450,9 @@
 			"decryptionFailed": "The stored Planner credentials could not be read due to a server-side configuration issue. Contact an administrator."
 		},
 		"scrapingExport": {
-			"gradesRcInProgress": "Another user is currently downloading this file. Try again in a few minutes."
+			"gradesRcInProgress": "Another user is currently downloading this file. Try again in a few minutes.",
+			"gradesRcJobNotFound": "The requested generation job was not found.",
+			"gradesRcFileNotReady": "The file is not ready to download yet."
 		},
 		"conflict": "Conflict with the current state of the resource",
 		"internalServer": "Internal server error",

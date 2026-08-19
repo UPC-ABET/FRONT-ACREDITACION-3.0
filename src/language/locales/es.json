@@ -180,6 +180,18 @@
 					"title": "Notas RC",
 					"description": "Notas por tipo de nota y estado de calificación (de Banner)."
 				}
+			},
+			"notasRc": {
+				"generate": "Generar",
+				"regenerate": "Generar de nuevo",
+				"retry": "Reintentar",
+				"downloadFile": "Descargar archivo",
+				"badgeRunning": "En curso",
+				"badgeCompleted": "Listo",
+				"badgeFailed": "Error",
+				"statusRunning": "Generando el archivo, esto puede tardar varios minutos…",
+				"statusFailed": "No se pudo generar el archivo.",
+				"startFailed": "No se pudo iniciar la generación del archivo."
 			}
 		},
 		"metaTitle": "Scraping — Extracción de datos"
@@ -1438,7 +1450,9 @@
 			"decryptionFailed": "No se pudieron leer las credenciales de Planner guardadas debido a un problema de configuración del servidor. Contacta a un administrador."
 		},
 		"scrapingExport": {
-			"gradesRcInProgress": "Otro usuario está descargando este archivo en este momento. Intenta de nuevo en unos minutos."
+			"gradesRcInProgress": "Otro usuario está descargando este archivo en este momento. Intenta de nuevo en unos minutos.",
+			"gradesRcJobNotFound": "No se encontró el proceso de generación solicitado.",
+			"gradesRcFileNotReady": "El archivo aún no está listo para descargar."
 		},
 		"conflict": "Conflicto con el estado actual del recurso",
 		"internalServer": "Error interno del servidor",
