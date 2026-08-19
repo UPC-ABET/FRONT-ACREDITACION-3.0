@@ -430,7 +430,8 @@
 				"reject": "Rechazar",
 				"approve": "Aprobar",
 				"submit": "Enviar",
-				"export": "Exportar"
+				"export": "Exportar",
+				"history": "Historial"
 			}
 		},
 		"pdf": {
@@ -447,6 +448,22 @@
 			"tooltipNoScope": "Realiza una búsqueda primero",
 			"error": {
 				"downloadFailed": "No se pudo descargar el reporte de estado"
+			}
+		},
+		"statusHistory": {
+			"title": "Historial de Estados",
+			"btn": {
+				"back": "Volver"
+			},
+			"table": {
+				"ariaLabel": "Historial de estados del IFC",
+				"col": {
+					"status": "Estado",
+					"date": "Fecha",
+					"comment": "Comentario",
+					"by": "Por"
+				},
+				"empty": "Aún no hay historial de estados."
 			}
 		},
 		"form": {
@@ -1561,7 +1578,8 @@
 			"prefillFailed": "No se pudo cargar la información previa",
 			"pdfFailed": "No se pudo generar el PDF",
 			"pdfBulkFailed": "No se pudo generar el ZIP de PDFs",
-			"statusReportFailed": "No se pudo generar el reporte de estado"
+			"statusReportFailed": "No se pudo generar el reporte de estado",
+			"statusHistoryFailed": "No se pudo cargar el historial de estados"
 		},
 		"ifcFinding": {
 			"notFound": "Hallazgo no encontrado",

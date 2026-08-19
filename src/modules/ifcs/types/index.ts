@@ -262,6 +262,19 @@ export interface SubmitResult {
 	notification: NotifyResult;
 }
 
+export interface IFCStatusHistoryEntry {
+	code: string;
+	name: I18nText;
+	color: string | null;
+	at: string;
+	comment: I18nText | null;
+	by: string | null;
+}
+
+export interface IFCStatusHistoryResponse {
+	statuses: IFCStatusHistoryEntry[];
+}
+
 export interface RawIfcSchool {
 	id: number | string;
 	code: string;

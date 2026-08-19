@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { ErrorDialog, LoadingDialog, SuccessDialog, Toast } from '@/shared/components';
 import { useGlobalAcademicFiltersLockOverride, useI18n } from '@/providers';
 import { getErrorMessage } from '@/shared/lib/apiError';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
-import { useIFCView } from '../../hooks/useIfcs';
+import { ifcQueryKeys, useIFCView } from '../../hooks/useIfcs';
 import { approveIFC, rejectIFC, submitIFC } from '../../services/ifcsService';
 import type { I18nText } from '../../types';
 import { IFCHeaderCard } from './IFCHeaderCard';
@@ -22,6 +23,7 @@ import { IFCActionButtons, computeActionFlags } from './IFCActionButtons';
 export default function IFCViewPage() {
 	const { t } = useI18n();
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const params = useParams<{ id: string }>();
 	const id = Number(params?.id);
 
@@ -58,6 +60,7 @@ export default function IFCViewPage() {
 			await fn();
 			setSuccessMsg(t(successKey));
 			await refetch();
+			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.statusHistory(id) });
 		} catch (e) {
 			setActionError(getErrorMessage(e, 'ifcs.error.generic'));
 		} finally {
@@ -83,6 +86,7 @@ export default function IFCViewPage() {
 				setSuccessMsg(t('ifcs.submit.toast.successNoNotify'));
 			}
 			await refetch();
+			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.statusHistory(id) });
 		} catch (e) {
 			setActionError(getErrorMessage(e, 'ifcs.error.generic'));
 		} finally {
@@ -115,6 +119,10 @@ export default function IFCViewPage() {
 		router.push('/ifcs');
 	}
 
+	function handleHistory() {
+		router.push(`/ifcs/${id}/history`);
+	}
+
 	return (
 		<div className="space-y-6">
 			<IFCHeaderCard
@@ -145,6 +153,7 @@ export default function IFCViewPage() {
 					onReject={handleReject}
 					onEdit={handleEdit}
 					onBack={handleBack}
+					onHistory={handleHistory}
 				/>
 			</div>
 

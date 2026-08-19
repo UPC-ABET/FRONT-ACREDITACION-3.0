@@ -430,7 +430,8 @@
 				"reject": "Reject",
 				"approve": "Approve",
 				"submit": "Submit",
-				"export": "Export"
+				"export": "Export",
+				"history": "History"
 			}
 		},
 		"pdf": {
@@ -447,6 +448,22 @@
 			"tooltipNoScope": "Run a search first",
 			"error": {
 				"downloadFailed": "Could not download the status report"
+			}
+		},
+		"statusHistory": {
+			"title": "Status History",
+			"btn": {
+				"back": "Back"
+			},
+			"table": {
+				"ariaLabel": "IFC status history",
+				"col": {
+					"status": "Status",
+					"date": "Date",
+					"comment": "Comment",
+					"by": "By"
+				},
+				"empty": "No status history yet."
 			}
 		},
 		"form": {
@@ -1561,7 +1578,8 @@
 			"prefillFailed": "Could not load the prefill data",
 			"pdfFailed": "Could not generate the PDF",
 			"pdfBulkFailed": "Could not generate the PDF ZIP",
-			"statusReportFailed": "Could not generate the status report"
+			"statusReportFailed": "Could not generate the status report",
+			"statusHistoryFailed": "Could not load the status history"
 		},
 		"ifcFinding": {
 			"notFound": "Finding not found",
