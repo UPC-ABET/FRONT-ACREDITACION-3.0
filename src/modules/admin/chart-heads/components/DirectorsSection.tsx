@@ -10,8 +10,17 @@ import {
 import { Button, Select, Title } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
-import type { ChartHeadsFormErrors, DirectorFormValue, SchoolOption, UserOption } from '../types';
+import { usedSchoolIds } from '../schemas';
+import type {
+	ChartHeadsFormErrors,
+	DirectorFormValue,
+	ProgramFormValue,
+	ProgramOption,
+	SchoolOption,
+	UserOption,
+} from '../types';
 import { HeadFields } from './HeadFields';
+import { ProgramsSubsection } from './ProgramsSubsection';
 
 interface Props {
 	directors: DirectorFormValue[];
@@ -23,6 +32,11 @@ interface Props {
 	schoolsLoading: boolean;
 	userOptions: UserOption[];
 	usersLoading: boolean;
+	programOptions: ProgramOption[];
+	programsLoading: boolean;
+	onProgramAdd: (directorKey: string) => void;
+	onProgramRemove: (directorKey: string, programKey: string) => void;
+	onProgramChange: (directorKey: string, programKey: string, next: ProgramFormValue) => void;
 	disabled?: boolean;
 }
 
@@ -36,6 +50,11 @@ export function DirectorsSection({
 	schoolsLoading,
 	userOptions,
 	usersLoading,
+	programOptions,
+	programsLoading,
+	onProgramAdd,
+	onProgramRemove,
+	onProgramChange,
 	disabled,
 }: Props) {
 	const { t } = useI18n();
@@ -80,6 +99,10 @@ export function DirectorsSection({
 						const rowErrors = errors[director.key];
 						const selectedSchool =
 							selectOptions.find((option) => option.value === director.schoolId) ?? null;
+						const excludedSchoolIds = usedSchoolIds(directors, director.key);
+						const rowSelectOptions = selectOptions.filter(
+							(option) => !excludedSchoolIds.has(option.value),
+						);
 
 						return (
 							<div
@@ -113,7 +136,7 @@ export function DirectorsSection({
 									isDisabled={disabled || schoolsLoading}
 									isSearchable
 									value={selectedSchool}
-									options={selectOptions}
+									options={rowSelectOptions}
 									error={rowErrors?.schoolId ? tryTranslate(t, rowErrors.schoolId) : undefined}
 									onChange={(_, option) => {
 										const next = (option as { value?: number } | null)?.value;
@@ -128,6 +151,21 @@ export function DirectorsSection({
 									value={director}
 									onChange={(next) => onChange(director.key, { ...director, ...next })}
 									errors={rowErrors}
+									userOptions={userOptions}
+									usersLoading={usersLoading}
+									disabled={disabled}
+								/>
+
+								<ProgramsSubsection
+									directors={directors}
+									directorKey={director.key}
+									programs={director.programs}
+									onChange={(programKey, next) => onProgramChange(director.key, programKey, next)}
+									onAdd={() => onProgramAdd(director.key)}
+									onRemove={(programKey) => onProgramRemove(director.key, programKey)}
+									errors={rowErrors?.programs ?? {}}
+									programOptions={programOptions}
+									programsLoading={programsLoading}
 									userOptions={userOptions}
 									usersLoading={usersLoading}
 									disabled={disabled}

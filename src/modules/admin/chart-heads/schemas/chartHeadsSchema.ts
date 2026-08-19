@@ -4,11 +4,15 @@ import type {
 	ChartHeadsFormValue,
 	ConfigureChartHeadsPayload,
 	DirectorConfig,
+	DirectorFormValue,
 	DirectorPayload,
 	HeadConfig,
 	HeadFormErrors,
 	HeadFormValue,
 	HeadPayload,
+	ProgramFormErrors,
+	ProgramFormValue,
+	ProgramPayload,
 } from '../types';
 
 const VALIDATION_KEYS = {
@@ -16,6 +20,8 @@ const VALIDATION_KEYS = {
 	titleRequired: 'admin.chartHeads.error.titleRequired',
 	schoolRequired: 'admin.chartHeads.error.schoolRequired',
 	duplicateSchool: 'admin.chartHeads.error.duplicateSchool',
+	programRequired: 'admin.chartHeads.error.programRequired',
+	duplicateProgram: 'admin.chartHeads.error.duplicateProgram',
 } as const;
 
 function emptyTitle(languages: string[]): Record<string, string> {
@@ -25,7 +31,7 @@ function emptyTitle(languages: string[]): Record<string, string> {
 	}, {});
 }
 
-function headToFormValue(head: HeadConfig | DirectorConfig, languages: string[]): HeadFormValue {
+function headToFormValue(head: HeadConfig, languages: string[]): HeadFormValue {
 	return {
 		teacher: {
 			staffId: head.staffId,
@@ -51,6 +57,11 @@ export function configToFormValue(
 			key: `chart-${director.chartId}`,
 			schoolId: director.schoolId,
 			...headToFormValue(director, languages),
+			programs: (director.programs ?? []).map((program) => ({
+				key: `program-${program.chartId}`,
+				programId: program.programId,
+				...headToFormValue(program, languages),
+			})),
 		})),
 	};
 }
@@ -65,8 +76,52 @@ export function emptyDirector(
 		teacher: null,
 		user: null,
 		title: emptyTitle(languages),
+		programs: [],
 	};
 }
+
+export function emptyProgram(key: string, languages: string[]): ProgramFormValue {
+	return {
+		key,
+		programId: null,
+		teacher: null,
+		user: null,
+		title: emptyTitle(languages),
+	};
+}
+
+export function usedSchoolIds(directors: DirectorFormValue[], excludeKey: string): Set<number> {
+	const ids = new Set<number>();
+	for (const director of directors) {
+		if (director.key === excludeKey) continue;
+		if (director.schoolId !== null) ids.add(director.schoolId);
+	}
+	return ids;
+}
+
+export function findDirectorForSchool(
+	config: ChartHeadsConfig,
+	schoolId: number,
+): DirectorConfig | undefined {
+	return config.directors.find((director) => director.schoolId === schoolId);
+}
+
+export function usedProgramIds(
+	directors: DirectorFormValue[],
+	excludeDirectorKey: string,
+	excludeProgramKey: string,
+): Set<number> {
+	const ids = new Set<number>();
+	for (const director of directors) {
+		for (const program of director.programs) {
+			if (director.key === excludeDirectorKey && program.key === excludeProgramKey) continue;
+			if (program.programId !== null) ids.add(program.programId);
+		}
+	}
+	return ids;
+}
+
+type DirectorFormErrorsDraft = ChartHeadsFormErrors['directors'][string];
 
 function isTitleComplete(title: Record<string, string>, languages: string[]): boolean {
 	return languages.every((code) => (title[code] ?? '').trim().length > 0);
@@ -87,11 +142,13 @@ export function validateChartHeadsForm(
 
 	const directorErrors: ChartHeadsFormErrors['directors'] = {};
 	const seenSchoolIds = new Map<number, string[]>();
+	const seenProgramIds = new Map<number, Array<{ directorKey: string; programKey: string }>>();
 
 	for (const director of form.directors) {
-		const errors = {
+		const errors: DirectorFormErrorsDraft = {
 			...validateHead(director, languages),
-		} as ChartHeadsFormErrors['directors'][string];
+			programs: {},
+		};
 		if (director.schoolId === null) {
 			errors.schoolId = VALIDATION_KEYS.schoolRequired;
 		} else {
@@ -99,6 +156,19 @@ export function validateChartHeadsForm(
 			keys.push(director.key);
 			seenSchoolIds.set(director.schoolId, keys);
 		}
+
+		for (const program of director.programs) {
+			const programErrors: ProgramFormErrors = { ...validateHead(program, languages) };
+			if (program.programId === null) {
+				programErrors.programId = VALIDATION_KEYS.programRequired;
+			} else {
+				const seen = seenProgramIds.get(program.programId) ?? [];
+				seen.push({ directorKey: director.key, programKey: program.key });
+				seenProgramIds.set(program.programId, seen);
+			}
+			errors.programs[program.key] = programErrors;
+		}
+
 		directorErrors[director.key] = errors;
 	}
 
@@ -113,9 +183,26 @@ export function validateChartHeadsForm(
 		}
 	}
 
+	for (const occurrences of seenProgramIds.values()) {
+		if (occurrences.length > 1) {
+			for (const { directorKey, programKey } of occurrences) {
+				const director = directorErrors[directorKey];
+				director.programs[programKey] = {
+					...director.programs[programKey],
+					programId: VALIDATION_KEYS.duplicateProgram,
+				};
+			}
+		}
+	}
+
+	const directorHasOwnError = (errors: DirectorFormErrorsDraft): boolean =>
+		Boolean(errors.teacher || errors.title || errors.schoolId);
+	const directorHasProgramError = (errors: DirectorFormErrorsDraft): boolean =>
+		Object.values(errors.programs).some((programErrors) => Object.keys(programErrors).length > 0);
+
 	const deanHasError = Object.keys(deanErrors).length > 0;
 	const directorsHaveError = Object.values(directorErrors).some(
-		(errors) => Object.keys(errors).length > 0,
+		(errors) => directorHasOwnError(errors) || directorHasProgramError(errors),
 	);
 
 	return {
@@ -147,6 +234,10 @@ export function formToPayload(
 		directors: form.directors.map<DirectorPayload>((director) => ({
 			...headToPayload(director),
 			schoolId: director.schoolId as number,
+			programs: director.programs.map<ProgramPayload>((program) => ({
+				...headToPayload(program),
+				programId: program.programId as number,
+			})),
 		})),
 	};
 }
