@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import type { DragEvent } from 'react';
 import { Download, FileSpreadsheet, Upload } from 'lucide-react';
 import {
+	Alert,
 	Button,
 	Card,
 	ErrorDialog,
@@ -22,12 +23,22 @@ import { downloadErrorExcel, useDownloadTemplate, useUpload } from '../hooks';
 import type { UploadResult } from '../types';
 import { cn } from '@/shared/lib/utils';
 
+interface ChartsPrecondition {
+	hasDirector: boolean;
+	hasPrograms: boolean;
+}
+
 interface UploadPanelProps {
 	type: TypeOption;
 	academicPeriodId: number;
+	chartsPrecondition?: ChartsPrecondition;
 }
 
-export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps) {
+export default function UploadPanel({
+	type,
+	academicPeriodId,
+	chartsPrecondition,
+}: UploadPanelProps) {
 	const { t, locale } = useI18n();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const upload = useUpload(type.code);
@@ -198,6 +209,18 @@ export default function UploadPanel({ type, academicPeriodId }: UploadPanelProps
 							)}
 						</div>
 					</header>
+
+					{chartsPrecondition &&
+						(!chartsPrecondition.hasDirector || !chartsPrecondition.hasPrograms) && (
+							<Alert variant="warning">
+								{!chartsPrecondition.hasDirector && (
+									<p>{t('loads.upload.chartsPrecondition.noDirector')}</p>
+								)}
+								{!chartsPrecondition.hasPrograms && (
+									<p>{t('loads.upload.chartsPrecondition.noPrograms')}</p>
+								)}
+							</Alert>
+						)}
 
 					<div
 						role="button"
