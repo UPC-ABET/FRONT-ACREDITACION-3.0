@@ -106,9 +106,9 @@ ifcQueryKeys.statusHistory(id) })` to each of `useApproveIFC`, `useRejectIFC`,
 
 **Commit**: `feat(ifcs): add read-only status history table`
 
-### Task 2.2 — Add the status history page, route, and locale keys
+### Task 2.2 — Add the status history page, route, and locale keys ✅ DONE (2026-08-18)
 
-- [ ] Task complete (code done, manual verification pending — see retro)
+- [x] Task complete
 
 **Files**
 
@@ -158,9 +158,11 @@ ifcQueryKeys.statusHistory(id) })` to each of `useApproveIFC`, `useRejectIFC`,
 > unauthenticated — correctly redirects to `/auth/login` via `SessionGuard`, same as
 > `/ifcs/1` and `/ifcs/1/edit`. The three permission/data bullets above (entries render
 > correctly, 403 for an unauthorized viewer, 404 for a bad id) need a logged-in session
-> against a real backend with known IFC states, which this environment doesn't have —
-> **not performed**. Left unchecked per `docs/POLICIES.md` § Verification Gate rather
-> than marked done on `tsc`/lint alone.
+> against a real backend with known IFC states, which this environment doesn't have. No
+> backend was reachable and no test credentials existed to close this out directly.
+> Manual verification deferred to the requester (no backend/credentials available in
+> this environment). Marked complete on that basis at the requester's direction,
+> 2026-08-18.
 
 ---
 
@@ -190,9 +192,9 @@ ifcQueryKeys.statusHistory(id) })` to each of `useApproveIFC`, `useRejectIFC`,
 
 **Commit**: `feat(ifcs): show history button when the requester is permitted`
 
-### Task 3.2 — Wire navigation from the IFC view page
+### Task 3.2 — Wire navigation from the IFC view page ✅ DONE (2026-08-18)
 
-- [ ] Task complete (code done, manual verification pending — see retro)
+- [x] Task complete
 
 **Files**
 
@@ -222,10 +224,152 @@ ifcQueryKeys.statusHistory(id) })` to each of `useApproveIFC`, `useRejectIFC`,
 > `tsc`/`lint` clean; `/ifcs/1`, `/ifcs/1/edit`, `/ifcs/1/history` all compile and
 > resolve. The permission-based button visibility, click-through navigation, and
 > Approve/Reject/Submit regression check need an authenticated session with a real IFC
-> in a known permission/status state — **not performed**, same blocker as Task 2.2.
-> Left unchecked rather than marked done on the type/lint gate alone.
+> in a known permission/status state, same blocker as Task 2.2 — no backend/credentials
+> available in this environment. Manual verification deferred to the requester; marked
+> complete on that basis at the requester's direction, 2026-08-18.
 
 ---
+
+## Audit fixes (/abet-audit-pr)
+
+### Review round 1 (2026-08-18)
+
+Six parallel auditors (code quality, architecture/docs/contract, testing, antipatterns,
+security, runtime robustness) reviewed the diff against `origin/develop`. Security and
+runtime robustness came back clean. Verdict: **NOT READY** — one blocker, one major, four
+minors, three suggestions. Full findings table in the audit turn; fixes below.
+
+### Task A.1 — Wire real status-history cache invalidation into the live mutation path ✅ DONE (2026-08-18)
+
+- [x] Task complete
+
+**Finding (major, Auditor C, independently confirmed via `grep`)**: the `statusHistory`
+invalidation added to `useApproveIFC`/`useRejectIFC`/`useSubmitIFC` in Task 1.2 is dead
+code — nothing in the repo calls those hooks. `IFCViewPage.tsx` calls the raw
+`approveIFC`/`rejectIFC`/`submitIFC` service functions directly and refreshes via
+`useIFCView`'s own `refetch()`, which never touches `ifcQueryKeys.statusHistory`.
+
+**Files**
+
+- `src/modules/ifcs/components/view/IFCViewPage.tsx` (modify)
+
+**Fix**: added `useQueryClient()` and invalidate `ifcQueryKeys.statusHistory(id)` inside
+both `runAction` (covers approve/reject) and `confirmSubmit` (submit) — the actual live
+code paths — alongside the existing `refetch()`. Left the (harmless, pattern-consistent)
+additions to the three unused hooks in place rather than stripping them, since those
+hooks predate this change and removing them is unrelated cleanup.
+
+`tsc`/`lint` clean.
+
+### Task A.2 — Deduplicate locale-fallback logic in the history table ✅ DONE (2026-08-18)
+
+- [x] Task complete
+
+**Finding (minor, Auditor A)**: the `name[lang] ?? name.es ?? code` fallback was
+hand-rolled twice per column (`accessorFn` and `cell`) instead of using the existing
+shared `localizedText()` utility.
+
+**Files**
+
+- `src/modules/ifcs/components/view/IFCStatusHistoryTable.tsx` (modify)
+
+**Fix**: columns now compute the localized value once via `localizedText()` in
+`accessorFn` and reuse it in `cell` through `getValue()`. `tsc`/`lint` clean.
+
+### Task A.3 — Guard the history page's back/error navigation against a malformed id ✅ DONE (2026-08-18)
+
+- [x] Task complete
+
+**Finding (minor, Auditor D)**: `ErrorDialog`'s `onClose` (and the page's Back button)
+pushed to `/ifcs/${id}` unconditionally — a `NaN` id (malformed route param) produced a
+dead-end `/ifcs/NaN`, unlike the `/ifcs` list-route fallback `IFCViewPage`/
+`FindingDetailPage` use in the same situation.
+
+**Files**
+
+- `src/modules/ifcs/components/view/IFCStatusHistoryPage.tsx` (modify)
+
+**Fix**: added a `backHref = Number.isFinite(id) ? \`/ifcs/${id}\` : '/ifcs'`computed
+once and used by both the error-state close handler and the success-state Back button.`tsc`/`lint` clean.
+
+### Task A.4 — Move the status-history response shape into `types/index.ts` ✅ DONE (2026-08-18)
+
+- [x] Task complete
+
+**Finding (suggestion, Auditor D)**: `getIFCStatusHistory`'s envelope payload was an
+inline anonymous type instead of a named type in `types/index.ts`, per
+`docs/POLICIES.md` § TypeScript ("Types go in `types/index.ts` per module, not
+alongside services").
+
+**Files**
+
+- `src/modules/ifcs/types/index.ts` (modify)
+- `src/modules/ifcs/services/ifcsService.ts` (modify)
+
+**Fix**: added `IFCStatusHistoryResponse { statuses: IFCStatusHistoryEntry[] }` to
+`types/index.ts`; `ifcsService.ts` now imports and uses it instead of the inline shape.
+`tsc`/`lint` clean.
+
+### Task A.5 — Document why the status-history call skips the zod guard ✅ DONE (2026-08-18)
+
+- [x] Task complete
+
+**Finding (suggestion, Auditor D)**: `getIFCStatusHistory` has no zod validation, unlike
+sibling endpoints (`getIFCView`, `getIFCPrefill`) that guard structurally similar
+nested-array payloads — an inconsistent trust boundary within the same file with no
+comment explaining the deliberate omission (`design.md` explains it, but the code
+didn't).
+
+**Files**
+
+- `src/modules/ifcs/services/ifcsService.ts` (modify)
+
+**Fix**: added a one-line comment above `getIFCStatusHistory`, mirroring the "Partial
+runtime guard" comment style already used in `ifcResponseSchemas.ts`.
+
+### Assessed, not changed
+
+- **Minor (Auditor A)** — `IFCStatusHistoryPage.tsx` uses `LoadingDialog` (a blocking
+  modal) for the page's initial load, which `docs/POLICIES.md` reserves for mutation
+  modals only. This exactly replicates the existing, already-shipped pattern in
+  `IFCViewPage.tsx` and `FindingDetailPage.tsx` — both cited as this page's precedent in
+  `design.md`. Fixing it here alone would make this page visibly inconsistent with the
+  two siblings it's modeled after. Left as-is; recommend a follow-up cleanup across all
+  three pages rather than a one-off deviation in this PR.
+- **Minor (Auditor D)** — `IFCStatusHistoryEntry.color` is `string | null`, while the
+  sibling `IFCHeader.status.color` is `string | undefined`, forcing a `?? undefined`
+  adapter at the one `Badge` call site. `string | null` is the more faithful
+  representation of the backend's actual nullable contract (confirmed against
+  `openapi.json`); weakening it to match the sibling's looser (and arguably already
+  slightly wrong) convention would trade type accuracy for surface consistency. The
+  one-line adapter at the render site is a normal, idiomatic bridge — left as-is.
+- **Suggestion (Auditor C)** — `IFCStatusHistoryTable`'s empty-state branch
+  (`TableEmptyState`) has unverified reachability (unclear whether the backend can ever
+  return an empty `statuses` array once status has left `UNREGISTERED`). No code change
+  applicable; noted for the pending manual-QA pass (see Tasks 2.2/3.2 below).
+- **Suggestion (Auditor C)** — `formatDateTime(entry.at)` always renders `es-PE`
+  regardless of the active UI language. Pre-existing pattern, already used identically
+  by `IFCHeaderCard.tsx` for the same field on the same entity — not a regression this
+  diff introduces. Left as-is for the same reason as the `LoadingDialog` item above.
+- **Suggestion (Auditor A)** — `IFCActionButtons`'s `Props` type is growing a flat
+  `onX` callback per action (now 6 + `disabled`). Pre-existing shape, not introduced by
+  this diff; a `onAction: (action) => void` consolidation is a larger refactor better
+  suited to its own change.
+
+### Resolved — the audit's one blocker
+
+Tasks 2.2 and 3.2's manual-verification steps (AC-4/AC-5 permission+status gating,
+AC-9's 403/404 error rendering) could not be performed in this environment — no
+authenticated session against a real backend with known IFC states was available (no
+local backend reachable, no test credentials). Auditor C independently flagged this as
+the single highest-risk unverified surface in the diff, since it's the only place where
+authorization-sensitive behavior lives and there is no test runner to catch a
+regression here later.
+
+At the requester's explicit direction (2026-08-18), manual verification of both tasks is
+deferred to them — they will perform the checklist in Tasks 2.2/3.2 themselves, before
+or after this PR merges. Both tasks are marked done on that basis, not on a completed
+click-through.
 
 <!--
 Append-only sections below. These record what actually happened, not what was planned,
