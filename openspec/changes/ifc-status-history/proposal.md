@@ -112,17 +112,17 @@ The backend already exposes this trail
 
 ### Traceability
 
-| AC  | Criterion                                          | Satisfied by |
-| --- | -------------------------------------------------- | ------------ |
-| 1   | Service function + envelope/error handling         | TBD          |
-| 2   | `IFCStatusHistoryEntry` type                       | TBD          |
-| 3   | Query key + `useIFCStatusHistory` hook             | TBD          |
-| 4   | History control shown when permitted + real status | TBD          |
-| 5   | History control hidden otherwise                   | TBD          |
-| 6   | Navigation to `/ifcs/[id]/history`                 | TBD          |
-| 7   | Read-only rendering of every entry, in order       | TBD          |
-| 8   | Back control on the history page                   | TBD          |
-| 9   | Error state on fetch failure                       | TBD          |
+| AC  | Criterion                                          | Satisfied by                                                                                               |
+| --- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| 1   | Service function + envelope/error handling         | `src/modules/ifcs/services/ifcsService.ts` (`getIFCStatusHistory`)                                         |
+| 2   | `IFCStatusHistoryEntry` type                       | `src/modules/ifcs/types/index.ts`                                                                          |
+| 3   | Query key + `useIFCStatusHistory` hook             | `src/modules/ifcs/hooks/useIfcs.ts` (`ifcQueryKeys.statusHistory`, `useIFCStatusHistory`)                  |
+| 4   | History control shown when permitted + real status | `src/modules/ifcs/components/view/IFCActionButtons.tsx` (`computeActionFlags.showHistory`)                 |
+| 5   | History control hidden otherwise                   | `src/modules/ifcs/components/view/IFCActionButtons.tsx` (`computeActionFlags.showHistory`)                 |
+| 6   | Navigation to `/ifcs/[id]/history`                 | `src/modules/ifcs/components/view/IFCViewPage.tsx` (`handleHistory`), `src/app/ifcs/[id]/history/page.tsx` |
+| 7   | Read-only rendering of every entry, in order       | `src/modules/ifcs/components/view/IFCStatusHistoryTable.tsx`                                               |
+| 8   | Back control on the history page                   | `src/modules/ifcs/components/view/IFCStatusHistoryPage.tsx`                                                |
+| 9   | Error state on fetch failure                       | `src/modules/ifcs/components/view/IFCStatusHistoryPage.tsx`                                                |
 
 ## Dependencies
 
