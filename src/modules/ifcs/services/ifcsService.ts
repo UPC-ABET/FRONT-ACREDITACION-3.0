@@ -8,6 +8,7 @@ import type {
 	CreateIFCBody,
 	IFCPrefill,
 	IFCRow,
+	IFCStatusHistoryEntry,
 	IFCViewPayload,
 	PatchIFCBody,
 	RejectIFCBody,
@@ -41,6 +42,14 @@ export async function approveIFC(id: number): Promise<void> {
 
 export async function rejectIFC(id: number, comment: RejectIFCBody['comment']): Promise<void> {
 	await apiPost(`/ifcs/${id}/reject`, { comment });
+}
+
+export async function getIFCStatusHistory(id: number): Promise<IFCStatusHistoryEntry[]> {
+	const envelope = await apiGet<ApiResponse<{ statuses: IFCStatusHistoryEntry[] }>>(
+		`/ifcs/${id}/status-history`,
+	);
+	if (!envelope?.data) throw new ApiError('ifcs.error.statusHistoryFailed');
+	return envelope.data.statuses;
 }
 
 export async function getIFCPrefill(chartId: number): Promise<IFCPrefill> {

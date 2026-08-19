@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	approveIFC,
 	createIFC,
+	getIFCStatusHistory,
 	getIFCView,
 	listIFCs,
 	patchIFC,
@@ -16,6 +17,7 @@ export const ifcQueryKeys = {
 	all: ['ifcs'] as const,
 	list: (chartIds: number[], periodId: number) => ['ifcs', 'list', { chartIds, periodId }] as const,
 	view: (id: number) => ['ifcs', 'view', id] as const,
+	statusHistory: (id: number) => ['ifcs', 'statusHistory', id] as const,
 };
 
 export function useIFCs(chartIds: number[], periodId: number, options?: { enabled?: boolean }) {
@@ -30,6 +32,14 @@ export function useIFCView(id: number | undefined) {
 	return useQuery({
 		queryKey: ifcQueryKeys.view(id!),
 		queryFn: () => getIFCView(id!),
+		enabled: id != null && Number.isFinite(id),
+	});
+}
+
+export function useIFCStatusHistory(id: number | undefined) {
+	return useQuery({
+		queryKey: ifcQueryKeys.statusHistory(id!),
+		queryFn: () => getIFCStatusHistory(id!),
 		enabled: id != null && Number.isFinite(id),
 	});
 }
@@ -62,6 +72,7 @@ export function useSubmitIFC() {
 		onSuccess: (_data, id) => {
 			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.all });
 			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.view(id) });
+			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.statusHistory(id) });
 		},
 	});
 }
@@ -73,6 +84,7 @@ export function useApproveIFC() {
 		onSuccess: (_data, id) => {
 			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.all });
 			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.view(id) });
+			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.statusHistory(id) });
 		},
 	});
 }
@@ -84,6 +96,7 @@ export function useRejectIFC() {
 		onSuccess: (_data, variables) => {
 			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.all });
 			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.view(variables.id) });
+			queryClient.invalidateQueries({ queryKey: ifcQueryKeys.statusHistory(variables.id) });
 		},
 	});
 }
