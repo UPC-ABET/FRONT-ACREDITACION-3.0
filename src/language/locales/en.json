@@ -841,7 +841,14 @@
 				"remove": "Remove",
 				"removeNote": "Removing a director only stops updating it on save; it is not deleted from the org chart.",
 				"empty": "No directors yet. Add one to get started.",
-				"rowLabel": "Director {number}"
+				"rowLabel": "Director {number}",
+				"programs": {
+					"title": "Programs",
+					"add": "Add program",
+					"remove": "Remove",
+					"empty": "No programs assigned to this director yet.",
+					"rowLabel": "Program {number}"
+				}
 			},
 			"field": {
 				"teacher": "Linked teacher",
@@ -851,7 +858,9 @@
 				"userLockedPlaceholder": "Defined by the linked teacher",
 				"title": "Title",
 				"school": "School",
-				"schoolPlaceholder": "Select a school"
+				"schoolPlaceholder": "Select a school",
+				"program": "Program",
+				"programPlaceholder": "Select a program"
 			},
 			"btn": {
 				"save": "Save configuration"
@@ -865,7 +874,9 @@
 				"teacherRequired": "Select a teacher.",
 				"titleRequired": "Title is required in every language.",
 				"schoolRequired": "Select a school.",
-				"duplicateSchool": "This school is already assigned to another director."
+				"duplicateSchool": "This school is already assigned to another director.",
+				"programRequired": "Select a program.",
+				"duplicateProgram": "This program is already assigned to another director."
 			}
 		},
 		"configuration": {
@@ -1370,7 +1381,8 @@
 			"entityTypeReadOnly": "The entity type is read-only.",
 			"entityCodeRequired": "The entity is required for this type.",
 			"entityNotFound": "The selected entity was not found.",
-			"entityAlreadyAssigned": "The selected entity is already assigned to another node."
+			"entityAlreadyAssigned": "The selected entity is already assigned to another node.",
+			"programAncestorRequired": "This node must have a program as an ancestor."
 		},
 		"courseOutcomeMapping": {
 			"courseOutOfScope": "The course does not belong to the selected program.",
@@ -1623,7 +1635,10 @@
 			"schoolNotFound": "The selected school does not exist.",
 			"staffNotFound": "The selected teacher does not exist.",
 			"userNotFound": "The selected user does not exist.",
-			"duplicateSchoolInPayload": "The same school cannot be assigned to two directors."
+			"duplicateSchoolInPayload": "The same school cannot be assigned to two directors.",
+			"duplicateProgramInPayload": "The same program cannot be assigned to two directors.",
+			"programNotFound": "The selected program does not exist.",
+			"programAssignedToOtherSchool": "This program is already configured under another school."
 		},
 		"evaluation": {
 			"docCannotGrade": "The DOCENTE role cannot grade projects.",
@@ -3411,6 +3426,10 @@
 			"successTitle": "Upload successful",
 			"successMessage": "Upload completed successfully.",
 			"errorTitle": "Upload error",
+			"chartsPrecondition": {
+				"noDirector": "This school has no director configured for this period.",
+				"noPrograms": "This school has no programs configured for this period."
+			},
 			"error": {
 				"fileRequired": "Select an .xlsx file",
 				"periodRequired": "Select an academic period",

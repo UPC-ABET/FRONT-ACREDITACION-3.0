@@ -5,7 +5,7 @@ import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { SuccessDialog, TableEmptyState, TableLoadingState, Toast } from '@/shared';
 import { useABET, useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
-import { useChartHeadsConfig, useSchoolOptions, useUserOptions } from '../hooks';
+import { useChartHeadsConfig, useProgramOptions, useSchoolOptions, useUserOptions } from '../hooks';
 import { ChartHeadsForm } from './ChartHeadsForm';
 
 export function ChartHeadsConfigPage() {
@@ -17,6 +17,7 @@ export function ChartHeadsConfigPage() {
 	const { data: config, isLoading, error } = useChartHeadsConfig(academicPeriodId);
 	const schools = useSchoolOptions();
 	const users = useUserOptions();
+	const programs = useProgramOptions();
 
 	return (
 		<div className="space-y-6">
@@ -38,6 +39,8 @@ export function ChartHeadsConfigPage() {
 					schoolsLoading={schools.isLoading}
 					userOptions={users.data ?? []}
 					usersLoading={users.isLoading}
+					programOptions={programs.data ?? []}
+					programsLoading={programs.isLoading}
 					onSuccess={setSuccessMsg}
 					onError={setErrorMsg}
 				/>

@@ -10,8 +10,16 @@ import {
 import { Button, Select, Title } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { tryTranslate } from '@/shared/utils/tryTranslate';
-import type { ChartHeadsFormErrors, DirectorFormValue, SchoolOption, UserOption } from '../types';
+import { usedSchoolIds } from '../schemas';
+import type {
+	ChartHeadsFormErrors,
+	DirectorFormValue,
+	ProgramsController,
+	SchoolOption,
+	UserOption,
+} from '../types';
 import { HeadFields } from './HeadFields';
+import { ProgramsSubsection } from './ProgramsSubsection';
 
 interface Props {
 	directors: DirectorFormValue[];
@@ -23,6 +31,7 @@ interface Props {
 	schoolsLoading: boolean;
 	userOptions: UserOption[];
 	usersLoading: boolean;
+	programsController: ProgramsController;
 	disabled?: boolean;
 }
 
@@ -36,6 +45,7 @@ export function DirectorsSection({
 	schoolsLoading,
 	userOptions,
 	usersLoading,
+	programsController,
 	disabled,
 }: Props) {
 	const { t } = useI18n();
@@ -47,6 +57,12 @@ export function DirectorsSection({
 				label: `${school.code} — ${school.name}`,
 			})),
 		[schoolOptions],
+	);
+
+	const excludedSchoolIdsByRow = useMemo(
+		() =>
+			new Map(directors.map((director) => [director.key, usedSchoolIds(directors, director.key)])),
+		[directors],
 	);
 
 	return (
@@ -80,6 +96,9 @@ export function DirectorsSection({
 						const rowErrors = errors[director.key];
 						const selectedSchool =
 							selectOptions.find((option) => option.value === director.schoolId) ?? null;
+						const rowSelectOptions = selectOptions.filter(
+							(option) => !excludedSchoolIdsByRow.get(director.key)?.has(option.value),
+						);
 
 						return (
 							<div
@@ -93,11 +112,10 @@ export function DirectorsSection({
 										)}
 									</span>
 									<Button
-										variant="ghost"
+										variant="danger"
 										size="md"
 										disabled={disabled}
-										onClick={() => onRemove(director.key)}
-										className="text-red-700 hover:bg-red-50">
+										onClick={() => onRemove(director.key)}>
 										<TrashIcon className="h-5 w-5" />
 										{t('admin.chartHeads.directors.remove')}
 									</Button>
@@ -113,7 +131,7 @@ export function DirectorsSection({
 									isDisabled={disabled || schoolsLoading}
 									isSearchable
 									value={selectedSchool}
-									options={selectOptions}
+									options={rowSelectOptions}
 									error={rowErrors?.schoolId ? tryTranslate(t, rowErrors.schoolId) : undefined}
 									onChange={(_, option) => {
 										const next = (option as { value?: number } | null)?.value;
@@ -128,6 +146,23 @@ export function DirectorsSection({
 									value={director}
 									onChange={(next) => onChange(director.key, { ...director, ...next })}
 									errors={rowErrors}
+									userOptions={userOptions}
+									usersLoading={usersLoading}
+									disabled={disabled}
+								/>
+
+								<ProgramsSubsection
+									directors={directors}
+									directorKey={director.key}
+									programs={director.programs}
+									onChange={(programKey, next) =>
+										programsController.onChange(director.key, programKey, next)
+									}
+									onAdd={() => programsController.onAdd(director.key)}
+									onRemove={(programKey) => programsController.onRemove(director.key, programKey)}
+									errors={rowErrors?.programs ?? {}}
+									programOptions={programsController.options}
+									programsLoading={programsController.loading}
 									userOptions={userOptions}
 									usersLoading={usersLoading}
 									disabled={disabled}

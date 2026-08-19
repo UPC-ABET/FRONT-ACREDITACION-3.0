@@ -26,9 +26,15 @@ export interface HeadConfig {
 	title: I18nText;
 }
 
+export interface ProgramConfig extends HeadConfig {
+	programId: number;
+	programCode: string;
+}
+
 export interface DirectorConfig extends HeadConfig {
 	schoolId: number;
 	schoolCode: string;
+	programs: ProgramConfig[];
 }
 
 export interface ChartHeadsConfig {
@@ -42,8 +48,13 @@ export interface HeadPayload {
 	title: I18nText;
 }
 
+export interface ProgramPayload extends HeadPayload {
+	programId: number;
+}
+
 export interface DirectorPayload extends HeadPayload {
 	schoolId: number;
+	programs: ProgramPayload[];
 }
 
 export interface ConfigureChartHeadsPayload {
@@ -56,6 +67,20 @@ export interface SchoolOption {
 	id: number;
 	code: string;
 	name: string;
+}
+
+export interface ProgramOption {
+	id: number;
+	code: string;
+	name: string;
+}
+
+export interface ProgramsController {
+	options: ProgramOption[];
+	loading: boolean;
+	onAdd: (directorKey: string) => void;
+	onRemove: (directorKey: string, programKey: string) => void;
+	onChange: (directorKey: string, programKey: string, next: ProgramFormValue) => void;
 }
 
 export interface LinkedStaffRef {
@@ -85,9 +110,15 @@ export interface HeadFormValue {
 	title: I18nText;
 }
 
+export interface ProgramFormValue extends HeadFormValue {
+	key: string;
+	programId: number | null;
+}
+
 export interface DirectorFormValue extends HeadFormValue {
 	key: string;
 	schoolId: number | null;
+	programs: ProgramFormValue[];
 }
 
 export interface ChartHeadsFormValue {
@@ -100,8 +131,13 @@ export interface HeadFormErrors {
 	title?: string;
 }
 
+export interface ProgramFormErrors extends HeadFormErrors {
+	programId?: string;
+}
+
 export interface DirectorFormErrors extends HeadFormErrors {
 	schoolId?: string;
+	programs: Record<string, ProgramFormErrors>;
 }
 
 export interface ChartHeadsFormErrors {
@@ -126,6 +162,12 @@ export interface RawUser {
 }
 
 export interface RawSchool {
+	id: number | string;
+	code: string;
+	name: string | I18nText;
+}
+
+export interface RawProgram {
 	id: number | string;
 	code: string;
 	name: string | I18nText;

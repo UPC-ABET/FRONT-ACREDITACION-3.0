@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Button } from '@/shared/components';
 import { ApiError } from '@/shared/lib';
 import { getErrorMessage } from '@/shared/lib/apiError';
@@ -11,6 +11,7 @@ import { useConfigureChartHeads } from '../hooks';
 import {
 	configToFormValue,
 	emptyDirector,
+	emptyProgram,
 	formToPayload,
 	validateChartHeadsForm,
 } from '../schemas';
@@ -20,6 +21,9 @@ import type {
 	ChartHeadsFormValue,
 	DirectorFormValue,
 	HeadFormValue,
+	ProgramFormValue,
+	ProgramOption,
+	ProgramsController,
 	SchoolOption,
 	UserOption,
 } from '../types';
@@ -33,6 +37,8 @@ interface Props {
 	schoolsLoading: boolean;
 	userOptions: UserOption[];
 	usersLoading: boolean;
+	programOptions: ProgramOption[];
+	programsLoading: boolean;
 	onSuccess: (message: string) => void;
 	onError: (message: string) => void;
 }
@@ -54,6 +60,8 @@ export function ChartHeadsForm({
 	schoolsLoading,
 	userOptions,
 	usersLoading,
+	programOptions,
+	programsLoading,
 	onSuccess,
 	onError,
 }: Props) {
@@ -61,6 +69,7 @@ export function ChartHeadsForm({
 	const languages = useLanguages();
 	const configure = useConfigureChartHeads();
 	const nextDirectorKey = useRef(0);
+	const nextProgramKey = useRef(0);
 
 	const [form, setForm] = useState<ChartHeadsFormValue>(() => configToFormValue(config, languages));
 	const [errors, setErrors] = useState<ChartHeadsFormErrors>(EMPTY_ERRORS);
@@ -86,6 +95,57 @@ export function ChartHeadsForm({
 			...prev,
 			directors: prev.directors.filter((director) => director.key !== key),
 		}));
+
+	const updateDirectorPrograms = useCallback(
+		(directorKey: string, mapPrograms: (programs: ProgramFormValue[]) => ProgramFormValue[]) =>
+			setForm((prev) => ({
+				...prev,
+				directors: prev.directors.map((director) =>
+					director.key === directorKey
+						? { ...director, programs: mapPrograms(director.programs) }
+						: director,
+				),
+			})),
+		[],
+	);
+
+	const addProgram = useCallback(
+		(directorKey: string) => {
+			nextProgramKey.current += 1;
+			updateDirectorPrograms(directorKey, (programs) => [
+				...programs,
+				emptyProgram(`new-program-${nextProgramKey.current}`, languages),
+			]);
+		},
+		[updateDirectorPrograms, languages],
+	);
+
+	const removeProgram = useCallback(
+		(directorKey: string, programKey: string) =>
+			updateDirectorPrograms(directorKey, (programs) =>
+				programs.filter((program) => program.key !== programKey),
+			),
+		[updateDirectorPrograms],
+	);
+
+	const setProgram = useCallback(
+		(directorKey: string, programKey: string, next: ProgramFormValue) =>
+			updateDirectorPrograms(directorKey, (programs) =>
+				programs.map((program) => (program.key === programKey ? next : program)),
+			),
+		[updateDirectorPrograms],
+	);
+
+	const programsController: ProgramsController = useMemo(
+		() => ({
+			options: programOptions,
+			loading: programsLoading,
+			onAdd: addProgram,
+			onRemove: removeProgram,
+			onChange: setProgram,
+		}),
+		[programOptions, programsLoading, addProgram, removeProgram, setProgram],
+	);
 
 	const handleSave = async () => {
 		const { errors: validationErrors, isValid } = validateChartHeadsForm(form, languages);
@@ -129,6 +189,7 @@ export function ChartHeadsForm({
 				schoolsLoading={schoolsLoading}
 				userOptions={userOptions}
 				usersLoading={usersLoading}
+				programsController={programsController}
 				disabled={configure.isPending}
 			/>
 

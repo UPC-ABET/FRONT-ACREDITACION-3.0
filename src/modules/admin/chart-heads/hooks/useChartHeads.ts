@@ -1,10 +1,17 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { configureChartHeads, getAllSchools, getAllUsers, getChartHeadsConfig } from '../services';
+import {
+	configureChartHeads,
+	getAllPrograms,
+	getAllSchools,
+	getAllUsers,
+	getChartHeadsConfig,
+} from '../services';
 import type {
 	ChartHeadsConfig,
 	ConfigureChartHeadsPayload,
+	ProgramOption,
 	SchoolOption,
 	UserOption,
 } from '../types';
@@ -31,6 +38,14 @@ export function useUserOptions() {
 	return useQuery<UserOption[], Error>({
 		queryKey: chartHeadsKeys.users(),
 		queryFn: getAllUsers,
+		staleTime: Infinity,
+	});
+}
+
+export function useProgramOptions() {
+	return useQuery<ProgramOption[], Error>({
+		queryKey: chartHeadsKeys.programs(),
+		queryFn: getAllPrograms,
 		staleTime: Infinity,
 	});
 }

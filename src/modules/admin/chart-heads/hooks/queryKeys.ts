@@ -4,4 +4,5 @@ export const chartHeadsKeys = {
 		[...chartHeadsKeys.all, 'config', academicPeriodId] as const,
 	schools: () => [...chartHeadsKeys.all, 'schools'] as const,
 	users: () => [...chartHeadsKeys.all, 'users'] as const,
+	programs: () => [...chartHeadsKeys.all, 'programs'] as const,
 };

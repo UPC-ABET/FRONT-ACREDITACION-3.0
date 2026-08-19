@@ -841,7 +841,14 @@
 				"remove": "Quitar",
 				"removeNote": "Quitar un director solo deja de actualizarlo al guardar; no lo elimina del organigrama.",
 				"empty": "Aún no hay directores. Agregue uno para comenzar.",
-				"rowLabel": "Director {number}"
+				"rowLabel": "Director {number}",
+				"programs": {
+					"title": "Carreras",
+					"add": "Agregar carrera",
+					"remove": "Quitar",
+					"empty": "Aún no hay carreras asignadas a este director.",
+					"rowLabel": "Carrera {number}"
+				}
 			},
 			"field": {
 				"teacher": "Docente vinculado",
@@ -851,7 +858,9 @@
 				"userLockedPlaceholder": "Definido por el docente vinculado",
 				"title": "Cargo",
 				"school": "Escuela",
-				"schoolPlaceholder": "Selecciona una escuela"
+				"schoolPlaceholder": "Selecciona una escuela",
+				"program": "Carrera",
+				"programPlaceholder": "Selecciona una carrera"
 			},
 			"btn": {
 				"save": "Guardar configuración"
@@ -865,7 +874,9 @@
 				"teacherRequired": "Selecciona un docente.",
 				"titleRequired": "El cargo es obligatorio en todos los idiomas.",
 				"schoolRequired": "Selecciona una escuela.",
-				"duplicateSchool": "Esta escuela ya fue asignada a otro director."
+				"duplicateSchool": "Esta escuela ya fue asignada a otro director.",
+				"programRequired": "Selecciona una carrera.",
+				"duplicateProgram": "Esta carrera ya fue asignada a otro director."
 			}
 		},
 		"configuration": {
@@ -1370,7 +1381,8 @@
 			"entityTypeReadOnly": "El tipo de entidad es de solo lectura.",
 			"entityCodeRequired": "La entidad es obligatoria para este tipo.",
 			"entityNotFound": "No se encontró la entidad seleccionada.",
-			"entityAlreadyAssigned": "La entidad seleccionada ya está asignada a otro nodo."
+			"entityAlreadyAssigned": "La entidad seleccionada ya está asignada a otro nodo.",
+			"programAncestorRequired": "Este nodo debe tener una carrera como ancestro."
 		},
 		"courseOutcomeMapping": {
 			"courseOutOfScope": "El curso no pertenece a la carrera seleccionada.",
@@ -1623,7 +1635,10 @@
 			"schoolNotFound": "La escuela seleccionada no existe.",
 			"staffNotFound": "El docente seleccionado no existe.",
 			"userNotFound": "El usuario seleccionado no existe.",
-			"duplicateSchoolInPayload": "No se puede asignar la misma escuela a dos directores."
+			"duplicateSchoolInPayload": "No se puede asignar la misma escuela a dos directores.",
+			"duplicateProgramInPayload": "No se puede asignar la misma carrera a dos directores.",
+			"programNotFound": "La carrera seleccionada no existe.",
+			"programAssignedToOtherSchool": "Esta carrera ya está configurada en otra escuela."
 		},
 		"evaluation": {
 			"docCannotGrade": "El rol DOCENTE no puede calificar proyectos.",
@@ -3411,6 +3426,10 @@
 			"successTitle": "Carga exitosa",
 			"successMessage": "Carga realizada exitosamente.",
 			"errorTitle": "Error en la carga",
+			"chartsPrecondition": {
+				"noDirector": "Esta escuela no tiene un director configurado para este período.",
+				"noPrograms": "Esta escuela no tiene carreras configuradas para este período."
+			},
 			"error": {
 				"fileRequired": "Selecciona un archivo .xlsx",
 				"periodRequired": "Selecciona un período académico",
