@@ -14,6 +14,7 @@ export default function IFCStatusHistoryPage() {
 	const router = useRouter();
 	const params = useParams<{ id: string }>();
 	const id = Number(params?.id);
+	const backHref = Number.isFinite(id) ? `/ifcs/${id}` : '/ifcs';
 
 	useGlobalAcademicFiltersLockOverride({ school: true, modality: true, period: true });
 
@@ -27,7 +28,7 @@ export default function IFCStatusHistoryPage() {
 		return (
 			<ErrorDialog
 				isOpen
-				onClose={() => router.push(`/ifcs/${id}`)}
+				onClose={() => router.push(backHref)}
 				message={tryTranslate(t, getErrorMessage(error, 'ifcs.error.statusHistoryFailed'))}
 			/>
 		);
@@ -38,7 +39,7 @@ export default function IFCStatusHistoryPage() {
 			<PageHeader
 				title={t('ifcs.statusHistory.title')}
 				action={
-					<Button variant="ghost" size="lg" onClick={() => router.push(`/ifcs/${id}`)}>
+					<Button variant="ghost" size="lg" onClick={() => router.push(backHref)}>
 						<ArrowLeftIcon className="h-5 w-5" />
 						{t('ifcs.statusHistory.btn.back')}
 					</Button>

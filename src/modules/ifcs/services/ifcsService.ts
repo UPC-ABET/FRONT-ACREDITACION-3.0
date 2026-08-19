@@ -9,6 +9,7 @@ import type {
 	IFCPrefill,
 	IFCRow,
 	IFCStatusHistoryEntry,
+	IFCStatusHistoryResponse,
 	IFCViewPayload,
 	PatchIFCBody,
 	RejectIFCBody,
@@ -44,8 +45,11 @@ export async function rejectIFC(id: number, comment: RejectIFCBody['comment']): 
 	await apiPost(`/ifcs/${id}/reject`, { comment });
 }
 
+// No zod guard here, unlike getIFCView/getIFCPrefill: every field is already a plain
+// string or a nullable I18nText, with no id to coerce and no optional field needing a
+// default, so a runtime schema would duplicate what the type already guarantees.
 export async function getIFCStatusHistory(id: number): Promise<IFCStatusHistoryEntry[]> {
-	const envelope = await apiGet<ApiResponse<{ statuses: IFCStatusHistoryEntry[] }>>(
+	const envelope = await apiGet<ApiResponse<IFCStatusHistoryResponse>>(
 		`/ifcs/${id}/status-history`,
 	);
 	if (!envelope?.data) throw new ApiError('ifcs.error.statusHistoryFailed');

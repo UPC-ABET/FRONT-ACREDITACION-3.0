@@ -271,6 +271,10 @@ export interface IFCStatusHistoryEntry {
 	by: string | null;
 }
 
+export interface IFCStatusHistoryResponse {
+	statuses: IFCStatusHistoryEntry[];
+}
+
 export interface RawIfcSchool {
 	id: number | string;
 	code: string;
