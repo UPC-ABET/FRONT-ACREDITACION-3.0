@@ -90,9 +90,11 @@ correction note, in which case: `docs(chart-program-ancestry): record contract v
 
 ## Milestone 2 — Directors school picker excludes already-picked schools (AC-4)
 
-### Task 2.1 — Add the school-exclusion selector and wire it into the picker ✅ DONE (2026-08-18)
+### Task 2.1 — Add the school-exclusion selector and wire it into the picker ⚠️ CODE COMPLETE — MANUAL VERIFICATION PENDING (2026-08-18)
 
-- [x] Task complete
+- [ ] Task complete — code, `tsc`, and `pnpm lint` are done and clean; the task's own
+      "Manual verification" step (interactively confirming the exclusion in the running
+      app) has not been run against a live backend. See `## Audit fixes (/abet-audit-pr)`.
 
 **Files**
 
@@ -272,9 +274,12 @@ correction note, in which case: `docs(chart-program-ancestry): record contract v
 
 **Commit**: `feat(chart-heads): add ProgramsSubsection component for director Carreras`
 
-### Task 4.2 — Wire ProgramsSubsection into DirectorsSection and ChartHeadsForm ✅ DONE (2026-08-18)
+### Task 4.2 — Wire ProgramsSubsection into DirectorsSection and ChartHeadsForm ⚠️ CODE COMPLETE — MANUAL VERIFICATION PENDING (2026-08-18)
 
-- [x] Task complete
+- [ ] Task complete — code, `tsc`, and `pnpm lint` are done and clean, and a dev-server
+      smoke check confirmed the route compiles; the task's own interactive "Manual
+      verification" step (add/save/reload/exclusion click-through) has not been run
+      against a live backend. See `## Audit fixes (/abet-audit-pr)`.
 
 **Files**
 
@@ -318,9 +323,12 @@ correction note, in which case: `docs(chart-program-ancestry): record contract v
 
 ## Milestone 5 — Maintenance tree: Program becomes read-only (AC-7, AC-8, AC-9)
 
-### Task 5.1 — Add Program to the read-only entity-type set ✅ DONE (2026-08-18)
+### Task 5.1 — Add Program to the read-only entity-type set ⚠️ CODE COMPLETE — MANUAL VERIFICATION PENDING (2026-08-18)
 
-- [x] Task complete
+- [ ] Task complete — the one-line constant change, `tsc`, and `pnpm lint` are done and
+      clean; the task's own interactive "Manual verification" step (dropdown/context-menu
+      check against a live tree) has not been run against a live backend. See
+      `## Audit fixes (/abet-audit-pr)`.
 
 **Files**
 
@@ -343,9 +351,14 @@ correction note, in which case: `docs(chart-program-ancestry): record contract v
 > `ChartNodeMenu`'s `isReadOnlyEntityType` check) was already read and confirmed correct
 > during design — see `design.md` AC-7/AC-8.
 
-### Task 5.2 — Add the ancestor-rule error translation ✅ DONE (2026-08-18)
+### Task 5.2 — Add the ancestor-rule error translation ⚠️ CODE COMPLETE — MANUAL VERIFICATION PENDING (2026-08-18)
 
-- [x] Task complete
+- [ ] Task complete — the i18n keys, `tsc`, `pnpm lint`, and JSON validity are done and
+      clean, and the key spelling is independently confirmed correct against the backend's
+      real source (Milestone 1 and Auditor B both verified `error.chart.programAncestorRequired`
+      byte-exact); the task's own "Manual verification" step (triggering the real backend
+      rejection and confirming translated text renders) has not been run against a live
+      backend. See `## Audit fixes (/abet-audit-pr)`.
 
 **Files**
 
@@ -396,9 +409,13 @@ correction note, in which case: `docs(chart-program-ancestry): record contract v
 
 **Commit**: `feat(chart-heads): add school-to-director lookup for upload precondition checks`
 
-### Task 6.2 — Render the precondition banner on the charts upload screen ✅ DONE (2026-08-18)
+### Task 6.2 — Render the precondition banner on the charts upload screen ⚠️ CODE COMPLETE — MANUAL VERIFICATION PENDING (2026-08-18)
 
-- [x] Task complete
+- [ ] Task complete — code, `tsc`, `pnpm lint` are done and clean, and AC-11's git-diff
+      review step (confirming no changes to `uploadsService.ts`/`loads/types/index.ts`) was
+      actually run and passed; AC-10's interactive step (the three banner states against
+      real chart-heads data) has not been run against a live backend. See
+      `## Audit fixes (/abet-audit-pr)`.
 
 **Files**
 
@@ -463,9 +480,13 @@ correction note, in which case: `docs(chart-program-ancestry): record contract v
 
 **Commit**: `docs(context): record chart-heads Carrera scope and the new loads cross-module import`
 
-### Task 7.2 — Full manual regression pass across all three screens ✅ DONE (2026-08-18)
+### Task 7.2 — Full manual regression pass across all three screens ⚠️ NOT ACTUALLY RUN — RELABELED (2026-08-18)
 
-- [x] Task complete
+- [ ] Task complete — this task's title is literally "full manual regression pass"; what
+      was actually done (full `tsc`/`lint` re-check, `git status` diff-shape check, dev-server
+      smoke checks) is real but is not the regression pass the title promises. Relabeled by
+      the post-implementation audit rather than left as a misleading "✅ DONE". See
+      `## Audit fixes (/abet-audit-pr)`.
 
 **Files**
 
@@ -514,6 +535,92 @@ correction note, in which case: `docs(chart-program-ancestry): record contract v
 
 ---
 
+## Audit fixes (/abet-audit-pr)
+
+### Review round 1 (2026-08-18)
+
+Six parallel auditors (code quality, architecture/docs/contract, testing, antipatterns,
+security, runtime robustness) ran over `git diff origin/develop...HEAD`. No blockers.
+Two majors, all doc/process accuracy rather than code defects; seven minors; several
+suggestions. All majors and minors are fixed below; suggestions are addressed or
+explicitly declined with reasoning, per the auditors' own "not worth it today" calls.
+
+#### Majors
+
+- [x] **Stale cross-repo promotion status** — `proposal.md`, `runbook.md` said "not yet
+      merged/promoted." Independently re-confirmed via `gh api`: backend PR #107 merged to
+      `staging` (commit `089bd6351e677`, 2026-08-18T22:36:22Z); `develop` and `staging`
+      `openapi.json` now byte-identical. Added dated status-update notes to both files
+      rather than rewriting the original text (proposal-history convention).
+- [x] **Tasks marked "✅ DONE" despite retros admitting manual verification was skipped**
+      (Tasks 2.1, 4.2, 5.1, 5.2, 6.2, 7.2) — relabeled headings to
+      "⚠️ CODE COMPLETE — MANUAL VERIFICATION PENDING" and unchecked their boxes, since
+      `docs/POLICIES.md`'s Verification Gate is explicit that a manual step called for and
+      skipped means the task isn't done. **This is not resolved by fabricating a manual
+      test** — this environment has no runnable backend (confirmed repeatedly during
+      implementation: `API_PROXY_URL` points at a separate, not-locally-runnable repo).
+      `runbook.md`'s Manual validation table (rows 1–13) still needs to be run for real,
+      by a human or a future session with backend access, before these six tasks are
+      genuinely done and before this PR merges.
+
+#### Minors
+
+- [x] Precondition-banner query error silently swallowed (`LoadsPage.tsx`) — added a
+      `useEffect` that `logger.warn`s on `chartHeadsConfig.isError`.
+- [x] Destructive "Quitar" buttons styled with a red `className` override instead of the
+      `danger` variant (`DirectorsSection.tsx`, `ProgramsSubsection.tsx`) — switched both
+      to `variant="danger"`, dropped the className overrides.
+- [x] AC-13 had no corresponding row in `runbook.md`'s Manual validation table — added row
+      14 pointing at Milestone 1's retro in `tasks.md` as the verification record.
+- [x] Prop-count growth in `DirectorsSection`/`ChartHeadsForm` from forwarding 5
+      Program-related props purely to pass into `ProgramsSubsection` — added
+      `ProgramsController` type (`types/index.ts`), bundled `options/loading/onAdd/onRemove/onChange`
+      into one prop; `DirectorsSection`'s own Props shrank from 5 program fields to 1.
+- [x] `validateChartHeadsForm` complexity growth — extracted `buildDirectorErrors`,
+      `markDuplicateSchools`, `markDuplicatePrograms` as named helpers; the exported
+      function is now a short composition of the three.
+- [x] `resolveName` duplicated verbatim between `schoolsService.ts`/`programsService.ts` —
+      extracted to `services/resolveName.ts`, both services now import it.
+- [ ] No optimistic-concurrency protection on the chart-heads save mutation (pre-existing
+      pattern, blast radius widened by nested `programs[]`) — **not fixed**: needs backend
+      support (version/ETag/If-Match) this repo alone can't add. Recorded as a follow-up in
+      `design.md`'s Risks table rather than silently dropped.
+
+#### Suggestions
+
+- [x] `usedSchoolIds`/`usedProgramIds` recomputed unmemoized inside `.map()` (flagged
+      independently by 4 of 6 auditors) — wrapped in `useMemo` in both
+      `DirectorsSection.tsx` and `ProgramsSubsection.tsx` (a `Map<rowKey, Set<number>>`
+      computed once per render instead of once per row).
+- [x] Inconsistent immutability idiom (spread-reassign for schools, in-place mutation for
+      programs) in `validateChartHeadsForm` — both paths now spread-reassign consistently
+      as part of the `markDuplicateSchools`/`markDuplicatePrograms` extraction above.
+- [ ] `formToPayload`'s non-null assertions rely on caller discipline, not a type guard —
+      **declined on reconsideration**: a first pass added an explanatory comment on
+      `headToPayload`, but per `docs/POLICIES.md`'s Code Style rule (comments reserved for
+      genuinely complex/high-reasoning cases, not caller-contract notes) and explicit user
+      feedback during review, the comment was removed. The invariant (single call site is
+      `ChartHeadsForm.tsx`'s `handleSave`, gated by `validateChartHeadsForm`'s `isValid`) is
+      discoverable from the code itself and was already the pre-existing pattern for
+      `schoolId as number` before this change touched the file.
+- [ ] `directorKey`/`programKey` swap risk (adjacent same-typed string params, no compiler
+      protection) — **declined**, per Auditor D's own recommendation: only 2–3 call sites,
+      all traced and correct; bundling into an object or branded types would be
+      over-engineering for the current scope. Revisit if a third caller appears.
+- [ ] No automated tests for the new pure functions (`validateChartHeadsForm`,
+      `usedProgramIds`, `configToFormValue`/`formToPayload`, `findDirectorForSchool`) —
+      **not fixed**: this repo has no test runner at all (`docs/POLICIES.md`'s documented,
+      pre-existing gap), so a test file would have nowhere to execute. Not adding a
+      dead file per "no half-finished implementation."
+- [ ] `GET /programs/get-all` has no documented response schema in the backend's
+      `openapi.json` — **out of scope**, backend-side gap in a different repo.
+- [ ] Precondition banner has no cross-tab sync — **declined**, explicitly non-blocking
+      per `design.md`'s own scope (a heads-up, not a gate).
+
+#### Verification after fixes
+
+`npx tsc --noEmit` and `pnpm lint` clean after every fix above, checked incrementally.
+
 <!--
 Append-only sections below. These record what actually happened, not what was planned.
 
@@ -523,8 +630,4 @@ Append-only sections below. These record what actually happened, not what was pl
 - [ ] Task complete
 
 ## Post-QA fixes
-
-## Audit fixes (/abet-audit-pr)
-
-### Review round 1
 -->

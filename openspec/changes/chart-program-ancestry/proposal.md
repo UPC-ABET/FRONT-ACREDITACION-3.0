@@ -7,6 +7,15 @@
 proposal covers only the frontend side)
 **Created**: 2026-08-18
 
+> **Status update (2026-08-18, post-implementation audit)**: the backend's PR #107 has
+> since merged and been **promoted to `staging`** — squash-merge commit `089bd6351e677`,
+> confirmed via `gh api` against `openapi.json` on `develop` and `staging` (both now
+> byte-identical, `ChartProgramDto`/`ChartHeadProgramViewDto` present on both). The
+> "not yet merged" framing below describes the state when this proposal was written, not
+> the current state — the cross-repo sequencing gate (backend must reach `staging` before
+> this frontend PR merges) is now satisfied. Left as originally written rather than
+> rewritten, per this repo's "don't rewrite proposal history" convention.
+
 ## Problem
 
 The backend (PR #107, not yet merged) is changing the org-chart domain model so that every
