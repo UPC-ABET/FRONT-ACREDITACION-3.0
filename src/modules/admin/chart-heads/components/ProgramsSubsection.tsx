@@ -55,6 +55,17 @@ export function ProgramsSubsection({
 		[programOptions],
 	);
 
+	const excludedProgramIdsByRow = useMemo(
+		() =>
+			new Map(
+				programs.map((program) => [
+					program.key,
+					usedProgramIds(directors, directorKey, program.key),
+				]),
+			),
+		[directors, directorKey, programs],
+	);
+
 	return (
 		<div className="space-y-3 rounded-md border border-zinc-100 bg-zinc-50/60 p-4">
 			<header className="flex flex-wrap items-center justify-between gap-3">
@@ -80,9 +91,8 @@ export function ProgramsSubsection({
 						const rowErrors = errors[program.key];
 						const selectedProgram =
 							selectOptions.find((option) => option.value === program.programId) ?? null;
-						const excludedProgramIds = usedProgramIds(directors, directorKey, program.key);
 						const rowSelectOptions = selectOptions.filter(
-							(option) => !excludedProgramIds.has(option.value),
+							(option) => !excludedProgramIdsByRow.get(program.key)?.has(option.value),
 						);
 
 						return (
@@ -97,11 +107,10 @@ export function ProgramsSubsection({
 										)}
 									</span>
 									<Button
-										variant="ghost"
+										variant="danger"
 										size="sm"
 										disabled={disabled}
-										onClick={() => onRemove(program.key)}
-										className="text-red-700 hover:bg-red-50">
+										onClick={() => onRemove(program.key)}>
 										<TrashIcon className="h-4 w-4" />
 										{t('admin.chartHeads.directors.programs.remove')}
 									</Button>

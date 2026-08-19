@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Button } from '@/shared/components';
 import { ApiError } from '@/shared/lib';
 import { getErrorMessage } from '@/shared/lib/apiError';
@@ -23,6 +23,7 @@ import type {
 	HeadFormValue,
 	ProgramFormValue,
 	ProgramOption,
+	ProgramsController,
 	SchoolOption,
 	UserOption,
 } from '../types';
@@ -95,36 +96,56 @@ export function ChartHeadsForm({
 			directors: prev.directors.filter((director) => director.key !== key),
 		}));
 
-	const updateDirectorPrograms = (
-		directorKey: string,
-		mapPrograms: (programs: ProgramFormValue[]) => ProgramFormValue[],
-	) =>
-		setForm((prev) => ({
-			...prev,
-			directors: prev.directors.map((director) =>
-				director.key === directorKey
-					? { ...director, programs: mapPrograms(director.programs) }
-					: director,
+	const updateDirectorPrograms = useCallback(
+		(directorKey: string, mapPrograms: (programs: ProgramFormValue[]) => ProgramFormValue[]) =>
+			setForm((prev) => ({
+				...prev,
+				directors: prev.directors.map((director) =>
+					director.key === directorKey
+						? { ...director, programs: mapPrograms(director.programs) }
+						: director,
+				),
+			})),
+		[],
+	);
+
+	const addProgram = useCallback(
+		(directorKey: string) => {
+			nextProgramKey.current += 1;
+			updateDirectorPrograms(directorKey, (programs) => [
+				...programs,
+				emptyProgram(`new-program-${nextProgramKey.current}`, languages),
+			]);
+		},
+		[updateDirectorPrograms, languages],
+	);
+
+	const removeProgram = useCallback(
+		(directorKey: string, programKey: string) =>
+			updateDirectorPrograms(directorKey, (programs) =>
+				programs.filter((program) => program.key !== programKey),
 			),
-		}));
+		[updateDirectorPrograms],
+	);
 
-	const addProgram = (directorKey: string) => {
-		nextProgramKey.current += 1;
-		updateDirectorPrograms(directorKey, (programs) => [
-			...programs,
-			emptyProgram(`new-program-${nextProgramKey.current}`, languages),
-		]);
-	};
+	const setProgram = useCallback(
+		(directorKey: string, programKey: string, next: ProgramFormValue) =>
+			updateDirectorPrograms(directorKey, (programs) =>
+				programs.map((program) => (program.key === programKey ? next : program)),
+			),
+		[updateDirectorPrograms],
+	);
 
-	const removeProgram = (directorKey: string, programKey: string) =>
-		updateDirectorPrograms(directorKey, (programs) =>
-			programs.filter((program) => program.key !== programKey),
-		);
-
-	const setProgram = (directorKey: string, programKey: string, next: ProgramFormValue) =>
-		updateDirectorPrograms(directorKey, (programs) =>
-			programs.map((program) => (program.key === programKey ? next : program)),
-		);
+	const programsController: ProgramsController = useMemo(
+		() => ({
+			options: programOptions,
+			loading: programsLoading,
+			onAdd: addProgram,
+			onRemove: removeProgram,
+			onChange: setProgram,
+		}),
+		[programOptions, programsLoading, addProgram, removeProgram, setProgram],
+	);
 
 	const handleSave = async () => {
 		const { errors: validationErrors, isValid } = validateChartHeadsForm(form, languages);
@@ -168,11 +189,7 @@ export function ChartHeadsForm({
 				schoolsLoading={schoolsLoading}
 				userOptions={userOptions}
 				usersLoading={usersLoading}
-				programOptions={programOptions}
-				programsLoading={programsLoading}
-				onProgramAdd={addProgram}
-				onProgramRemove={removeProgram}
-				onProgramChange={setProgram}
+				programsController={programsController}
 				disabled={configure.isPending}
 			/>
 

@@ -14,8 +14,7 @@ import { usedSchoolIds } from '../schemas';
 import type {
 	ChartHeadsFormErrors,
 	DirectorFormValue,
-	ProgramFormValue,
-	ProgramOption,
+	ProgramsController,
 	SchoolOption,
 	UserOption,
 } from '../types';
@@ -32,11 +31,7 @@ interface Props {
 	schoolsLoading: boolean;
 	userOptions: UserOption[];
 	usersLoading: boolean;
-	programOptions: ProgramOption[];
-	programsLoading: boolean;
-	onProgramAdd: (directorKey: string) => void;
-	onProgramRemove: (directorKey: string, programKey: string) => void;
-	onProgramChange: (directorKey: string, programKey: string, next: ProgramFormValue) => void;
+	programsController: ProgramsController;
 	disabled?: boolean;
 }
 
@@ -50,11 +45,7 @@ export function DirectorsSection({
 	schoolsLoading,
 	userOptions,
 	usersLoading,
-	programOptions,
-	programsLoading,
-	onProgramAdd,
-	onProgramRemove,
-	onProgramChange,
+	programsController,
 	disabled,
 }: Props) {
 	const { t } = useI18n();
@@ -66,6 +57,12 @@ export function DirectorsSection({
 				label: `${school.code} — ${school.name}`,
 			})),
 		[schoolOptions],
+	);
+
+	const excludedSchoolIdsByRow = useMemo(
+		() =>
+			new Map(directors.map((director) => [director.key, usedSchoolIds(directors, director.key)])),
+		[directors],
 	);
 
 	return (
@@ -99,9 +96,8 @@ export function DirectorsSection({
 						const rowErrors = errors[director.key];
 						const selectedSchool =
 							selectOptions.find((option) => option.value === director.schoolId) ?? null;
-						const excludedSchoolIds = usedSchoolIds(directors, director.key);
 						const rowSelectOptions = selectOptions.filter(
-							(option) => !excludedSchoolIds.has(option.value),
+							(option) => !excludedSchoolIdsByRow.get(director.key)?.has(option.value),
 						);
 
 						return (
@@ -116,11 +112,10 @@ export function DirectorsSection({
 										)}
 									</span>
 									<Button
-										variant="ghost"
+										variant="danger"
 										size="md"
 										disabled={disabled}
-										onClick={() => onRemove(director.key)}
-										className="text-red-700 hover:bg-red-50">
+										onClick={() => onRemove(director.key)}>
 										<TrashIcon className="h-5 w-5" />
 										{t('admin.chartHeads.directors.remove')}
 									</Button>
@@ -160,12 +155,14 @@ export function DirectorsSection({
 									directors={directors}
 									directorKey={director.key}
 									programs={director.programs}
-									onChange={(programKey, next) => onProgramChange(director.key, programKey, next)}
-									onAdd={() => onProgramAdd(director.key)}
-									onRemove={(programKey) => onProgramRemove(director.key, programKey)}
+									onChange={(programKey, next) =>
+										programsController.onChange(director.key, programKey, next)
+									}
+									onAdd={() => programsController.onAdd(director.key)}
+									onRemove={(programKey) => programsController.onRemove(director.key, programKey)}
 									errors={rowErrors?.programs ?? {}}
-									programOptions={programOptions}
-									programsLoading={programsLoading}
+									programOptions={programsController.options}
+									programsLoading={programsController.loading}
 									userOptions={userOptions}
 									usersLoading={usersLoading}
 									disabled={disabled}

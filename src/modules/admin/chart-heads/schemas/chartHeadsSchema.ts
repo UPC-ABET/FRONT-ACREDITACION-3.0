@@ -134,17 +134,22 @@ function validateHead(head: HeadFormValue, languages: string[]): HeadFormErrors 
 	return errors;
 }
 
-export function validateChartHeadsForm(
-	form: ChartHeadsFormValue,
+type SchoolOccurrences = Map<number, string[]>;
+type ProgramOccurrences = Map<number, Array<{ directorKey: string; programKey: string }>>;
+
+function buildDirectorErrors(
+	directors: DirectorFormValue[],
 	languages: string[],
-): { errors: ChartHeadsFormErrors; isValid: boolean } {
-	const deanErrors = validateHead(form.dean, languages);
-
+): {
+	directorErrors: ChartHeadsFormErrors['directors'];
+	seenSchoolIds: SchoolOccurrences;
+	seenProgramIds: ProgramOccurrences;
+} {
 	const directorErrors: ChartHeadsFormErrors['directors'] = {};
-	const seenSchoolIds = new Map<number, string[]>();
-	const seenProgramIds = new Map<number, Array<{ directorKey: string; programKey: string }>>();
+	const seenSchoolIds: SchoolOccurrences = new Map();
+	const seenProgramIds: ProgramOccurrences = new Map();
 
-	for (const director of form.directors) {
+	for (const director of directors) {
 		const errors: DirectorFormErrorsDraft = {
 			...validateHead(director, languages),
 			programs: {},
@@ -172,28 +177,62 @@ export function validateChartHeadsForm(
 		directorErrors[director.key] = errors;
 	}
 
-	for (const keys of seenSchoolIds.values()) {
-		if (keys.length > 1) {
-			for (const key of keys) {
-				directorErrors[key] = {
-					...directorErrors[key],
-					schoolId: VALIDATION_KEYS.duplicateSchool,
-				};
-			}
-		}
-	}
+	return { directorErrors, seenSchoolIds, seenProgramIds };
+}
 
-	for (const occurrences of seenProgramIds.values()) {
-		if (occurrences.length > 1) {
-			for (const { directorKey, programKey } of occurrences) {
-				const director = directorErrors[directorKey];
-				director.programs[programKey] = {
-					...director.programs[programKey],
-					programId: VALIDATION_KEYS.duplicateProgram,
-				};
-			}
+function markDuplicateSchools(
+	directorErrors: ChartHeadsFormErrors['directors'],
+	seenSchoolIds: SchoolOccurrences,
+): ChartHeadsFormErrors['directors'] {
+	let next = directorErrors;
+	for (const keys of seenSchoolIds.values()) {
+		if (keys.length <= 1) continue;
+		for (const key of keys) {
+			next = { ...next, [key]: { ...next[key], schoolId: VALIDATION_KEYS.duplicateSchool } };
 		}
 	}
+	return next;
+}
+
+function markDuplicatePrograms(
+	directorErrors: ChartHeadsFormErrors['directors'],
+	seenProgramIds: ProgramOccurrences,
+): ChartHeadsFormErrors['directors'] {
+	let next = directorErrors;
+	for (const occurrences of seenProgramIds.values()) {
+		if (occurrences.length <= 1) continue;
+		for (const { directorKey, programKey } of occurrences) {
+			const director = next[directorKey];
+			next = {
+				...next,
+				[directorKey]: {
+					...director,
+					programs: {
+						...director.programs,
+						[programKey]: {
+							...director.programs[programKey],
+							programId: VALIDATION_KEYS.duplicateProgram,
+						},
+					},
+				},
+			};
+		}
+	}
+	return next;
+}
+
+export function validateChartHeadsForm(
+	form: ChartHeadsFormValue,
+	languages: string[],
+): { errors: ChartHeadsFormErrors; isValid: boolean } {
+	const deanErrors = validateHead(form.dean, languages);
+
+	const { directorErrors, seenSchoolIds, seenProgramIds } = buildDirectorErrors(
+		form.directors,
+		languages,
+	);
+	const withDuplicateSchools = markDuplicateSchools(directorErrors, seenSchoolIds);
+	const withDuplicatePrograms = markDuplicatePrograms(withDuplicateSchools, seenProgramIds);
 
 	const directorHasOwnError = (errors: DirectorFormErrorsDraft): boolean =>
 		Boolean(errors.teacher || errors.title || errors.schoolId);
@@ -201,12 +240,12 @@ export function validateChartHeadsForm(
 		Object.values(errors.programs).some((programErrors) => Object.keys(programErrors).length > 0);
 
 	const deanHasError = Object.keys(deanErrors).length > 0;
-	const directorsHaveError = Object.values(directorErrors).some(
+	const directorsHaveError = Object.values(withDuplicatePrograms).some(
 		(errors) => directorHasOwnError(errors) || directorHasProgramError(errors),
 	);
 
 	return {
-		errors: { dean: deanErrors, directors: directorErrors },
+		errors: { dean: deanErrors, directors: withDuplicatePrograms },
 		isValid: !deanHasError && !directorsHaveError,
 	};
 }

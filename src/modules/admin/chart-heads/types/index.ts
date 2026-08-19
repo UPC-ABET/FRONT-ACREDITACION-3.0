@@ -75,6 +75,14 @@ export interface ProgramOption {
 	name: string;
 }
 
+export interface ProgramsController {
+	options: ProgramOption[];
+	loading: boolean;
+	onAdd: (directorKey: string) => void;
+	onRemove: (directorKey: string, programKey: string) => void;
+	onChange: (directorKey: string, programKey: string, next: ProgramFormValue) => void;
+}
+
 export interface LinkedStaffRef {
 	id: number;
 	code: string | null;
