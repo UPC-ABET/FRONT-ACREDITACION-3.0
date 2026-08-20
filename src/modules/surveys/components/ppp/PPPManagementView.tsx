@@ -12,7 +12,7 @@ import { PPPConfiguration } from './configuration/PPPConfiguration';
 // you switch away — holding them locally would reset the selection on every round trip.
 export function PPPManagementView() {
 	const { t } = useI18n();
-	const [activeTab, setActiveTab] = useState('upload');
+	const [activeTab, setActiveTab] = useState('reports');
 	const [uploadProgramId, setUploadProgramId] = useState(0);
 	const [reportsProgramId, setReportsProgramId] = useState(0);
 	const [configProgramId, setConfigProgramId] = useState(0);
@@ -23,8 +23,8 @@ export function PPPManagementView() {
 	// PPP does not send survey notifications — only GRA and LCFC do. The template
 	// download already lives inside the massive-upload tab, so it has no tab of its own.
 	const TABS = [
-		{ id: 'upload', label: t('surveys.ppp.management.tabUpload') },
 		{ id: 'reports', label: t('surveys.ppp.management.tabReports') },
+		{ id: 'upload', label: t('surveys.ppp.management.tabUpload') },
 		{ id: 'config', label: t('surveys.ppp.management.tabConfig') },
 	];
 

@@ -21,23 +21,15 @@ interface PPPReportsProps {
 }
 
 export function PPPReports({ programId, onProgramChange }: PPPReportsProps) {
-	const { t } = useI18n();
+	const { t, locale } = useI18n();
 	const { academicPeriodId } = useABET();
 	const [commission, setCommission] = useState<OptionItem | null>(null);
 	const [campus, setCampus] = useState<OptionItem | null>(null);
 	const [surveyNumbers, setSurveyNumbers] = useState<OptionItem[]>([]);
-	// Only the value is state — storing the whole option would freeze its label at the
-	// mount-time locale.
-	const [lang, setLang] = useState<'es' | 'en'>('es');
 	const [generating, setGenerating] = useState(false);
 	const panelRef = useRef<PerceptionReportPanelHandle>(null);
 
 	const { commissionOptions, campusOptions } = useSurveyFilterOptions(programId);
-
-	const languageOptions: OptionItem[] = [
-		{ value: 'es', label: t('surveys.perception.spanish') },
-		{ value: 'en', label: t('surveys.perception.english') },
-	];
 
 	if (!academicPeriodId) {
 		return <p className="text-sm text-zinc-500 italic">{t('surveys.shared.selectCycle')}</p>;
@@ -68,16 +60,6 @@ export function PPPReports({ programId, onProgramChange }: PPPReportsProps) {
 						setSurveyNumbers(Array.isArray(value) ? (value as OptionItem[]) : [])
 					}
 				/>
-				<Select
-					name="ppp-language"
-					label={t('surveys.perception.language')}
-					options={languageOptions}
-					value={languageOptions.find((option) => option.value === lang) ?? languageOptions[0]}
-					onChange={(_name, value) => {
-						if (!value || Array.isArray(value)) return;
-						setLang(value.value === 'en' ? 'en' : 'es');
-					}}
-				/>
 			</div>
 
 			<div className="flex items-start justify-between gap-3">
@@ -105,7 +87,7 @@ export function PPPReports({ programId, onProgramChange }: PPPReportsProps) {
 					commissionId: commission ? Number(commission.value) : undefined,
 					campusId: campus ? Number(campus.value) : undefined,
 					surveyNumbers: surveyNumbers.map((option) => Number(option.value)),
-					lang,
+					lang: locale === 'en' ? 'en' : 'es',
 				}}
 			/>
 		</div>

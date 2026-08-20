@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { Button, Select, Toast } from '@/shared/components';
+import { Button, Toast } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { getErrorMessage } from '@/shared/lib';
@@ -24,10 +24,6 @@ export function GRAReports() {
 	const [programId, setProgramId] = useState(0);
 	const [commission, setCommission] = useState<OptionItem | null>(null);
 	const [campus, setCampus] = useState<OptionItem | null>(null);
-	// Defaults to the UI locale but stays user-overridable, so a coordinator browsing in
-	// Spanish can still produce the English report an accreditor asked for. Only the value is
-	// state — storing the whole option would freeze its label at the mount-time locale.
-	const [lang, setLang] = useState<'es' | 'en'>(locale === 'en' ? 'en' : 'es');
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
 		open: false,
 		type: 'success',
@@ -38,11 +34,6 @@ export function GRAReports() {
 	const panelRef = useRef<PerceptionReportPanelHandle>(null);
 
 	const { commissionOptions, campusOptions } = useSurveyFilterOptions(programId);
-
-	const languageOptions: OptionItem[] = [
-		{ value: 'es', label: t('surveys.perception.spanish') },
-		{ value: 'en', label: t('surveys.perception.english') },
-	];
 
 	const dashboardMutation = useMutation({
 		mutationFn: () =>
@@ -93,16 +84,6 @@ export function GRAReports() {
 					onCommissionChange={setCommission}
 					onCampusChange={setCampus}
 				/>
-				<Select
-					name="gra-language"
-					label={t('surveys.perception.language')}
-					options={languageOptions}
-					value={languageOptions.find((option) => option.value === lang) ?? languageOptions[0]}
-					onChange={(_name, value) => {
-						if (!value || Array.isArray(value)) return;
-						setLang(value.value === 'en' ? 'en' : 'es');
-					}}
-				/>
 			</div>
 
 			<div className="flex items-start justify-between gap-3">
@@ -143,7 +124,7 @@ export function GRAReports() {
 				externalFilters={{
 					commissionId: commission ? Number(commission.value) : undefined,
 					campusId: campus ? Number(campus.value) : undefined,
-					lang,
+					lang: locale === 'en' ? 'en' : 'es',
 				}}
 			/>
 
