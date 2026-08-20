@@ -329,6 +329,13 @@ ran in a sandboxed job with no reachable backend — was flagged to the requeste
 3.1's retros above are left as-written (an honest record of what happened _at execution time_)
 rather than rewritten — this section is the append-only record of the resolution.
 
+**Update, same day** — see "Audit fixes, round 2" below: the re-run `/abet-audit-pr` found that
+the round-1 "file no longer available" 404 fix was dead code (a real bug in
+`getErrorMessage`/`handleError` usage, now fixed). If `runbook.md` step 10 (the stale-file race)
+was executed against a backend that actually reproduced the retention purge, it would have shown
+the wrong toast copy — this is worth a deliberate re-run of step 10 specifically against the
+now-fixed code, rather than assuming the original "resolved" note still covers it.
+
 ## Audit fixes (/abet-audit-pr)
 
 Findings from the `/abet-audit-pr` synthesis (6 parallel auditors), resolved in one pass. See the
@@ -409,3 +416,63 @@ New cross-module import introduced by the `AbetScope` fix (`scraping-exports` �
 
 `npx tsc --noEmit` and `pnpm exec eslint` (targeted at every touched file) both clean after all
 fixes above.
+
+## Audit fixes, round 2 (/abet-audit-pr re-run at PR-creation time)
+
+Before opening the PR, HEAD had moved (round-1 fix commits), so `/abet-audit-pr` was re-run in
+full (6 fresh auditors) per this repo's "audit must run on current HEAD" rule. Two of round 1's
+claimed fixes were confirmed **not actually working**, independently caught by 4–6 of the 6
+auditors each — real bugs, not false positives:
+
+- [x] **The round-1 "file no longer available" 404 fix was dead code.** `handleError`/`onError`
+      route through `getErrorMessage(error, fallbackKey)`
+      (`src/shared/lib/apiError.ts`), which returns `error.message` unconditionally whenever
+      `error instanceof Error` — true for every `ApiError` — so the `fallbackKey` argument
+      (`'scraping.exports.actions.fileNoLongerAvailable'`) was never actually used; the toast always
+      showed the backend's own message instead. **This means `runbook.md` step 10, if genuinely run
+      against a live backend that reproduced the stale-file race, would have shown the wrong copy —
+      worth re-running step 10 specifically now that this is fixed**, since the "Outstanding before
+      merge" resolution note didn't record step-by-step results to check against. Fixed: added a
+      dedicated `onFileNoLongerAvailable: () => void` callback prop on `ScrapingExportCard`, wired to
+      `showToast(t('scraping.exports.actions.fileNoLongerAvailable'), 'error')` directly in the
+      parent (bypassing `handleError`/`getErrorMessage` entirely for this one case); `UploadPanel`'s
+      equivalent branch now calls `showToast` directly too, for the same reason.
+- [x] **`UploadPanel`'s regenerate call reintroduced the exact scope-closure race Fix #1 (round 1)
+      had just fixed in the hook**, because `UploadPanel` never adopted `useRegenerateScrapingExport`
+      — it called the raw service function and manually invalidated with a render-time `scope`
+      closure instead of a mutation-time one. Fixed: `UploadPanel` now calls
+      `useRegenerateScrapingExport(scrapingKind ?? 'staff')` (hook called unconditionally per rules
+      of hooks; only ever actually invoked when `scrapingKind` is real) and awaits
+      `regenerate.mutateAsync({ lang: locale, scope })`, exactly like `ScrapingExportsView` does — no
+      more hand-rolled invalidation logic in `UploadPanel` at all.
+- [x] **`period`/`periodo` "rename" from round 1 wasn't a real rename** — the backend's wire field
+      is still `periodo` (confirmed against the live `openapi.json`); nothing translated it to
+      `period` at the service boundary, so `ScrapingExportGenerated.period` was silently `undefined`
+      at runtime despite being typed `string`. Dormant (nothing read `.period` yet) but a landmine.
+      Fixed: `scrapingExportsService.ts` now has an explicit `ScrapingExportStatusWire` type for the
+      raw response and a `normalizeStatusResponse(raw, exportType, lang)` that maps `wire.periodo` →
+      `period` (and derives `exportType`/`lang` from the function's own known arguments rather than
+      trusting the echoed wire values, which are equally unguaranteed by the spec).
+- [x] **`useScrapingExportStatus` took `scope: AbetScope` as a parameter instead of calling
+      `useAbetScope()` internally**, deviating from the codebase's own documented convention
+      (`useAbetScope.ts`: "Hooks call this internally; call sites do not pass the scope" — see
+      `usePrograms`/`useStudyPlanCourses` for precedent). Fixed: `useScrapingExportStatus` now calls
+      `useAbetScope()` itself and takes only `(exportType, lang)`.
+- [x] **Icon fidelity regression** — the unified regenerate/generate/retry button always rendered
+      `ArrowPathIcon`, even for the first-time "generate" case, where the pre-refactor code used
+      `ArrowDownTrayIcon` (nothing to "re"-generate yet). Fixed: icon now follows the same
+      `failed || canDownload` branch the label already used.
+- [x] **Redundant double-narrowing** — `canDownload` called `isScrapingExportDownloadable(data)`
+      after `generated` had already narrowed the same union via `isScrapingExportGenerated`. Fixed:
+      `canDownload` now reuses `generated` directly (`generated !== null && generated.fileName !== null`).
+
+Not fixed, explicitly deferred: a request-time (not render-time) scope guard for the narrow
+window between `UploadPanel`'s status check and its regenerate call if the top-bar period changes
+mid-flight — the fix above closes the _invalidation_ half of that race (via `mutateAsync`'s own
+variables) but a period switch between the `getScrapingExportStatus` await and the `regenerate`
+call would still start a regenerate under whatever scope is active at call time, which is
+arguably correct (it's what the user's UI actually reflects at that moment) rather than a bug —
+noted here for visibility, not treated as a defect.
+
+`npx tsc --noEmit` and `pnpm exec eslint` (targeted at every touched file) clean after round 2.
+Dead-code sweep re-run, clean.
