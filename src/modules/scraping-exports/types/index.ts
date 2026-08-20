@@ -9,7 +9,7 @@ export type ScrapingExportRunStatus = 'running' | 'completed' | 'failed';
 
 export interface ScrapingExportGenerated {
 	exportType: ScrapingExportType;
-	periodo: string;
+	period: string;
 	lang: string;
 	status: ScrapingExportRunStatus;
 	fileName: string | null;
@@ -19,3 +19,16 @@ export interface ScrapingExportGenerated {
 }
 
 export type ScrapingExportStatusResponse = { status: 'notGenerated' } | ScrapingExportGenerated;
+
+export function isScrapingExportGenerated(
+	response: ScrapingExportStatusResponse,
+): response is ScrapingExportGenerated {
+	return response.status !== 'notGenerated';
+}
+
+// Download always serves the last *successfully* generated file, independent of the current
+// run's status (see docs/CONTEXT.md § Business Rules) — so this is gated on `fileName`, not on
+// `status === 'completed'`.
+export function isScrapingExportDownloadable(response: ScrapingExportStatusResponse): boolean {
+	return isScrapingExportGenerated(response) && response.fileName !== null;
+}

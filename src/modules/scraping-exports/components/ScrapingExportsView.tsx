@@ -4,81 +4,66 @@ import { useState } from 'react';
 import { ArrowDownTrayIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { Alert, AlertDescription, Badge, Button, Card, Spinner, Toast } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
-import { useABET, useI18n } from '@/providers';
-import { EXPORT_FALLBACK_FILE_NAME, SCRAPING_EXPORT_TYPES } from '../constants';
+import { ApiError } from '@/shared/lib';
+import { tryTranslate } from '@/shared/utils';
+import { useI18n } from '@/providers';
+import { type AbetScope, useAbetScope } from '@/modules/academic';
+import { SCRAPING_EXPORT_TYPES } from '../constants';
 import { useRegenerateScrapingExport, useScrapingExportStatus } from '../hooks';
 import { downloadScrapingExport } from '../services';
-import type {
-	ScrapingExportGenerated,
-	ScrapingExportStatusResponse,
-	ScrapingExportType,
-} from '../types';
-
-function isGenerated(response: ScrapingExportStatusResponse): response is ScrapingExportGenerated {
-	return response.status !== 'notGenerated';
-}
+import { isScrapingExportDownloadable, isScrapingExportGenerated } from '../types';
+import type { ScrapingExportType } from '../types';
 
 interface ScrapingExportCardProps {
 	exportType: ScrapingExportType;
 	lang: 'es' | 'en';
-	schoolId: number | null;
-	modalityTypeId: number | null;
-	academicPeriodId: number | null;
+	scope: AbetScope;
 	onDownloaded: () => void;
 	onError: (error: unknown, fallbackKey?: string) => void;
 }
 
 // One card per export type, all driven by the same generic status/regenerate/download contract.
-// Download stays available whenever a successful file exists (`fileName !== null`), independent
-// of the current run's status — that's what lets it keep serving the previous file while a
-// regenerate is in flight.
 function ScrapingExportCard({
 	exportType,
 	lang,
-	schoolId,
-	modalityTypeId,
-	academicPeriodId,
+	scope,
 	onDownloaded,
 	onError,
 }: ScrapingExportCardProps) {
 	const { t } = useI18n();
 	const [downloading, setDownloading] = useState(false);
-	const statusQuery = useScrapingExportStatus(
-		exportType,
-		schoolId,
-		modalityTypeId,
-		academicPeriodId,
-		lang,
-	);
-	const regenerate = useRegenerateScrapingExport(
-		exportType,
-		schoolId,
-		modalityTypeId,
-		academicPeriodId,
-	);
+	const statusQuery = useScrapingExportStatus(exportType, scope, lang);
+	const regenerate = useRegenerateScrapingExport(exportType);
 
 	const data = statusQuery.data;
 	const status = data?.status ?? null;
-	const generated = data && isGenerated(data) ? data : null;
-	const canDownload = generated !== null && generated.fileName !== null;
+	const generated = data && isScrapingExportGenerated(data) ? data : null;
+	const canDownload = data !== undefined && isScrapingExportDownloadable(data);
 	const running = status === 'running';
+	const failed = status === 'failed';
 
 	const handleDownload = async () => {
 		setDownloading(true);
 		try {
-			await downloadScrapingExport(exportType, lang, EXPORT_FALLBACK_FILE_NAME[exportType]);
+			await downloadScrapingExport(exportType, lang);
 			onDownloaded();
 		} catch (error) {
-			onError(error, 'scraping.exports.actions.downloadFailed');
+			if (error instanceof ApiError && error.status === 404) {
+				onError(error, 'scraping.exports.actions.fileNoLongerAvailable');
+				statusQuery.refetch();
+			} else {
+				onError(error, 'scraping.exports.actions.downloadFailed');
+			}
 		} finally {
 			setDownloading(false);
 		}
 	};
 
 	const handleRegenerate = () => {
-		regenerate.mutate(lang, {
-			onError: (error) => onError(error, 'scraping.exports.actions.startFailed'),
-		});
+		regenerate.mutate(
+			{ lang, scope },
+			{ onError: (error) => onError(error, 'scraping.exports.actions.startFailed') },
+		);
 	};
 
 	return (
@@ -88,9 +73,7 @@ function ScrapingExportCard({
 					<p className="text-sm font-semibold text-zinc-800">
 						{t(`scraping.exports.items.${exportType}.title`)}
 					</p>
-					{status === 'failed' && (
-						<Badge variant="danger">{t('scraping.exports.actions.badgeFailed')}</Badge>
-					)}
+					{failed && <Badge variant="danger">{t('scraping.exports.actions.badgeFailed')}</Badge>}
 					{status === 'completed' && (
 						<Badge variant="success">{t('scraping.exports.actions.badgeCompleted')}</Badge>
 					)}
@@ -105,13 +88,18 @@ function ScrapingExportCard({
 						{t('scraping.exports.actions.statusRunning')}
 					</p>
 				)}
-				{status === 'failed' && (
+				{failed && (
 					<Alert variant="destructive" className="mt-2">
 						<AlertDescription>
 							{generated?.errorMessage
-								? generated.errorMessage
+								? tryTranslate(t, generated.errorMessage)
 								: t('scraping.exports.actions.statusFailed')}
 						</AlertDescription>
+					</Alert>
+				)}
+				{statusQuery.isError && (
+					<Alert variant="destructive" className="mt-2">
+						<AlertDescription>{t('scraping.exports.actions.statusFetchFailed')}</AlertDescription>
 					</Alert>
 				)}
 			</div>
@@ -133,7 +121,7 @@ function ScrapingExportCard({
 					loading={regenerate.isPending}
 					disabled={running || regenerate.isPending || statusQuery.isLoading}>
 					<ArrowPathIcon className="h-4 w-4" />
-					{status === 'failed'
+					{failed
 						? t('scraping.exports.actions.retry')
 						: canDownload
 							? t('scraping.exports.actions.regenerate')
@@ -149,14 +137,14 @@ function ScrapingExportCard({
 // files line up with the uploads/* templates, so they can be fed straight into the load module.
 export function ScrapingExportsView() {
 	const { t, locale } = useI18n();
-	const { schoolId, modalityTypeId, academicPeriodId } = useABET();
+	const scope = useAbetScope();
 	const { toast, showToast, handleError, clearToast } = useApiErrorToast();
 	const lang = locale === 'en' ? 'en' : 'es';
 
 	return (
 		<div className="w-full space-y-4">
 			<Card title={t('scraping.exports.title')} description={t('scraping.exports.subtitle')}>
-				{academicPeriodId === null ? (
+				{scope.academicPeriodId === null ? (
 					<Alert variant="warning">{t('scraping.exports.selectPeriod')}</Alert>
 				) : (
 					<div className="space-y-3">
@@ -165,9 +153,7 @@ export function ScrapingExportsView() {
 								key={exportType}
 								exportType={exportType}
 								lang={lang}
-								schoolId={schoolId}
-								modalityTypeId={modalityTypeId}
-								academicPeriodId={academicPeriodId}
+								scope={scope}
 								onDownloaded={() => showToast(t('scraping.exports.actions.downloaded'), 'success')}
 								onError={handleError}
 							/>

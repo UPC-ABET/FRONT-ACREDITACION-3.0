@@ -1,7 +1,7 @@
 import { TYPE_CODES } from '@/shared/constants';
 import type { ScrapingExportType } from '../types';
 
-export const SCRAPING_EXPORT_TYPES: ScrapingExportType[] = [
+export const SCRAPING_EXPORT_TYPES: readonly ScrapingExportType[] = [
 	'staff',
 	'sections',
 	'enrolledStudents',
