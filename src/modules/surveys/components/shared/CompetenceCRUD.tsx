@@ -86,7 +86,10 @@ export function CompetenceCRUD({
 	});
 
 	useEffect(() => {
-		if (cycleId) onLoad(cycleId, programId);
+		// Mounted even before a program is picked (so the buttons/tables are visible right away) —
+		// wait for a real programId, otherwise this would fetch every program's competences unfiltered.
+		if (!cycleId || !programId) return;
+		onLoad(cycleId, programId);
 	}, [cycleId, programId, onLoad]);
 
 	const { data: allCommissionGroups = [] } = useQuery({
@@ -310,6 +313,7 @@ export function CompetenceCRUD({
 				columns={columns}
 				data={filteredItems}
 				isLoading={loading}
+				emptyMessage={!programId ? t('surveys.shared.selectProgram') : undefined}
 				title={
 					competenceType === 'specific'
 						? t('surveys.competence.table.titleSpecific')

@@ -122,15 +122,37 @@ function pickEn(value: I18nOrString): string {
 	return '';
 }
 
+interface ProgramOutcomeGroup {
+	commissionId: number;
+	commissionCode?: string;
+	outcomes?: ProgramOutcome[];
+}
+
 /**
  * Real outcomes of a program for a period (accreditation.outcomes), grouped by
- * commission on the backend and flattened here. PPP/GRA/LCFC all measure these
- * same outcomes, so this list is the source of truth for building survey configs.
+ * commission on the backend. PPP/GRA/LCFC all measure these same outcomes, so
+ * this is the source of truth for building survey configs.
  */
-export async function listProgramOutcomes(programId: number): Promise<ProgramOutcome[]> {
+async function listProgramOutcomeGroups(programId: number): Promise<ProgramOutcomeGroup[]> {
 	const res = await apiPost('gra/outcomes/list', { programId });
-	const groups = getApiData<Array<{ outcomes?: ProgramOutcome[] }>>(res) ?? [];
+	return getApiData<ProgramOutcomeGroup[]>(res) ?? [];
+}
+
+export async function listProgramOutcomes(programId: number): Promise<ProgramOutcome[]> {
+	const groups = await listProgramOutcomeGroups(programId);
 	return groups.flatMap((g) => g.outcomes ?? []);
+}
+
+/**
+ * A program can be linked to several commissions (e.g. Ingeniería de Sistemas carries
+ * EAC, CAC and ICT at once) but PPP's config should only cover the program's main ABET
+ * commission — same preference LCFC already applies when auto-assigning a commission to
+ * a generated config (`lcfc-config.service.ts` `resolvePreferredCommissionId`): EAC first,
+ * otherwise whichever commission the program actually has.
+ */
+function pickPreferredCommissionGroup(groups: ProgramOutcomeGroup[]): ProgramOutcomeGroup | null {
+	if (groups.length === 0) return null;
+	return groups.find((g) => (g.commissionCode ?? '').toUpperCase() === 'EAC') ?? groups[0];
 }
 
 /**
@@ -143,7 +165,8 @@ export async function generatePPPConfigFromOutcomes(
 	programId: number,
 	academicPeriodId: number,
 ): Promise<{ created: number; skipped: number; total: number }> {
-	const outcomes = await listProgramOutcomes(programId);
+	const groups = await listProgramOutcomeGroups(programId);
+	const outcomes = pickPreferredCommissionGroup(groups)?.outcomes ?? [];
 	let created = 0;
 	let skipped = 0;
 	for (let i = 0; i < outcomes.length; i++) {
