@@ -18,7 +18,13 @@ import { useApiErrorToast } from '@/shared/hooks';
 import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import type { TypeOption } from '@/modules/core';
-import { downloadScrapingExport, scrapingExportForUploadType } from '@/modules/scraping-exports';
+import {
+	downloadScrapingExport,
+	EXPORT_FALLBACK_FILE_NAME,
+	getScrapingExportStatus,
+	regenerateScrapingExport,
+	scrapingExportForUploadType,
+} from '@/modules/scraping-exports';
 import { downloadErrorExcel, useDownloadTemplate, useUpload } from '../hooks';
 import type { UploadResult } from '../types';
 import { cn } from '@/shared/lib/utils';
@@ -43,7 +49,7 @@ export default function UploadPanel({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const upload = useUpload(type.code);
 	const downloadTemplate = useDownloadTemplate(type.code);
-	const { toast, handleError, clearToast } = useApiErrorToast();
+	const { toast, showToast, handleError, clearToast } = useApiErrorToast();
 	const [file, setFile] = useState<File | null>(null);
 	const [localError, setLocalError] = useState<string | null>(null);
 	const [result, setResult] = useState<UploadResult | null>(null);
@@ -106,12 +112,25 @@ export default function UploadPanel({
 		);
 	};
 
-	// Scoped to the active school/period: the api client forwards X-School-Id / X-Academic-Period-Id automatically.
+	// Scoped to the active school/period: the api client forwards X-School-Id / X-Academic-Period-Id
+	// automatically. Download only ever serves the last *successful* file and never blocks on an
+	// in-flight regenerate, so this checks status first: a prior success downloads immediately;
+	// otherwise it triggers regeneration (skipped if one is already running, to avoid a guaranteed
+	// 409) and points the user at the Exports tab, where the full status/regenerate/download flow
+	// lives.
 	const handleWebScraping = async () => {
 		if (!scrapingKind) return;
 		setScrapingPending(true);
 		try {
-			await downloadScrapingExport(scrapingKind, locale);
+			const status = await getScrapingExportStatus(scrapingKind, locale);
+			if (status.status !== 'notGenerated' && status.fileName) {
+				await downloadScrapingExport(scrapingKind, locale, EXPORT_FALLBACK_FILE_NAME[scrapingKind]);
+			} else if (status.status === 'running') {
+				showToast(t('loads.upload.webScrapingAlreadyRunning'), 'info');
+			} else {
+				await regenerateScrapingExport(scrapingKind, locale);
+				showToast(t('loads.upload.webScrapingStarted'), 'success');
+			}
 		} catch (err) {
 			handleError(err, 'loads.upload.error.webScrapingFailed');
 		} finally {
