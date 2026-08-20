@@ -2,7 +2,6 @@
 
 import { useRef, useState } from 'react';
 import type { DragEvent } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { Download, FileSpreadsheet, Upload } from 'lucide-react';
 import {
 	Alert,
@@ -25,9 +24,8 @@ import {
 	downloadScrapingExport,
 	getScrapingExportStatus,
 	isScrapingExportDownloadable,
-	regenerateScrapingExport,
 	scrapingExportForUploadType,
-	scrapingExportsQueryKeys,
+	useRegenerateScrapingExport,
 } from '@/modules/scraping-exports';
 import { downloadErrorExcel, useDownloadTemplate, useUpload } from '../hooks';
 import type { UploadResult } from '../types';
@@ -51,7 +49,6 @@ export default function UploadPanel({
 }: UploadPanelProps) {
 	const { t, locale } = useI18n();
 	const inputRef = useRef<HTMLInputElement>(null);
-	const queryClient = useQueryClient();
 	const scope = useAbetScope();
 	const upload = useUpload(type.code);
 	const downloadTemplate = useDownloadTemplate(type.code);
@@ -66,6 +63,10 @@ export default function UploadPanel({
 	const [scrapingPending, setScrapingPending] = useState(false);
 
 	const scrapingKind = scrapingExportForUploadType(type.code);
+	// Hooks must be called unconditionally: falls back to an arbitrary export type when this
+	// upload type has none, but `handleWebScraping` returns early in that case, so `regenerate`
+	// is only ever actually invoked when `scrapingKind` is real.
+	const regenerate = useRegenerateScrapingExport(scrapingKind ?? 'staff');
 
 	const handleFileChange = (selected: File | null) => {
 		setLocalError(null);
@@ -132,15 +133,12 @@ export default function UploadPanel({
 			} else if (status.status === 'running') {
 				showToast(t('loads.upload.webScrapingAlreadyRunning'), 'info');
 			} else {
-				await regenerateScrapingExport(scrapingKind, locale);
-				queryClient.invalidateQueries({
-					queryKey: scrapingExportsQueryKeys.status(scrapingKind, scope, locale),
-				});
+				await regenerate.mutateAsync({ lang: locale, scope });
 				showToast(t('loads.upload.webScrapingStarted'), 'success');
 			}
 		} catch (err) {
 			if (err instanceof ApiError && err.status === 404) {
-				handleError(err, 'scraping.exports.actions.fileNoLongerAvailable');
+				showToast(t('scraping.exports.actions.fileNoLongerAvailable'), 'error');
 			} else {
 				handleError(err, 'loads.upload.error.webScrapingFailed');
 			}
