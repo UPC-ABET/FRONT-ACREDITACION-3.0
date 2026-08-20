@@ -422,6 +422,24 @@ here would later be read as authoritative.
    persisted, and never returned by any endpoint afterward. — `src/modules/planner/types`,
    `src/modules/planner/components/PlannerSessionStatusCard.tsx`,
    `src/modules/planner/components/PlannerCredentialsCard.tsx`
+5. **A scraping export's `download` always serves the last _successfully_ generated file,
+   independent of whatever the current run's status is.** The `fileName` field on
+   `GET /scraping/exports/:exportType/status` reflects the last success, not the current
+   attempt — so a `running` or `failed` status can still carry a non-null `fileName` if an
+   earlier generation for that export/period/lang succeeded. The frontend's Download action
+   is gated on `fileName !== null`, not on `status === 'completed'`, so a regenerate in
+   progress (or one that later fails) never hides a file that already downloads fine.
+   `download` only 404s when there has truly never been a successful generation for that
+   `(exportType, periodo, lang)`.
+6. **Grades RC's regenerate is globally single-flighted across all academic periods — the
+   other four export types are not.** A `409` from `POST /scraping/exports/staff/regenerate`
+   (etc.) means that exact export/period/lang is already generating; a `409` from
+   `.../grades-rc/regenerate` can mean a _different period's_ grades-rc job is running, since
+   the backend allows only one grades-rc generation at a time system-wide. The frontend must
+   not render period-specific copy for this conflict — see
+   `src/modules/scraping-exports/components/ScrapingExportsView.tsx`, which uses one generic
+   "already generating" message for all five export types rather than one implying "this
+   period" for grades-rc. — `src/modules/scraping-exports/`
 
 ---
 
