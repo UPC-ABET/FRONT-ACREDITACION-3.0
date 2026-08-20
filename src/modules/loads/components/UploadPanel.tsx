@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import type { DragEvent } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Download, FileSpreadsheet, Upload } from 'lucide-react';
 import {
 	Alert,
@@ -15,15 +16,18 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
+import { ApiError } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import type { TypeOption } from '@/modules/core';
+import { useAbetScope } from '@/modules/academic';
 import {
 	downloadScrapingExport,
-	EXPORT_FALLBACK_FILE_NAME,
 	getScrapingExportStatus,
+	isScrapingExportDownloadable,
 	regenerateScrapingExport,
 	scrapingExportForUploadType,
+	scrapingExportsQueryKeys,
 } from '@/modules/scraping-exports';
 import { downloadErrorExcel, useDownloadTemplate, useUpload } from '../hooks';
 import type { UploadResult } from '../types';
@@ -47,6 +51,8 @@ export default function UploadPanel({
 }: UploadPanelProps) {
 	const { t, locale } = useI18n();
 	const inputRef = useRef<HTMLInputElement>(null);
+	const queryClient = useQueryClient();
+	const scope = useAbetScope();
 	const upload = useUpload(type.code);
 	const downloadTemplate = useDownloadTemplate(type.code);
 	const { toast, showToast, handleError, clearToast } = useApiErrorToast();
@@ -112,27 +118,32 @@ export default function UploadPanel({
 		);
 	};
 
-	// Scoped to the active school/period: the api client forwards X-School-Id / X-Academic-Period-Id
-	// automatically. Download only ever serves the last *successful* file and never blocks on an
-	// in-flight regenerate, so this checks status first: a prior success downloads immediately;
-	// otherwise it triggers regeneration (skipped if one is already running, to avoid a guaranteed
-	// 409) and points the user at the Exports tab, where the full status/regenerate/download flow
-	// lives.
+	// Checks status before acting because download only ever serves the last *successful* file and
+	// never blocks on an in-flight regenerate: a prior success downloads immediately, otherwise
+	// this triggers regeneration (skipped if one is already running, to avoid a guaranteed 409)
+	// and points the user at the Exports tab, where the full status/regenerate/download flow lives.
 	const handleWebScraping = async () => {
 		if (!scrapingKind) return;
 		setScrapingPending(true);
 		try {
 			const status = await getScrapingExportStatus(scrapingKind, locale);
-			if (status.status !== 'notGenerated' && status.fileName) {
-				await downloadScrapingExport(scrapingKind, locale, EXPORT_FALLBACK_FILE_NAME[scrapingKind]);
+			if (isScrapingExportDownloadable(status)) {
+				await downloadScrapingExport(scrapingKind, locale);
 			} else if (status.status === 'running') {
 				showToast(t('loads.upload.webScrapingAlreadyRunning'), 'info');
 			} else {
 				await regenerateScrapingExport(scrapingKind, locale);
+				queryClient.invalidateQueries({
+					queryKey: scrapingExportsQueryKeys.status(scrapingKind, scope, locale),
+				});
 				showToast(t('loads.upload.webScrapingStarted'), 'success');
 			}
 		} catch (err) {
-			handleError(err, 'loads.upload.error.webScrapingFailed');
+			if (err instanceof ApiError && err.status === 404) {
+				handleError(err, 'scraping.exports.actions.fileNoLongerAvailable');
+			} else {
+				handleError(err, 'loads.upload.error.webScrapingFailed');
+			}
 		} finally {
 			setScrapingPending(false);
 		}
