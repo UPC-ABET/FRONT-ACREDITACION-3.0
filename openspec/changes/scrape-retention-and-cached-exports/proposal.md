@@ -133,18 +133,18 @@ status-polling pattern grades-rc already uses, for all five.
 
 ### Traceability
 
-| AC  | Criterion                                               | Satisfied by |
-| --- | ------------------------------------------------------- | ------------ |
-| 1   | Status call per export type, period/lang-scoped         | TBD          |
-| 2   | No-period gating, standard notice                       | TBD          |
-| 3   | Download ignores concurrent `running` regenerate        | TBD          |
-| 4   | `notGenerated`/`failed` → regenerate as primary action  | TBD          |
-| 5   | 409 handling, grades-rc global single-flight copy       | TBD          |
-| 6   | Query key includes exportType + period + lang           | TBD          |
-| 7   | Old contract fully removed, no dead references          | TBD          |
-| 8   | UploadPanel button: download-latest-else-regenerate     | TBD          |
-| 9   | New error i18n keys in both locale files                | TBD          |
-| 10  | Contract verified against staging before implementation | TBD          |
+| AC  | Criterion                                               | Satisfied by                                                                                                         |
+| --- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 1   | Status call per export type, period/lang-scoped         | `src/modules/scraping-exports/hooks/useScrapingExports.ts` (`useScrapingExportStatus`)                               |
+| 2   | No-period gating, standard notice                       | `src/modules/scraping-exports/components/ScrapingExportsView.tsx`                                                    |
+| 3   | Download ignores concurrent `running` regenerate        | `src/modules/scraping-exports/types/index.ts` (`isScrapingExportDownloadable`), used in `ScrapingExportsView.tsx`    |
+| 4   | `notGenerated`/`failed` → regenerate as primary action  | `src/modules/scraping-exports/components/ScrapingExportsView.tsx` (`ScrapingExportCard`)                             |
+| 5   | 409 handling, grades-rc global single-flight copy       | `src/modules/scraping-exports/hooks/useScrapingExports.ts` (`useRegenerateScrapingExport`), `docs/CONTEXT.md` rule 6 |
+| 6   | Query key includes exportType + period + lang           | `src/modules/scraping-exports/hooks/useScrapingExports.ts` (`scrapingExportsQueryKeys`, `AbetScope`)                 |
+| 7   | Old contract fully removed, no dead references          | Whole `src/modules/scraping-exports/` module rewrite; verified by `rg` sweep (`tasks.md` Task 4.2)                   |
+| 8   | UploadPanel button: download-latest-else-regenerate     | `src/modules/loads/components/UploadPanel.tsx` (`handleWebScraping`)                                                 |
+| 9   | New error i18n keys in both locale files                | `src/language/locales/{es,en}.json` (`error.scrapingExport.*`)                                                       |
+| 10  | Contract verified against staging before implementation | `tasks.md` Task 0.1; re-verified at PR-creation time against `staging@f584e72`                                       |
 
 ## Dependencies
 
