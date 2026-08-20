@@ -34,7 +34,7 @@ import {
 	useDeletePerformanceLevel,
 	usePerformanceLevelForm,
 } from '@/modules/academic/hooks';
-import { useTypeGroups, useTypes } from '@/modules/core/hooks';
+import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { TYPE_GROUP_CODES } from '@/shared/constants';
 import { DEFAULT_PERFORMANCE_LEVEL_COLOR } from '@/modules/academic/constants';
 import { performanceLevelFormSchema } from '@/modules/academic/schemas';
@@ -177,14 +177,21 @@ export function PerformanceLevelsPage() {
 
 	const { data: academicPeriods = [] } = useAcademicPeriods({});
 
-	const { data: typeGroups } = useTypeGroups({
-		code: TYPE_GROUP_CODES.PERFORMANCE_LEVEL_INSTRUMENT,
-	});
-	const typeGroupId = typeGroups?.[0]?.id ?? null;
-
-	const { data: instrumentTypes = [] } = useTypes(
-		{ typeGroupId: typeGroupId ?? undefined },
-		{ enabled: typeGroupId != null },
+	const { data: rawRubricTypes = [] } = useTypesByGroupCode(
+		TYPE_GROUP_CODES.PERFORMANCE_LEVEL_INSTRUMENT,
+	);
+	const { data: surveyTypes = [] } = useTypesByGroupCode(TYPE_GROUP_CODES.SURVEY_TYPE);
+	// TG206-T005/T006/T007 are unused placeholder entries that duplicate the PPP/GRA/LCFC
+	// survey types below by name — they have no performance levels of their own and the
+	// report generator never reads them (it resolves by the TG601 survey type instead).
+	const rubricTypes = useMemo(
+		() =>
+			rawRubricTypes.filter((t) => !['TG206-T005', 'TG206-T006', 'TG206-T007'].includes(t.code)),
+		[rawRubricTypes],
+	);
+	const instrumentTypes = useMemo(
+		() => [...rubricTypes, ...surveyTypes],
+		[rubricTypes, surveyTypes],
 	);
 
 	const filters = useMemo(
@@ -264,10 +271,14 @@ export function PerformanceLevelsPage() {
 
 	const instrumentTypeOptions = useMemo<OptionItem[]>(
 		() =>
-			instrumentTypes.map((t) => ({
-				label: t.name?.[locale as 'es' | 'en'] ?? t.name?.es ?? t.code,
-				value: t.id,
-			})),
+			instrumentTypes.map((t) => {
+				// Survey types (TG601) carry their short acronym in `extra.code` (PPP/GRA/LCFC) —
+				// show that instead of the full name so the dropdown reads "PPP", "GRA", "LCFC".
+				const extraCode = t.extra?.code;
+				const acronym = typeof extraCode === 'string' ? extraCode : undefined;
+				const name = t.name?.[locale as 'es' | 'en'] ?? t.name?.es ?? t.code;
+				return { label: acronym ?? name, value: t.id };
+			}),
 		[instrumentTypes, locale],
 	);
 

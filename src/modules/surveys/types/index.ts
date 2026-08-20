@@ -475,6 +475,17 @@ export interface ProgramOutcome {
 	outcomeDescription?: I18nOrString;
 }
 
+/**
+ * One commission's outcomes for a program, as grouped by `gra/outcomes/list`
+ * (`GraConfigRepository.findOutcomesGroupedByCommission`). `commissionCode` is the
+ * commission's own code (e.g. "EAC", "CAC") — always present on the backend response.
+ */
+export interface ProgramOutcomeGroup {
+	commissionId: number;
+	commissionCode: string;
+	outcomes?: ProgramOutcome[];
+}
+
 export interface GenerateConfigResult {
 	created: number;
 	skipped: number;

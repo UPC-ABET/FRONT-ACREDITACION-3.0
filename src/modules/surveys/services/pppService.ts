@@ -13,8 +13,10 @@ import { logger } from '@/shared/lib/logger';
 import { getSurveyTypeId } from './academicService';
 import { performanceLevelsService } from '@/modules/academic';
 import type { PerformanceLevelResponse } from '@/modules/academic/types';
-import type { ProgramOutcome, I18nOrString } from '../types';
 import type {
+	ProgramOutcome,
+	ProgramOutcomeGroup,
+	I18nOrString,
 	CompetenceConfig,
 	CompetenceFormData,
 	PerformanceLevel,
@@ -124,13 +126,35 @@ function pickEn(value: I18nOrString): string {
 
 /**
  * Real outcomes of a program for a period (accreditation.outcomes), grouped by
- * commission on the backend and flattened here. PPP/GRA/LCFC all measure these
- * same outcomes, so this list is the source of truth for building survey configs.
+ * commission on the backend (`GraConfigRepository.findOutcomesGroupedByCommission`,
+ * BACK-ACREDITACION-3.0 `src/modules/survey/gra/core/gra-config.repository.ts`) — each
+ * group's `commissionCode` comes straight from `accreditation.commissions.code`
+ * ("EAC"/"CAC"/...). PPP/GRA/LCFC all measure these same outcomes, so this is the
+ * source of truth for building survey configs.
  */
-export async function listProgramOutcomes(programId: number): Promise<ProgramOutcome[]> {
+async function listProgramOutcomeGroups(programId: number): Promise<ProgramOutcomeGroup[]> {
 	const res = await apiPost('gra/outcomes/list', { programId });
-	const groups = getApiData<Array<{ outcomes?: ProgramOutcome[] }>>(res) ?? [];
+	return getApiData<ProgramOutcomeGroup[]>(res) ?? [];
+}
+
+export async function listProgramOutcomes(programId: number): Promise<ProgramOutcome[]> {
+	const groups = await listProgramOutcomeGroups(programId);
 	return groups.flatMap((g) => g.outcomes ?? []);
+}
+
+/**
+ * A program can be linked to several commissions (e.g. Ingeniería de Sistemas carries
+ * EAC, CAC and ICT at once) but PPP's config should only cover the program's main ABET
+ * commission. LCFC applies an analogous preference when auto-assigning a commission to a
+ * generated config (`resolvePreferredCommissionId`, BACK-ACREDITACION-3.0
+ * `src/modules/survey/lcfc/api/lcfc-config.service.ts`) — that one fuzzy-matches "EAC"
+ * across several commission fields since it predates a reliable code column; here
+ * `commissionCode` is the real `accreditation.commissions.code` value, so an exact match
+ * is sufficient. Same intent, EAC first otherwise whichever commission the program has.
+ */
+function pickPreferredCommissionGroup(groups: ProgramOutcomeGroup[]): ProgramOutcomeGroup | null {
+	if (groups.length === 0) return null;
+	return groups.find((g) => g.commissionCode.toUpperCase() === 'EAC') ?? groups[0];
 }
 
 /**
@@ -143,7 +167,8 @@ export async function generatePPPConfigFromOutcomes(
 	programId: number,
 	academicPeriodId: number,
 ): Promise<{ created: number; skipped: number; total: number }> {
-	const outcomes = await listProgramOutcomes(programId);
+	const groups = await listProgramOutcomeGroups(programId);
+	const outcomes = pickPreferredCommissionGroup(groups)?.outcomes ?? [];
 	let created = 0;
 	let skipped = 0;
 	for (let i = 0; i < outcomes.length; i++) {

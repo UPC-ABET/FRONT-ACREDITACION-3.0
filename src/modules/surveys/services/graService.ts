@@ -175,8 +175,14 @@ export async function listGRAOutcomes(params: { programId: number }) {
 			Array<{
 				commissionId: number;
 				commissionName: unknown;
+				commissionCode: string;
 				commissionTypeCode: string;
-				outcomes: Array<{ outcomeId: number; outcomeCode: unknown; outcomeName: unknown }>;
+				outcomes: Array<{
+					outcomeId: number;
+					outcomeCode: unknown;
+					outcomeName: unknown;
+					outcomeDescription?: unknown;
+				}>;
 			}>
 		>(res) ?? [];
 	// outcomeCode/outcomeName arrive as I18nText objects; coerce so labels don't render
@@ -184,11 +190,13 @@ export async function listGRAOutcomes(params: { programId: number }) {
 	return raw.map((group) => ({
 		commissionId: group.commissionId,
 		commissionName: toText(group.commissionName),
+		commissionCode: group.commissionCode,
 		commissionTypeCode: group.commissionTypeCode,
 		outcomes: (group.outcomes ?? []).map((o) => ({
 			outcomeId: o.outcomeId,
 			outcomeCode: toText(o.outcomeCode),
 			outcomeName: toText(o.outcomeName),
+			outcomeDescription: toText(o.outcomeDescription),
 		})),
 	}));
 }
