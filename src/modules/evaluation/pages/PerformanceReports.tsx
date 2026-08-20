@@ -51,7 +51,7 @@ export function PerformanceReports() {
 					<PerformanceReportFilters state={filterState} kind={reportKind} />
 					<PerformanceReportView
 						kind={reportKind}
-						filters={filterState.filters}
+						filters={filterState.appliedFilters}
 						academicPeriodId={academicPeriodId}
 					/>
 				</div>

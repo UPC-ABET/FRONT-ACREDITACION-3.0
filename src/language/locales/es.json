@@ -4147,7 +4147,8 @@
 			"gradeTypes": "Tipo de nota",
 			"allGradeTypes": "Todos los tipos de nota",
 			"gradeTypesHint": "Solo aplica a Verificación (RV). Si no seleccionas ninguno, se incluyen todos los tipos de nota.",
-			"clear": "Limpiar filtros"
+			"clear": "Limpiar filtros",
+			"search": "Buscar"
 		},
 		"chart": {
 			"title": "Alumnos por nivel de desempeño y outcome"

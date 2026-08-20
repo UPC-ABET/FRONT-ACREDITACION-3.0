@@ -1,6 +1,6 @@
 'use client';
 
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Select } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { PERFORMANCE_REPORT_KINDS } from '@/modules';
@@ -92,11 +92,16 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 					name="campus"
 					label={t('performanceReports.filters.campus')}
 					placeholder={t('performanceReports.filters.allCampuses')}
+					isMulti
 					isClearable
 					isSearchable
 					options={state.campusOptions}
-					value={selectedOption(state.campusOptions, state.campusId)}
-					onChange={(_name, value) => state.onCampusChange(asSingle(value))}
+					value={selectedOptions(state.campusOptions, state.campusIds)}
+					onChange={(_name, value) =>
+						state.onCampusesChange(
+							Array.isArray(value) ? value.map((option) => Number(option.value)) : [],
+						)
+					}
 				/>
 				<Select
 					name="language"
@@ -131,14 +136,18 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 			{showGradeTypeFilter && (
 				<p className="text-xs text-zinc-500">{t('performanceReports.filters.gradeTypesHint')}</p>
 			)}
-			{canClear && (
-				<div className="flex justify-end">
+			<div className="flex items-center justify-end gap-2 border-t border-zinc-100 pt-4">
+				{canClear && (
 					<Button variant="secondary" onClick={state.reset}>
 						<TrashIcon className="h-4 w-4" />
 						{t('performanceReports.filters.clear')}
 					</Button>
-				</div>
-			)}
+				)}
+				<Button variant="primary" onClick={state.search} disabled={!state.hasPendingChanges}>
+					<MagnifyingGlassIcon className="h-4 w-4" />
+					{t('performanceReports.filters.search')}
+				</Button>
+			</div>
 		</Card>
 	);
 }

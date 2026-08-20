@@ -33,11 +33,17 @@ export function usePerformanceReportFilters() {
 	const [commissionId, setCommissionId] = useState<number | null>(null);
 	const [programId, setProgramId] = useState<number | null>(null);
 	const [outcomeId, setOutcomeId] = useState<number | null>(null);
-	const [campusId, setCampusId] = useState<number | null>(null);
+	const [campusIds, setCampusIds] = useState<number[]>([]);
 	// RV only: grade types (core.types group TG205) whose grades feed the report. Empty = all.
 	const [gradeTypeIds, setGradeTypeIds] = useState<number[]>([]);
 	const [lang, setLang] = useState<PerformanceReportLang>(locale === 'en' ? 'en' : 'es');
 	const [syncedPeriodId, setSyncedPeriodId] = useState(academicPeriodId);
+	// The report query only reads appliedFilters, not the live filters below — editing the
+	// filter bar must not fire a request per keystroke/select change. It only advances on an
+	// explicit search() (the "Buscar" button) or reset(), both single user actions.
+	const [appliedFilters, setAppliedFilters] = useState<PerformanceReportFilterDto>({
+		lang: locale === 'en' ? 'en' : 'es',
+	});
 
 	// The report is scoped to the active period (header). When it changes, the cascade
 	// selections no longer apply, so reset them. This runs during render (React's documented
@@ -50,6 +56,11 @@ export function usePerformanceReportFilters() {
 		setCommissionId(null);
 		setProgramId(null);
 		setOutcomeId(null);
+		setAppliedFilters({
+			campusIds: campusIds.length > 0 ? campusIds : undefined,
+			gradeTypeIds: gradeTypeIds.length > 0 ? gradeTypeIds : undefined,
+			lang,
+		});
 	}
 
 	const accreditorsQuery = useAccreditors();
@@ -157,27 +168,37 @@ export function usePerformanceReportFilters() {
 		() => ({
 			programCommissionId,
 			outcomeId: outcomeId ?? undefined,
-			campusId: campusId ?? undefined,
+			campusIds: campusIds.length > 0 ? campusIds : undefined,
 			gradeTypeIds: gradeTypeIds.length > 0 ? gradeTypeIds : undefined,
 			lang,
 		}),
-		[programCommissionId, outcomeId, campusId, gradeTypeIds, lang],
+		[programCommissionId, outcomeId, campusIds, gradeTypeIds, lang],
 	);
 
 	const hasActiveFilters =
 		accreditorId != null ||
-		campusId != null ||
+		campusIds.length > 0 ||
 		gradeTypeIds.length > 0 ||
 		lang !== (locale === 'en' ? 'en' : 'es');
+
+	const hasPendingChanges = useMemo(
+		() => JSON.stringify(filters) !== JSON.stringify(appliedFilters),
+		[filters, appliedFilters],
+	);
+
+	function search() {
+		setAppliedFilters(filters);
+	}
 
 	function reset() {
 		setAccreditorId(null);
 		setCommissionId(null);
 		setProgramId(null);
 		setOutcomeId(null);
-		setCampusId(null);
+		setCampusIds([]);
 		setGradeTypeIds([]);
 		setLang(locale === 'en' ? 'en' : 'es');
+		setAppliedFilters({ lang: locale === 'en' ? 'en' : 'es' });
 	}
 
 	function handleAccreditorChange(option: SelectedOption) {
@@ -200,11 +221,14 @@ export function usePerformanceReportFilters() {
 
 	return {
 		filters,
+		appliedFilters,
+		hasPendingChanges,
+		search,
 		accreditorId,
 		commissionId,
 		programId,
 		outcomeId,
-		campusId,
+		campusIds,
 		gradeTypeIds,
 		lang,
 		accreditorOptions,
@@ -221,7 +245,7 @@ export function usePerformanceReportFilters() {
 		onCommissionChange: handleCommissionChange,
 		onProgramChange: handleProgramChange,
 		onOutcomeChange: (option: SelectedOption) => setOutcomeId(toOptionValue(option)),
-		onCampusChange: (option: SelectedOption) => setCampusId(toOptionValue(option)),
+		onCampusesChange: (ids: number[]) => setCampusIds(ids),
 		onGradeTypesChange: (ids: number[]) => setGradeTypeIds(ids),
 		onLangChange: setLang,
 		reset,
