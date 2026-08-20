@@ -11,7 +11,7 @@ import { type AbetScope, useAbetScope } from '@/modules/academic';
 import { SCRAPING_EXPORT_TYPES } from '../constants';
 import { useRegenerateScrapingExport, useScrapingExportStatus } from '../hooks';
 import { downloadScrapingExport } from '../services';
-import { isScrapingExportDownloadable, isScrapingExportGenerated } from '../types';
+import { isScrapingExportGenerated } from '../types';
 import type { ScrapingExportType } from '../types';
 
 interface ScrapingExportCardProps {
@@ -20,25 +20,26 @@ interface ScrapingExportCardProps {
 	scope: AbetScope;
 	onDownloaded: () => void;
 	onError: (error: unknown, fallbackKey?: string) => void;
+	onFileNoLongerAvailable: () => void;
 }
 
-// One card per export type, all driven by the same generic status/regenerate/download contract.
 function ScrapingExportCard({
 	exportType,
 	lang,
 	scope,
 	onDownloaded,
 	onError,
+	onFileNoLongerAvailable,
 }: ScrapingExportCardProps) {
 	const { t } = useI18n();
 	const [downloading, setDownloading] = useState(false);
-	const statusQuery = useScrapingExportStatus(exportType, scope, lang);
+	const statusQuery = useScrapingExportStatus(exportType, lang);
 	const regenerate = useRegenerateScrapingExport(exportType);
 
 	const data = statusQuery.data;
 	const status = data?.status ?? null;
 	const generated = data && isScrapingExportGenerated(data) ? data : null;
-	const canDownload = data !== undefined && isScrapingExportDownloadable(data);
+	const canDownload = generated !== null && generated.fileName !== null;
 	const running = status === 'running';
 	const failed = status === 'failed';
 
@@ -49,7 +50,7 @@ function ScrapingExportCard({
 			onDownloaded();
 		} catch (error) {
 			if (error instanceof ApiError && error.status === 404) {
-				onError(error, 'scraping.exports.actions.fileNoLongerAvailable');
+				onFileNoLongerAvailable();
 				statusQuery.refetch();
 			} else {
 				onError(error, 'scraping.exports.actions.downloadFailed');
@@ -120,7 +121,11 @@ function ScrapingExportCard({
 					onClick={handleRegenerate}
 					loading={regenerate.isPending}
 					disabled={running || regenerate.isPending || statusQuery.isLoading}>
-					<ArrowPathIcon className="h-4 w-4" />
+					{failed || canDownload ? (
+						<ArrowPathIcon className="h-4 w-4" />
+					) : (
+						<ArrowDownTrayIcon className="h-4 w-4" />
+					)}
 					{failed
 						? t('scraping.exports.actions.retry')
 						: canDownload
@@ -156,6 +161,9 @@ export function ScrapingExportsView() {
 								scope={scope}
 								onDownloaded={() => showToast(t('scraping.exports.actions.downloaded'), 'success')}
 								onError={handleError}
+								onFileNoLongerAvailable={() =>
+									showToast(t('scraping.exports.actions.fileNoLongerAvailable'), 'error')
+								}
 							/>
 						))}
 					</div>

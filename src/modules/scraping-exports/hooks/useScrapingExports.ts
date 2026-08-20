@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { AbetScope } from '@/modules/academic';
+import { type AbetScope, useAbetScope } from '@/modules/academic';
 import { getScrapingExportStatus, regenerateScrapingExport } from '../services';
 import type { ScrapingExportStatusResponse, ScrapingExportType } from '../types';
 
@@ -13,11 +13,8 @@ export const scrapingExportsQueryKeys = {
 		[...scrapingExportsQueryKeys.all, 'status', exportType, scope, lang] as const,
 };
 
-export function useScrapingExportStatus(
-	exportType: ScrapingExportType,
-	scope: AbetScope,
-	lang: 'es' | 'en',
-) {
+export function useScrapingExportStatus(exportType: ScrapingExportType, lang: 'es' | 'en') {
+	const scope = useAbetScope();
 	return useQuery({
 		queryKey: scrapingExportsQueryKeys.status(exportType, scope, lang),
 		queryFn: () => getScrapingExportStatus(exportType, lang),

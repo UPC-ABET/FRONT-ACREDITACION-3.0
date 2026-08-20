@@ -7,7 +7,11 @@ import {
 	triggerBlobDownload,
 } from '@/shared/lib/apiClient';
 import { EXPORT_FALLBACK_FILE_NAME, EXPORT_TYPE_PATH } from '../constants';
-import type { ScrapingExportStatusResponse, ScrapingExportType } from '../types';
+import type {
+	ScrapingExportRunStatus,
+	ScrapingExportStatusResponse,
+	ScrapingExportType,
+} from '../types';
 
 function buildUrl(
 	exportType: ScrapingExportType,
@@ -17,16 +21,34 @@ function buildUrl(
 	return `/scraping/exports/${EXPORT_TYPE_PATH[exportType]}/${action}?lang=${encodeURIComponent(lang)}`;
 }
 
-// The backend DTO only marks `status` as required — normalize the rest to the guaranteed-present
-// shape the frontend types declare, rather than trusting every field to always be sent.
-function normalizeStatusResponse(raw: ScrapingExportStatusResponse): ScrapingExportStatusResponse {
-	if (raw.status === 'notGenerated') return raw;
+// The backend's wire field is `periodo` (Spanish), and only `status` is guaranteed present —
+// this maps the raw response to the frontend's typed, English-named, defensively-defaulted
+// shape rather than trusting the JSON to already match it.
+interface ScrapingExportStatusWire {
+	status?: string;
+	periodo?: string;
+	fileName?: string | null;
+	errorMessage?: string | null;
+	startedAt?: string | null;
+	finishedAt?: string | null;
+}
+
+function normalizeStatusResponse(
+	raw: unknown,
+	exportType: ScrapingExportType,
+	lang: 'es' | 'en',
+): ScrapingExportStatusResponse {
+	const wire = raw as ScrapingExportStatusWire;
+	if (!wire.status || wire.status === 'notGenerated') return { status: 'notGenerated' };
 	return {
-		...raw,
-		fileName: raw.fileName ?? null,
-		errorMessage: raw.errorMessage ?? null,
-		startedAt: raw.startedAt ?? null,
-		finishedAt: raw.finishedAt ?? null,
+		exportType,
+		period: wire.periodo ?? '',
+		lang,
+		status: wire.status as ScrapingExportRunStatus,
+		fileName: wire.fileName ?? null,
+		errorMessage: wire.errorMessage ?? null,
+		startedAt: wire.startedAt ?? null,
+		finishedAt: wire.finishedAt ?? null,
 	};
 }
 
@@ -35,7 +57,7 @@ export async function getScrapingExportStatus(
 	lang: 'es' | 'en' = 'es',
 ): Promise<ScrapingExportStatusResponse> {
 	const res = await apiGet(buildUrl(exportType, 'status', lang));
-	return normalizeStatusResponse(getApiData<ScrapingExportStatusResponse>(res));
+	return normalizeStatusResponse(getApiData<unknown>(res), exportType, lang);
 }
 
 export async function regenerateScrapingExport(
@@ -43,7 +65,7 @@ export async function regenerateScrapingExport(
 	lang: 'es' | 'en' = 'es',
 ): Promise<ScrapingExportStatusResponse> {
 	const res = await apiPost(buildUrl(exportType, 'regenerate', lang));
-	return normalizeStatusResponse(getApiData<ScrapingExportStatusResponse>(res));
+	return normalizeStatusResponse(getApiData<unknown>(res), exportType, lang);
 }
 
 export async function downloadScrapingExport(
