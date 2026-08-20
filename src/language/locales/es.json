@@ -186,11 +186,13 @@
 				"download": "Descargar",
 				"downloaded": "Archivo descargado correctamente.",
 				"downloadFailed": "No se pudo descargar el archivo.",
+				"fileNoLongerAvailable": "Este archivo ya no está disponible. Genéralo de nuevo.",
 				"badgeRunning": "En curso",
 				"badgeCompleted": "Listo",
 				"badgeFailed": "Error",
 				"statusRunning": "Generando el archivo, esto puede tardar varios minutos…",
 				"statusFailed": "No se pudo generar el archivo.",
+				"statusFetchFailed": "No se pudo consultar el estado de este archivo.",
 				"startFailed": "No se pudo iniciar la generación del archivo."
 			}
 		},
