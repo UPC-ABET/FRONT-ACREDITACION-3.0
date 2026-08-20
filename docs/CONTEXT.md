@@ -188,6 +188,9 @@ hard "never import another module's internal paths" rule. Known cross-module imp
 - `loads` → `@/modules/admin/chart-heads` (for `useChartHeadsConfig`/`findDirectorForSchool`,
   to warn on the Excel upload screen when the target school has no chart-heads Director or
   pre-configured Carreras for the period)
+- `loads` → `@/modules/academic` (for `useAbetScope`/`AbetScope`, to scope its scraping-export
+  status query key the same way every other scoped query in the app does)
+- `scraping-exports` → `@/modules/academic` (for `useAbetScope`/`AbetScope`, same reason)
 
 The `TYPE_CODES` / `TYPE_GROUP_CODES` / `PARAMETER_CODES` tables are **not** cross-module
 imports — they live in `@/shared/constants`, so reaching for them is a `shared/` import, not
@@ -422,6 +425,28 @@ here would later be read as authoritative.
    persisted, and never returned by any endpoint afterward. — `src/modules/planner/types`,
    `src/modules/planner/components/PlannerSessionStatusCard.tsx`,
    `src/modules/planner/components/PlannerCredentialsCard.tsx`
+5. **A scraping export's `download` always serves the last _successfully_ generated file,
+   independent of whatever the current run's status is.** The `fileName` field on
+   `GET /scraping/exports/:exportType/status` reflects the last success, not the current
+   attempt — so a `running` or `failed` status can still carry a non-null `fileName` if an
+   earlier generation for that export/period/lang succeeded. The frontend's Download action
+   is gated on `fileName !== null`, not on `status === 'completed'`, so a regenerate in
+   progress (or one that later fails) never hides a file that already downloads fine.
+   `download` only 404s when there has truly never been a successful generation for that
+   `(exportType, period, lang)`.
+6. **Grades RC's regenerate is globally single-flighted across all academic periods — the
+   other four export types are not.** A `409` from `POST /scraping/exports/staff/regenerate`
+   (etc.) means that exact export/period/lang is already generating; a `409` from
+   `.../grades-rc/regenerate` can mean a _different period's_ grades-rc job is running, since
+   the backend allows only one grades-rc generation at a time system-wide. (This specific claim
+   comes from the backend team's contract description, not from anything independently
+   verifiable in this repo's code or its `openapi.json` — the `409` response is documented
+   identically for all five export types. Treat it as trusted-but-unconfirmed until it's been
+   reproduced against a live backend.) The frontend must not render period-specific copy for
+   this conflict — see
+   `src/modules/scraping-exports/components/ScrapingExportsView.tsx`, which uses one generic
+   "already generating" message for all five export types rather than one implying "this
+   period" for grades-rc. — `src/modules/scraping-exports/`
 
 ---
 

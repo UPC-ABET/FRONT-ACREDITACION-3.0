@@ -6,62 +6,75 @@ import {
 	resolveDownloadFileName,
 	triggerBlobDownload,
 } from '@/shared/lib/apiClient';
-import type { DirectDownloadExportKind, GradesRcExportJobStatus } from '../types';
+import { EXPORT_FALLBACK_FILE_NAME, EXPORT_TYPE_PATH } from '../constants';
+import type {
+	ScrapingExportRunStatus,
+	ScrapingExportStatusResponse,
+	ScrapingExportType,
+} from '../types';
 
-const EXPORTS: Record<DirectDownloadExportKind, { path: string; fallbackFileName: string }> = {
-	docentes: { path: '/scraping/exports/docentes', fallbackFileName: 'Docentes.xlsx' },
-	secciones: { path: '/scraping/exports/secciones', fallbackFileName: 'Secciones.xlsx' },
-	alumnosMatriculados: {
-		path: '/scraping/exports/alumnos-matriculados',
-		fallbackFileName: 'Matriculados.xlsx',
-	},
-	alumnosSecciones: {
-		path: '/scraping/exports/alumnos-secciones',
-		fallbackFileName: 'AlumnoSeccion.xlsx',
-	},
-};
-
-export const DIRECT_DOWNLOAD_EXPORT_KINDS = Object.keys(EXPORTS) as DirectDownloadExportKind[];
-
-export async function downloadScrapingExport(
-	kind: DirectDownloadExportKind,
-	lang: 'es' | 'en' = 'es',
-): Promise<void> {
-	const { path, fallbackFileName } = EXPORTS[kind];
-	const { blob, response } = await apiGetBlobResponse(`${path}?lang=${lang}`);
-	triggerBlobDownload(blob, resolveDownloadFileName(response, fallbackFileName));
+function buildUrl(
+	exportType: ScrapingExportType,
+	action: 'status' | 'download' | 'regenerate',
+	lang: 'es' | 'en',
+) {
+	return `/scraping/exports/${EXPORT_TYPE_PATH[exportType]}/${action}?lang=${encodeURIComponent(lang)}`;
 }
 
-const GRADES_RC_BASE_PATH = '/scraping/exports/grades-rc';
-const GRADES_RC_FALLBACK_FILE_NAME = 'NotasRC.xlsx';
-
-export async function startGradesRcExport(
-	lang: 'es' | 'en' = 'es',
-): Promise<{ accepted: boolean; jobId: string }> {
-	const res = await apiPost(`${GRADES_RC_BASE_PATH}/start?lang=${lang}`);
-	const data = getApiData<{ accepted?: boolean; jobId?: string }>(res);
-	return { accepted: data?.accepted ?? false, jobId: data?.jobId ?? '' };
+// The backend's wire field is `periodo` (Spanish), and only `status` is guaranteed present —
+// this maps the raw response to the frontend's typed, English-named, defensively-defaulted
+// shape rather than trusting the JSON to already match it.
+interface ScrapingExportStatusWire {
+	status?: string;
+	periodo?: string;
+	fileName?: string | null;
+	errorMessage?: string | null;
+	startedAt?: string | null;
+	finishedAt?: string | null;
 }
 
-export async function getGradesRcExportStatus(jobId: string): Promise<GradesRcExportJobStatus> {
-	const res = await apiGet(`${GRADES_RC_BASE_PATH}/status/${encodeURIComponent(jobId)}`);
-	const data = getApiData<{
-		status?: GradesRcExportJobStatus['status'];
-		done?: boolean;
-		fileName?: string | null;
-		errorMessage?: string | null;
-	}>(res);
+function normalizeStatusResponse(
+	raw: unknown,
+	exportType: ScrapingExportType,
+	lang: 'es' | 'en',
+): ScrapingExportStatusResponse {
+	const wire = raw as ScrapingExportStatusWire;
+	if (!wire.status || wire.status === 'notGenerated') return { status: 'notGenerated' };
 	return {
-		status: data?.status ?? 'running',
-		done: data?.done ?? false,
-		fileName: data?.fileName ?? null,
-		errorMessage: data?.errorMessage ?? null,
+		exportType,
+		period: wire.periodo ?? '',
+		lang,
+		status: wire.status as ScrapingExportRunStatus,
+		fileName: wire.fileName ?? null,
+		errorMessage: wire.errorMessage ?? null,
+		startedAt: wire.startedAt ?? null,
+		finishedAt: wire.finishedAt ?? null,
 	};
 }
 
-export async function downloadGradesRcExport(jobId: string): Promise<void> {
-	const { blob, response } = await apiGetBlobResponse(
-		`${GRADES_RC_BASE_PATH}/download/${encodeURIComponent(jobId)}`,
+export async function getScrapingExportStatus(
+	exportType: ScrapingExportType,
+	lang: 'es' | 'en' = 'es',
+): Promise<ScrapingExportStatusResponse> {
+	const res = await apiGet(buildUrl(exportType, 'status', lang));
+	return normalizeStatusResponse(getApiData<unknown>(res), exportType, lang);
+}
+
+export async function regenerateScrapingExport(
+	exportType: ScrapingExportType,
+	lang: 'es' | 'en' = 'es',
+): Promise<ScrapingExportStatusResponse> {
+	const res = await apiPost(buildUrl(exportType, 'regenerate', lang));
+	return normalizeStatusResponse(getApiData<unknown>(res), exportType, lang);
+}
+
+export async function downloadScrapingExport(
+	exportType: ScrapingExportType,
+	lang: 'es' | 'en' = 'es',
+): Promise<void> {
+	const { blob, response } = await apiGetBlobResponse(buildUrl(exportType, 'download', lang));
+	triggerBlobDownload(
+		blob,
+		resolveDownloadFileName(response, EXPORT_FALLBACK_FILE_NAME[exportType]),
 	);
-	triggerBlobDownload(blob, resolveDownloadFileName(response, GRADES_RC_FALLBACK_FILE_NAME));
 }

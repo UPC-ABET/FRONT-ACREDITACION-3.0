@@ -15,10 +15,18 @@ import {
 	Toast,
 } from '@/shared/components';
 import { useApiErrorToast } from '@/shared/hooks';
+import { ApiError } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { useI18n } from '@/providers';
 import type { TypeOption } from '@/modules/core';
-import { downloadScrapingExport, scrapingExportForUploadType } from '@/modules/scraping-exports';
+import { useAbetScope } from '@/modules/academic';
+import {
+	downloadScrapingExport,
+	getScrapingExportStatus,
+	isScrapingExportDownloadable,
+	scrapingExportForUploadType,
+	useRegenerateScrapingExport,
+} from '@/modules/scraping-exports';
 import { downloadErrorExcel, useDownloadTemplate, useUpload } from '../hooks';
 import type { UploadResult } from '../types';
 import { cn } from '@/shared/lib/utils';
@@ -41,9 +49,10 @@ export default function UploadPanel({
 }: UploadPanelProps) {
 	const { t, locale } = useI18n();
 	const inputRef = useRef<HTMLInputElement>(null);
+	const scope = useAbetScope();
 	const upload = useUpload(type.code);
 	const downloadTemplate = useDownloadTemplate(type.code);
-	const { toast, handleError, clearToast } = useApiErrorToast();
+	const { toast, showToast, handleError, clearToast } = useApiErrorToast();
 	const [file, setFile] = useState<File | null>(null);
 	const [localError, setLocalError] = useState<string | null>(null);
 	const [result, setResult] = useState<UploadResult | null>(null);
@@ -54,6 +63,10 @@ export default function UploadPanel({
 	const [scrapingPending, setScrapingPending] = useState(false);
 
 	const scrapingKind = scrapingExportForUploadType(type.code);
+	// Hooks must be called unconditionally: falls back to an arbitrary export type when this
+	// upload type has none, but `handleWebScraping` returns early in that case, so `regenerate`
+	// is only ever actually invoked when `scrapingKind` is real.
+	const regenerate = useRegenerateScrapingExport(scrapingKind ?? 'staff');
 
 	const handleFileChange = (selected: File | null) => {
 		setLocalError(null);
@@ -106,14 +119,29 @@ export default function UploadPanel({
 		);
 	};
 
-	// Scoped to the active school/period: the api client forwards X-School-Id / X-Academic-Period-Id automatically.
+	// Checks status before acting because download only ever serves the last *successful* file and
+	// never blocks on an in-flight regenerate: a prior success downloads immediately, otherwise
+	// this triggers regeneration (skipped if one is already running, to avoid a guaranteed 409)
+	// and points the user at the Exports tab, where the full status/regenerate/download flow lives.
 	const handleWebScraping = async () => {
 		if (!scrapingKind) return;
 		setScrapingPending(true);
 		try {
-			await downloadScrapingExport(scrapingKind, locale);
+			const status = await getScrapingExportStatus(scrapingKind, locale);
+			if (isScrapingExportDownloadable(status)) {
+				await downloadScrapingExport(scrapingKind, locale);
+			} else if (status.status === 'running') {
+				showToast(t('loads.upload.webScrapingAlreadyRunning'), 'info');
+			} else {
+				await regenerate.mutateAsync({ lang: locale, scope });
+				showToast(t('loads.upload.webScrapingStarted'), 'success');
+			}
 		} catch (err) {
-			handleError(err, 'loads.upload.error.webScrapingFailed');
+			if (err instanceof ApiError && err.status === 404) {
+				showToast(t('scraping.exports.actions.fileNoLongerAvailable'), 'error');
+			} else {
+				handleError(err, 'loads.upload.error.webScrapingFailed');
+			}
 		} finally {
 			setScrapingPending(false);
 		}

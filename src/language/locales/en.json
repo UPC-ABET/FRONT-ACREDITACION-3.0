@@ -156,41 +156,43 @@
 		"exports": {
 			"title": "Generate upload Excels",
 			"subtitle": "Build the Excel files ready for the upload module from the latest extracted data.",
-			"download": "Download",
-			"downloaded": "File generated successfully.",
-			"downloadFailed": "The file could not be generated.",
+			"selectPeriod": "Select an academic period in the top bar to view and generate these files.",
 			"items": {
-				"docentes": {
+				"staff": {
 					"title": "Professors",
 					"description": "Code, last name, first name and institutional email (from Banner)."
 				},
-				"secciones": {
+				"sections": {
 					"title": "Sections",
 					"description": "Course, section, professor, campus and modality."
 				},
-				"alumnosMatriculados": {
+				"enrolledStudents": {
 					"title": "Enrolled students",
 					"description": "Code, last name, first name, program and campus."
 				},
-				"alumnosSecciones": {
+				"studentSections": {
 					"title": "Students by section",
 					"description": "Student-to-section relationship."
 				},
-				"notasRc": {
+				"gradesRc": {
 					"title": "Grades RC",
 					"description": "Grades by grade type and qualification status (from Banner)."
 				}
 			},
-			"notasRc": {
+			"actions": {
 				"generate": "Generate",
 				"regenerate": "Generate again",
 				"retry": "Retry",
-				"downloadFile": "Download file",
+				"download": "Download",
+				"downloaded": "File downloaded successfully.",
+				"downloadFailed": "The file could not be downloaded.",
+				"fileNoLongerAvailable": "This file is no longer available. Generate it again.",
 				"badgeRunning": "Running",
 				"badgeCompleted": "Ready",
 				"badgeFailed": "Error",
 				"statusRunning": "Generating the file, this can take several minutes…",
 				"statusFailed": "The file could not be generated.",
+				"statusFetchFailed": "Could not check the status of this file.",
 				"startFailed": "Could not start generating the file."
 			}
 		},
@@ -1450,9 +1452,10 @@
 			"decryptionFailed": "The stored Planner credentials could not be read due to a server-side configuration issue. Contact an administrator."
 		},
 		"scrapingExport": {
-			"gradesRcInProgress": "Another user is currently downloading this file. Try again in a few minutes.",
-			"gradesRcJobNotFound": "The requested generation job was not found.",
-			"gradesRcFileNotReady": "The file is not ready to download yet."
+			"notGenerated": "This file hasn't been generated yet.",
+			"alreadyGenerating": "This file is already being generated. Try again once it finishes.",
+			"invalidExportType": "Invalid export type.",
+			"periodNotFound": "The selected academic period doesn't exist."
 		},
 		"conflict": "Conflict with the current state of the resource",
 		"internalServer": "Internal server error",
@@ -3452,6 +3455,8 @@
 			"downloadingTemplate": "Downloading",
 			"webScraping": "Web-scraping Excel",
 			"webScrapingLoading": "Generating...",
+			"webScrapingAlreadyRunning": "This file is already being generated. Check the Downloads tab in Scraping for progress.",
+			"webScrapingStarted": "File generation started. Check the Downloads tab in Scraping to download it once it's ready.",
 			"dropzone": "Click or drag the Excel file here",
 			"submit": "Upload file",
 			"loadedSummary": "Loaded rows",

@@ -1,22 +1,34 @@
-// The five upload-ready Excels the backend builds from the raw scrape data
-// (see BACK scraping-exports module). `notasRc` is generated as a background job (see
-// GradesRcExportJobStatus below); the other four stream their .xlsx directly on GET.
-export type ScrapingExportKind =
-	| 'docentes'
-	| 'secciones'
-	| 'alumnosMatriculados'
-	| 'alumnosSecciones'
-	| 'notasRc';
+export type ScrapingExportType =
+	| 'staff'
+	| 'sections'
+	| 'enrolledStudents'
+	| 'studentSections'
+	| 'gradesRc';
 
-export type DirectDownloadExportKind = Exclude<ScrapingExportKind, 'notasRc'>;
+export type ScrapingExportRunStatus = 'running' | 'completed' | 'failed';
 
-export type GradesRcExportStatus = 'running' | 'completed' | 'failed';
-
-// The grades-rc export's merge query can run well past any HTTP/gateway timeout, so the
-// backend runs it as a background job instead of streaming the file synchronously.
-export interface GradesRcExportJobStatus {
-	status: GradesRcExportStatus;
-	done: boolean;
+export interface ScrapingExportGenerated {
+	exportType: ScrapingExportType;
+	period: string;
+	lang: string;
+	status: ScrapingExportRunStatus;
 	fileName: string | null;
 	errorMessage: string | null;
+	startedAt: string | null;
+	finishedAt: string | null;
+}
+
+export type ScrapingExportStatusResponse = { status: 'notGenerated' } | ScrapingExportGenerated;
+
+export function isScrapingExportGenerated(
+	response: ScrapingExportStatusResponse,
+): response is ScrapingExportGenerated {
+	return response.status !== 'notGenerated';
+}
+
+// Download always serves the last *successfully* generated file, independent of the current
+// run's status (see docs/CONTEXT.md § Business Rules) — so this is gated on `fileName`, not on
+// `status === 'completed'`.
+export function isScrapingExportDownloadable(response: ScrapingExportStatusResponse): boolean {
+	return isScrapingExportGenerated(response) && response.fileName !== null;
 }
