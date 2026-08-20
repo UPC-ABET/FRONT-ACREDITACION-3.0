@@ -72,6 +72,13 @@ export function usePPPCompetences() {
 		}
 	}, []);
 
+	// For when the caller clears the program selector — `load` only runs while a program is
+	// picked, so without this the previous program's rows would linger under "no program selected."
+	const clear = useCallback(() => {
+		setCompetences([]);
+		setError(null);
+	}, []);
+
 	const save = useCallback(async (data: CompetenceFormData, onSuccess?: () => void) => {
 		try {
 			await savePPPCompetence(data);
@@ -130,7 +137,7 @@ export function usePPPCompetences() {
 		[],
 	);
 
-	return { competences, loading, error, load, save, remove, clone, generate, setError };
+	return { competences, loading, error, load, clear, save, remove, clone, generate, setError };
 }
 
 export function usePPPDownload() {

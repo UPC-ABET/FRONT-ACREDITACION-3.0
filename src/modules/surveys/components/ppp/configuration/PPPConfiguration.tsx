@@ -22,6 +22,7 @@ export function PPPConfiguration({ programId, onProgramChange }: PPPConfiguratio
 		loading: compLoading,
 		error: compError,
 		load: loadComp,
+		clear: clearComp,
 		save: saveComp,
 		remove: removeComp,
 		generate: generateComp,
@@ -38,9 +39,15 @@ export function PPPConfiguration({ programId, onProgramChange }: PPPConfiguratio
 	});
 
 	useEffect(() => {
-		if (!academicPeriodId || !programId) return;
+		if (!academicPeriodId || !programId) {
+			// Clearing the program selector must clear stale rows too — the tables now render
+			// even without a program picked, so leftovers from the previous one would otherwise
+			// stay visible under "no program selected."
+			clearComp();
+			return;
+		}
 		loadComp(academicPeriodId, programId);
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- loadComp is an unstable service binding; refetch only when period/program changes
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- loadComp/clearComp are unstable service bindings; refetch only when period/program changes
 	}, [academicPeriodId, programId]);
 
 	function handleGenerate() {

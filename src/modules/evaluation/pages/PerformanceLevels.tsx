@@ -274,7 +274,8 @@ export function PerformanceLevelsPage() {
 			instrumentTypes.map((t) => {
 				// Survey types (TG601) carry their short acronym in `extra.code` (PPP/GRA/LCFC) —
 				// show that instead of the full name so the dropdown reads "PPP", "GRA", "LCFC".
-				const acronym = (t.extra as { code?: string } | undefined)?.code;
+				const extraCode = t.extra?.code;
+				const acronym = typeof extraCode === 'string' ? extraCode : undefined;
 				const name = t.name?.[locale as 'es' | 'en'] ?? t.name?.es ?? t.code;
 				return { label: acronym ?? name, value: t.id };
 			}),
