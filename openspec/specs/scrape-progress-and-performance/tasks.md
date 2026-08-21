@@ -86,9 +86,9 @@ from Banner carries over), then a final cross-cutting verification pass.
 
 **Commit**: `feat(banner): add scrape phase label component`
 
-### Task 2.2 — Wire the phase label into the progress card and history table
+### Task 2.2 — Wire the phase label into the progress card and history table ✅ DONE (2026-08-21)
 
-- [ ] Task complete
+- [x] Task complete
 
 **Files**
 
@@ -130,6 +130,11 @@ from Banner carries over), then a final cross-cutting verification pass.
 > step 5 actually asks for: watching the label appear and advance against a real running
 > scrape (AC-1, AC-3, AC-4) — left open pending a live-backend pass, tracked in
 > `runbook.md`.
+>
+> **Closed 2026-08-21**: verified live post-deploy by the requester — phase label observed
+> advancing on the Banner progress card against production data. The history-table half of
+> this task's original scope (AC-3) no longer applies — reverted the same day, see
+> `proposal.md` § Scope reduction and Task U.1.
 
 ---
 
@@ -157,9 +162,9 @@ from Banner carries over), then a final cross-cutting verification pass.
 
 **Commit**: `feat(planner): add scrape phase label component`
 
-### Task 3.2 — Wire the phase label into the progress card and history table
+### Task 3.2 — Wire the phase label into the progress card and history table ✅ DONE (2026-08-21)
 
-- [ ] Task complete
+- [x] Task complete
 
 **Files**
 
@@ -187,6 +192,10 @@ from Banner carries over), then a final cross-cutting verification pass.
 > identical harness described in Task 2.2's retro and Task 4.1's, with the same three
 > results). AC-1/AC-3/AC-4's live end-to-end behavior is still open, tracked in
 > `runbook.md`.
+>
+> **Closed 2026-08-21**: verified live post-deploy by the requester, same as Task 2.2. The
+> history-table half of this task's original scope (AC-3) no longer applies — reverted the
+> same day, see `proposal.md` § Scope reduction and Task U.1.
 
 ---
 
