@@ -4,3 +4,4 @@ export { PlannerCredentialsDialog } from './PlannerCredentialsDialog';
 export { PlannerStartScrapePanel } from './PlannerStartScrapePanel';
 export { PlannerScrapeRunProgress } from './PlannerScrapeRunProgress';
 export { PlannerScrapeRunHistory } from './PlannerScrapeRunHistory';
+export { PlannerScrapePhaseLabel } from './PlannerScrapePhaseLabel';

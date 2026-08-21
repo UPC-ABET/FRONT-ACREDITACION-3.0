@@ -16,6 +16,8 @@ export interface StartScrapeResponse {
 
 export type ScrapeRunStatus = 'running' | 'completed' | 'partial' | 'failed' | 'expired';
 
+export type ScraperPhase = 'horario' | 'matricula' | 'alumnosYNotas';
+
 export interface ScrapeCounts {
 	horario: number;
 	matricula: number;
@@ -42,6 +44,7 @@ export interface ScrapeRunStats {
 
 export interface ScrapeRun {
 	status: ScrapeRunStatus;
+	phase: ScraperPhase | null;
 	stats: ScrapeRunStats | null;
 }
 
@@ -51,6 +54,7 @@ export interface ScrapeRunSummary {
 	periodo: string;
 	departamentos: string[];
 	status: ScrapeRunStatus;
+	phase: ScraperPhase | null;
 	startedAt: string;
 	finishedAt: string | null;
 	counts: ScrapeCounts | null;

@@ -260,6 +260,11 @@
 				"failed": "Failed",
 				"expired": "Session expired"
 			},
+			"phase": {
+				"secciones": "Fetching sections",
+				"evaluaciones": "Fetching evaluations",
+				"notas": "Fetching grades"
+			},
 			"counts": {
 				"seccion": "Sections",
 				"evaluacion": "Evaluations",
@@ -354,6 +359,11 @@
 				"partial": "Partial",
 				"failed": "Failed",
 				"expired": "Session expired"
+			},
+			"phase": {
+				"horario": "Fetching schedules",
+				"matricula": "Fetching enrollments",
+				"alumnosYNotas": "Fetching students & grades"
 			},
 			"counts": {
 				"horario": "Schedules",

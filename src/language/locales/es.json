@@ -260,6 +260,11 @@
 				"failed": "Fallida",
 				"expired": "Sesión vencida"
 			},
+			"phase": {
+				"secciones": "Obteniendo secciones",
+				"evaluaciones": "Obteniendo evaluaciones",
+				"notas": "Obteniendo notas"
+			},
 			"counts": {
 				"seccion": "Secciones",
 				"evaluacion": "Evaluaciones",
@@ -354,6 +359,11 @@
 				"partial": "Parcial",
 				"failed": "Fallida",
 				"expired": "Sesión vencida"
+			},
+			"phase": {
+				"horario": "Obteniendo horarios",
+				"matricula": "Obteniendo matrículas",
+				"alumnosYNotas": "Obteniendo alumnos y notas"
 			},
 			"counts": {
 				"horario": "Horarios",
