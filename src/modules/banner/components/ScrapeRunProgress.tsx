@@ -4,6 +4,7 @@ import { Badge, Card, Spinner } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { useBannerScrapeRun, isTerminalScrapeStatus } from '../hooks';
 import { SCRAPE_STATUS_COLORS } from '../constants';
+import { ScrapePhaseLabel } from './ScrapePhaseLabel';
 import type { ScrapeRunStats } from '../types';
 
 interface ScrapeRunProgressProps {
@@ -105,6 +106,7 @@ export function ScrapeRunProgress({ runId }: ScrapeRunProgressProps) {
 						<Badge color={SCRAPE_STATUS_COLORS[data.status]}>
 							{t(`banner.run.status.${data.status}`)}
 						</Badge>
+						<ScrapePhaseLabel phase={data.phase} />
 						{isRunning && (
 							<span className="flex items-center gap-2 text-sm text-zinc-500">
 								<Spinner size="sm" />
