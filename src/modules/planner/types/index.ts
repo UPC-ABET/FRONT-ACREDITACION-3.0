@@ -27,6 +27,8 @@ export interface StartPlannerScrapeResponse {
 
 export type PlannerScrapeRunStatus = 'running' | 'completed' | 'partial' | 'failed' | 'expired';
 
+export type PlannerScraperPhase = 'secciones' | 'evaluaciones' | 'notas';
+
 export interface PlannerScrapeCounts {
 	seccion: number;
 	evaluacion: number;
@@ -53,6 +55,7 @@ export interface PlannerScrapeRunStats {
 
 export interface PlannerScrapeRun {
 	status: PlannerScrapeRunStatus;
+	phase: PlannerScraperPhase | null;
 	stats: PlannerScrapeRunStats | null;
 }
 
@@ -61,6 +64,7 @@ export interface PlannerScrapeRunSummary {
 	periodo: string;
 	escuela: string | null;
 	status: PlannerScrapeRunStatus;
+	phase: PlannerScraperPhase | null;
 	startedAt: string;
 	finishedAt: string | null;
 	counts: PlannerScrapeCounts | null;
