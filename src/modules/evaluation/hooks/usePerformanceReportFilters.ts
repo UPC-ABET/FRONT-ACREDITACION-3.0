@@ -50,6 +50,10 @@ export function usePerformanceReportFilters() {
 	// "adjust state on prop change" pattern), not in a useEffect: a useEffect would render once
 	// with the stale filters before the reset commits, flashing outcomes/programs from the
 	// previous period. Do not "fix" this into a useEffect.
+	// The rebuilt appliedFilters below reads campusIds/gradeTypeIds/lang off the *previous*
+	// appliedFilters, not the live draft state: the live values may include filter edits the
+	// user hasn't searched yet, and promoting those into appliedFilters here would fire a
+	// query from an unsearched edit, bypassing the explicit "Buscar" gate.
 	if (academicPeriodId !== syncedPeriodId) {
 		setSyncedPeriodId(academicPeriodId);
 		setAccreditorId(null);
@@ -57,9 +61,9 @@ export function usePerformanceReportFilters() {
 		setProgramId(null);
 		setOutcomeId(null);
 		setAppliedFilters({
-			campusIds: campusIds.length > 0 ? campusIds : undefined,
-			gradeTypeIds: gradeTypeIds.length > 0 ? gradeTypeIds : undefined,
-			lang,
+			campusIds: appliedFilters.campusIds,
+			gradeTypeIds: appliedFilters.gradeTypeIds,
+			lang: appliedFilters.lang,
 		});
 	}
 

@@ -139,12 +139,12 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 			<div className="flex items-center justify-end gap-2 border-t border-zinc-100 pt-4">
 				{canClear && (
 					<Button variant="secondary" onClick={state.reset}>
-						<TrashIcon className="h-4 w-4" />
+						<TrashIcon aria-hidden="true" className="h-4 w-4" />
 						{t('performanceReports.filters.clear')}
 					</Button>
 				)}
 				<Button variant="primary" onClick={state.search} disabled={!state.hasPendingChanges}>
-					<MagnifyingGlassIcon className="h-4 w-4" />
+					<MagnifyingGlassIcon aria-hidden="true" className="h-4 w-4" />
 					{t('performanceReports.filters.search')}
 				</Button>
 			</div>

@@ -21,8 +21,10 @@ The frontend still sends the old `campusId: number` field. Since the backend's
 `ValidationPipe` runs with `whitelist: true`, sending `campusId` now fails every one of
 the 6 endpoints with `400 property campusId should not exist` — the RC/RV report screen
 and its PDF/Excel downloads are currently broken for any request bound for these
-endpoints (see `reportes-rc.md` at the repo root, provided by the backend team, for the
-full contract).
+endpoints (full contract shared by the backend team as `reportes-rc.md`; not committed to
+this repo — see backend PR
+[#118](https://github.com/UPC-ABET/BACK-ACREDITACION-3.0/pull/118) for the source of
+truth).
 
 ## What already exists
 
@@ -56,7 +58,7 @@ end-to-end against these endpoints:
    `gradeTypeIds` multi-select pattern in the same files.
 3. No changes to the download plumbing (service/hook/blob handling) — it already handles
    PDF, Excel, or ZIP responses generically via `Content-Disposition`, which is exactly
-   what `reportes-rc.md` asks for.
+   what the backend's shared contract doc (`reportes-rc.md`, not committed here) asks for.
 4. **Explicit "Buscar" (Search) button.** Every filter field previously fed straight into
    the `useQuery` that drives the on-screen report (`PerformanceReportFilterDto` sat in
    the query key), so each individual filter tweak fired its own request immediately —
@@ -76,5 +78,18 @@ end-to-end against these endpoints:
   campuses are selected, so no changes are needed there.
 - Adding a distinct "downloading ZIP" visual state — the button already shows a generic
   loading spinner (`Button loading` prop) with no PDF/ZIP-specific copy, so the checklist
-  item in `reportes-rc.md` about simplifying "descargando ZIP" copy does not apply; there
-  was never a ZIP-specific label to begin with.
+  item in the backend's shared contract doc about simplifying "descargando ZIP" copy does
+  not apply; there was never a ZIP-specific label to begin with.
+
+## Blocking dependency
+
+This change assumes `PerformanceReportFilterDto.campusId?: number` →
+`campusIds?: number[]` is already live on the backend. As of this writing it is not:
+backend PR [#118](https://github.com/UPC-ABET/BACK-ACREDITACION-3.0/pull/118) (the
+`campusId` → `campusIds` contract change) is still open against `develop`, and the
+committed `openapi.json` on both backend `develop` and `staging` still defines
+`SemaphoreFilterDto.campusId: number` (singular). Do not merge this frontend change until
+#118 has merged to `develop` and promoted to `staging` — with `ValidationPipe({ whitelist:
+true })` on the backend, sending `campusIds: number[]` before then does not error
+visibly, it silently drops the filter, so the multi-campus scenarios in `tasks.md`'s
+manual verification step cannot be meaningfully exercised until then either.

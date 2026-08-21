@@ -12,8 +12,9 @@ means the component only needs the already-imported `selectedOptions()` helper �
 component code.
 
 Alternative considered: a separate "all campuses" toggle next to a disabled single-select.
-Rejected — `reportes-rc.md` explicitly says `campusIds: []`/omitted already means "all
-campuses" on the backend, so a toggle would be redundant state that has to stay in sync
+Rejected — the backend's shared contract doc (`reportes-rc.md`, not committed here)
+explicitly says `campusIds: []`/omitted already means "all campuses" on the backend, so a
+toggle would be redundant state that has to stay in sync
 with the array, for no behavioral gain. Empty multi-select reads naturally as "no filter
 applied = all", matching every other optional filter in this same form (accreditor,
 commission, outcome all use the same "unset = no filter" convention).
@@ -30,7 +31,7 @@ commission, outcome all use the same "unset = no filter" convention).
   whether the blob is a PDF, an XLSX, or a ZIP — the browser's download dialog uses
   whatever extension is in the resolved filename.
 
-This already satisfies every bullet in `reportes-rc.md`'s "Manejo de errores" and
+This already satisfies every bullet in the backend's shared contract doc's "Manejo de errores" and
 "Checklist de migración" sections except the DTO field rename and the campus multi-select
 UI. Confirmed by reading `performanceReportsService.ts`,
 `usePerformanceReports.ts`, and `PerformanceReportView.tsx` before writing this
@@ -40,8 +41,8 @@ design — no speculative "might need to change" items included.
 
 `fallbackFileName()` only ever returns a `.pdf`/`.xlsx` extension, never `.zip`, since it
 has no way to know the backend chose ZIP mode without reading the response. This fallback
-only fires when `Content-Disposition` is missing entirely, which `reportes-rc.md` says the
-backend always sends for these 6 endpoints. Not hardening this against a header the
+only fires when `Content-Disposition` is missing entirely, which the backend's shared
+contract doc says the backend always sends for these 6 endpoints. Not hardening this against a header the
 backend contract guarantees it will send — that would be validating for a scenario that
 can't happen per the documented contract, which the project's coding guidelines
 explicitly call out as unnecessary defensive code.
@@ -100,3 +101,26 @@ constructs one of these two states in this file today.
   `campusId: number | undefined` to `campusIds: number[] | undefined` inside that object
   continues to correctly bust the cache on any campus selection change — no query-key
   factory changes needed.
+
+## Known gap: `hasPendingChanges` doesn't see accreditor/commission/program directly
+
+`filters` (and therefore `hasPendingChanges`) only reflects the cascade through its
+derived `programCommissionId`, not `accreditorId`/`commissionId`/`programId` themselves.
+Picking an accreditor without drilling all the way down to a program change leaves
+`programCommissionId` unset (`undefined` either way), so `hasPendingChanges` stays `false`
+and "Buscar" stays disabled even though a dropdown visibly changed. This is a pre-existing
+property of the DTO shape (only `programCommissionId` was ever sent), not something this
+change introduced, but it's now more visible since "Buscar" gives the user an explicit
+signal to expect changed selections to be searchable. Accepted as-is for this change;
+worth revisiting if it causes real confusion in practice.
+
+## Known gap: "Buscar" button visually matches `danger` at rest
+
+`Button.tsx`'s `primary` and `danger` variants share the same resting `bg-red-600`
+background (they only differ on hover), so the new "Buscar" button is not visually
+distinct from a destructive action at rest. This is pre-existing in `Button.tsx`, not
+introduced here — `variant="primary"` for a search/submit action already matches this
+codebase's convention elsewhere (e.g. `IFCDashboard.tsx`, `FindingsConsultPage.tsx` both
+use `variant="primary"` for their search buttons), so picking a different variant here
+would be inconsistent with those. Flagged as a design-system follow-up rather than
+special-cased in this change.

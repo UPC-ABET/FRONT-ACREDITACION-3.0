@@ -31,12 +31,12 @@
 - [x] Confirm `PerformanceReportView.tsx` needs no changes for the `campusId` →
       `campusIds` rename itself — it consumes the `filters` prop generically and doesn't
       reference `campusId` by name. (It does start consuming `appliedFilters` instead of
-      `filters` for Task 6, below — a different, deliberate change.)
+      `filters` for Task 5, below — a different, deliberate change.)
 - [x] Confirm `performanceReportsService.ts`, `usePerformanceReports.ts`, and the download
       button in `PerformanceReportView.tsx` need no changes (per `design.md`, the blob/
       filename handling is already format-agnostic).
 
-### Task 6: Add an explicit "Buscar" (Search) button so filter edits don't fire a request per change
+### Task 5: Add an explicit "Buscar" (Search) button so filter edits don't fire a request per change
 
 - [x] In `usePerformanceReportFilters.ts`, add `appliedFilters` state
       (`useState<PerformanceReportFilterDto>`, initialized to `{ lang }`), a `search()`
@@ -56,7 +56,7 @@
 - [x] Add the `performanceReports.filters.search` key to `es.json` ("Buscar") and
       `en.json` ("Search").
 
-### Task 7: Verify
+### Task 6: Verify
 
 - [x] `npx tsc --noEmit` is clean.
 - [x] `pnpm lint` (via `npx eslint <changed files>`) is clean on every changed file
@@ -66,8 +66,8 @@
       `PerceptionReportPanel.tsx`) were verified present on `develop` before this change
       (via `git stash` + `pnpm lint`) — unrelated to this work.
 - [x] `npx prettier --check` is clean on every changed file.
-- [ ] Manual verification (pending — user will verify against the running dev server):
-      run `pnpm dev`, open the RC/RV report screen, and check:
+- [x] Manual verification (confirmed by miikuru002 against the running dev server):
+      ran `pnpm dev`, opened the RC/RV report screen, and checked:
   - Editing any filter (campus, accreditor, outcome, language, grade types) does **not**
     refetch the report immediately — the on-screen data stays put until "Buscar" is
     clicked, and the button is disabled until something actually changed.
