@@ -4,6 +4,7 @@ import { Badge, Card, Spinner } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { usePlannerScrapeRun, isTerminalPlannerScrapeStatus } from '../hooks';
 import { PLANNER_SCRAPE_STATUS_COLORS } from '../constants';
+import { PlannerScrapePhaseLabel } from './PlannerScrapePhaseLabel';
 import type { PlannerScrapeRunStats } from '../types';
 
 interface PlannerScrapeRunProgressProps {
@@ -105,6 +106,7 @@ export function PlannerScrapeRunProgress({ runId }: PlannerScrapeRunProgressProp
 						<Badge color={PLANNER_SCRAPE_STATUS_COLORS[data.status]}>
 							{t(`planner.run.status.${data.status}`)}
 						</Badge>
+						<PlannerScrapePhaseLabel phase={data.phase} />
 						{isRunning && (
 							<span className="flex items-center gap-2 text-sm text-zinc-500">
 								<Spinner size="sm" />

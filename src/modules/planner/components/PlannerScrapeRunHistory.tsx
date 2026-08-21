@@ -5,6 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, Button, DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { PLANNER_SCRAPE_STATUS_COLORS } from '../constants';
+import { PlannerScrapePhaseLabel } from './PlannerScrapePhaseLabel';
 import type { PlannerScrapeRunSummary } from '../types';
 
 interface PlannerScrapeRunHistoryProps {
@@ -41,9 +42,12 @@ export function PlannerScrapeRunHistory({
 				id: 'status',
 				header: t('planner.history.col.status'),
 				cell: ({ row }) => (
-					<Badge color={PLANNER_SCRAPE_STATUS_COLORS[row.original.status]}>
-						{t(`planner.run.status.${row.original.status}`)}
-					</Badge>
+					<div className="space-y-1">
+						<Badge color={PLANNER_SCRAPE_STATUS_COLORS[row.original.status]}>
+							{t(`planner.run.status.${row.original.status}`)}
+						</Badge>
+						<PlannerScrapePhaseLabel phase={row.original.phase} />
+					</div>
 				),
 			},
 			{ accessorKey: 'periodo', header: t('planner.history.col.periodo') },
