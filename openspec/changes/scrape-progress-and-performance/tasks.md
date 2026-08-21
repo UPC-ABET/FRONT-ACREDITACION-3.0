@@ -335,3 +335,35 @@ schemas against the frontend types field-by-field — exact match on enum values
 nullability, and field names for both Banner and Planner.
 
 `npx tsc --noEmit` and `pnpm lint` both clean, repo-wide, after all fixes above.
+
+## Unplanned — remove phase label from history tables (2026-08-21)
+
+PR #110 shipped to `production` on 2026-08-21. The same day, the requester decided phase
+should show only on the single-run progress cards, not the history tables — see
+`proposal.md` § Scope reduction. This reopens AC-3 as reverted rather than satisfied; AC-1,
+AC-2, AC-4, AC-5, AC-6, AC-7, AC-8 are unaffected.
+
+### Task U.1 — Remove phase from ScrapeRunHistory / PlannerScrapeRunHistory ✅ DONE (2026-08-21)
+
+- [x] Task complete
+
+**Files**
+
+- `src/modules/banner/components/ScrapeRunHistory.tsx` (modify)
+- `src/modules/planner/components/PlannerScrapeRunHistory.tsx` (modify)
+
+**Steps**
+
+1. Remove the `ScrapePhaseLabel`/`PlannerScrapePhaseLabel` import and its usage from each
+   file's `status` column `cell`, reverting the cell to render the status `Badge` alone
+   (its pre-change shape) instead of the `space-y-1` wrapper with the phase label as a
+   second line.
+2. `npx tsc --noEmit`, `pnpm lint` — both clean.
+
+**Commit**: `fix(scraping): remove phase label from history tables, keep on progress cards`
+
+> `ScrapePhaseLabel`/`PlannerScrapePhaseLabel` components, their constants
+> (`SCRAPE_PHASE_LABEL_KEYS`/`PLANNER_SCRAPE_PHASE_LABEL_KEYS`), the `phase` type fields,
+> and the i18n keys are all untouched — still in active use by the progress cards
+> (`ScrapeRunProgress.tsx`/`PlannerScrapeRunProgress.tsx`), which is the whole reason this
+> was a small revert rather than a re-do. Only the two history-table wiring sites changed.
