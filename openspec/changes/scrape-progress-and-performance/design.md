@@ -107,6 +107,11 @@ exactly as it does today.
 
 ### AC-3 — Phase label visible in both history tables, without adding an 8th column
 
+> **Reverted 2026-08-21** — see `proposal.md` § Scope reduction. The approach below shipped
+> in PR #110 and is kept here as the record of what was built and why; it no longer reflects
+> the current code. The history tables now render the status `Badge` alone, matching their
+> pre-change shape exactly.
+
 Both history tables already have 7 columns (`status`, plus 6 more) — the proposal flagged
 adding an 8th as a crowding risk and left the resolution to design time. Resolved here:
 **the phase label goes inside the existing `status` cell, as a second line under the

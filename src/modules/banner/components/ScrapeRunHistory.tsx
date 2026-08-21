@@ -5,7 +5,6 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { Badge, Button, DataTable } from '@/shared/components';
 import { useI18n } from '@/providers';
 import { SCRAPE_STATUS_COLORS } from '../constants';
-import { ScrapePhaseLabel } from './ScrapePhaseLabel';
 import type { ScrapeRunSummary } from '../types';
 
 interface ScrapeRunHistoryProps {
@@ -42,12 +41,9 @@ export function ScrapeRunHistory({
 				id: 'status',
 				header: t('banner.history.col.status'),
 				cell: ({ row }) => (
-					<div className="space-y-1">
-						<Badge color={SCRAPE_STATUS_COLORS[row.original.status]}>
-							{t(`banner.run.status.${row.original.status}`)}
-						</Badge>
-						<ScrapePhaseLabel phase={row.original.phase} />
-					</div>
+					<Badge color={SCRAPE_STATUS_COLORS[row.original.status]}>
+						{t(`banner.run.status.${row.original.status}`)}
+					</Badge>
 				),
 			},
 			{ accessorKey: 'nivel', header: t('banner.history.col.nivel') },

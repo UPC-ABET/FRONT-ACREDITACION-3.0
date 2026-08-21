@@ -109,16 +109,16 @@ render, not how they fetch.
 
 ### Traceability
 
-| AC  | Criterion                                                   | Satisfied by                                                                                                                           |
-| --- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Phase label next to status Badge in both progress cards     | `ScrapePhaseLabel`/`PlannerScrapePhaseLabel` rendered in `ScrapeRunProgress.tsx`/`PlannerScrapeRunProgress.tsx` (Tasks 2.2, 3.2)       |
-| 2   | Null phase renders no label                                 | `ScrapePhaseLabel`/`PlannerScrapePhaseLabel` early-return on `phase === null` (Tasks 2.1, 3.1)                                         |
-| 3   | Phase label visible in both history tables                  | Same components folded into the `status` cell of `ScrapeRunHistory.tsx`/`PlannerScrapeRunHistory.tsx` (Tasks 2.2, 3.2)                 |
-| 4   | Terminal-status runs keep showing last-known phase          | No `status`-based branching in the label components — renders purely off `phase` (design.md § AC-4)                                    |
-| 5   | Unrecognized phase value falls back to raw string, no crash | `SCRAPE_PHASE_LABEL_KEYS`/`PLANNER_SCRAPE_PHASE_LABEL_KEYS` membership check with raw-string fallback (Tasks 2.1, 3.1)                 |
-| 6   | Types match backend `openapi.json` on `staging` exactly     | `ScraperPhase`/`PlannerScraperPhase` in `types/index.ts` (Task 1.1), verified against the live schema in `design.md` § Contract status |
-| 7   | All phase copy goes through `t()` + both locale files       | `banner.run.phase.*`/`planner.run.phase.*` keys in `es.json`/`en.json` (Tasks 2.2, 3.2)                                                |
-| 8   | `tsc --noEmit` and `pnpm lint` clean                        | Task 4.2 (repo-wide gate)                                                                                                              |
+| AC  | Criterion                                                                                         | Satisfied by                                                                                                                           |
+| --- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Phase label next to status Badge in both progress cards                                           | `ScrapePhaseLabel`/`PlannerScrapePhaseLabel` rendered in `ScrapeRunProgress.tsx`/`PlannerScrapeRunProgress.tsx` (Tasks 2.2, 3.2)       |
+| 2   | Null phase renders no label                                                                       | `ScrapePhaseLabel`/`PlannerScrapePhaseLabel` early-return on `phase === null` (Tasks 2.1, 3.1)                                         |
+| 3   | ~~Phase label visible in both history tables~~ — reverted, see Scope reduction (2026-08-21) below | Removed from `ScrapeRunHistory.tsx`/`PlannerScrapeRunHistory.tsx` — phase now shows only on the progress cards (AC-1)                  |
+| 4   | Terminal-status runs keep showing last-known phase                                                | No `status`-based branching in the label components — renders purely off `phase` (design.md § AC-4)                                    |
+| 5   | Unrecognized phase value falls back to raw string, no crash                                       | `SCRAPE_PHASE_LABEL_KEYS`/`PLANNER_SCRAPE_PHASE_LABEL_KEYS` membership check with raw-string fallback (Tasks 2.1, 3.1)                 |
+| 6   | Types match backend `openapi.json` on `staging` exactly                                           | `ScraperPhase`/`PlannerScraperPhase` in `types/index.ts` (Task 1.1), verified against the live schema in `design.md` § Contract status |
+| 7   | All phase copy goes through `t()` + both locale files                                             | `banner.run.phase.*`/`planner.run.phase.*` keys in `es.json`/`en.json` (Tasks 2.2, 3.2)                                                |
+| 8   | `tsc --noEmit` and `pnpm lint` clean                                                              | Task 4.2 (repo-wide gate)                                                                                                              |
 
 ## Dependencies
 
@@ -147,3 +147,13 @@ tables, not just the single-run progress cards) was resolved with the requester:
 both.**
 
 ---
+
+### Scope reduction — remove phase from history tables (2026-08-21)
+
+After this change shipped to production (PR #110), the requester decided the phase label
+should show only on the single-run progress cards, not in the history tables — AC-3 is
+reversed. This does not change AC-1, AC-2, AC-4, AC-5, AC-6, AC-7, or AC-8: `phase` is still
+on the types, still rendered on `ScrapeRunProgress`/`PlannerScrapeRunProgress`, still
+defensively handled for unrecognized values. Only the history-table rendering (previously
+folded into the `status` cell) is removed. See `tasks.md` § Unplanned for the implementing
+task.
