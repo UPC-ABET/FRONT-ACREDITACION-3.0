@@ -46,13 +46,20 @@ export function PlannerScrapeRunHistory({
 					</Badge>
 				),
 			},
-			{ accessorKey: 'periodo', header: t('planner.history.col.periodo') },
+			{ accessorKey: 'period', header: t('planner.history.col.periodo') },
+			{
+				id: 'school',
+				header: t('planner.history.col.school'),
+				cell: ({ row }) => row.original.school ?? none,
+			},
 			{
 				id: 'counts',
 				header: t('planner.history.col.counts'),
 				cell: ({ row }) => {
 					const counts = row.original.counts;
-					return counts ? `${counts.seccion} / ${counts.evaluacion} / ${counts.nota}` : none;
+					return counts
+						? `${counts.sections ?? 0} / ${counts.evaluations ?? 0} / ${counts.grades ?? 0}`
+						: none;
 				},
 			},
 			{
@@ -68,7 +75,7 @@ export function PlannerScrapeRunHistory({
 			{
 				id: 'triggeredBy',
 				header: t('planner.history.col.triggeredBy'),
-				cell: ({ row }) => row.original.triggeredBy ?? none,
+				cell: ({ row }) => row.original.triggeredByName,
 			},
 			{
 				id: 'actions',

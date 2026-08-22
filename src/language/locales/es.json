@@ -287,6 +287,7 @@
 			"col": {
 				"status": "Estado",
 				"periodo": "Período",
+				"school": "Escuela",
 				"counts": "Conteos (S/E/N)",
 				"started": "Inicio",
 				"finished": "Fin",
@@ -337,7 +338,7 @@
 				"status": "Estado",
 				"nivel": "Nivel",
 				"departments": "Departamentos",
-				"counts": "Conteos (H/M/A)",
+				"counts": "Conteos (H/M/A/N)",
 				"started": "Inicio",
 				"finished": "Fin",
 				"triggeredBy": "Ejecutado por",
@@ -369,6 +370,7 @@
 				"horario": "Horarios",
 				"matricula": "Matrículas",
 				"alumno": "Alumnos",
+				"nota": "Notas",
 				"uniqueStudents": "Alumnos únicos"
 			},
 			"departments": {

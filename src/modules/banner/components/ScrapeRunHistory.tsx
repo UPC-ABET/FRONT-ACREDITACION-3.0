@@ -46,18 +46,20 @@ export function ScrapeRunHistory({
 					</Badge>
 				),
 			},
-			{ accessorKey: 'nivel', header: t('banner.history.col.nivel') },
+			{ accessorKey: 'level', header: t('banner.history.col.nivel') },
 			{
 				id: 'departments',
 				header: t('banner.history.col.departments'),
-				cell: ({ row }) => row.original.departamentos.join(', ') || none,
+				cell: ({ row }) => row.original.departments.join(', ') || none,
 			},
 			{
 				id: 'counts',
 				header: t('banner.history.col.counts'),
 				cell: ({ row }) => {
 					const counts = row.original.counts;
-					return counts ? `${counts.horario} / ${counts.matricula} / ${counts.alumno}` : none;
+					return counts
+						? `${counts.schedule ?? 0} / ${counts.enrollment ?? 0} / ${counts.students ?? 0} / ${counts.grades ?? 0}`
+						: none;
 				},
 			},
 			{
@@ -73,7 +75,7 @@ export function ScrapeRunHistory({
 			{
 				id: 'triggeredBy',
 				header: t('banner.history.col.triggeredBy'),
-				cell: ({ row }) => row.original.triggeredBy ?? none,
+				cell: ({ row }) => row.original.triggeredByName,
 			},
 			{
 				id: 'actions',

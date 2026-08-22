@@ -26,9 +26,12 @@ function StatsDetail({ stats }: { stats: PlannerScrapeRunStats }) {
 	return (
 		<div className="space-y-5">
 			<div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-				<CountTile label={t('planner.run.counts.seccion')} value={stats.counts.seccion} />
-				<CountTile label={t('planner.run.counts.evaluacion')} value={stats.counts.evaluacion} />
-				<CountTile label={t('planner.run.counts.nota')} value={stats.counts.nota} />
+				<CountTile label={t('planner.run.counts.seccion')} value={stats.counts.sections ?? 0} />
+				<CountTile
+					label={t('planner.run.counts.evaluacion')}
+					value={stats.counts.evaluations ?? 0}
+				/>
+				<CountTile label={t('planner.run.counts.nota')} value={stats.counts.grades ?? 0} />
 				<CountTile label={t('planner.run.counts.uniqueSections')} value={stats.uniqueSections} />
 			</div>
 
