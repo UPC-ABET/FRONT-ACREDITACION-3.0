@@ -9,15 +9,15 @@ const SCRAPING_EXPORT_POLL_INTERVAL_MS = 5_000;
 
 export const scrapingExportsQueryKeys = {
 	all: ['scraping-exports'] as const,
-	status: (exportType: ScrapingExportType, scope: AbetScope, lang: string) =>
-		[...scrapingExportsQueryKeys.all, 'status', exportType, scope, lang] as const,
+	status: (exportType: ScrapingExportType, scope: AbetScope) =>
+		[...scrapingExportsQueryKeys.all, 'status', exportType, scope] as const,
 };
 
-export function useScrapingExportStatus(exportType: ScrapingExportType, lang: 'es' | 'en') {
+export function useScrapingExportStatus(exportType: ScrapingExportType) {
 	const scope = useAbetScope();
 	return useQuery({
-		queryKey: scrapingExportsQueryKeys.status(exportType, scope, lang),
-		queryFn: () => getScrapingExportStatus(exportType, lang),
+		queryKey: scrapingExportsQueryKeys.status(exportType, scope),
+		queryFn: () => getScrapingExportStatus(exportType),
 		enabled: scope.academicPeriodId !== null,
 		retry: false,
 		refetchInterval: (query) =>
@@ -26,7 +26,6 @@ export function useScrapingExportStatus(exportType: ScrapingExportType, lang: 'e
 }
 
 interface RegenerateScrapingExportVariables {
-	lang: 'es' | 'en';
 	scope: AbetScope;
 }
 
@@ -34,13 +33,13 @@ export function useRegenerateScrapingExport(exportType: ScrapingExportType) {
 	const queryClient = useQueryClient();
 
 	return useMutation<ScrapingExportStatusResponse, unknown, RegenerateScrapingExportVariables>({
-		mutationFn: ({ lang }) => regenerateScrapingExport(exportType, lang),
+		mutationFn: () => regenerateScrapingExport(exportType),
 		// Scope comes from the mutation's own variables, not a closure over the hook's render-time
 		// props — otherwise switching the top-bar period while a regenerate is in flight would
 		// invalidate the newly-selected period's cache entry instead of the one actually mutated.
-		onSettled: (_data, _error, { lang, scope }) => {
+		onSettled: (_data, _error, { scope }) => {
 			queryClient.invalidateQueries({
-				queryKey: scrapingExportsQueryKeys.status(exportType, scope, lang),
+				queryKey: scrapingExportsQueryKeys.status(exportType, scope),
 			});
 		},
 	});

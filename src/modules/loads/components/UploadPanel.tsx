@@ -127,13 +127,13 @@ export default function UploadPanel({
 		if (!scrapingKind) return;
 		setScrapingPending(true);
 		try {
-			const status = await getScrapingExportStatus(scrapingKind, locale);
+			const status = await getScrapingExportStatus(scrapingKind);
 			if (isScrapingExportDownloadable(status)) {
 				await downloadScrapingExport(scrapingKind, locale);
 			} else if (status.status === 'running') {
 				showToast(t('loads.upload.webScrapingAlreadyRunning'), 'info');
 			} else {
-				await regenerate.mutateAsync({ lang: locale, scope });
+				await regenerate.mutateAsync({ scope });
 				showToast(t('loads.upload.webScrapingStarted'), 'success');
 			}
 		} catch (err) {

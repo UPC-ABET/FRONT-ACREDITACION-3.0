@@ -33,7 +33,7 @@ function ScrapingExportCard({
 }: ScrapingExportCardProps) {
 	const { t } = useI18n();
 	const [downloading, setDownloading] = useState(false);
-	const statusQuery = useScrapingExportStatus(exportType, lang);
+	const statusQuery = useScrapingExportStatus(exportType);
 	const regenerate = useRegenerateScrapingExport(exportType);
 
 	const data = statusQuery.data;
@@ -62,7 +62,7 @@ function ScrapingExportCard({
 
 	const handleRegenerate = () => {
 		regenerate.mutate(
-			{ lang, scope },
+			{ scope },
 			{ onError: (error) => onError(error, 'scraping.exports.actions.startFailed') },
 		);
 	};

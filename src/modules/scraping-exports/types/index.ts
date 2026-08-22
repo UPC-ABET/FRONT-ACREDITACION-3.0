@@ -10,7 +10,6 @@ export type ScrapingExportRunStatus = 'running' | 'completed' | 'failed';
 export interface ScrapingExportGenerated {
 	exportType: ScrapingExportType;
 	period: string;
-	lang: string;
 	status: ScrapingExportRunStatus;
 	fileName: string | null;
 	errorMessage: string | null;
