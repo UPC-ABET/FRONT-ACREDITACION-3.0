@@ -142,9 +142,9 @@ missed old identifier and runs the repo-wide gate.
 
 **Commit**: `fix(banner): rename history table fields, show grades count and triggered-by name`
 
-### Task 2.2 — Add the grades count tile to `ScrapeRunProgress`
+### Task 2.2 — Add the grades count tile to `ScrapeRunProgress` ✅ DONE (2026-08-21)
 
-- [ ] Task complete
+- [x] Task complete
 
 **Files**
 
@@ -174,8 +174,9 @@ missed old identifier and runs the repo-wide gate.
 > backend is reachable in this environment (`.env`'s `API_PROXY_URL=http://localhost:7777`
 > confirmed down via `curl`; the sibling `BACK-ACREDITACION-3.0` checkout exists locally but
 > starting it would require provisioning its database and triggering a real scrape against
-> Banner, out of scope for verifying a tile renders). Left unchecked; tracked in
-> "Outstanding before merge" below and in `runbook.md`.
+> Banner, out of scope for verifying a tile renders). **Closed 2026-08-21**: step 4 verified
+> live by the requester against a reachable backend — all four count tiles (including
+> grades) render with real numbers in the documented order.
 
 ---
 
@@ -241,9 +242,9 @@ missed old identifier and runs the repo-wide gate.
 
 ## Milestone 4 — Planner UI wiring
 
-### Task 4.1 — Wire renamed fields and `triggeredByName` into `PlannerScrapeRunHistory`, add the `school` column
+### Task 4.1 — Wire renamed fields and `triggeredByName` into `PlannerScrapeRunHistory`, add the `school` column ✅ DONE (2026-08-21)
 
-- [ ] Task complete (code complete — see retro)
+- [x] Task complete
 
 **Files**
 
@@ -269,17 +270,17 @@ row.original.school ?? none }` (`design.md` § AC-11).
 **Commit**: `fix(planner): rename history table fields, add school column, show triggered-by name`
 
 > Code complete: steps 1–5 done, `tsc --noEmit` and `pnpm lint` both clean. Step 6 (live
-> manual check) **not performed** — same reachability gap as Task 2.2 (no backend reachable
-> in this environment). Left unchecked; tracked in "Outstanding before merge" below and in
-> `runbook.md`.
+> manual check) **not performed** at implementation time — same reachability gap as Task
+> 2.2. **Closed 2026-08-21**: verified live by the requester — the `school` column renders
+> a real school code / `-` for unscoped runs.
 
 ---
 
 ## Milestone 5 — Scraping-exports wire mapper
 
-### Task 5.1 — Rename the `periodo` wire read to `period`
+### Task 5.1 — Rename the `periodo` wire read to `period` ✅ DONE (2026-08-21)
 
-- [ ] Task complete (code complete — see retro)
+- [x] Task complete
 
 **Files**
 
@@ -299,8 +300,9 @@ row.original.school ?? none }` (`design.md` § AC-11).
 **Commit**: `fix(scraping-exports): read the renamed period field from the status wire response`
 
 > Code complete: steps 1–4 done, `tsc --noEmit` and `pnpm lint` both clean. Step 5 (live
-> manual check) **not performed** — same reachability gap as Tasks 2.2/4.1. Left unchecked;
-> tracked in "Outstanding before merge" below and in `runbook.md`.
+> manual check) **not performed** at implementation time — same reachability gap as Tasks
+> 2.2/4.1. **Closed 2026-08-21**: verified live by the requester — the status endpoint
+> returns a real, non-empty `period`.
 
 ---
 
@@ -364,39 +366,55 @@ row.original.school ?? none }` (`design.md` § AC-11).
 
 ---
 
-## Outstanding before merge
+## Outstanding before merge — resolved 2026-08-21
 
-Everything is code-complete: `pnpm exec tsc --noEmit` and `pnpm lint` are clean across the
-whole repo, the old-identifier sweep (Task 6.1) found nothing outstanding, and i18n key
-parity is confirmed. Nine of twelve tasks are fully done. The three that aren't (2.2, 4.1,
-5.1) share one genuine remaining gap: **no backend is reachable in this environment**
-(`.env`'s `API_PROXY_URL=http://localhost:7777` confirmed down via `curl`; the sibling
-`BACK-ACREDITACION-3.0` checkout exists locally but starting it would mean provisioning its
-database and, to populate real data, triggering actual scrapes against Banner/uPlanner or
-calling scraping-exports against a real academic period — out of scope for this environment)
-— so their own manual-verification steps could not be performed:
-
-- Task 2.2, step 4 — confirm all four Banner count tiles render real numbers.
-- Task 4.1, step 6 — confirm the new Planner `school` column renders real data.
-- Task 5.1, step 5 — confirm the scraping-exports status call returns a real, non-empty
-  `period`.
-
-This is the same reachability gap `scrape-progress-and-performance` hit (see that change's
-`tasks.md` § Milestone 2/3 retros) — resolved there by the requester verifying live
-post-deploy. **Before this is treated as ready for `/abet-create-pr`**, either run
-`runbook.md`'s Manual validation table steps 1–8 against a reachable backend, or — per the
-prior change's precedent — ship and verify live post-deploy, given this fixes an active
-production regression rather than shipping a new feature ahead of its dependency.
+Was: Tasks 2.2, 4.1, 5.1 code-complete but their live-backend manual steps unperformed (no
+backend reachable in this environment — same gap `scrape-progress-and-performance` hit).
+**Resolved**: the requester performed the live manual verification directly against a
+reachable backend and confirmed all three steps pass (grades count tiles, Planner `school`
+column, scraping-exports `period`). All 12 tasks are now `✅ DONE`.
 
 Re-run `/abet-verify-contract` one more time immediately before opening the PR, per
 `design.md` § Cross-repo mode, as the standard final check.
 
-<!--
-Append-only sections below. These record what actually happened, not what was planned.
-
-## Unplanned — <what and why>
-
-## Post-QA fixes
-
 ## Audit fixes (/abet-audit-pr)
--->
+
+Six parallel auditors (code quality, architecture/contract, testing, antipatterns,
+security, runtime robustness) ran against the diff, plus the skill's own task-completeness
+gate. Verdict: **NOT READY** — one blocker (open tasks), two minors, two suggestions.
+Resolved same day (2026-08-21):
+
+### Blocker
+
+- [x] **3 of 12 tasks had open checkboxes (2.2, 4.1, 5.1)** — the completeness gate
+      (`grep -c '^- \[ \]' tasks.md`) reported 3, and Auditor B independently flagged the
+      same tasks for checkbox/heading inconsistency. Resolved: the requester performed the
+      live-backend manual verification for all three (see "Outstanding before merge"
+      above) — all 12 tasks now `✅ DONE`.
+
+### Minor
+
+- [x] **Runtime robustness (Auditor F)** — `ScrapeCounts.nota` (Banner) was read directly
+      from the backend's untyped `stats`/`counts` object with no defensive default, unlike
+      the pattern this same diff already established in
+      `scrapingExportsService.ts#normalizeStatusResponse`. Fixed: `counts.nota ?? 0` at
+      both read sites (`ScrapeRunHistory.tsx`'s counts cell, `ScrapeRunProgress.tsx`'s
+      `CountTile`).
+- [x] **Antipatterns (Auditor D)** — `triggeredBy: string | null` stays on both
+      `ScrapeRunSummary`/`PlannerScrapeRunSummary` with zero remaining consumers
+      (superseded by `triggeredByName`), but nothing in the code said so — a future reader
+      would have to rediscover the reason via `design.md`. Fixed: added a one-line WHY
+      comment on both fields (`banner/types/index.ts`, `planner/types/index.ts`).
+
+### Suggestions
+
+- [x] **Runtime robustness (Auditor F)** — the same unguarded-count pattern pre-existed for
+      Planner's `nota` (not a regression, but adjacent to the diff). Applied the same
+      `?? 0` fallback to `PlannerScrapeRunHistory.tsx`'s counts cell for consistency.
+- [x] No action needed — **Security (Auditor E)**'s note that `triggeredByName` has no
+      render-time fallback was flagged only for cross-checking the backend's
+      always-present guarantee once live; the requester's live verification above confirms
+      the field renders correctly.
+
+Independently re-verified (not trusting the fix alone): `pnpm exec tsc --noEmit` and
+`pnpm lint` both clean, repo-wide, after all fixes above.
