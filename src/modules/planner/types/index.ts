@@ -30,9 +30,9 @@ export type PlannerScrapeRunStatus = 'running' | 'completed' | 'partial' | 'fail
 export type PlannerScraperPhase = 'sections' | 'evaluations' | 'grades';
 
 export interface PlannerScrapeCounts {
-	seccion: number;
-	evaluacion: number;
-	nota: number;
+	sections: number;
+	evaluations: number;
+	grades: number;
 }
 
 export interface PlannerScrapeRunError {

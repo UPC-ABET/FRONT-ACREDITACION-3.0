@@ -57,7 +57,9 @@ export function PlannerScrapeRunHistory({
 				header: t('planner.history.col.counts'),
 				cell: ({ row }) => {
 					const counts = row.original.counts;
-					return counts ? `${counts.seccion} / ${counts.evaluacion} / ${counts.nota ?? 0}` : none;
+					return counts
+						? `${counts.sections} / ${counts.evaluations} / ${counts.grades ?? 0}`
+						: none;
 				},
 			},
 			{
