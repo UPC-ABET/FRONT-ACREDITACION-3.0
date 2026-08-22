@@ -21,12 +21,12 @@ function buildUrl(
 	return `/scraping/exports/${EXPORT_TYPE_PATH[exportType]}/${action}?lang=${encodeURIComponent(lang)}`;
 }
 
-// The backend's wire field is `periodo` (Spanish), and only `status` is guaranteed present —
-// this maps the raw response to the frontend's typed, English-named, defensively-defaulted
-// shape rather than trusting the JSON to already match it.
+// The backend's wire field is `period` (English, as of PR #124), and only `status` is
+// guaranteed present — this maps the raw response to the frontend's typed,
+// defensively-defaulted shape rather than trusting the JSON to already match it.
 interface ScrapingExportStatusWire {
 	status?: string;
-	periodo?: string;
+	period?: string;
 	fileName?: string | null;
 	errorMessage?: string | null;
 	startedAt?: string | null;
@@ -42,7 +42,7 @@ function normalizeStatusResponse(
 	if (!wire.status || wire.status === 'notGenerated') return { status: 'notGenerated' };
 	return {
 		exportType,
-		period: wire.periodo ?? '',
+		period: wire.period ?? '',
 		lang,
 		status: wire.status as ScrapingExportRunStatus,
 		fileName: wire.fileName ?? null,
