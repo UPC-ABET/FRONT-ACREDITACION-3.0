@@ -6,8 +6,8 @@ export interface BannerSessionStatus {
 }
 
 export interface StartScrapeRequest {
-	nivel?: string;
-	departamentos?: string[];
+	level?: string;
+	departments?: string[];
 }
 
 export interface StartScrapeResponse {
@@ -16,12 +16,13 @@ export interface StartScrapeResponse {
 
 export type ScrapeRunStatus = 'running' | 'completed' | 'partial' | 'failed' | 'expired';
 
-export type ScraperPhase = 'horario' | 'matricula' | 'alumnosYNotas';
+export type ScraperPhase = 'schedule' | 'enrollment' | 'studentsAndGrades';
 
 export interface ScrapeCounts {
 	horario: number;
 	matricula: number;
 	alumno: number;
+	nota: number;
 }
 
 export interface ScrapeRunError {
@@ -50,15 +51,16 @@ export interface ScrapeRun {
 
 export interface ScrapeRunSummary {
 	runId: string;
-	nivel: string;
-	periodo: string;
-	departamentos: string[];
+	level: string;
+	period: string;
+	departments: string[];
 	status: ScrapeRunStatus;
 	phase: ScraperPhase | null;
 	startedAt: string;
 	finishedAt: string | null;
 	counts: ScrapeCounts | null;
 	triggeredBy: string | null;
+	triggeredByName: string;
 }
 
 export type AuthSessionStatus = 'active' | 'completed' | 'failed' | 'expired';

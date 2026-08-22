@@ -16,9 +16,9 @@ export const PLANNER_SCRAPE_STATUS_COLORS: Record<PlannerScrapeRunStatus, string
 // so an unrecognized backend value misses the map and falls back to the raw string instead
 // of an untranslated i18n key — see PlannerScrapePhaseLabel.
 export const PLANNER_SCRAPE_PHASE_LABEL_KEYS: Record<PlannerScraperPhase, string> = {
-	secciones: 'planner.run.phase.secciones',
-	evaluaciones: 'planner.run.phase.evaluaciones',
-	notas: 'planner.run.phase.notas',
+	sections: 'planner.run.phase.secciones',
+	evaluations: 'planner.run.phase.evaluaciones',
+	grades: 'planner.run.phase.notas',
 };
 
 export const PLANNER_SESSION_STATUS_COLORS: Record<PlannerSessionStatusValue, string> = {

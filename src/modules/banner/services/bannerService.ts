@@ -23,9 +23,9 @@ export async function startBannerScrape(
 	payload: StartScrapeRequest = {},
 ): Promise<StartScrapeResponse> {
 	const body: StartScrapeRequest = {
-		...(payload.nivel ? { nivel: payload.nivel } : {}),
-		...(payload.departamentos && payload.departamentos.length > 0
-			? { departamentos: payload.departamentos }
+		...(payload.level ? { level: payload.level } : {}),
+		...(payload.departments && payload.departments.length > 0
+			? { departments: payload.departments }
 			: {}),
 	};
 	const res = await apiPost('/banner/scrape', body);

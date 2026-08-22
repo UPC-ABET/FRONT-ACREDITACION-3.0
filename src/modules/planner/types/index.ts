@@ -17,8 +17,8 @@ export interface SavePlannerCredentialsRequest {
 }
 
 export interface StartPlannerScrapeRequest {
-	nivel?: string;
-	cursos?: string[];
+	level?: string;
+	courses?: string[];
 }
 
 export interface StartPlannerScrapeResponse {
@@ -27,7 +27,7 @@ export interface StartPlannerScrapeResponse {
 
 export type PlannerScrapeRunStatus = 'running' | 'completed' | 'partial' | 'failed' | 'expired';
 
-export type PlannerScraperPhase = 'secciones' | 'evaluaciones' | 'notas';
+export type PlannerScraperPhase = 'sections' | 'evaluations' | 'grades';
 
 export interface PlannerScrapeCounts {
 	seccion: number;
@@ -61,12 +61,13 @@ export interface PlannerScrapeRun {
 
 export interface PlannerScrapeRunSummary {
 	runId: string;
-	periodo: string;
-	escuela: string | null;
+	period: string;
+	school: string | null;
 	status: PlannerScrapeRunStatus;
 	phase: PlannerScraperPhase | null;
 	startedAt: string;
 	finishedAt: string | null;
 	counts: PlannerScrapeCounts | null;
 	triggeredBy: string | null;
+	triggeredByName: string;
 }

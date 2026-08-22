@@ -35,8 +35,8 @@ export async function startPlannerScrape(
 	payload: StartPlannerScrapeRequest = {},
 ): Promise<StartPlannerScrapeResponse> {
 	const body: StartPlannerScrapeRequest = {
-		...(payload.nivel ? { nivel: payload.nivel } : {}),
-		...(payload.cursos && payload.cursos.length > 0 ? { cursos: payload.cursos } : {}),
+		...(payload.level ? { level: payload.level } : {}),
+		...(payload.courses && payload.courses.length > 0 ? { courses: payload.courses } : {}),
 	};
 	const res = await apiPost('/planner/scrape', body);
 	return getApiData<StartPlannerScrapeResponse>(res);
