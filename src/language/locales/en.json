@@ -4164,7 +4164,8 @@
 			"gradeTypes": "Grade type",
 			"allGradeTypes": "All grade types",
 			"gradeTypesHint": "Applies to Verification (RV) only. Leave empty to include every grade type.",
-			"clear": "Clear filters"
+			"clear": "Clear filters",
+			"search": "Search"
 		},
 		"chart": {
 			"title": "Students by performance level and outcome"
