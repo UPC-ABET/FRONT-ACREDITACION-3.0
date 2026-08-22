@@ -26,9 +26,9 @@ function StatsDetail({ stats }: { stats: ScrapeRunStats }) {
 	return (
 		<div className="space-y-5">
 			<div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-				<CountTile label={t('banner.run.counts.horario')} value={stats.counts.schedule} />
-				<CountTile label={t('banner.run.counts.matricula')} value={stats.counts.enrollment} />
-				<CountTile label={t('banner.run.counts.alumno')} value={stats.counts.students} />
+				<CountTile label={t('banner.run.counts.horario')} value={stats.counts.schedule ?? 0} />
+				<CountTile label={t('banner.run.counts.matricula')} value={stats.counts.enrollment ?? 0} />
+				<CountTile label={t('banner.run.counts.alumno')} value={stats.counts.students ?? 0} />
 				<CountTile label={t('banner.run.counts.nota')} value={stats.counts.grades ?? 0} />
 				<CountTile label={t('banner.run.counts.uniqueStudents')} value={stats.uniqueStudents} />
 			</div>

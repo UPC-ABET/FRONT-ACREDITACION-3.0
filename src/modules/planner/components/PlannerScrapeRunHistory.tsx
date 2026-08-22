@@ -58,7 +58,7 @@ export function PlannerScrapeRunHistory({
 				cell: ({ row }) => {
 					const counts = row.original.counts;
 					return counts
-						? `${counts.sections} / ${counts.evaluations} / ${counts.grades ?? 0}`
+						? `${counts.sections ?? 0} / ${counts.evaluations ?? 0} / ${counts.grades ?? 0}`
 						: none;
 				},
 			},
