@@ -209,3 +209,52 @@ directly against the merged `openapi.json` (`ref=a338a612`) and the backend's
 Planner school field) were confirmed as real, verifiable omissions, not guessed.
 
 ---
+
+### Scope extension — `stats.counts` field rename (2026-08-21)
+
+The backend renamed the `stats.counts` field names on `RunSummaryResponseDto`/
+`PlannerRunSummaryResponseDto` (`GET /banner/scrape`, `GET /planner/scrape`, and their
+`/:runId` variants) from Spanish to English — the exact class of field this proposal's own
+Risks table flagged as unprotected ("`stats`/`counts` are untyped in `openapi.json`... if
+the backend changes the internal `stats` shape without updating `openapi.json`, this
+frontend type could silently drift again"). Same hard-cutover rules as the original rename:
+no dual-field compatibility window.
+
+- Banner (`ScrapeCounts`): `horario`→`schedule`, `matricula`→`enrollment`,
+  `alumno`→`students`, `nota`→`grades`.
+- Planner (`PlannerScrapeCounts`): `seccion`→`sections`, `evaluacion`→`evaluations`,
+  `nota`→`grades`.
+
+Independently confirmed against the backend's `scraper.service.ts`/
+`planner-scraper.service.ts` on `develop` via `gh api` (not just the report) before
+touching any code — `counts: { schedule, enrollment, students, grades }` (Banner) and
+`counts: { sections, evaluations, grades }` (Planner), matching exactly.
+
+New acceptance criteria, numbered continuing from AC-13:
+
+14. **AC-14** — Given `ScrapeCounts`, when inspected, then its fields are `schedule`,
+    `enrollment`, `students`, `grades` — not `horario`/`matricula`/`alumno`/`nota`.
+15. **AC-15** — Given `PlannerScrapeCounts`, when inspected, then its fields are
+    `sections`, `evaluations`, `grades` — not `seccion`/`evaluacion`/`nota`.
+16. **AC-16** — Given every component that reads `stats.counts`/`counts`
+    (`ScrapeRunHistory.tsx`, `ScrapeRunProgress.tsx`, `PlannerScrapeRunHistory.tsx`,
+    `PlannerScrapeRunProgress.tsx`), when inspected, then all four read the renamed field
+    names.
+17. **AC-17** — Given the finished change, when grepping `src/modules/{banner,planner}`
+    for the old count field identifiers used as object keys (`horario`, `matricula`,
+    `alumno`, `seccion`, `evaluacion` — `nota` excluded from the grep since it's still a
+    live i18n key name/comment substring elsewhere), then no live references remain.
+18. **AC-18** — Given the finished change, when running `npx tsc --noEmit` and
+    `pnpm lint`, then both are clean.
+
+#### Traceability (scope extension)
+
+| AC  | Criterion                                     | Satisfied by                                                                                                   |
+| --- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| 14  | `ScrapeCounts` fields renamed                 | `banner/types/index.ts`                                                                                        |
+| 15  | `PlannerScrapeCounts` fields renamed          | `planner/types/index.ts`                                                                                       |
+| 16  | All 4 read sites updated                      | `ScrapeRunHistory.tsx`, `ScrapeRunProgress.tsx`, `PlannerScrapeRunHistory.tsx`, `PlannerScrapeRunProgress.tsx` |
+| 17  | No old Spanish count-field identifiers remain | grep sweep                                                                                                     |
+| 18  | `tsc --noEmit` and `pnpm lint` clean          | repo-wide gate                                                                                                 |
+
+---

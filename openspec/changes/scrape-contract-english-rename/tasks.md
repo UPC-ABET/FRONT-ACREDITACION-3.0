@@ -418,3 +418,71 @@ Resolved same day (2026-08-21):
 
 Independently re-verified (not trusting the fix alone): `pnpm exec tsc --noEmit` and
 `pnpm lint` both clean, repo-wide, after all fixes above.
+
+## Unplanned — `stats.counts` field rename (2026-08-21)
+
+Backend follow-up: `RunSummaryResponseDto.counts`/`PlannerRunSummaryResponseDto.counts`
+(`GET /banner/scrape`, `GET /planner/scrape`, `/:runId` variants) had their own Spanish
+keys renamed to English — the exact untyped-field drift risk this change's `proposal.md`
+Risks table already flagged. See `proposal.md` § Scope extension (2026-08-21) for AC-14
+through AC-18. Independently confirmed against the backend's `scraper.service.ts`/
+`planner-scraper.service.ts` on `develop` via `gh api` before touching code.
+
+### Task U.1 — Rename Banner `ScrapeCounts` fields and update read sites ✅ DONE (2026-08-21)
+
+- [x] Task complete
+
+**Files**
+
+- `src/modules/banner/types/index.ts` (modify)
+- `src/modules/banner/components/ScrapeRunHistory.tsx` (modify)
+- `src/modules/banner/components/ScrapeRunProgress.tsx` (modify)
+
+**Steps**
+
+1. `ScrapeCounts`: rename `horario`→`schedule`, `matricula`→`enrollment`,
+   `alumno`→`students`, `nota`→`grades`.
+2. `ScrapeRunHistory.tsx`'s counts cell template: update the four property reads to match.
+3. `ScrapeRunProgress.tsx`'s four `CountTile`s: update `value={stats.counts.xxx}` to the
+   renamed fields (keep the existing `?? 0` defensive fallback on the grades tile from the
+   audit fix — `stats.counts.grades ?? 0`).
+4. `npx tsc --noEmit`, `pnpm lint`.
+
+**Commit**: `fix(banner): rename scrape counts fields to match the renamed backend contract`
+
+### Task U.2 — Rename Planner `PlannerScrapeCounts` fields and update read sites ✅ DONE (2026-08-21)
+
+- [x] Task complete
+
+**Files**
+
+- `src/modules/planner/types/index.ts` (modify)
+- `src/modules/planner/components/PlannerScrapeRunHistory.tsx` (modify)
+- `src/modules/planner/components/PlannerScrapeRunProgress.tsx` (modify)
+
+**Steps**
+
+1. `PlannerScrapeCounts`: rename `seccion`→`sections`, `evaluacion`→`evaluations`,
+   `nota`→`grades`.
+2. `PlannerScrapeRunHistory.tsx`'s counts cell template: update the three property reads
+   (keep the existing `?? 0` fallback on the grades value from the audit fix).
+3. `PlannerScrapeRunProgress.tsx`'s three `CountTile`s: update `value={stats.counts.xxx}`
+   to the renamed fields.
+4. `npx tsc --noEmit`, `pnpm lint`.
+
+**Commit**: `fix(planner): rename scrape counts fields to match the renamed backend contract`
+
+### Task U.3 — Sweep and repo-wide gate ✅ DONE (2026-08-21)
+
+- [x] Task complete
+
+**Files**
+
+- None expected.
+
+**Steps**
+
+1. `rg "\.horario|\.matricula|\.alumno\b|\.seccion\b|\.evaluacion\b" src/modules/banner src/modules/planner --include='*.ts' --include='*.tsx'` — confirm no live property-access reference to the old count field names remains (the i18n key **names** in `constants/index.ts` — `banner.run.phase.horario`, etc. — are unaffected; those are `phase` label keys, unrelated to `counts`).
+2. `npx tsc --noEmit`, `pnpm lint`, repo-wide.
+
+**Commit**: none, unless step 1 finds something missed.
