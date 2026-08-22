@@ -70,9 +70,14 @@ git revert <commit-sha>   # for each commit in this change, newest first
 - Do not rename the i18n key **names** (e.g. `banner.run.phase.horario`,
   `banner.history.col.nivel`) as part of this change — only the code that maps
   types/enum values to those keys changes. See `design.md` § AC-3/AC-6.
-- Do not rename `ScrapeCounts.nota` / `PlannerScrapeCounts.nota` to `grade`/`grades` — these
-  live inside the backend's untyped `stats.counts` object, which PR #124 did not rename;
-  inventing an English name here would be a contract change this repo doesn't own.
+- **Superseded 2026-08-21** — this originally said not to rename `ScrapeCounts.nota` /
+  `PlannerScrapeCounts.nota`, since PR #124 hadn't touched the backend's untyped
+  `stats.counts` object. The backend has since renamed it too (see `proposal.md` § Scope
+  extension, `tasks.md` § Unplanned, Tasks U.1/U.2) — `ScrapeCounts`/`PlannerScrapeCounts`
+  are now `{ schedule, enrollment, students, grades }` / `{ sections, evaluations, grades }`.
+  The rule that still applies: **do not invent an English name the backend hasn't actually
+  chosen** — every rename in this repo must trace to a confirmed backend change (spec or
+  source), never a guess.
 - Do not add a UI for choosing `level`/`departments`/`courses` overrides at scrape-start as
   part of this change — out of scope (`proposal.md` § Non-goals); only the field names the
   (currently unused) override path would send are being fixed.

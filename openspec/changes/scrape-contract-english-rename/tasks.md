@@ -486,3 +486,69 @@ through AC-18. Independently confirmed against the backend's `scraper.service.ts
 2. `npx tsc --noEmit`, `pnpm lint`, repo-wide.
 
 **Commit**: none, unless step 1 finds something missed.
+
+## Second audit fixes (/abet-audit-pr, re-run on Tasks U.1–U.3)
+
+Six auditors re-ran against the full current diff (create-pr precondition: audit must have
+run on current HEAD). Prior findings from the first audit round were all confirmed still
+fixed. Two new findings, both from the scope-extension commits. Verdict: **NOT READY** — one
+major, two related minors. Resolved same day (2026-08-21):
+
+### Major
+
+- [x] **Documentation currency (Auditor B)** — `runbook.md` § Do NOT still said "Do not
+      rename `ScrapeCounts.nota` / `PlannerScrapeCounts.nota` to `grade`/`grades`", which is
+      now factually false and directly contradicts Tasks U.1/U.2, already merged on this
+      same branch. A future reader following the runbook literally could read the correct
+      rename as a violation of the repo's own stated rule. Fixed: the bullet now states the
+      field was in fact renamed by the backend's follow-up, with the underlying rule
+      (never invent an English name the backend hasn't chosen) restated as what still
+      applies.
+
+### Minor
+
+- [x] **Documentation currency (Auditor B)** — `design.md` § Contract status asserted the
+      old Spanish `stats.counts` shape as current fact, with no pointer to the follow-up
+      rename; the § Risks row that predicted this exact drift wasn't marked as having
+      materialized. Fixed: added a "Superseded 2026-08-21" note to Contract status pointing
+      at `proposal.md` § Scope extension, and updated the Risks row to say the drift
+      materialized rather than remaining theoretical.
+- [x] **Runtime robustness (Auditor F)** — only `ScrapeCounts.grades`/
+      `PlannerScrapeCounts.grades` had a defensive `?? 0` fallback (added because it was the
+      one field observed missing from a real payload in the first audit round); the sibling
+      fields (`schedule`/`enrollment`/`students`, `sections`/`evaluations`) were read
+      unguarded from the same untyped backend object — an inconsistent risk posture, since
+      nothing about the type makes `grades` more at-risk than its siblings. See Task U.4.
+
+### Suggestion
+
+- [x] No action needed — **Documentation process (Auditor B)** suggested a "docs sync"
+      checklist item for future scope extensions that only touch `proposal.md`/`tasks.md`.
+      Noted here as the record of the suggestion; no process file to encode it in beyond
+      this note (per repo convention, `docs/POLICIES.md` changes are a human conversation,
+      not a skill's to make unilaterally).
+
+Independently re-verified: `pnpm exec tsc --noEmit` and `pnpm lint` both clean, repo-wide,
+after all fixes above.
+
+### Task U.4 — Apply defensive `?? 0` fallback uniformly across all count fields ✅ DONE (2026-08-21)
+
+- [x] Task complete
+
+**Files**
+
+- `src/modules/banner/components/ScrapeRunHistory.tsx` (modify)
+- `src/modules/banner/components/ScrapeRunProgress.tsx` (modify)
+- `src/modules/planner/components/PlannerScrapeRunHistory.tsx` (modify)
+- `src/modules/planner/components/PlannerScrapeRunProgress.tsx` (modify)
+
+**Steps**
+
+1. In all four files, add `?? 0` to every remaining unguarded `ScrapeCounts`/
+   `PlannerScrapeCounts` field read (`schedule`, `enrollment`, `students` on Banner;
+   `sections`, `evaluations` on Planner) — `grades` already had it from the first audit
+   round; this makes every field in the untyped `counts` object equally defended, not just
+   the one previously observed missing.
+2. `npx tsc --noEmit`, `pnpm lint`.
+
+**Commit**: `fix(scraping): guard every count field against the backend's untyped counts object`
