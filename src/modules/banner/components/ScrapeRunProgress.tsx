@@ -29,7 +29,7 @@ function StatsDetail({ stats }: { stats: ScrapeRunStats }) {
 				<CountTile label={t('banner.run.counts.horario')} value={stats.counts.horario} />
 				<CountTile label={t('banner.run.counts.matricula')} value={stats.counts.matricula} />
 				<CountTile label={t('banner.run.counts.alumno')} value={stats.counts.alumno} />
-				<CountTile label={t('banner.run.counts.nota')} value={stats.counts.nota} />
+				<CountTile label={t('banner.run.counts.nota')} value={stats.counts.nota ?? 0} />
 				<CountTile label={t('banner.run.counts.uniqueStudents')} value={stats.uniqueStudents} />
 			</div>
 

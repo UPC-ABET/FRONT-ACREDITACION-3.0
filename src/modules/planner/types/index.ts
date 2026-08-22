@@ -68,6 +68,8 @@ export interface PlannerScrapeRunSummary {
 	startedAt: string;
 	finishedAt: string | null;
 	counts: PlannerScrapeCounts | null;
+	// Still sent by the backend; triggeredByName below is what's displayed. Kept for wire
+	// fidelity rather than dropped, since the backend hasn't stopped sending it.
 	triggeredBy: string | null;
 	triggeredByName: string;
 }

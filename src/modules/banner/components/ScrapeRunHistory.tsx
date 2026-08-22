@@ -58,7 +58,7 @@ export function ScrapeRunHistory({
 				cell: ({ row }) => {
 					const counts = row.original.counts;
 					return counts
-						? `${counts.horario} / ${counts.matricula} / ${counts.alumno} / ${counts.nota}`
+						? `${counts.horario} / ${counts.matricula} / ${counts.alumno} / ${counts.nota ?? 0}`
 						: none;
 				},
 			},
