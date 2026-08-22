@@ -19,10 +19,10 @@ export type ScrapeRunStatus = 'running' | 'completed' | 'partial' | 'failed' | '
 export type ScraperPhase = 'schedule' | 'enrollment' | 'studentsAndGrades';
 
 export interface ScrapeCounts {
-	horario: number;
-	matricula: number;
-	alumno: number;
-	nota: number;
+	schedule: number;
+	enrollment: number;
+	students: number;
+	grades: number;
 }
 
 export interface ScrapeRunError {
