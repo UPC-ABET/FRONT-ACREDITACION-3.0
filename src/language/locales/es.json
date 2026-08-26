@@ -3703,6 +3703,7 @@
 			"resetPassword": {
 				"selectTitle": "Restablecer contraseña",
 				"selectDescription": "Selecciona los tipos de entidad cuyos usuarios vinculados deben recibir la contraseña por defecto de la plataforma. Esta acción es inmediata y no se puede deshacer.",
+				"loadTypesFailed": "No se pudieron cargar los tipos de entidad. Cierra e inténtalo de nuevo.",
 				"continue": "Continuar",
 				"confirmTitle": "Confirmar restablecimiento",
 				"confirmMessage": "Se restablecerá la contraseña de los usuarios vinculados a: {{types}}. Esta acción es inmediata y no se puede deshacer.",

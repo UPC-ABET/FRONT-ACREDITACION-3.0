@@ -3703,6 +3703,7 @@
 			"resetPassword": {
 				"selectTitle": "Reset password",
 				"selectDescription": "Select the entity types whose linked users should receive the platform's default password. This action is immediate and cannot be undone.",
+				"loadTypesFailed": "The entity types could not be loaded. Close this dialog and try again.",
 				"continue": "Continue",
 				"confirmTitle": "Confirm reset",
 				"confirmMessage": "This will reset the password of users linked to: {{types}}. This action is immediate and cannot be undone.",
