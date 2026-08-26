@@ -68,3 +68,23 @@ export type PaginatedResult<T> = {
 };
 
 export type LookupParams = { search?: string; page?: number; pageSize?: number };
+
+export type ChartResetPasswordPayload = { entityTypeCodes: string[] };
+
+export type ChartResetPasswordResetUser = {
+	userId: number;
+	firstName: string;
+	lastName: string;
+	chartIds: number[];
+};
+
+export type ChartResetPasswordSkippedNode = {
+	chartId: number;
+	staffId: number;
+	entityTypeCode: string;
+};
+
+export type ChartResetPasswordResult = {
+	reset: ChartResetPasswordResetUser[];
+	skipped: ChartResetPasswordSkippedNode[];
+};

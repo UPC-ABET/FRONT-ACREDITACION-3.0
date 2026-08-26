@@ -3659,7 +3659,8 @@
 				"expandAll": "Expandir todo",
 				"collapseAll": "Colapsar todo",
 				"exportPng": "Exportar imagen",
-				"exportPdf": "Exportar PDF"
+				"exportPdf": "Exportar PDF",
+				"resetPassword": "Restablecer contraseña"
 			},
 			"actions": {
 				"edit": "Editar",
@@ -3699,12 +3700,28 @@
 				"blockedTitle": "No se puede eliminar",
 				"blockedSubtitle": "No se pudo eliminar por lo siguiente:"
 			},
+			"resetPassword": {
+				"selectTitle": "Restablecer contraseña",
+				"selectDescription": "Selecciona los tipos de entidad cuyos usuarios vinculados deben recibir la contraseña por defecto de la plataforma. Esta acción es inmediata y no se puede deshacer.",
+				"continue": "Continuar",
+				"confirmTitle": "Confirmar restablecimiento",
+				"confirmMessage": "Se restablecerá la contraseña de los usuarios vinculados a: {{types}}. Esta acción es inmediata y no se puede deshacer.",
+				"resultsTitle": "Resultado del restablecimiento",
+				"resultsResetHeading": "Contraseñas restablecidas",
+				"resultsResetEmpty": "Ningún usuario fue restablecido.",
+				"resultsResetCount": "{{count}} nodo(s) de organigrama",
+				"resultsSkippedHeading": "Nodos omitidos",
+				"resultsSkippedEmpty": "Ningún nodo fue omitido.",
+				"resultsSkippedCount": "{{count}} nodo(s) omitido(s)",
+				"close": "Cerrar"
+			},
 			"export": {
 				"error": "No se pudo exportar el organigrama."
 			},
 			"error": {
 				"loadFailed": "No se pudo cargar el organigrama.",
-				"deleteFailed": "No se pudo eliminar el nodo."
+				"deleteFailed": "No se pudo eliminar el nodo.",
+				"resetPasswordFailed": "No se pudieron restablecer las contraseñas."
 			}
 		},
 		"sectionsMaintenance": {

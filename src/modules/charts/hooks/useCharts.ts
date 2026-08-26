@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { chartsService } from '../services/chartsService';
-import type { ChartCreatePayload, ChartUpdatePayload } from '../types';
+import type { ChartCreatePayload, ChartResetPasswordPayload, ChartUpdatePayload } from '../types';
 import { chartsQueryKeys } from './queryKeys';
 
 export function useChartTree(academicPeriodId: number | null, schoolId: number | null) {
@@ -44,4 +44,10 @@ export function useChartMutations() {
 	});
 
 	return { create, update, remove };
+}
+
+export function useResetChartPasswords() {
+	return useMutation({
+		mutationFn: (payload: ChartResetPasswordPayload) => chartsService.resetPasswords(payload),
+	});
 }

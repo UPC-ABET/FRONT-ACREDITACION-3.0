@@ -2,6 +2,8 @@ import { apiDelete, apiGet, apiPost, apiPut, getApiData } from '@/shared/lib';
 import type {
 	ChartCreatePayload,
 	ChartNode,
+	ChartResetPasswordPayload,
+	ChartResetPasswordResult,
 	ChartUpdatePayload,
 	CourseLookupItem,
 	LookupParams,
@@ -36,6 +38,10 @@ export const chartsService = {
 
 	async remove(chartId: number): Promise<void> {
 		await apiDelete(`${BASE}/${chartId}`);
+	},
+
+	async resetPasswords(payload: ChartResetPasswordPayload): Promise<ChartResetPasswordResult> {
+		return getApiData<ChartResetPasswordResult>(await apiPost(`${BASE}/reset-password`, payload));
 	},
 
 	async staffLookup(params: LookupParams): Promise<PaginatedResult<StaffLookupItem>> {
