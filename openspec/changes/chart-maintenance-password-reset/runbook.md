@@ -49,6 +49,13 @@ configured chart.
      throughout. If reachable, simulate a failed lookup (e.g. block the `/types/by-group-code`
      request in devtools) and confirm an inline error message appears instead of a silently
      empty list.
+   - **Recovery after a failed lookup** (added during the round-2 re-audit): with the
+     lookup still blocked, close and reopen the dialog — confirm the error persists (the
+     query is still disabled/failed, not silently cleared). Then unblock the request and
+     reopen again — confirm the spinner reappears and the checkboxes render once the retry
+     succeeds, rather than the dialog getting stuck on the stale error. TanStack Query
+     should retry automatically on re-enable per its default `retry: 1`; this step exists
+     to confirm that in practice, not just by reading the library's semantics.
 3. **Request shape (AC-3)** — With the browser devtools network tab open, select 2–3 entity
    types, continue through confirmation, and submit. Confirm the request is
    `POST /charts/maintenance/reset-password` with body `{ "entityTypeCodes": [...] }`
@@ -94,12 +101,15 @@ typesLoading || typesError}`, and `Button`'s underlying `<button>` forwards `dis
      no code path that fires the request before that dialog's own confirm button is
      pressed. What still needs a live backend is confirming the network tab shows no
      request in practice and that the copy itself reads correctly end-to-end.
-   - **Confirm-step cancel/dismiss safety** (added during the audit fix pass): cancelling
-     via the "Cancel" button, Escape, or a backdrop click while a reset request is in
-     flight must **not** be possible to trigger a second submission — `handleCancelConfirm`
-     and `handleConfirm` both now guard on `resetPasswords.isPending`. Verify by starting a
-     reset, attempting to dismiss the confirm dialog immediately (all three ways), and
-     confirming nothing double-fires (check the network tab for exactly one request).
+   - **Confirm-step cancel/dismiss safety** (added during the audit fix pass, hardened
+     during the round-2 re-audit): cancelling via the "Cancel" button, Escape, or a
+     backdrop click while a reset request is in flight must **not** be possible to trigger
+     a second submission — `handleCancelConfirm` and `handleConfirm` both guard on a
+     synchronous `submittingRef` in addition to `resetPasswords.isPending`, closing the
+     same-tick double-dispatch window the state-only guard couldn't fully rule out. Verify
+     by starting a reset, attempting to dismiss the confirm dialog immediately (all three
+     ways) and rapidly double-clicking Confirm, and confirming nothing double-fires (check
+     the network tab for exactly one request each time).
 9. **i18n (AC-7)** — Switch the `appLocale` cookie to `en` (or use whatever in-app language
    toggle exists) and repeat steps 1–2 and 4a/4b, confirming no raw i18n keys or Spanish
    text leak into the English rendering. Record pass/fail.

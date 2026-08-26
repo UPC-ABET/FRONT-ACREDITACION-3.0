@@ -131,14 +131,17 @@ returns, so invalidating `chartsQueryKeys.treeAll()` would only cause a pointles
 
 ### AC-5 — 400/403 handled as a toast, no results dialog
 
-`ChartResetPasswordDialog` reuses `useApiErrorToast()` (already used by the parent for
-export failures) rather than the `getApiErrorReasons` list-of-blockers pattern from delete
-— the backend's `400`/`403` for this endpoint carry a plain `message` i18n key, not the
-`data: string[]` blocker array that `getApiErrorReasons` extracts (that shape is specific
-to delete's dependency-blocker response). On error, the dialog stays on (or returns to) the
-`'confirm'` step is skipped — it returns to `'select'` with the prior selection intact, so
-the admin can retry without re-checking boxes, and the parent's `showToast` fires with the
-translated message.
+`ChartResetPasswordDialog` computes the error message via `getErrorMessage()` and forwards
+it to the parent through the `onError` callback prop, rather than instantiating its own
+`useApiErrorToast()` — the parent (`OrganizationChartMaintenance.tsx`) already owns one
+instance for the export-failure path, and reuses it here too (`onError={(message) =>
+showToast(message, 'error')}`). This is deliberately not the `getApiErrorReasons`
+list-of-blockers pattern from delete — the backend's `400`/`403` for this endpoint carry a
+plain `message` i18n key, not the `data: string[]` blocker array that `getApiErrorReasons`
+extracts (that shape is specific to delete's dependency-blocker response). On error, the
+`'confirm'` step is skipped — the dialog returns to `'select'` with the prior selection
+intact, so the admin can retry without re-checking boxes, and the parent's `showToast`
+fires with the translated message.
 
 ### AC-6 — Irreversibility confirmation step
 
@@ -218,16 +221,16 @@ keys — no new top-level namespace.
 No test runner exists in this repo (`docs/POLICIES.md#verification-gate`) — every row
 below is manual, described in `runbook.md`, plus `tsc`/`lint` as the automated floor.
 
-| AC  | Covered by                                                                           | Kind      |
-| --- | ------------------------------------------------------------------------------------ | --------- |
-| 1   | `runbook.md` step 1                                                                  | manual    |
-| 2   | `runbook.md` step 2                                                                  | manual    |
-| 3   | `runbook.md` step 3 (network tab inspection of the request)                          | manual    |
-| 4   | `runbook.md` steps 4a (non-empty) and 4b (all-empty)                                 | manual    |
-| 5   | `runbook.md` steps 5a (400) and 5b (403, once a non-ADMIN test account is available) | manual    |
-| 6   | `runbook.md` step 6                                                                  | manual    |
-| 7   | `runbook.md` step 7 (toggle `appLocale` cookie, repeat steps 1–6 in English)         | manual    |
-| all | `npx tsc --noEmit`, `pnpm lint`                                                      | automated |
+| AC  | Covered by                                                                                                          | Kind      |
+| --- | ------------------------------------------------------------------------------------------------------------------- | --------- |
+| 1   | `runbook.md` step 1                                                                                                 | manual    |
+| 2   | `runbook.md` step 2                                                                                                 | manual    |
+| 3   | `runbook.md` step 3 (network tab inspection of the request)                                                         | manual    |
+| 4   | `runbook.md` steps 4 (non-empty) and 5 (all-empty)                                                                  | manual    |
+| 5   | `runbook.md` steps 6 (AC-5a, verified by code inspection) and 7 (AC-5b, once a non-ADMIN test account is available) | manual    |
+| 6   | `runbook.md` step 8                                                                                                 | manual    |
+| 7   | `runbook.md` step 9 (toggle `appLocale` cookie, repeat steps 1–2 and 4–5 in English)                                | manual    |
+| all | `npx tsc --noEmit`, `pnpm lint`                                                                                     | automated |
 
 ## Risks
 

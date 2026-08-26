@@ -277,23 +277,28 @@ commit `/abet-implement`'s final grouping proposes, or left uncommitted for
 > - `pnpm lint` — clean (exit 0) after every task, and again after every audit fix.
 > - `pnpm build` (full production build, all routes including `/loads`) — compiled and
 >   typechecked successfully, all pages generated with no errors.
-> - **Runbook steps 6 and part of 8 have since been verified by code inspection** (see
->   `runbook.md` — no backend needed for these two, and the audit's testing auditor
->   independently confirmed the same by reading the code): the empty-selection guard is a
->   real, enforced `disabled` attribute, and `resetPasswords.mutateAsync` has no code path
->   that fires before the confirm step. This narrows what's still genuinely blocked to
->   steps 1, 2 (dynamic render), 3, 4a, 4b, 5a-live, 5b, 7 (i18n), 9 (renumbered from the
->   original 10 after the audit-fix pass added sub-steps), and the new
->   confirm-dismiss-during-pending check added to step 8.
+> - **Runbook step 6 (AC-5a) and half of step 8 (AC-6's no-request-before-confirm half)
+>   have since been verified by code inspection** (see `runbook.md` — no backend needed for
+>   these, and the audit's testing auditor independently re-confirmed both against the
+>   current code during the round-2 re-audit): the empty-selection guard is a real,
+>   enforced `disabled` attribute, and `resetPasswords.mutateAsync` has no code path that
+>   fires before the confirm step. `runbook.md` step 6 explicitly states no live-backend
+>   re-check is needed for it — this list does not repeat it as still-blocked. What's still
+>   genuinely blocked, using `runbook.md`'s actual current step numbers (this list was
+>   previously out of sync with the runbook and has been corrected, per the round-2
+>   audit's finding): steps 1, 2, 3, 4, 5, 7 (AC-5b, needs a non-ADMIN account), the
+>   network-tab-observable half of step 8 (including the new confirm-dismiss-during-pending
+>   and rapid-double-click sub-checks), 9 (i18n), and 10 (regression check).
 >
-> **The `staging` promotion blocker is resolved** — re-verified same day: `staging` and
-> `develop` are now at the same commit (`647f6ea0...`), so the sequencing prerequisite for
-> merging is satisfied. This does not change the fact that runtime correctness is still
-> **typechecked, not verified** — `docs/POLICIES.md#verification-gate` still requires the
-> actual manual steps to have been performed. Whoever picks this up next (or the same
-> session, once a backend is reachable) must run `pnpm dev` against a backend on `staging`
-> (or `develop`) and work through the remaining `runbook.md` steps before this task — and
-> this change — can be marked complete.
+> **The `staging` promotion blocker is resolved** — re-verified same day, and independently
+> re-verified live again during the round-2 re-audit: `staging` and `develop` are at the
+> same commit (`647f6ea0...`), so the sequencing prerequisite for merging is satisfied. This
+> does not change the fact that runtime correctness is still **typechecked, not verified**
+> — `docs/POLICIES.md#verification-gate` still requires the actual manual steps to have
+> been performed. Whoever picks this up next (or the same session, once a backend is
+> reachable) must run `pnpm dev` against a backend on `staging` (or `develop`) and work
+> through the remaining `runbook.md` steps before this task — and this change — can be
+> marked complete.
 
 ---
 
@@ -531,5 +536,133 @@ omitted it, understating what that task actually recorded.
 
 **Fix**: Added the key to Task 1.3's list with a note explaining it was a
 documentation-only gap, not a functional one.
+
+---
+
+## Round 2 — re-audit fixes (/abet-audit-pr)
+
+After the fixes above landed in 4 commits, `/abet-create-pr`'s preconditions required a
+fresh `/abet-audit-pr` pass since HEAD had moved. Round 2 dispatched the same 6 auditors
+again over the full current diff, specifically re-verifying every round-1 fix rather than
+trusting the commit messages. **Verdict: no blockers, no majors** — all three round-1
+blockers and the major are confirmed genuinely resolved (the `staging` promotion and
+frontend/backend contract match were independently re-verified live, not just read from
+docs). A few new minors/suggestions surfaced, from auditors specifically told to give the
+files touched only during the round-1 fix pass (`useSyncOnChange.ts` in particular) real
+scrutiny rather than assuming they were already vetted.
+
+### Task B.1 — Document `useSyncOnChange`'s sentinel/key-type caveats ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Minor (Auditor D) — `useSyncOnChange<T>(key, initial, onChange)`'s `initial`
+sentinel is indistinguishable from a real first-render `key` value equal to it, silently
+skipping the mount-time call if they collide; and the unconstrained generic `T` only
+behaves correctly for primitive/reference-stable keys. Neither is an active bug at either
+of the two current call sites (verified by both Auditor D and this fix), but it's an
+undocumented footgun now that this is shared, reusable code.
+
+**Files**
+
+- `src/shared/hooks/useSyncOnChange.ts` (modify)
+
+**Fix**: Added a JSDoc comment stating both constraints explicitly, so a future caller
+knows to pick a genuinely-unreachable `initial` and a primitive/stable-by-value `key`.
+
+### Task B.2 — Add a synchronous reentrancy lock to the reset-password confirm handler ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Suggestion (Auditor E, corroborated as worth doing by Auditor F) — the
+round-1 fix's `resetPasswords.isPending` guard is a React-state value shared between
+`handleConfirm`, `handleCancelConfirm`, and the button's `disabled` prop — the same signal
+read three times, not three independent locks. A theoretical same-tick double-dispatch
+(two native click events before React re-renders) could still slip past all three on an
+irreversible, non-idempotent action.
+
+**Files**
+
+- `src/modules/charts/components/ChartResetPasswordDialog.tsx` (modify)
+
+**Steps**
+
+1. Add `const submittingRef = useRef(false)`.
+2. Set it `true` at the top of `handleConfirm` (in addition to the existing
+   `resetPasswords.isPending` check), reset it in a `finally`.
+3. Check it in `handleCancelConfirm` too, alongside the existing `isPending` check.
+4. `pnpm exec tsc --noEmit` → clean.
+5. `pnpm lint` → clean.
+
+**Commit**: `fix(charts): add synchronous reentrancy lock to reset-password confirm`
+
+### Task B.3 — Add a recovery-after-failure sub-check to the runbook's loading/error step ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Suggestion (Auditor C) — the round-1 loading/error-state fix's runbook
+sub-check verified the error appears on a failed lookup, but never verified the dialog
+recovers (retries and clears the error) on reopen. Traced through TanStack Query's default
+`retry: 1` and confirmed this should self-heal by ordinary library semantics, but it had
+never actually been exercised.
+
+**Files**
+
+- `openspec/changes/chart-maintenance-password-reset/runbook.md` (modify)
+
+**Fix**: Added an explicit sub-step to step 2: close and reopen the dialog with the lookup
+still blocked (error should persist, not silently clear), then unblock and reopen again
+(spinner should reappear and the retry should succeed).
+
+### Task B.4 — Fix stale step-number cross-references introduced by the round-1 fix pass ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Two minors (Auditor C) — adding sub-steps and splitting "Results" into two
+top-level runbook steps during the round-1 fix pass shifted every step number after it
+(AC-5a/b moved from 5a/5b to 6/7, AC-6 from 6 to 8, AC-7 from 7 to 9), but `design.md`'s
+Testing strategy table and `tasks.md`'s Task 3.2 retro were never updated to match. The
+retro additionally contained a direct contradiction: it listed "5a-live" as still blocked,
+while `runbook.md` step 6 (AC-5a) explicitly says no live-backend re-check is needed.
+
+**Files**
+
+- `openspec/changes/chart-maintenance-password-reset/design.md` (modify — Testing
+  strategy table)
+- `openspec/changes/chart-maintenance-password-reset/tasks.md` (modify — Task 3.2's
+  retro, this file)
+
+**Fix**: Updated both to reference `runbook.md`'s actual current step numbers, and removed
+the contradictory "5a-live" entry from Task 3.2's retro.
+
+### Task B.5 — Correct `design.md`'s AC-5 description of the error-handling path ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Suggestion (Auditor B) — `design.md` said `ChartResetPasswordDialog` "reuses
+`useApiErrorToast()`," but in the actual code the dialog only computes the message via
+`getErrorMessage()` and forwards it through an `onError` callback; the parent
+(`OrganizationChartMaintenance.tsx`) is the one that owns the `useApiErrorToast()`
+instance and calls `showToast`.
+
+**Files**
+
+- `openspec/changes/chart-maintenance-password-reset/design.md` (modify — AC-5 section)
+
+**Fix**: Reworded to accurately describe the callback-forwarding shape.
+
+### Not fixed — deliberately deferred
+
+- **No client-side request timeout/`AbortController` in `apiClient.ts`** (Auditor F,
+  minor) — pre-existing, repo-wide, not introduced by this diff. Flagged as a follow-up
+  in the PR body rather than fixed here.
+- **`useResetChartPasswords` silently drops unknown codes with no signal** (Auditor E,
+  suggestion) — explicitly marked "not required now" by the auditor; revisit only if a
+  second caller is ever added.
+- **Duplicated error-translate intent between the dialog's manual
+  `getErrorMessage`/`onError` and `useApiErrorToast().handleError`** (Auditor D,
+  suggestion) — the auditor themselves called the current architecture (parent owns the
+  one toast instance) sound; not changed.
+- **No visual feedback when a dismiss attempt is silently no-op'd while pending** (Auditor
+  F, suggestion) — optional UX polish, not implemented.
 
 ---
