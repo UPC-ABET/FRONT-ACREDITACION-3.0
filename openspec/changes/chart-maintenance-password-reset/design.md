@@ -32,26 +32,36 @@
   `ResetMaintenancePasswordsResponseDto` / `ResetMaintenancePasswordsResetUserDto` /
   `ResetMaintenancePasswordsSkippedNodeDto` match the proposal exactly.
 
-## Dependency verification (done at design time)
+## Dependency verification (done at design time; re-verified during the audit pass)
 
 Fetched remotely, not from a local checkout, per `docs/CONTEXT.md#related-repositories`:
 
-- `staging`: `gh api repos/UPC-ABET/BACK-ACREDITACION-3.0/contents/openapi.json?ref=staging`
-  — `POST /charts/maintenance/reset-password` **does not exist yet**. Only the unrelated
-  self-service `/users/reset-password` and `/users/request-password-reset` are present.
-- `develop`: same call with `ref=develop` — the endpoint **is present**, and its schema
-  matches the proposal's contract exactly (`entityTypeCodes: string[]` required on the
+- **At design time (2026-08-25)** — `staging`:
+  `gh api repos/UPC-ABET/BACK-ACREDITACION-3.0/contents/openapi.json?ref=staging` —
+  `POST /charts/maintenance/reset-password` **did not exist yet**. Only the unrelated
+  self-service `/users/reset-password` and `/users/request-password-reset` were present.
+  `develop`: same call with `ref=develop` — the endpoint **was present**, and its schema
+  matched the proposal's contract exactly (`entityTypeCodes: string[]` required on the
   request DTO; `reset`/`skipped` both required arrays on the response DTO; field names and
-  types match `ResetMaintenancePasswordsResetUserDto` /
+  types matching `ResetMaintenancePasswordsResetUserDto` /
   `ResetMaintenancePasswordsSkippedNodeDto` verbatim). The endpoint does not declare a `403`
   response in the OpenAPI doc (guards produce it globally, undocumented per-route — this
   matches every other guarded endpoint in the spec) and declares only `400`/`500` besides
   `201`.
+- **Re-verified same day, during `/abet-audit-pr`** — `staging` and `develop` are now at
+  the **same commit**, `647f6ea02a2df74d741f9b7412511ff37ff59f06`
+  (`gh api repos/UPC-ABET/BACK-ACREDITACION-3.0/git/refs/heads/staging` /
+  `.../heads/develop`): the backend has been promoted, and `POST
+/charts/maintenance/reset-password` is now present on `staging` with the identical
+  schema. **Spec SHA this change is verified against: `647f6ea02a2df74d741f9b7412511ff37ff59f06`**
+  — carry this into the PR body per the frontend stack rules' contract-currency guidance.
 
-**Consequence**: per `plugins/abet-common/reference/conventions.md` § Sequencing, this
-frontend change may be implemented now (frontend may develop in parallel), but **its PR
-must not merge until the backend change is promoted from `develop` to `staging`**. Re-check
-with `/abet-verify-contract` immediately before opening the PR — see Risks.
+**Consequence**: per `plugins/abet-common/reference/conventions.md` § Sequencing, the
+sequencing prerequisite for merging this PR (backend promoted `develop → staging`) **is now
+satisfied**. Re-run the check in `runbook.md`'s "Deploy prerequisite" section immediately
+before opening the PR regardless — a promotion state can change between now and then, and
+that section also documents a grep-anchoring bug found and fixed during the audit pass (see
+Risks).
 
 ## ADR gate (walked, not skipped)
 
@@ -221,12 +231,37 @@ below is manual, described in `runbook.md`, plus `tsc`/`lint` as the automated f
 
 ## Risks
 
-| Risk                                                                                                                                                                                | Mitigation                                                                                                                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Backend endpoint is on `develop`, not `staging`, as of design time                                                                                                                  | Do not open the PR until `/abet-verify-contract` (or a manual re-run of the `gh api ... ?ref=staging` check in this design) shows the endpoint promoted. Recorded in `runbook.md` as the deploy prerequisite. |
-| A user without ADMIN permission clicks the always-visible button and gets a 403 (accepted in `proposal.md`)                                                                         | `useApiErrorToast` surfaces the backend's message as a translated toast; no silent failure.                                                                                                                   |
-| Skipped-node grouping by `entityTypeCode` could show a raw code if the type lookup hasn't loaded yet (race between the mutation resolving and `useTypesByGroupCode` still fetching) | The dialog only opens the `'select'` step once `useTypesByGroupCode` has resolved (its data backs the checkboxes too), so by the time a `'results'` step is reachable the label map is already populated.     |
-| Manual QA needs a non-ADMIN test account to exercise AC-5's 403 path                                                                                                                | Flagged in `runbook.md`; if no such account exists yet, the 403 path is verified by code review of the error-handling branch instead, and the gap is noted in the PR description.                             |
+| Risk                                                                                                                                                                                                                                                                  | Mitigation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Backend endpoint was on `develop`, not `staging`, as of design time                                                                                                                                                                                                   | **Resolved as of the audit pass** — the backend has been promoted; `staging` now serves the endpoint at the same commit as `develop` (`647f6ea0...`). Re-verify with the corrected `runbook.md` check immediately before opening the PR regardless, since promotion state can change.                                                                                                                                                                                                                                                                                                                                                                               |
+| A user without ADMIN permission clicks the always-visible button and gets a 403 (accepted in `proposal.md`)                                                                                                                                                           | `useApiErrorToast` surfaces the backend's message as a translated toast; no silent failure.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Skipped-node grouping by `entityTypeCode` could show a raw code if the type lookup hasn't loaded yet, or the select step could look broken (empty, no feedback) on a cold type-lookup cache                                                                           | **Corrected during the audit pass** — this design originally (incorrectly) claimed the dialog doesn't open until `useTypesByGroupCode` resolves; the actual code opens immediately. Fixed properly instead of just correcting the claim: the select step now shows a `LoadingState` spinner while fetching and an inline error `Alert` on failure, and "Continue" stays disabled through both states (`disabled={selectedCodes.size === 0 \|\| typesLoading \|\| typesError}`) — so the `'confirm'`/`'results'` steps are only reachable once `typeOptions` is populated, and the label map used for skipped-node grouping is guaranteed non-empty by construction. |
+| Manual QA needs a non-ADMIN test account to exercise AC-5's 403 path                                                                                                                                                                                                  | Flagged in `runbook.md`; if no such account exists yet, the 403 path is verified by code review of the error-handling branch instead, and the gap is noted in the PR description.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Dismissing the `'confirm'` step (Cancel/Escape/backdrop) while the reset request was in flight bypassed the `isPending` guard the buttons respected, allowing a user who believed the action was canceled to resubmit and fire two real, irreversible password resets | **Fixed during the audit pass** — `handleCancelConfirm` (used by both `ConfirmDialog`'s `onClose` and `onDecline`) and `handleConfirm` itself now both guard on `resetPasswords.isPending`, matching the guard the primary dialog's `handleClose` already had.                                                                                                                                                                                                                                                                                                                                                                                                      |
+
+## Audit-pass corrections (2026-08-25)
+
+`/abet-audit-pr` ran six parallel auditors over the implemented diff; see `tasks.md` §
+Audit fixes for the full findings table. Recorded here, append-only, rather than rewriting
+the Approach section above (which still accurately describes the original design intent):
+
+- **`ChartResetPasswordDialog.tsx`** now guards both `handleConfirm` and the `'confirm'`
+  step's dismissal (`handleCancelConfirm`, used by `ConfirmDialog`'s `onClose`/`onDecline`)
+  against `resetPasswords.isPending` — closing the confirm dialog mid-request could
+  previously bypass the guard the buttons already respected (see Risks).
+- The select step now surfaces `useTypesByGroupCode`'s loading and error states
+  (`LoadingState` spinner / inline `Alert`) instead of silently rendering an empty
+  checkbox list.
+- The duplicated reset/skipped result-list JSX was factored into a local `ResultList`
+  helper component within the same file.
+- The `open && step !== 'confirm'` / `open && step === 'confirm'` pair of independently-
+  negated conditions was replaced with one derived `isConfirmStep` boolean.
+- The render-time "sync state when a key changes" idiom (previously duplicated between
+  this component and `ChartNodeDialog.tsx`'s `syncKey` pattern) was extracted into
+  `src/shared/hooks/useSyncOnChange.ts`, and both dialogs now use it.
+- `useResetChartPasswords` (`hooks/useCharts.ts`) now filters `entityTypeCodes` against
+  `RESET_PASSWORD_ENTITY_TYPE_CODES` before calling the service, as defense-in-depth on
+  top of the dialog's existing whitelist-constrained checkbox construction.
 
 ## Docs to update in this PR
 

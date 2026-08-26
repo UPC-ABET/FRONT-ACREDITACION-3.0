@@ -16,8 +16,10 @@
   the heading. Never one without the other.
 - **No autonomous commits.** Propose the grouping and stop.
 - Do not edit `docs/POLICIES.md` or `docs/adr/*`.
-- Before opening the PR: re-verify the backend endpoint has been promoted to `staging` (see
-  `runbook.md`) — it was only on `develop` at design time.
+- Before opening the PR: re-verify the backend endpoint is still on `staging` (see
+  `runbook.md`) — it was only on `develop` at design time, and was confirmed promoted
+  during the `/abet-audit-pr` pass on 2026-08-25. Re-check anyway; promotion state can
+  change.
 
 ## Goal
 
@@ -109,6 +111,10 @@ demonstrable end-to-end.
    - `resetPassword.resultsTitle` — results step title.
    - `resetPassword.resultsResetHeading` / `resetPassword.resultsResetEmpty` — reset
      section heading and empty state.
+   - `resetPassword.resultsResetCount` — interpolated per-user chart-node count line, e.g.
+     `"{{count}} chart node(s)"` (omitted from this list originally — added retroactively
+     per `/abet-audit-pr` finding; the key itself was present in both locale files and used
+     by the component from the start, this was a documentation-completeness gap only).
    - `resetPassword.resultsSkippedHeading` / `resetPassword.resultsSkippedEmpty` — skipped
      section heading and empty state.
    - `resetPassword.resultsSkippedCount` — interpolated count-by-type line, e.g.
@@ -259,22 +265,271 @@ demonstrable end-to-end.
 commit `/abet-implement`'s final grouping proposes, or left uncommitted for
 `/abet-audit-pr` to review alongside the diff.
 
-> **Not completed — no backend reachable in this environment.** `curl` against
+> **Still not completed — no backend reachable in this environment.** `curl` against
 > `http://localhost:7777` (the `API_PROXY_URL` this repo's `pnpm dev` proxies to) refused
 > the connection; there is no running instance of `BACK-ACREDITACION-3.0` here, on any
-> branch, and this session cannot start one (separate repo, not checked out). What _was_
+> branch, and this session cannot start one (separate repo, not checked out). Re-checked
+> again during the `/abet-audit-pr` fix pass (2026-08-25) — still refused. What _was_
 > verified instead, as the strongest available substitute:
 >
-> - `pnpm exec tsc --noEmit` — clean after every task in this change.
-> - `pnpm lint` — clean (exit 0) after every task.
+> - `pnpm exec tsc --noEmit` — clean after every task in this change, and again after every
+>   audit fix.
+> - `pnpm lint` — clean (exit 0) after every task, and again after every audit fix.
 > - `pnpm build` (full production build, all routes including `/loads`) — compiled and
 >   typechecked successfully, all pages generated with no errors.
+> - **Runbook steps 6 and part of 8 have since been verified by code inspection** (see
+>   `runbook.md` — no backend needed for these two, and the audit's testing auditor
+>   independently confirmed the same by reading the code): the empty-selection guard is a
+>   real, enforced `disabled` attribute, and `resetPasswords.mutateAsync` has no code path
+>   that fires before the confirm step. This narrows what's still genuinely blocked to
+>   steps 1, 2 (dynamic render), 3, 4a, 4b, 5a-live, 5b, 7 (i18n), 9 (renumbered from the
+>   original 10 after the audit-fix pass added sub-steps), and the new
+>   confirm-dismiss-during-pending check added to step 8.
 >
-> This does **not** satisfy `docs/POLICIES.md#verification-gate`, which requires the actual
-> manual verification step to have been performed, not just typecheck/lint/build. AC-1
-> through AC-7 in `proposal.md` remain **unverified against a real backend** — the 10 steps
-> in `runbook.md` are all still open. Whoever picks this up next (or the same session, once
-> a backend is available) must run `pnpm dev` against the `develop`-branch backend and work
-> through `runbook.md` before this task — and this change — can be marked complete.
+> **The `staging` promotion blocker is resolved** — re-verified same day: `staging` and
+> `develop` are now at the same commit (`647f6ea0...`), so the sequencing prerequisite for
+> merging is satisfied. This does not change the fact that runtime correctness is still
+> **typechecked, not verified** — `docs/POLICIES.md#verification-gate` still requires the
+> actual manual steps to have been performed. Whoever picks this up next (or the same
+> session, once a backend is reachable) must run `pnpm dev` against a backend on `staging`
+> (or `develop`) and work through the remaining `runbook.md` steps before this task — and
+> this change — can be marked complete.
+
+---
+
+## Audit fixes (/abet-audit-pr)
+
+Six parallel auditors (code quality, architecture/docs/contract, testing, antipatterns,
+security, runtime robustness) reviewed the diff on 2026-08-25. Verdict was **NOT READY**
+(3 blockers, 1 major). All code-fixable findings below were implemented in this same
+session immediately after the audit; the two findings that are not code-fixable (no
+reachable backend; external backend-promotion status) are called out as still-open where
+relevant elsewhere in this file.
+
+### Task A.1 — Fix the runbook's false-positive staging-check command ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Blocker (Auditor B). `grep -q 'reset-password'` (unanchored) matches the
+unrelated, pre-existing `/users/reset-password` endpoint, so the runbook's own merge-gate
+command would report `PRESENT` even on a `staging` spec that doesn't have the chart
+endpoint — which is exactly what it did when re-run during the audit, on a `staging` spec
+that (at that moment) genuinely didn't have it yet.
+
+**Files**
+
+- `openspec/changes/chart-maintenance-password-reset/runbook.md` (modify)
+
+**Fix**: Anchored the grep to the exact quoted path,
+`grep -q '"/charts/maintenance/reset-password"'`. Re-ran the corrected command against the
+current `staging` spec — reports `PRESENT`, and independently confirmed via `node`/`jq`
+against the same fetched spec.
+
+### Task A.2 — Record current staging-promotion status and spec SHA ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Blocker (Auditor B, at the time of the audit) — re-verified as part of this
+fix pass and found to have changed: the backend has since been promoted to `staging`.
+Also folds in the suggestion (Auditor B) to record a spec SHA per the frontend stack
+rules' contract-currency guidance.
+
+**Files**
+
+- `openspec/changes/chart-maintenance-password-reset/design.md` (modify)
+- `openspec/changes/chart-maintenance-password-reset/runbook.md` (modify)
+- `openspec/changes/chart-maintenance-password-reset/tasks.md` (modify, this file)
+
+**Fix**: Updated `design.md`'s Dependency verification section and Risks table to record
+the re-check (`staging` and `develop` both at commit `647f6ea02a2df74d741f9b7412511ff37ff59f06`,
+schema identical, no drift), and updated `runbook.md`'s deploy-prerequisite section
+accordingly. This is a documentation update, not a code change — the underlying
+sequencing prerequisite for merging is now satisfied, but it must still be re-checked
+immediately before the PR is actually opened.
+
+### Task A.3 — Guard the confirm step against dismissal mid-request ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Major (found independently by Auditor A as a stale-async-continuation issue,
+Auditor F as an Escape/backdrop-dismiss bypass, and Auditor E as a related double-submit
+race — synthesized as one finding at the strongest severity). `ConfirmDialog`'s
+`onClose`/`onDecline` reset `step` back to `'select'` unconditionally, bypassing the
+`resetPasswords.isPending` guard the buttons already respected via `isLoading`. A user
+could dismiss the confirm dialog (Escape, backdrop click, or Cancel) while the
+irreversible `POST /charts/maintenance/reset-password` call was still in flight, believe
+it was canceled, and resubmit — resulting in two real password resets for one apparent
+action.
+
+**Files**
+
+- `src/modules/charts/components/ChartResetPasswordDialog.tsx` (modify)
+
+**Steps**
+
+1. Add `handleCancelConfirm`, guarded on `resetPasswords.isPending`, and wire it as both
+   `ConfirmDialog`'s `onClose` and `onDecline` (previously two separate unguarded inline
+   closures).
+2. Add the same guard as the first line of `handleConfirm` itself, as defense-in-depth
+   against a double-click race the button's `disabled` state might not catch in the same
+   frame.
+3. `pnpm exec tsc --noEmit` → clean.
+4. `pnpm lint` → clean.
+
+**Commit**: `fix(charts): guard reset-password confirm step against mid-request dismissal`
+
+> Verified by reading the resulting control flow: `resetPasswords.mutateAsync` is only
+> reachable via `handleConfirm`, which now returns immediately if already pending, and the
+> only two ways to leave the `'confirm'` step (`onClose`/`onDecline`) route through the
+> same guard `handleClose` already used for the primary dialog. No live-backend
+> verification possible in this environment; added as an explicit new runbook step for
+> whoever next has a reachable backend (see `runbook.md` step 8's new bullet).
+
+### Task A.4 — Surface loading/error state for the entity-type lookup ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Minor (Auditor A: error state not surfaced; Auditor C: `design.md`'s claim
+that the dialog "only opens once types have resolved" doesn't match the actual code,
+which opens immediately and shows an empty checkbox list during the fetch). Merged into
+one fix since both point at the same gap.
+
+**Files**
+
+- `src/modules/charts/components/ChartResetPasswordDialog.tsx` (modify)
+- `src/language/locales/es.json` (modify)
+- `src/language/locales/en.json` (modify)
+- `openspec/changes/chart-maintenance-password-reset/design.md` (modify — corrected the
+  inaccurate risk-table claim instead of leaving it to describe behavior that never
+  existed)
+
+**Steps**
+
+1. Destructure `isError` from `useTypesByGroupCode` alongside `data`/`isLoading`.
+2. Render `LoadingState` (`@/shared`) while `typesLoading`, an inline `Alert
+variant="destructive"` on `typesError`, and the checkbox list otherwise.
+3. Add `resetPassword.loadTypesFailed` to both locale files.
+4. Extend the "Continue" button's `disabled` condition to also cover `typesError`.
+5. `pnpm exec tsc --noEmit` → clean.
+6. `pnpm lint` → clean.
+
+**Commit**: `fix(charts): surface loading and error states for reset-password entity types`
+
+### Task A.5 — Deduplicate result-list rendering and the confirm-step boolean ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Two minors (Auditor D) — the reset/skipped result sections were two
+near-identical ~25-line blocks, and the main `Dialog`'s `open`/`ConfirmDialog`'s `isOpen`
+conditions were independently-written negations of the same `step` value with no
+guarantee they'd stay complementary.
+
+**Files**
+
+- `src/modules/charts/components/ChartResetPasswordDialog.tsx` (modify)
+
+**Steps**
+
+1. Extract a local `ResultList` component (`heading`, `emptyText`, `rows`, `badgeVariant`
+   props) and use it for both the reset and skipped sections.
+2. Derive `const isConfirmStep = step === 'confirm';` once; use it for both the primary
+   `Dialog`'s `open` and `ConfirmDialog`'s `isOpen`.
+3. `pnpm exec tsc --noEmit` → clean.
+4. `pnpm lint` → clean.
+
+**Commit**: `refactor(charts): deduplicate reset-password result rendering`
+
+### Task A.6 — Extract the render-time sync-on-change idiom into a shared hook ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Suggestion (Auditor D) — the "adjust state during render when a key changes"
+idiom (used to reset dialog state when it reopens) was hand-rolled independently in this
+new component and in the pre-existing `ChartNodeDialog.tsx`'s `syncKey` pattern, with two
+different shapes for the same trick.
+
+**Files**
+
+- `src/shared/hooks/useSyncOnChange.ts` (create)
+- `src/shared/hooks/index.ts` (modify)
+- `src/modules/charts/components/ChartResetPasswordDialog.tsx` (modify)
+- `src/modules/charts/components/ChartNodeDialog.tsx` (modify)
+
+**Steps**
+
+1. Extract `useSyncOnChange<T>(key: T, initial: T, onChange: (key: T) => void): void` —
+   generic over the comparison key, preserving the exact "compare during render, update
+   state and fire the callback on mismatch" behavior both existing call sites relied on.
+2. Export from the `shared/hooks` barrel.
+3. Update `ChartResetPasswordDialog.tsx` to call it with `(open, false, ...)`.
+4. Update `ChartNodeDialog.tsx` to call it with `(syncKey, '', ...)`, preserving its exact
+   existing reset logic.
+5. `pnpm exec tsc --noEmit` → clean.
+6. `pnpm lint` → clean.
+
+**Commit**: `refactor(shared): extract render-time sync-on-change hook`
+
+> Touches `ChartNodeDialog.tsx`, a file otherwise outside this change's diff — justified
+> because the finding specifically compared the new component's pattern against that
+> file's precedent, and deduplicating only one side wouldn't have resolved it. Behavior
+> verified unchanged by inspection: the hook's `key !== syncedKey` / `setSyncedKey(key)` /
+> callback-fire sequence is identical to what both components did inline before.
+
+### Task A.7 — Whitelist `entityTypeCodes` defense-in-depth at the hook layer ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Suggestion (Auditor E) — `chartsService.resetPasswords` forwarded
+`entityTypeCodes` with no constraint of its own; only the dialog's checkbox construction
+kept it whitelist-safe. Not exploitable today (single, constrained caller), but cheap
+insurance against a future second caller.
+
+**Files**
+
+- `src/modules/charts/hooks/useCharts.ts` (modify)
+
+**Steps**
+
+1. In `useResetChartPasswords`'s `mutationFn`, filter `payload.entityTypeCodes` against
+   `RESET_PASSWORD_ENTITY_TYPE_CODES` before calling `chartsService.resetPasswords`.
+2. `pnpm exec tsc --noEmit` → clean.
+3. `pnpm lint` → clean.
+
+**Commit**: `fix(charts): whitelist entity type codes in reset-password mutation`
+
+### Task A.8 — Add the missing AC-4 tree-invalidation assertion and record partially-verifiable runbook steps ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Two minors (Auditor C) — no runbook step explicitly asserted AC-4's "tree
+left untouched" claim, and steps 6 and part of 8 were achievable by static code reading
+without a backend but were recorded as fully blocked anyway.
+
+**Files**
+
+- `openspec/changes/chart-maintenance-password-reset/runbook.md` (modify)
+- `openspec/changes/chart-maintenance-password-reset/tasks.md` (modify, this file — Task
+  3.2's retro)
+
+**Fix**: Added a network-tab sub-check to runbook steps 4a/4b for "no extra tree GET
+fires," and a loading/error-state sub-check to step 2. Marked step 6 (empty-selection
+guard) and half of step 8 (no request before confirm) as verified by static code
+inspection directly in `runbook.md`, and updated Task 3.2's retro to reflect the narrowed
+remaining scope.
+
+### Task A.9 — Add missing `resultsResetCount` key to Task 1.3's record ✅ DONE (2026-08-25)
+
+- [x] Task complete
+
+**Finding**: Suggestion (Auditor C) — `resultsResetCount` was present in both locale
+files and used by the component from the start, but Task 1.3's enumerated key list
+omitted it, understating what that task actually recorded.
+
+**Files**
+
+- `openspec/changes/chart-maintenance-password-reset/tasks.md` (modify — Task 1.3)
+
+**Fix**: Added the key to Task 1.3's list with a note explaining it was a
+documentation-only gap, not a functional one.
 
 ---
