@@ -244,9 +244,9 @@ demonstrable end-to-end.
 > `toast`/`showToast`/`clearToast` for the export-failure path, so the reset-password error
 > path reuses the same state rather than adding a second toast. Clean on the first pass.
 
-### Task 3.2 — Manual verification against a real backend ⏳ BLOCKED (2026-08-25)
+### Task 3.2 — Manual verification against a real backend ⚠️ CLOSED WITHOUT LIVE VERIFICATION (2026-08-26)
 
-- [ ] Task complete
+- [x] Task complete
 
 **Files**
 
@@ -292,13 +292,20 @@ commit `/abet-implement`'s final grouping proposes, or left uncommitted for
 >
 > **The `staging` promotion blocker is resolved** — re-verified same day, and independently
 > re-verified live again during the round-2 re-audit: `staging` and `develop` are at the
-> same commit (`647f6ea0...`), so the sequencing prerequisite for merging is satisfied. This
-> does not change the fact that runtime correctness is still **typechecked, not verified**
-> — `docs/POLICIES.md#verification-gate` still requires the actual manual steps to have
-> been performed. Whoever picks this up next (or the same session, once a backend is
-> reachable) must run `pnpm dev` against a backend on `staging` (or `develop`) and work
-> through the remaining `runbook.md` steps before this task — and this change — can be
-> marked complete.
+> same commit (`647f6ea0...`), so the sequencing prerequisite for merging was satisfied. The
+> feature PR ([#115](https://github.com/UPC-ABET/FRONT-ACREDITACION-3.0/pull/115)) merged
+> with this disclosed, unresolved gap — its PR body's "How it was tested" section stated
+> plainly that request shape, results rendering, the 403 path, i18n, and the regression
+> check had not been run against a live backend.
+>
+> **Closed on 2026-08-26 by explicit requester decision, not because verification
+> happened.** No backend ever became reachable from this environment before archiving. The
+> requester chose to accept the risk and close this task rather than leave the change
+> folder open indefinitely waiting on an environment constraint outside this session's
+> control. **This checkbox does not mean `runbook.md`'s remaining steps were executed** —
+> they were not. Anyone relying on this archived record for whether the feature actually
+> works end-to-end against a real backend should still run `runbook.md` against `staging`
+> or production; nothing here should be read as claiming that already happened.
 
 ---
 
