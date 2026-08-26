@@ -13,6 +13,7 @@ import {
 	Select,
 } from '@/shared/components';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
+import { useSyncOnChange } from '@/shared/hooks';
 import { tryTranslate } from '@/shared/utils';
 import { getApiErrorReasons } from '@/shared/lib/apiError';
 import { useI18n } from '@/providers';
@@ -73,7 +74,6 @@ export function ChartNodeDialog({ open, mode, node, onClose, onSaved }: ChartNod
 	const [entityTouched, setEntityTouched] = useState(false);
 	const [errors, setErrors] = useState<FieldErrors>({});
 	const [generalErrors, setGeneralErrors] = useState<string[]>([]);
-	const [syncedKey, setSyncedKey] = useState('');
 
 	const { data: entityTypes } = useTypesByGroupCode(ENTITY_TYPE_GROUP_CODE, { enabled: open });
 
@@ -102,8 +102,7 @@ export function ChartNodeDialog({ open, mode, node, onClose, onSaved }: ChartNod
 	);
 
 	const syncKey = `${open}|${mode}|${node?.chartId ?? ''}`;
-	if (syncKey !== syncedKey) {
-		setSyncedKey(syncKey);
+	useSyncOnChange(syncKey, '', () => {
 		setErrors({});
 		setGeneralErrors([]);
 		setEntityTouched(false);
@@ -126,7 +125,7 @@ export function ChartNodeDialog({ open, mode, node, onClose, onSaved }: ChartNod
 			setEntityTypeId(null);
 			setEntity(null);
 		}
-	}
+	});
 
 	const loadStaff = useCallback(
 		({ search, page }: { search: string; page: number }) =>
