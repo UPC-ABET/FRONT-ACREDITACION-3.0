@@ -3659,7 +3659,8 @@
 				"expandAll": "Expand all",
 				"collapseAll": "Collapse all",
 				"exportPng": "Export image",
-				"exportPdf": "Export PDF"
+				"exportPdf": "Export PDF",
+				"resetPassword": "Reset password"
 			},
 			"actions": {
 				"edit": "Edit",
@@ -3699,12 +3700,29 @@
 				"blockedTitle": "Cannot delete",
 				"blockedSubtitle": "It could not be deleted for the following reasons:"
 			},
+			"resetPassword": {
+				"selectTitle": "Reset password",
+				"selectDescription": "Select the entity types whose linked users should receive the platform's default password. This action is immediate and cannot be undone.",
+				"loadTypesFailed": "The entity types could not be loaded. Close this dialog and try again.",
+				"continue": "Continue",
+				"confirmTitle": "Confirm reset",
+				"confirmMessage": "This will reset the password of users linked to: {{types}}. This action is immediate and cannot be undone.",
+				"resultsTitle": "Reset results",
+				"resultsResetHeading": "Passwords reset",
+				"resultsResetEmpty": "No user was reset.",
+				"resultsResetCount": "{{count}} chart node(s)",
+				"resultsSkippedHeading": "Skipped nodes",
+				"resultsSkippedEmpty": "No node was skipped.",
+				"resultsSkippedCount": "{{count}} node(s) skipped",
+				"close": "Close"
+			},
 			"export": {
 				"error": "The organization chart could not be exported."
 			},
 			"error": {
 				"loadFailed": "The organization chart could not be loaded.",
-				"deleteFailed": "The node could not be deleted."
+				"deleteFailed": "The node could not be deleted.",
+				"resetPasswordFailed": "The passwords could not be reset."
 			}
 		},
 		"sectionsMaintenance": {

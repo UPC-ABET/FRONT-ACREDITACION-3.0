@@ -6,6 +6,7 @@ import {
 	ArrowsPointingOutIcon,
 	DocumentArrowDownIcon,
 	ExclamationTriangleIcon,
+	KeyIcon,
 	MagnifyingGlassMinusIcon,
 	MagnifyingGlassPlusIcon,
 	PhotoIcon,
@@ -35,6 +36,7 @@ import { collectNodeIdsWithChildren } from '../utils/layout';
 import { exportSvgAsPdf, exportSvgAsPng } from '../utils/exportChart';
 import { ChartNodeDialog } from '@/modules/charts';
 import { ChartNodeMenu } from './ChartNodeMenu';
+import { ChartResetPasswordDialog } from './ChartResetPasswordDialog';
 import { OrgChart } from './OrgChart';
 
 interface MenuState {
@@ -67,6 +69,7 @@ export function OrganizationChartMaintenance() {
 	const [pendingDelete, setPendingDelete] = useState<ChartNode | null>(null);
 	const [blockedReasons, setBlockedReasons] = useState<string[] | null>(null);
 	const [exportingKind, setExportingKind] = useState<'png' | 'pdf' | null>(null);
+	const [resetPasswordOpen, setResetPasswordOpen] = useState(false);
 	const exporting = exportingKind !== null;
 
 	const root = treeQuery.data ?? null;
@@ -247,6 +250,14 @@ export function OrganizationChartMaintenance() {
 							<DocumentArrowDownIcon className="h-4 w-4" />
 							<span>{t('loads.organizationChartMaintenance.toolbar.exportPdf')}</span>
 						</Button>
+						<Button
+							variant="surface"
+							size="sm"
+							disabled={!chartReady}
+							onClick={() => setResetPasswordOpen(true)}>
+							<KeyIcon className="h-4 w-4" />
+							<span>{t('loads.organizationChartMaintenance.toolbar.resetPassword')}</span>
+						</Button>
 					</div>
 				</div>
 
@@ -273,6 +284,12 @@ export function OrganizationChartMaintenance() {
 					onClose={closeMenu}
 				/>
 			)}
+
+			<ChartResetPasswordDialog
+				open={resetPasswordOpen}
+				onClose={() => setResetPasswordOpen(false)}
+				onError={(message) => showToast(message, 'error')}
+			/>
 
 			<ChartNodeDialog
 				open={dialog != null}
