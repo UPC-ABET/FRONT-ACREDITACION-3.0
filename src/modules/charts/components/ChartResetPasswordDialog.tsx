@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
 	Alert,
 	AlertDescription,
@@ -147,9 +147,11 @@ export function ChartResetPasswordDialog({
 	}, [result, labelByCode, t]);
 
 	const isConfirmStep = step === 'confirm';
+	const submittingRef = useRef(false);
 
 	const handleConfirm = async () => {
-		if (resetPasswords.isPending) return;
+		if (submittingRef.current || resetPasswords.isPending) return;
+		submittingRef.current = true;
 		try {
 			const response = await resetPasswords.mutateAsync({ entityTypeCodes: [...selectedCodes] });
 			setResult(response);
@@ -159,6 +161,8 @@ export function ChartResetPasswordDialog({
 			onError(
 				getErrorMessage(error, 'loads.organizationChartMaintenance.error.resetPasswordFailed'),
 			);
+		} finally {
+			submittingRef.current = false;
 		}
 	};
 
@@ -168,7 +172,7 @@ export function ChartResetPasswordDialog({
 	};
 
 	const handleCancelConfirm = () => {
-		if (resetPasswords.isPending) return;
+		if (submittingRef.current || resetPasswords.isPending) return;
 		setStep('select');
 	};
 
