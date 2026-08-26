@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { RESET_PASSWORD_ENTITY_TYPE_CODES } from '../constants';
 import { chartsService } from '../services/chartsService';
 import type { ChartCreatePayload, ChartResetPasswordPayload, ChartUpdatePayload } from '../types';
 import { chartsQueryKeys } from './queryKeys';
@@ -48,6 +49,11 @@ export function useChartMutations() {
 
 export function useResetChartPasswords() {
 	return useMutation({
-		mutationFn: (payload: ChartResetPasswordPayload) => chartsService.resetPasswords(payload),
+		mutationFn: (payload: ChartResetPasswordPayload) => {
+			const entityTypeCodes = payload.entityTypeCodes.filter((code) =>
+				RESET_PASSWORD_ENTITY_TYPE_CODES.includes(code),
+			);
+			return chartsService.resetPasswords({ entityTypeCodes });
+		},
 	});
 }
