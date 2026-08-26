@@ -3,3 +3,4 @@ export * from './OrgChart';
 export * from './OrgChartNode';
 export * from './ChartNodeDialog';
 export * from './ChartNodeMenu';
+export * from './ChartResetPasswordDialog';
