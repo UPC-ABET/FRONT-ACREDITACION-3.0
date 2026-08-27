@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Card, Button, Select, Toast } from '@/shared/components';
 import { ArrowDownTrayIcon, EyeIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
 import { useI18n } from '@/providers';
+import { useModalityLabel } from '@/modules/academic';
 import { base64ToBlob, tryTranslate } from '@/shared/utils';
 import { getErrorMessage } from '@/shared/lib';
 import { useSurveyFilterOptions } from '../../hooks';
@@ -86,6 +87,7 @@ export const PerceptionReportPanel = forwardRef<
 	});
 
 	const { commissionOptions, campusOptions } = useSurveyFilterOptions(programId);
+	const modalityLabel = useModalityLabel();
 
 	const languageOptions: OptionItem[] = [
 		{ value: 'es', label: t('surveys.perception.spanish') },
@@ -148,6 +150,7 @@ export const PerceptionReportPanel = forwardRef<
 			commissionId: resolvedCommissionId,
 			campusId: resolvedCampusId,
 			surveyNumbers: showSurveyNumber ? resolvedSurveyNumbers : undefined,
+			modalityLabel,
 			lang: resolvedLang,
 		});
 	}
