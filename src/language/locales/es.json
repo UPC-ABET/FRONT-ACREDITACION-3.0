@@ -2608,7 +2608,12 @@
 				"byProgramTitle": "Encuestas por programa",
 				"byCourseTitle": "Encuestas en curso por sección",
 				"programFallback": "Programa {{index}}",
-				"courseFallback": "Curso {{index}}"
+				"courseFallback": "Curso {{index}}",
+				"downloadPdf": "Descargar reporte PDF",
+				"granularityLabel": "Detalle por NRC (sección)",
+				"granularityDescription": "Al activar, el reporte muestra cada sección con su docente. Al desactivar, agrupa por curso.",
+				"granularityCourse": "Curso",
+				"granularitySection": "NRC"
 			},
 			"config": {
 				"colCode": "Código",

@@ -2608,7 +2608,12 @@
 				"byProgramTitle": "Surveys by program",
 				"byCourseTitle": "Surveys in progress by section",
 				"programFallback": "Program {{index}}",
-				"courseFallback": "Course {{index}}"
+				"courseFallback": "Course {{index}}",
+				"downloadPdf": "Download PDF report",
+				"granularityLabel": "Break down by NRC (section)",
+				"granularityDescription": "When on, the report shows each section with its professor. When off, it groups by course.",
+				"granularityCourse": "Course",
+				"granularitySection": "NRC"
 			},
 			"config": {
 				"colCode": "Code",

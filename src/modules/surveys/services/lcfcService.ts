@@ -328,8 +328,12 @@ export async function downloadLCFCSurveys(programId = 0): Promise<void> {
 	triggerBlobDownload(blob, resolveDownloadFileName(response, 'encuestas_lcfc.xlsx'));
 }
 
-export async function downloadLCFCReportPdf(programId = 0, lang = 'es'): Promise<void> {
-	const params = new URLSearchParams({ lang });
+export async function downloadLCFCReportPdf(
+	programId = 0,
+	lang = 'es',
+	groupBy: 'course' | 'section' = 'section',
+): Promise<void> {
+	const params = new URLSearchParams({ lang, groupBy });
 	if (programId) params.set('programId', String(programId));
 	const { blob, response } = await apiGetBlobResponse(`lcfc/report-pdf?${params.toString()}`);
 	triggerBlobDownload(blob, resolveDownloadFileName(response, 'reporte_lcfc.pdf'));
