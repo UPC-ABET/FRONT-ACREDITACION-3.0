@@ -2,8 +2,8 @@
 
 import React, { useRef, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { Button, Toast } from '@/shared/components';
+import { ArrowDownTrayIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { Button, Toast, Toggle } from '@/shared/components';
 import { useI18n, useABET } from '@/providers';
 import { tryTranslate } from '@/shared/utils';
 import { getErrorMessage } from '@/shared/lib';
@@ -14,6 +14,7 @@ import {
 import { SurveyMetricsSummary } from '../shared/SurveyMetricsSummary';
 import {
 	downloadLCFCSurveys,
+	downloadLCFCReportPdf,
 	generateLCFCPerceptionPdf,
 	generateLCFCDashboard,
 } from '../../services';
@@ -33,7 +34,9 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 		msg: '',
 	});
 	const [downloading, setDownloading] = useState(false);
+	const [downloadingReport, setDownloadingReport] = useState(false);
 	const [generating, setGenerating] = useState(false);
+	const [bySection, setBySection] = useState(true);
 	const panelRef = useRef<PerceptionReportPanelHandle>(null);
 
 	const dashboardMutation = useMutation({
@@ -60,6 +63,25 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 			setToast({ open: true, type: 'error', msg: tryTranslate(t, (error as Error).message) });
 		} finally {
 			setDownloading(false);
+		}
+	}
+
+	async function handleDownloadReport() {
+		if (!academicPeriodId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.shared.selectCycle') });
+			return;
+		}
+		setDownloadingReport(true);
+		try {
+			await downloadLCFCReportPdf(
+				programId || 0,
+				locale === 'en' ? 'en' : 'es',
+				bySection ? 'section' : 'course',
+			);
+		} catch (error) {
+			setToast({ open: true, type: 'error', msg: tryTranslate(t, (error as Error).message) });
+		} finally {
+			setDownloadingReport(false);
 		}
 	}
 
@@ -90,6 +112,23 @@ export function LCFCReports({ programId, commissionId, campusId }: LCFCReportsPr
 						{t('surveys.perception.generate')}
 					</Button>
 				</div>
+			</div>
+
+			<div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-200 p-3">
+				<Toggle
+					label={t('surveys.lcfc.reports.granularityLabel')}
+					description={t('surveys.lcfc.reports.granularityDescription')}
+					checked={bySection}
+					onChange={setBySection}
+				/>
+				<Button
+					variant="surface"
+					onClick={handleDownloadReport}
+					disabled={downloadingReport}
+					loading={downloadingReport}>
+					<DocumentTextIcon className="h-4 w-4 mr-1" />
+					{t('surveys.lcfc.reports.downloadPdf')}
+				</Button>
 			</div>
 
 			{dashboard && <SurveyMetricsSummary summary={dashboard.summary} />}
