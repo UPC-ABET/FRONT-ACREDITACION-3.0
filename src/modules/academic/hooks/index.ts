@@ -16,3 +16,4 @@ export * from './useStudyPlansMaintenance';
 export * from './useStudyPlanCoursesView';
 export * from './usePrograms';
 export * from './useGlobalAcademicFilters';
+export * from './useModalityLabel';

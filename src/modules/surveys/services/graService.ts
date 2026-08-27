@@ -473,6 +473,7 @@ export async function generateGRAPerceptionPdf(
 		commissionId: params.commissionId,
 		campusId: params.campusId,
 		surveyNumbers: params.surveyNumbers,
+		modalityLabel: params.modalityLabel,
 		lang: params.lang ?? 'es',
 	});
 	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };
