@@ -10,6 +10,7 @@ import {
 	SidebarGroup,
 	SidebarItem,
 	SidebarNavGroup,
+	Toast,
 } from '@/shared/components';
 import {
 	HomeIcon,
@@ -27,6 +28,9 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAuth, useI18n } from '@/providers';
 import { useLogout } from '@/modules/auth/hooks';
+import { useApiErrorToast } from '@/shared/hooks';
+import { getErrorMessage } from '@/shared/lib';
+import { getPortfolioSsoLink } from '@/modules/admin/portfolio-integration';
 
 type NavChild = {
 	name: string;
@@ -36,18 +40,29 @@ type NavChild = {
 type NavItem = {
 	name: string;
 	href?: string;
-	externalHref?: string;
+	onClick?: () => void;
 	icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 	children?: NavChild[];
 };
-
-const PORTFOLIO_URL = process.env.NEXT_PUBLIC_PORTFOLIO_URL ?? '';
 
 export function AppSidebar() {
 	const pathname = usePathname();
 	const { t } = useI18n();
 	const { canAccessRoute } = useAuth();
 	const handleLogout = useLogout();
+	const { toast, showToast, clearToast } = useApiErrorToast();
+
+	async function handlePortfolioClick() {
+		const popup = window.open('', '_blank');
+		try {
+			const { url } = await getPortfolioSsoLink();
+			if (popup) popup.location.href = url;
+			else window.open(url, '_blank');
+		} catch (err) {
+			popup?.close();
+			showToast(getErrorMessage(err, 'admin.portfolioIntegration.error.linkFailed'), 'error');
+		}
+	}
 
 	const navigation: NavItem[] = [
 		{ name: t('nav.home'), href: '/', icon: HomeIcon },
@@ -82,7 +97,7 @@ export function AppSidebar() {
 		{
 			name: t('nav.portfolio'),
 			href: '/portfolio',
-			externalHref: PORTFOLIO_URL,
+			onClick: handlePortfolioClick,
 			icon: BriefcaseIcon,
 		},
 
@@ -133,6 +148,10 @@ export function AppSidebar() {
 				{ name: t('nav.admin.notifications'), href: '/admin/notifications' },
 				{ name: t('nav.admin.configuration'), href: '/admin/configuration' },
 				{ name: t('nav.admin.iam'), href: '/admin/iam' },
+				{
+					name: t('nav.admin.portfolioIntegration'),
+					href: '/admin/portfolio-integration',
+				},
 			],
 		},
 	];
@@ -159,61 +178,63 @@ export function AppSidebar() {
 		.filter((item): item is NavItem => item !== null);
 
 	return (
-		<Sidebar>
-			<SidebarHeader />
+		<>
+			<Sidebar>
+				<SidebarHeader />
 
-			<SidebarContent>
-				<SidebarGroup>
-					{visibleNavigation.map((item) => {
-						const childActive = item.children?.some((child) => isActive(child.href)) ?? false;
+				<SidebarContent>
+					<SidebarGroup>
+						{visibleNavigation.map((item) => {
+							const childActive = item.children?.some((child) => isActive(child.href)) ?? false;
 
-						return (
-							<div key={item.name}>
-								{!item.children && item.externalHref ? (
-									<SidebarItem
-										label={item.name}
-										icon={<item.icon className="h-5 w-5" />}
-										href={item.externalHref}
-										external
-									/>
-								) : !item.children ? (
-									<SidebarItem
-										label={item.name}
-										icon={<item.icon className="h-5 w-5" />}
-										href={item.href ?? '#'}
-										active={isActive(item.href)}
-									/>
-								) : (
-									<SidebarNavGroup
-										label={item.name}
-										icon={<item.icon className="h-5 w-5" />}
-										active={childActive}
-										defaultOpen={childActive}>
-										{item.children.map((child) => (
-											<SidebarItem
-												key={child.name}
-												label={child.name}
-												icon={null}
-												href={child.href}
-												active={isActive(child.href)}
-											/>
-										))}
-									</SidebarNavGroup>
-								)}
-							</div>
-						);
-					})}
-				</SidebarGroup>
-			</SidebarContent>
+							return (
+								<div key={item.name}>
+									{!item.children && item.onClick ? (
+										<SidebarItem
+											label={item.name}
+											icon={<item.icon className="h-5 w-5" />}
+											onClick={item.onClick}
+										/>
+									) : !item.children ? (
+										<SidebarItem
+											label={item.name}
+											icon={<item.icon className="h-5 w-5" />}
+											href={item.href ?? '#'}
+											active={isActive(item.href)}
+										/>
+									) : (
+										<SidebarNavGroup
+											label={item.name}
+											icon={<item.icon className="h-5 w-5" />}
+											active={childActive}
+											defaultOpen={childActive}>
+											{item.children.map((child) => (
+												<SidebarItem
+													key={child.name}
+													label={child.name}
+													icon={null}
+													href={child.href}
+													active={isActive(child.href)}
+												/>
+											))}
+										</SidebarNavGroup>
+									)}
+								</div>
+							);
+						})}
+					</SidebarGroup>
+				</SidebarContent>
 
-			<SidebarFooter>
-				<SidebarItem
-					label={t('nav.logout')}
-					icon={<ArrowRightStartOnRectangleIcon className="h-5 w-5" />}
-					onClick={handleLogout}
-				/>
-			</SidebarFooter>
-		</Sidebar>
+				<SidebarFooter>
+					<SidebarItem
+						label={t('nav.logout')}
+						icon={<ArrowRightStartOnRectangleIcon className="h-5 w-5" />}
+						onClick={handleLogout}
+					/>
+				</SidebarFooter>
+			</Sidebar>
+			<Toast isOpen={toast.isOpen} onClose={clearToast} type={toast.type} message={toast.message} />
+		</>
 	);
 }
 

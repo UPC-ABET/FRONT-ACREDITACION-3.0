@@ -38,7 +38,8 @@
 			"parameters": "Parámetros",
 			"notifications": "Notificaciones",
 			"configuration": "Configuración",
-			"iam": "Identidad y Accesos"
+			"iam": "Identidad y Accesos",
+			"portfolioIntegration": "Integración Portafolio"
 		},
 		"logout": "Cerrar sesión",
 		"loads": {
@@ -1226,6 +1227,41 @@
 				"loadFailed": "No se pudo cargar el parámetro",
 				"saveFailed": "No se pudo guardar el parámetro",
 				"notFound": "Parámetro no encontrado"
+			}
+		},
+		"portfolioIntegration": {
+			"page": {
+				"title": "Integración Portafolio",
+				"subtitle": "Configura la conexión de inicio de sesión único con PORTFOLIO-AUDIT."
+			},
+			"status": {
+				"configured": "Configurado — última actualización: {{date}}",
+				"notConfigured": "No configurado"
+			},
+			"form": {
+				"baseUrl": "URL base de PORTFOLIO-AUDIT",
+				"baseUrlPlaceholder": "https://portfolio.tcupc.pe",
+				"apiKey": "Clave de API compartida",
+				"apiKeyPlaceholder": "Genera una nueva clave para continuar",
+				"apiKeyHint": "Copia esta clave antes de guardar: no se volverá a mostrar. Debes registrarla también en el parámetro acreditacion.config de PORTFOLIO-AUDIT.",
+				"btn": {
+					"generate": "Generar clave",
+					"submit": "Guardar",
+					"submitting": "Guardando..."
+				},
+				"toast": {
+					"saved": "Configuración de Portafolio guardada"
+				},
+				"error": {
+					"baseUrlInvalid": "Ingresa una URL válida.",
+					"apiKeyInvalid": "La clave debe tener al menos 32 caracteres.",
+					"saveFailed": "No se pudo guardar la configuración de Portafolio."
+				}
+			},
+			"error": {
+				"loadFailed": "No se pudo cargar la configuración de Portafolio.",
+				"saveFailed": "No se pudo guardar la configuración de Portafolio.",
+				"linkFailed": "No se pudo generar el enlace de acceso a Portafolio."
 			}
 		}
 	},
