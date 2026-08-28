@@ -145,6 +145,10 @@ export function AppSidebar() {
 					name: t('nav.admin.portfolioIntegration'),
 					href: '/admin/portfolio-integration',
 				},
+				{
+					name: t('nav.admin.apiTokens'),
+					href: '/admin/api-tokens',
+				},
 			],
 		},
 	];
