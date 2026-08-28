@@ -1412,7 +1412,10 @@
 			"thresholdNotFound": "No performance-level configuration was found for the period.",
 			"generateFailed": "The report could not be generated.",
 			"pdfFailed": "The report PDF could not be generated.",
-			"excelFailed": "The report Excel could not be generated."
+			"excelFailed": "The report Excel could not be generated.",
+			"queryFailed": "The report data could not be queried.",
+			"queryTimeout": "The query took too long. Try again with narrower filters (program, outcome or campus).",
+			"singleCampusRequired": "Select a single campus, or none for the consolidated report."
 		},
 		"chart": {
 			"hasIfc": "A descendant course coordinator has an IFC for its course in this period.",
@@ -4180,6 +4183,7 @@
 			"languageEn": "English",
 			"gradeTypes": "Grade type",
 			"allGradeTypes": "All grade types",
+			"campusHint": "The report is downloaded for a single campus. Leave it empty to generate the consolidated report for all campuses.",
 			"clear": "Clear filters",
 			"search": "Search"
 		},

@@ -1412,7 +1412,10 @@
 			"thresholdNotFound": "No se encontró la configuración de niveles de desempeño para el periodo.",
 			"generateFailed": "No se pudo generar el reporte.",
 			"pdfFailed": "No se pudo generar el PDF del reporte.",
-			"excelFailed": "No se pudo generar el Excel del reporte."
+			"excelFailed": "No se pudo generar el Excel del reporte.",
+			"queryFailed": "No se pudo consultar la información del reporte.",
+			"queryTimeout": "La consulta tardó demasiado. Vuelve a intentarlo acotando los filtros (carrera, outcome o sede).",
+			"singleCampusRequired": "Selecciona una sola sede, o ninguna para el reporte consolidado."
 		},
 		"chart": {
 			"hasIfc": "Un coordinador de curso dependiente tiene un IFC para su curso en este período.",
@@ -4180,6 +4183,7 @@
 			"languageEn": "Inglés",
 			"gradeTypes": "Tipo de nota",
 			"allGradeTypes": "Todos los tipos de nota",
+			"campusHint": "El reporte se descarga para una sola sede. Si no seleccionas ninguna, se genera el consolidado de todas las sedes.",
 			"clear": "Limpiar filtros",
 			"search": "Buscar"
 		},
