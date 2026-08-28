@@ -1,6 +1,7 @@
 import { API_URL, apiDelete, apiGet, apiPost, getApiData } from '@/shared/lib';
 import type {
 	AuthSessionState,
+	BannerAuthCredentials,
 	BannerSessionStatus,
 	ScrapeRun,
 	ScrapeRunSummary,
@@ -42,8 +43,10 @@ export async function getBannerScrapeRun(runId: string): Promise<ScrapeRun> {
 	return getApiData<ScrapeRun>(res);
 }
 
-export async function startBannerAuthSession(): Promise<StartAuthSessionResponse> {
-	const res = await apiPost('/banner/auth/sessions');
+export async function startBannerAuthSession(
+	credentials?: BannerAuthCredentials,
+): Promise<StartAuthSessionResponse> {
+	const res = await apiPost('/banner/auth/sessions', credentials ?? {});
 	return getApiData<StartAuthSessionResponse>(res);
 }
 

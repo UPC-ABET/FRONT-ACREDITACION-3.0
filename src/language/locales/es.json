@@ -39,7 +39,8 @@
 			"notifications": "Notificaciones",
 			"configuration": "Configuración",
 			"iam": "Identidad y Accesos",
-			"portfolioIntegration": "Integración Portafolio"
+			"portfolioIntegration": "Integración Portafolio",
+			"apiTokens": "Tokens de API"
 		},
 		"logout": "Cerrar sesión",
 		"loads": {
@@ -384,6 +385,11 @@
 			"button": "Iniciar sesión en Banner",
 			"title": "Iniciar sesión en Banner",
 			"subtitle": "Completa el inicio de sesión de Microsoft/UPC dentro del navegador remoto.",
+			"credentialsHint": "Opcional: completa tu usuario y contraseña acá para que se escriban solos en el login de Microsoft/Outlook. Si te pide un código o confirmación (MFA), lo terminas tú en la pantalla que aparece después.",
+			"usernameLabel": "Usuario",
+			"passwordLabel": "Contraseña",
+			"show": "Mostrar",
+			"hide": "Ocultar",
 			"starting": "Iniciando sesión remota...",
 			"startFailed": "No se pudo iniciar la sesión de login.",
 			"connecting": "Conectando con el navegador remoto...",
@@ -1265,6 +1271,102 @@
 				"loadFailed": "No se pudo cargar la configuración de Portafolio.",
 				"saveFailed": "No se pudo guardar la configuración de Portafolio.",
 				"linkFailed": "No se pudo generar el enlace de acceso a Portafolio."
+			}
+		},
+		"apiTokens": {
+			"page": {
+				"title": "Tokens de API",
+				"subtitle": "Administra las credenciales de API para integraciones externas."
+			},
+			"table": {
+				"col": {
+					"name": "Nombre",
+					"keyId": "Key ID",
+					"scopes": "Alcances",
+					"status": "Estado",
+					"expiresAt": "Expira",
+					"createdAt": "Creado",
+					"actions": "Acciones"
+				},
+				"search": "Buscar por nombre o key ID…",
+				"create": "Nuevo token"
+			},
+			"badge": {
+				"active": "Activo",
+				"revoked": "Revocado"
+			},
+			"noExpiration": "Sin expiración",
+			"actions": {
+				"edit": "Editar",
+				"revoke": "Revocar"
+			},
+			"confirmRevoke": {
+				"title": "Revocar token",
+				"description": "¿Revocar el token \"{{name}}\"? Los sistemas que lo usan dejarán de poder autenticarse de inmediato. Esta acción no se puede deshacer."
+			},
+			"toast": {
+				"revoked": "Token revocado"
+			},
+			"error": {
+				"loadFailed": "No se pudo cargar la lista de tokens de API.",
+				"listFailed": "No se pudo cargar la lista de tokens de API.",
+				"createFailed": "No se pudo crear el token de API.",
+				"updateFailed": "No se pudo actualizar el token de API.",
+				"revokeFailed": "No se pudo revocar el token de API."
+			},
+			"form": {
+				"error": {
+					"nameRequired": "Ingresa un nombre.",
+					"nameTooLong": "El nombre no puede superar los 255 caracteres.",
+					"scopesRequired": "Agrega al menos un alcance."
+				}
+			},
+			"create": {
+				"title": "Nuevo token de API",
+				"form": {
+					"name": "Nombre",
+					"namePlaceholder": "Ej. Integración PORTFOLIO-AUDIT",
+					"scopes": "Alcances",
+					"scopeModule": "Módulo",
+					"scopeAction": "Acción",
+					"addScope": "Agregar alcance",
+					"removeScope": "Quitar alcance",
+					"expiresAt": "Fecha de expiración",
+					"expiresAtHelp": "Opcional. Déjalo vacío para un token sin expiración.",
+					"btn": {
+						"submit": "Crear token"
+					}
+				},
+				"success": {
+					"description": "Token creado. Copia la clave ahora: no volverá a mostrarse.",
+					"apiKey": "Clave de API",
+					"apiKeyHint": "Copia esta clave antes de cerrar: no se volverá a mostrar.",
+					"btn": {
+						"copy": "Copiar",
+						"close": "Cerrar"
+					}
+				},
+				"toast": {
+					"copied": "Clave copiada al portapapeles"
+				},
+				"error": {
+					"copyFailed": "No se pudo copiar la clave. Selecciónala manualmente.",
+					"createFailed": "No se pudo crear el token de API."
+				}
+			},
+			"edit": {
+				"title": "Editar token de API",
+				"form": {
+					"name": "Nombre",
+					"expiresAt": "Fecha de expiración",
+					"expiresAtHelp": "Opcional. Déjalo vacío para quitar la expiración."
+				},
+				"toast": {
+					"saved": "Token actualizado"
+				},
+				"error": {
+					"saveFailed": "No se pudo actualizar el token de API."
+				}
 			}
 		}
 	},

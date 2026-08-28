@@ -9,7 +9,7 @@ import {
 	startBannerAuthSession,
 	startBannerScrape,
 } from '../services';
-import type { ScrapeRunStatus } from '../types';
+import type { BannerAuthCredentials, ScrapeRunStatus } from '../types';
 
 const TERMINAL_STATUSES: ScrapeRunStatus[] = ['completed', 'partial', 'failed', 'expired'];
 
@@ -81,7 +81,7 @@ export function useBannerScrapeRun(runId: string | null) {
 
 export function useStartBannerAuthSession() {
 	return useMutation({
-		mutationFn: () => startBannerAuthSession(),
+		mutationFn: (credentials?: BannerAuthCredentials) => startBannerAuthSession(credentials),
 	});
 }
 

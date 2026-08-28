@@ -39,7 +39,8 @@
 			"notifications": "Notifications",
 			"configuration": "Configuration",
 			"iam": "Identity & Access",
-			"portfolioIntegration": "Portfolio Integration"
+			"portfolioIntegration": "Portfolio Integration",
+			"apiTokens": "API Tokens"
 		},
 		"logout": "Logout",
 		"loads": {
@@ -384,6 +385,11 @@
 			"button": "Login to Banner",
 			"title": "Login to Banner",
 			"subtitle": "Complete the Microsoft/UPC sign-in inside the remote browser.",
+			"credentialsHint": "Optional: fill in your username and password here so they're typed automatically into the Microsoft/Outlook login. If it asks for a code or confirmation (MFA), you finish that yourself on the screen that follows.",
+			"usernameLabel": "Username",
+			"passwordLabel": "Password",
+			"show": "Show",
+			"hide": "Hide",
 			"starting": "Starting remote session...",
 			"startFailed": "Could not start the login session.",
 			"connecting": "Connecting to the remote browser...",
@@ -1265,6 +1271,102 @@
 				"loadFailed": "Could not load the Portfolio configuration.",
 				"saveFailed": "Could not save the Portfolio configuration.",
 				"linkFailed": "Could not generate the Portfolio access link."
+			}
+		},
+		"apiTokens": {
+			"page": {
+				"title": "API Tokens",
+				"subtitle": "Manage API credentials for external integrations."
+			},
+			"table": {
+				"col": {
+					"name": "Name",
+					"keyId": "Key ID",
+					"scopes": "Scopes",
+					"status": "Status",
+					"expiresAt": "Expires",
+					"createdAt": "Created",
+					"actions": "Actions"
+				},
+				"search": "Search by name or key ID…",
+				"create": "New token"
+			},
+			"badge": {
+				"active": "Active",
+				"revoked": "Revoked"
+			},
+			"noExpiration": "No expiration",
+			"actions": {
+				"edit": "Edit",
+				"revoke": "Revoke"
+			},
+			"confirmRevoke": {
+				"title": "Revoke token",
+				"description": "Revoke the token \"{{name}}\"? Systems using it will immediately lose access. This action cannot be undone."
+			},
+			"toast": {
+				"revoked": "Token revoked"
+			},
+			"error": {
+				"loadFailed": "Could not load the API tokens list.",
+				"listFailed": "Could not load the API tokens list.",
+				"createFailed": "Could not create the API token.",
+				"updateFailed": "Could not update the API token.",
+				"revokeFailed": "Could not revoke the API token."
+			},
+			"form": {
+				"error": {
+					"nameRequired": "Enter a name.",
+					"nameTooLong": "The name cannot exceed 255 characters.",
+					"scopesRequired": "Add at least one scope."
+				}
+			},
+			"create": {
+				"title": "New API token",
+				"form": {
+					"name": "Name",
+					"namePlaceholder": "E.g. PORTFOLIO-AUDIT integration",
+					"scopes": "Scopes",
+					"scopeModule": "Module",
+					"scopeAction": "Action",
+					"addScope": "Add scope",
+					"removeScope": "Remove scope",
+					"expiresAt": "Expiration date",
+					"expiresAtHelp": "Optional. Leave empty for a token with no expiration.",
+					"btn": {
+						"submit": "Create token"
+					}
+				},
+				"success": {
+					"description": "Token created. Copy the key now: it won't be shown again.",
+					"apiKey": "API key",
+					"apiKeyHint": "Copy this key before closing: it won't be shown again.",
+					"btn": {
+						"copy": "Copy",
+						"close": "Close"
+					}
+				},
+				"toast": {
+					"copied": "Key copied to clipboard"
+				},
+				"error": {
+					"copyFailed": "Could not copy the key. Select it manually.",
+					"createFailed": "Could not create the API token."
+				}
+			},
+			"edit": {
+				"title": "Edit API token",
+				"form": {
+					"name": "Name",
+					"expiresAt": "Expiration date",
+					"expiresAtHelp": "Optional. Leave empty to remove the expiration."
+				},
+				"toast": {
+					"saved": "Token updated"
+				},
+				"error": {
+					"saveFailed": "Could not update the API token."
+				}
 			}
 		}
 	},

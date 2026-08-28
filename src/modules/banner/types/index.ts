@@ -67,6 +67,13 @@ export interface ScrapeRunSummary {
 
 export type AuthSessionStatus = 'active' | 'completed' | 'failed' | 'expired';
 
+/** Both optional — pre-fills Microsoft's email/password fields on the remote login page;
+ *  never persisted, only forwarded once when the session starts. */
+export interface BannerAuthCredentials {
+	username: string;
+	password: string;
+}
+
 export interface StartAuthSessionResponse {
 	sessionId: string;
 	wsUrl: string;
