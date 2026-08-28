@@ -24,9 +24,14 @@ export interface PerceptionReportPanelProps {
 		campusId?: number;
 		lang?: 'es' | 'en';
 		surveyNumbers?: number[];
+		courseId?: number;
+		courseSectionId?: number;
+		outcomeId?: number;
 	};
 	hideGenerateButton?: boolean;
 	requireCommission?: boolean;
+	/** Blocks generate() until externalFilters.outcomeId is set (LCFC's "Percepción por Outcome"). */
+	requireOutcome?: boolean;
 	/** When no program/commission/campus is selected, skip validation and generate anyway
 	 *  (the backend returns a per-program overview report in that case). */
 	allowUnfiltered?: boolean;
@@ -66,6 +71,7 @@ export const PerceptionReportPanel = forwardRef<
 		externalFilters,
 		hideGenerateButton,
 		requireCommission,
+		requireOutcome,
 		allowUnfiltered,
 		onGeneratingChange,
 		generate,
@@ -135,6 +141,10 @@ export const PerceptionReportPanel = forwardRef<
 			setToast({ open: true, type: 'error', msg: t('surveys.perception.commissionRequired') });
 			return;
 		}
+		if (requireOutcome && !externalFilters?.outcomeId) {
+			setToast({ open: true, type: 'error', msg: t('surveys.perception.outcomeRequired') });
+			return;
+		}
 		const resolvedLang: 'es' | 'en' = externalFilters
 			? (externalFilters.lang ?? (locale === 'en' ? 'en' : 'es'))
 			: language.value === 'en'
@@ -151,6 +161,9 @@ export const PerceptionReportPanel = forwardRef<
 			campusId: resolvedCampusId,
 			surveyNumbers: showSurveyNumber ? resolvedSurveyNumbers : undefined,
 			modalityLabel,
+			courseId: externalFilters?.courseId,
+			courseSectionId: externalFilters?.courseSectionId,
+			outcomeId: externalFilters?.outcomeId,
 			lang: resolvedLang,
 		});
 	}

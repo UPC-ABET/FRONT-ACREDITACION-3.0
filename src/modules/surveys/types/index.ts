@@ -455,7 +455,16 @@ export interface PerceptionReportFilters {
 	campusId?: number;
 	surveyNumbers?: number[];
 	modalityLabel?: string;
+	courseId?: number;
+	courseSectionId?: number;
+	outcomeId?: number;
 	lang?: 'es' | 'en';
+}
+
+export interface LCFCOutcomeOption {
+	id: number;
+	code: string;
+	name: I18nText | string | null;
 }
 
 export interface SurveyApiResponse<T = unknown> {

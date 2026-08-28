@@ -30,6 +30,7 @@ import type {
 	BackendGenerateResult,
 	PerceptionReportFilters,
 	PerceptionReportResponse,
+	LCFCOutcomeOption,
 } from '../types';
 import type { I18nText } from '@/shared/types';
 
@@ -129,7 +130,9 @@ export async function getAvailableSections(
 	if (programId) params.set('programId', String(programId));
 	const qs = params.toString();
 	const res = await apiGet(`lcfc/config/available-sections${qs ? `?${qs}` : ''}`);
-	return getApiData<AvailableSection[]>(res) ?? [];
+	const list =
+		getApiData<Array<Omit<AvailableSection, 'courseName'> & { courseName: unknown }>>(res);
+	return (list ?? []).map((row) => ({ ...row, courseName: toText(row.courseName) }));
 }
 
 export async function getLCFCSectionOutcomes(
@@ -283,10 +286,14 @@ export async function generateLCFCDashboard(params: {
 	academicPeriodId?: number;
 	programId?: number;
 	campusId?: number;
+	courseId?: number;
+	courseSectionId?: number;
 }): Promise<DashboardResponse> {
 	const res = await apiPost('lcfc/dashboard', {
 		programId: params.programId,
 		campusId: params.campusId,
+		courseId: params.courseId,
+		courseSectionId: params.courseSectionId,
 	});
 	const data = getApiData<{
 		summary?: {
@@ -328,13 +335,22 @@ export async function downloadLCFCSurveys(programId = 0): Promise<void> {
 	triggerBlobDownload(blob, resolveDownloadFileName(response, 'encuestas_lcfc.xlsx'));
 }
 
-export async function downloadLCFCReportPdf(
-	programId = 0,
-	lang = 'es',
-	groupBy: 'course' | 'section' = 'section',
-): Promise<void> {
-	const params = new URLSearchParams({ lang, groupBy });
-	if (programId) params.set('programId', String(programId));
+export async function downloadLCFCReportPdf(options: {
+	programId?: number;
+	lang?: 'es' | 'en';
+	groupBy?: 'course' | 'section';
+	courseId?: number;
+	courseSectionId?: number;
+	hideCourseBreakdown?: boolean;
+}): Promise<void> {
+	const params = new URLSearchParams({
+		lang: options.lang ?? 'es',
+		groupBy: options.groupBy ?? 'section',
+	});
+	if (options.programId) params.set('programId', String(options.programId));
+	if (options.courseId) params.set('courseId', String(options.courseId));
+	if (options.courseSectionId) params.set('courseSectionId', String(options.courseSectionId));
+	if (options.hideCourseBreakdown) params.set('hideCourseBreakdown', 'true');
 	const { blob, response } = await apiGetBlobResponse(`lcfc/report-pdf?${params.toString()}`);
 	triggerBlobDownload(blob, resolveDownloadFileName(response, 'reporte_lcfc.pdf'));
 }
@@ -353,6 +369,28 @@ export async function generateLCFCPerceptionPdf(
 		campusId: params.campusId,
 		surveyNumbers: params.surveyNumbers,
 		modalityLabel: params.modalityLabel,
+		courseId: params.courseId,
+		courseSectionId: params.courseSectionId,
+		lang: params.lang ?? 'es',
+	});
+	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };
+}
+
+export async function listLCFCOutcomes(
+	programId: number,
+	commissionId: number,
+): Promise<LCFCOutcomeOption[]> {
+	const res = await apiPost('lcfc/outcomes/list', { programId, commissionId });
+	return getApiData<LCFCOutcomeOption[]>(res) ?? [];
+}
+
+export async function generateLCFCOutcomeReportPdf(
+	params: PerceptionReportFilters & { programId?: number },
+): Promise<PerceptionReportResponse> {
+	const res = await apiPost('lcfc/report/perception-by-outcome', {
+		programId: params.programId,
+		commissionId: params.commissionId,
+		outcomeId: params.outcomeId,
 		lang: params.lang ?? 'es',
 	});
 	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };

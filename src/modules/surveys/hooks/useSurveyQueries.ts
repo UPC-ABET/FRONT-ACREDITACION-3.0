@@ -27,6 +27,8 @@ export const surveyQueryKeys = {
 	commissions: (programId?: number, academicPeriodId?: number | null) =>
 		['surveys', 'commissions', programId, academicPeriodId] as const,
 	campuses: () => ['surveys', 'campuses'] as const,
+	lcfcAvailableSections: (programId?: number) =>
+		['surveys', 'lcfc', 'available-sections', programId] as const,
 
 	graCompetences: () => ['surveys', 'gra', 'competences'] as const,
 	graCompetencesList: (periodId: number, programId?: number) =>
