@@ -7,6 +7,9 @@ export type PerformanceReportLang = 'es' | 'en';
 export type PerformanceReportFilterDto = {
 	programCommissionId?: number;
 	outcomeId?: number;
+	// At most one campus on the download endpoints (pdf/excel): 2+ campuses are rejected with
+	// 400 error.semaphoreReport.singleCampusRequired. Empty/omitted = consolidated report over
+	// every campus. The JSON screen endpoints still accept any number.
 	campusIds?: number[];
 	// RV only: limits the report to grades whose rubric belongs to one of the selected grade
 	// types (core.types group TG205). Empty/omitted = all grade types. Ignored by RC.

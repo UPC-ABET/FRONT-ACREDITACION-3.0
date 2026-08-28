@@ -33,7 +33,9 @@ export function usePerformanceReportFilters() {
 	const [commissionId, setCommissionId] = useState<number | null>(null);
 	const [programId, setProgramId] = useState<number | null>(null);
 	const [outcomeId, setOutcomeId] = useState<number | null>(null);
-	const [campusIds, setCampusIds] = useState<number[]>([]);
+	// Downloads accept at most one campus (2+ -> 400 error.semaphoreReport.singleCampusRequired),
+	// so the selector is single-valued and "no campus" means the consolidated report.
+	const [campusId, setCampusId] = useState<number | null>(null);
 	// RV only: grade types (core.types group TG205) whose grades feed the report. Empty = all.
 	const [gradeTypeIds, setGradeTypeIds] = useState<number[]>([]);
 	const [lang, setLang] = useState<PerformanceReportLang>(locale === 'en' ? 'en' : 'es');
@@ -172,16 +174,16 @@ export function usePerformanceReportFilters() {
 		() => ({
 			programCommissionId,
 			outcomeId: outcomeId ?? undefined,
-			campusIds: campusIds.length > 0 ? campusIds : undefined,
+			campusIds: campusId != null ? [campusId] : undefined,
 			gradeTypeIds: gradeTypeIds.length > 0 ? gradeTypeIds : undefined,
 			lang,
 		}),
-		[programCommissionId, outcomeId, campusIds, gradeTypeIds, lang],
+		[programCommissionId, outcomeId, campusId, gradeTypeIds, lang],
 	);
 
 	const hasActiveFilters =
 		accreditorId != null ||
-		campusIds.length > 0 ||
+		campusId != null ||
 		gradeTypeIds.length > 0 ||
 		lang !== (locale === 'en' ? 'en' : 'es');
 
@@ -199,7 +201,7 @@ export function usePerformanceReportFilters() {
 		setCommissionId(null);
 		setProgramId(null);
 		setOutcomeId(null);
-		setCampusIds([]);
+		setCampusId(null);
 		setGradeTypeIds([]);
 		setLang(locale === 'en' ? 'en' : 'es');
 		setAppliedFilters({ lang: locale === 'en' ? 'en' : 'es' });
@@ -232,7 +234,7 @@ export function usePerformanceReportFilters() {
 		commissionId,
 		programId,
 		outcomeId,
-		campusIds,
+		campusId,
 		gradeTypeIds,
 		lang,
 		accreditorOptions,
@@ -249,7 +251,7 @@ export function usePerformanceReportFilters() {
 		onCommissionChange: handleCommissionChange,
 		onProgramChange: handleProgramChange,
 		onOutcomeChange: (option: SelectedOption) => setOutcomeId(toOptionValue(option)),
-		onCampusesChange: (ids: number[]) => setCampusIds(ids),
+		onCampusChange: (option: SelectedOption) => setCampusId(toOptionValue(option)),
 		onGradeTypesChange: (ids: number[]) => setGradeTypeIds(ids),
 		onLangChange: setLang,
 		reset,

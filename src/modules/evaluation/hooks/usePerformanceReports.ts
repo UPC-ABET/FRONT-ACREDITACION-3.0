@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { ApiError } from '@/shared/lib';
 import { triggerBlobDownload } from '@/shared/lib/fileDownload';
 import { performanceReportsService } from '../services/performanceReportsService';
 import type {
@@ -41,5 +42,10 @@ export function usePerformanceReportDownload(kind: PerformanceReportKind) {
 			filters: PerformanceReportFilterDto;
 		}) => performanceReportsService.downloadReport(kind, format, filters),
 		onSuccess: ({ blob, filename }) => triggerBlobDownload(blob, filename),
+		// A 503 is the backend's statement timeout on a heavy query, not a bad request: one
+		// automatic retry is worth it. Every other status (400 single-campus, 404 no data) is
+		// deterministic and must surface immediately.
+		retry: (failureCount, error) =>
+			error instanceof ApiError && error.status === 503 && failureCount < 1,
 	});
 }
