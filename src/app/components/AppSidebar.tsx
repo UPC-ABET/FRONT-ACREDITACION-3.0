@@ -95,13 +95,6 @@ export function AppSidebar() {
 			],
 		},
 		{
-			name: t('nav.portfolio'),
-			href: '/portfolio',
-			onClick: handlePortfolioClick,
-			icon: BriefcaseIcon,
-		},
-
-		{
 			name: t('nav.ifc.label'),
 			icon: DocumentChartBarIcon,
 			children: [
@@ -177,6 +170,8 @@ export function AppSidebar() {
 		})
 		.filter((item): item is NavItem => item !== null);
 
+	const portfolioVisible = canAccessRoute('/portfolio');
+
 	return (
 		<>
 			<Sidebar>
@@ -226,6 +221,15 @@ export function AppSidebar() {
 				</SidebarContent>
 
 				<SidebarFooter>
+					{portfolioVisible && (
+						<SidebarItem
+							label={t('nav.portfolio')}
+							icon={<BriefcaseIcon className="h-5 w-5" />}
+							onClick={handlePortfolioClick}
+							variant="accent"
+							className="mb-1"
+						/>
+					)}
 					<SidebarItem
 						label={t('nav.logout')}
 						icon={<ArrowRightStartOnRectangleIcon className="h-5 w-5" />}

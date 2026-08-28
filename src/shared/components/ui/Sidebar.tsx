@@ -240,6 +240,7 @@ export function SidebarItem({
 	href,
 	external = false,
 	className = '',
+	variant = 'default',
 }: {
 	icon?: React.ReactNode;
 	label: string;
@@ -251,9 +252,14 @@ export function SidebarItem({
 	href?: string;
 	external?: boolean;
 	className?: string;
+	/** 'accent' sets a distinct orange treatment for an item that isn't part of the
+	 *  regular nav flow (e.g. a link out to another system) — visually separate from
+	 *  the red "active" state, which still takes precedence when both apply. */
+	variant?: 'default' | 'accent';
 }) {
 	const { open, setOpen, isMobile } = useSidebar();
 	const hasIcon = icon !== null && icon !== undefined;
+	const isAccent = variant === 'accent' && !active;
 
 	const badgeStyles = {
 		urgent: 'bg-red-900/60 text-red-300 border border-red-700/50',
@@ -288,9 +294,20 @@ export function SidebarItem({
 				<div
 					className={[
 						'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all',
-						active ? 'bg-white/20' : 'bg-zinc-800 group-hover:bg-zinc-700',
+						active
+							? 'bg-white/20'
+							: isAccent
+								? 'bg-orange-500/15 group-hover:bg-orange-500/25'
+								: 'bg-zinc-800 group-hover:bg-zinc-700',
 					].join(' ')}>
-					<span className={active ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-200'}>
+					<span
+						className={
+							active
+								? 'text-white'
+								: isAccent
+									? 'text-orange-400 group-hover:text-orange-300'
+									: 'text-zinc-400 group-hover:text-zinc-200'
+						}>
 						{icon}
 					</span>
 				</div>
@@ -302,7 +319,11 @@ export function SidebarItem({
 						<span
 							className={[
 								'text-[13px] font-semibold leading-tight whitespace-normal break-words',
-								active ? 'text-white' : 'text-zinc-300 group-hover:text-white',
+								active
+									? 'text-white'
+									: isAccent
+										? 'text-orange-300 group-hover:text-orange-200'
+										: 'text-zinc-300 group-hover:text-white',
 							].join(' ')}>
 							{label}
 						</span>
