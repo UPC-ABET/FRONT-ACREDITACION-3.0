@@ -370,11 +370,10 @@ permanent state.
 
 From `.env.example` and `src/configs/env.config.ts` (Zod-validated at runtime):
 
-| Variable                    | Required  | Purpose                                                                                                                                                                                                                      |
-| --------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_API_URL`       | Yes (Zod) | Public base path the browser uses to reach the API. `/api` = same origin; Nginx routes `/api` to the backend container in production (no CORS).                                                                              |
-| `NEXT_PUBLIC_PORTFOLIO_URL` | Yes (Zod) | External Portfolio app the sidebar button links to.                                                                                                                                                                          |
-| `API_PROXY_URL`             | No        | Local-only dev proxy. When set and `NODE_ENV !== 'production'`, Next rewrites `/api/*` to this origin so the browser can reach a backend on another port without CORS. Ignored in production. Not covered by the Zod schema. |
+| Variable              | Required  | Purpose                                                                                                                                                                                                                      |
+| --------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL` | Yes (Zod) | Public base path the browser uses to reach the API. `/api` = same origin; Nginx routes `/api` to the backend container in production (no CORS).                                                                              |
+| `API_PROXY_URL`       | No        | Local-only dev proxy. When set and `NODE_ENV !== 'production'`, Next rewrites `/api/*` to this origin so the browser can reach a backend on another port without CORS. Ignored in production. Not covered by the Zod schema. |
 
 `validateEnv()` throws at startup if either Zod-required variable is missing — see
 `src/configs/env.config.ts`.

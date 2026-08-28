@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 const envSchema = z.object({
 	NEXT_PUBLIC_API_URL: z.string().min(1),
-	NEXT_PUBLIC_PORTFOLIO_URL: z.string().min(1),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -38,7 +38,8 @@
 			"parameters": "Parameters",
 			"notifications": "Notifications",
 			"configuration": "Configuration",
-			"iam": "Identity & Access"
+			"iam": "Identity & Access",
+			"portfolioIntegration": "Portfolio Integration"
 		},
 		"logout": "Logout",
 		"loads": {
@@ -1226,6 +1227,41 @@
 				"loadFailed": "Could not load the parameter",
 				"saveFailed": "Could not save the parameter",
 				"notFound": "Parameter not found"
+			}
+		},
+		"portfolioIntegration": {
+			"page": {
+				"title": "Portfolio Integration",
+				"subtitle": "Configure the single sign-on connection with PORTFOLIO-AUDIT."
+			},
+			"status": {
+				"configured": "Configured — last updated: {{date}}",
+				"notConfigured": "Not configured"
+			},
+			"form": {
+				"baseUrl": "PORTFOLIO-AUDIT base URL",
+				"baseUrlPlaceholder": "https://portfolio.tcupc.pe",
+				"apiKey": "Shared API key",
+				"apiKeyPlaceholder": "Generate a new key to continue",
+				"apiKeyHint": "Copy this key before saving: it won't be shown again. You must also register it in PORTFOLIO-AUDIT's acreditacion.config parameter.",
+				"btn": {
+					"generate": "Generate key",
+					"submit": "Save",
+					"submitting": "Saving..."
+				},
+				"toast": {
+					"saved": "Portfolio configuration saved"
+				},
+				"error": {
+					"baseUrlInvalid": "Enter a valid URL.",
+					"apiKeyInvalid": "The key must be at least 32 characters long.",
+					"saveFailed": "Could not save the Portfolio configuration."
+				}
+			},
+			"error": {
+				"loadFailed": "Could not load the Portfolio configuration.",
+				"saveFailed": "Could not save the Portfolio configuration.",
+				"linkFailed": "Could not generate the Portfolio access link."
 			}
 		}
 	},
