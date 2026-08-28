@@ -1553,7 +1553,10 @@
 			"thresholdNotFound": "No se encontró la configuración de niveles de desempeño para el periodo.",
 			"generateFailed": "No se pudo generar el reporte.",
 			"pdfFailed": "No se pudo generar el PDF del reporte.",
-			"excelFailed": "No se pudo generar el Excel del reporte."
+			"excelFailed": "No se pudo generar el Excel del reporte.",
+			"queryFailed": "No se pudo consultar la información del reporte.",
+			"queryTimeout": "La consulta tardó demasiado. Vuelve a intentarlo acotando los filtros (carrera, outcome o sede).",
+			"singleCampusRequired": "Selecciona una sola sede, o ninguna para el reporte consolidado."
 		},
 		"chart": {
 			"hasIfc": "Un coordinador de curso dependiente tiene un IFC para su curso en este período.",
@@ -4313,6 +4316,7 @@
 		"subtitle": "Cumplimiento de Student Outcomes (ABET) por curso y outcome, clasificado por niveles de desempeño.",
 		"selectPeriod": "Selecciona un periodo académico en la barra superior para ver el reporte.",
 		"empty": "No hay datos para los filtros seleccionados.",
+		"promptSearch": "Configura los filtros y presiona \"Buscar\" para ver el reporte.",
 		"downloadPdf": "Descargar PDF",
 		"downloadExcel": "Descargar Excel",
 		"tabs": {
@@ -4327,8 +4331,6 @@
 			"allCommissions": "Todas las comisiones",
 			"program": "Carrera",
 			"allPrograms": "Todas las carreras",
-			"outcome": "Outcome",
-			"allOutcomes": "Todos los outcomes",
 			"campus": "Sede",
 			"allCampuses": "Todas las sedes",
 			"language": "Idioma del reporte",
@@ -4336,7 +4338,7 @@
 			"languageEn": "Inglés",
 			"gradeTypes": "Tipo de nota",
 			"allGradeTypes": "Todos los tipos de nota",
-			"gradeTypesHint": "Solo aplica a Verificación (RV). Si no seleccionas ninguno, se incluyen todos los tipos de nota.",
+			"campusHint": "El reporte se descarga para una sola sede. Si no seleccionas ninguna, se genera el consolidado de todas las sedes.",
 			"clear": "Limpiar filtros",
 			"search": "Buscar"
 		},

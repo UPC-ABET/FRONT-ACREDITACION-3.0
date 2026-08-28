@@ -78,30 +78,14 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 					onChange={(_name, value) => state.onProgramChange(asSingle(value))}
 				/>
 				<Select
-					name="outcome"
-					label={t('performanceReports.filters.outcome')}
-					placeholder={t('performanceReports.filters.allOutcomes')}
-					isClearable
-					isSearchable
-					isDisabled={state.programId == null || state.isLoadingOutcomes}
-					options={state.outcomeOptions}
-					value={selectedOption(state.outcomeOptions, state.outcomeId)}
-					onChange={(_name, value) => state.onOutcomeChange(asSingle(value))}
-				/>
-				<Select
 					name="campus"
 					label={t('performanceReports.filters.campus')}
 					placeholder={t('performanceReports.filters.allCampuses')}
-					isMulti
 					isClearable
 					isSearchable
 					options={state.campusOptions}
-					value={selectedOptions(state.campusOptions, state.campusIds)}
-					onChange={(_name, value) =>
-						state.onCampusesChange(
-							Array.isArray(value) ? value.map((option) => Number(option.value)) : [],
-						)
-					}
+					value={selectedOption(state.campusOptions, state.campusId)}
+					onChange={(_name, value) => state.onCampusChange(asSingle(value))}
 				/>
 				<Select
 					name="language"
@@ -133,9 +117,7 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 					/>
 				)}
 			</div>
-			{showGradeTypeFilter && (
-				<p className="text-xs text-zinc-500">{t('performanceReports.filters.gradeTypesHint')}</p>
-			)}
+			<p className="text-xs text-zinc-500">{t('performanceReports.filters.campusHint')}</p>
 			<div className="flex items-center justify-end gap-2 border-t border-zinc-100 pt-4">
 				{canClear && (
 					<Button variant="secondary" onClick={state.reset}>

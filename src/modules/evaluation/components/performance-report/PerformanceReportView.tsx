@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { ArrowDownTrayIcon, DocumentArrowDownIcon, UsersIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Toast } from '@/shared/components';
 import { useI18n } from '@/providers';
-import { ApiError, getErrorMessage } from '@/shared/lib';
+import { ApiError, getApiErrorReasons, getErrorMessage } from '@/shared/lib';
 import { tryTranslate } from '@/shared/utils';
 import { usePerformanceReport, usePerformanceReportDownload } from '@/modules';
 import {
@@ -20,19 +20,34 @@ interface PerformanceReportViewProps {
 	readonly kind: PerformanceReportKind;
 	readonly filters: PerformanceReportFilterDto;
 	readonly academicPeriodId: number | null;
+	// Gates the report query: only fires once the user has clicked "Buscar" at least once for the
+	// current period -- the initial/reset filters are a valid (empty) filter set, not an absent one.
+	readonly enabled: boolean;
 }
 
 function isNotFound(error: unknown): boolean {
 	return error instanceof ApiError && error.status === 404;
 }
 
+// The semaphore endpoints wrap every failure in a generic `message`
+// (error.semaphoreReport.generateFailed) and put the actionable key in `data[0]` — reading
+// only `message` would show "no se pudo generar el reporte" for every distinct cause.
+function reportErrorKey(error: unknown): string {
+	return getApiErrorReasons(error)[0] ?? getErrorMessage(error);
+}
+
 export function PerformanceReportView({
 	kind,
 	filters,
 	academicPeriodId,
+	enabled,
 }: PerformanceReportViewProps) {
 	const { t } = useI18n();
-	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
+	const [toast, setToast] = useState<{
+		open: boolean;
+		type: 'success' | 'error' | 'warning';
+		msg: string;
+	}>({
 		open: false,
 		type: 'error',
 		msg: '',
@@ -49,7 +64,7 @@ export function PerformanceReportView({
 
 	const isVerificationReport = kind === PERFORMANCE_REPORT_KINDS.RV;
 
-	const reportQuery = usePerformanceReport(kind, effectiveFilters, academicPeriodId);
+	const reportQuery = usePerformanceReport(kind, effectiveFilters, academicPeriodId, enabled);
 	const downloadMutation = usePerformanceReportDownload(kind);
 
 	// The backend returns 404 when no rows match the filters; that is an empty state for the UI,
@@ -60,7 +75,7 @@ export function PerformanceReportView({
 
 	const tableError =
 		reportQuery.isError && !isEmpty
-			? tryTranslate(t, getErrorMessage(reportQuery.error))
+			? tryTranslate(t, reportErrorKey(reportQuery.error))
 			: undefined;
 
 	function handleDownload(format: 'pdf' | 'excel') {
@@ -68,10 +83,18 @@ export function PerformanceReportView({
 			{ format, filters: effectiveFilters },
 			{
 				onError: (error) => {
-					const message = isNotFound(error)
-						? t('performanceReports.empty')
-						: tryTranslate(t, getErrorMessage(error));
-					setToast({ open: true, type: 'error', msg: message });
+					if (isNotFound(error)) {
+						setToast({ open: true, type: 'error', msg: t('performanceReports.empty') });
+						return;
+					}
+					// A 503 means the query hit the backend's statement timeout: the fix is narrower
+					// filters, not a bug report, so it reads as a warning rather than a failure.
+					const isTimeout = error instanceof ApiError && error.status === 503;
+					setToast({
+						open: true,
+						type: isTimeout ? 'warning' : 'error',
+						msg: tryTranslate(t, reportErrorKey(error)),
+					});
 				},
 			},
 		);
@@ -154,7 +177,9 @@ export function PerformanceReportView({
 				legend={report?.legend ?? []}
 				isLoading={reportQuery.isLoading}
 				errorMessage={tableError}
-				emptyMessage={t('performanceReports.empty')}
+				emptyMessage={
+					enabled ? t('performanceReports.empty') : t('performanceReports.promptSearch')
+				}
 			/>
 
 			{isVerificationReport && (
@@ -162,7 +187,6 @@ export function PerformanceReportView({
 					open={isGradesDialogOpen}
 					onClose={() => setIsGradesDialogOpen(false)}
 					programCommissionId={effectiveFilters.programCommissionId}
-					outcomeId={effectiveFilters.outcomeId}
 					academicPeriodId={academicPeriodId}
 				/>
 			)}

@@ -12,10 +12,24 @@ function tint(hex: string, alphaHex: string): string {
 	return clean;
 }
 
+function trimScore(score: number): string {
+	return String(Math.round(score * 100) / 100);
+}
+
+// Levels are stored as closed ranges whose upper bound stops just short of the next one
+// ([0, 12.999999], [13, 15.999999], …). Printing maxScore verbatim would show "12.999999",
+// so every level but the last borrows the next level's minScore and renders half-open.
+function formatLevelRange(legend: PerformanceLevelLegendDto[], index: number): string {
+	const isLast = index === legend.length - 1;
+	const lower = trimScore(legend[index].minScore);
+	const upper = trimScore(isLast ? legend[index].maxScore : legend[index + 1].minScore);
+	return isLast ? `[${lower} - ${upper}]` : `[${lower} - ${upper}>`;
+}
+
 export function PerformanceLevelLegend({ legend }: PerformanceLevelLegendProps) {
 	return (
 		<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-			{legend.map((level) => (
+			{legend.map((level, index) => (
 				<div
 					key={level.name}
 					className="flex items-center gap-4 rounded-xl border p-5 shadow-sm"
@@ -30,9 +44,7 @@ export function PerformanceLevelLegend({ legend }: PerformanceLevelLegendProps) 
 					/>
 					<div>
 						<p className="text-sm font-medium text-zinc-700">{level.name}</p>
-						<p className="text-xs text-zinc-500 tabular-nums">
-							[{level.minScore} - {level.maxScore}]
-						</p>
+						<p className="text-xs text-zinc-500 tabular-nums">{formatLevelRange(legend, index)}</p>
 					</div>
 				</div>
 			))}

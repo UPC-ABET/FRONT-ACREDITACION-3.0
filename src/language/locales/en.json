@@ -1553,7 +1553,10 @@
 			"thresholdNotFound": "No performance-level configuration was found for the period.",
 			"generateFailed": "The report could not be generated.",
 			"pdfFailed": "The report PDF could not be generated.",
-			"excelFailed": "The report Excel could not be generated."
+			"excelFailed": "The report Excel could not be generated.",
+			"queryFailed": "The report data could not be queried.",
+			"queryTimeout": "The query took too long. Try again with narrower filters (program, outcome or campus).",
+			"singleCampusRequired": "Select a single campus, or none for the consolidated report."
 		},
 		"chart": {
 			"hasIfc": "A descendant course coordinator has an IFC for its course in this period.",
@@ -4313,6 +4316,7 @@
 		"subtitle": "Student Outcome (ABET) achievement by course and outcome, classified by performance level.",
 		"selectPeriod": "Select an academic period in the top bar to view the report.",
 		"empty": "No data for the selected filters.",
+		"promptSearch": "Set the filters and click \"Search\" to view the report.",
 		"downloadPdf": "Download PDF",
 		"downloadExcel": "Download Excel",
 		"tabs": {
@@ -4327,8 +4331,6 @@
 			"allCommissions": "All commissions",
 			"program": "Program",
 			"allPrograms": "All programs",
-			"outcome": "Outcome",
-			"allOutcomes": "All outcomes",
 			"campus": "Campus",
 			"allCampuses": "All campuses",
 			"language": "Report language",
@@ -4336,7 +4338,7 @@
 			"languageEn": "English",
 			"gradeTypes": "Grade type",
 			"allGradeTypes": "All grade types",
-			"gradeTypesHint": "Applies to Verification (RV) only. Leave empty to include every grade type.",
+			"campusHint": "The report is downloaded for a single campus. Leave it empty to generate the consolidated report for all campuses.",
 			"clear": "Clear filters",
 			"search": "Search"
 		},

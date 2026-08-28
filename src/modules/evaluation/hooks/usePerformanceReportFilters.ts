@@ -9,7 +9,6 @@ import {
 	useProgramCommissionsDetailed,
 	useProgramOptions,
 } from '@/modules/academic';
-import { outcomesService } from '@/modules/accreditation';
 import { TYPE_GROUP_CODES } from '@/shared';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import type { PerformanceReportFilterDto, PerformanceReportLang } from '../types';
@@ -32,8 +31,9 @@ export function usePerformanceReportFilters() {
 	const [accreditorId, setAccreditorId] = useState<number | null>(null);
 	const [commissionId, setCommissionId] = useState<number | null>(null);
 	const [programId, setProgramId] = useState<number | null>(null);
-	const [outcomeId, setOutcomeId] = useState<number | null>(null);
-	const [campusIds, setCampusIds] = useState<number[]>([]);
+	// Downloads accept at most one campus (2+ -> 400 error.semaphoreReport.singleCampusRequired),
+	// so the selector is single-valued and "no campus" means the consolidated report.
+	const [campusId, setCampusId] = useState<number | null>(null);
 	// RV only: grade types (core.types group TG205) whose grades feed the report. Empty = all.
 	const [gradeTypeIds, setGradeTypeIds] = useState<number[]>([]);
 	const [lang, setLang] = useState<PerformanceReportLang>(locale === 'en' ? 'en' : 'es');
@@ -44,6 +44,12 @@ export function usePerformanceReportFilters() {
 	const [appliedFilters, setAppliedFilters] = useState<PerformanceReportFilterDto>({
 		lang: locale === 'en' ? 'en' : 'es',
 	});
+	// Gates the report query itself: it must not fire just because appliedFilters exists (its
+	// initial value is a real, valid filter set -- {lang} with everything else omitted, meaning
+	// "no filter"). Only an explicit search() flips this to true; reset() and a period change
+	// flip it back, so the view returns to its pre-search empty state instead of re-querying with
+	// the now-reset filters.
+	const [hasSearched, setHasSearched] = useState(false);
 
 	// The report is scoped to the active period (header). When it changes, the cascade
 	// selections no longer apply, so reset them. This runs during render (React's documented
@@ -59,7 +65,7 @@ export function usePerformanceReportFilters() {
 		setAccreditorId(null);
 		setCommissionId(null);
 		setProgramId(null);
-		setOutcomeId(null);
+		setHasSearched(false);
 		setAppliedFilters({
 			campusIds: appliedFilters.campusIds,
 			gradeTypeIds: appliedFilters.gradeTypeIds,
@@ -83,19 +89,6 @@ export function usePerformanceReportFilters() {
 		queryKey: ['evaluation', 'performance-reports', 'campuses'],
 		queryFn: () => campusesService.getAll().then((response) => response.data ?? []),
 		staleTime: Infinity,
-	});
-
-	const outcomesQuery = useQuery({
-		queryKey: ['evaluation', 'performance-reports', 'outcomes', programId, academicPeriodId],
-		queryFn: () =>
-			outcomesService
-				.maintenanceList({
-					programId: programId!,
-					academicPeriodId: academicPeriodId!,
-					pageSize: 100,
-				})
-				.then((response) => response.data?.items ?? []),
-		enabled: programId != null && academicPeriodId != null,
 	});
 
 	// RV-only "grade type" selector (core.types group TG205, e.g. PA/TA/EA1). Unlike rubrics,
@@ -130,15 +123,6 @@ export function usePerformanceReportFilters() {
 		[programsQuery.data, locale],
 	);
 
-	const outcomeOptions = useMemo<PerformanceReportFilterOption[]>(
-		() =>
-			(outcomesQuery.data ?? []).map((outcome) => ({
-				value: outcome.id,
-				label: `${outcome.outcomeCode} - ${localizedText(outcome.outcomeName, locale)}`,
-			})),
-		[outcomesQuery.data, locale],
-	);
-
 	const campusOptions = useMemo<PerformanceReportFilterOption[]>(
 		() =>
 			(campusesQuery.data ?? []).map((campus) => ({
@@ -171,17 +155,16 @@ export function usePerformanceReportFilters() {
 	const filters = useMemo<PerformanceReportFilterDto>(
 		() => ({
 			programCommissionId,
-			outcomeId: outcomeId ?? undefined,
-			campusIds: campusIds.length > 0 ? campusIds : undefined,
+			campusIds: campusId != null ? [campusId] : undefined,
 			gradeTypeIds: gradeTypeIds.length > 0 ? gradeTypeIds : undefined,
 			lang,
 		}),
-		[programCommissionId, outcomeId, campusIds, gradeTypeIds, lang],
+		[programCommissionId, campusId, gradeTypeIds, lang],
 	);
 
 	const hasActiveFilters =
 		accreditorId != null ||
-		campusIds.length > 0 ||
+		campusId != null ||
 		gradeTypeIds.length > 0 ||
 		lang !== (locale === 'en' ? 'en' : 'es');
 
@@ -192,64 +175,59 @@ export function usePerformanceReportFilters() {
 
 	function search() {
 		setAppliedFilters(filters);
+		setHasSearched(true);
 	}
 
 	function reset() {
 		setAccreditorId(null);
 		setCommissionId(null);
 		setProgramId(null);
-		setOutcomeId(null);
-		setCampusIds([]);
+		setCampusId(null);
 		setGradeTypeIds([]);
 		setLang(locale === 'en' ? 'en' : 'es');
 		setAppliedFilters({ lang: locale === 'en' ? 'en' : 'es' });
+		setHasSearched(false);
 	}
 
 	function handleAccreditorChange(option: SelectedOption) {
 		setAccreditorId(toOptionValue(option));
 		setCommissionId(null);
 		setProgramId(null);
-		setOutcomeId(null);
 	}
 
 	function handleCommissionChange(option: SelectedOption) {
 		setCommissionId(toOptionValue(option));
 		setProgramId(null);
-		setOutcomeId(null);
 	}
 
 	function handleProgramChange(option: SelectedOption) {
 		setProgramId(toOptionValue(option));
-		setOutcomeId(null);
 	}
 
 	return {
 		filters,
 		appliedFilters,
 		hasPendingChanges,
+		hasSearched,
 		search,
 		accreditorId,
 		commissionId,
 		programId,
-		outcomeId,
-		campusIds,
+		campusId,
 		gradeTypeIds,
 		lang,
 		accreditorOptions,
 		commissionOptions,
 		programOptions,
-		outcomeOptions,
 		campusOptions,
 		gradeTypeOptions,
 		isLoadingPrograms: programsQuery.isLoading,
-		isLoadingOutcomes: outcomesQuery.isLoading,
 		isLoadingGradeTypes: gradeTypesQuery.isLoading,
 		hasActiveFilters,
 		onAccreditorChange: handleAccreditorChange,
 		onCommissionChange: handleCommissionChange,
 		onProgramChange: handleProgramChange,
-		onOutcomeChange: (option: SelectedOption) => setOutcomeId(toOptionValue(option)),
-		onCampusesChange: (ids: number[]) => setCampusIds(ids),
+		onCampusChange: (option: SelectedOption) => setCampusId(toOptionValue(option)),
 		onGradeTypesChange: (ids: number[]) => setGradeTypeIds(ids),
 		onLangChange: setLang,
 		reset,
