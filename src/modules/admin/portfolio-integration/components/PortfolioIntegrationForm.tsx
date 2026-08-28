@@ -40,6 +40,14 @@ export function PortfolioIntegrationForm() {
 		setApiKey(generateApiKey());
 	}
 
+	function handleCopyApiKey() {
+		if (!apiKey) return;
+		navigator.clipboard
+			.writeText(apiKey)
+			.then(() => showToast(t('admin.portfolioIntegration.form.toast.copied'), 'success'))
+			.catch(() => showToast(t('admin.portfolioIntegration.form.error.copyFailed'), 'error'));
+	}
+
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 
@@ -84,16 +92,21 @@ export function PortfolioIntegrationForm() {
 						<div className="flex-1">
 							<Input
 								label={t('admin.portfolioIntegration.form.apiKey')}
-								type="password"
+								type="text"
 								autoComplete="off"
+								spellCheck={false}
 								value={apiKey}
 								onChange={(e) => setApiKey(e.target.value)}
 								placeholder={t('admin.portfolioIntegration.form.apiKeyPlaceholder')}
 								error={formError ?? undefined}
+								className="font-mono"
 							/>
 						</div>
 						<Button type="button" variant="secondary" onClick={handleGenerateApiKey}>
 							{t('admin.portfolioIntegration.form.btn.generate')}
+						</Button>
+						<Button type="button" variant="secondary" onClick={handleCopyApiKey} disabled={!apiKey}>
+							{t('admin.portfolioIntegration.form.btn.copy')}
 						</Button>
 					</div>
 					<p className="text-xs text-zinc-500">{t('admin.portfolioIntegration.form.apiKeyHint')}</p>

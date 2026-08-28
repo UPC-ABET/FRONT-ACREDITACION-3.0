@@ -1240,22 +1240,25 @@
 			},
 			"form": {
 				"baseUrl": "PORTFOLIO-AUDIT base URL",
-				"baseUrlPlaceholder": "https://portfolio.tcupc.pe",
+				"baseUrlPlaceholder": "https://portafolio.tcupc.pe",
 				"apiKey": "Shared API key",
 				"apiKeyPlaceholder": "Generate a new key to continue",
 				"apiKeyHint": "Copy this key before saving: it won't be shown again. You must also register it in PORTFOLIO-AUDIT's acreditacion.config parameter.",
 				"btn": {
 					"generate": "Generate key",
+					"copy": "Copy",
 					"submit": "Save",
 					"submitting": "Saving..."
 				},
 				"toast": {
-					"saved": "Portfolio configuration saved"
+					"saved": "Portfolio configuration saved",
+					"copied": "Key copied to clipboard"
 				},
 				"error": {
 					"baseUrlInvalid": "Enter a valid URL.",
 					"apiKeyInvalid": "The key must be at least 32 characters long.",
-					"saveFailed": "Could not save the Portfolio configuration."
+					"saveFailed": "Could not save the Portfolio configuration.",
+					"copyFailed": "Could not copy the key. Select it manually."
 				}
 			},
 			"error": {
