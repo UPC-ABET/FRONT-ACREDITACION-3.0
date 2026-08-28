@@ -6,7 +6,6 @@ export type PerformanceReportLang = 'es' | 'en';
 
 export type PerformanceReportFilterDto = {
 	programCommissionId?: number;
-	outcomeId?: number;
 	campusIds?: number[];
 	// RV only: limits the report to grades whose rubric belongs to one of the selected grade
 	// types (core.types group TG205). Empty/omitted = all grade types. Ignored by RC.

@@ -12,6 +12,13 @@ function tint(hex: string, alphaHex: string): string {
 	return clean;
 }
 
+// Always 1 decimal, truncated (not rounded) -- a stored boundary like 15.999999 must read as
+// "15.9", never "16.0": rounding up would claim a score of 15.95 already qualifies for the next
+// level, which the actual stored boundary does not allow.
+function formatScore(value: number): string {
+	return (Math.trunc(value * 10) / 10).toFixed(1);
+}
+
 export function PerformanceLevelLegend({ legend }: PerformanceLevelLegendProps) {
 	return (
 		<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -31,7 +38,7 @@ export function PerformanceLevelLegend({ legend }: PerformanceLevelLegendProps) 
 					<div>
 						<p className="text-sm font-medium text-zinc-700">{level.name}</p>
 						<p className="text-xs text-zinc-500 tabular-nums">
-							[{level.minScore} - {level.maxScore}]
+							[{formatScore(level.minScore)} - {formatScore(level.maxScore)}]
 						</p>
 					</div>
 				</div>

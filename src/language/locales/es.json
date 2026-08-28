@@ -4158,6 +4158,7 @@
 		"subtitle": "Cumplimiento de Student Outcomes (ABET) por curso y outcome, clasificado por niveles de desempeño.",
 		"selectPeriod": "Selecciona un periodo académico en la barra superior para ver el reporte.",
 		"empty": "No hay datos para los filtros seleccionados.",
+		"promptSearch": "Configura los filtros y presiona \"Buscar\" para ver el reporte.",
 		"downloadPdf": "Descargar PDF",
 		"downloadExcel": "Descargar Excel",
 		"tabs": {
@@ -4172,8 +4173,6 @@
 			"allCommissions": "Todas las comisiones",
 			"program": "Carrera",
 			"allPrograms": "Todas las carreras",
-			"outcome": "Outcome",
-			"allOutcomes": "Todos los outcomes",
 			"campus": "Sede",
 			"allCampuses": "Todas las sedes",
 			"language": "Idioma del reporte",
@@ -4181,7 +4180,6 @@
 			"languageEn": "Inglés",
 			"gradeTypes": "Tipo de nota",
 			"allGradeTypes": "Todos los tipos de nota",
-			"gradeTypesHint": "Solo aplica a Verificación (RV). Si no seleccionas ninguno, se incluyen todos los tipos de nota.",
 			"clear": "Limpiar filtros",
 			"search": "Buscar"
 		},

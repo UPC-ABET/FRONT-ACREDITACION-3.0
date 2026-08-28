@@ -22,11 +22,12 @@ export function usePerformanceReport(
 	kind: PerformanceReportKind,
 	filters: PerformanceReportFilterDto,
 	academicPeriodId: number | null,
+	enabled: boolean,
 ) {
 	return useQuery({
 		queryKey: performanceReportKeys.report(kind, academicPeriodId, filters),
 		queryFn: () => performanceReportsService.getReport(kind, filters),
-		enabled: academicPeriodId != null,
+		enabled: academicPeriodId != null && enabled,
 		retry: false,
 	});
 }

@@ -4158,6 +4158,7 @@
 		"subtitle": "Student Outcome (ABET) achievement by course and outcome, classified by performance level.",
 		"selectPeriod": "Select an academic period in the top bar to view the report.",
 		"empty": "No data for the selected filters.",
+		"promptSearch": "Set the filters and click \"Search\" to view the report.",
 		"downloadPdf": "Download PDF",
 		"downloadExcel": "Download Excel",
 		"tabs": {
@@ -4172,8 +4173,6 @@
 			"allCommissions": "All commissions",
 			"program": "Program",
 			"allPrograms": "All programs",
-			"outcome": "Outcome",
-			"allOutcomes": "All outcomes",
 			"campus": "Campus",
 			"allCampuses": "All campuses",
 			"language": "Report language",
@@ -4181,7 +4180,6 @@
 			"languageEn": "English",
 			"gradeTypes": "Grade type",
 			"allGradeTypes": "All grade types",
-			"gradeTypesHint": "Applies to Verification (RV) only. Leave empty to include every grade type.",
 			"clear": "Clear filters",
 			"search": "Search"
 		},

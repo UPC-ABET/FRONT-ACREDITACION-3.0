@@ -20,6 +20,9 @@ interface PerformanceReportViewProps {
 	readonly kind: PerformanceReportKind;
 	readonly filters: PerformanceReportFilterDto;
 	readonly academicPeriodId: number | null;
+	// Gates the report query: only fires once the user has clicked "Buscar" at least once for the
+	// current period -- the initial/reset filters are a valid (empty) filter set, not an absent one.
+	readonly enabled: boolean;
 }
 
 function isNotFound(error: unknown): boolean {
@@ -30,6 +33,7 @@ export function PerformanceReportView({
 	kind,
 	filters,
 	academicPeriodId,
+	enabled,
 }: PerformanceReportViewProps) {
 	const { t } = useI18n();
 	const [toast, setToast] = useState<{ open: boolean; type: 'success' | 'error'; msg: string }>({
@@ -49,7 +53,7 @@ export function PerformanceReportView({
 
 	const isVerificationReport = kind === PERFORMANCE_REPORT_KINDS.RV;
 
-	const reportQuery = usePerformanceReport(kind, effectiveFilters, academicPeriodId);
+	const reportQuery = usePerformanceReport(kind, effectiveFilters, academicPeriodId, enabled);
 	const downloadMutation = usePerformanceReportDownload(kind);
 
 	// The backend returns 404 when no rows match the filters; that is an empty state for the UI,
@@ -154,7 +158,9 @@ export function PerformanceReportView({
 				legend={report?.legend ?? []}
 				isLoading={reportQuery.isLoading}
 				errorMessage={tableError}
-				emptyMessage={t('performanceReports.empty')}
+				emptyMessage={
+					enabled ? t('performanceReports.empty') : t('performanceReports.promptSearch')
+				}
 			/>
 
 			{isVerificationReport && (
@@ -162,7 +168,6 @@ export function PerformanceReportView({
 					open={isGradesDialogOpen}
 					onClose={() => setIsGradesDialogOpen(false)}
 					programCommissionId={effectiveFilters.programCommissionId}
-					outcomeId={effectiveFilters.outcomeId}
 					academicPeriodId={academicPeriodId}
 				/>
 			)}
