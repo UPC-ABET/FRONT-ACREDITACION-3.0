@@ -12,6 +12,7 @@ import {
 import { outcomesService } from '@/modules/accreditation';
 import { TYPE_GROUP_CODES } from '@/shared';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
+import { performanceReportsService } from '../services';
 import type { PerformanceReportFilterDto, PerformanceReportLang } from '../types';
 
 export type PerformanceReportFilterOption = {
@@ -39,6 +40,9 @@ export function usePerformanceReportFilters() {
 	// PDF per selected outcome, or one per every active outcome of the commission when none are
 	// selected. RV ignores this filter entirely.
 	const [outcomeIds, setOutcomeIds] = useState<number[]>([]);
+	// RC PDF download only: a single "Nivel de Desempeño" (academic.performance_levels id) that
+	// narrows the chart/table to that one level's column/series. RV ignores this filter entirely.
+	const [performanceLevelId, setPerformanceLevelId] = useState<number | null>(null);
 	// RV only: grade types (core.types group TG205) whose grades feed the report. Empty = all.
 	const [gradeTypeIds, setGradeTypeIds] = useState<number[]>([]);
 	const [lang, setLang] = useState<PerformanceReportLang>(locale === 'en' ? 'en' : 'es');
@@ -71,6 +75,7 @@ export function usePerformanceReportFilters() {
 		setCommissionId(null);
 		setProgramId(null);
 		setOutcomeIds([]);
+		setPerformanceLevelId(null);
 		setHasSearched(false);
 		setAppliedFilters({
 			campusIds: appliedFilters.campusIds,
@@ -126,6 +131,14 @@ export function usePerformanceReportFilters() {
 		enabled: programId != null && commissionId != null && academicPeriodId != null,
 	});
 
+	// RC-only "Nivel de Desempeño" selector: only needs the active academic period (header), not
+	// the accreditor/commission/program cascade, so it's populated as soon as a period is active.
+	const performanceLevelsQuery = useQuery({
+		queryKey: ['evaluation', 'performance-reports', 'rc-performance-levels', academicPeriodId],
+		queryFn: () => performanceReportsService.getRcPerformanceLevels(lang),
+		enabled: academicPeriodId != null,
+	});
+
 	const accreditorOptions = useMemo<PerformanceReportFilterOption[]>(
 		() =>
 			(accreditorsQuery.data ?? []).map((accreditor) => ({
@@ -160,6 +173,15 @@ export function usePerformanceReportFilters() {
 				label: outcome.outcomeCode,
 			})),
 		[outcomesQuery.data],
+	);
+
+	const performanceLevelOptions = useMemo<PerformanceReportFilterOption[]>(
+		() =>
+			(performanceLevelsQuery.data ?? []).map((level) => ({
+				value: level.id,
+				label: level.name,
+			})),
+		[performanceLevelsQuery.data],
 	);
 
 	const campusOptions = useMemo<PerformanceReportFilterOption[]>(
@@ -197,9 +219,10 @@ export function usePerformanceReportFilters() {
 			campusIds: campusId != null ? [campusId] : undefined,
 			outcomeIds: outcomeIds.length > 0 ? outcomeIds : undefined,
 			gradeTypeIds: gradeTypeIds.length > 0 ? gradeTypeIds : undefined,
+			performanceLevelId: performanceLevelId ?? undefined,
 			lang,
 		}),
-		[programCommissionId, campusId, outcomeIds, gradeTypeIds, lang],
+		[programCommissionId, campusId, outcomeIds, gradeTypeIds, performanceLevelId, lang],
 	);
 
 	const hasActiveFilters =
@@ -207,6 +230,7 @@ export function usePerformanceReportFilters() {
 		campusId != null ||
 		outcomeIds.length > 0 ||
 		gradeTypeIds.length > 0 ||
+		performanceLevelId != null ||
 		lang !== (locale === 'en' ? 'en' : 'es');
 
 	const hasPendingChanges = useMemo(
@@ -225,6 +249,7 @@ export function usePerformanceReportFilters() {
 		setProgramId(null);
 		setCampusId(null);
 		setOutcomeIds([]);
+		setPerformanceLevelId(null);
 		setGradeTypeIds([]);
 		setLang(locale === 'en' ? 'en' : 'es');
 		setAppliedFilters({ lang: locale === 'en' ? 'en' : 'es' });
@@ -261,6 +286,7 @@ export function usePerformanceReportFilters() {
 		campusId,
 		outcomeIds,
 		gradeTypeIds,
+		performanceLevelId,
 		lang,
 		accreditorOptions,
 		commissionOptions,
@@ -268,9 +294,11 @@ export function usePerformanceReportFilters() {
 		campusOptions,
 		outcomeOptions,
 		gradeTypeOptions,
+		performanceLevelOptions,
 		isLoadingPrograms: programsQuery.isLoading,
 		isLoadingOutcomes: outcomesQuery.isLoading,
 		isLoadingGradeTypes: gradeTypesQuery.isLoading,
+		isLoadingPerformanceLevels: performanceLevelsQuery.isLoading,
 		hasActiveFilters,
 		onAccreditorChange: handleAccreditorChange,
 		onCommissionChange: handleCommissionChange,
@@ -278,6 +306,8 @@ export function usePerformanceReportFilters() {
 		onCampusChange: (option: SelectedOption) => setCampusId(toOptionValue(option)),
 		onOutcomesChange: (ids: number[]) => setOutcomeIds(ids),
 		onGradeTypesChange: (ids: number[]) => setGradeTypeIds(ids),
+		onPerformanceLevelChange: (option: SelectedOption) =>
+			setPerformanceLevelId(toOptionValue(option)),
 		onLangChange: setLang,
 		reset,
 	};

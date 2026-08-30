@@ -20,10 +20,15 @@ export type PerformanceReportFilterDto = {
 	// RV only, DEPRECATED: legacy filter by rubric id. Kept for backend compatibility but no
 	// longer surfaced in the UI (rubrics have no human-readable name); prefer gradeTypeIds.
 	rubricIds?: number[];
+	// RC PDF download only: a single academic.performance_levels id (see
+	// performanceReportsService.getRcPerformanceLevels). Narrows the chart/table to that one
+	// level's column/series instead of showing all of them. Ignored by RC Excel/JSON and by RV.
+	performanceLevelId?: number;
 	lang?: PerformanceReportLang;
 };
 
 export type PerformanceLevelLegendDto = {
+	id: number;
 	name: string;
 	minScore: number;
 	maxScore: number;

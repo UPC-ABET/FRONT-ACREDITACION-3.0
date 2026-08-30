@@ -1,11 +1,12 @@
 import type { ApiResponse } from '@/shared';
-import { apiPost, apiPostBlobResponse } from '@/shared/lib';
+import { apiGet, apiPost, apiPostBlobResponse } from '@/shared/lib';
 import { resolveDownloadFileName } from '@/shared/lib/fileDownload';
 import {
 	PERFORMANCE_REPORT_FORMAT_ACCEPT,
 	PERFORMANCE_REPORTS_BASE_PATH,
 } from '../constants/performanceReports';
 import type {
+	PerformanceLevelLegendDto,
 	PerformanceReportDto,
 	PerformanceReportFilterDto,
 	PerformanceReportFormat,
@@ -45,6 +46,17 @@ export const performanceReportsService = {
 		return apiPost<ApiResponse<PerformanceReportDto>>(reportPath(kind), filters).then(
 			(response) => response.data,
 		);
+	},
+
+	// RC only, for the "Nivel de Desempeño" filter: same rows as the RC legend, scoped to the
+	// active academic period (header).
+	getRcPerformanceLevels(
+		lang: PerformanceReportFilterDto['lang'],
+	): Promise<PerformanceLevelLegendDto[]> {
+		const query = new URLSearchParams({ lang: lang ?? 'es' });
+		return apiGet<ApiResponse<PerformanceLevelLegendDto[]>>(
+			`${reportPath('rc')}/performance-levels?${query.toString()}`,
+		).then((response) => response.data);
 	},
 
 	async downloadReport(

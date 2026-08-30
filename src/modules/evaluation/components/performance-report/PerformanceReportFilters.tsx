@@ -34,8 +34,9 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 	const { t } = useI18n();
 	// The grade-type selector only applies to RV (RC grades are the course weighted average).
 	const showGradeTypeFilter = kind === PERFORMANCE_REPORT_KINDS.RV;
-	// The outcome selector only applies to RC -- it's generated one outcome at a time, so its PDF
-	// download is a zip with one report per selected outcome (or every one, when none is selected).
+	// The outcome and "Nivel de Desempeño" selectors only apply to RC -- it's generated one
+	// outcome at a time (its PDF download is a zip with one report per selected outcome, or every
+	// one when none is selected), and its PDF alone can narrow the chart/table to one level.
 	const showOutcomeFilter = kind === PERFORMANCE_REPORT_KINDS.RC;
 	const canClear = state.hasActiveFilters || state.programId != null;
 
@@ -96,6 +97,19 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 								Array.isArray(value) ? value.map((option) => Number(option.value)) : [],
 							)
 						}
+					/>
+				)}
+				{showOutcomeFilter && (
+					<Select
+						name="performanceLevel"
+						label={t('performanceReports.filters.performanceLevel')}
+						placeholder={t('performanceReports.filters.allPerformanceLevels')}
+						isClearable
+						isSearchable
+						isDisabled={state.isLoadingPerformanceLevels}
+						options={state.performanceLevelOptions}
+						value={selectedOption(state.performanceLevelOptions, state.performanceLevelId)}
+						onChange={(_name, value) => state.onPerformanceLevelChange(asSingle(value))}
 					/>
 				)}
 				<Select
