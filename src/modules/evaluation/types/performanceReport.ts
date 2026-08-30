@@ -10,6 +10,10 @@ export type PerformanceReportFilterDto = {
 	// 400 error.semaphoreReport.singleCampusRequired. Empty/omitted = consolidated report over
 	// every campus. The JSON screen endpoints still accept any number.
 	campusIds?: number[];
+	// RC PDF download only: outcome IDs to report on. RC is generated one outcome at a time, so
+	// the download is a zip with one PDF per outcome -- the selected ones, or every active outcome
+	// of the selected commission when omitted. Ignored by RC Excel/JSON and by RV entirely.
+	outcomeIds?: number[];
 	// RV only: limits the report to grades whose rubric belongs to one of the selected grade
 	// types (core.types group TG205). Empty/omitted = all grade types. Ignored by RC.
 	gradeTypeIds?: number[];

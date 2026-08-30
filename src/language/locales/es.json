@@ -4331,6 +4331,8 @@
 			"allCommissions": "Todas las comisiones",
 			"program": "Carrera",
 			"allPrograms": "Todas las carreras",
+			"outcome": "Outcome",
+			"allOutcomes": "Todos los outcomes",
 			"campus": "Sede",
 			"allCampuses": "Todas las sedes",
 			"language": "Idioma del reporte",
@@ -4338,7 +4340,6 @@
 			"languageEn": "Inglés",
 			"gradeTypes": "Tipo de nota",
 			"allGradeTypes": "Todos los tipos de nota",
-			"campusHint": "El reporte se descarga para una sola sede. Si no seleccionas ninguna, se genera el consolidado de todas las sedes.",
 			"clear": "Limpiar filtros",
 			"search": "Buscar"
 		},

@@ -54,11 +54,13 @@ export function PerformanceReportView({
 	});
 	const [isGradesDialogOpen, setIsGradesDialogOpen] = useState(false);
 
-	// gradeTypeIds only apply to RV; strip them for RC so its cache key doesn't churn on an
-	// input the backend ignores.
+	// gradeTypeIds only applies to RV and outcomeIds only to RC; strip the other one per kind so
+	// the cache key doesn't churn on an input the backend ignores.
 	const effectiveFilters = useMemo<PerformanceReportFilterDto>(
 		() =>
-			kind === PERFORMANCE_REPORT_KINDS.RV ? filters : { ...filters, gradeTypeIds: undefined },
+			kind === PERFORMANCE_REPORT_KINDS.RV
+				? { ...filters, outcomeIds: undefined }
+				: { ...filters, gradeTypeIds: undefined },
 		[kind, filters],
 	);
 

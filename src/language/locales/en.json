@@ -4331,6 +4331,8 @@
 			"allCommissions": "All commissions",
 			"program": "Program",
 			"allPrograms": "All programs",
+			"outcome": "Outcome",
+			"allOutcomes": "All outcomes",
 			"campus": "Campus",
 			"allCampuses": "All campuses",
 			"language": "Report language",
@@ -4338,7 +4340,6 @@
 			"languageEn": "English",
 			"gradeTypes": "Grade type",
 			"allGradeTypes": "All grade types",
-			"campusHint": "The report is downloaded for a single campus. Leave it empty to generate the consolidated report for all campuses.",
 			"clear": "Clear filters",
 			"search": "Search"
 		},

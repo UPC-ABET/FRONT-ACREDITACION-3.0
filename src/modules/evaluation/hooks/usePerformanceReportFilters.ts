@@ -9,6 +9,7 @@ import {
 	useProgramCommissionsDetailed,
 	useProgramOptions,
 } from '@/modules/academic';
+import { outcomesService } from '@/modules/accreditation';
 import { TYPE_GROUP_CODES } from '@/shared';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import type { PerformanceReportFilterDto, PerformanceReportLang } from '../types';
@@ -34,6 +35,10 @@ export function usePerformanceReportFilters() {
 	// Downloads accept at most one campus (2+ -> 400 error.semaphoreReport.singleCampusRequired),
 	// so the selector is single-valued and "no campus" means the consolidated report.
 	const [campusId, setCampusId] = useState<number | null>(null);
+	// RC only: RC is generated one outcome at a time, so its PDF download is always a zip -- one
+	// PDF per selected outcome, or one per every active outcome of the commission when none are
+	// selected. RV ignores this filter entirely.
+	const [outcomeIds, setOutcomeIds] = useState<number[]>([]);
 	// RV only: grade types (core.types group TG205) whose grades feed the report. Empty = all.
 	const [gradeTypeIds, setGradeTypeIds] = useState<number[]>([]);
 	const [lang, setLang] = useState<PerformanceReportLang>(locale === 'en' ? 'en' : 'es');
@@ -65,6 +70,7 @@ export function usePerformanceReportFilters() {
 		setAccreditorId(null);
 		setCommissionId(null);
 		setProgramId(null);
+		setOutcomeIds([]);
 		setHasSearched(false);
 		setAppliedFilters({
 			campusIds: appliedFilters.campusIds,
@@ -96,6 +102,30 @@ export function usePerformanceReportFilters() {
 	// report still ignores it for RC. Empty selection = all grade types.
 	const gradeTypesQuery = useTypesByGroupCode(TYPE_GROUP_CODES.GRADE_TYPE);
 
+	// RC-only outcome selector, scoped to program + commission + period -- a program can have more
+	// than one active commission in the same period, so commissionId is required here too, not
+	// just programId, or outcomes from every commission would show up mixed together.
+	const outcomesQuery = useQuery({
+		queryKey: [
+			'evaluation',
+			'performance-reports',
+			'outcomes',
+			programId,
+			commissionId,
+			academicPeriodId,
+		],
+		queryFn: () =>
+			outcomesService
+				.maintenanceList({
+					programId: programId!,
+					commissionId: commissionId!,
+					academicPeriodId: academicPeriodId!,
+					pageSize: 100,
+				})
+				.then((response) => response.data?.items ?? []),
+		enabled: programId != null && commissionId != null && academicPeriodId != null,
+	});
+
 	const accreditorOptions = useMemo<PerformanceReportFilterOption[]>(
 		() =>
 			(accreditorsQuery.data ?? []).map((accreditor) => ({
@@ -121,6 +151,15 @@ export function usePerformanceReportFilters() {
 				label: localizedText(program.name, locale) || program.code,
 			})),
 		[programsQuery.data, locale],
+	);
+
+	const outcomeOptions = useMemo<PerformanceReportFilterOption[]>(
+		() =>
+			(outcomesQuery.data ?? []).map((outcome) => ({
+				value: outcome.id,
+				label: outcome.outcomeCode,
+			})),
+		[outcomesQuery.data],
 	);
 
 	const campusOptions = useMemo<PerformanceReportFilterOption[]>(
@@ -156,15 +195,17 @@ export function usePerformanceReportFilters() {
 		() => ({
 			programCommissionId,
 			campusIds: campusId != null ? [campusId] : undefined,
+			outcomeIds: outcomeIds.length > 0 ? outcomeIds : undefined,
 			gradeTypeIds: gradeTypeIds.length > 0 ? gradeTypeIds : undefined,
 			lang,
 		}),
-		[programCommissionId, campusId, gradeTypeIds, lang],
+		[programCommissionId, campusId, outcomeIds, gradeTypeIds, lang],
 	);
 
 	const hasActiveFilters =
 		accreditorId != null ||
 		campusId != null ||
+		outcomeIds.length > 0 ||
 		gradeTypeIds.length > 0 ||
 		lang !== (locale === 'en' ? 'en' : 'es');
 
@@ -183,6 +224,7 @@ export function usePerformanceReportFilters() {
 		setCommissionId(null);
 		setProgramId(null);
 		setCampusId(null);
+		setOutcomeIds([]);
 		setGradeTypeIds([]);
 		setLang(locale === 'en' ? 'en' : 'es');
 		setAppliedFilters({ lang: locale === 'en' ? 'en' : 'es' });
@@ -193,15 +235,18 @@ export function usePerformanceReportFilters() {
 		setAccreditorId(toOptionValue(option));
 		setCommissionId(null);
 		setProgramId(null);
+		setOutcomeIds([]);
 	}
 
 	function handleCommissionChange(option: SelectedOption) {
 		setCommissionId(toOptionValue(option));
 		setProgramId(null);
+		setOutcomeIds([]);
 	}
 
 	function handleProgramChange(option: SelectedOption) {
 		setProgramId(toOptionValue(option));
+		setOutcomeIds([]);
 	}
 
 	return {
@@ -214,20 +259,24 @@ export function usePerformanceReportFilters() {
 		commissionId,
 		programId,
 		campusId,
+		outcomeIds,
 		gradeTypeIds,
 		lang,
 		accreditorOptions,
 		commissionOptions,
 		programOptions,
 		campusOptions,
+		outcomeOptions,
 		gradeTypeOptions,
 		isLoadingPrograms: programsQuery.isLoading,
+		isLoadingOutcomes: outcomesQuery.isLoading,
 		isLoadingGradeTypes: gradeTypesQuery.isLoading,
 		hasActiveFilters,
 		onAccreditorChange: handleAccreditorChange,
 		onCommissionChange: handleCommissionChange,
 		onProgramChange: handleProgramChange,
 		onCampusChange: (option: SelectedOption) => setCampusId(toOptionValue(option)),
+		onOutcomesChange: (ids: number[]) => setOutcomeIds(ids),
 		onGradeTypesChange: (ids: number[]) => setGradeTypeIds(ids),
 		onLangChange: setLang,
 		reset,

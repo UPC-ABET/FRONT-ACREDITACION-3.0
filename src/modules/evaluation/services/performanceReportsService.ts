@@ -31,7 +31,9 @@ function fallbackFileName(
 		rv: { es: 'Reporte_Verificacion_RV', en: 'Verification_Report_RV' },
 	};
 	const prefix = lang === 'en' ? names[kind].en : names[kind].es;
-	const extension = format === 'pdf' ? 'pdf' : 'xlsx';
+	// RC's "PDF" download is always a zip -- one PDF per outcome (see the backend's
+	// generateRcZipDownload). RV's stays a single PDF.
+	const extension = format === 'excel' ? 'xlsx' : kind === 'rc' ? 'zip' : 'pdf';
 	return `${prefix}.${extension}`;
 }
 
