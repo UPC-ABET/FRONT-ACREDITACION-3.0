@@ -17,13 +17,25 @@ function trimScore(score: number): string {
 }
 
 // Levels are stored as closed ranges whose upper bound stops just short of the next one
-// ([0, 12.999999], [13, 15.999999], …). Printing maxScore verbatim would show "12.999999",
-// so every level but the last borrows the next level's minScore and renders half-open.
+// ([0, 12.999999], [13, 15.999999], …). Printing maxScore verbatim would show "12.999999", so
+// the outer bound of the lowest/highest level borrows its neighbor's clean minScore/maxScore.
+//
+// Only the two outer levels are half-open, on the side that faces the rest of the scale --
+// `[0 - 13>` for the lowest, `<16 - 20]` for the highest -- because that shared boundary belongs
+// to whichever level sits between them. Every level in between (and a lone level with no
+// neighbors) is closed on both ends, e.g. `[13 - 16]`. Mirrors the backend's
+// `formatLevelRange` in semaphore-reports.service.ts.
 function formatLevelRange(legend: PerformanceLevelLegendDto[], index: number): string {
+	const hasNeighbors = legend.length > 1;
+	const isFirst = index === 0;
 	const isLast = index === legend.length - 1;
-	const lower = trimScore(legend[index].minScore);
-	const upper = trimScore(isLast ? legend[index].maxScore : legend[index + 1].minScore);
-	return isLast ? `[${lower} - ${upper}]` : `[${lower} - ${upper}>`;
+	const lowerValue = isLast && hasNeighbors ? legend[index - 1].maxScore : legend[index].minScore;
+	const upperValue = isFirst && hasNeighbors ? legend[index + 1].minScore : legend[index].maxScore;
+	const lower = trimScore(lowerValue);
+	const upper = trimScore(upperValue);
+	const openLeft = isLast && hasNeighbors ? '<' : '[';
+	const openRight = isFirst && hasNeighbors ? '>' : ']';
+	return `${openLeft}${lower} - ${upper}${openRight}`;
 }
 
 export function PerformanceLevelLegend({ legend }: PerformanceLevelLegendProps) {
