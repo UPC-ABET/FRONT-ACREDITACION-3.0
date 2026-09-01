@@ -50,7 +50,12 @@ export function EvaluationCoursesPage() {
 	const selectedPeriodCode = periods.find((p) => p.id === selectedPeriodId)?.code ?? '';
 
 	const { data: programs = [], isLoading: loadingPrograms } = usePrograms(
-		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
+		{
+			isActive: true,
+			schoolFilter: true,
+			useAcademicPeriod: true,
+			modalityTypeId: modalityTypeId ?? undefined,
+		},
 		{ enabled: !!selectedPeriodId && !!schoolId },
 	);
 

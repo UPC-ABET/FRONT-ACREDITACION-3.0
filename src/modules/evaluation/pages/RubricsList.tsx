@@ -44,7 +44,12 @@ export function RubricsListPage() {
 	}, [selectedProgram?.value, selectedCourse?.value]);
 
 	const { data: programs = [] } = usePrograms(
-		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
+		{
+			isActive: true,
+			schoolFilter: true,
+			useAcademicPeriod: true,
+			modalityTypeId: modalityTypeId ?? undefined,
+		},
 		{ enabled: !!selectedPeriodId && !!schoolId },
 	);
 

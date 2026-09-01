@@ -70,7 +70,12 @@ export function useCourseScopeSelection({
 	const { data: periods = [] } = useAcademicPeriods({ isActive: true });
 
 	const { data: programs = [], isLoading: loadingPrograms } = usePrograms(
-		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
+		{
+			isActive: true,
+			schoolFilter: true,
+			useAcademicPeriod: true,
+			modalityTypeId: modalityTypeId ?? undefined,
+		},
 		{ enabled: !!schoolId && !!academicPeriodId },
 	);
 

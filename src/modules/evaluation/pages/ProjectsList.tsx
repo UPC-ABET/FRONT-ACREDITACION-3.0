@@ -49,7 +49,12 @@ export function ProjectsListPage() {
 	}, [selectedProgram?.value, selectedCourse?.value, selectedGroup?.value, debouncedSearch]);
 
 	const { data: programs = [] } = usePrograms(
-		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
+		{
+			isActive: true,
+			schoolFilter: true,
+			useAcademicPeriod: true,
+			modalityTypeId: modalityTypeId ?? undefined,
+		},
 		{ enabled: !!selectedPeriodId && !!schoolId },
 	);
 

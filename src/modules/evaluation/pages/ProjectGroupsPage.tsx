@@ -50,7 +50,12 @@ export function ProjectGroupsPage() {
 	const [selectedProgram, setSelectedProgram] = useState<SelectOption | null>(null);
 
 	const { data: programs = [] } = usePrograms(
-		{ isActive: true, schoolFilter: true, modalityTypeId: modalityTypeId ?? undefined },
+		{
+			isActive: true,
+			schoolFilter: true,
+			useAcademicPeriod: true,
+			modalityTypeId: modalityTypeId ?? undefined,
+		},
 		{ enabled: !!academicPeriodId && !!schoolId },
 	);
 
