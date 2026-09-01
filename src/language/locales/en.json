@@ -340,7 +340,7 @@
 				"status": "Status",
 				"nivel": "Level",
 				"departments": "Departments",
-				"counts": "Counts (S/E/St/G)",
+				"counts": "Counts (S/E/St)",
 				"started": "Started",
 				"finished": "Finished",
 				"triggeredBy": "Triggered by",
@@ -372,7 +372,6 @@
 				"horario": "Schedules",
 				"matricula": "Enrollments",
 				"alumno": "Students",
-				"nota": "Grades",
 				"uniqueStudents": "Unique students"
 			},
 			"departments": {

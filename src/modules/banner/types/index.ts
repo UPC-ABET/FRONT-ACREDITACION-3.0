@@ -22,7 +22,6 @@ export interface ScrapeCounts {
 	schedule: number;
 	enrollment: number;
 	students: number;
-	grades: number;
 }
 
 export interface ScrapeRunError {

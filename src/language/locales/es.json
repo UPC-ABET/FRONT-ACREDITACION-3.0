@@ -340,7 +340,7 @@
 				"status": "Estado",
 				"nivel": "Nivel",
 				"departments": "Departamentos",
-				"counts": "Conteos (H/M/A/N)",
+				"counts": "Conteos (H/M/A)",
 				"started": "Inicio",
 				"finished": "Fin",
 				"triggeredBy": "Ejecutado por",
@@ -372,7 +372,6 @@
 				"horario": "Horarios",
 				"matricula": "Matrículas",
 				"alumno": "Alumnos",
-				"nota": "Notas",
 				"uniqueStudents": "Alumnos únicos"
 			},
 			"departments": {
