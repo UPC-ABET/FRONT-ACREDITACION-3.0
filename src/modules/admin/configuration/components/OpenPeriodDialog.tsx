@@ -131,7 +131,7 @@ export default function OpenPeriodDialog({ open, onOpenChange }: OpenPeriodDialo
 				<div className="space-y-4">
 					<Input
 						label={t('admin.configuration.periods.form.code')}
-						placeholder="2026-01"
+						placeholder="202620"
 						value={form.code}
 						onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
 						error={errors.code}

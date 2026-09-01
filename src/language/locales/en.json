@@ -964,7 +964,7 @@
 				"form": {
 					"title": "Open new period",
 					"code": "Code",
-					"codeHelp": "Format YYYY-01, YYYY-02, or YYYY-00.",
+					"codeHelp": "6 digits: year + term code (e.g. 202620).",
 					"startDate": "Start date",
 					"endDate": "End date",
 					"modality": "Modality",
@@ -973,7 +973,7 @@
 					"submitting": "Opening...",
 					"error": {
 						"codeRequired": "Code is required.",
-						"codeInvalid": "Code must match YYYY-01, YYYY-02, or YYYY-00.",
+						"codeInvalid": "Code must be 6 digits (year + term code, e.g. 202620).",
 						"startDateRequired": "Start date is required.",
 						"endDateRequired": "End date is required.",
 						"endBeforeStart": "End date cannot be before start date.",
