@@ -13,7 +13,11 @@ import { outcomesService } from '@/modules/accreditation';
 import { TYPE_GROUP_CODES } from '@/shared';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { performanceReportsService } from '../services';
-import type { PerformanceReportFilterDto, PerformanceReportLang } from '../types';
+import type {
+	PerformanceReportFilterDto,
+	PerformanceReportKind,
+	PerformanceReportLang,
+} from '../types';
 
 export type PerformanceReportFilterOption = {
 	value: number;
@@ -55,10 +59,14 @@ export function usePerformanceReportFilters() {
 	});
 	// Gates the report query itself: it must not fire just because appliedFilters exists (its
 	// initial value is a real, valid filter set -- {lang} with everything else omitted, meaning
-	// "no filter"). Only an explicit search() flips this to true; reset() and a period change
-	// flip it back, so the view returns to its pre-search empty state instead of re-querying with
-	// the now-reset filters.
-	const [hasSearched, setHasSearched] = useState(false);
+	// "no filter"). Only an explicit search() sets it; reset() and a period change clear it, so
+	// the view returns to its pre-search empty state instead of re-querying with the now-reset
+	// filters.
+	// It holds the *kind* searched, not a boolean, because RC and RV are separate queries: with a
+	// boolean, switching tabs kept the gate open and the new kind's query fired on its own, one
+	// backend request per tab switch. Returning to a tab already searched under the same filters
+	// still shows its report -- react-query serves that key from cache without refetching.
+	const [searchedKind, setSearchedKind] = useState<PerformanceReportKind | null>(null);
 
 	// The report is scoped to the active period (header). When it changes, the cascade
 	// selections no longer apply, so reset them. This runs during render (React's documented
@@ -76,7 +84,7 @@ export function usePerformanceReportFilters() {
 		setProgramId(null);
 		setOutcomeIds([]);
 		setPerformanceLevelId(null);
-		setHasSearched(false);
+		setSearchedKind(null);
 		setAppliedFilters({
 			campusIds: appliedFilters.campusIds,
 			gradeTypeIds: appliedFilters.gradeTypeIds,
@@ -245,9 +253,9 @@ export function usePerformanceReportFilters() {
 	// applied.
 	const canSearch = !detailedQuery.isFetching && programCommissionId != null;
 
-	function search() {
+	function search(kind: PerformanceReportKind) {
 		setAppliedFilters(filters);
-		setHasSearched(true);
+		setSearchedKind(kind);
 	}
 
 	function reset() {
@@ -260,7 +268,7 @@ export function usePerformanceReportFilters() {
 		setGradeTypeIds([]);
 		setLang(locale === 'en' ? 'en' : 'es');
 		setAppliedFilters({ lang: locale === 'en' ? 'en' : 'es' });
-		setHasSearched(false);
+		setSearchedKind(null);
 	}
 
 	function handleAccreditorChange(option: SelectedOption) {
@@ -285,7 +293,7 @@ export function usePerformanceReportFilters() {
 		filters,
 		appliedFilters,
 		canSearch,
-		hasSearched,
+		searchedKind,
 		search,
 		accreditorId,
 		commissionId,

@@ -159,7 +159,7 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 						{t('performanceReports.filters.clear')}
 					</Button>
 				)}
-				<Button variant="primary" onClick={state.search} disabled={!state.canSearch}>
+				<Button variant="primary" onClick={() => state.search(kind)} disabled={!state.canSearch}>
 					<MagnifyingGlassIcon aria-hidden="true" className="h-4 w-4" />
 					{t('performanceReports.filters.search')}
 				</Button>

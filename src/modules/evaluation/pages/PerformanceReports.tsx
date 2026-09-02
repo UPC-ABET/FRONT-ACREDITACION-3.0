@@ -53,7 +53,7 @@ export function PerformanceReports() {
 						kind={reportKind}
 						filters={filterState.appliedFilters}
 						academicPeriodId={academicPeriodId}
-						enabled={filterState.hasSearched}
+						enabled={filterState.searchedKind === reportKind}
 					/>
 				</div>
 			)}
