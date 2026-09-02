@@ -233,10 +233,17 @@ export function usePerformanceReportFilters() {
 		performanceLevelId != null ||
 		lang !== (locale === 'en' ? 'en' : 'es');
 
-	const hasPendingChanges = useMemo(
-		() => JSON.stringify(filters) !== JSON.stringify(appliedFilters),
-		[filters, appliedFilters],
-	);
+	// "Buscar" is gated on whether a search *can* run, not on whether the draft differs from the
+	// last applied filters. A dirty-check gate looks right until the user re-picks the program
+	// they just searched with: the draft becomes equal to appliedFilters again and the button
+	// stays dead until "Limpiar filtros" or a reload -- re-running the same search is legitimate.
+	// What a search actually requires is a resolved program-commission: the cascade
+	// (accreditor -> commission -> program) is only meaningful to the report once it resolves to
+	// that id, so a half-filled cascade leaves the button off. detailedQuery keeps the previous
+	// rows as placeholder data while refetching, so `programCommissionId` can still hold the
+	// *previous* program's id mid-switch; isFetching is what keeps that stale id from being
+	// applied.
+	const canSearch = !detailedQuery.isFetching && programCommissionId != null;
 
 	function search() {
 		setAppliedFilters(filters);
@@ -277,7 +284,7 @@ export function usePerformanceReportFilters() {
 	return {
 		filters,
 		appliedFilters,
-		hasPendingChanges,
+		canSearch,
 		hasSearched,
 		search,
 		accreditorId,

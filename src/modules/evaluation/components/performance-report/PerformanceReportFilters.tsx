@@ -73,7 +73,7 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 				<Select
 					name="program"
 					label={t('performanceReports.filters.program')}
-					placeholder={t('performanceReports.filters.allPrograms')}
+					placeholder={t('performanceReports.filters.selectProgram')}
 					isClearable
 					isSearchable
 					isDisabled={state.commissionId == null || state.isLoadingPrograms}
@@ -159,7 +159,7 @@ export function PerformanceReportFilters({ state, kind }: PerformanceReportFilte
 						{t('performanceReports.filters.clear')}
 					</Button>
 				)}
-				<Button variant="primary" onClick={state.search} disabled={!state.hasPendingChanges}>
+				<Button variant="primary" onClick={state.search} disabled={!state.canSearch}>
 					<MagnifyingGlassIcon aria-hidden="true" className="h-4 w-4" />
 					{t('performanceReports.filters.search')}
 				</Button>
