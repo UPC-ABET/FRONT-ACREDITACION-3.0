@@ -30,6 +30,14 @@ export function usePerformanceReport(
 		queryFn: () => performanceReportsService.getReport(kind, filters),
 		enabled: academicPeriodId != null && enabled,
 		retry: false,
+		// A searched report is only fetched on an explicit "Buscar", so it must never go stale on
+		// its own: with the global staleTime of 0, switching RC <-> RV re-subscribed this observer
+		// to the other kind's key and refetched it on arrival, one request per tab switch. The
+		// filters are part of the key, so a cached entry can only be re-read by a search with the
+		// exact same filters -- there is nothing to refresh. gcTime keeps that entry alive while
+		// the other tab (no observer on this key) is open, well past the 5-minute global default.
+		staleTime: Infinity,
+		gcTime: 30 * 60_000,
 	});
 }
 

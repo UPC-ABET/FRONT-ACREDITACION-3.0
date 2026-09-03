@@ -13,7 +13,11 @@ import { outcomesService } from '@/modules/accreditation';
 import { TYPE_GROUP_CODES } from '@/shared';
 import { useTypesByGroupCode } from '@/modules/core/hooks';
 import { performanceReportsService } from '../services';
-import type { PerformanceReportFilterDto, PerformanceReportLang } from '../types';
+import type {
+	PerformanceReportFilterDto,
+	PerformanceReportKind,
+	PerformanceReportLang,
+} from '../types';
 
 export type PerformanceReportFilterOption = {
 	value: number;
@@ -55,10 +59,14 @@ export function usePerformanceReportFilters() {
 	});
 	// Gates the report query itself: it must not fire just because appliedFilters exists (its
 	// initial value is a real, valid filter set -- {lang} with everything else omitted, meaning
-	// "no filter"). Only an explicit search() flips this to true; reset() and a period change
-	// flip it back, so the view returns to its pre-search empty state instead of re-querying with
-	// the now-reset filters.
-	const [hasSearched, setHasSearched] = useState(false);
+	// "no filter"). Only an explicit search() sets it; reset() and a period change clear it, so
+	// the view returns to its pre-search empty state instead of re-querying with the now-reset
+	// filters.
+	// It holds the *kind* searched, not a boolean, because RC and RV are separate queries: with a
+	// boolean, switching tabs kept the gate open and the new kind's query fired on its own, one
+	// backend request per tab switch. Returning to a tab already searched under the same filters
+	// still shows its report -- react-query serves that key from cache without refetching.
+	const [searchedKind, setSearchedKind] = useState<PerformanceReportKind | null>(null);
 
 	// The report is scoped to the active period (header). When it changes, the cascade
 	// selections no longer apply, so reset them. This runs during render (React's documented
@@ -76,7 +84,7 @@ export function usePerformanceReportFilters() {
 		setProgramId(null);
 		setOutcomeIds([]);
 		setPerformanceLevelId(null);
-		setHasSearched(false);
+		setSearchedKind(null);
 		setAppliedFilters({
 			campusIds: appliedFilters.campusIds,
 			gradeTypeIds: appliedFilters.gradeTypeIds,
@@ -233,14 +241,21 @@ export function usePerformanceReportFilters() {
 		performanceLevelId != null ||
 		lang !== (locale === 'en' ? 'en' : 'es');
 
-	const hasPendingChanges = useMemo(
-		() => JSON.stringify(filters) !== JSON.stringify(appliedFilters),
-		[filters, appliedFilters],
-	);
+	// "Buscar" is gated on whether a search *can* run, not on whether the draft differs from the
+	// last applied filters. A dirty-check gate looks right until the user re-picks the program
+	// they just searched with: the draft becomes equal to appliedFilters again and the button
+	// stays dead until "Limpiar filtros" or a reload -- re-running the same search is legitimate.
+	// What a search actually requires is a resolved program-commission: the cascade
+	// (accreditor -> commission -> program) is only meaningful to the report once it resolves to
+	// that id, so a half-filled cascade leaves the button off. detailedQuery keeps the previous
+	// rows as placeholder data while refetching, so `programCommissionId` can still hold the
+	// *previous* program's id mid-switch; isFetching is what keeps that stale id from being
+	// applied.
+	const canSearch = !detailedQuery.isFetching && programCommissionId != null;
 
-	function search() {
+	function search(kind: PerformanceReportKind) {
 		setAppliedFilters(filters);
-		setHasSearched(true);
+		setSearchedKind(kind);
 	}
 
 	function reset() {
@@ -253,7 +268,7 @@ export function usePerformanceReportFilters() {
 		setGradeTypeIds([]);
 		setLang(locale === 'en' ? 'en' : 'es');
 		setAppliedFilters({ lang: locale === 'en' ? 'en' : 'es' });
-		setHasSearched(false);
+		setSearchedKind(null);
 	}
 
 	function handleAccreditorChange(option: SelectedOption) {
@@ -277,8 +292,8 @@ export function usePerformanceReportFilters() {
 	return {
 		filters,
 		appliedFilters,
-		hasPendingChanges,
-		hasSearched,
+		canSearch,
+		searchedKind,
 		search,
 		accreditorId,
 		commissionId,
