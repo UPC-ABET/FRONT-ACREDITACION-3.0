@@ -2915,7 +2915,11 @@
 			"reports": {
 				"title": "Dashboard — Graduandos",
 				"description": "Resumen de percepción por ciclo académico para encuestas de graduandos.",
-				"exportFileName": "encuestas_gra.xlsx"
+				"exportFileName": "encuestas_gra.xlsx",
+				"importanceTitle": "Importancia por Outcome",
+				"importanceDescription": "Promedio de importancia de cada outcome por carrera.",
+				"outcomeFilterLabel": "Outcome",
+				"outcomeFilterPlaceholder": "Selecciona un outcome"
 			},
 			"emailTemplate": {
 				"title": "Plantilla de Correo Electrónico",
