@@ -34,6 +34,7 @@ import type {
 	BackendUploadResult,
 	PerceptionReportFilters,
 	PerceptionReportResponse,
+	SurveyOutcomeOption,
 } from '../types';
 
 /** Coerce an I18nText ({ es, en }) or plain string to a display string (prefers Spanish). */
@@ -473,6 +474,27 @@ export async function generateGRAPerceptionPdf(
 		commissionId: params.commissionId,
 		campusId: params.campusId,
 		surveyNumbers: params.surveyNumbers,
+		modalityLabel: params.modalityLabel,
+		lang: params.lang ?? 'es',
+	});
+	return getApiData<PerceptionReportResponse>(res) ?? { reports: [], zip: null };
+}
+
+export async function listGRAReportOutcomes(
+	programId: number,
+	commissionId: number,
+): Promise<SurveyOutcomeOption[]> {
+	const res = await apiPost('gra/report/outcomes', { programId, commissionId });
+	return getApiData<SurveyOutcomeOption[]>(res) ?? [];
+}
+
+export async function generateGRAImportancePdf(
+	params: PerceptionReportFilters & { programId?: number },
+): Promise<PerceptionReportResponse> {
+	const res = await apiPost('gra/report/importance', {
+		programId: params.programId,
+		commissionId: params.commissionId,
+		outcomeId: params.outcomeId,
 		modalityLabel: params.modalityLabel,
 		lang: params.lang ?? 'es',
 	});

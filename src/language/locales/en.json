@@ -2915,7 +2915,11 @@
 			"reports": {
 				"title": "Dashboard — Graduating Students",
 				"description": "Perception summary by academic cycle for graduating student surveys.",
-				"exportFileName": "gra_surveys.xlsx"
+				"exportFileName": "gra_surveys.xlsx",
+				"importanceTitle": "Importance by Outcome",
+				"importanceDescription": "Average importance of each outcome per program.",
+				"outcomeFilterLabel": "Outcome",
+				"outcomeFilterPlaceholder": "Select an outcome"
 			},
 			"emailTemplate": {
 				"title": "Email Template",

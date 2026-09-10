@@ -30,7 +30,7 @@ import type {
 	BackendGenerateResult,
 	PerceptionReportFilters,
 	PerceptionReportResponse,
-	LCFCOutcomeOption,
+	SurveyOutcomeOption,
 } from '../types';
 import type { I18nText } from '@/shared/types';
 
@@ -379,9 +379,9 @@ export async function generateLCFCPerceptionPdf(
 export async function listLCFCOutcomes(
 	programId: number,
 	commissionId: number,
-): Promise<LCFCOutcomeOption[]> {
+): Promise<SurveyOutcomeOption[]> {
 	const res = await apiPost('lcfc/outcomes/list', { programId, commissionId });
-	return getApiData<LCFCOutcomeOption[]>(res) ?? [];
+	return getApiData<SurveyOutcomeOption[]>(res) ?? [];
 }
 
 export async function generateLCFCOutcomeReportPdf(

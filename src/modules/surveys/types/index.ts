@@ -461,7 +461,9 @@ export interface PerceptionReportFilters {
 	lang?: 'es' | 'en';
 }
 
-export interface LCFCOutcomeOption {
+/** An outcome as offered in a report filter — LCFC's "Percepción por Outcome" and GRA's
+ *  "Importancia por Outcome" both list them this way. */
+export interface SurveyOutcomeOption {
 	id: number;
 	code: string;
 	name: I18nText | string | null;
