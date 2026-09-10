@@ -85,7 +85,10 @@ export function GRAReports() {
 		useSurveyFilterOptions(importanceProgramId);
 
 	// A career change invalidates the commission it was scoped to, and a commission change the
-	// outcome — same reset chain as LCFC's "Percepción por Outcome" card.
+	// outcome — same reset chain as LCFC's "Percepción por Outcome" card, written with the
+	// adjust-state-during-render pattern. React re-runs the render and never commits the stale
+	// value, so the filters are consistent on the first paint; an effect would clear them only
+	// after the browser had already shown the invalid pair.
 	const [prevImportanceProgramId, setPrevImportanceProgramId] = useState(importanceProgramId);
 	if (importanceProgramId !== prevImportanceProgramId) {
 		setPrevImportanceProgramId(importanceProgramId);
